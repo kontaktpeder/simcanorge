@@ -57,6 +57,18 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        // Simca brand colors for direct use
+        simca: {
+          blue: "hsl(var(--simca-blue))",
+          red: "hsl(var(--simca-red))",
+          cream: "hsl(var(--simca-cream))",
+          gray: "hsl(var(--simca-gray))",
+        },
+      },
+      fontFamily: {
+        display: ["Bebas Neue", "sans-serif"],
+        serif: ["Playfair Display", "serif"],
+        sans: ["Source Sans 3", "sans-serif"],
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -65,20 +77,12 @@ export default {
       },
       keyframes: {
         "accordion-down": {
-          from: {
-            height: "0",
-          },
-          to: {
-            height: "var(--radix-accordion-content-height)",
-          },
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
         },
         "accordion-up": {
-          from: {
-            height: "var(--radix-accordion-content-height)",
-          },
-          to: {
-            height: "0",
-          },
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
         },
       },
       animation: {
