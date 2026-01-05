@@ -4,31 +4,31 @@ import { AnimatedSection } from "@/components/layout/AnimatedSection";
 import { useInView } from "@/hooks/useInView";
 import { Calendar, MapPin, Car, History, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
-
-function TimelineItem({ year, title, children }: { year: string; title: string; children: React.ReactNode }) {
-  const { ref, isInView } = useInView();
-  return (
-    <div
-      ref={ref}
-      className={`relative pl-8 md:pl-12 pb-12 border-l-2 border-accent/30 last:border-l-0 last:pb-0 transition-all duration-700 ${isInView ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4'}`}
-    >
+function TimelineItem({
+  year,
+  title,
+  children
+}: {
+  year: string;
+  title: string;
+  children: React.ReactNode;
+}) {
+  const {
+    ref,
+    isInView
+  } = useInView();
+  return <div ref={ref} className={`relative pl-8 md:pl-12 pb-12 border-l-2 border-accent/30 last:border-l-0 last:pb-0 transition-all duration-700 ${isInView ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4'}`}>
       <div className="absolute left-0 top-0 w-4 h-4 -translate-x-[9px] rounded-full bg-accent shadow-lg" />
       <span className="font-display text-accent text-lg">{year}</span>
       <h3 className="font-display text-2xl md:text-3xl text-foreground mt-1 mb-4">{title}</h3>
       <div className="text-lg md:text-xl text-foreground/80 leading-relaxed">
         {children}
       </div>
-    </div>
-  );
+    </div>;
 }
-
 export default function Historie() {
-  return (
-    <Layout>
-      <PageHeader 
-        title="HISTORIE" 
-        subtitle="Fra 1934 til i dag – historien om et bilmerke med sjel" 
-      />
+  return <Layout>
+      <PageHeader title="HISTORIE" subtitle="Fra 1934 til i dag – historien om et bilmerke med sjel" />
 
       {/* Intro */}
       <section className="py-16 md:py-24 bg-background">
@@ -40,9 +40,7 @@ export default function Historie() {
                   <History className="w-6 h-6 text-primary" />
                 </div>
                 <div>
-                  <h2 className="font-display text-3xl md:text-4xl text-foreground">
-                    SIMCA – ET MERKE MED PERSONLIGHET
-                  </h2>
+                  <h2 className="font-display text-3xl md:text-4xl text-foreground">SIMCA, TALBOT og MATREA – BILER MED PERSONLIGHET</h2>
                 </div>
               </div>
               <p className="text-lg md:text-xl text-foreground/80 leading-relaxed mb-6">
@@ -168,7 +166,7 @@ export default function Historie() {
                 Utover 2000-tallet begynte en forsiktig gjenoppdagelse. Flere biler dukket opp igjen etter mange år i dvale, og interessen blant entusiaster vokste.
               </p>
               <p className="text-lg md:text-xl text-foreground/80 leading-relaxed mb-6">
-                I dag finnes det igjen et lite, men engasjert miljø rundt Simca i Norge. Noen biler er ferdig restaurert, andre er midt i prosessen – og flere venter fortsatt på sin tur.
+                I dag er det et økende engasjement rundt Simca, Talbot og Matra i Norge. Noen biler er ferdig restaurert, andre er midt i prosessen – og flere venter fortsatt på sin tur.
               </p>
               <div className="border-l-4 border-accent pl-6 mt-8">
                 <p className="font-serif text-xl md:text-2xl text-foreground/90 italic">
@@ -201,6 +199,5 @@ export default function Historie() {
           </div>
         </div>
       </section>
-    </Layout>
-  );
+    </Layout>;
 }
