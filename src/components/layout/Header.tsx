@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, Wrench } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { useCart } from "@/hooks/useCart";
 import simcaBadge from "@/assets/simca-badge.png";
+import toolboxIcon from "@/assets/toolbox-icon.png";
 import {
   Tooltip,
   TooltipContent,
@@ -76,7 +77,7 @@ export function Header() {
                     className="relative p-2 hover:bg-muted/50 rounded-lg transition-colors ml-2"
                     aria-label="Min verktøykasse"
                   >
-                    <Wrench className="w-6 h-6" />
+                    <img src={toolboxIcon} alt="Verktøykasse" className="w-8 h-8 object-contain" />
                     {itemCount > 0 && (
                       <span className="absolute -top-1 -right-1 bg-accent text-accent-foreground w-5 h-5 rounded-full text-xs font-display flex items-center justify-center shadow-md">
                         {itemCount}
@@ -98,7 +99,7 @@ export function Header() {
               className="relative p-2 hover:bg-muted/50 rounded-lg transition-colors"
               aria-label="Min verktøykasse"
             >
-              <Wrench className="w-6 h-6" />
+              <img src={toolboxIcon} alt="Verktøykasse" className="w-8 h-8 object-contain" />
               {itemCount > 0 && (
                 <span className="absolute -top-1 -right-1 bg-accent text-accent-foreground w-5 h-5 rounded-full text-xs font-display flex items-center justify-center shadow-md">
                   {itemCount}

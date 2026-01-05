@@ -3,9 +3,10 @@ import { Link } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { useCart } from "@/hooks/useCart";
 import { supabase } from "@/integrations/supabase/client";
-import { X, Send, Briefcase, ArrowLeft, Check } from "lucide-react";
+import { X, Send, ArrowLeft, Check } from "lucide-react";
 import { z } from "zod";
 import { toast } from "sonner";
+import toolboxIcon from "@/assets/toolbox-icon.png";
 
 const inquirySchema = z.object({
   customer_name: z.string().trim().min(1, "Navn er påkrevd").max(100),
@@ -138,7 +139,7 @@ const Foresporsel = () => {
         <div className="container mx-auto">
           {items.length === 0 ? (
             <div className="text-center py-12 animate-fade-in">
-              <Briefcase className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
+              <img src={toolboxIcon} alt="Verktøykasse" className="w-24 h-24 mx-auto mb-4 object-contain" />
               <h2 className="headline-md mb-4">VERKTØYKASSEN ER TOM</h2>
               <p className="text-muted-foreground mb-6">
                 Du har ikke lagt til noen deler i verktøykassen ennå.
