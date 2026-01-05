@@ -272,8 +272,9 @@ const Biler = () => {
       </section>
 
       {/* CTA */}
-      <section className="poster-section poster-section-red">
-        <div className="container mx-auto text-center">
+      <section className="poster-section poster-section-red relative overflow-hidden">
+        <div className="absolute inset-0 stripes-diagonal opacity-50" />
+        <div className="container mx-auto text-center relative z-10">
           <h2 className="headline-md mb-4">HAR DU EN SIMCA?</h2>
           <p className="text-xl mb-6 opacity-90">
             Del historien om din franske klassiker med oss!

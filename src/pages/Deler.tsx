@@ -267,8 +267,9 @@ const Deler = () => {
       </section>
 
       {/* CTA */}
-      <section className="poster-section poster-section-red">
-        <div className="container mx-auto text-center">
+      <section className="poster-section poster-section-red relative overflow-hidden">
+        <div className="absolute inset-0 stripes-diagonal opacity-50" />
+        <div className="container mx-auto text-center relative z-10">
           <h2 className="headline-md mb-4">FANT DU IKKE DET DU LETTE ETTER?</h2>
           <p className="text-xl mb-6 opacity-90">
             Ta kontakt med oss så hjelper vi deg å finne riktig del.

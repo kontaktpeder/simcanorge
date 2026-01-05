@@ -152,12 +152,27 @@
       linear-gradient(135deg, #0F3E7A 0%, #1F66B5 35%, #4FA0FF 55%, #1F66B5 75%, #0F3E7A 100%);
   }
 
-  /* Metallic red lacquer background with depth */
+  /* Metallic red lacquer background with depth and diagonal stripes */
   .bg-metal-red {
+    position: relative;
     background:
       radial-gradient(1200px 600px at 70% 10%, rgba(255,255,255,0.12), rgba(255,255,255,0) 60%),
       radial-gradient(900px 500px at 20% 80%, rgba(0,0,0,0.25), rgba(0,0,0,0) 55%),
       linear-gradient(135deg, #7A1A1A 0%, #B52A2A 35%, #D44040 55%, #B52A2A 75%, #7A1A1A 100%);
+  }
+
+  .bg-metal-red::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 8px,
+      rgba(0, 0, 0, 0.08) 8px,
+      rgba(0, 0, 0, 0.08) 16px
+    );
+    pointer-events: none;
   }
 
   /* Chrome/metallic frame effect */
