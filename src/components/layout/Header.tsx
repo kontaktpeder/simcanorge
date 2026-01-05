@@ -1,17 +1,23 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, ShoppingBag } from "lucide-react";
+import { Menu, X, Wrench } from "lucide-react";
 import { useCart } from "@/hooks/useCart";
 import simcaBadge from "@/assets/simca-badge.png";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const navItems = [
-  { href: "/", label: "Hjem" },
-  { href: "/manedens-bil", label: "Månedens bil" },
-  { href: "/biler", label: "Biler & Historier" },
-  { href: "/deler", label: "Deler" },
-  { href: "/send-inn", label: "Send inn din bil" },
-  { href: "/historie", label: "Historie" },
-  { href: "/om-oss", label: "Om oss" },
+  { href: "/", label: "Hjem", description: "Tilbake til forsiden" },
+  { href: "/manedens-bil", label: "Månedens bil", description: "Se denne månedens utvalgte Simca" },
+  { href: "/biler", label: "Biler", description: "Utforsk Simca-biler og historier" },
+  { href: "/deler", label: "Deler", description: "Finn deler til din Simca" },
+  { href: "/send-inn", label: "Send inn din bil", description: "Del din Simca-historie med oss" },
+  { href: "/historie", label: "Simcaens historie", description: "Lær om Simcas rike historie" },
+  { href: "/om-oss", label: "Om oss", description: "Hvem står bak Simca Norge" },
 ];
 
 export function Header() {
@@ -38,36 +44,51 @@ export function Header() {
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center gap-6">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                to={item.href}
-                className={`font-display text-lg uppercase tracking-wide transition-all hover:text-accent relative py-1 ${
-                  location.pathname === item.href
-                    ? "text-accent"
-                    : "text-foreground"
-                }`}
-              >
-                {item.label}
-                {location.pathname === item.href && (
-                  <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-accent rounded-full" />
-                )}
-              </Link>
-            ))}
+            <TooltipProvider delayDuration={200}>
+              {navItems.map((item) => (
+                <Tooltip key={item.href}>
+                  <TooltipTrigger asChild>
+                    <Link
+                      to={item.href}
+                      className={`font-display text-lg uppercase tracking-wide transition-all hover:text-accent relative py-1 ${
+                        location.pathname === item.href
+                          ? "text-accent"
+                          : "text-foreground"
+                      }`}
+                    >
+                      {item.label}
+                      {location.pathname === item.href && (
+                        <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-accent rounded-full" />
+                      )}
+                    </Link>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>{item.description}</p>
+                  </TooltipContent>
+                </Tooltip>
+              ))}
 
-            {/* Cart Icon */}
-            <Link
-              to="/foresporsel"
-              className="relative p-2 hover:bg-muted/50 rounded-lg transition-colors ml-2"
-              aria-label="Se forespørsel"
-            >
-              <ShoppingBag className="w-6 h-6" />
-              {itemCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-accent text-accent-foreground w-5 h-5 rounded-full text-xs font-display flex items-center justify-center shadow-md">
-                  {itemCount}
-                </span>
-              )}
-            </Link>
+              {/* Cart Icon */}
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Link
+                    to="/foresporsel"
+                    className="relative p-2 hover:bg-muted/50 rounded-lg transition-colors ml-2"
+                    aria-label="Se forespørsel"
+                  >
+                    <Wrench className="w-6 h-6" />
+                    {itemCount > 0 && (
+                      <span className="absolute -top-1 -right-1 bg-accent text-accent-foreground w-5 h-5 rounded-full text-xs font-display flex items-center justify-center shadow-md">
+                        {itemCount}
+                      </span>
+                    )}
+                  </Link>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Se deler du har forespurt</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </nav>
 
           {/* Mobile: Cart + Menu */}
@@ -77,7 +98,7 @@ export function Header() {
               className="relative p-2 hover:bg-muted/50 rounded-lg transition-colors"
               aria-label="Se forespørsel"
             >
-              <ShoppingBag className="w-6 h-6" />
+              <Wrench className="w-6 h-6" />
               {itemCount > 0 && (
                 <span className="absolute -top-1 -right-1 bg-accent text-accent-foreground w-5 h-5 rounded-full text-xs font-display flex items-center justify-center shadow-md">
                   {itemCount}
