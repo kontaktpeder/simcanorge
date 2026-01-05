@@ -40,7 +40,7 @@ export default function Historie() {
                   <History className="w-6 h-6 text-primary" />
                 </div>
                 <div>
-                  <h2 className="font-display text-3xl md:text-4xl text-foreground">SIMCA, TALBOT og MATREA – BILER MED PERSONLIGHET</h2>
+                  <h2 className="font-display text-3xl md:text-4xl text-foreground">SIMCA, TALBOT og MATRA – BILER MED PERSONLIGHET</h2>
                 </div>
               </div>
               <p className="text-lg md:text-xl text-foreground/80 leading-relaxed mb-6">
