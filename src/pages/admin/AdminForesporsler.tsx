@@ -30,6 +30,7 @@ const AdminForesporsler = () => {
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const fetchInquiries = async () => {
+    console.log("Fetching inquiries...");
     const { data, error } = await supabase
       .from("inquiries")
       .select(`
@@ -38,6 +39,8 @@ const AdminForesporsler = () => {
       `)
       .order("created_at", { ascending: false });
 
+    console.log("Inquiries result:", { data, error });
+    
     if (error) {
       console.error("Error fetching inquiries:", error);
       toast.error("Kunne ikke hente forespørsler");
