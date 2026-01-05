@@ -86,7 +86,7 @@ const Foresporsel = () => {
       if (data.success) {
         setIsSuccess(true);
         clearCart();
-        toast.success("Forespørsel sendt! Sjekk e-posten din for bekreftelse.");
+        toast.success("Forespørsel mottatt! Vi tar kontakt snart.");
       } else {
         throw new Error(data.error || "Noe gikk galt");
       }
@@ -109,8 +109,8 @@ const Foresporsel = () => {
               </div>
               <h1 className="headline-md text-accent mb-4">TAKK FOR DIN FORESPØRSEL!</h1>
               <p className="text-lg mb-6">
-                Vi har sendt en bekreftelse til e-posten din. 
-                Pappa sjekker hylla og kommer tilbake til deg snart! 🔧
+                Forespørselen din er mottatt og ligger i vår innboks.
+                Vi tar kontakt så snart som mulig! 🔧
               </p>
               <Link to="/deler" className="btn-enamel-blue">
                 <ArrowLeft className="w-5 h-5 mr-2" />

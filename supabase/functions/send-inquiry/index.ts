@@ -1,8 +1,5 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import { Resend } from "https://esm.sh/resend@2.0.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-
-const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -56,6 +53,7 @@ const handler = async (req: Request): Promise<Response> => {
         car_model: data.car_model || null,
         car_year: data.car_year || null,
         message: data.message || null,
+        read: false,
       })
       .select()
       .single();
@@ -85,86 +83,12 @@ const handler = async (req: Request): Promise<Response> => {
       console.error("Error inserting inquiry items:", itemsError);
     }
 
-    // Build parts list HTML
-    const partsListHtml = data.items
-      .map((item) => `<li>${item.part_title}</li>`)
-      .join("");
-
-    // Send email to admin (kontaktpeder@gmail.com)
-    const adminEmailHtml = `
-      <h1 style="color: #1e88e5;">🚗 Ny deler-forespørsel fra Simca Norge</h1>
-      
-      <h2>Kundeinformasjon</h2>
-      <table style="border-collapse: collapse; margin-bottom: 20px;">
-        <tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Navn:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">${data.customer_name}</td></tr>
-        <tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>E-post:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">${data.email}</td></tr>
-        ${data.phone ? `<tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Telefon:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">${data.phone}</td></tr>` : ""}
-        ${data.car_model ? `<tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Bilmodell:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">${data.car_model}</td></tr>` : ""}
-        ${data.car_year ? `<tr><td style="padding: 8px; border: 1px solid #ddd;"><strong>Årsmodell:</strong></td><td style="padding: 8px; border: 1px solid #ddd;">${data.car_year}</td></tr>` : ""}
-      </table>
-      
-      <h2>Etterspurte deler</h2>
-      <ul>${partsListHtml}</ul>
-      
-      ${data.message ? `<h2>Melding</h2><p style="background: #f5f5f5; padding: 15px; border-radius: 5px;">${data.message}</p>` : ""}
-      
-      <hr style="margin-top: 30px;" />
-      <p style="color: #666; font-size: 12px;">Denne forespørselen er lagret i databasen.</p>
-    `;
-
-    const adminEmailResponse = await resend.emails.send({
-      from: "Simca Norge <onboarding@resend.dev>",
-      to: ["kontaktpeder@gmail.com"],
-      subject: `Ny deler-forespørsel fra ${data.customer_name}`,
-      html: adminEmailHtml,
-    });
-
-    console.log("Admin email sent:", adminEmailResponse);
-
-    // Send confirmation email to customer
-    const customerEmailHtml = `
-      <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
-        <div style="background: #1e88e5; color: white; padding: 30px; text-align: center;">
-          <h1 style="margin: 0;">SIMCA NORGE</h1>
-          <p style="margin: 10px 0 0;">Takk for din forespørsel!</p>
-        </div>
-        
-        <div style="padding: 30px; background: #fafafa;">
-          <p>Hei ${data.customer_name},</p>
-          
-          <p>Vi har mottatt din forespørsel om følgende deler:</p>
-          
-          <ul style="background: white; padding: 20px 40px; border-radius: 5px; border: 1px solid #ddd;">
-            ${partsListHtml}
-          </ul>
-          
-          <p>Pappa sjekker hylla og kommer tilbake til deg så snart som mulig! 🔧</p>
-          
-          <p style="margin-top: 30px;">
-            Med vennlig hilsen,<br/>
-            <strong>Simca Norge</strong>
-          </p>
-        </div>
-        
-        <div style="background: #333; color: #999; padding: 20px; text-align: center; font-size: 12px;">
-          <p>Dette er en automatisk bekreftelse. Du trenger ikke å svare på denne e-posten.</p>
-        </div>
-      </div>
-    `;
-
-    const customerEmailResponse = await resend.emails.send({
-      from: "Simca Norge <onboarding@resend.dev>",
-      to: [data.email],
-      subject: "Bekreftelse: Vi har mottatt din forespørsel - Simca Norge",
-      html: customerEmailHtml,
-    });
-
-    console.log("Customer confirmation email sent:", customerEmailResponse);
+    console.log("Inquiry items created for inquiry:", inquiry.id);
 
     return new Response(
       JSON.stringify({ 
         success: true, 
-        message: "Forespørsel sendt! Sjekk e-posten din for bekreftelse.",
+        message: "Forespørsel mottatt! Vi tar kontakt så snart som mulig.",
         inquiry_id: inquiry.id 
       }),
       { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
