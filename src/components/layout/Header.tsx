@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X, ShoppingBag } from "lucide-react";
 import { useCart } from "@/hooks/useCart";
-import simcaLogo from "@/assets/simca-logo.png";
+import simcaBadge from "@/assets/simca-badge.png";
 
 const navItems = [
   { href: "/", label: "Hjem" },
@@ -26,7 +26,7 @@ export function Header() {
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3 hover-lift">
             <img 
-              src={simcaLogo} 
+              src={simcaBadge} 
               alt="Simca Norge" 
               className="h-14 w-auto drop-shadow-md"
             />
