@@ -76,21 +76,13 @@ export function HeroSection() {
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Text Content */}
           <div className="text-center lg:text-left">
-            <div className="flex items-center justify-center lg:justify-start gap-4 mb-6">
+            <div className="flex items-center justify-center lg:justify-start mb-8">
               <img 
                 src={simcaBadge} 
-                alt="Simca Norge badge" 
-                className="h-24 md:h-32 w-auto drop-shadow-2xl"
+                alt="Simca Norge" 
+                className="h-48 md:h-64 lg:h-72 w-auto drop-shadow-2xl"
               />
             </div>
-            
-            <span className="inline-block font-serif italic text-xl md:text-2xl mb-4 text-white/90">
-              Bienvenue chez
-            </span>
-            <h1 className="headline-xl mb-6 text-shadow-retro">
-              <span className="text-metal">SIMCA</span><br />
-              <span className="text-metal">NORGE</span>
-            </h1>
             <p className="text-xl md:text-2xl font-light mb-10 max-w-lg mx-auto lg:mx-0 text-white/90">
               Din kilde til franske klassikere, deler og historier fra Simca-entusiaster i Norge.
             </p>
