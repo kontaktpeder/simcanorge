@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -20,7 +21,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
-import { Car, Mail, Phone, Calendar, Eye, Trash2, MessageSquare, Image } from "lucide-react";
+import { Car, Mail, Phone, Calendar, Eye, Trash2, MessageSquare, Image, Plus } from "lucide-react";
 import { format } from "date-fns";
 import { nb } from "date-fns/locale";
 
@@ -56,8 +57,24 @@ const statusLabels: Record<string, string> = {
 export default function AdminInnsendinger() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const [selectedSubmission, setSelectedSubmission] = useState<CarSubmission | null>(null);
   const [adminNotes, setAdminNotes] = useState("");
+
+  const handleCreateCar = (submission: CarSubmission) => {
+    // Navigate to AdminBiler with submission data in state
+    navigate("/admin/biler", {
+      state: {
+        fromSubmission: {
+          model: submission.car_model,
+          year: submission.car_year,
+          story: submission.car_story,
+          images: submission.images,
+          ownerName: submission.owner_name,
+        }
+      }
+    });
+  };
 
   const { data: submissions, isLoading } = useQuery({
     queryKey: ["car-submissions"],
@@ -315,8 +332,15 @@ export default function AdminInnsendinger() {
                     </Button>
                   </div>
 
-                  {/* Delete */}
-                  <div className="pt-4 border-t">
+                  {/* Actions */}
+                  <div className="pt-4 border-t flex flex-wrap gap-3">
+                    <Button
+                      onClick={() => handleCreateCar(selectedSubmission)}
+                      className="bg-primary"
+                    >
+                      <Plus className="w-4 h-4 mr-2" />
+                      Opprett bil fra innsending
+                    </Button>
                     <Button
                       variant="destructive"
                       onClick={() => {

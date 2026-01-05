@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { supabase } from "@/integrations/supabase/client";
 import { Plus, Pencil, Trash2, Eye, EyeOff, X, Upload, Car, Star, StarOff } from "lucide-react";
@@ -41,7 +42,16 @@ const MODELS = [
   "Annet",
 ];
 
+interface SubmissionData {
+  model: string;
+  year: number | null;
+  story: string | null;
+  images: string[] | null;
+  ownerName: string;
+}
+
 const AdminBiler = () => {
+  const location = useLocation();
   const [cars, setCars] = useState<CarPost[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -50,6 +60,7 @@ const AdminBiler = () => {
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [existingImages, setExistingImages] = useState<CarImage[]>([]);
   const [tagsInput, setTagsInput] = useState("");
+  const [submissionImageUrls, setSubmissionImageUrls] = useState<string[]>([]);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -84,6 +95,28 @@ const AdminBiler = () => {
     fetchCars();
   }, []);
 
+  // Check for submission data from navigation state
+  useEffect(() => {
+    const state = location.state as { fromSubmission?: SubmissionData } | null;
+    if (state?.fromSubmission) {
+      const sub = state.fromSubmission;
+      setFormData({
+        title: sub.year ? `${sub.year} ${sub.model}` : sub.model,
+        slug: "",
+        model: sub.model,
+        year: sub.year?.toString() || "",
+        story: sub.story || "",
+        overhauled: false,
+        featured: false,
+        published: false,
+      });
+      setSubmissionImageUrls(sub.images || []);
+      setShowForm(true);
+      // Clear the state so it doesn't re-trigger
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
+
   const generateSlug = (title: string) => {
     return title
       .toLowerCase()
@@ -110,6 +143,11 @@ const AdminBiler = () => {
     setImageFiles([]);
     setExistingImages([]);
     setTagsInput("");
+    setSubmissionImageUrls([]);
+  };
+
+  const removeSubmissionImage = (index: number) => {
+    setSubmissionImageUrls((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -221,9 +259,20 @@ const AdminBiler = () => {
 
         if (error) throw error;
 
-        // Upload images
+        // Upload new images
         if (imageFiles.length > 0 && data) {
           await uploadImages(data.id);
+        }
+
+        // Add submission images (already uploaded URLs)
+        if (submissionImageUrls.length > 0 && data) {
+          for (let i = 0; i < submissionImageUrls.length; i++) {
+            await supabase.from("car_images").insert({
+              car_id: data.id,
+              image_url: submissionImageUrls[i],
+              sort_order: i,
+            });
+          }
         }
 
         toast.success("Bil opprettet!");
@@ -433,6 +482,34 @@ const AdminBiler = () => {
               {/* Images */}
               <div>
                 <label className="block font-display mb-2">BILDER</label>
+
+                {/* Submission images (from innsending) */}
+                {submissionImageUrls.length > 0 && (
+                  <div className="mb-4">
+                    <p className="text-sm text-muted-foreground mb-2">Fra innsending:</p>
+                    <div className="flex gap-2 flex-wrap">
+                      {submissionImageUrls.map((url, index) => (
+                        <div key={index} className="relative w-24 h-24 border-2 border-green-500">
+                          <img
+                            src={url}
+                            alt=""
+                            className="w-full h-full object-cover"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => removeSubmissionImage(index)}
+                            className="absolute -top-2 -right-2 bg-accent text-accent-foreground p-1 rounded-full"
+                          >
+                            <X className="w-4 h-4" />
+                          </button>
+                          <span className="absolute bottom-0 left-0 right-0 bg-green-500 text-white text-xs text-center">
+                            INNSENDT
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
                 {/* Existing images */}
                 {existingImages.length > 0 && (
