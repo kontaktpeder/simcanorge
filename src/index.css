@@ -4,98 +4,109 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Simca Norge Design System - Retro French 60/70s Poster Aesthetic
-   Colors extracted from the Simca logo: vibrant blue, bold red, clean white
-   All colors MUST be HSL.
+/* Simca Norge Design System - Metallic Badge/Enamel Sign Aesthetic
+   Inspired by classic French car badges: chrome frames, metallic blue lacquer, enamel red
+   All colors MUST be HSL for semantic tokens, hex for gradients.
 */
 
 @layer base {
   :root {
-    /* Core palette from Simca logo */
-    --simca-blue: 207 85% 48%;
-    --simca-red: 2 80% 50%;
-    --simca-cream: 45 33% 97%;
-    --simca-gray: 220 10% 60%;
+    /* Core metallic palette */
+    --metal-blue: 210 75% 40%;
+    --metal-blue-dark: 212 80% 27%;
+    --metal-blue-light: 210 85% 62%;
+    --badge-red: 2 85% 40%;
+    --badge-red-dark: 2 85% 28%;
+    --chrome-light: 216 15% 95%;
+    --chrome-mid: 215 12% 75%;
+    --chrome-dark: 216 10% 40%;
+    --offwhite: 42 30% 97%;
     
     /* Semantic tokens */
-    --background: 45 33% 97%;
-    --foreground: 220 25% 15%;
+    --background: 42 30% 97%;
+    --foreground: 212 80% 15%;
 
     --card: 0 0% 100%;
-    --card-foreground: 220 25% 15%;
+    --card-foreground: 212 80% 15%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 220 25% 15%;
+    --popover-foreground: 212 80% 15%;
 
-    --primary: 207 85% 48%;
+    --primary: 210 75% 40%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 45 20% 92%;
-    --secondary-foreground: 220 25% 15%;
+    --secondary: 42 20% 92%;
+    --secondary-foreground: 212 80% 15%;
 
-    --muted: 45 15% 88%;
-    --muted-foreground: 220 10% 45%;
+    --muted: 42 15% 88%;
+    --muted-foreground: 216 10% 45%;
 
-    --accent: 2 80% 50%;
+    --accent: 2 85% 40%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 15% 85%;
-    --input: 220 15% 85%;
-    --ring: 207 85% 48%;
+    --border: 216 15% 80%;
+    --input: 216 15% 85%;
+    --ring: 210 75% 40%;
 
-    --radius: 0.25rem;
+    --radius: 0.5rem;
 
     /* Sidebar tokens */
-    --sidebar-background: 207 85% 48%;
+    --sidebar-background: 210 75% 40%;
     --sidebar-foreground: 0 0% 100%;
     --sidebar-primary: 0 0% 100%;
-    --sidebar-primary-foreground: 207 85% 48%;
-    --sidebar-accent: 207 85% 58%;
+    --sidebar-primary-foreground: 210 75% 40%;
+    --sidebar-accent: 210 75% 50%;
     --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-border: 207 85% 40%;
+    --sidebar-border: 210 75% 32%;
     --sidebar-ring: 0 0% 100%;
+    
+    /* Legacy simca tokens for backwards compatibility */
+    --simca-blue: 210 75% 40%;
+    --simca-red: 2 85% 40%;
+    --simca-cream: 42 30% 97%;
+    --simca-gray: 216 10% 60%;
   }
 
   .dark {
-    --background: 220 25% 12%;
-    --foreground: 45 33% 97%;
+    --background: 212 80% 10%;
+    --foreground: 42 30% 97%;
 
-    --card: 220 25% 16%;
-    --card-foreground: 45 33% 97%;
+    --card: 212 80% 14%;
+    --card-foreground: 42 30% 97%;
 
-    --popover: 220 25% 16%;
-    --popover-foreground: 45 33% 97%;
+    --popover: 212 80% 14%;
+    --popover-foreground: 42 30% 97%;
 
-    --primary: 207 85% 55%;
+    --primary: 210 85% 55%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 220 20% 20%;
-    --secondary-foreground: 45 33% 97%;
+    --secondary: 212 50% 18%;
+    --secondary-foreground: 42 30% 97%;
 
-    --muted: 220 20% 25%;
-    --muted-foreground: 220 10% 65%;
+    --muted: 212 50% 22%;
+    --muted-foreground: 216 10% 65%;
 
-    --accent: 2 80% 55%;
+    --accent: 2 85% 50%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 62% 35%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 20% 25%;
-    --input: 220 20% 25%;
-    --ring: 207 85% 55%;
+    --border: 212 50% 22%;
+    --input: 212 50% 22%;
+    --ring: 210 85% 55%;
 
-    --sidebar-background: 220 25% 12%;
-    --sidebar-foreground: 45 33% 97%;
-    --sidebar-primary: 207 85% 55%;
+    --sidebar-background: 212 80% 10%;
+    --sidebar-foreground: 42 30% 97%;
+    --sidebar-primary: 210 85% 55%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 220 25% 20%;
-    --sidebar-accent-foreground: 45 33% 97%;
-    --sidebar-border: 220 20% 25%;
-    --sidebar-ring: 207 85% 55%;
+    --sidebar-accent: 212 80% 18%;
+    --sidebar-accent-foreground: 42 30% 97%;
+    --sidebar-border: 212 50% 22%;
+    --sidebar-ring: 210 85% 55%;
   }
 }
 
@@ -128,7 +139,150 @@
 }
 
 @layer components {
-  /* Retro poster-style decorative elements */
+  /* ========================================
+     METALLIC BADGE DESIGN SYSTEM
+     ======================================== */
+
+  /* Metallic blue lacquer background with depth */
+  .bg-metal-blue {
+    background:
+      radial-gradient(1200px 600px at 70% 10%, rgba(255,255,255,0.18), rgba(255,255,255,0) 60%),
+      radial-gradient(900px 500px at 20% 80%, rgba(0,0,0,0.20), rgba(0,0,0,0) 55%),
+      linear-gradient(135deg, #0F3E7A 0%, #1F66B5 35%, #4FA0FF 55%, #1F66B5 75%, #0F3E7A 100%);
+  }
+
+  /* Chrome/metallic frame effect */
+  .border-chrome {
+    border: 3px solid transparent;
+    background:
+      linear-gradient(hsl(var(--card)), hsl(var(--card))) padding-box,
+      linear-gradient(135deg, #F2F4F7 0%, #B8C0CC 18%, #FFFFFF 35%, #7A8596 55%, #F2F4F7 75%, #5B6472 100%) border-box;
+    border-radius: 18px;
+  }
+
+  /* Chrome frame for transparent/dark backgrounds */
+  .border-chrome-dark {
+    border: 3px solid transparent;
+    background:
+      linear-gradient(transparent, transparent) padding-box,
+      linear-gradient(135deg, #F2F4F7 0%, #B8C0CC 18%, #FFFFFF 35%, #7A8596 55%, #F2F4F7 75%, #5B6472 100%) border-box;
+    border-radius: 18px;
+  }
+
+  /* Enamel card effect with inner shadow and depth */
+  .card-enamel {
+    border-radius: 18px;
+    box-shadow:
+      inset 0 2px 10px rgba(255,255,255,0.15),
+      inset 0 -12px 25px rgba(0,0,0,0.15),
+      0 12px 35px rgba(0,0,0,0.15);
+  }
+
+  /* Metallic text gradient for headlines */
+  .text-metal {
+    background: linear-gradient(180deg, #FFFFFF 0%, #C9D0DA 35%, #FFFFFF 60%, #7A8596 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: none;
+  }
+
+  /* Red enamel button */
+  .btn-enamel-red {
+    @apply inline-flex items-center justify-center px-8 py-4 font-display text-xl uppercase tracking-wide;
+    @apply text-white border-0;
+    background: linear-gradient(180deg, #D41515 0%, #C10D0D 40%, #9A0A0A 100%);
+    border-radius: 12px;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.25),
+      inset 0 -2px 4px rgba(0,0,0,0.2),
+      0 4px 12px rgba(0,0,0,0.25);
+    transition: all 0.15s ease;
+  }
+
+  .btn-enamel-red:hover {
+    background: linear-gradient(180deg, #E52020 0%, #D41515 40%, #A50B0B 100%);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.3),
+      inset 0 -2px 4px rgba(0,0,0,0.15),
+      0 6px 20px rgba(193,13,13,0.35),
+      0 0 0 3px rgba(255,255,255,0.3);
+    transform: translateY(-1px);
+  }
+
+  .btn-enamel-red:active {
+    transform: translateY(1px);
+    box-shadow:
+      inset 0 2px 4px rgba(0,0,0,0.3),
+      0 2px 8px rgba(0,0,0,0.2);
+  }
+
+  /* Blue enamel button variant */
+  .btn-enamel-blue {
+    @apply inline-flex items-center justify-center px-8 py-4 font-display text-xl uppercase tracking-wide;
+    @apply text-white border-0;
+    background: linear-gradient(180deg, #2B7BD4 0%, #1F66B5 40%, #0F3E7A 100%);
+    border-radius: 12px;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.25),
+      inset 0 -2px 4px rgba(0,0,0,0.2),
+      0 4px 12px rgba(0,0,0,0.25);
+    transition: all 0.15s ease;
+  }
+
+  .btn-enamel-blue:hover {
+    background: linear-gradient(180deg, #3A8AE3 0%, #2B7BD4 40%, #1A4F8F 100%);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.3),
+      inset 0 -2px 4px rgba(0,0,0,0.15),
+      0 6px 20px rgba(31,102,181,0.35),
+      0 0 0 3px rgba(255,255,255,0.3);
+    transform: translateY(-1px);
+  }
+
+  /* Chrome header bar */
+  .header-chrome {
+    background: linear-gradient(180deg, #FFFFFF 0%, #F2F4F7 50%, #E8EAEF 100%);
+    border-bottom: 3px solid transparent;
+    background-clip: padding-box;
+    position: relative;
+  }
+
+  .header-chrome::after {
+    content: '';
+    position: absolute;
+    bottom: -3px;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #5B6472 0%, #B8C0CC 15%, #FFFFFF 30%, #FFFFFF 70%, #B8C0CC 85%, #5B6472 100%);
+  }
+
+  /* Hero watermark container */
+  .hero-watermark {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-watermark::before {
+    content: "";
+    position: absolute;
+    inset: -15%;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 80'%3E%3Cpath d='M10,60 Q30,50 60,45 T120,35 T180,25 Q190,22 195,18' stroke='%23FFFFFF' stroke-width='8' fill='none' stroke-linecap='round'/%3E%3Cpath d='M180,25 L195,18 L188,32' stroke='%23FFFFFF' stroke-width='6' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: 65% 25%;
+    background-size: 800px;
+    opacity: 0.10;
+    filter: blur(0.5px);
+    transform: rotate(-8deg);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ========================================
+     RETRO POSTER ELEMENTS (enhanced)
+     ======================================== */
+
   .retro-border {
     @apply border-4 border-foreground;
   }
@@ -141,19 +295,18 @@
     @apply bg-card retro-border retro-shadow p-6;
   }
 
-  /* Simca badge shape - mimics the logo shield */
+  /* Simca badge shape */
   .simca-badge {
     @apply relative overflow-hidden;
     border-radius: 8px 8px 8px 8px;
     clip-path: polygon(0 0, 100% 0, 100% 85%, 50% 100%, 0 85%);
   }
 
-  /* Fun hover states */
   .hover-lift {
     @apply transition-transform duration-200;
   }
   .hover-lift:hover {
-    transform: translateY(-4px) rotate(-1deg);
+    transform: translateY(-4px);
   }
 
   /* Large typographic headlines */
@@ -169,27 +322,36 @@
     @apply text-2xl md:text-4xl font-display uppercase tracking-tight leading-tight;
   }
 
-  /* Retro button styles */
+  /* Legacy retro button - now with enamel styling */
   .btn-retro {
     @apply inline-flex items-center justify-center px-8 py-4 font-display text-xl uppercase tracking-wide;
-    @apply bg-accent text-accent-foreground border-4 border-foreground;
-    @apply transition-all duration-150;
-    box-shadow: 4px 4px 0 hsl(var(--foreground));
+    @apply text-white;
+    background: linear-gradient(180deg, #D41515 0%, #C10D0D 40%, #9A0A0A 100%);
+    border-radius: 12px;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.25),
+      inset 0 -2px 4px rgba(0,0,0,0.2),
+      0 4px 12px rgba(0,0,0,0.25);
+    transition: all 0.15s ease;
   }
 
   .btn-retro:hover {
-    box-shadow: 2px 2px 0 hsl(var(--foreground));
-    transform: translate(2px, 2px);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.3),
+      0 6px 20px rgba(193,13,13,0.35),
+      0 0 0 3px rgba(255,255,255,0.3);
+    transform: translateY(-1px);
   }
 
   .btn-retro:active {
-    box-shadow: 0 0 0 hsl(var(--foreground));
-    transform: translate(4px, 4px);
+    transform: translateY(1px);
   }
 
   /* Section dividers */
   .section-divider {
-    @apply w-full h-1 bg-foreground my-12;
+    @apply w-full my-12;
+    height: 3px;
+    background: linear-gradient(90deg, transparent 0%, #5B6472 15%, #B8C0CC 30%, #FFFFFF 50%, #B8C0CC 70%, #5B6472 85%, transparent 100%);
   }
 
   /* Poster-style sections */
@@ -198,28 +360,62 @@
   }
 
   .poster-section-blue {
-    @apply bg-primary text-primary-foreground;
+    @apply text-white;
+    background:
+      radial-gradient(1200px 600px at 70% 10%, rgba(255,255,255,0.18), rgba(255,255,255,0) 60%),
+      radial-gradient(900px 500px at 20% 80%, rgba(0,0,0,0.20), rgba(0,0,0,0) 55%),
+      linear-gradient(135deg, #0F3E7A 0%, #1F66B5 35%, #4FA0FF 55%, #1F66B5 75%, #0F3E7A 100%);
   }
 
   .poster-section-red {
-    @apply bg-accent text-accent-foreground;
+    @apply text-white;
+    background: linear-gradient(180deg, #D41515 0%, #C10D0D 40%, #7A0707 100%);
   }
 }
 
 @layer utilities {
-  /* Text shadows for poster effect */
+  /* Text shadows for metallic effect */
   .text-shadow-retro {
-    text-shadow: 3px 3px 0 hsl(var(--foreground) / 0.2);
+    text-shadow: 
+      0 2px 0 rgba(0,0,0,0.2),
+      0 4px 8px rgba(0,0,0,0.15);
   }
 
-  /* Decorative stripes */
+  /* Decorative stripes - subtle for metal */
   .stripes-diagonal {
     background: repeating-linear-gradient(
       45deg,
       transparent,
       transparent 10px,
-      hsl(var(--foreground) / 0.05) 10px,
-      hsl(var(--foreground) / 0.05) 20px
+      rgba(255,255,255,0.03) 10px,
+      rgba(255,255,255,0.03) 20px
     );
+  }
+
+  /* Chrome shine animation */
+  .chrome-shine {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .chrome-shine::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+      45deg,
+      transparent 40%,
+      rgba(255,255,255,0.3) 50%,
+      transparent 60%
+    );
+    animation: shine 3s infinite;
+  }
+
+  @keyframes shine {
+    0% { transform: translateX(-100%) rotate(45deg); }
+    100% { transform: translateX(100%) rotate(45deg); }
   }
 }

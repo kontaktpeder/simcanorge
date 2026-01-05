@@ -52,9 +52,9 @@ export function HeroSection() {
   };
 
   return (
-    <section className="poster-section poster-section-blue relative overflow-hidden">
-      {/* Decorative stripes */}
-      <div className="absolute inset-0 stripes-diagonal opacity-10" />
+    <section className="poster-section poster-section-blue hero-watermark relative overflow-hidden">
+      {/* Subtle stripes overlay */}
+      <div className="absolute inset-0 stripes-diagonal" />
       
       <div className="container mx-auto relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -63,21 +63,21 @@ export function HeroSection() {
             <span className="inline-block font-serif italic text-xl mb-4 opacity-90">
               Bienvenue chez
             </span>
-            <h1 className="headline-xl mb-6 text-shadow-retro">
+            <h1 className="headline-xl mb-6 text-metal text-shadow-retro">
               SIMCA<br />NORGE
             </h1>
-            <p className="text-xl md:text-2xl font-light mb-8 max-w-lg mx-auto lg:mx-0">
+            <p className="text-xl md:text-2xl font-light mb-8 max-w-lg mx-auto lg:mx-0 text-white/90">
               Din kilde til franske klassikere, deler og historier fra Simca-entusiaster i Norge.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-              <Link to="/biler" className="btn-retro bg-accent">
+              <Link to="/biler" className="btn-enamel-red">
                 Se alle biler
                 <ArrowRight className="w-5 h-5 ml-2" />
               </Link>
               <Link 
                 to="/deler" 
-                className="btn-retro bg-primary-foreground text-primary border-primary-foreground"
+                className="btn-enamel-blue"
               >
                 Finn deler
                 <Car className="w-5 h-5 ml-2" />
@@ -88,8 +88,8 @@ export function HeroSection() {
           {/* Featured Car - Månedens bil */}
           <div className="relative">
             {isLoading ? (
-              <div className="bg-card/10 backdrop-blur-sm rounded-lg p-8 border-4 border-primary-foreground/30">
-                <Skeleton className="aspect-[4/3] w-full rounded" />
+              <div className="border-chrome-dark card-enamel bg-white/10 backdrop-blur-sm p-6">
+                <Skeleton className="aspect-[4/3] w-full rounded-lg" />
                 <div className="mt-4">
                   <Skeleton className="h-6 w-3/4 mx-auto" />
                   <Skeleton className="h-4 w-1/2 mx-auto mt-2" />
@@ -98,33 +98,33 @@ export function HeroSection() {
             ) : featuredCar ? (
               <Link 
                 to={`/biler/${featuredCar.slug}`}
-                className="block bg-card/10 backdrop-blur-sm rounded-lg p-4 border-4 border-primary-foreground/30 hover-lift transition-transform"
+                className="block border-chrome-dark card-enamel bg-white/10 backdrop-blur-sm p-4 hover-lift transition-all hover:shadow-2xl"
               >
                 {getMainImage(featuredCar) ? (
                   <img
                     src={getMainImage(featuredCar)!.image_url}
                     alt={getMainImage(featuredCar)!.alt_text || featuredCar.title}
-                    className="w-full aspect-[4/3] object-cover rounded"
+                    className="w-full aspect-[4/3] object-cover rounded-lg shadow-lg"
                   />
                 ) : (
-                  <div className="aspect-[4/3] bg-primary-foreground/20 rounded flex items-center justify-center">
+                  <div className="aspect-[4/3] bg-white/20 rounded-lg flex items-center justify-center">
                     <Car className="w-24 h-24 opacity-50" />
                   </div>
                 )}
                 <div className="mt-4 text-center">
-                  <p className="font-display text-xl">
+                  <p className="font-display text-2xl text-white">
                     {featuredCar.year && `${featuredCar.year} `}{featuredCar.model.toUpperCase()}
                   </p>
-                  <p className="font-serif italic opacity-80">{featuredCar.title}</p>
+                  <p className="font-serif italic text-white/80">{featuredCar.title}</p>
                 </div>
               </Link>
             ) : (
-              <div className="bg-card/10 backdrop-blur-sm rounded-lg p-8 border-4 border-primary-foreground/30">
-                <div className="aspect-[4/3] bg-primary-foreground/20 rounded flex items-center justify-center">
+              <div className="border-chrome-dark card-enamel bg-white/10 backdrop-blur-sm p-8">
+                <div className="aspect-[4/3] bg-white/20 rounded-lg flex items-center justify-center">
                   <div className="text-center">
                     <Car className="w-24 h-24 mx-auto mb-4 opacity-50" />
-                    <p className="font-display text-2xl opacity-75">MÅNEDENS BIL</p>
-                    <p className="font-serif italic opacity-60">Kommer snart...</p>
+                    <p className="font-display text-2xl text-white/75">MÅNEDENS BIL</p>
+                    <p className="font-serif italic text-white/60">Kommer snart...</p>
                   </div>
                 </div>
               </div>
@@ -133,7 +133,7 @@ export function HeroSection() {
             {/* Decorative badge */}
             <Link
               to="/manedens-bil"
-              className="absolute -top-4 -right-4 bg-accent text-accent-foreground px-4 py-2 font-display text-lg rotate-12 border-2 border-foreground flex items-center gap-2 hover:scale-105 transition-transform"
+              className="absolute -top-4 -right-4 px-5 py-2 font-display text-lg rotate-12 flex items-center gap-2 hover:scale-105 transition-transform btn-enamel-red shadow-xl"
             >
               <Star className="w-4 h-4 fill-current" />
               MÅNEDENS BIL

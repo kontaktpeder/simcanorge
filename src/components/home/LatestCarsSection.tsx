@@ -28,15 +28,15 @@ const placeholderCars = [
 
 export function LatestCarsSection() {
   return (
-    <section className="poster-section">
+    <section className="poster-section bg-background">
       <div className="container mx-auto">
         <div className="flex flex-col md:flex-row items-center justify-between mb-12 gap-4">
-          <h2 className="headline-md">
+          <h2 className="headline-md text-foreground">
             NYESTE HISTORIER
           </h2>
           <Link 
             to="/biler" 
-            className="font-display text-xl text-accent hover:underline inline-flex items-center gap-2"
+            className="font-display text-xl text-accent hover:text-accent/80 inline-flex items-center gap-2 transition-colors"
           >
             Se alle
             <ArrowRight className="w-5 h-5" />
@@ -48,20 +48,20 @@ export function LatestCarsSection() {
             <Link 
               key={car.id}
               to={`/biler/${car.slug}`}
-              className="retro-card group hover-lift"
+              className="border-chrome card-enamel bg-card p-6 group hover-lift transition-all hover:shadow-2xl"
             >
-              <div className="aspect-[4/3] bg-muted rounded mb-4 flex items-center justify-center">
+              <div className="aspect-[4/3] bg-muted rounded-lg mb-4 flex items-center justify-center overflow-hidden">
                 <Car className="w-16 h-16 text-muted-foreground" />
               </div>
               <div className="flex items-center gap-2 mb-2">
-                <span className="bg-primary text-primary-foreground px-2 py-1 text-sm font-display">
+                <span className="bg-primary text-primary-foreground px-3 py-1 text-sm font-display rounded-md shadow-sm">
                   {car.model}
                 </span>
-                <span className="bg-accent text-accent-foreground px-2 py-1 text-sm font-display">
+                <span className="bg-accent text-accent-foreground px-3 py-1 text-sm font-display rounded-md shadow-sm">
                   {car.year}
                 </span>
               </div>
-              <h3 className="font-display text-2xl group-hover:text-accent transition-colors">
+              <h3 className="font-display text-2xl text-foreground group-hover:text-accent transition-colors">
                 {car.title}
               </h3>
             </Link>
