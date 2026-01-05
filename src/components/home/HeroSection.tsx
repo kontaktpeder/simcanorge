@@ -53,6 +53,9 @@ export function HeroSection() {
     return sorted[0];
   };
   return <section className="poster-section poster-section-blue hero-watermark relative overflow-hidden min-h-[85vh] flex items-center">
+      {/* Subtle stripes overlay */}
+      <div className="absolute inset-0 stripes-diagonal" />
+      
       {/* Large swallow watermark */}
       <div className="absolute inset-0 pointer-events-none" style={{
       backgroundImage: `url(${simcaSwallow})`,
@@ -98,18 +101,18 @@ export function HeroSection() {
                 </div>
               </div> : featuredCar ? <Link to={`/biler/${featuredCar.slug}`} className="block badge-frame bg-white/10 backdrop-blur-sm p-5 hover-lift transition-all hover:shadow-2xl group">
                 {getMainImage(featuredCar) ? <div className="overflow-hidden rounded-lg">
-                    <img src={getMainImage(featuredCar)!.image_url} alt={getMainImage(featuredCar)!.alt_text || featuredCar.title} className="w-full aspect-[4/3] object-cover shadow-lg group-hover:scale-105 transition-transform duration-500" />
-                  </div> : <div className="aspect-[4/3] bg-white/20 rounded-lg flex items-center justify-center">
+                    <img src={getMainImage(featuredCar)!.image_url} alt={getMainImage(featuredCar)!.alt_text || featuredCar.title} className="w-full aspect-[16/10] object-cover shadow-lg group-hover:scale-105 transition-transform duration-500" />
+                  </div> : <div className="aspect-[16/10] bg-white/20 rounded-lg flex items-center justify-center">
                     <Car className="w-24 h-24 opacity-50" />
                   </div>}
                 <div className="mt-5 text-center">
-                  <p className="font-display text-3xl text-white">
-                    {featuredCar.year && `${featuredCar.year} `}{featuredCar.model.toUpperCase()}
+                  <p className="font-display text-3xl font-bold text-white">{featuredCar.title}</p>
+                  <p className="font-serif text-lg text-white/80 mt-1">
+                    {featuredCar.year && `${featuredCar.year} · `}{featuredCar.model}
                   </p>
-                  <p className="font-serif italic text-lg text-white/80">{featuredCar.title}</p>
                 </div>
               </Link> : <div className="badge-frame bg-white/10 backdrop-blur-sm p-8">
-                <div className="aspect-[4/3] bg-white/20 rounded-lg flex items-center justify-center">
+                <div className="aspect-[16/10] bg-white/20 rounded-lg flex items-center justify-center">
                   <div className="text-center">
                     <Car className="w-24 h-24 mx-auto mb-4 opacity-50" />
                     <p className="font-display text-2xl text-white/75">MÅNEDENS BIL</p>
