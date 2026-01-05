@@ -24,8 +24,16 @@ interface CarPost {
   featured: boolean;
   published_at: string | null;
   created_at: string;
+  category: string;
   car_images: CarImage[];
 }
+
+const CATEGORIES = [
+  { id: "registrert", label: "Registrerte biler" },
+  { id: "restaurering", label: "Restaureringsprosjekter" },
+  { id: "historisk", label: "Historiske biler" },
+  { id: "vrak", label: "Vrak" },
+];
 
 const MODELS = [
   "Aronde",
@@ -71,13 +79,14 @@ const AdminBiler = () => {
     overhauled: false,
     featured: false,
     published: false,
+    category: "registrert",
   });
 
   const fetchCars = async () => {
     const { data, error } = await supabase
       .from("cars")
       .select(`
-        id, title, slug, model, year, story, overhauled, tags, featured, published_at, created_at,
+        id, title, slug, model, year, story, overhauled, tags, featured, published_at, created_at, category,
         car_images(id, image_url, alt_text, sort_order)
       `)
       .order("created_at", { ascending: false });
@@ -109,6 +118,7 @@ const AdminBiler = () => {
         overhauled: false,
         featured: false,
         published: false,
+        category: "registrert",
       });
       setSubmissionImageUrls(sub.images || []);
       setShowForm(true);
@@ -137,6 +147,7 @@ const AdminBiler = () => {
       overhauled: false,
       featured: false,
       published: false,
+      category: "registrert",
     });
     setEditingId(null);
     setShowForm(false);
@@ -219,6 +230,7 @@ const AdminBiler = () => {
         featured: formData.featured,
         tags,
         published_at: formData.published ? new Date().toISOString() : null,
+        category: formData.category,
       };
 
       if (editingId) {
@@ -302,6 +314,7 @@ const AdminBiler = () => {
       overhauled: car.overhauled,
       featured: car.featured,
       published: !!car.published_at,
+      category: car.category || "registrert",
     });
     setTagsInput(car.tags?.join(", ") || "");
     setExistingImages(car.car_images || []);
@@ -436,6 +449,27 @@ const AdminBiler = () => {
                   </select>
                 </div>
 
+                {/* Category */}
+                <div>
+                  <label className="block font-display mb-2">KATEGORI *</label>
+                  <select
+                    value={formData.category}
+                    onChange={(e) =>
+                      setFormData({ ...formData, category: e.target.value })
+                    }
+                    className="w-full p-3 border-2 border-foreground bg-card"
+                    required
+                  >
+                    {CATEGORIES.map((cat) => (
+                      <option key={cat.id} value={cat.id}>
+                        {cat.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-4">
                 {/* Year */}
                 <div>
                   <label className="block font-display mb-2">ÅRSMODELL</label>
@@ -659,13 +693,15 @@ const AdminBiler = () => {
                 <th className="text-left p-4 font-display w-16">BILDE</th>
                 <th className="text-left p-4 font-display">TITTEL</th>
                 <th className="text-left p-4 font-display">MODELL</th>
-                <th className="text-left p-4 font-display">ÅR</th>
+                <th className="text-left p-4 font-display">KATEGORI</th>
                 <th className="text-left p-4 font-display">STATUS</th>
                 <th className="text-right p-4 font-display">HANDLINGER</th>
               </tr>
             </thead>
             <tbody>
-              {cars.map((car) => (
+              {cars.map((car) => {
+                const categoryLabel = CATEGORIES.find(c => c.id === car.category)?.label || car.category;
+                return (
                 <tr key={car.id} className="border-t border-border">
                   <td className="p-4">
                     <div className="w-12 h-12 bg-muted rounded overflow-hidden">
@@ -683,15 +719,27 @@ const AdminBiler = () => {
                     </div>
                   </td>
                   <td className="p-4">
-                    <div className="flex items-center gap-2">
-                      {car.featured && (
-                        <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
-                      )}
-                      <span className="font-medium">{car.title}</span>
+                    <div className="flex flex-col">
+                      <div className="flex items-center gap-2">
+                        {car.featured && (
+                          <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
+                        )}
+                        <span className="font-medium">{car.title}</span>
+                      </div>
+                      {car.year && <span className="text-xs text-muted-foreground">{car.year}</span>}
                     </div>
                   </td>
                   <td className="p-4">{car.model}</td>
-                  <td className="p-4">{car.year || "-"}</td>
+                  <td className="p-4">
+                    <span className={`text-xs px-2 py-1 rounded font-display ${
+                      car.category === 'registrert' ? 'bg-green-100 text-green-700' :
+                      car.category === 'restaurering' ? 'bg-orange-100 text-orange-700' :
+                      car.category === 'historisk' ? 'bg-blue-100 text-blue-700' :
+                      'bg-gray-100 text-gray-700'
+                    }`}>
+                      {categoryLabel}
+                    </span>
+                  </td>
                   <td className="p-4">
                     {car.published_at ? (
                       <span className="text-green-600 flex items-center gap-1">
@@ -746,7 +794,8 @@ const AdminBiler = () => {
                     </div>
                   </td>
                 </tr>
-              ))}
+              );
+              })}
             </tbody>
           </table>
         </div>
