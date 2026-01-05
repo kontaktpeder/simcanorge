@@ -46,9 +46,9 @@ export default function Historie() {
               <p className="text-lg md:text-xl text-foreground/80 leading-relaxed mb-6">
                 Bilmerket Simca ble grunnlagt i Frankrike i 1934 og fikk raskt en viktig rolle i europeisk bilindustri. Simca ble kjent for å lage moderne, praktiske og rimelige biler – ofte med tekniske løsninger som lå litt foran sin tid.
               </p>
-              <p className="text-lg md:text-xl text-foreground/80 leading-relaxed">
-                Gjennom flere tiår lanserte merket en rekke modeller som ble populære både i Frankrike og i mange andre europeiske land, også i Norge.
-              </p>
+              <p className="text-lg md:text-xl text-foreground/80 leading-relaxed">Gjennom flere tiår lanserte merket en rekke modeller som ble populære både i Frankrike og i mange andre europeiske land, også i Norge.
+
+Simca ble i hovedsak produsert i Poissy/Paris, samt Spania, Stor-Britannia og Finland de siste 10 årene frem til 1987.</p>
             </AnimatedSection>
           </div>
         </div>
