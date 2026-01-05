@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { supabase } from "@/integrations/supabase/client";
-import { Car, Filter, X, Search } from "lucide-react";
+import { Car, Filter, X, Search, History, CheckCircle, Wrench, AlertTriangle } from "lucide-react";
 
 interface CarPost {
   id: string;
@@ -15,6 +15,7 @@ interface CarPost {
   tags: string[];
   featured: boolean;
   published_at: string | null;
+  category: string;
   car_images: { image_url: string; alt_text: string | null }[];
 }
 
@@ -33,6 +34,39 @@ const MODELS = [
   "Annet",
 ];
 
+const CATEGORIES = [
+  { 
+    id: "alle", 
+    label: "Alle biler", 
+    icon: Car,
+    description: null
+  },
+  { 
+    id: "registrert", 
+    label: "Registrerte biler", 
+    icon: CheckCircle,
+    description: "Biler som kjører på veien i dag. Registrert og i bruk på norske veier."
+  },
+  { 
+    id: "restaurering", 
+    label: "Restaureringsprosjekter", 
+    icon: Wrench,
+    description: "Biler under overhaling. Prosessen er like viktig som sluttresultatet."
+  },
+  { 
+    id: "historisk", 
+    label: "Historiske biler", 
+    icon: History,
+    description: "Biler som ikke lenger eksisterer, men lever videre gjennom bilder og historier."
+  },
+  { 
+    id: "vrak", 
+    label: "Vrak", 
+    icon: AlertTriangle,
+    description: "Biler som finnes, men som av ulike årsaker ikke er kjørbare."
+  },
+];
+
 const Biler = () => {
   const [cars, setCars] = useState<CarPost[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -42,14 +76,14 @@ const Biler = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedModel, setSelectedModel] = useState<string>("");
   const [selectedDecade, setSelectedDecade] = useState<string>("");
-  const [showOverhauled, setShowOverhauled] = useState<boolean | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string>("alle");
 
   useEffect(() => {
     const fetchCars = async () => {
       const { data, error } = await supabase
         .from("cars")
         .select(`
-          id, title, slug, model, year, story, overhauled, tags, featured, published_at,
+          id, title, slug, model, year, story, overhauled, tags, featured, published_at, category,
           car_images(image_url, alt_text)
         `)
         .not("published_at", "is", null)
@@ -69,6 +103,9 @@ const Biler = () => {
 
   // Filter cars
   const filteredCars = cars.filter((car) => {
+    // Category filter
+    if (selectedCategory !== "alle" && car.category !== selectedCategory) return false;
+
     // Search query
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
@@ -89,9 +126,6 @@ const Biler = () => {
       if (decade.toString() !== selectedDecade) return false;
     }
 
-    // Overhauled filter
-    if (showOverhauled !== null && car.overhauled !== showOverhauled) return false;
-
     return true;
   });
 
@@ -102,24 +136,78 @@ const Biler = () => {
     setSearchQuery("");
     setSelectedModel("");
     setSelectedDecade("");
-    setShowOverhauled(null);
   };
 
-  const hasActiveFilters =
-    searchQuery || selectedModel || selectedDecade || showOverhauled !== null;
+  const hasActiveFilters = searchQuery || selectedModel || selectedDecade;
+
+  const currentCategoryInfo = CATEGORIES.find(c => c.id === selectedCategory);
+
+  // Count cars per category
+  const categoryCounts = CATEGORIES.reduce((acc, cat) => {
+    if (cat.id === "alle") {
+      acc[cat.id] = cars.length;
+    } else {
+      acc[cat.id] = cars.filter(c => c.category === cat.id).length;
+    }
+    return acc;
+  }, {} as Record<string, number>);
 
   return (
     <Layout>
       {/* Hero */}
       <section className="poster-section poster-section-blue">
         <div className="container mx-auto text-center">
-          <h1 className="headline-lg mb-4">BILER & HISTORIER</h1>
+          <h1 className="headline-lg mb-4">BILER</h1>
           <p className="text-xl opacity-90 max-w-2xl mx-auto">
-            Utforsk samlingen av Simca-biler og historiene bak dem. 
-            Fra restaurerte perler til originale klassikere.
+            Utforsk samlingen av Simca-biler i Norge. 
+            Fra registrerte klassikere til historiske perler.
           </p>
         </div>
       </section>
+
+      {/* Category Tabs */}
+      <section className="bg-card border-b-4 border-foreground">
+        <div className="container mx-auto">
+          <div className="flex overflow-x-auto scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0">
+            {CATEGORIES.map((cat) => {
+              const Icon = cat.icon;
+              const isActive = selectedCategory === cat.id;
+              return (
+                <button
+                  key={cat.id}
+                  onClick={() => setSelectedCategory(cat.id)}
+                  className={`flex items-center gap-2 px-6 py-4 font-display text-sm whitespace-nowrap border-b-4 transition-all ${
+                    isActive 
+                      ? "border-primary text-primary bg-primary/5" 
+                      : "border-transparent hover:bg-muted text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  <Icon className="w-5 h-5" />
+                  <span className="hidden sm:inline">{cat.label}</span>
+                  <span className="sm:hidden">{cat.label.split(' ')[0]}</span>
+                  <span className={`text-xs px-2 py-0.5 rounded-full ${
+                    isActive ? "bg-primary text-primary-foreground" : "bg-muted"
+                  }`}>
+                    {categoryCounts[cat.id]}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* Category Description */}
+      {currentCategoryInfo?.description && (
+        <section className="bg-muted/50 border-b border-border animate-fade-in">
+          <div className="container mx-auto py-4">
+            <div className="flex items-center gap-3">
+              <currentCategoryInfo.icon className="w-6 h-6 text-primary shrink-0" />
+              <p className="text-muted-foreground">{currentCategoryInfo.description}</p>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Filters Bar */}
       <section className="bg-card border-b-4 border-foreground sticky top-20 z-40">
@@ -178,18 +266,6 @@ const Biler = () => {
                 <option value="1980">1980-tallet</option>
               </select>
 
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={showOverhauled === true}
-                  onChange={(e) =>
-                    setShowOverhauled(e.target.checked ? true : null)
-                  }
-                  className="w-4 h-4"
-                />
-                <span className="font-display text-sm">KUN OVERHALT</span>
-              </label>
-
               {hasActiveFilters && (
                 <button
                   onClick={clearFilters}
@@ -204,7 +280,7 @@ const Biler = () => {
 
           {/* Mobile Filters Dropdown */}
           {showFilters && (
-            <div className="lg:hidden mt-4 pt-4 border-t border-border space-y-4">
+            <div className="lg:hidden mt-4 pt-4 border-t border-border space-y-4 animate-fade-in">
               <div>
                 <label className="block font-display text-sm mb-2">MODELL</label>
                 <select
@@ -236,18 +312,6 @@ const Biler = () => {
                 </select>
               </div>
 
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={showOverhauled === true}
-                  onChange={(e) =>
-                    setShowOverhauled(e.target.checked ? true : null)
-                  }
-                  className="w-4 h-4"
-                />
-                <span className="font-display">KUN OVERHALT</span>
-              </label>
-
               {hasActiveFilters && (
                 <button
                   onClick={clearFilters}
@@ -272,14 +336,23 @@ const Biler = () => {
               <Car className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
               <h2 className="headline-md mb-2">INGEN BILER FUNNET</h2>
               <p className="text-muted-foreground mb-4">
-                {hasActiveFilters
+                {hasActiveFilters || selectedCategory !== "alle"
                   ? "Prøv å endre filterene dine"
                   : "Ingen biler er publisert ennå"}
               </p>
-              {hasActiveFilters && (
-                <button onClick={clearFilters} className="btn-enamel-red">
-                  Nullstill filter
-                </button>
+              {(hasActiveFilters || selectedCategory !== "alle") && (
+                <div className="flex gap-4 justify-center">
+                  {hasActiveFilters && (
+                    <button onClick={clearFilters} className="btn-enamel-red">
+                      Nullstill filter
+                    </button>
+                  )}
+                  {selectedCategory !== "alle" && (
+                    <button onClick={() => setSelectedCategory("alle")} className="btn-enamel-blue">
+                      Vis alle kategorier
+                    </button>
+                  )}
+                </div>
               )}
             </div>
           ) : (
@@ -300,7 +373,9 @@ const Biler = () => {
               {regularCars.length > 0 && (
                 <div className="animate-fade-in-delay-1">
                   {featuredCars.length > 0 && (
-                    <h2 className="headline-md mb-6">ALLE BILER</h2>
+                    <h2 className="headline-md mb-6">
+                      {selectedCategory === "alle" ? "ALLE BILER" : currentCategoryInfo?.label.toUpperCase()}
+                    </h2>
                   )}
                   <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 stagger-children">
                     {regularCars.map((car) => (
@@ -342,6 +417,23 @@ interface CarCardProps {
 function CarCard({ car, featured }: CarCardProps) {
   const mainImage = car.car_images?.[0];
 
+  const getCategoryBadge = () => {
+    switch (car.category) {
+      case "registrert":
+        return { label: "REGISTRERT", color: "bg-green-600" };
+      case "restaurering":
+        return { label: "RESTAURERING", color: "bg-orange-500" };
+      case "historisk":
+        return { label: "HISTORISK", color: "bg-blue-600" };
+      case "vrak":
+        return { label: "VRAK", color: "bg-gray-600" };
+      default:
+        return null;
+    }
+  };
+
+  const categoryBadge = getCategoryBadge();
+
   return (
     <Link
       to={`/biler/${car.slug}`}
@@ -349,7 +441,7 @@ function CarCard({ car, featured }: CarCardProps) {
     >
       {/* Image */}
       <div
-        className={`bg-muted rounded-lg overflow-hidden mb-4 ${
+        className={`bg-muted rounded-lg overflow-hidden mb-4 relative ${
           featured ? "md:w-1/2 md:mb-0 aspect-[4/3]" : "aspect-[4/3]"
         }`}
       >
@@ -364,6 +456,12 @@ function CarCard({ car, featured }: CarCardProps) {
             <Car className="w-16 h-16 text-muted-foreground" />
           </div>
         )}
+        {/* Category badge on image */}
+        {categoryBadge && (
+          <span className={`absolute top-2 left-2 ${categoryBadge.color} text-white text-xs px-2 py-1 font-display rounded`}>
+            {categoryBadge.label}
+          </span>
+        )}
       </div>
 
       {/* Content */}
@@ -376,11 +474,6 @@ function CarCard({ car, featured }: CarCardProps) {
           {car.year && (
             <span className="bg-accent text-accent-foreground text-xs px-2 py-1 font-display rounded">
               {car.year}
-            </span>
-          )}
-          {car.overhauled && (
-            <span className="bg-green-600 text-white text-xs px-2 py-1 font-display rounded">
-              OVERHALT
             </span>
           )}
         </div>

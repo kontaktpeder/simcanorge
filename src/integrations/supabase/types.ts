@@ -99,6 +99,7 @@ export type Database = {
       }
       cars: {
         Row: {
+          category: string
           created_at: string
           featured: boolean | null
           id: string
@@ -113,6 +114,7 @@ export type Database = {
           year: number | null
         }
         Insert: {
+          category?: string
           created_at?: string
           featured?: boolean | null
           id?: string
@@ -127,6 +129,7 @@ export type Database = {
           year?: number | null
         }
         Update: {
+          category?: string
           created_at?: string
           featured?: boolean | null
           id?: string
