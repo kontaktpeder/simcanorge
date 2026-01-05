@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
 import simcaBadge from "@/assets/simca-badge.png";
+import simcaSwallow from "@/assets/simca-swallow.png";
 
 interface FeaturedCar {
   id: string;
@@ -57,16 +58,17 @@ export function HeroSection() {
       {/* Subtle stripes overlay */}
       <div className="absolute inset-0 stripes-diagonal" />
       
-      {/* Large badge watermark */}
+      {/* Large swallow watermark */}
       <div 
         className="absolute inset-0 pointer-events-none"
         style={{
-          backgroundImage: `url(${simcaBadge})`,
+          backgroundImage: `url(${simcaSwallow})`,
           backgroundRepeat: 'no-repeat',
-          backgroundPosition: '85% 50%',
-          backgroundSize: '600px',
-          opacity: 0.08,
-          filter: 'blur(1px)',
+          backgroundPosition: '75% 50%',
+          backgroundSize: '800px',
+          opacity: 0.10,
+          filter: 'blur(0.5px)',
+          transform: 'rotate(-8deg)',
         }}
       />
       
