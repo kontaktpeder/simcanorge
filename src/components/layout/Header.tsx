@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ShoppingBag } from "lucide-react";
+import { useCart } from "@/hooks/useCart";
 import simcaLogo from "@/assets/simca-logo.png";
 
 const navItems = [
@@ -15,6 +16,7 @@ const navItems = [
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const { itemCount } = useCart();
 
   return (
     <header className="sticky top-0 z-50 bg-card border-b-4 border-foreground">
@@ -48,20 +50,48 @@ export function Header() {
                 {item.label}
               </Link>
             ))}
+
+            {/* Cart Icon */}
+            <Link
+              to="/foresporsel"
+              className="relative p-2 hover:bg-muted rounded transition-colors"
+              aria-label="Se forespørsel"
+            >
+              <ShoppingBag className="w-6 h-6" />
+              {itemCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-accent text-accent-foreground w-5 h-5 rounded-full text-xs font-display flex items-center justify-center">
+                  {itemCount}
+                </span>
+              )}
+            </Link>
           </nav>
 
-          {/* Mobile Menu Button */}
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden p-2 hover:bg-muted rounded"
-            aria-label="Toggle menu"
-          >
-            {mobileMenuOpen ? (
-              <X className="w-6 h-6" />
-            ) : (
-              <Menu className="w-6 h-6" />
-            )}
-          </button>
+          {/* Mobile: Cart + Menu */}
+          <div className="lg:hidden flex items-center gap-2">
+            <Link
+              to="/foresporsel"
+              className="relative p-2 hover:bg-muted rounded transition-colors"
+              aria-label="Se forespørsel"
+            >
+              <ShoppingBag className="w-6 h-6" />
+              {itemCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-accent text-accent-foreground w-5 h-5 rounded-full text-xs font-display flex items-center justify-center">
+                  {itemCount}
+                </span>
+              )}
+            </Link>
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="p-2 hover:bg-muted rounded"
+              aria-label="Toggle menu"
+            >
+              {mobileMenuOpen ? (
+                <X className="w-6 h-6" />
+              ) : (
+                <Menu className="w-6 h-6" />
+              )}
+            </button>
+          </div>
         </div>
 
         {/* Mobile Navigation */}
