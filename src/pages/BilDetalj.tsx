@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
+import { PageHeader } from "@/components/layout/PageHeader";
 import { supabase } from "@/integrations/supabase/client";
 import { ArrowLeft, Calendar, Wrench, Tag, ChevronLeft, ChevronRight, Car } from "lucide-react";
 
@@ -109,6 +110,11 @@ const BilDetalj = () => {
 
   return (
     <Layout>
+      <PageHeader 
+        title={car.title} 
+        subtitle={car.year ? `${car.model} · ${car.year}` : car.model} 
+      />
+
       {/* Breadcrumb */}
       <div className="bg-muted border-b border-border">
         <div className="container mx-auto py-3">
