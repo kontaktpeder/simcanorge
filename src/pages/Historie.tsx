@@ -1,20 +1,9 @@
 import { Layout } from "@/components/layout/Layout";
 import { PageHeader } from "@/components/layout/PageHeader";
+import { AnimatedSection } from "@/components/layout/AnimatedSection";
 import { useInView } from "@/hooks/useInView";
 import { Calendar, MapPin, Car, History, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
-
-function AnimatedSection({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  const { ref, isInView } = useInView();
-  return (
-    <div
-      ref={ref}
-      className={`transition-all duration-700 ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'} ${className}`}
-    >
-      {children}
-    </div>
-  );
-}
 
 function TimelineItem({ year, title, children }: { year: string; title: string; children: React.ReactNode }) {
   const { ref, isInView } = useInView();
