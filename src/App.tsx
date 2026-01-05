@@ -18,6 +18,8 @@ import AdminBiler from "./pages/admin/AdminBiler";
 import AdminDeler from "./pages/admin/AdminDeler";
 import AdminKategorier from "./pages/admin/AdminKategorier";
 import AdminForesporsler from "./pages/admin/AdminForesporsler";
+import AdminInnsendinger from "./pages/admin/AdminInnsendinger";
+import SendInnBil from "./pages/SendInnBil";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -38,6 +40,7 @@ const App = () => (
             <Route path="/foresporsel" element={<Foresporsel />} />
             <Route path="/om-oss" element={<OmOss />} />
             <Route path="/historie" element={<Historie />} />
+            <Route path="/send-inn" element={<SendInnBil />} />
             
             {/* Admin routes */}
             <Route path="/admin/login" element={<AdminLogin />} />
@@ -46,6 +49,7 @@ const App = () => (
             <Route path="/admin/deler" element={<AdminDeler />} />
             <Route path="/admin/kategorier" element={<AdminKategorier />} />
             <Route path="/admin/foresporsler" element={<AdminForesporsler />} />
+            <Route path="/admin/innsendinger" element={<AdminInnsendinger />} />
             
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
