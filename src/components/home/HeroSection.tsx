@@ -63,7 +63,7 @@ export function HeroSection() {
       <div className="absolute inset-0 pointer-events-none" style={{
       backgroundImage: `url(${simcaSwallow})`,
       backgroundRepeat: 'no-repeat',
-      backgroundPosition: '75% 50%',
+      backgroundPosition: '50% 50%',
       backgroundSize: '800px',
       opacity: 0.10,
       filter: 'blur(0.5px)',
