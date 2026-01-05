@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { supabase } from "@/integrations/supabase/client";
 import { useCart } from "@/hooks/useCart";
-import { ShoppingBag, Plus, Check, Wrench, ChevronRight } from "lucide-react";
+import { Plus, Check, Wrench, ChevronRight, Briefcase } from "lucide-react";
 import { toast } from "sonner";
 
 interface Category {
@@ -58,10 +58,10 @@ const Deler = () => {
   const handleAddToCart = (part: Part) => {
     if (isInCart(part.id)) {
       removeItem(part.id);
-      toast.info(`${part.title} fjernet fra forespørselen`);
+      toast.info(`${part.title} fjernet fra verktøykassen`);
     } else {
       addItem({ part_id: part.id, part_title: part.title });
-      toast.success(`${part.title} lagt til i forespørselen`);
+      toast.success(`${part.title} lagt til i verktøykassen`);
     }
   };
 
@@ -79,26 +79,26 @@ const Deler = () => {
           <h1 className="headline-lg mb-4">DELER</h1>
           <p className="text-xl opacity-90 max-w-2xl mx-auto">
             Bla gjennom vårt utvalg av deler til Simca-modeller. 
-            Legg delene du er interessert i i forespørselen, så sjekker pappa hylla! 🔧
+            Legg delene du er interessert i verktøykassen, så sjekker pappa hylla! 🔧
           </p>
         </div>
       </section>
 
-      {/* Cart Banner */}
+      {/* Toolbox Banner */}
       {itemCount > 0 && (
         <div className="bg-accent text-accent-foreground py-4 sticky top-20 z-40">
           <div className="container mx-auto flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <ShoppingBag className="w-6 h-6" />
+              <Briefcase className="w-6 h-6" />
               <span className="font-display text-lg">
-                {itemCount} del{itemCount !== 1 ? "er" : ""} i forespørselen
+                {itemCount} del{itemCount !== 1 ? "er" : ""} i verktøykassen
               </span>
             </div>
             <Link
               to="/foresporsel"
               className="bg-accent-foreground text-accent px-6 py-2 font-display hover:opacity-90 transition-opacity"
             >
-              SE FORESPØRSEL
+              SE VERKTØYKASSEN
               <ChevronRight className="w-5 h-5 inline ml-1" />
             </Link>
           </div>
@@ -252,12 +252,12 @@ const Deler = () => {
                           {inCart ? (
                             <>
                               <Check className="w-5 h-5" />
-                              I FORESPØRSELEN
+                              I VERKTØYKASSEN
                             </>
                           ) : (
                             <>
                               <Plus className="w-5 h-5" />
-                              LEGG I FORESPØRSEL
+                              LEGG I VERKTØYKASSEN
                             </>
                           )}
                         </button>
