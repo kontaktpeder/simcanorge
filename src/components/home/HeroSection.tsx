@@ -1,8 +1,9 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, Car, Star, Calendar } from "lucide-react";
+import { ArrowRight, Car, Star } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
+import simcaBadge from "@/assets/simca-badge.png";
 
 interface FeaturedCar {
   id: string;
@@ -52,35 +53,58 @@ export function HeroSection() {
   };
 
   return (
-    <section className="poster-section poster-section-blue hero-watermark relative overflow-hidden">
+    <section className="poster-section poster-section-blue hero-watermark relative overflow-hidden min-h-[85vh] flex items-center">
       {/* Subtle stripes overlay */}
       <div className="absolute inset-0 stripes-diagonal" />
+      
+      {/* Large badge watermark */}
+      <div 
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          backgroundImage: `url(${simcaBadge})`,
+          backgroundRepeat: 'no-repeat',
+          backgroundPosition: '85% 50%',
+          backgroundSize: '600px',
+          opacity: 0.08,
+          filter: 'blur(1px)',
+        }}
+      />
       
       <div className="container mx-auto relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Text Content */}
           <div className="text-center lg:text-left">
-            <span className="inline-block font-serif italic text-xl mb-4 opacity-90">
+            <div className="flex items-center justify-center lg:justify-start gap-4 mb-6">
+              <img 
+                src={simcaBadge} 
+                alt="Simca Norge badge" 
+                className="h-24 md:h-32 w-auto drop-shadow-2xl"
+              />
+            </div>
+            
+            <span className="inline-block font-serif italic text-xl md:text-2xl mb-4 text-white/90">
               Bienvenue chez
             </span>
-            <h1 className="headline-xl mb-6 text-metal text-shadow-retro">
-              SIMCA<br />NORGE
+            <h1 className="headline-xl mb-6 text-shadow-retro">
+              <span className="text-metal">SIMCA</span><br />
+              <span className="text-metal">NORGE</span>
             </h1>
-            <p className="text-xl md:text-2xl font-light mb-8 max-w-lg mx-auto lg:mx-0 text-white/90">
+            <p className="text-xl md:text-2xl font-light mb-10 max-w-lg mx-auto lg:mx-0 text-white/90">
               Din kilde til franske klassikere, deler og historier fra Simca-entusiaster i Norge.
             </p>
             
+            {/* Enhanced CTA buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-              <Link to="/biler" className="btn-enamel-red">
-                Se alle biler
-                <ArrowRight className="w-5 h-5 ml-2" />
+              <Link to="/biler" className="btn-enamel-red group text-lg md:text-xl px-10 py-5">
+                <span>Se alle biler</span>
+                <ArrowRight className="w-6 h-6 ml-3 group-hover:translate-x-1 transition-transform" />
               </Link>
               <Link 
                 to="/deler" 
-                className="btn-enamel-blue"
+                className="btn-enamel-blue group text-lg md:text-xl px-10 py-5"
               >
-                Finn deler
-                <Car className="w-5 h-5 ml-2" />
+                <span>Finn deler</span>
+                <Car className="w-6 h-6 ml-3 group-hover:scale-110 transition-transform" />
               </Link>
             </div>
           </div>
@@ -98,24 +122,26 @@ export function HeroSection() {
             ) : featuredCar ? (
               <Link 
                 to={`/biler/${featuredCar.slug}`}
-                className="block border-chrome-dark card-enamel bg-white/10 backdrop-blur-sm p-4 hover-lift transition-all hover:shadow-2xl"
+                className="block border-chrome-dark card-enamel bg-white/10 backdrop-blur-sm p-5 hover-lift transition-all hover:shadow-2xl group"
               >
                 {getMainImage(featuredCar) ? (
-                  <img
-                    src={getMainImage(featuredCar)!.image_url}
-                    alt={getMainImage(featuredCar)!.alt_text || featuredCar.title}
-                    className="w-full aspect-[4/3] object-cover rounded-lg shadow-lg"
-                  />
+                  <div className="overflow-hidden rounded-lg">
+                    <img
+                      src={getMainImage(featuredCar)!.image_url}
+                      alt={getMainImage(featuredCar)!.alt_text || featuredCar.title}
+                      className="w-full aspect-[4/3] object-cover shadow-lg group-hover:scale-105 transition-transform duration-500"
+                    />
+                  </div>
                 ) : (
                   <div className="aspect-[4/3] bg-white/20 rounded-lg flex items-center justify-center">
                     <Car className="w-24 h-24 opacity-50" />
                   </div>
                 )}
-                <div className="mt-4 text-center">
-                  <p className="font-display text-2xl text-white">
+                <div className="mt-5 text-center">
+                  <p className="font-display text-3xl text-white">
                     {featuredCar.year && `${featuredCar.year} `}{featuredCar.model.toUpperCase()}
                   </p>
-                  <p className="font-serif italic text-white/80">{featuredCar.title}</p>
+                  <p className="font-serif italic text-lg text-white/80">{featuredCar.title}</p>
                 </div>
               </Link>
             ) : (
@@ -133,9 +159,9 @@ export function HeroSection() {
             {/* Decorative badge */}
             <Link
               to="/manedens-bil"
-              className="absolute -top-4 -right-4 px-5 py-2 font-display text-lg rotate-12 flex items-center gap-2 hover:scale-105 transition-transform btn-enamel-red shadow-xl"
+              className="absolute -top-5 -right-5 px-6 py-3 font-display text-xl rotate-12 flex items-center gap-2 hover:scale-110 transition-transform btn-enamel-red shadow-2xl"
             >
-              <Star className="w-4 h-4 fill-current" />
+              <Star className="w-5 h-5 fill-current" />
               MÅNEDENS BIL
             </Link>
           </div>
