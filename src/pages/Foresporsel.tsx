@@ -139,10 +139,17 @@ const Foresporsel = () => {
         <div className="container mx-auto">
           {items.length === 0 ? (
             <div className="text-center py-12 animate-fade-in">
-              <img src={toolboxIcon} alt="Verktøykasse" className="w-48 h-48 mx-auto mb-6 object-contain" />
+              {/* Toolbox illustration container */}
+              <div className="pt-6 pb-4 md:pt-8 md:pb-6 flex justify-center">
+                <img 
+                  src={toolboxIcon} 
+                  alt="Verktøykasse" 
+                  className="w-20 h-auto md:w-28 object-contain drop-shadow-[0_8px_24px_rgba(0,0,0,0.25)] [filter:drop-shadow(0_0_8px_rgba(255,255,255,0.15))]" 
+                />
+              </div>
               <h2 className="headline-md mb-4">VERKTØYKASSEN ER TOM</h2>
-              <p className="text-muted-foreground mb-6">
-                Du har ikke lagt til noen deler i verktøykassen ennå.
+              <p className="text-muted-foreground mb-6 max-w-md mx-auto">
+                Her samler du deler til prosjektet ditt. Bla gjennom delekatalogen og legg til det du trenger.
               </p>
               <Link to="/deler" className="btn-enamel-blue">
                 <ArrowLeft className="w-5 h-5 mr-2" />
