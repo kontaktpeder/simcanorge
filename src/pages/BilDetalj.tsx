@@ -86,13 +86,13 @@ const BilDetalj = () => {
     return (
       <Layout>
         <section className="poster-section min-h-[60vh] flex items-center justify-center">
-          <div className="text-center">
+          <div className="text-center animate-fade-in">
             <Car className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
             <h1 className="headline-md mb-4">BIL IKKE FUNNET</h1>
             <p className="text-muted-foreground mb-6">
               Bilen du leter etter eksisterer ikke eller er ikke publisert ennå.
             </p>
-            <Link to="/biler" className="btn-retro">
+            <Link to="/biler" className="btn-enamel-blue">
               <ArrowLeft className="w-5 h-5 mr-2" />
               Tilbake til galleriet
             </Link>
@@ -209,20 +209,20 @@ const BilDetalj = () => {
       {/* Content */}
       <section className="poster-section">
         <div className="container mx-auto">
-          <div className="max-w-4xl mx-auto">
+          <div className="max-w-4xl mx-auto animate-fade-in">
             {/* Badges */}
             <div className="flex flex-wrap gap-3 mb-6">
-              <span className="bg-primary text-primary-foreground px-4 py-2 font-display text-lg">
+              <span className="bg-primary text-primary-foreground px-4 py-2 font-display text-lg rounded-lg">
                 {car.model}
               </span>
               {car.year && (
-                <span className="bg-accent text-accent-foreground px-4 py-2 font-display text-lg flex items-center gap-2">
+                <span className="bg-accent text-accent-foreground px-4 py-2 font-display text-lg flex items-center gap-2 rounded-lg">
                   <Calendar className="w-5 h-5" />
                   {car.year}
                 </span>
               )}
               {car.overhauled && (
-                <span className="bg-green-600 text-white px-4 py-2 font-display text-lg flex items-center gap-2">
+                <span className="bg-green-600 text-white px-4 py-2 font-display text-lg flex items-center gap-2 rounded-lg">
                   <Wrench className="w-5 h-5" />
                   OVERHALT
                 </span>
@@ -234,7 +234,7 @@ const BilDetalj = () => {
 
             {/* Story */}
             {car.story && (
-              <div className="prose prose-lg max-w-none">
+              <div className="border-chrome card-enamel bg-card p-8 mb-8">
                 <div className="text-lg leading-relaxed whitespace-pre-wrap">
                   {car.story}
                 </div>
@@ -243,13 +243,13 @@ const BilDetalj = () => {
 
             {/* Tags */}
             {car.tags && car.tags.length > 0 && (
-              <div className="mt-12 pt-8 border-t border-border">
+              <div className="pt-8 border-t border-border">
                 <div className="flex items-center gap-2 flex-wrap">
                   <Tag className="w-5 h-5 text-muted-foreground" />
                   {car.tags.map((tag) => (
                     <span
                       key={tag}
-                      className="bg-muted px-3 py-1 text-sm text-muted-foreground"
+                      className="bg-muted px-3 py-1 text-sm text-muted-foreground rounded-full"
                     >
                       #{tag}
                     </span>
@@ -260,7 +260,7 @@ const BilDetalj = () => {
 
             {/* Back link */}
             <div className="mt-12">
-              <Link to="/biler" className="btn-retro bg-primary inline-flex">
+              <Link to="/biler" className="btn-enamel-blue inline-flex">
                 <ArrowLeft className="w-5 h-5 mr-2" />
                 Se flere biler
               </Link>

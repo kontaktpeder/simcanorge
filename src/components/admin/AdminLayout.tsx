@@ -59,29 +59,40 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
   return (
     <div className="min-h-screen bg-muted flex">
       {/* Sidebar */}
-      <aside className="w-64 bg-primary text-primary-foreground flex flex-col">
-        <div className="p-6 border-b border-primary-foreground/20">
-          <Link to="/" className="flex items-center gap-3">
-            <img src={simcaLogo} alt="Simca Norge" className="h-10 w-auto" />
+      <aside className="w-64 bg-metal-blue text-white flex flex-col relative overflow-hidden">
+        {/* Subtle swallow watermark */}
+        <div 
+          className="absolute inset-0 pointer-events-none opacity-5"
+          style={{
+            backgroundImage: `url(${simcaLogo})`,
+            backgroundRepeat: 'no-repeat',
+            backgroundPosition: 'center 80%',
+            backgroundSize: '180px',
+          }}
+        />
+        
+        <div className="p-6 border-b border-white/20 relative z-10">
+          <Link to="/" className="flex items-center gap-3 group">
+            <img src={simcaLogo} alt="Simca Norge" className="h-10 w-auto transition-transform group-hover:scale-105" />
             <div>
               <span className="font-display text-lg">SIMCA</span>
-              <span className="font-display text-lg ml-1 text-accent">ADMIN</span>
+              <span className="font-display text-lg ml-1 text-yellow-400">ADMIN</span>
             </div>
           </Link>
         </div>
 
-        <nav className="flex-1 p-4">
-          <ul className="space-y-2">
+        <nav className="flex-1 p-4 relative z-10">
+          <ul className="space-y-2 stagger-children">
             {navItems.map((item) => {
               const isActive = location.pathname === item.href;
               return (
                 <li key={item.href}>
                   <Link
                     to={item.href}
-                    className={`flex items-center gap-3 px-4 py-3 rounded transition-colors ${
+                    className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
                       isActive
-                        ? "bg-primary-foreground text-primary"
-                        : "hover:bg-primary-foreground/10"
+                        ? "bg-white text-primary shadow-lg"
+                        : "hover:bg-white/15"
                     }`}
                   >
                     <item.icon className="w-5 h-5" />
@@ -93,17 +104,17 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
           </ul>
         </nav>
 
-        <div className="p-4 border-t border-primary-foreground/20">
+        <div className="p-4 border-t border-white/20 relative z-10">
           <Link
             to="/"
-            className="flex items-center gap-3 px-4 py-3 hover:bg-primary-foreground/10 rounded transition-colors mb-2"
+            className="flex items-center gap-3 px-4 py-3 hover:bg-white/15 rounded-xl transition-all mb-2"
           >
             <Home className="w-5 h-5" />
             <span className="font-display">Til forsiden</span>
           </Link>
           <button
             onClick={handleSignOut}
-            className="flex items-center gap-3 px-4 py-3 w-full text-left hover:bg-primary-foreground/10 rounded transition-colors"
+            className="flex items-center gap-3 px-4 py-3 w-full text-left hover:bg-white/15 rounded-xl transition-all"
           >
             <LogOut className="w-5 h-5" />
             <span className="font-display">Logg ut</span>
@@ -113,10 +124,10 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
 
       {/* Main Content */}
       <main className="flex-1 overflow-auto">
-        <header className="bg-card border-b-4 border-foreground p-6">
-          <h1 className="headline-md">{title}</h1>
+        <header className="header-chrome p-6">
+          <h1 className="headline-md text-foreground animate-fade-in">{title}</h1>
         </header>
-        <div className="p-6">
+        <div className="p-6 animate-fade-in">
           {children}
         </div>
       </main>

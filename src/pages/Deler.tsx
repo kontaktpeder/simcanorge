@@ -110,12 +110,12 @@ const Deler = () => {
           <div className="grid lg:grid-cols-4 gap-8">
             {/* Sidebar - Categories */}
             <aside className="lg:col-span-1">
-              <div className="retro-card sticky top-40">
+              <div className="border-chrome card-enamel bg-card p-6 sticky top-40 animate-slide-in-left">
                 <h2 className="font-display text-xl mb-4">KATEGORIER</h2>
                 
                 <button
                   onClick={() => setSelectedCategory(null)}
-                  className={`w-full text-left py-2 px-3 mb-2 transition-colors ${
+                  className={`w-full text-left py-2 px-3 mb-2 rounded-lg transition-all ${
                     !selectedCategory
                       ? "bg-primary text-primary-foreground"
                       : "hover:bg-muted"
@@ -136,7 +136,7 @@ const Deler = () => {
                     <div key={parent.id} className="mb-2">
                       <button
                         onClick={() => setSelectedCategory(parent.id)}
-                        className={`w-full text-left py-2 px-3 transition-colors font-medium ${
+                        className={`w-full text-left py-2 px-3 rounded-lg transition-all font-medium ${
                           selectedCategory === parent.id
                             ? "bg-primary text-primary-foreground"
                             : "hover:bg-muted"
@@ -146,7 +146,7 @@ const Deler = () => {
                       </button>
 
                       {children.length > 0 && (
-                        <div className="ml-4 border-l-2 border-border">
+                        <div className="ml-4 border-l-2 border-primary/30">
                           {children.map((child) => {
                             const childPartCount = parts.filter(
                               (p) => p.category_id === child.id
@@ -155,7 +155,7 @@ const Deler = () => {
                               <button
                                 key={child.id}
                                 onClick={() => setSelectedCategory(child.id)}
-                                className={`w-full text-left py-1.5 px-3 text-sm transition-colors ${
+                                className={`w-full text-left py-1.5 px-3 text-sm rounded-lg transition-all ${
                                   selectedCategory === child.id
                                     ? "bg-primary text-primary-foreground"
                                     : "hover:bg-muted"
@@ -175,7 +175,7 @@ const Deler = () => {
 
             {/* Parts Grid */}
             <div className="lg:col-span-3">
-              <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center justify-between mb-6 animate-fade-in">
                 <h2 className="headline-md">
                   {selectedCategory
                     ? categories.find((c) => c.id === selectedCategory)?.name.toUpperCase()
@@ -187,9 +187,9 @@ const Deler = () => {
               </div>
 
               {isLoading ? (
-                <div className="text-center py-12">Laster deler...</div>
+                <div className="text-center py-12 text-muted-foreground">Laster deler...</div>
               ) : filteredParts.length === 0 ? (
-                <div className="retro-card text-center py-12">
+                <div className="border-chrome card-enamel bg-card text-center py-12 animate-fade-in">
                   <Wrench className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
                   <p className="text-muted-foreground">
                     {selectedCategory
@@ -198,18 +198,18 @@ const Deler = () => {
                   </p>
                 </div>
               ) : (
-                <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-6 stagger-children">
                   {filteredParts.map((part) => {
                     const inCart = isInCart(part.id);
                     return (
-                      <div key={part.id} className="retro-card hover-lift">
+                      <div key={part.id} className="border-chrome card-enamel bg-card p-4 card-hover-glow">
                         {/* Image */}
-                        <div className="aspect-square bg-muted mb-4 rounded overflow-hidden">
+                        <div className="aspect-square bg-muted mb-4 rounded-lg overflow-hidden">
                           {part.image_url ? (
                             <img
                               src={part.image_url}
                               alt={part.title}
-                              className="w-full h-full object-cover"
+                              className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                             />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center">
@@ -220,7 +220,7 @@ const Deler = () => {
 
                         {/* Category badge */}
                         {part.category_id && (
-                          <span className="inline-block bg-primary text-primary-foreground text-xs px-2 py-1 font-display mb-2">
+                          <span className="inline-block bg-primary text-primary-foreground text-xs px-2 py-1 font-display mb-2 rounded">
                             {getCategoryName(part.category_id)}
                           </span>
                         )}
@@ -243,10 +243,10 @@ const Deler = () => {
                         {/* Add to cart button */}
                         <button
                           onClick={() => handleAddToCart(part)}
-                          className={`w-full py-3 font-display text-sm flex items-center justify-center gap-2 transition-colors ${
+                          className={`w-full py-3 font-display text-sm flex items-center justify-center gap-2 rounded-lg transition-all ${
                             inCart
-                              ? "bg-green-600 text-white border-2 border-green-600"
-                              : "bg-accent text-accent-foreground border-2 border-foreground"
+                              ? "bg-green-600 text-white"
+                              : "bg-accent text-accent-foreground hover:opacity-90"
                           }`}
                         >
                           {inCart ? (

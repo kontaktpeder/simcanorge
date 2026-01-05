@@ -266,9 +266,9 @@ const Biler = () => {
       <section className="poster-section">
         <div className="container mx-auto">
           {isLoading ? (
-            <div className="text-center py-12">Laster biler...</div>
+            <div className="text-center py-12 text-muted-foreground">Laster biler...</div>
           ) : filteredCars.length === 0 ? (
-            <div className="retro-card text-center py-12">
+            <div className="border-chrome card-enamel bg-card text-center py-12 animate-fade-in">
               <Car className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
               <h2 className="headline-md mb-2">INGEN BILER FUNNET</h2>
               <p className="text-muted-foreground mb-4">
@@ -277,7 +277,7 @@ const Biler = () => {
                   : "Ingen biler er publisert ennå"}
               </p>
               {hasActiveFilters && (
-                <button onClick={clearFilters} className="btn-retro">
+                <button onClick={clearFilters} className="btn-enamel-red">
                   Nullstill filter
                 </button>
               )}
@@ -286,9 +286,9 @@ const Biler = () => {
             <>
               {/* Featured Cars */}
               {featuredCars.length > 0 && (
-                <div className="mb-12">
+                <div className="mb-12 animate-fade-in">
                   <h2 className="headline-md mb-6">UTVALGTE</h2>
-                  <div className="grid md:grid-cols-2 gap-8">
+                  <div className="grid md:grid-cols-2 gap-8 stagger-children">
                     {featuredCars.map((car) => (
                       <CarCard key={car.id} car={car} featured />
                     ))}
@@ -298,11 +298,11 @@ const Biler = () => {
 
               {/* Regular Cars */}
               {regularCars.length > 0 && (
-                <div>
+                <div className="animate-fade-in-delay-1">
                   {featuredCars.length > 0 && (
                     <h2 className="headline-md mb-6">ALLE BILER</h2>
                   )}
-                  <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 stagger-children">
                     {regularCars.map((car) => (
                       <CarCard key={car.id} car={car} />
                     ))}
@@ -345,11 +345,11 @@ function CarCard({ car, featured }: CarCardProps) {
   return (
     <Link
       to={`/biler/${car.slug}`}
-      className={`retro-card group hover-lift ${featured ? "md:flex gap-6" : ""}`}
+      className={`border-chrome card-enamel bg-card group card-hover-glow ${featured ? "md:flex gap-6 p-6" : "p-4"}`}
     >
       {/* Image */}
       <div
-        className={`bg-muted rounded overflow-hidden mb-4 ${
+        className={`bg-muted rounded-lg overflow-hidden mb-4 ${
           featured ? "md:w-1/2 md:mb-0 aspect-[4/3]" : "aspect-[4/3]"
         }`}
       >
@@ -357,7 +357,7 @@ function CarCard({ car, featured }: CarCardProps) {
           <img
             src={mainImage.image_url}
             alt={mainImage.alt_text || car.title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center">
@@ -370,16 +370,16 @@ function CarCard({ car, featured }: CarCardProps) {
       <div className={featured ? "md:w-1/2 md:flex md:flex-col md:justify-center" : ""}>
         {/* Badges */}
         <div className="flex flex-wrap gap-2 mb-2">
-          <span className="bg-primary text-primary-foreground text-xs px-2 py-1 font-display">
+          <span className="bg-primary text-primary-foreground text-xs px-2 py-1 font-display rounded">
             {car.model}
           </span>
           {car.year && (
-            <span className="bg-accent text-accent-foreground text-xs px-2 py-1 font-display">
+            <span className="bg-accent text-accent-foreground text-xs px-2 py-1 font-display rounded">
               {car.year}
             </span>
           )}
           {car.overhauled && (
-            <span className="bg-green-600 text-white text-xs px-2 py-1 font-display">
+            <span className="bg-green-600 text-white text-xs px-2 py-1 font-display rounded">
               OVERHALT
             </span>
           )}
@@ -387,7 +387,7 @@ function CarCard({ car, featured }: CarCardProps) {
 
         {/* Title */}
         <h3
-          className={`font-display group-hover:text-accent transition-colors ${
+          className={`font-display group-hover:text-primary transition-colors ${
             featured ? "text-3xl mb-3" : "text-xl mb-2"
           }`}
         >
@@ -411,7 +411,7 @@ function CarCard({ car, featured }: CarCardProps) {
             {car.tags.slice(0, 3).map((tag) => (
               <span
                 key={tag}
-                className="text-xs bg-muted px-2 py-1 text-muted-foreground"
+                className="text-xs bg-muted px-2 py-1 text-muted-foreground rounded"
               >
                 #{tag}
               </span>
