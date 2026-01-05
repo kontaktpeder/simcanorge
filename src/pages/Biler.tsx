@@ -166,9 +166,9 @@ const Biler = () => {
       </section>
 
       {/* Category Tabs */}
-      <section className="bg-card border-b-4 border-foreground">
+      <section className="bg-gradient-to-b from-card to-muted/30 py-8 border-b-4 border-foreground">
         <div className="container mx-auto">
-          <div className="flex overflow-x-auto scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0">
+          <div className="flex flex-wrap justify-center gap-3 md:gap-4">
             {CATEGORIES.map((cat) => {
               const Icon = cat.icon;
               const isActive = selectedCategory === cat.id;
@@ -176,20 +176,25 @@ const Biler = () => {
                 <button
                   key={cat.id}
                   onClick={() => setSelectedCategory(cat.id)}
-                  className={`flex items-center gap-2 px-6 py-4 font-display text-sm whitespace-nowrap border-b-4 transition-all ${
+                  className={`group relative flex items-center gap-3 px-5 py-4 md:px-8 md:py-5 font-display text-sm md:text-base rounded-xl transition-all duration-300 transform hover:scale-105 ${
                     isActive 
-                      ? "border-primary text-primary bg-primary/5" 
-                      : "border-transparent hover:bg-muted text-muted-foreground hover:text-foreground"
+                      ? "bg-primary text-primary-foreground shadow-lg shadow-primary/30 scale-105" 
+                      : "bg-card border-2 border-foreground/20 hover:border-primary hover:bg-primary/5 text-foreground"
                   }`}
                 >
-                  <Icon className="w-5 h-5" />
-                  <span className="hidden sm:inline">{cat.label}</span>
-                  <span className="sm:hidden">{cat.label.split(' ')[0]}</span>
-                  <span className={`text-xs px-2 py-0.5 rounded-full ${
-                    isActive ? "bg-primary text-primary-foreground" : "bg-muted"
+                  <Icon className={`w-6 h-6 md:w-7 md:h-7 transition-transform group-hover:scale-110 ${isActive ? 'animate-pulse' : ''}`} />
+                  <span className="hidden sm:inline font-bold tracking-wide">{cat.label}</span>
+                  <span className="sm:hidden font-bold">{cat.label.split(' ')[0]}</span>
+                  <span className={`text-sm font-bold px-3 py-1 rounded-full transition-colors ${
+                    isActive 
+                      ? "bg-white/20 text-primary-foreground" 
+                      : "bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground"
                   }`}>
                     {categoryCounts[cat.id]}
                   </span>
+                  {isActive && (
+                    <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-0 h-0 border-l-8 border-r-8 border-t-8 border-l-transparent border-r-transparent border-t-primary" />
+                  )}
                 </button>
               );
             })}
@@ -199,36 +204,36 @@ const Biler = () => {
 
       {/* Category Description */}
       {currentCategoryInfo?.description && (
-        <section className="bg-muted/50 border-b border-border animate-fade-in">
-          <div className="container mx-auto py-4">
-            <div className="flex items-center gap-3">
-              <currentCategoryInfo.icon className="w-6 h-6 text-primary shrink-0" />
-              <p className="text-muted-foreground">{currentCategoryInfo.description}</p>
+        <section className="bg-primary/5 border-b-2 border-primary/20 animate-fade-in">
+          <div className="container mx-auto py-5">
+            <div className="flex items-center justify-center gap-4 text-center">
+              <currentCategoryInfo.icon className="w-8 h-8 text-primary shrink-0" />
+              <p className="text-lg text-foreground/80 max-w-2xl">{currentCategoryInfo.description}</p>
             </div>
           </div>
         </section>
       )}
 
       {/* Filters Bar */}
-      <section className="bg-card border-b-4 border-foreground sticky top-20 z-40">
-        <div className="container mx-auto py-4">
+      <section className="bg-card/80 backdrop-blur-sm border-b-2 border-foreground/20 sticky top-20 z-40 shadow-md">
+        <div className="container mx-auto py-5">
           <div className="flex flex-wrap items-center gap-4">
             {/* Search */}
-            <div className="relative flex-1 min-w-[200px]">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+            <div className="relative flex-1 min-w-[250px]">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-6 h-6 text-primary" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Søk etter bil..."
-                className="w-full pl-10 pr-4 py-2 border-2 border-foreground bg-card focus:outline-none focus:ring-2 focus:ring-primary"
+                placeholder="Søk etter bil, modell eller historie..."
+                className="w-full pl-14 pr-6 py-4 text-lg border-3 border-foreground/30 bg-card rounded-xl focus:outline-none focus:ring-4 focus:ring-primary/30 focus:border-primary transition-all shadow-sm hover:shadow-md"
               />
             </div>
 
             {/* Filter Toggle (Mobile) */}
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className="lg:hidden flex items-center gap-2 px-4 py-2 border-2 border-foreground hover:bg-muted"
+              className="lg:hidden flex items-center gap-2 px-5 py-4 rounded-xl border-2 border-foreground/30 hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all"
             >
               <Filter className="w-5 h-5" />
               Filter
@@ -240,11 +245,11 @@ const Biler = () => {
             </button>
 
             {/* Desktop Filters */}
-            <div className="hidden lg:flex items-center gap-4">
+            <div className="hidden lg:flex items-center gap-3">
               <select
                 value={selectedModel}
                 onChange={(e) => setSelectedModel(e.target.value)}
-                className="px-4 py-2 border-2 border-foreground bg-card"
+                className="px-5 py-3 text-base border-2 border-foreground/30 bg-card rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-all cursor-pointer hover:border-primary/50"
               >
                 <option value="">Alle modeller</option>
                 {MODELS.map((model) => (
@@ -257,7 +262,7 @@ const Biler = () => {
               <select
                 value={selectedDecade}
                 onChange={(e) => setSelectedDecade(e.target.value)}
-                className="px-4 py-2 border-2 border-foreground bg-card"
+                className="px-5 py-3 text-base border-2 border-foreground/30 bg-card rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-all cursor-pointer hover:border-primary/50"
               >
                 <option value="">Alle tiår</option>
                 <option value="1950">1950-tallet</option>
@@ -269,9 +274,9 @@ const Biler = () => {
               {hasActiveFilters && (
                 <button
                   onClick={clearFilters}
-                  className="flex items-center gap-1 text-accent hover:underline"
+                  className="flex items-center gap-2 px-4 py-3 bg-accent/10 text-accent rounded-lg hover:bg-accent hover:text-accent-foreground transition-all font-display"
                 >
-                  <X className="w-4 h-4" />
+                  <X className="w-5 h-5" />
                   Nullstill
                 </button>
               )}
