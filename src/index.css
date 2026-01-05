@@ -288,21 +288,6 @@
     overflow: hidden;
   }
 
-  .hero-watermark::before {
-    content: "";
-    position: absolute;
-    inset: -15%;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 80'%3E%3Cpath d='M10,60 Q30,50 60,45 T120,35 T180,25 Q190,22 195,18' stroke='%23FFFFFF' stroke-width='8' fill='none' stroke-linecap='round'/%3E%3Cpath d='M180,25 L195,18 L188,32' stroke='%23FFFFFF' stroke-width='6' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: 65% 25%;
-    background-size: 800px;
-    opacity: 0.10;
-    filter: blur(0.5px);
-    transform: rotate(-8deg);
-    pointer-events: none;
-    z-index: 0;
-  }
-
   /* ========================================
      RETRO POSTER ELEMENTS (enhanced)
      ======================================== */
