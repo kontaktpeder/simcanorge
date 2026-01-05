@@ -57,12 +57,27 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
-        // Simca brand colors for direct use
+        // Simca brand colors
         simca: {
           blue: "hsl(var(--simca-blue))",
           red: "hsl(var(--simca-red))",
           cream: "hsl(var(--simca-cream))",
           gray: "hsl(var(--simca-gray))",
+        },
+        // Metallic badge colors
+        metal: {
+          blue: "hsl(var(--metal-blue))",
+          "blue-dark": "hsl(var(--metal-blue-dark))",
+          "blue-light": "hsl(var(--metal-blue-light))",
+        },
+        badge: {
+          red: "hsl(var(--badge-red))",
+          "red-dark": "hsl(var(--badge-red-dark))",
+        },
+        chrome: {
+          light: "hsl(var(--chrome-light))",
+          mid: "hsl(var(--chrome-mid))",
+          dark: "hsl(var(--chrome-dark))",
         },
       },
       fontFamily: {
