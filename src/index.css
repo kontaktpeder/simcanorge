@@ -17,6 +17,7 @@
     --metal-blue-light: 210 85% 62%;
     --badge-red: 2 85% 40%;
     --badge-red-dark: 2 85% 28%;
+    --chrome-border: 215 12% 75%;
     --chrome-light: 216 15% 95%;
     --chrome-mid: 215 12% 75%;
     --chrome-dark: 216 10% 40%;
@@ -149,6 +150,14 @@
       radial-gradient(1200px 600px at 70% 10%, rgba(255,255,255,0.18), rgba(255,255,255,0) 60%),
       radial-gradient(900px 500px at 20% 80%, rgba(0,0,0,0.20), rgba(0,0,0,0) 55%),
       linear-gradient(135deg, #0F3E7A 0%, #1F66B5 35%, #4FA0FF 55%, #1F66B5 75%, #0F3E7A 100%);
+  }
+
+  /* Metallic red lacquer background with depth */
+  .bg-metal-red {
+    background:
+      radial-gradient(1200px 600px at 70% 10%, rgba(255,255,255,0.12), rgba(255,255,255,0) 60%),
+      radial-gradient(900px 500px at 20% 80%, rgba(0,0,0,0.25), rgba(0,0,0,0) 55%),
+      linear-gradient(135deg, #7A1A1A 0%, #B52A2A 35%, #D44040 55%, #B52A2A 75%, #7A1A1A 100%);
   }
 
   /* Chrome/metallic frame effect */
