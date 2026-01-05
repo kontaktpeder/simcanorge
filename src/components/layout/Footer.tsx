@@ -1,24 +1,18 @@
 import { Link } from "react-router-dom";
 import { Facebook, Mail } from "lucide-react";
 import simcaLogo from "@/assets/simca-logo.png";
-
 export function Footer() {
-  return (
-    <footer className="bg-metal-blue text-white">
+  return <footer className="bg-metal-blue text-white">
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
           {/* Logo & Tagline */}
           <div className="flex flex-col items-center md:items-start gap-4">
-            <img 
-              src={simcaLogo} 
-              alt="Simca Norge" 
-              className="h-20 w-auto drop-shadow-lg"
-            />
+            <img src={simcaLogo} alt="Simca Norge" className="h-20 w-auto drop-shadow-lg" />
             <p className="font-serif italic text-lg text-center md:text-left text-white/90">
               "La petite voiture française"
             </p>
             <p className="text-sm text-white/70">
-              Norges hjørne for Simca-entusiaster
+              Norges hjørne for Simca, Talbot og Matra - entusiaster
             </p>
           </div>
 
@@ -38,19 +32,11 @@ export function Footer() {
           <div className="text-center md:text-left">
             <h3 className="font-display text-2xl mb-4 text-metal">KONTAKT</h3>
             <div className="flex flex-col gap-3">
-              <a 
-                href="mailto:kontaktpeder@gmail.com" 
-                className="flex items-center justify-center md:justify-start gap-2 hover:text-white/80 transition-colors text-white/90"
-              >
+              <a href="mailto:kontaktpeder@gmail.com" className="flex items-center justify-center md:justify-start gap-2 hover:text-white/80 transition-colors text-white/90">
                 <Mail className="w-5 h-5" />
                 kontaktpeder@gmail.com
               </a>
-              <a 
-                href="https://facebook.com/groups/simcanorge" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="flex items-center justify-center md:justify-start gap-2 hover:text-white/80 transition-colors text-white/90"
-              >
+              <a href="https://facebook.com/groups/simcanorge" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center md:justify-start gap-2 hover:text-white/80 transition-colors text-white/90">
                 <Facebook className="w-5 h-5" />
                 Facebook-gruppen
               </a>
@@ -70,6 +56,5 @@ export function Footer() {
           </Link>
         </div>
       </div>
-    </footer>
-  );
+    </footer>;
 }
