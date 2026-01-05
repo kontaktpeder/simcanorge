@@ -51,8 +51,11 @@ const MODELS = [
 ];
 
 interface SubmissionData {
+  title: string | null;
   model: string;
   year: number | null;
+  category: string;
+  tags: string[] | null;
   story: string | null;
   images: string[] | null;
   ownerName: string;
@@ -110,7 +113,7 @@ const AdminBiler = () => {
     if (state?.fromSubmission) {
       const sub = state.fromSubmission;
       setFormData({
-        title: sub.year ? `${sub.year} ${sub.model}` : sub.model,
+        title: sub.title || (sub.year ? `${sub.year} ${sub.model}` : sub.model),
         slug: "",
         model: sub.model,
         year: sub.year?.toString() || "",
@@ -118,8 +121,9 @@ const AdminBiler = () => {
         overhauled: false,
         featured: false,
         published: false,
-        category: "registrert",
+        category: sub.category || "registrert",
       });
+      setTagsInput(sub.tags?.join(", ") || "");
       setSubmissionImageUrls(sub.images || []);
       setShowForm(true);
       // Clear the state so it doesn't re-trigger

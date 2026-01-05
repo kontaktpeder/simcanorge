@@ -25,13 +25,23 @@ import { Car, Mail, Phone, Calendar, Eye, Trash2, MessageSquare, Image, Plus } f
 import { format } from "date-fns";
 import { nb } from "date-fns/locale";
 
+const CATEGORY_LABELS: Record<string, string> = {
+  registrert: "Registrerte biler",
+  restaurering: "Restaureringsprosjekter",
+  historisk: "Historiske biler",
+  vrak: "Vrak",
+};
+
 interface CarSubmission {
   id: string;
+  title: string | null;
   owner_name: string;
   email: string;
   phone: string | null;
   car_model: string;
   car_year: number | null;
+  category: string;
+  tags: string[] | null;
   car_story: string | null;
   images: string[] | null;
   status: string;
@@ -66,8 +76,11 @@ export default function AdminInnsendinger() {
     navigate("/admin/biler", {
       state: {
         fromSubmission: {
+          title: submission.title,
           model: submission.car_model,
           year: submission.car_year,
+          category: submission.category,
+          tags: submission.tags,
           story: submission.car_story,
           images: submission.images,
           ownerName: submission.owner_name,
@@ -192,11 +205,20 @@ export default function AdminInnsendinger() {
                           <span className="w-2 h-2 bg-accent rounded-full" />
                         )}
                         <h3 className="font-display text-lg truncate">
-                          {submission.car_year && `${submission.car_year} `}{submission.car_model}
+                          {submission.title || `${submission.car_year ? submission.car_year + ' ' : ''}${submission.car_model}`}
                         </h3>
                         <Badge className={statusColors[submission.status]}>
                           {statusLabels[submission.status]}
                         </Badge>
+                      </div>
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <span>{submission.car_model}</span>
+                        {submission.category && (
+                          <>
+                            <span>•</span>
+                            <span>{CATEGORY_LABELS[submission.category] || submission.category}</span>
+                          </>
+                        )}
                       </div>
                       <p className="text-sm text-muted-foreground">
                         Fra: {submission.owner_name} • {format(new Date(submission.created_at), "d. MMM yyyy", { locale: nb })}
@@ -224,12 +246,33 @@ export default function AdminInnsendinger() {
               <>
                 <DialogHeader>
                   <DialogTitle className="font-display text-2xl">
-                    {selectedSubmission.car_year && `${selectedSubmission.car_year} `}
-                    {selectedSubmission.car_model}
+                    {selectedSubmission.title || `${selectedSubmission.car_year ? selectedSubmission.car_year + ' ' : ''}${selectedSubmission.car_model}`}
                   </DialogTitle>
                 </DialogHeader>
 
                 <div className="space-y-6">
+                  {/* Car details */}
+                  <div className="bg-muted/30 rounded-lg p-4 grid gap-2">
+                    <div className="flex items-center gap-2">
+                      <span className="font-display">Modell:</span>
+                      <span>{selectedSubmission.car_model}</span>
+                      {selectedSubmission.car_year && <span>({selectedSubmission.car_year})</span>}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="font-display">Kategori:</span>
+                      <Badge variant="secondary">
+                        {CATEGORY_LABELS[selectedSubmission.category] || selectedSubmission.category}
+                      </Badge>
+                    </div>
+                    {selectedSubmission.tags && selectedSubmission.tags.length > 0 && (
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="font-display">Stikkord:</span>
+                        {selectedSubmission.tags.map((tag, i) => (
+                          <Badge key={i} variant="outline" className="text-xs">{tag}</Badge>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                   {/* Contact info */}
                   <div className="grid gap-3">
                     <div className="flex items-center gap-2 text-foreground">

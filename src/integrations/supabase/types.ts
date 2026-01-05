@@ -55,6 +55,7 @@ export type Database = {
           car_model: string
           car_story: string | null
           car_year: number | null
+          category: string | null
           created_at: string
           email: string
           id: string
@@ -63,6 +64,8 @@ export type Database = {
           phone: string | null
           read: boolean | null
           status: string
+          tags: string[] | null
+          title: string | null
           updated_at: string
         }
         Insert: {
@@ -70,6 +73,7 @@ export type Database = {
           car_model: string
           car_story?: string | null
           car_year?: number | null
+          category?: string | null
           created_at?: string
           email: string
           id?: string
@@ -78,6 +82,8 @@ export type Database = {
           phone?: string | null
           read?: boolean | null
           status?: string
+          tags?: string[] | null
+          title?: string | null
           updated_at?: string
         }
         Update: {
@@ -85,6 +91,7 @@ export type Database = {
           car_model?: string
           car_story?: string | null
           car_year?: number | null
+          category?: string | null
           created_at?: string
           email?: string
           id?: string
@@ -93,6 +100,8 @@ export type Database = {
           phone?: string | null
           read?: boolean | null
           status?: string
+          tags?: string[] | null
+          title?: string | null
           updated_at?: string
         }
         Relationships: []
