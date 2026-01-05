@@ -6,6 +6,7 @@ import simcaLogo from "@/assets/simca-logo.png";
 
 const navItems = [
   { href: "/", label: "Hjem" },
+  { href: "/manedens-bil", label: "Månedens bil" },
   { href: "/biler", label: "Biler & Historier" },
   { href: "/deler", label: "Deler" },
   { href: "/send-inn", label: "Send inn din bil" },
