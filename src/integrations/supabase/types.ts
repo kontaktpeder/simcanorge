@@ -49,6 +49,54 @@ export type Database = {
           },
         ]
       }
+      car_submissions: {
+        Row: {
+          admin_notes: string | null
+          car_model: string
+          car_story: string | null
+          car_year: number | null
+          created_at: string
+          email: string
+          id: string
+          images: string[] | null
+          owner_name: string
+          phone: string | null
+          read: boolean | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          car_model: string
+          car_story?: string | null
+          car_year?: number | null
+          created_at?: string
+          email: string
+          id?: string
+          images?: string[] | null
+          owner_name: string
+          phone?: string | null
+          read?: boolean | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          admin_notes?: string | null
+          car_model?: string
+          car_story?: string | null
+          car_year?: number | null
+          created_at?: string
+          email?: string
+          id?: string
+          images?: string[] | null
+          owner_name?: string
+          phone?: string | null
+          read?: boolean | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       cars: {
         Row: {
           created_at: string
