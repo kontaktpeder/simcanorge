@@ -53,9 +53,6 @@ export function HeroSection() {
     return sorted[0];
   };
   return <section className="poster-section poster-section-blue hero-watermark relative overflow-hidden min-h-[85vh] flex items-center">
-      {/* Subtle stripes overlay */}
-      <div className="absolute inset-0 stripes-diagonal" />
-      
       {/* Large swallow watermark */}
       <div className="absolute inset-0 pointer-events-none" style={{
       backgroundImage: `url(${simcaSwallow})`,
@@ -93,13 +90,13 @@ export function HeroSection() {
 
           {/* Featured Car - Månedens bil */}
           <div className="relative">
-            {isLoading ? <div className="border-chrome-dark card-enamel bg-white/10 backdrop-blur-sm p-6">
+            {isLoading ? <div className="badge-frame bg-white/10 backdrop-blur-sm p-6">
                 <Skeleton className="aspect-[4/3] w-full rounded-lg" />
                 <div className="mt-4">
                   <Skeleton className="h-6 w-3/4 mx-auto" />
                   <Skeleton className="h-4 w-1/2 mx-auto mt-2" />
                 </div>
-              </div> : featuredCar ? <Link to={`/biler/${featuredCar.slug}`} className="block border-chrome-dark card-enamel bg-white/10 backdrop-blur-sm p-5 hover-lift transition-all hover:shadow-2xl group">
+              </div> : featuredCar ? <Link to={`/biler/${featuredCar.slug}`} className="block badge-frame bg-white/10 backdrop-blur-sm p-5 hover-lift transition-all hover:shadow-2xl group">
                 {getMainImage(featuredCar) ? <div className="overflow-hidden rounded-lg">
                     <img src={getMainImage(featuredCar)!.image_url} alt={getMainImage(featuredCar)!.alt_text || featuredCar.title} className="w-full aspect-[4/3] object-cover shadow-lg group-hover:scale-105 transition-transform duration-500" />
                   </div> : <div className="aspect-[4/3] bg-white/20 rounded-lg flex items-center justify-center">
@@ -111,7 +108,7 @@ export function HeroSection() {
                   </p>
                   <p className="font-serif italic text-lg text-white/80">{featuredCar.title}</p>
                 </div>
-              </Link> : <div className="border-chrome-dark card-enamel bg-white/10 backdrop-blur-sm p-8">
+              </Link> : <div className="badge-frame bg-white/10 backdrop-blur-sm p-8">
                 <div className="aspect-[4/3] bg-white/20 rounded-lg flex items-center justify-center">
                   <div className="text-center">
                     <Car className="w-24 h-24 mx-auto mb-4 opacity-50" />
