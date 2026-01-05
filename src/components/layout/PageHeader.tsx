@@ -22,17 +22,18 @@ export function PageHeader({ title, subtitle }: PageHeaderProps) {
   const parallaxOffset = scrollY * 0.3;
 
   return (
-    <section className="poster-section poster-section-blue relative overflow-hidden py-20 md:py-28">
+    <section className="poster-section poster-section-blue relative overflow-hidden py-24 md:py-32">
       <div className="absolute inset-0 stripes-diagonal" />
       <div 
         className="absolute inset-0 pointer-events-none transition-transform duration-100" 
         style={{
           backgroundImage: `url(${simcaSwallow})`,
           backgroundRepeat: 'no-repeat',
-          backgroundPosition: '50% 50%',
-          backgroundSize: '450px',
+          backgroundPosition: '85% 50%',
+          backgroundSize: '500px',
           opacity: 0.80,
-          transform: `rotate(-8deg) translateY(${parallaxOffset}px)`
+          transform: `rotate(-8deg) translateY(${parallaxOffset}px)`,
+          filter: 'drop-shadow(0 8px 24px rgba(0,0,0,0.4)) drop-shadow(0 4px 12px rgba(0,0,0,0.3))'
         }} 
       />
       
