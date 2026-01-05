@@ -20,7 +20,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
-import { Car, Mail, Phone, Calendar, Eye, Trash2, MessageSquare } from "lucide-react";
+import { Car, Mail, Phone, Calendar, Eye, Trash2, MessageSquare, Image } from "lucide-react";
 import { format } from "date-fns";
 import { nb } from "date-fns/locale";
 
@@ -32,6 +32,7 @@ interface CarSubmission {
   car_model: string;
   car_year: number | null;
   car_story: string | null;
+  images: string[] | null;
   status: string;
   admin_notes: string | null;
   read: boolean;
@@ -236,6 +237,33 @@ export default function AdminInnsendinger() {
                       {format(new Date(selectedSubmission.created_at), "d. MMMM yyyy 'kl.' HH:mm", { locale: nb })}
                     </div>
                   </div>
+
+                  {/* Images */}
+                  {selectedSubmission.images && selectedSubmission.images.length > 0 && (
+                    <div>
+                      <h4 className="font-display text-lg mb-2 flex items-center gap-2">
+                        <Image className="w-4 h-4" />
+                        Bilder ({selectedSubmission.images.length})
+                      </h4>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                        {selectedSubmission.images.map((imageUrl, index) => (
+                          <a 
+                            key={index}
+                            href={imageUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="aspect-square rounded-lg overflow-hidden border hover:opacity-80 transition-opacity"
+                          >
+                            <img 
+                              src={imageUrl} 
+                              alt={`Bilde ${index + 1}`}
+                              className="w-full h-full object-cover"
+                            />
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
                   {/* Story */}
                   {selectedSubmission.car_story && (
