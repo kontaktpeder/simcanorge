@@ -6,6 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useInView } from "@/hooks/useInView";
 import simcaBadge from "@/assets/simca-badge.png";
 import simcaSwallow from "@/assets/simca-swallow.png";
+import checkeredFlag from "@/assets/checkered-flag.png";
 interface FeaturedCar {
   id: string;
   slug: string;
@@ -106,36 +107,90 @@ export function HeroSection() {
             ref={cardRef}
             className={`relative transition-all duration-700 ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
           >
-            {isLoading ? <div className="badge-frame bg-white/10 backdrop-blur-sm p-6">
+            {isLoading ? (
+              <div className="featured-car-frame p-6">
                 <Skeleton className="aspect-[4/3] w-full rounded-lg" />
                 <div className="mt-4">
                   <Skeleton className="h-6 w-3/4 mx-auto" />
                   <Skeleton className="h-4 w-1/2 mx-auto mt-2" />
                 </div>
-              </div> : featuredCar ? <Link to={`/biler/${featuredCar.slug}`} className="block badge-frame bg-white/10 backdrop-blur-sm p-5 hover-lift transition-all hover:shadow-2xl group">
-                {getMainImage(featuredCar) ? <div className="overflow-hidden rounded-lg">
-                    <img src={getMainImage(featuredCar)!.image_url} alt={getMainImage(featuredCar)!.alt_text || featuredCar.title} className="w-full aspect-[16/10] object-cover shadow-lg group-hover:scale-105 transition-transform duration-500" />
-                  </div> : <div className="aspect-[16/10] bg-white/20 rounded-lg flex items-center justify-center">
+              </div>
+            ) : featuredCar ? (
+              <Link 
+                to={`/biler/${featuredCar.slug}`} 
+                className="block featured-car-frame p-5 hover-lift transition-all group relative overflow-hidden"
+              >
+                {/* Checkered flag background with wave animation */}
+                <div 
+                  className={`absolute inset-0 pointer-events-none checkered-flag-wave ${isInView ? 'animate-flag-fade-in' : 'opacity-0'}`}
+                  style={{
+                    backgroundImage: `url(${checkeredFlag})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    opacity: 0.22,
+                    transform: 'rotate(-8deg) scale(1.3)',
+                    filter: 'blur(1px)',
+                  }}
+                />
+                {/* Gradient vignette overlay */}
+                <div className="absolute inset-0 pointer-events-none bg-gradient-to-br from-black/40 via-transparent to-black/60 z-[1]" />
+                
+                {/* Car image with finish line glow */}
+                {getMainImage(featuredCar) ? (
+                  <div className="overflow-hidden rounded-lg relative z-[2] car-finish-glow">
+                    <img 
+                      src={getMainImage(featuredCar)!.image_url} 
+                      alt={getMainImage(featuredCar)!.alt_text || featuredCar.title} 
+                      className="w-full aspect-[16/10] object-cover shadow-lg group-hover:scale-105 transition-transform duration-500" 
+                    />
+                    {/* Subtle shine overlay on hover */}
+                    <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  </div>
+                ) : (
+                  <div className="aspect-[16/10] bg-white/20 rounded-lg flex items-center justify-center relative z-[2]">
                     <Car className="w-24 h-24 opacity-50" />
-                  </div>}
-                <div className="mt-5 text-center">
-                  <p className="font-display text-3xl font-bold text-white">{featuredCar.title}</p>
-                  <p className="font-serif text-lg text-white/80 mt-1">
+                  </div>
+                )}
+                
+                {/* Text content */}
+                <div className="mt-5 text-center relative z-[2]">
+                  <p className="font-display text-3xl font-bold text-white drop-shadow-lg">{featuredCar.title}</p>
+                  <p className="font-serif text-lg text-white/90 mt-1 drop-shadow-md">
                     {featuredCar.year && `${featuredCar.year} · `}{featuredCar.model}
                   </p>
                 </div>
-              </Link> : <div className="badge-frame bg-white/10 backdrop-blur-sm p-8">
-                <div className="aspect-[16/10] bg-white/20 rounded-lg flex items-center justify-center">
+              </Link>
+            ) : (
+              <div className="featured-car-frame p-8 relative overflow-hidden">
+                {/* Checkered flag background for empty state */}
+                <div 
+                  className="absolute inset-0 pointer-events-none checkered-flag-wave"
+                  style={{
+                    backgroundImage: `url(${checkeredFlag})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    opacity: 0.12,
+                    transform: 'rotate(-8deg) scale(1.3)',
+                    filter: 'blur(1.5px)',
+                  }}
+                />
+                <div className="absolute inset-0 pointer-events-none bg-gradient-to-br from-black/50 via-transparent to-black/60 z-[1]" />
+                
+                <div className="aspect-[16/10] bg-white/20 rounded-lg flex items-center justify-center relative z-[2]">
                   <div className="text-center">
                     <Car className="w-24 h-24 mx-auto mb-4 opacity-50" />
                     <p className="font-display text-2xl text-white/75">MÅNEDENS BIL</p>
                     <p className="font-serif italic text-white/60">Kommer snart...</p>
                   </div>
                 </div>
-              </div>}
+              </div>
+            )}
             
-            {/* Decorative badge */}
-            <Link to="/manedens-bil" className="absolute -top-5 -right-5 px-6 py-3 font-display text-xl rotate-12 flex items-center gap-2 hover:scale-110 transition-transform btn-enamel-red shadow-2xl">
+            {/* Decorative badge - enhanced emblem style */}
+            <Link 
+              to="/manedens-bil" 
+              className="absolute -top-5 -right-5 manedens-bil-badge px-5 py-2.5 font-display text-lg rotate-12 flex items-center gap-2 hover:scale-110 transition-transform z-10"
+            >
               <Star className="w-5 h-5 fill-current" />
               MÅNEDENS BIL
             </Link>
