@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 import { Layout } from "@/components/layout/Layout";
 import { PageHeader } from "@/components/layout/PageHeader";
-import { useInView } from "@/hooks/useInView";
+import { AnimatedSection } from "@/components/layout/AnimatedSection";
 import { Car, Send, Camera, CheckCircle, X, ImagePlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { z } from "zod";
+
 const submissionSchema = z.object({
   owner_name: z.string().trim().min(2, "Navn må være minst 2 tegn").max(100, "Navn kan ikke være mer enn 100 tegn"),
   email: z.string().trim().email("Ugyldig e-postadresse").max(255, "E-post kan ikke være mer enn 255 tegn"),
@@ -18,21 +19,6 @@ const submissionSchema = z.object({
   car_year: z.number().int().min(1934, "Året må være fra 1934 eller senere").max(1990, "Året må være før 1990").optional().nullable(),
   car_story: z.string().trim().max(5000, "Historien kan ikke være mer enn 5000 tegn").optional().or(z.literal(""))
 });
-function AnimatedSection({
-  children,
-  className = ""
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) {
-  const {
-    ref,
-    isInView
-  } = useInView();
-  return <div ref={ref} className={`transition-all duration-700 ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'} ${className}`}>
-      {children}
-    </div>;
-}
 export default function SendInnBil() {
   const {
     toast
