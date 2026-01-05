@@ -139,7 +139,7 @@ const Foresporsel = () => {
         <div className="container mx-auto">
           {items.length === 0 ? (
             <div className="text-center py-12 animate-fade-in">
-              <img src={toolboxIcon} alt="Verktøykasse" className="w-24 h-24 mx-auto mb-4 object-contain" />
+              <img src={toolboxIcon} alt="Verktøykasse" className="w-48 h-48 mx-auto mb-6 object-contain" />
               <h2 className="headline-md mb-4">VERKTØYKASSEN ER TOM</h2>
               <p className="text-muted-foreground mb-6">
                 Du har ikke lagt til noen deler i verktøykassen ennå.
