@@ -14,11 +14,11 @@ export function PageHeader({ title, subtitle }: PageHeaderProps) {
         style={{
           backgroundImage: `url(${simcaSwallow})`,
           backgroundRepeat: 'no-repeat',
-          backgroundPosition: '85% 50%',
+          backgroundPosition: '85% 75%',
           backgroundSize: '450px',
-          opacity: 0.15,
+          opacity: 0.80,
           transform: 'rotate(-8deg)'
-        }} 
+        }}
       />
       
       <div className="container mx-auto px-4 relative z-10">
