@@ -103,8 +103,8 @@ const Foresporsel = () => {
       <Layout>
         <section className="poster-section min-h-[60vh] flex items-center justify-center">
           <div className="container mx-auto text-center">
-            <div className="retro-card max-w-lg mx-auto">
-              <div className="w-20 h-20 mx-auto mb-6 bg-green-500 text-white rounded-full flex items-center justify-center">
+            <div className="border-chrome card-enamel bg-card max-w-lg mx-auto p-8 animate-scale-in">
+              <div className="w-20 h-20 mx-auto mb-6 bg-green-500 text-white rounded-full flex items-center justify-center animate-pulse">
                 <Check className="w-10 h-10" />
               </div>
               <h1 className="headline-md text-accent mb-4">TAKK FOR DIN FORESPØRSEL!</h1>
@@ -112,7 +112,7 @@ const Foresporsel = () => {
                 Vi har sendt en bekreftelse til e-posten din. 
                 Pappa sjekker hylla og kommer tilbake til deg snart! 🔧
               </p>
-              <Link to="/deler" className="btn-retro bg-primary">
+              <Link to="/deler" className="btn-enamel-blue">
                 <ArrowLeft className="w-5 h-5 mr-2" />
                 Tilbake til deler
               </Link>
@@ -137,13 +137,13 @@ const Foresporsel = () => {
       <section className="poster-section">
         <div className="container mx-auto">
           {items.length === 0 ? (
-            <div className="text-center py-12">
+            <div className="text-center py-12 animate-fade-in">
               <ShoppingBag className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
               <h2 className="headline-md mb-4">HANDLEKURVEN ER TOM</h2>
               <p className="text-muted-foreground mb-6">
                 Du har ikke lagt til noen deler i forespørselen ennå.
               </p>
-              <Link to="/deler" className="btn-retro">
+              <Link to="/deler" className="btn-enamel-blue">
                 <ArrowLeft className="w-5 h-5 mr-2" />
                 Bla i deler
               </Link>
@@ -151,18 +151,18 @@ const Foresporsel = () => {
           ) : (
             <div className="grid lg:grid-cols-2 gap-12">
               {/* Cart Items */}
-              <div>
+              <div className="animate-slide-in-left">
                 <h2 className="headline-md mb-6">VALGTE DELER ({items.length})</h2>
-                <div className="space-y-4">
+                <div className="space-y-4 stagger-children">
                   {items.map((item) => (
                     <div
                       key={item.part_id}
-                      className="flex items-center justify-between bg-card p-4 border-2 border-foreground"
+                      className="flex items-center justify-between border-chrome bg-card p-4 rounded-xl"
                     >
                       <span className="font-medium">{item.part_title}</span>
                       <button
                         onClick={() => removeItem(item.part_id)}
-                        className="p-2 text-accent hover:bg-accent hover:text-accent-foreground transition-colors"
+                        className="p-2 text-accent hover:bg-accent hover:text-accent-foreground rounded-lg transition-colors"
                         aria-label={`Fjern ${item.part_title}`}
                       >
                         <X className="w-5 h-5" />
@@ -173,9 +173,9 @@ const Foresporsel = () => {
               </div>
 
               {/* Contact Form */}
-              <div>
+              <div className="animate-slide-in-right">
                 <h2 className="headline-md mb-6">DINE OPPLYSNINGER</h2>
-                <form onSubmit={handleSubmit} className="space-y-4">
+                <form onSubmit={handleSubmit} className="border-chrome card-enamel bg-card p-6 space-y-4">
                   <div>
                     <label className="block font-display text-lg mb-2">
                       NAVN *
@@ -185,9 +185,9 @@ const Foresporsel = () => {
                       name="customer_name"
                       value={formData.customer_name}
                       onChange={handleChange}
-                      className={`w-full p-3 border-2 ${
-                        errors.customer_name ? "border-accent" : "border-foreground"
-                      } bg-card focus:outline-none focus:ring-2 focus:ring-primary`}
+                      className={`w-full p-3 border-2 rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary transition-all ${
+                        errors.customer_name ? "border-accent" : "border-border"
+                      }`}
                       required
                     />
                     {errors.customer_name && (
@@ -204,9 +204,9 @@ const Foresporsel = () => {
                       name="email"
                       value={formData.email}
                       onChange={handleChange}
-                      className={`w-full p-3 border-2 ${
-                        errors.email ? "border-accent" : "border-foreground"
-                      } bg-card focus:outline-none focus:ring-2 focus:ring-primary`}
+                      className={`w-full p-3 border-2 rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary transition-all ${
+                        errors.email ? "border-accent" : "border-border"
+                      }`}
                       required
                     />
                     {errors.email && (
@@ -223,7 +223,7 @@ const Foresporsel = () => {
                       name="phone"
                       value={formData.phone}
                       onChange={handleChange}
-                      className="w-full p-3 border-2 border-foreground bg-card focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="w-full p-3 border-2 border-border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary transition-all"
                     />
                   </div>
 
@@ -238,7 +238,7 @@ const Foresporsel = () => {
                         value={formData.car_model}
                         onChange={handleChange}
                         placeholder="f.eks. 1000 Rallye"
-                        className="w-full p-3 border-2 border-foreground bg-card focus:outline-none focus:ring-2 focus:ring-primary"
+                        className="w-full p-3 border-2 border-border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary transition-all"
                       />
                     </div>
                     <div>
@@ -253,7 +253,7 @@ const Foresporsel = () => {
                         placeholder="f.eks. 1972"
                         min="1900"
                         max={new Date().getFullYear() + 1}
-                        className="w-full p-3 border-2 border-foreground bg-card focus:outline-none focus:ring-2 focus:ring-primary"
+                        className="w-full p-3 border-2 border-border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary transition-all"
                       />
                     </div>
                   </div>
@@ -268,14 +268,14 @@ const Foresporsel = () => {
                       onChange={handleChange}
                       rows={4}
                       placeholder="Eventuelle spørsmål eller tilleggsinformasjon..."
-                      className="w-full p-3 border-2 border-foreground bg-card focus:outline-none focus:ring-2 focus:ring-primary resize-none"
+                      className="w-full p-3 border-2 border-border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary transition-all resize-none"
                     />
                   </div>
 
                   <button
                     type="submit"
                     disabled={isSubmitting || items.length === 0}
-                    className="btn-retro w-full disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="btn-enamel-red w-full disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isSubmitting ? (
                       "Sender..."

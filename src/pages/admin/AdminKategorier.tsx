@@ -122,13 +122,13 @@ const AdminKategorier = () => {
 
   return (
     <AdminLayout title="KATEGORIER">
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex justify-between items-center mb-6 animate-fade-in">
         <p className="text-muted-foreground">
           {categories.length} kategori{categories.length !== 1 ? "er" : ""} totalt
         </p>
         <button
           onClick={() => setShowForm(!showForm)}
-          className="btn-retro bg-primary"
+          className="btn-enamel-blue"
         >
           <Plus className="w-5 h-5 mr-2" />
           Ny kategori
@@ -136,93 +136,95 @@ const AdminKategorier = () => {
       </div>
 
       {showForm && (
-        <form onSubmit={handleSubmit} className="retro-card mb-6">
+        <div className="border-chrome card-enamel bg-card mb-6 p-6 animate-scale-in">
           <h3 className="font-display text-xl mb-4">
             {editingId ? "REDIGER KATEGORI" : "NY KATEGORI"}
           </h3>
-          <div className="grid md:grid-cols-3 gap-4 mb-4">
-            <div>
-              <label className="block font-display mb-2">NAVN</label>
-              <input
-                type="text"
-                value={formData.name}
-                onChange={(e) =>
-                  setFormData({ ...formData, name: e.target.value })
-                }
-                className="w-full p-3 border-2 border-foreground"
-                required
-              />
+          <form onSubmit={handleSubmit}>
+            <div className="grid md:grid-cols-3 gap-4 mb-4">
+              <div>
+                <label className="block font-display mb-2">NAVN</label>
+                <input
+                  type="text"
+                  value={formData.name}
+                  onChange={(e) =>
+                    setFormData({ ...formData, name: e.target.value })
+                  }
+                  className="w-full p-3 border-2 border-border rounded-lg bg-background focus:border-primary focus:outline-none transition-colors"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block font-display mb-2">SLUG (valgfritt)</label>
+                <input
+                  type="text"
+                  value={formData.slug}
+                  onChange={(e) =>
+                    setFormData({ ...formData, slug: e.target.value })
+                  }
+                  placeholder={generateSlug(formData.name) || "auto-generert"}
+                  className="w-full p-3 border-2 border-border rounded-lg bg-background focus:border-primary focus:outline-none transition-colors"
+                />
+              </div>
+              <div>
+                <label className="block font-display mb-2">HOVEDKATEGORI</label>
+                <select
+                  value={formData.parent_id}
+                  onChange={(e) =>
+                    setFormData({ ...formData, parent_id: e.target.value })
+                  }
+                  className="w-full p-3 border-2 border-border rounded-lg bg-background focus:border-primary focus:outline-none transition-colors"
+                >
+                  <option value="">Ingen (er hovedkategori)</option>
+                  {parentCategories
+                    .filter((c) => c.id !== editingId)
+                    .map((cat) => (
+                      <option key={cat.id} value={cat.id}>
+                        {cat.name}
+                      </option>
+                    ))}
+                </select>
+              </div>
             </div>
-            <div>
-              <label className="block font-display mb-2">SLUG (valgfritt)</label>
-              <input
-                type="text"
-                value={formData.slug}
-                onChange={(e) =>
-                  setFormData({ ...formData, slug: e.target.value })
-                }
-                placeholder={generateSlug(formData.name) || "auto-generert"}
-                className="w-full p-3 border-2 border-foreground"
-              />
-            </div>
-            <div>
-              <label className="block font-display mb-2">HOVEDKATEGORI</label>
-              <select
-                value={formData.parent_id}
-                onChange={(e) =>
-                  setFormData({ ...formData, parent_id: e.target.value })
-                }
-                className="w-full p-3 border-2 border-foreground bg-card"
+            <div className="flex gap-4">
+              <button type="submit" className="btn-enamel-red">
+                {editingId ? "Oppdater" : "Opprett"}
+              </button>
+              <button
+                type="button"
+                onClick={resetForm}
+                className="px-6 py-3 font-display bg-muted hover:bg-muted/80 rounded-lg transition-colors"
               >
-                <option value="">Ingen (er hovedkategori)</option>
-                {parentCategories
-                  .filter((c) => c.id !== editingId)
-                  .map((cat) => (
-                    <option key={cat.id} value={cat.id}>
-                      {cat.name}
-                    </option>
-                  ))}
-              </select>
+                Avbryt
+              </button>
             </div>
-          </div>
-          <div className="flex gap-4">
-            <button type="submit" className="btn-retro">
-              {editingId ? "Oppdater" : "Opprett"}
-            </button>
-            <button
-              type="button"
-              onClick={resetForm}
-              className="btn-retro bg-muted text-foreground"
-            >
-              Avbryt
-            </button>
-          </div>
-        </form>
+          </form>
+        </div>
       )}
 
       {isLoading ? (
-        <div className="text-center py-12">Laster...</div>
+        <div className="text-center py-12 text-muted-foreground">Laster...</div>
       ) : categories.length === 0 ? (
-        <div className="retro-card text-center py-12">
+        <div className="border-chrome card-enamel bg-card text-center py-12 animate-fade-in">
           <FolderTree className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
           <p className="text-muted-foreground">Ingen kategorier ennå</p>
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-4 stagger-children">
           {parentCategories.map((parent) => (
-            <div key={parent.id} className="retro-card">
+            <div key={parent.id} className="border-chrome card-enamel bg-card p-6 card-hover-glow">
               <div className="flex items-center justify-between mb-2">
                 <h3 className="font-display text-xl">{parent.name}</h3>
                 <div className="flex gap-2">
                   <button
                     onClick={() => startEdit(parent)}
-                    className="p-2 hover:bg-muted rounded"
+                    className="p-2 hover:bg-primary/10 rounded-lg transition-colors"
                   >
                     <Pencil className="w-5 h-5 text-primary" />
                   </button>
                   <button
                     onClick={() => deleteCategory(parent.id)}
-                    className="p-2 hover:bg-muted rounded"
+                    className="p-2 hover:bg-accent/10 rounded-lg transition-colors"
                   >
                     <Trash2 className="w-5 h-5 text-accent" />
                   </button>
@@ -231,11 +233,11 @@ const AdminKategorier = () => {
               <p className="text-sm text-muted-foreground mb-3">/{parent.slug}</p>
 
               {getChildren(parent.id).length > 0 && (
-                <div className="pl-4 border-l-2 border-border space-y-2">
+                <div className="pl-4 border-l-2 border-primary/30 space-y-2">
                   {getChildren(parent.id).map((child) => (
                     <div
                       key={child.id}
-                      className="flex items-center justify-between py-2"
+                      className="flex items-center justify-between py-2 hover:bg-muted/50 px-3 rounded-lg transition-colors"
                     >
                       <div>
                         <span className="font-medium">{child.name}</span>
@@ -246,13 +248,13 @@ const AdminKategorier = () => {
                       <div className="flex gap-2">
                         <button
                           onClick={() => startEdit(child)}
-                          className="p-1 hover:bg-muted rounded"
+                          className="p-1 hover:bg-primary/10 rounded transition-colors"
                         >
                           <Pencil className="w-4 h-4 text-primary" />
                         </button>
                         <button
                           onClick={() => deleteCategory(child.id)}
-                          className="p-1 hover:bg-muted rounded"
+                          className="p-1 hover:bg-accent/10 rounded transition-colors"
                         >
                           <Trash2 className="w-4 h-4 text-accent" />
                         </button>
