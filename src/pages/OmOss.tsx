@@ -53,7 +53,7 @@ export default function OmOss() {
             
             {/* Intro */}
             <AnimatedSection>
-              <p className="font-serif text-xl md:text-2xl text-foreground/90 leading-relaxed mb-12">
+              <p className="font-serif text-2xl md:text-3xl text-foreground/90 leading-relaxed mb-12">
                 Simca Norge er opprettet fordi disse bilene nesten forsvant – og fordi noen mente de fortjente bedre.
               </p>
             </AnimatedSection>
@@ -70,11 +70,11 @@ export default function OmOss() {
                   </h2>
                 </div>
               </div>
-              <div className="prose prose-lg max-w-none">
-                <p className="text-foreground/80 leading-relaxed mb-4">
+              <div className="prose prose-xl max-w-none">
+                <p className="text-lg md:text-xl text-foreground/80 leading-relaxed mb-4">
                   Allerede i 2007 ble Facebook-gruppen Simca Norge etablert av noen få entusiaster. Gruppen har siden vært levende og aktiv, og har gjennom årene samlet over 1000 medlemmer. Her deles minner, bilder, teknisk kunnskap og entusiasme for et bilmerke som for mange har hatt en helt spesiell plass.
                 </p>
-                <p className="text-foreground/80 leading-relaxed">
+                <p className="text-lg md:text-xl text-foreground/80 leading-relaxed">
                   Samtidig har det lenge vært savnet noe mer.
                 </p>
               </div>
@@ -83,10 +83,10 @@ export default function OmOss() {
             {/* The Need */}
             <AnimatedSection className="mb-12">
               <div className="badge-frame bg-muted/30 p-8 md:p-10">
-                <p className="text-foreground/80 leading-relaxed mb-4">
+                <p className="text-lg md:text-xl text-foreground/80 leading-relaxed mb-4">
                   Facebook egner seg godt for dialog, men gir begrensede muligheter for å vise frem bilene slik de fortjener. Bilder forsvinner fort i strømmen, og det har manglet et sted der norske Simca-biler kan presenteres ordentlig, inspirere nye eiere – og vekke interessen hos dem som kanskje bare husker bilene fra barndommen.
                 </p>
-                <p className="font-display text-xl text-accent">
+                <p className="font-display text-2xl text-accent">
                   Denne nettsiden er laget for å fylle nettopp det rommet.
                 </p>
               </div>
@@ -104,7 +104,7 @@ export default function OmOss() {
                   </h2>
                 </div>
               </div>
-              <p className="text-foreground/80 leading-relaxed">
+              <p className="text-lg md:text-xl text-foreground/80 leading-relaxed">
                 Simca Norge skal være et visuelt og levende arkiv der bilene får plass, historiene kan bevares, og entusiasmen kan vokse. Her kan både ferdig restaurerte biler og pågående prosjekter vises frem – til inspirasjon for andre.
               </p>
             </AnimatedSection>
@@ -121,7 +121,7 @@ export default function OmOss() {
                   </h2>
                 </div>
               </div>
-              <p className="text-foreground/80 leading-relaxed">
+              <p className="text-lg md:text-xl text-foreground/80 leading-relaxed">
                 I takt med at flere biler nå restaureres, har også behovet for deler økt. Simca Norge har fått tilgang til et omfattende bildellager, som formidles gjennom denne siden. Målet er å gjøre det enklere for eiere å finne riktige deler, holde bilene på veien – og senke terskelen for å sette i gang med restaurering.
               </p>
             </AnimatedSection>
@@ -139,10 +139,10 @@ export default function OmOss() {
                 </div>
               </div>
               <div className="border-l-4 border-accent pl-6">
-                <p className="text-foreground/80 leading-relaxed mb-4">
+                <p className="text-lg md:text-xl text-foreground/80 leading-relaxed mb-4">
                   Simca Norge er ikke ment å erstatte fellesskapet på Facebook, men å utfylle det.
                 </p>
-                <p className="font-serif text-lg text-foreground/90 italic">
+                <p className="font-serif text-xl md:text-2xl text-foreground/90 italic">
                   Facebook er møteplassen. Denne siden er utstillingsrommet, verktøykassen og inspirasjonskilden.
                 </p>
               </div>
@@ -151,8 +151,8 @@ export default function OmOss() {
             {/* Closing */}
             <AnimatedSection>
               <div className="text-center py-10 border-t border-border">
-                <Heart className="w-10 h-10 text-accent mx-auto mb-6" />
-                <p className="font-serif text-lg md:text-xl text-foreground/80 leading-relaxed max-w-2xl mx-auto">
+                <Heart className="w-12 h-12 text-accent mx-auto mb-6" />
+                <p className="font-serif text-xl md:text-2xl text-foreground/80 leading-relaxed max-w-2xl mx-auto">
                   Alt drives av entusiasme, frivillig innsats og kjærlighet til et bilmerke som fortjener å bli sett – og brukt – også i dag.
                 </p>
               </div>
@@ -173,7 +173,7 @@ export default function OmOss() {
               Finn deler
             </Link>
             <a 
-              href="https://www.facebook.com/groups/simcanorge" 
+              href="https://www.facebook.com/groups/1569119639997670" 
               target="_blank" 
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 font-display text-lg uppercase tracking-wide text-foreground hover:text-accent transition-colors"
