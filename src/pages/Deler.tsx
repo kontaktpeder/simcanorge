@@ -230,10 +230,15 @@ const Deler = () => {
 
                         {/* Description */}
                         {part.description && (
-                          <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
+                          <p className="text-sm text-muted-foreground mb-2 line-clamp-2">
                             {part.description}
                           </p>
                         )}
+
+                        {/* Variant info */}
+                        <p className="text-xs text-muted-foreground italic mb-4">
+                          Vi kan ha flere varianter – spør oss!
+                        </p>
 
                         {/* Add to cart button */}
                         <button
