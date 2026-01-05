@@ -3,6 +3,7 @@ import { ArrowRight, Car, Star } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useInView } from "@/hooks/useInView";
 import simcaBadge from "@/assets/simca-badge.png";
 import simcaSwallow from "@/assets/simca-swallow.png";
 interface FeaturedCar {
@@ -19,6 +20,8 @@ interface FeaturedCar {
   }[];
 }
 export function HeroSection() {
+  const { ref: cardRef, isInView } = useInView();
+  
   const {
     data: featuredCar,
     isLoading
@@ -92,7 +95,10 @@ export function HeroSection() {
           </div>
 
           {/* Featured Car - Månedens bil */}
-          <div className="relative">
+          <div 
+            ref={cardRef}
+            className={`relative transition-all duration-700 ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+          >
             {isLoading ? <div className="badge-frame bg-white/10 backdrop-blur-sm p-6">
                 <Skeleton className="aspect-[4/3] w-full rounded-lg" />
                 <div className="mt-4">
