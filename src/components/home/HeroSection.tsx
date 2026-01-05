@@ -1,7 +1,56 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, Car } from "lucide-react";
+import { ArrowRight, Car, Star, Calendar } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { Skeleton } from "@/components/ui/skeleton";
+
+interface FeaturedCar {
+  id: string;
+  slug: string;
+  title: string;
+  model: string;
+  year: number | null;
+  story: string | null;
+  car_images: { image_url: string; alt_text: string | null; sort_order: number | null }[];
+}
 
 export function HeroSection() {
+  const { data: featuredCar, isLoading } = useQuery({
+    queryKey: ["featured-car-home"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("cars")
+        .select(`
+          id,
+          slug,
+          title,
+          model,
+          year,
+          story,
+          car_images (
+            image_url,
+            alt_text,
+            sort_order
+          )
+        `)
+        .eq("featured", true)
+        .not("published_at", "is", null)
+        .lte("published_at", new Date().toISOString())
+        .order("published_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (error) throw error;
+      return data as FeaturedCar | null;
+    },
+  });
+
+  const getMainImage = (car: FeaturedCar) => {
+    if (!car.car_images || car.car_images.length === 0) return null;
+    const sorted = [...car.car_images].sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
+    return sorted[0];
+  };
+
   return (
     <section className="poster-section poster-section-blue relative overflow-hidden">
       {/* Decorative stripes */}
@@ -36,26 +85,59 @@ export function HeroSection() {
             </div>
           </div>
 
-          {/* Featured Car Placeholder */}
+          {/* Featured Car - Månedens bil */}
           <div className="relative">
-            <div className="bg-card/10 backdrop-blur-sm rounded-lg p-8 border-4 border-primary-foreground/30">
-              <div className="aspect-[4/3] bg-primary-foreground/20 rounded flex items-center justify-center">
-                <div className="text-center">
-                  <Car className="w-24 h-24 mx-auto mb-4 opacity-50" />
-                  <p className="font-display text-2xl opacity-75">UKENS BIL</p>
-                  <p className="font-serif italic opacity-60">Kommer snart...</p>
+            {isLoading ? (
+              <div className="bg-card/10 backdrop-blur-sm rounded-lg p-8 border-4 border-primary-foreground/30">
+                <Skeleton className="aspect-[4/3] w-full rounded" />
+                <div className="mt-4">
+                  <Skeleton className="h-6 w-3/4 mx-auto" />
+                  <Skeleton className="h-4 w-1/2 mx-auto mt-2" />
                 </div>
               </div>
-              <div className="mt-4 text-center">
-                <p className="font-display text-xl">1967 SIMCA 1000</p>
-                <p className="font-serif italic opacity-80">En perle fra Poissy</p>
+            ) : featuredCar ? (
+              <Link 
+                to={`/biler/${featuredCar.slug}`}
+                className="block bg-card/10 backdrop-blur-sm rounded-lg p-4 border-4 border-primary-foreground/30 hover-lift transition-transform"
+              >
+                {getMainImage(featuredCar) ? (
+                  <img
+                    src={getMainImage(featuredCar)!.image_url}
+                    alt={getMainImage(featuredCar)!.alt_text || featuredCar.title}
+                    className="w-full aspect-[4/3] object-cover rounded"
+                  />
+                ) : (
+                  <div className="aspect-[4/3] bg-primary-foreground/20 rounded flex items-center justify-center">
+                    <Car className="w-24 h-24 opacity-50" />
+                  </div>
+                )}
+                <div className="mt-4 text-center">
+                  <p className="font-display text-xl">
+                    {featuredCar.year && `${featuredCar.year} `}{featuredCar.model.toUpperCase()}
+                  </p>
+                  <p className="font-serif italic opacity-80">{featuredCar.title}</p>
+                </div>
+              </Link>
+            ) : (
+              <div className="bg-card/10 backdrop-blur-sm rounded-lg p-8 border-4 border-primary-foreground/30">
+                <div className="aspect-[4/3] bg-primary-foreground/20 rounded flex items-center justify-center">
+                  <div className="text-center">
+                    <Car className="w-24 h-24 mx-auto mb-4 opacity-50" />
+                    <p className="font-display text-2xl opacity-75">MÅNEDENS BIL</p>
+                    <p className="font-serif italic opacity-60">Kommer snart...</p>
+                  </div>
+                </div>
               </div>
-            </div>
+            )}
             
             {/* Decorative badge */}
-            <div className="absolute -top-4 -right-4 bg-accent text-accent-foreground px-4 py-2 font-display text-lg rotate-12 border-2 border-foreground">
-              FEATURED
-            </div>
+            <Link
+              to="/manedens-bil"
+              className="absolute -top-4 -right-4 bg-accent text-accent-foreground px-4 py-2 font-display text-lg rotate-12 border-2 border-foreground flex items-center gap-2 hover:scale-105 transition-transform"
+            >
+              <Star className="w-4 h-4 fill-current" />
+              MÅNEDENS BIL
+            </Link>
           </div>
         </div>
       </div>
