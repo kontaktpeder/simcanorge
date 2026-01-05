@@ -169,6 +169,30 @@
     border-radius: 18px;
   }
 
+  /* Badge-inspired frame with rounded corners like Simca logo */
+  .badge-frame {
+    border: 4px solid transparent;
+    background:
+      linear-gradient(transparent, transparent) padding-box,
+      linear-gradient(180deg, #FFD700 0%, #DAA520 20%, #B8860B 50%, #DAA520 80%, #FFD700 100%) border-box;
+    border-radius: 24px;
+    box-shadow:
+      inset 0 2px 10px rgba(255,255,255,0.15),
+      inset 0 -12px 25px rgba(0,0,0,0.15),
+      0 12px 35px rgba(0,0,0,0.25),
+      0 0 0 2px rgba(0,0,0,0.3);
+    position: relative;
+  }
+
+  .badge-frame::before {
+    content: '';
+    position: absolute;
+    inset: 3px;
+    border: 1px solid rgba(255,215,0,0.3);
+    border-radius: 20px;
+    pointer-events: none;
+  }
+
   /* Enamel card effect with inner shadow and depth */
   .card-enamel {
     border-radius: 18px;
