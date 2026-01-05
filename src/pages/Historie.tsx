@@ -83,7 +83,7 @@ export default function Historie() {
                 </p>
               </TimelineItem>
 
-              <TimelineItem year="1970-tallet" title="Chrysler-perioden">
+              <TimelineItem year="1960-70-tallet" title="Chrysler-perioden">
                 <p>
                   Simca ble en del av Chrysler Europe. Merket fortsatte å produsere biler, men begynte gradvis å miste sin egenart.
                 </p>
