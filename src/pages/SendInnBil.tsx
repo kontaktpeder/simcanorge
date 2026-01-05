@@ -1,14 +1,14 @@
 import { useState, useRef } from "react";
 import { Layout } from "@/components/layout/Layout";
+import { PageHeader } from "@/components/layout/PageHeader";
 import { useInView } from "@/hooks/useInView";
-import { Car, Send, Camera, CheckCircle, X, Upload, ImagePlus } from "lucide-react";
+import { Car, Send, Camera, CheckCircle, X, ImagePlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import simcaSwallow from "@/assets/simca-swallow.png";
 import { z } from "zod";
 const submissionSchema = z.object({
   owner_name: z.string().trim().min(2, "Navn må være minst 2 tegn").max(100, "Navn kan ikke være mer enn 100 tegn"),
@@ -214,39 +214,14 @@ export default function SendInnBil() {
       </Layout>;
   }
   return <Layout>
-      {/* Hero with badge-inspired design */}
-      <section className="relative overflow-hidden">
-        {/* Blue section (top of badge) */}
-        <div className="bg-gradient-to-b from-[#2B7BD4] via-[#1F66B5] to-[#0F3E7A] py-16 md:py-20 relative">
-          <div className="absolute inset-0 stripes-diagonal opacity-20" />
-          <div className="absolute inset-0 pointer-events-none" style={{
-          backgroundImage: `url(${simcaSwallow})`,
-          backgroundRepeat: 'no-repeat',
-          backgroundPosition: '80% 50%',
-          backgroundSize: '350px',
-          opacity: 0.15,
-          transform: 'rotate(-8deg)'
-        }} />
-          
-          <div className="container mx-auto px-4 relative z-10">
-            <div className="max-w-2xl">
-              <h1 className="font-display text-4xl md:text-5xl lg:text-6xl text-white mb-4 drop-shadow-lg">
-                SEND INN DIN BIL
-              </h1>
-              <p className="font-serif text-xl md:text-2xl text-white/90 italic">
-                Har du en Simca, Talbot eller Matra? Del historien din med oss, og få den ut på siden!      
-              </p>
-            </div>
-          </div>
-        </div>
+      <PageHeader 
+        title="SEND INN DIN BIL" 
+        subtitle="Har du en Simca, Talbot eller Matra? Del historien din med oss!" 
+      />
 
-        {/* Chrome divider */}
-        <div className="h-2 bg-gradient-to-r from-[#5B6472] via-[#F2F4F7] to-[#5B6472] shadow-md" />
-
-        {/* Red section (bottom of badge) - Form area */}
-        <div className="bg-gradient-to-b from-[#D41515] via-[#C10D0D] to-[#9A0A0A] py-16 md:py-20 relative">
-          <div className="absolute inset-0 stripes-diagonal opacity-10" />
-          
+      {/* Form Section */}
+      <section className="poster-section">
+        
           <div className="container mx-auto px-4 relative z-10">
             <div className="max-w-2xl mx-auto">
               <AnimatedSection>
@@ -383,7 +358,6 @@ export default function SendInnBil() {
               </AnimatedSection>
             </div>
           </div>
-        </div>
       </section>
     </Layout>;
 }

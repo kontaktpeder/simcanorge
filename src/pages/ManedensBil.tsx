@@ -1,4 +1,5 @@
 import { Layout } from "@/components/layout/Layout";
+import { PageHeader } from "@/components/layout/PageHeader";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Link } from "react-router-dom";
@@ -83,17 +84,10 @@ const ManedensBil = () => {
     return sorted[0];
   };
   return <Layout>
-      {/* Hero Section */}
-      <section className="bg-primary text-primary-foreground py-16">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <Star className="w-8 h-8 text-accent fill-accent" />
-            <h1 className="headline-lg text-center">Månedens Bil</h1>
-            <Star className="w-8 h-8 text-accent fill-accent" />
-          </div>
-          <p className="font-serif text-center max-w-2xl mx-auto opacity-90 text-lg">Hver måned løfter vi frem én bil fra vårt fellesskap – med sin unike historie og sjarm. Bilene som legges ut her bidrar til en spesiell inspirasjon og glede.</p>
-        </div>
-      </section>
+      <PageHeader 
+        title="MÅNEDENS BIL" 
+        subtitle="Hver måned løfter vi frem én bil fra vårt fellesskap – med sin unike historie og sjarm" 
+      />
 
       {/* Featured Car */}
       <section className="py-16">

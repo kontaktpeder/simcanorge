@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
+import { PageHeader } from "@/components/layout/PageHeader";
 import { supabase } from "@/integrations/supabase/client";
 import { useCart } from "@/hooks/useCart";
 import { Plus, Check, Wrench, ChevronRight, Briefcase } from "lucide-react";
@@ -73,16 +74,10 @@ const Deler = () => {
 
   return (
     <Layout>
-      {/* Hero */}
-      <section className="poster-section poster-section-blue">
-        <div className="container mx-auto text-center">
-          <h1 className="headline-lg mb-4">DELER</h1>
-          <p className="text-xl opacity-90 max-w-2xl mx-auto">
-            Bla gjennom vårt utvalg av deler til Simca-modeller. 
-            Legg delene du er interessert i verktøykassen, så sjekker pappa hylla! 🔧
-          </p>
-        </div>
-      </section>
+      <PageHeader 
+        title="DELER" 
+        subtitle="Bla gjennom vårt utvalg av deler til Simca-modeller – legg dem i verktøykassen så sjekker vi hylla! 🔧" 
+      />
 
       {/* Toolbox Banner */}
       {itemCount > 0 && (

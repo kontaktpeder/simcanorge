@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
+import { PageHeader } from "@/components/layout/PageHeader";
 import { useCart } from "@/hooks/useCart";
 import { supabase } from "@/integrations/supabase/client";
 import { X, Send, ArrowLeft, Check } from "lucide-react";
@@ -126,14 +127,10 @@ const Foresporsel = () => {
 
   return (
     <Layout>
-      <section className="poster-section poster-section-blue">
-        <div className="container mx-auto">
-          <h1 className="headline-lg text-center mb-4">MIN VERKTØYKASSE</h1>
-          <p className="text-xl text-center opacity-90 max-w-2xl mx-auto">
-            Se over delene du har samlet og send inn forespørselen din.
-          </p>
-        </div>
-      </section>
+      <PageHeader 
+        title="MIN VERKTØYKASSE" 
+        subtitle="Se over delene du har samlet og send inn forespørselen din" 
+      />
 
       <section className="poster-section">
         <div className="container mx-auto">
