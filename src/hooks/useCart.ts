@@ -7,25 +7,36 @@ export interface CartItem {
 
 const CART_KEY = "simca-inquiry-cart";
 
-export function useCart() {
-  const [items, setItems] = useState<CartItem[]>([]);
-
-  // Load cart from localStorage on mount
-  useEffect(() => {
-    const stored = localStorage.getItem(CART_KEY);
-    if (stored) {
-      try {
-        setItems(JSON.parse(stored));
-      } catch (e) {
-        console.error("Failed to parse cart from localStorage:", e);
-      }
+// Helper to get initial cart from localStorage
+function getInitialCart(): CartItem[] {
+  if (typeof window === "undefined") return [];
+  const stored = localStorage.getItem(CART_KEY);
+  if (stored) {
+    try {
+      return JSON.parse(stored);
+    } catch (e) {
+      console.error("Failed to parse cart from localStorage:", e);
+      return [];
     }
+  }
+  return [];
+}
+
+export function useCart() {
+  const [items, setItems] = useState<CartItem[]>(getInitialCart);
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  // Mark as initialized after first render
+  useEffect(() => {
+    setIsInitialized(true);
   }, []);
 
-  // Save cart to localStorage whenever it changes
+  // Save cart to localStorage only after initialization
   useEffect(() => {
-    localStorage.setItem(CART_KEY, JSON.stringify(items));
-  }, [items]);
+    if (isInitialized) {
+      localStorage.setItem(CART_KEY, JSON.stringify(items));
+    }
+  }, [items, isInitialized]);
 
   const addItem = useCallback((item: CartItem) => {
     setItems((prev) => {
