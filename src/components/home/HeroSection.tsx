@@ -122,18 +122,16 @@ export function HeroSection() {
               >
                 {/* Checkered flag background with wave animation */}
                 <div 
-                  className={`absolute inset-0 pointer-events-none checkered-flag-wave ${isInView ? 'animate-flag-fade-in' : 'opacity-0'}`}
+                  className={`absolute inset-0 pointer-events-none checkered-flag-wave z-[1] ${isInView ? 'animate-flag-fade-in' : 'opacity-0'}`}
                   style={{
                     backgroundImage: `url(${checkeredFlag})`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    opacity: 0.22,
-                    transform: 'rotate(-8deg) scale(1.3)',
-                    filter: 'blur(1px)',
+                    backgroundSize: '150%',
+                    backgroundPosition: 'top left',
+                    backgroundRepeat: 'no-repeat',
                   }}
                 />
-                {/* Gradient vignette overlay */}
-                <div className="absolute inset-0 pointer-events-none bg-gradient-to-br from-black/40 via-transparent to-black/60 z-[1]" />
+                {/* Gradient vignette overlay - lower z-index than flag */}
+                <div className="absolute inset-0 pointer-events-none bg-gradient-to-br from-black/30 via-transparent to-black/40 z-0" />
                 
                 {/* Car image with finish line glow */}
                 {getMainImage(featuredCar) ? (
@@ -169,9 +167,6 @@ export function HeroSection() {
                     backgroundImage: `url(${checkeredFlag})`,
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
-                    opacity: 0.12,
-                    transform: 'rotate(-8deg) scale(1.3)',
-                    filter: 'blur(1.5px)',
                   }}
                 />
                 <div className="absolute inset-0 pointer-events-none bg-gradient-to-br from-black/50 via-transparent to-black/60 z-[1]" />
@@ -189,9 +184,9 @@ export function HeroSection() {
             {/* Decorative badge - enhanced emblem style */}
             <Link 
               to="/manedens-bil" 
-              className="absolute -top-5 -right-5 manedens-bil-badge px-5 py-2.5 font-display text-lg rotate-12 flex items-center gap-2 hover:scale-110 transition-transform z-10"
+              className="absolute -top-3 -right-3 manedens-bil-badge px-4 py-2 font-display text-sm rotate-12 flex items-center gap-1.5 hover:scale-110 transition-transform z-20"
             >
-              <Star className="w-5 h-5 fill-current" />
+              <Star className="w-4 h-4 fill-current" />
               MÅNEDENS BIL
             </Link>
           </div>
