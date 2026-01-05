@@ -579,4 +579,22 @@
       max-height: 1000px;
     }
   }
+
+  /* Accessibility: if user prefers reduced motion, never hide content */
+  @media (prefers-reduced-motion: reduce) {
+    .animate-fade-in,
+    .animate-fade-in-delay-1,
+    .animate-fade-in-delay-2,
+    .animate-fade-in-delay-3,
+    .animate-slide-in-left,
+    .animate-slide-in-right,
+    .animate-scale-in,
+    .animate-accordion,
+    .stagger-children > * {
+      animation: none !important;
+      opacity: 1 !important;
+      transform: none !important;
+      max-height: none !important;
+    }
+  }
 }
