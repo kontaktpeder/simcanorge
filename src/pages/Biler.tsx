@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
+import { PageHeader } from "@/components/layout/PageHeader";
 import { supabase } from "@/integrations/supabase/client";
 import { Car, Filter, X, Search, History, CheckCircle, Wrench, AlertTriangle } from "lucide-react";
 
@@ -154,16 +155,10 @@ const Biler = () => {
 
   return (
     <Layout>
-      {/* Hero */}
-      <section className="poster-section poster-section-blue">
-        <div className="container mx-auto text-center">
-          <h1 className="headline-lg mb-4">BILER</h1>
-          <p className="text-xl opacity-90 max-w-2xl mx-auto">
-            Utforsk samlingen av Simca-biler i Norge. 
-            Fra registrerte klassikere til historiske perler.
-          </p>
-        </div>
-      </section>
+      <PageHeader 
+        title="BILER" 
+        subtitle="Utforsk samlingen av Simca-biler i Norge – fra registrerte klassikere til historiske perler" 
+      />
 
       {/* Category Tabs */}
       <section className="bg-gradient-to-b from-card to-muted/30 py-8 border-b-4 border-foreground">

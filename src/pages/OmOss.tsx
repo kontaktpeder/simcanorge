@@ -1,8 +1,8 @@
 import { Layout } from "@/components/layout/Layout";
+import { PageHeader } from "@/components/layout/PageHeader";
 import { useInView } from "@/hooks/useInView";
 import { Facebook, Heart, Users, Car, Wrench } from "lucide-react";
 import { Link } from "react-router-dom";
-import simcaSwallow from "@/assets/simca-swallow.png";
 
 function AnimatedSection({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   const { ref, isInView } = useInView();
@@ -19,32 +19,10 @@ function AnimatedSection({ children, className = "" }: { children: React.ReactNo
 export default function OmOss() {
   return (
     <Layout>
-      {/* Hero Section */}
-      <section className="poster-section poster-section-blue relative overflow-hidden py-20 md:py-28">
-        <div className="absolute inset-0 stripes-diagonal" />
-        <div 
-          className="absolute inset-0 pointer-events-none" 
-          style={{
-            backgroundImage: `url(${simcaSwallow})`,
-            backgroundRepeat: 'no-repeat',
-            backgroundPosition: '85% 50%',
-            backgroundSize: '500px',
-            opacity: 0.08,
-            transform: 'rotate(-8deg)'
-          }} 
-        />
-        
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="max-w-3xl">
-            <h1 className="font-display text-5xl md:text-6xl lg:text-7xl text-white mb-6">
-              OM OSS
-            </h1>
-            <p className="font-serif text-xl md:text-2xl text-white/90 italic">
-              Fordi disse bilene fortjente bedre
-            </p>
-          </div>
-        </div>
-      </section>
+      <PageHeader 
+        title="OM OSS" 
+        subtitle="Fordi disse bilene fortjente bedre" 
+      />
 
       {/* Main Content */}
       <section className="py-16 md:py-24 bg-background">
