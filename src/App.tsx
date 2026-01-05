@@ -10,6 +10,7 @@ import Biler from "./pages/Biler";
 import BilDetalj from "./pages/BilDetalj";
 import Deler from "./pages/Deler";
 import Foresporsel from "./pages/Foresporsel";
+import OmOss from "./pages/OmOss";
 import AdminLogin from "./pages/admin/AdminLogin";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminBiler from "./pages/admin/AdminBiler";
@@ -34,6 +35,7 @@ const App = () => (
             <Route path="/biler/:slug" element={<BilDetalj />} />
             <Route path="/deler" element={<Deler />} />
             <Route path="/foresporsel" element={<Foresporsel />} />
+            <Route path="/om-oss" element={<OmOss />} />
             
             {/* Admin routes */}
             <Route path="/admin/login" element={<AdminLogin />} />
