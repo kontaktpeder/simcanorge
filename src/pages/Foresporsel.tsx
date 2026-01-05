@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { useCart } from "@/hooks/useCart";
 import { supabase } from "@/integrations/supabase/client";
-import { X, Send, ShoppingBag, ArrowLeft, Check } from "lucide-react";
+import { X, Send, Briefcase, ArrowLeft, Check } from "lucide-react";
 import { z } from "zod";
 import { toast } from "sonner";
 
@@ -45,7 +45,7 @@ const Foresporsel = () => {
     e.preventDefault();
 
     if (items.length === 0) {
-      toast.error("Du må legge til minst én del i forespørselen");
+      toast.error("Du må legge til minst én del i verktøykassen");
       return;
     }
 
@@ -127,9 +127,9 @@ const Foresporsel = () => {
     <Layout>
       <section className="poster-section poster-section-blue">
         <div className="container mx-auto">
-          <h1 className="headline-lg text-center mb-4">MIN FORESPØRSEL</h1>
+          <h1 className="headline-lg text-center mb-4">MIN VERKTØYKASSE</h1>
           <p className="text-xl text-center opacity-90 max-w-2xl mx-auto">
-            Se over delene du har valgt og send inn forespørselen din.
+            Se over delene du har samlet og send inn forespørselen din.
           </p>
         </div>
       </section>
@@ -138,10 +138,10 @@ const Foresporsel = () => {
         <div className="container mx-auto">
           {items.length === 0 ? (
             <div className="text-center py-12 animate-fade-in">
-              <ShoppingBag className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
-              <h2 className="headline-md mb-4">HANDLEKURVEN ER TOM</h2>
+              <Briefcase className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
+              <h2 className="headline-md mb-4">VERKTØYKASSEN ER TOM</h2>
               <p className="text-muted-foreground mb-6">
-                Du har ikke lagt til noen deler i forespørselen ennå.
+                Du har ikke lagt til noen deler i verktøykassen ennå.
               </p>
               <Link to="/deler" className="btn-enamel-blue">
                 <ArrowLeft className="w-5 h-5 mr-2" />
@@ -150,9 +150,9 @@ const Foresporsel = () => {
             </div>
           ) : (
             <div className="grid lg:grid-cols-2 gap-12">
-              {/* Cart Items */}
+              {/* Toolbox Items */}
               <div className="animate-slide-in-left">
-                <h2 className="headline-md mb-6">VALGTE DELER ({items.length})</h2>
+                <h2 className="headline-md mb-6">DELER I VERKTØYKASSEN ({items.length})</h2>
                 <div className="space-y-4 stagger-children">
                   {items.map((item) => (
                     <div

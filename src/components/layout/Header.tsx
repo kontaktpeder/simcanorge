@@ -68,13 +68,13 @@ export function Header() {
                 </Tooltip>
               ))}
 
-              {/* Cart Icon */}
+              {/* Toolbox Icon */}
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Link
                     to="/foresporsel"
                     className="relative p-2 hover:bg-muted/50 rounded-lg transition-colors ml-2"
-                    aria-label="Se forespørsel"
+                    aria-label="Min verktøykasse"
                   >
                     <Wrench className="w-6 h-6" />
                     {itemCount > 0 && (
@@ -85,18 +85,18 @@ export function Header() {
                   </Link>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>Se deler du har forespurt</p>
+                  <p>{itemCount > 0 ? `${itemCount} deler i verktøykassen` : "Min verktøykasse"}</p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
           </nav>
 
-          {/* Mobile: Cart + Menu */}
+          {/* Mobile: Toolbox + Menu */}
           <div className="lg:hidden flex items-center gap-2">
             <Link
               to="/foresporsel"
               className="relative p-2 hover:bg-muted/50 rounded-lg transition-colors"
-              aria-label="Se forespørsel"
+              aria-label="Min verktøykasse"
             >
               <Wrench className="w-6 h-6" />
               {itemCount > 0 && (
