@@ -130,8 +130,7 @@ export function HeroSection() {
                     backgroundRepeat: 'no-repeat',
                   }}
                 />
-                {/* Gradient vignette overlay - lower z-index than flag */}
-                <div className="absolute inset-0 pointer-events-none bg-gradient-to-br from-black/30 via-transparent to-black/40 z-0" />
+                {/* No overlay - flag shows clearly */}
                 
                 {/* Car image with finish line glow */}
                 {getMainImage(featuredCar) ? (
