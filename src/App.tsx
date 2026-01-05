@@ -5,6 +5,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import Index from "./pages/Index";
+import Biler from "./pages/Biler";
+import BilDetalj from "./pages/BilDetalj";
 import Deler from "./pages/Deler";
 import Foresporsel from "./pages/Foresporsel";
 import AdminLogin from "./pages/admin/AdminLogin";
@@ -26,6 +28,8 @@ const App = () => (
         <AuthProvider>
           <Routes>
             <Route path="/" element={<Index />} />
+            <Route path="/biler" element={<Biler />} />
+            <Route path="/biler/:slug" element={<BilDetalj />} />
             <Route path="/deler" element={<Deler />} />
             <Route path="/foresporsel" element={<Foresporsel />} />
             
