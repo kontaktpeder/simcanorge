@@ -127,18 +127,18 @@ export default function Historie() {
             </AnimatedSection>
 
             <AnimatedSection className="mt-12">
-              <div className="badge-frame bg-muted/30 p-8 md:p-10">
+              <div className="badge-frame bg-metal-blue p-8 md:p-10 rounded-xl text-white">
                 <div className="flex items-center gap-3 mb-4">
-                  <Calendar className="w-6 h-6 text-accent" />
-                  <span className="font-display text-xl text-accent">1996</span>
+                  <Calendar className="w-6 h-6 text-white/90" />
+                  <span className="font-display text-xl text-white">1996</span>
                 </div>
-                <p className="text-lg md:text-xl text-foreground/80 leading-relaxed mb-4">
+                <p className="text-lg md:text-xl text-white/90 leading-relaxed mb-4">
                   Vrakpanten i Norge ble kraftig økt for å få eldre og slitne biler ut av trafikken. For Simca og Talbot ble dette et avgjørende vendepunkt.
                 </p>
-                <p className="font-display text-xl text-foreground">
+                <p className="font-display text-xl text-white">
                   Det meste av det som fortsatt rullet, forsvant i løpet av kort tid.
                 </p>
-                <p className="text-foreground/70 mt-4 font-serif italic">
+                <p className="text-white/80 mt-4 font-serif italic">
                   Kun et lite antall biler ble reddet og satt bort – ofte i garasjer, låver og uthus.
                 </p>
               </div>
