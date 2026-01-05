@@ -77,7 +77,7 @@ export function Header() {
                     className="relative p-2 hover:bg-muted/50 rounded-lg transition-colors ml-2"
                     aria-label="Min verktøykasse"
                   >
-                    <img src={toolboxIcon} alt="Verktøykasse" className="w-8 h-8 object-contain" />
+                    <img src={toolboxIcon} alt="Verktøykasse" className="h-12 w-auto object-contain" />
                     {itemCount > 0 && (
                       <span className="absolute -top-1 -right-1 bg-accent text-accent-foreground w-5 h-5 rounded-full text-xs font-display flex items-center justify-center shadow-md">
                         {itemCount}
@@ -99,7 +99,7 @@ export function Header() {
               className="relative p-2 hover:bg-muted/50 rounded-lg transition-colors"
               aria-label="Min verktøykasse"
             >
-              <img src={toolboxIcon} alt="Verktøykasse" className="w-8 h-8 object-contain" />
+              <img src={toolboxIcon} alt="Verktøykasse" className="h-10 w-auto object-contain" />
               {itemCount > 0 && (
                 <span className="absolute -top-1 -right-1 bg-accent text-accent-foreground w-5 h-5 rounded-full text-xs font-display flex items-center justify-center shadow-md">
                   {itemCount}
