@@ -87,6 +87,15 @@ export default function Historie() {
                 </p>
               </TimelineItem>
 
+              <TimelineItem year="1969" title="Matra blir med">
+                <p>
+                  I 1969 ble Matra en del av Simca-historien. Matra var opprinnelig et fransk selskap innen luftfart og høyteknologi, men hadde også markert seg sterkt innen motorsport og bilutvikling.
+                </p>
+                <p className="mt-4">
+                  Samarbeidet mellom Matra og Simca førte til en rekke spesielle og nyskapende bilmodeller. Matra sto for konstruksjon og design, mens Simca leverte motorer og salgsapparat. Resultatet ble biler som skilte seg tydelig ut fra det øvrige Simca-programmet – både teknisk og visuelt.
+                </p>
+              </TimelineItem>
+
               <TimelineItem year="1978" title="Peugeot overtar">
                 <p>
                   Peugeot kjøpte Chrysler Europe. Under Peugeot ble Simca-navnet gradvis faset ut, og bilene ble i stedet solgt under navnet Talbot. Merkets særpreg ble svakere.
