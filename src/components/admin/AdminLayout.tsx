@@ -12,7 +12,8 @@ import {
   Home,
   Send,
 } from "lucide-react";
-import simcaLogo from "@/assets/simca-logo.png";
+import simcaBadgeLogo from "@/assets/simca-badge-logo.png";
+import simcaChromeSwallow from "@/assets/simca-chrome-swallow.png";
 
 interface AdminLayoutProps {
   children: ReactNode;
@@ -60,23 +61,24 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
     <div className="min-h-screen bg-muted flex">
       {/* Sidebar */}
       <aside className="w-64 bg-metal-blue text-white flex flex-col relative overflow-hidden">
-        {/* Subtle swallow watermark */}
+        {/* Chrome swallow watermark */}
         <div 
-          className="absolute inset-0 pointer-events-none opacity-5"
+          className="absolute inset-0 pointer-events-none"
           style={{
-            backgroundImage: `url(${simcaLogo})`,
+            backgroundImage: `url(${simcaChromeSwallow})`,
             backgroundRepeat: 'no-repeat',
-            backgroundPosition: 'center 80%',
-            backgroundSize: '180px',
+            backgroundPosition: 'center 75%',
+            backgroundSize: '200px',
+            opacity: 0.08,
+            transform: 'rotate(-15deg)',
           }}
         />
         
         <div className="p-6 border-b border-white/20 relative z-10">
           <Link to="/" className="flex items-center gap-3 group">
-            <img src={simcaLogo} alt="Simca Norge" className="h-10 w-auto transition-transform group-hover:scale-105" />
+            <img src={simcaBadgeLogo} alt="Simca Norge" className="h-14 w-auto transition-transform group-hover:scale-105 drop-shadow-lg" />
             <div>
-              <span className="font-display text-lg">SIMCA</span>
-              <span className="font-display text-lg ml-1 text-yellow-400">ADMIN</span>
+              <span className="font-display text-xl text-metal drop-shadow">ADMIN</span>
             </div>
           </Link>
         </div>
