@@ -41,9 +41,7 @@ export function Footer() {
                   Facebook-gruppen
                 </a>
               </div>
-              <p className="mt-2 md:mt-3 text-[10px] md:text-sm text-white/70">
-                Pappa sjekker hylla hver dag! 🔧
-              </p>
+              
             </div>
           </div>
         </div>
