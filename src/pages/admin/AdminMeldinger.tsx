@@ -325,38 +325,42 @@ export default function AdminMeldinger() {
             {loadingMessages ? (
               <div className="text-center py-12">Laster...</div>
             ) : !messages?.length ? (
-              <Card>
-                <CardContent className="py-12 text-center text-muted-foreground">
-                  <MessageSquare className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                  <p>Ingen meldinger ennå</p>
-                </CardContent>
-              </Card>
+              <div className="bg-card border border-border rounded-xl py-12 text-center text-muted-foreground">
+                <MessageSquare className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                <p>Ingen meldinger ennå</p>
+              </div>
             ) : (
-              <div className="grid gap-4">
+              <div className="space-y-3">
                 {messages.map((msg) => (
-                  <Card
+                  <div
                     key={msg.id}
-                    className={`cursor-pointer hover:shadow-md transition-shadow ${!msg.read ? "border-accent border-2" : ""}`}
+                    className={`bg-card border rounded-xl p-3 cursor-pointer hover:shadow-md transition-shadow ${!msg.read ? "border-accent border-2" : "border-border"}`}
                     onClick={() => openMessage(msg)}
                   >
-                    <CardContent className="p-4">
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-1">
-                            {!msg.read && <span className="w-2 h-2 bg-accent rounded-full" />}
-                            <h3 className="font-display text-lg truncate">{msg.subject}</h3>
-                          </div>
-                          <p className="text-sm text-muted-foreground">
-                            Fra: {msg.name} • {format(new Date(msg.created_at), "d. MMM yyyy", { locale: nb })}
-                          </p>
-                          <p className="text-sm text-foreground/70 mt-2 line-clamp-2">{msg.message}</p>
-                        </div>
-                        <Button variant="ghost" size="icon">
-                          <Eye className="w-4 h-4" />
-                        </Button>
+                    <div className="flex gap-3">
+                      {/* Icon */}
+                      <div className="w-10 h-10 md:w-12 md:h-12 bg-muted rounded-lg flex items-center justify-center flex-shrink-0">
+                        <MessageSquare className="w-5 h-5 md:w-6 md:h-6 text-muted-foreground" />
                       </div>
-                    </CardContent>
-                  </Card>
+                      
+                      {/* Info */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="min-w-0">
+                            <div className="flex items-center gap-1.5">
+                              {!msg.read && <span className="w-2 h-2 bg-accent rounded-full flex-shrink-0" />}
+                              <span className="font-medium text-sm truncate block">{msg.subject}</span>
+                            </div>
+                            <p className="text-xs text-muted-foreground">
+                              {msg.name} · {format(new Date(msg.created_at), "d. MMM", { locale: nb })}
+                            </p>
+                          </div>
+                          <Eye className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                        </div>
+                        <p className="text-xs text-foreground/70 mt-1.5 line-clamp-1 md:line-clamp-2">{msg.message}</p>
+                      </div>
+                    </div>
+                  </div>
                 ))}
               </div>
             )}
@@ -367,43 +371,58 @@ export default function AdminMeldinger() {
             {loadingSubmissions ? (
               <div className="text-center py-12">Laster...</div>
             ) : !submissions?.length ? (
-              <Card>
-                <CardContent className="py-12 text-center text-muted-foreground">
-                  <Car className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                  <p>Ingen bil-innsendinger ennå</p>
-                </CardContent>
-              </Card>
+              <div className="bg-card border border-border rounded-xl py-12 text-center text-muted-foreground">
+                <Car className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                <p>Ingen bil-innsendinger ennå</p>
+              </div>
             ) : (
-              <div className="grid gap-4">
+              <div className="space-y-3">
                 {submissions.map((sub) => (
-                  <Card
+                  <div
                     key={sub.id}
-                    className={`cursor-pointer hover:shadow-md transition-shadow ${!sub.read ? "border-accent border-2" : ""}`}
+                    className={`bg-card border rounded-xl p-3 cursor-pointer hover:shadow-md transition-shadow ${!sub.read ? "border-accent border-2" : "border-border"}`}
                     onClick={() => openSubmission(sub)}
                   >
-                    <CardContent className="p-4">
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-1">
-                            {!sub.read && <span className="w-2 h-2 bg-accent rounded-full" />}
-                            <h3 className="font-display text-lg truncate">
-                              {sub.title || `${sub.car_year ? sub.car_year + " " : ""}${sub.car_model}`}
-                            </h3>
-                            <Badge className={statusColors[sub.status]}>{statusLabels[sub.status]}</Badge>
+                    <div className="flex gap-3">
+                      {/* Image */}
+                      <div className="w-16 h-16 bg-muted rounded-lg overflow-hidden flex-shrink-0">
+                        {sub.images?.[0] ? (
+                          <img
+                            src={sub.images[0]}
+                            alt={sub.car_model}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center">
+                            <Car className="w-6 h-6 text-muted-foreground" />
                           </div>
-                          <p className="text-sm text-muted-foreground">
-                            Fra: {sub.owner_name} • {format(new Date(sub.created_at), "d. MMM yyyy", { locale: nb })}
-                          </p>
-                          {sub.car_story && (
-                            <p className="text-sm text-foreground/70 mt-2 line-clamp-2">{sub.car_story}</p>
-                          )}
-                        </div>
-                        <Button variant="ghost" size="icon">
-                          <Eye className="w-4 h-4" />
-                        </Button>
+                        )}
                       </div>
-                    </CardContent>
-                  </Card>
+                      
+                      {/* Info */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="min-w-0">
+                            <div className="flex items-center gap-1.5">
+                              {!sub.read && <span className="w-2 h-2 bg-accent rounded-full flex-shrink-0" />}
+                              <span className="font-medium text-sm truncate block">
+                                {sub.title || `${sub.car_year ? sub.car_year + " " : ""}${sub.car_model}`}
+                              </span>
+                            </div>
+                            <p className="text-xs text-muted-foreground">
+                              {sub.owner_name} · {format(new Date(sub.created_at), "d. MMM", { locale: nb })}
+                            </p>
+                          </div>
+                          <span className={`text-[10px] px-1.5 py-0.5 rounded flex-shrink-0 text-white ${statusColors[sub.status]}`}>
+                            {statusLabels[sub.status]}
+                          </span>
+                        </div>
+                        {sub.car_story && (
+                          <p className="text-xs text-foreground/70 mt-1.5 line-clamp-1">{sub.car_story}</p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
                 ))}
               </div>
             )}
@@ -414,41 +433,45 @@ export default function AdminMeldinger() {
             {loadingInquiries ? (
               <div className="text-center py-12">Laster...</div>
             ) : !inquiries?.length ? (
-              <Card>
-                <CardContent className="py-12 text-center text-muted-foreground">
-                  <Inbox className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                  <p>Ingen forespørsler ennå</p>
-                </CardContent>
-              </Card>
+              <div className="bg-card border border-border rounded-xl py-12 text-center text-muted-foreground">
+                <Inbox className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                <p>Ingen forespørsler ennå</p>
+              </div>
             ) : (
-              <div className="grid gap-4">
+              <div className="space-y-3">
                 {inquiries.map((inq) => (
-                  <Card
+                  <div
                     key={inq.id}
-                    className={`cursor-pointer hover:shadow-md transition-shadow ${!inq.read ? "border-accent border-2" : ""}`}
+                    className={`bg-card border rounded-xl p-3 cursor-pointer hover:shadow-md transition-shadow ${!inq.read ? "border-accent border-2" : "border-border"}`}
                     onClick={() => openInquiry(inq)}
                   >
-                    <CardContent className="p-4">
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-1">
-                            {!inq.read && <span className="w-2 h-2 bg-accent rounded-full" />}
-                            <h3 className="font-display text-lg truncate">{inq.customer_name}</h3>
-                          </div>
-                          <p className="text-sm text-muted-foreground">
-                            {format(new Date(inq.created_at), "d. MMM yyyy", { locale: nb })}
-                            {inq.inquiry_items?.length > 0 && ` • ${inq.inquiry_items.length} del(er)`}
-                          </p>
-                          {inq.message && (
-                            <p className="text-sm text-foreground/70 mt-2 line-clamp-2">{inq.message}</p>
-                          )}
-                        </div>
-                        <Button variant="ghost" size="icon">
-                          <Eye className="w-4 h-4" />
-                        </Button>
+                    <div className="flex gap-3">
+                      {/* Icon */}
+                      <div className="w-10 h-10 md:w-12 md:h-12 bg-muted rounded-lg flex items-center justify-center flex-shrink-0">
+                        <Inbox className="w-5 h-5 md:w-6 md:h-6 text-muted-foreground" />
                       </div>
-                    </CardContent>
-                  </Card>
+                      
+                      {/* Info */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="min-w-0">
+                            <div className="flex items-center gap-1.5">
+                              {!inq.read && <span className="w-2 h-2 bg-accent rounded-full flex-shrink-0" />}
+                              <span className="font-medium text-sm truncate block">{inq.customer_name}</span>
+                            </div>
+                            <p className="text-xs text-muted-foreground">
+                              {format(new Date(inq.created_at), "d. MMM", { locale: nb })}
+                              {inq.inquiry_items?.length > 0 && ` · ${inq.inquiry_items.length} del(er)`}
+                            </p>
+                          </div>
+                          <Eye className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                        </div>
+                        {inq.message && (
+                          <p className="text-xs text-foreground/70 mt-1.5 line-clamp-1">{inq.message}</p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
                 ))}
               </div>
             )}
