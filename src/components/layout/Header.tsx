@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { useCart } from "@/hooks/useCart";
@@ -22,38 +22,39 @@ const navItems = [
   { href: "/om-oss", label: "Om oss", description: "Hvem står bak Simca Norge" },
 ];
 
+const LEAVE_HOME_ANIM_KEY = "simca_leave_home_anim";
+
 export function Header() {
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isSpeedBoost, setIsSpeedBoost] = useState(false);
   const [isDrivingToGarage, setIsDrivingToGarage] = useState(false);
-  const prevPathRef = useRef<string>(location.pathname);
   const { itemCount } = useCart();
 
   const isHome = location.pathname === "/";
 
-  // Handle navigation - animate ONLY when leaving home
+  // Trigger drive-to-garage ONLY when we left home via a click (Header remounts between routes)
   useEffect(() => {
-    const prevPath = prevPathRef.current;
-    const currentPath = location.pathname;
-
-    if (prevPath === currentPath) return;
-
-    // Leaving home -> animate car driving to garage
-    if (prevPath === "/" && currentPath !== "/") {
-      setIsDrivingToGarage(true);
-      
-      const timer = setTimeout(() => {
-        setIsDrivingToGarage(false);
-      }, 900);
-
-      prevPathRef.current = currentPath;
-      return () => clearTimeout(timer);
+    if (isHome) {
+      setIsDrivingToGarage(false);
+      return;
     }
 
-    // All other navigations - just update ref
-    prevPathRef.current = currentPath;
-  }, [location.pathname]);
+    const shouldAnimate = sessionStorage.getItem(LEAVE_HOME_ANIM_KEY) === "1";
+    if (!shouldAnimate) return;
+
+    sessionStorage.removeItem(LEAVE_HOME_ANIM_KEY);
+    setIsDrivingToGarage(true);
+
+    const t = setTimeout(() => setIsDrivingToGarage(false), 900);
+    return () => clearTimeout(t);
+  }, [isHome]);
+
+  const markLeavingHome = (to: string) => {
+    if (!isHome) return;
+    if (to === "/") return;
+    sessionStorage.setItem(LEAVE_HOME_ANIM_KEY, "1");
+  };
 
   const handleCarClick = () => {
     if (isSpeedBoost || !isHome) return;
@@ -106,14 +107,15 @@ export function Header() {
               {navItems.map((item) => (
                 <Tooltip key={item.href}>
                   <TooltipTrigger asChild>
-                    <Link
-                      to={item.href}
-                      className={`font-display text-lg uppercase tracking-wide transition-all hover:text-accent relative py-1 ${
-                        location.pathname === item.href
-                          ? "text-accent"
-                          : "text-foreground"
-                      }`}
-                    >
+                      <Link
+                        to={item.href}
+                        onClick={() => markLeavingHome(item.href)}
+                        className={`font-display text-lg uppercase tracking-wide transition-all hover:text-accent relative py-1 ${
+                          location.pathname === item.href
+                            ? "text-accent"
+                            : "text-foreground"
+                        }`}
+                      >
                       {item.label}
                       {location.pathname === item.href && (
                         <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-accent rounded-full" />
@@ -131,6 +133,7 @@ export function Header() {
                 <TooltipTrigger asChild>
                   <Link
                     to="/foresporsel"
+                    onClick={() => markLeavingHome("/foresporsel")}
                     className="relative p-2 hover:bg-muted/50 rounded-lg transition-colors ml-2"
                     aria-label="Min verktøykasse"
                   >
@@ -151,11 +154,12 @@ export function Header() {
 
           {/* Mobile: Toolbox + Menu */}
           <div className="lg:hidden flex items-center gap-2">
-            <Link
-              to="/foresporsel"
-              className="relative p-2 hover:bg-muted/50 rounded-lg transition-colors"
-              aria-label="Min verktøykasse"
-            >
+              <Link
+                to="/foresporsel"
+                onClick={() => markLeavingHome("/foresporsel")}
+                className="relative p-2 hover:bg-muted/50 rounded-lg transition-colors"
+                aria-label="Min verktøykasse"
+              >
               <img src={toolboxIcon} alt="Verktøykasse" className="h-10 w-auto object-contain" />
               {itemCount > 0 && (
                 <span className="absolute -top-1 -right-1 bg-accent text-accent-foreground w-5 h-5 rounded-full text-xs font-display flex items-center justify-center shadow-md">
@@ -185,7 +189,10 @@ export function Header() {
                 <Link
                   key={item.href}
                   to={item.href}
-                  onClick={() => setMobileMenuOpen(false)}
+                  onClick={() => {
+                    markLeavingHome(item.href);
+                    setMobileMenuOpen(false);
+                  }}
                   className={`font-display text-xl uppercase tracking-wide py-2 px-4 rounded-lg transition-all hover:bg-muted/50 ${
                     location.pathname === item.href
                       ? "text-accent bg-muted/30"
