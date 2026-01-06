@@ -35,11 +35,16 @@ export function Header() {
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isSpeedBoost, setIsSpeedBoost] = useState(false);
-  const [isDrivingToGarage, setIsDrivingToGarage] = useState(false);
   const [roadFading, setRoadFading] = useState(false);
   const { itemCount } = useCart();
 
   const isHome = location.pathname === "/";
+  
+  // Initialize isDrivingToGarage based on sessionStorage to prevent flash
+  const [isDrivingToGarage, setIsDrivingToGarage] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return !isHome && sessionStorage.getItem(LEAVE_HOME_ANIM_KEY) === "1";
+  });
 
   // Refs for JS-driven animation
   const carWrapRef = useRef<HTMLDivElement | null>(null);
