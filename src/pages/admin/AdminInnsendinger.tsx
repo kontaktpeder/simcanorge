@@ -35,6 +35,7 @@ const CATEGORY_LABELS: Record<string, string> = {
 interface CarSubmission {
   id: string;
   title: string | null;
+  brand: string | null;
   owner_name: string;
   email: string;
   phone: string | null;
@@ -77,6 +78,7 @@ export default function AdminInnsendinger() {
       state: {
         fromSubmission: {
           title: submission.title,
+          brand: submission.brand,
           model: submission.car_model,
           year: submission.car_year,
           category: submission.category,
@@ -246,13 +248,19 @@ export default function AdminInnsendinger() {
               <>
                 <DialogHeader>
                   <DialogTitle className="font-display text-2xl">
-                    {selectedSubmission.title || `${selectedSubmission.car_year ? selectedSubmission.car_year + ' ' : ''}${selectedSubmission.car_model}`}
+                    {selectedSubmission.title || `${selectedSubmission.brand ? selectedSubmission.brand + ' ' : ''}${selectedSubmission.car_model}${selectedSubmission.car_year ? ' ' + selectedSubmission.car_year : ''}`}
                   </DialogTitle>
                 </DialogHeader>
 
                 <div className="space-y-6">
                   {/* Car details */}
                   <div className="bg-muted/30 rounded-lg p-4 grid gap-2">
+                    {selectedSubmission.brand && (
+                      <div className="flex items-center gap-2">
+                        <span className="font-display">Merke:</span>
+                        <span>{selectedSubmission.brand}</span>
+                      </div>
+                    )}
                     <div className="flex items-center gap-2">
                       <span className="font-display">Modell:</span>
                       <span>{selectedSubmission.car_model}</span>

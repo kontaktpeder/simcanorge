@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useMemo } from "react";
 import { Layout } from "@/components/layout/Layout";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { AnimatedSection } from "@/components/layout/AnimatedSection";
@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { z } from "zod";
+import { CAR_BRANDS, getModelsForBrand, getYearsForModel, generateCarTitle } from "@/data/carBrands";
 
 const CATEGORIES = [
   { id: "registrert", label: "Registrerte biler" },
@@ -18,36 +19,20 @@ const CATEGORIES = [
   { id: "vrak", label: "Vrak" },
 ];
 
-const MODELS = [
-  "Aronde",
-  "Vedette", 
-  "1000",
-  "1000 Rallye",
-  "1100",
-  "1200",
-  "1300",
-  "1301",
-  "1500",
-  "1501",
-  "Horizon",
-  "Annet",
-];
-
 const submissionSchema = z.object({
-  title: z.string().trim().min(2, "Tittel må være minst 2 tegn").max(200, "Tittel kan ikke være mer enn 200 tegn"),
+  brand: z.string().min(1, "Velg et merke"),
+  car_model: z.string().min(1, "Velg en modell"),
+  car_year: z.number().int().min(1900, "Ugyldig årstall").max(2000, "Ugyldig årstall").optional().nullable(),
   owner_name: z.string().trim().min(2, "Navn må være minst 2 tegn").max(100, "Navn kan ikke være mer enn 100 tegn"),
   email: z.string().trim().email("Ugyldig e-postadresse").max(255, "E-post kan ikke være mer enn 255 tegn"),
   phone: z.string().trim().max(20, "Telefonnummer kan ikke være mer enn 20 tegn").optional().or(z.literal("")),
-  car_model: z.string().trim().min(1, "Velg en modell"),
-  car_year: z.number().int().min(1934, "Året må være fra 1934 eller senere").max(1990, "Året må være før 1990").optional().nullable(),
   category: z.string().min(1, "Velg en kategori"),
   tags: z.string().max(500, "Tags kan ikke være mer enn 500 tegn").optional().or(z.literal("")),
   car_story: z.string().trim().max(5000, "Historien kan ikke være mer enn 5000 tegn").optional().or(z.literal(""))
 });
+
 export default function SendInnBil() {
-  const {
-    toast
-  } = useToast();
+  const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -56,7 +41,7 @@ export default function SendInnBil() {
   const [uploadProgress, setUploadProgress] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [formData, setFormData] = useState({
-    title: "",
+    brand: "",
     owner_name: "",
     email: "",
     phone: "",
@@ -66,6 +51,22 @@ export default function SendInnBil() {
     tags: "",
     car_story: ""
   });
+
+  // Get available models based on selected brand
+  const availableModels = useMemo(() => {
+    return getModelsForBrand(formData.brand);
+  }, [formData.brand]);
+
+  // Get available years based on selected brand and model
+  const availableYears = useMemo(() => {
+    return getYearsForModel(formData.brand, formData.car_model);
+  }, [formData.brand, formData.car_model]);
+
+  // Generated title preview
+  const generatedTitle = useMemo(() => {
+    if (!formData.brand || !formData.car_model) return "";
+    return generateCarTitle(formData.brand, formData.car_model, formData.car_year ? parseInt(formData.car_year) : null);
+  }, [formData.brand, formData.car_model, formData.car_year]);
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const {
       name,
@@ -182,10 +183,18 @@ export default function SendInnBil() {
         ? result.data.tags.split(",").map(t => t.trim()).filter(t => t.length > 0)
         : [];
 
+      // Generate title from brand, model and year
+      const generatedTitle = generateCarTitle(
+        result.data.brand,
+        result.data.car_model,
+        result.data.car_year
+      );
+
       const {
         error
       } = await supabase.from("car_submissions").insert({
-        title: result.data.title,
+        title: generatedTitle,
+        brand: result.data.brand,
         owner_name: result.data.owner_name,
         email: result.data.email,
         phone: result.data.phone || null,
@@ -265,12 +274,104 @@ export default function SendInnBil() {
                   {/* Form content */}
                   <div className="bg-card p-8 md:p-10">
                     <form onSubmit={handleSubmit} className="space-y-6">
-                      {/* Title */}
+                      {/* Brand, Model, Year - Cascading selects */}
+                      <div className="space-y-4 p-4 bg-muted/30 rounded-lg border-2 border-muted">
+                        <p className="text-sm text-muted-foreground font-medium">Velg merke, modell og årstall – dette blir bilens tittel på siden</p>
+                        
+                        <div className="grid md:grid-cols-3 gap-4">
+                          {/* Brand */}
+                          <div className="space-y-2">
+                            <Label htmlFor="brand" className="text-lg font-display">MERKE *</Label>
+                            <select 
+                              id="brand" 
+                              name="brand" 
+                              value={formData.brand} 
+                              onChange={(e) => setFormData(prev => ({ 
+                                ...prev, 
+                                brand: e.target.value, 
+                                car_model: "", 
+                                car_year: "" 
+                              }))}
+                              className={`w-full h-12 px-3 text-lg rounded-md border-2 bg-background ${errors.brand ? 'border-destructive' : 'border-muted'}`}
+                              required
+                            >
+                              <option value="">Velg merke...</option>
+                              {CAR_BRANDS.map((brand) => (
+                                <option key={brand.name} value={brand.name}>{brand.name}</option>
+                              ))}
+                            </select>
+                            {errors.brand && <p className="text-sm text-destructive">{errors.brand}</p>}
+                          </div>
+
+                          {/* Model */}
+                          <div className="space-y-2">
+                            <Label htmlFor="car_model" className="text-lg font-display">MODELL *</Label>
+                            <select 
+                              id="car_model" 
+                              name="car_model" 
+                              value={formData.car_model} 
+                              onChange={(e) => setFormData(prev => ({ 
+                                ...prev, 
+                                car_model: e.target.value, 
+                                car_year: "" 
+                              }))}
+                              className={`w-full h-12 px-3 text-lg rounded-md border-2 bg-background ${errors.car_model ? 'border-destructive' : 'border-muted'}`}
+                              required
+                              disabled={!formData.brand}
+                            >
+                              <option value="">Velg modell...</option>
+                              {availableModels.map((model) => (
+                                <option key={model.name} value={model.name}>{model.name}</option>
+                              ))}
+                            </select>
+                            {errors.car_model && <p className="text-sm text-destructive">{errors.car_model}</p>}
+                          </div>
+
+                          {/* Year */}
+                          <div className="space-y-2">
+                            <Label htmlFor="car_year" className="text-lg font-display">ÅRSTALL</Label>
+                            <select 
+                              id="car_year" 
+                              name="car_year" 
+                              value={formData.car_year} 
+                              onChange={(e) => setFormData(prev => ({ ...prev, car_year: e.target.value }))}
+                              className={`w-full h-12 px-3 text-lg rounded-md border-2 bg-background ${errors.car_year ? 'border-destructive' : 'border-muted'}`}
+                              disabled={!formData.car_model}
+                            >
+                              <option value="">Velg år...</option>
+                              {availableYears.map((year) => (
+                                <option key={year} value={year}>{year}</option>
+                              ))}
+                            </select>
+                            {errors.car_year && <p className="text-sm text-destructive">{errors.car_year}</p>}
+                          </div>
+                        </div>
+
+                        {/* Generated title preview */}
+                        {generatedTitle && (
+                          <div className="mt-2 p-3 bg-primary/10 rounded-md border border-primary/30">
+                            <p className="text-sm text-muted-foreground">Bilens tittel på siden blir:</p>
+                            <p className="text-lg font-display text-primary">{generatedTitle}</p>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Category */}
                       <div className="space-y-2">
-                        <Label htmlFor="title" className="text-lg font-display">TITTEL PÅ BILEN *</Label>
-                        <Input id="title" name="title" value={formData.title} onChange={handleChange} placeholder="f.eks. Aronde fra Drøbak" className={`text-lg py-6 border-2 ${errors.title ? 'border-destructive' : 'border-muted'}`} required />
-                        {errors.title && <p className="text-sm text-destructive">{errors.title}</p>}
-                        <p className="text-sm text-muted-foreground">Gi bilen din et beskrivende navn</p>
+                        <Label htmlFor="category" className="text-lg font-display">KATEGORI *</Label>
+                        <select 
+                          id="category" 
+                          name="category" 
+                          value={formData.category} 
+                          onChange={(e) => setFormData(prev => ({ ...prev, category: e.target.value }))}
+                          className={`w-full h-12 px-3 text-lg rounded-md border-2 bg-background ${errors.category ? 'border-destructive' : 'border-muted'}`}
+                          required
+                        >
+                          {CATEGORIES.map((cat) => (
+                            <option key={cat.id} value={cat.id}>{cat.label}</option>
+                          ))}
+                        </select>
+                        {errors.category && <p className="text-sm text-destructive">{errors.category}</p>}
                       </div>
 
                       {/* Name */}
@@ -295,60 +396,12 @@ export default function SendInnBil() {
                         </div>
                       </div>
 
-                      <div className="grid md:grid-cols-2 gap-6">
-                        {/* Model */}
-                        <div className="space-y-2">
-                          <Label htmlFor="car_model" className="text-lg font-display">BILMODELL *</Label>
-                          <select 
-                            id="car_model" 
-                            name="car_model" 
-                            value={formData.car_model} 
-                            onChange={(e) => setFormData(prev => ({ ...prev, car_model: e.target.value }))}
-                            className={`w-full h-12 px-3 text-lg rounded-md border-2 bg-background ${errors.car_model ? 'border-destructive' : 'border-muted'}`}
-                            required
-                          >
-                            <option value="">Velg modell...</option>
-                            {MODELS.map((model) => (
-                              <option key={model} value={model}>{model}</option>
-                            ))}
-                          </select>
-                          {errors.car_model && <p className="text-sm text-destructive">{errors.car_model}</p>}
-                        </div>
-
-                        {/* Category */}
-                        <div className="space-y-2">
-                          <Label htmlFor="category" className="text-lg font-display">KATEGORI *</Label>
-                          <select 
-                            id="category" 
-                            name="category" 
-                            value={formData.category} 
-                            onChange={(e) => setFormData(prev => ({ ...prev, category: e.target.value }))}
-                            className={`w-full h-12 px-3 text-lg rounded-md border-2 bg-background ${errors.category ? 'border-destructive' : 'border-muted'}`}
-                            required
-                          >
-                            {CATEGORIES.map((cat) => (
-                              <option key={cat.id} value={cat.id}>{cat.label}</option>
-                            ))}
-                          </select>
-                          {errors.category && <p className="text-sm text-destructive">{errors.category}</p>}
-                        </div>
-                      </div>
-
-                      <div className="grid md:grid-cols-2 gap-6">
-                        {/* Year */}
-                        <div className="space-y-2">
-                          <Label htmlFor="car_year" className="text-lg font-display">ÅRSMODELL</Label>
-                          <Input id="car_year" name="car_year" type="number" min="1934" max="1990" value={formData.car_year} onChange={handleChange} placeholder="f.eks. 1968" className={`text-lg py-6 border-2 ${errors.car_year ? 'border-destructive' : 'border-muted'}`} />
-                          {errors.car_year && <p className="text-sm text-destructive">{errors.car_year}</p>}
-                        </div>
-
-                        {/* Tags */}
-                        <div className="space-y-2">
-                          <Label htmlFor="tags" className="text-lg font-display">STIKKORD</Label>
-                          <Input id="tags" name="tags" value={formData.tags} onChange={handleChange} placeholder="f.eks. original, veteran, rally" className={`text-lg py-6 border-2 ${errors.tags ? 'border-destructive' : 'border-muted'}`} />
-                          {errors.tags && <p className="text-sm text-destructive">{errors.tags}</p>}
-                          <p className="text-sm text-muted-foreground">Skill med komma</p>
-                        </div>
+                      {/* Tags */}
+                      <div className="space-y-2">
+                        <Label htmlFor="tags" className="text-lg font-display">STIKKORD</Label>
+                        <Input id="tags" name="tags" value={formData.tags} onChange={handleChange} placeholder="f.eks. original, veteran, rally" className={`text-lg py-6 border-2 ${errors.tags ? 'border-destructive' : 'border-muted'}`} />
+                        {errors.tags && <p className="text-sm text-destructive">{errors.tags}</p>}
+                        <p className="text-sm text-muted-foreground">Skill med komma</p>
                       </div>
 
                       {/* Story */}
