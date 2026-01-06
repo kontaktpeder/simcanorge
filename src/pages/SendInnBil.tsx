@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { z } from "zod";
-import { CAR_BRANDS, getModelsForBrand, getYearsForModel, generateCarTitle } from "@/data/carBrands";
+import { CAR_BRANDS, getModelsForBrand, getYearsForModel, getVariantsForModel, generateCarTitle } from "@/data/carBrands";
 import { CAR_BODY_TYPES } from "@/data/carBodyTypes";
 import { FormFieldWithTooltip } from "@/components/ui/form-field-with-tooltip";
 
@@ -67,6 +67,11 @@ export default function SendInnBil() {
   // Get available years based on selected brand and model
   const availableYears = useMemo(() => {
     return getYearsForModel(formData.brand, formData.car_model);
+  }, [formData.brand, formData.car_model]);
+
+  // Get available variants based on selected brand and model
+  const availableVariants = useMemo(() => {
+    return getVariantsForModel(formData.brand, formData.car_model);
   }, [formData.brand, formData.car_model]);
 
   // Generated title preview
@@ -334,7 +339,8 @@ export default function SendInnBil() {
                               onChange={(e) => setFormData(prev => ({ 
                                 ...prev, 
                                 car_model: e.target.value, 
-                                car_year: "" 
+                                car_year: "",
+                                variant: ""
                               }))}
                               className={`w-full h-12 px-3 text-base rounded-md border-2 bg-background ${errors.car_model ? 'border-destructive' : 'border-muted'}`}
                               required
@@ -354,14 +360,31 @@ export default function SendInnBil() {
                             htmlFor="variant"
                             error={errors.variant}
                           >
-                            <Input 
-                              id="variant" 
-                              name="variant" 
-                              value={formData.variant} 
-                              onChange={handleChange} 
-                              placeholder="F.eks. VF1, Rallye 2, TI..."
-                              className={`text-base h-12 border-2 ${errors.variant ? 'border-destructive' : 'border-muted'}`}
-                            />
+                            {availableVariants.length > 0 ? (
+                              <select 
+                                id="variant" 
+                                name="variant" 
+                                value={formData.variant} 
+                                onChange={(e) => setFormData(prev => ({ ...prev, variant: e.target.value }))}
+                                className={`w-full h-12 px-3 text-base rounded-md border-2 bg-background ${errors.variant ? 'border-destructive' : 'border-muted'}`}
+                                disabled={!formData.car_model}
+                              >
+                                <option value="">Velg variant...</option>
+                                {availableVariants.map((variant) => (
+                                  <option key={variant} value={variant}>{variant}</option>
+                                ))}
+                                <option value="__other__">Annet (skriv inn)</option>
+                              </select>
+                            ) : (
+                              <Input 
+                                id="variant" 
+                                name="variant" 
+                                value={formData.variant} 
+                                onChange={handleChange} 
+                                placeholder="F.eks. VF1, Rallye 2, TI..."
+                                className={`text-base h-12 border-2 ${errors.variant ? 'border-destructive' : 'border-muted'}`}
+                              />
+                            )}
                           </FormFieldWithTooltip>
 
                           {/* Body Type */}

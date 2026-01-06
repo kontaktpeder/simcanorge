@@ -4,7 +4,7 @@ import { AdminLayout } from "@/components/admin/AdminLayout";
 import { supabase } from "@/integrations/supabase/client";
 import { Plus, Pencil, Trash2, Eye, EyeOff, X, Upload, Car, Star, StarOff } from "lucide-react";
 import { toast } from "sonner";
-import { CAR_BRANDS, getModelsForBrand, getYearsForModel, generateCarTitle } from "@/data/carBrands";
+import { CAR_BRANDS, getModelsForBrand, getYearsForModel, getVariantsForModel, generateCarTitle } from "@/data/carBrands";
 import { CAR_BODY_TYPES } from "@/data/carBodyTypes";
 import { FormFieldWithTooltip } from "@/components/ui/form-field-with-tooltip";
 import { Input } from "@/components/ui/input";
@@ -91,6 +91,11 @@ const AdminBiler = () => {
   // Get available years based on selected brand and model
   const availableYears = useMemo(() => {
     return getYearsForModel(formData.brand, formData.model);
+  }, [formData.brand, formData.model]);
+
+  // Get available variants based on selected brand and model
+  const availableVariants = useMemo(() => {
+    return getVariantsForModel(formData.brand, formData.model);
   }, [formData.brand, formData.model]);
 
   // Generated title preview
@@ -457,7 +462,7 @@ const AdminBiler = () => {
                     <select
                       value={formData.model}
                       onChange={(e) =>
-                        setFormData({ ...formData, model: e.target.value, year: "" })
+                        setFormData({ ...formData, model: e.target.value, year: "", variant: "" })
                       }
                       className="w-full h-12 p-3 text-base border-2 border-foreground bg-card rounded"
                       required
@@ -472,12 +477,27 @@ const AdminBiler = () => {
 
                   {/* Variant */}
                   <FormFieldWithTooltip label="VARIANTBETEGNELSE" tooltip="Fabrikkens navn på en spesifikk utgave. Eks: VF1, Rallye 2">
-                    <Input
-                      value={formData.variant}
-                      onChange={(e) => setFormData({ ...formData, variant: e.target.value })}
-                      placeholder="F.eks. VF1, Rallye 2, TI..."
-                      className="h-12 text-base border-2 border-foreground"
-                    />
+                    {availableVariants.length > 0 ? (
+                      <select
+                        value={formData.variant}
+                        onChange={(e) => setFormData({ ...formData, variant: e.target.value })}
+                        className="w-full h-12 p-3 text-base border-2 border-foreground bg-card rounded"
+                        disabled={!formData.model}
+                      >
+                        <option value="">Velg variant...</option>
+                        {availableVariants.map((variant) => (
+                          <option key={variant} value={variant}>{variant}</option>
+                        ))}
+                        <option value="__other__">Annet (skriv inn)</option>
+                      </select>
+                    ) : (
+                      <Input
+                        value={formData.variant}
+                        onChange={(e) => setFormData({ ...formData, variant: e.target.value })}
+                        placeholder="F.eks. VF1, Rallye 2, TI..."
+                        className="h-12 text-base border-2 border-foreground"
+                      />
+                    )}
                   </FormFieldWithTooltip>
 
                   {/* Body Type */}
