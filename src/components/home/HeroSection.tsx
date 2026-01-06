@@ -68,12 +68,12 @@ export function HeroSection() {
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Text Content */}
           <div className="text-center lg:text-left">
-            <div className="flex items-center justify-center lg:justify-start mb-8">
+            <div className="flex items-center justify-center lg:justify-start mb-4">
               <img src={simcaBadge} alt="Simca Norge" className="h-56 md:h-72 lg:h-96 w-auto" style={{
               filter: 'drop-shadow(0 8px 24px rgba(0,0,0,0.4)) drop-shadow(0 4px 8px rgba(0,0,0,0.3))'
             }} />
             </div>
-            <p className="text-xl font-light mb-10 max-w-lg mx-auto lg:mx-0 text-white/90 font-serif md:text-3xl">
+            <p className="text-xl font-light mb-6 max-w-lg mx-auto lg:mx-0 text-white/90 font-serif md:text-3xl">
               Din kilde til Simca, Talbot og Matra klassikere. Bildeler og historier fra entusiaster i Norge.
             </p>
             
