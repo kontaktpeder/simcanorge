@@ -23,23 +23,39 @@ const navItems = [
 ];
 
 export function Header() {
+  const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isSpeedBoost, setIsSpeedBoost] = useState(false);
   const [isDrivingToGarage, setIsDrivingToGarage] = useState(false);
-  const [isParked, setIsParked] = useState(() => location.pathname !== "/");
-  const [roadVisible, setRoadVisible] = useState(() => location.pathname === "/");
-  const prevPathRef = useRef<string>(location.pathname);
+  const [isParked, setIsParked] = useState(false);
+  const [roadVisible, setRoadVisible] = useState(true);
+  const prevPathRef = useRef<string | null>(null);
+  const isInitialMount = useRef(true);
   const { itemCount } = useCart();
 
   const isHome = location.pathname === "/";
 
+  // Initialize on mount
+  useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      prevPathRef.current = location.pathname;
+      if (!isHome) {
+        setIsParked(true);
+        setRoadVisible(false);
+      }
+    }
+  }, [location.pathname, isHome]);
+
   // Handle navigation changes - only animate when leaving home
   useEffect(() => {
+    // Skip on initial mount
+    if (isInitialMount.current) return;
+    
     const prevPath = prevPathRef.current;
     const currentPath = location.pathname;
     
-    // Update ref AFTER checking
-    if (prevPath !== currentPath) {
+    if (prevPath !== currentPath && prevPath !== null) {
       // If navigating away from home to another page
       if (prevPath === "/" && currentPath !== "/") {
         setIsDrivingToGarage(true);
