@@ -49,22 +49,23 @@ function DriveHomeAnimation({
   const trackPointsRef = useRef<number[]>([]);
   const [tracks, setTracks] = useState<number[]>([]);
 
-  const TOTAL_DURATION = 1400; // ms total
-  const PHASE1_DURATION = 700; // ms - drive horizontally on road
-  const PHASE2_DURATION = 700; // ms - drive up into garage
+  const TOTAL_DURATION = 1600; // ms total
+  const PHASE1_DURATION = 700; // ms - drive left on road until off-screen
+  const PHASE2_DURATION = 900; // ms - appear under logo and drive into garage
   const GARAGE_LEFT_SM = 120;
   const GARAGE_LEFT_MD = 160;
-  const EXIT_X = 220; // X position where car exits the road and turns up
 
   useEffect(() => {
-    setShowGarage(true);
-
     const initialX = startX;
     const isMd = window.matchMedia("(min-width: 768px)").matches;
 
-    // Target position in garage
+    // Phase 1 target: drive off the left edge of the screen
+    const offScreenX = -100;
+    
+    // Phase 2: appear from left under the logo and drive into garage
     const garageX = (isMd ? GARAGE_LEFT_MD : GARAGE_LEFT_SM) + 25;
-    const garageY = isMd ? -95 : -75;
+    const logoAreaY = isMd ? -95 : -75; // Y position under the logo
+    const startPhase2X = -80; // Start just off-screen on the left
 
     const animate = (ts: number) => {
       if (!carRef.current) return;
@@ -77,42 +78,50 @@ function DriveHomeAnimation({
       let opacity = 1;
 
       if (elapsed < PHASE1_DURATION) {
-        // Phase 1: Drive horizontally along the road towards EXIT_X
+        // Phase 1: Drive left on the road until off-screen
         const phase1Progress = elapsed / PHASE1_DURATION;
         const eased = 1 - Math.pow(1 - phase1Progress, 2);
-        currentX = initialX + (EXIT_X - initialX) * eased;
+        currentX = initialX + (offScreenX - initialX) * eased;
         currentY = 0;
-      } else {
-        // Phase 2: Drive up from the road into the garage
-        const phase2Elapsed = elapsed - PHASE1_DURATION;
-        const phase2Progress = Math.min(phase2Elapsed / PHASE2_DURATION, 1);
-        const eased = 1 - Math.pow(1 - phase2Progress, 3);
         
-        currentX = EXIT_X + (garageX - EXIT_X) * eased;
-        currentY = 0 + (garageY - 0) * eased;
-        
-        // Fade out in last 20% of phase 2
-        if (phase2Progress > 0.8) {
-          opacity = 1 - (phase2Progress - 0.8) / 0.2;
+        // Fade out as it exits
+        if (phase1Progress > 0.7) {
+          opacity = 1 - (phase1Progress - 0.7) / 0.3;
         }
-      }
-
-      carRef.current.style.transform = `translate3d(${currentX}px, ${currentY}px, 0) scaleX(-1)`;
-      carRef.current.style.opacity = String(opacity);
-
-      // Add tire tracks only during phase 1 (on the road)
-      if (elapsed < PHASE1_DURATION) {
+        
+        // Add tire tracks on the road
         const trackSpacing = 30;
         const distanceTraveled = Math.abs(currentX - initialX);
         const numTracks = Math.floor(distanceTraveled / trackSpacing);
 
         if (numTracks > trackPointsRef.current.length) {
-          const dir = initialX > EXIT_X ? -1 : 1;
-          const newTrackX = initialX + dir * (trackPointsRef.current.length + 1) * trackSpacing;
+          const newTrackX = initialX - (trackPointsRef.current.length + 1) * trackSpacing;
           trackPointsRef.current.push(newTrackX);
           setTracks([...trackPointsRef.current]);
         }
+      } else {
+        // Phase 2: Appear under the logo and drive into garage
+        const phase2Elapsed = elapsed - PHASE1_DURATION;
+        const phase2Progress = Math.min(phase2Elapsed / PHASE2_DURATION, 1);
+        
+        // Show garage when phase 2 starts
+        if (!showGarage) setShowGarage(true);
+        
+        const eased = 1 - Math.pow(1 - phase2Progress, 3);
+        
+        currentX = startPhase2X + (garageX - startPhase2X) * eased;
+        currentY = logoAreaY; // Stay at logo level
+        
+        // Fade in at start, fade out at end
+        if (phase2Progress < 0.2) {
+          opacity = phase2Progress / 0.2;
+        } else if (phase2Progress > 0.85) {
+          opacity = 1 - (phase2Progress - 0.85) / 0.15;
+        }
       }
+
+      carRef.current.style.transform = `translate3d(${currentX}px, ${currentY}px, 0) scaleX(-1)`;
+      carRef.current.style.opacity = String(opacity);
 
       if (elapsed < TOTAL_DURATION) {
         requestAnimationFrame(animate);
@@ -120,7 +129,7 @@ function DriveHomeAnimation({
     };
 
     requestAnimationFrame(animate);
-  }, [startX]);
+  }, [startX, showGarage]);
 
   return (
     <>
@@ -287,8 +296,8 @@ export function Header() {
     setIsDrivingToGarage(true);
     setRoadFading(false);
 
-    const fadeTimer = setTimeout(() => setRoadFading(true), 1300);
-    const endTimer = setTimeout(() => setIsDrivingToGarage(false), 1700);
+    const fadeTimer = setTimeout(() => setRoadFading(true), 650);
+    const endTimer = setTimeout(() => setIsDrivingToGarage(false), 1900);
 
     return () => {
       clearTimeout(fadeTimer);
