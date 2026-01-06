@@ -3,7 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowLeft, Calendar, Wrench, Tag, ChevronLeft, ChevronRight, Car, Share2, Facebook, Twitter, Linkedin, Link as LinkIcon, Check, Instagram } from "lucide-react";
+import { ArrowLeft, Calendar, Wrench, ArrowRight, ChevronLeft, ChevronRight, Car, Facebook, Twitter, Linkedin, Link as LinkIcon, Check, Instagram, X } from "lucide-react";
 import { toast } from "sonner";
 
 interface CarImage {
@@ -32,11 +32,8 @@ const BilDetalj = () => {
   const { slug } = useParams<{ slug: string }>();
   const [car, setCar] = useState<CarDetail | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [slideDirection, setSlideDirection] = useState<'left' | 'right' | null>(null);
-  const [touchStart, setTouchStart] = useState<{ x: number; y: number } | null>(null);
-  const [isSwiping, setIsSwiping] = useState(false);
-  const [showShareMenu, setShowShareMenu] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
   const [copied, setCopied] = useState(false);
 
   const currentUrl = typeof window !== "undefined" ? window.location.href : "";
@@ -66,61 +63,6 @@ const BilDetalj = () => {
     fetchCar();
   }, [slug]);
 
-  const nextImage = () => {
-    if (car && car.car_images.length > 0) {
-      setSlideDirection('left');
-      setCurrentImageIndex((prev) =>
-        prev === car.car_images.length - 1 ? 0 : prev + 1
-      );
-      setTimeout(() => setSlideDirection(null), 300);
-    }
-  };
-
-  const prevImage = () => {
-    if (car && car.car_images.length > 0) {
-      setSlideDirection('right');
-      setCurrentImageIndex((prev) =>
-        prev === 0 ? car.car_images.length - 1 : prev - 1
-      );
-      setTimeout(() => setSlideDirection(null), 300);
-    }
-  };
-
-  const handleTouchStart = (e: React.TouchEvent) => {
-    const touch = e.touches[0];
-    setTouchStart({ x: touch.clientX, y: touch.clientY });
-    setIsSwiping(false);
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (!touchStart) return;
-    
-    const touch = e.touches[0];
-    const diffX = Math.abs(touch.clientX - touchStart.x);
-    const diffY = Math.abs(touch.clientY - touchStart.y);
-    
-    // If horizontal swipe is more prominent than vertical, prevent scroll
-    if (diffX > diffY && diffX > 10) {
-      setIsSwiping(true);
-      e.preventDefault();
-    }
-  };
-
-  const handleTouchEnd = (e: React.TouchEvent) => {
-    if (!touchStart) return;
-    
-    const touchEndX = e.changedTouches[0].clientX;
-    const diff = touchStart.x - touchEndX;
-    
-    if (Math.abs(diff) > 50 && isSwiping) {
-      if (diff > 0) nextImage();
-      else prevImage();
-    }
-    
-    setTouchStart(null);
-    setIsSwiping(false);
-  };
-
   const shareOnFacebook = () => {
     window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(currentUrl)}`, "_blank", "width=600,height=400");
   };
@@ -128,10 +70,6 @@ const BilDetalj = () => {
   const shareOnTwitter = () => {
     const text = car ? `Sjekk ut denne ${car.title}!` : "Sjekk ut denne bilen!";
     window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(currentUrl)}&text=${encodeURIComponent(text)}`, "_blank", "width=600,height=400");
-  };
-
-  const shareOnLinkedIn = () => {
-    window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(currentUrl)}`, "_blank", "width=600,height=400");
   };
 
   const copyLink = async () => {
@@ -142,6 +80,25 @@ const BilDetalj = () => {
       setTimeout(() => setCopied(false), 2000);
     } catch {
       toast.error("Kunne ikke kopiere lenke");
+    }
+  };
+
+  // Lightbox navigation
+  const nextImage = () => {
+    if (car && selectedImageIndex !== null) {
+      const sortedImages = [...car.car_images].sort((a, b) => a.sort_order - b.sort_order);
+      setSelectedImageIndex((prev) => 
+        prev === sortedImages.length - 1 ? 0 : (prev ?? 0) + 1
+      );
+    }
+  };
+
+  const prevImage = () => {
+    if (car && selectedImageIndex !== null) {
+      const sortedImages = [...car.car_images].sort((a, b) => a.sort_order - b.sort_order);
+      setSelectedImageIndex((prev) => 
+        prev === 0 ? sortedImages.length - 1 : (prev ?? 0) - 1
+      );
     }
   };
 
@@ -175,293 +132,238 @@ const BilDetalj = () => {
     );
   }
 
-  const sortedImages = [...car.car_images].sort(
-    (a, b) => a.sort_order - b.sort_order
-  );
-  const currentImage = sortedImages[currentImageIndex];
+  const sortedImages = [...car.car_images].sort((a, b) => a.sort_order - b.sort_order);
+  const mainImage = sortedImages[0];
+  const galleryImages = sortedImages.slice(1);
+
+  // Story excerpt logic
+  const storyExcerpt = car.story && car.story.length > 500 
+    ? `${car.story.substring(0, 500)}...` 
+    : car.story;
+  const hasMoreStory = car.story && car.story.length > 500;
 
   return (
     <Layout>
       <PageHeader 
-        title={car.title} 
-        subtitle={car.year ? `${car.model} · ${car.year}` : car.model} 
+        title="BILHISTORIE" 
+        subtitle="En unik historie fra vårt fellesskap" 
       />
 
-      {/* Breadcrumb */}
-      <div className="bg-muted border-b border-border">
-        <div className="container mx-auto py-3">
-          <Link
-            to="/biler"
-            className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            <span>Tilbake til galleriet</span>
-          </Link>
-        </div>
-      </div>
-
-      {/* Hero Image Gallery - Mobile swipe style */}
-      <section className="bg-black">
-        {sortedImages.length > 0 ? (
-          <>
-            {/* Full-width mobile gallery with fixed aspect ratio */}
-            <div className="relative overflow-hidden">
-              {/* Fixed height container to prevent jumping */}
-              <div 
-                className="relative w-full aspect-[4/3] md:aspect-[16/10] bg-black"
-                onTouchStart={handleTouchStart}
-                onTouchMove={handleTouchMove}
-                onTouchEnd={handleTouchEnd}
-                style={{ touchAction: isSwiping ? 'none' : 'pan-y' }}
-              >
-                {/* Image with slide animation */}
-                <img
-                  key={currentImageIndex}
-                  src={currentImage.image_url}
-                  alt={currentImage.alt_text || car.title}
-                  className={`absolute inset-0 w-full h-full object-contain transition-all duration-300 ease-out ${
-                    slideDirection === 'left' 
-                      ? 'animate-slide-in-from-right' 
-                      : slideDirection === 'right' 
-                        ? 'animate-slide-in-from-left' 
-                        : ''
-                  }`}
+      {/* Main Content Section - Same as Månedens Bil */}
+      <section className="py-8 md:py-16">
+        <div className="container mx-auto px-4">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start">
+            {/* Main Image */}
+            <div className="relative">
+              {mainImage ? (
+                <img 
+                  src={mainImage.image_url} 
+                  alt={mainImage.alt_text || car.title} 
+                  className="w-full aspect-[4/3] object-cover border-4 border-foreground shadow-brutal cursor-pointer hover:opacity-95 transition-opacity" 
+                  onClick={() => setSelectedImageIndex(0)}
                 />
-                
-                {/* Gradient overlay for counter visibility */}
-                <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/70 to-transparent pointer-events-none" />
-                
-                {/* Image counter - bottom right pill style */}
-                {sortedImages.length > 1 && (
-                  <div className="absolute bottom-3 right-3 bg-black/70 backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-xs font-medium">
-                    {currentImageIndex + 1} / {sortedImages.length}
-                  </div>
-                )}
-                
-                {/* Swipe hint on first image */}
-                {sortedImages.length > 1 && currentImageIndex === 0 && (
-                  <div className="md:hidden absolute bottom-3 left-3 bg-black/70 backdrop-blur-sm text-white/80 px-3 py-1.5 rounded-full text-xs flex items-center gap-1.5">
-                    <ChevronLeft className="w-3 h-3" />
-                    Sveip
-                    <ChevronRight className="w-3 h-3" />
-                  </div>
-                )}
-              </div>
-
-              {/* Navigation arrows - only on desktop */}
-              {sortedImages.length > 1 && (
-                <>
-                  <button
-                    onClick={prevImage}
-                    className="hidden md:flex absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white p-3 rounded-full shadow-lg transition-all hover:scale-110"
-                    aria-label="Forrige bilde"
-                  >
-                    <ChevronLeft className="w-6 h-6 text-foreground" />
-                  </button>
-                  <button
-                    onClick={nextImage}
-                    className="hidden md:flex absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white p-3 rounded-full shadow-lg transition-all hover:scale-110"
-                    aria-label="Neste bilde"
-                  >
-                    <ChevronRight className="w-6 h-6 text-foreground" />
-                  </button>
-                </>
+              ) : (
+                <div className="w-full aspect-[4/3] bg-muted border-4 border-foreground flex items-center justify-center">
+                  <Car className="w-16 h-16 text-muted-foreground" />
+                </div>
+              )}
+              {car.featured && (
+                <div className="absolute top-4 left-4 bg-accent text-accent-foreground px-4 py-2 font-display uppercase text-sm border-2 border-foreground">
+                  Månedens bil
+                </div>
               )}
             </div>
 
-            {/* Dot indicators for mobile */}
-            {sortedImages.length > 1 && (
-              <div className="md:hidden flex justify-center gap-1.5 py-3 bg-black">
-                {sortedImages.map((_, index) => (
-                  <button
-                    key={index}
-                    onClick={() => {
-                      setSlideDirection(index > currentImageIndex ? 'left' : 'right');
-                      setCurrentImageIndex(index);
-                      setTimeout(() => setSlideDirection(null), 300);
-                    }}
-                    className={`h-2 rounded-full transition-all duration-300 ${
-                      index === currentImageIndex
-                        ? "bg-white w-6"
-                        : "bg-white/40 w-2"
-                    }`}
-                    aria-label={`Gå til bilde ${index + 1}`}
-                  />
-                ))}
+            {/* Content */}
+            <div>
+              <h2 className="headline-md mb-2">{car.title}</h2>
+              <div className="flex items-center gap-4 mb-6 flex-wrap">
+                <span className="font-display text-xl text-accent">{car.model}</span>
+                {car.year && (
+                  <span className="flex items-center gap-1 text-muted-foreground">
+                    <Calendar className="w-4 h-4" />
+                    {car.year}
+                  </span>
+                )}
+                {car.overhauled && (
+                  <span className="flex items-center gap-1 text-green-600">
+                    <Wrench className="w-4 h-4" />
+                    Overhalt
+                  </span>
+                )}
               </div>
-            )}
 
-            {/* Thumbnail strip - desktop only */}
-            {sortedImages.length > 1 && (
-              <div className="hidden md:block bg-muted/50 py-3">
-                <div className="container mx-auto">
-                  <div className="flex gap-2 overflow-x-auto pb-1 justify-center">
-                    {sortedImages.map((img, index) => (
-                      <button
-                        key={img.id}
-                        onClick={() => {
-                          setSlideDirection(index > currentImageIndex ? 'left' : 'right');
-                          setCurrentImageIndex(index);
-                          setTimeout(() => setSlideDirection(null), 300);
-                        }}
-                        className={`flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition-all ${
-                          index === currentImageIndex
-                            ? "border-accent ring-2 ring-accent/30"
-                            : "border-transparent hover:border-white/50 opacity-60 hover:opacity-100"
-                        }`}
-                      >
-                        <img
-                          src={img.image_url}
-                          alt={img.alt_text || `Bilde ${index + 1}`}
-                          className="w-full h-full object-cover"
-                        />
-                      </button>
-                    ))}
-                  </div>
+              {/* Tags */}
+              {car.tags && car.tags.length > 0 && (
+                <div className="flex flex-wrap gap-2 mb-6">
+                  {car.tags.map((tag, index) => (
+                    <span 
+                      key={index} 
+                      className="bg-secondary text-secondary-foreground px-3 py-1 text-sm font-display uppercase"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              )}
+
+              {/* Story excerpt or full story */}
+              {car.story && (
+                <div className="prose prose-lg mb-8">
+                  <p className="font-serif text-lg leading-relaxed whitespace-pre-wrap">
+                    {isExpanded ? car.story : storyExcerpt}
+                  </p>
+                </div>
+              )}
+
+              {/* Expand button or always show if short story */}
+              {hasMoreStory && !isExpanded && (
+                <button 
+                  onClick={() => setIsExpanded(true)}
+                  className="inline-flex items-center gap-2 bg-accent text-accent-foreground px-6 py-3 font-display uppercase text-lg border-2 border-foreground shadow-brutal hover-lift mb-8"
+                >
+                  Les hele historien
+                  <ArrowRight className="w-5 h-5" />
+                </button>
+              )}
+
+              {/* Share section */}
+              <div className="border-t border-border pt-6">
+                <p className="text-sm text-muted-foreground mb-3">Del denne historien</p>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={shareOnFacebook}
+                    className="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center hover:opacity-90 transition-opacity"
+                    aria-label="Del på Facebook"
+                  >
+                    <Facebook className="w-5 h-5" />
+                  </button>
+                  <button
+                    onClick={() => window.open(`https://www.instagram.com/`, "_blank")}
+                    className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-600 via-pink-500 to-orange-400 text-white flex items-center justify-center hover:opacity-90 transition-opacity"
+                    aria-label="Del på Instagram"
+                  >
+                    <Instagram className="w-5 h-5" />
+                  </button>
+                  <button
+                    onClick={shareOnTwitter}
+                    className="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center hover:opacity-90 transition-opacity"
+                    aria-label="Del på X"
+                  >
+                    <Twitter className="w-5 h-5" />
+                  </button>
+                  <button
+                    onClick={copyLink}
+                    className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
+                      copied ? "bg-green-600 text-white" : "bg-muted text-foreground hover:bg-muted/80"
+                    }`}
+                    aria-label="Kopier lenke"
+                  >
+                    {copied ? <Check className="w-5 h-5" /> : <LinkIcon className="w-5 h-5" />}
+                  </button>
                 </div>
               </div>
-            )}
-          </>
-        ) : (
-          <div className="w-full aspect-[4/3] bg-muted flex items-center justify-center">
-            <Car className="w-16 h-16 text-muted-foreground" />
-          </div>
-        )}
-      </section>
 
-      {/* Content - Mobile optimized */}
-      <section className="bg-background">
-        <div className="container mx-auto px-4 py-5 md:py-10">
-          <div className="max-w-4xl mx-auto">
-            {/* Title first on mobile */}
-            <h1 className="font-display text-xl md:text-4xl mb-3 md:mb-4">{car.title}</h1>
-            
-            {/* Compact badges row */}
-            <div className="flex flex-wrap gap-2 mb-4 md:mb-6">
-              <span className="bg-primary text-primary-foreground px-2.5 py-1 md:px-4 md:py-2 font-display text-xs md:text-base rounded-full">
-                {car.model}
-              </span>
-              {car.year && (
-                <span className="bg-accent text-accent-foreground px-2.5 py-1 md:px-4 md:py-2 font-display text-xs md:text-base flex items-center gap-1.5 rounded-full">
-                  <Calendar className="w-3 h-3 md:w-4 md:h-4" />
-                  {car.year}
-                </span>
-              )}
-              {car.overhauled && (
-                <span className="bg-green-600 text-white px-2.5 py-1 md:px-4 md:py-2 font-display text-xs md:text-base flex items-center gap-1.5 rounded-full">
-                  <Wrench className="w-3 h-3 md:w-4 md:h-4" />
-                  Overhalt
-                </span>
-              )}
+              {/* Back link */}
+              <Link 
+                to="/biler" 
+                className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mt-6"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                Tilbake til galleriet
+              </Link>
             </div>
-
-            {/* Story */}
-            {car.story && (
-              <div className="bg-card rounded-xl p-4 md:p-6 mb-4 md:mb-6 border border-border">
-                <p className="text-sm md:text-base leading-relaxed whitespace-pre-wrap text-foreground/90">
-                  {car.story}
-                </p>
-              </div>
-            )}
-
-            {/* Tags - horizontal scroll on mobile */}
-            {car.tags && car.tags.length > 0 && (
-              <div className="flex items-center gap-2 overflow-x-auto pb-2 mb-4 md:mb-6 -mx-4 px-4 md:mx-0 md:px-0 md:flex-wrap">
-                {car.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="flex-shrink-0 bg-muted px-2.5 py-1 text-xs md:text-sm text-muted-foreground rounded-full"
-                  >
-                    #{tag}
-                  </span>
-                ))}
-              </div>
-            )}
-
-            {/* Share section - inline icons on mobile */}
-            <div className="border-t border-border pt-4 md:pt-6">
-              <p className="text-xs text-muted-foreground mb-3">Del på sosiale medier</p>
-              <div className="flex items-center gap-2 mb-4">
-                <button
-                  onClick={shareOnFacebook}
-                  className="w-10 h-10 md:w-11 md:h-11 rounded-full bg-blue-600 text-white flex items-center justify-center hover:opacity-90 transition-opacity"
-                  aria-label="Del på Facebook"
-                >
-                  <Facebook className="w-5 h-5" />
-                </button>
-                <button
-                  onClick={() => {
-                    const text = `Sjekk ut denne ${car.title}!`;
-                    window.open(`https://www.instagram.com/`, "_blank");
-                  }}
-                  className="w-10 h-10 md:w-11 md:h-11 rounded-full bg-gradient-to-br from-purple-600 via-pink-500 to-orange-400 text-white flex items-center justify-center hover:opacity-90 transition-opacity"
-                  aria-label="Del på Instagram"
-                >
-                  <Instagram className="w-5 h-5" />
-                </button>
-                <button
-                  onClick={() => {
-                    window.open(`https://www.tiktok.com/`, "_blank");
-                  }}
-                  className="w-10 h-10 md:w-11 md:h-11 rounded-full bg-black text-white flex items-center justify-center hover:opacity-90 transition-opacity border border-white/20"
-                  aria-label="Del på TikTok"
-                >
-                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
-                  </svg>
-                </button>
-                <button
-                  onClick={() => {
-                    window.open(`https://www.snapchat.com/`, "_blank");
-                  }}
-                  className="w-10 h-10 md:w-11 md:h-11 rounded-full bg-yellow-400 text-black flex items-center justify-center hover:opacity-90 transition-opacity"
-                  aria-label="Del på Snapchat"
-                >
-                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12.206.793c.99 0 4.347.276 5.93 3.821.529 1.193.403 3.219.299 4.847l-.003.06c-.012.18-.022.345-.03.51.075.045.203.09.401.09.3-.016.659-.12 1.033-.301a.603.603 0 0 1 .243-.045c.158 0 .315.045.45.135.165.12.255.285.27.465.015.285-.135.45-.345.585-.09.06-.24.12-.42.18-.63.195-1.365.315-1.545.645-.18.315.06.705.165.87.93 1.455 2.16 2.58 3.57 3.255.21.105.39.27.435.495.045.3-.09.555-.315.735-.3.225-.645.375-1.05.465-.27.06-.57.09-.885.12-.06.015-.12.015-.18.03-.18.03-.36.075-.57.15-.27.09-.495.24-.66.45-.21.27-.3.555-.33.81-.03.225.015.45.09.645.12.3.315.525.525.69.24.18.525.315.825.39.315.075.66.12 1.02.12.525 0 1.035-.09 1.5-.24.285-.09.54-.195.765-.33a.89.89 0 0 1 .48-.135c.255 0 .51.105.69.3.21.225.27.525.195.78-.12.39-.405.675-.795.885-.705.375-1.56.6-2.52.675-.21.015-.435.03-.66.03-.27 0-.54-.015-.81-.045a6.84 6.84 0 0 1-1.29-.24c-.375-.105-.75-.24-1.11-.42-.39-.195-.78-.435-1.14-.735-.51-.42-.975-.93-1.38-1.545-.285-.435-.525-.9-.72-1.395-.12-.3-.21-.615-.285-.945-.075-.345-.12-.705-.12-1.08 0-.495.075-.975.225-1.425.18-.555.465-1.065.855-1.5.27-.3.585-.555.945-.75-.24-.615-.36-1.275-.36-1.965 0-2.13 1.23-4.02 3.15-4.92z"/>
-                  </svg>
-                </button>
-                <button
-                  onClick={shareOnTwitter}
-                  className="w-10 h-10 md:w-11 md:h-11 rounded-full bg-black text-white flex items-center justify-center hover:opacity-90 transition-opacity"
-                  aria-label="Del på X"
-                >
-                  <Twitter className="w-5 h-5" />
-                </button>
-                <button
-                  onClick={copyLink}
-                  className={`w-10 h-10 md:w-11 md:h-11 rounded-full flex items-center justify-center transition-all ${
-                    copied ? "bg-green-600 text-white" : "bg-muted text-foreground hover:bg-muted/80"
-                  }`}
-                  aria-label="Kopier lenke"
-                >
-                  {copied ? <Check className="w-5 h-5" /> : <LinkIcon className="w-5 h-5" />}
-                </button>
-              </div>
-            </div>
-
-            {/* Back button */}
-            <Link 
-              to="/biler" 
-              className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mt-2"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              Tilbake til galleriet
-            </Link>
           </div>
         </div>
       </section>
 
+      {/* Image Gallery Section */}
+      {galleryImages.length > 0 && (
+        <section className="py-8 md:py-16 bg-muted">
+          <div className="container mx-auto px-4">
+            <h2 className="headline-md mb-8 text-center">Flere bilder</h2>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {galleryImages.map((img, index) => (
+                <button
+                  key={img.id}
+                  onClick={() => setSelectedImageIndex(index + 1)}
+                  className="aspect-square overflow-hidden border-4 border-foreground shadow-brutal hover-lift focus:outline-none focus:ring-2 focus:ring-accent"
+                >
+                  <img
+                    src={img.image_url}
+                    alt={img.alt_text || `Bilde ${index + 2}`}
+                    className="w-full h-full object-cover"
+                  />
+                </button>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Lightbox */}
+      {selectedImageIndex !== null && (
+        <div 
+          className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center"
+          onClick={() => setSelectedImageIndex(null)}
+        >
+          {/* Close button */}
+          <button
+            onClick={() => setSelectedImageIndex(null)}
+            className="absolute top-4 right-4 z-10 bg-white/10 hover:bg-white/20 p-3 rounded-full transition-colors"
+            aria-label="Lukk"
+          >
+            <X className="w-6 h-6 text-white" />
+          </button>
+
+          {/* Navigation arrows */}
+          {sortedImages.length > 1 && (
+            <>
+              <button
+                onClick={(e) => { e.stopPropagation(); prevImage(); }}
+                className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 p-3 rounded-full transition-colors"
+                aria-label="Forrige bilde"
+              >
+                <ChevronLeft className="w-8 h-8 text-white" />
+              </button>
+              <button
+                onClick={(e) => { e.stopPropagation(); nextImage(); }}
+                className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 p-3 rounded-full transition-colors"
+                aria-label="Neste bilde"
+              >
+                <ChevronRight className="w-8 h-8 text-white" />
+              </button>
+            </>
+          )}
+
+          {/* Image */}
+          <img
+            src={sortedImages[selectedImageIndex].image_url}
+            alt={sortedImages[selectedImageIndex].alt_text || car.title}
+            className="max-w-[90vw] max-h-[90vh] object-contain"
+            onClick={(e) => e.stopPropagation()}
+          />
+
+          {/* Counter */}
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/70 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm">
+            {selectedImageIndex + 1} / {sortedImages.length}
+          </div>
+        </div>
+      )}
+
       {/* CTA Section */}
-      <section className="poster-section poster-section-red relative overflow-hidden">
-        <div className="absolute inset-0 stripes-diagonal opacity-50" />
-        <div className="container mx-auto text-center relative z-10">
-          <h2 className="headline-md mb-4">HAR DU EN SIMCA?</h2>
-          <p className="text-xl mb-6 opacity-90">
-            Del historien om din franske klassiker med oss!
+      <section className="py-16 bg-accent">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="headline-md text-accent-foreground mb-4">Har du en Simca?</h2>
+          <p className="font-serif text-xl text-accent-foreground/90 mb-8 max-w-xl mx-auto">
+            Kanskje blir din bil neste månedens bil! Send inn historien din og la oss løfte frem din Simca.
           </p>
-          <Link to="/send-inn" className="btn-retro bg-accent-foreground text-primary-foreground">
+          <Link 
+            to="/send-inn" 
+            className="inline-flex items-center gap-2 bg-foreground text-background px-8 py-4 font-display uppercase text-lg border-2 border-foreground hover-lift"
+          >
             Send inn din bil
+            <ArrowRight className="w-5 h-5" />
           </Link>
         </div>
       </section>
