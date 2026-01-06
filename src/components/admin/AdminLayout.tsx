@@ -58,7 +58,7 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
   }
 
   return (
-    <div className="min-h-screen bg-muted flex">
+    <div className="min-h-screen bg-background flex">
       {/* Sidebar */}
       <aside className="w-64 bg-metal-blue text-white flex flex-col relative overflow-hidden">
         {/* Chrome swallow watermark */}
@@ -125,7 +125,7 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-auto bg-background">
+      <main className="flex-1 overflow-auto bg-card">
         <header className="header-chrome p-6">
           <h1 className="headline-md text-foreground animate-fade-in">{title}</h1>
         </header>
