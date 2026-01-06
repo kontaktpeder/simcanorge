@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useLocation } from "react-router-dom";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { supabase } from "@/integrations/supabase/client";
 import { Plus, Pencil, Trash2, Eye, EyeOff, X, Upload, Car, Star, StarOff } from "lucide-react";
 import { toast } from "sonner";
+import { CAR_BRANDS, getModelsForBrand, getYearsForModel, generateCarTitle } from "@/data/carBrands";
 
 interface CarImage {
   id: string;
@@ -16,6 +17,7 @@ interface CarPost {
   id: string;
   title: string;
   slug: string;
+  brand: string | null;
   model: string;
   year: number | null;
   story: string | null;
@@ -35,23 +37,9 @@ const CATEGORIES = [
   { id: "vrak", label: "Vrak" },
 ];
 
-const MODELS = [
-  "Aronde",
-  "Vedette", 
-  "1000",
-  "1000 Rallye",
-  "1100",
-  "1200",
-  "1300",
-  "1301",
-  "1500",
-  "1501",
-  "Horizon",
-  "Annet",
-];
-
 interface SubmissionData {
   title: string | null;
+  brand: string | null;
   model: string;
   year: number | null;
   category: string;
@@ -76,6 +64,7 @@ const AdminBiler = () => {
   const [formData, setFormData] = useState({
     title: "",
     slug: "",
+    brand: "",
     model: "",
     year: "",
     story: "",
@@ -85,11 +74,27 @@ const AdminBiler = () => {
     category: "registrert",
   });
 
+  // Get available models based on selected brand
+  const availableModels = useMemo(() => {
+    return getModelsForBrand(formData.brand);
+  }, [formData.brand]);
+
+  // Get available years based on selected brand and model
+  const availableYears = useMemo(() => {
+    return getYearsForModel(formData.brand, formData.model);
+  }, [formData.brand, formData.model]);
+
+  // Generated title preview
+  const generatedTitle = useMemo(() => {
+    if (!formData.brand || !formData.model) return "";
+    return generateCarTitle(formData.brand, formData.model, formData.year ? parseInt(formData.year) : null);
+  }, [formData.brand, formData.model, formData.year]);
+
   const fetchCars = async () => {
     const { data, error } = await supabase
       .from("cars")
       .select(`
-        id, title, slug, model, year, story, overhauled, tags, featured, published_at, created_at, category,
+        id, title, slug, brand, model, year, story, overhauled, tags, featured, published_at, created_at, category,
         car_images(id, image_url, alt_text, sort_order)
       `)
       .order("created_at", { ascending: false });
@@ -113,8 +118,9 @@ const AdminBiler = () => {
     if (state?.fromSubmission) {
       const sub = state.fromSubmission;
       setFormData({
-        title: sub.title || (sub.year ? `${sub.year} ${sub.model}` : sub.model),
+        title: sub.title || generateCarTitle(sub.brand || "", sub.model, sub.year),
         slug: "",
+        brand: sub.brand || "",
         model: sub.model,
         year: sub.year?.toString() || "",
         story: sub.story || "",
@@ -145,6 +151,7 @@ const AdminBiler = () => {
     setFormData({
       title: "",
       slug: "",
+      brand: "",
       model: "",
       year: "",
       story: "",
@@ -222,11 +229,14 @@ const AdminBiler = () => {
         .map((t) => t.trim())
         .filter((t) => t.length > 0);
 
-      const slug = formData.slug || generateSlug(formData.title);
+      // Auto-generate title from brand, model, year if not manually set
+      const autoTitle = generatedTitle || formData.title.trim();
+      const slug = formData.slug || generateSlug(autoTitle);
 
       const carData = {
-        title: formData.title.trim(),
+        title: autoTitle,
         slug,
+        brand: formData.brand || null,
         model: formData.model,
         year: formData.year ? parseInt(formData.year) : null,
         story: formData.story.trim() || null,
@@ -312,6 +322,7 @@ const AdminBiler = () => {
     setFormData({
       title: car.title,
       slug: car.slug,
+      brand: car.brand || "",
       model: car.model,
       year: car.year?.toString() || "",
       story: car.story || "",
@@ -401,22 +412,83 @@ const AdminBiler = () => {
             </div>
 
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
-              <div className="grid md:grid-cols-2 gap-4">
-                {/* Title */}
-                <div>
-                  <label className="block font-display mb-2">TITTEL *</label>
-                  <input
-                    type="text"
-                    value={formData.title}
-                    onChange={(e) =>
-                      setFormData({ ...formData, title: e.target.value })
-                    }
-                    className="w-full p-3 border-2 border-foreground bg-card"
-                    placeholder="f.eks. Aronde fra Drøbak"
-                    required
-                  />
+              {/* Brand, Model, Year - Cascading selects */}
+              <div className="space-y-4 p-4 bg-muted/30 border-2 border-muted">
+                <p className="text-sm text-muted-foreground font-medium">Velg merke, modell og årstall – dette genererer bilens tittel</p>
+                
+                <div className="grid md:grid-cols-3 gap-4">
+                  {/* Brand */}
+                  <div>
+                    <label className="block font-display mb-2">MERKE *</label>
+                    <select
+                      value={formData.brand}
+                      onChange={(e) =>
+                        setFormData({ ...formData, brand: e.target.value, model: "", year: "" })
+                      }
+                      className="w-full p-3 border-2 border-foreground bg-card"
+                      required
+                    >
+                      <option value="">Velg merke...</option>
+                      {CAR_BRANDS.map((brand) => (
+                        <option key={brand.name} value={brand.name}>
+                          {brand.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Model */}
+                  <div>
+                    <label className="block font-display mb-2">MODELL *</label>
+                    <select
+                      value={formData.model}
+                      onChange={(e) =>
+                        setFormData({ ...formData, model: e.target.value, year: "" })
+                      }
+                      className="w-full p-3 border-2 border-foreground bg-card"
+                      required
+                      disabled={!formData.brand}
+                    >
+                      <option value="">Velg modell...</option>
+                      {availableModels.map((model) => (
+                        <option key={model.name} value={model.name}>
+                          {model.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Year */}
+                  <div>
+                    <label className="block font-display mb-2">ÅRSTALL</label>
+                    <select
+                      value={formData.year}
+                      onChange={(e) =>
+                        setFormData({ ...formData, year: e.target.value })
+                      }
+                      className="w-full p-3 border-2 border-foreground bg-card"
+                      disabled={!formData.model}
+                    >
+                      <option value="">Velg år...</option>
+                      {availableYears.map((year) => (
+                        <option key={year} value={year}>
+                          {year}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
 
+                {/* Generated title preview */}
+                {generatedTitle && (
+                  <div className="mt-2 p-3 bg-primary/10 border border-primary/30">
+                    <p className="text-sm text-muted-foreground">Bilens tittel blir:</p>
+                    <p className="text-lg font-display text-primary">{generatedTitle}</p>
+                  </div>
+                )}
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-4">
                 {/* Slug */}
                 <div>
                   <label className="block font-display mb-2">SLUG (URL)</label>
@@ -426,31 +498,9 @@ const AdminBiler = () => {
                     onChange={(e) =>
                       setFormData({ ...formData, slug: e.target.value })
                     }
-                    placeholder={generateSlug(formData.title) || "auto-generert"}
+                    placeholder={generateSlug(generatedTitle || formData.title) || "auto-generert"}
                     className="w-full p-3 border-2 border-foreground bg-card"
                   />
-                </div>
-              </div>
-
-              <div className="grid md:grid-cols-2 gap-4">
-                {/* Model */}
-                <div>
-                  <label className="block font-display mb-2">MODELL *</label>
-                  <select
-                    value={formData.model}
-                    onChange={(e) =>
-                      setFormData({ ...formData, model: e.target.value })
-                    }
-                    className="w-full p-3 border-2 border-foreground bg-card"
-                    required
-                  >
-                    <option value="">Velg modell...</option>
-                    {MODELS.map((model) => (
-                      <option key={model} value={model}>
-                        {model}
-                      </option>
-                    ))}
-                  </select>
                 </div>
 
                 {/* Category */}
@@ -470,24 +520,6 @@ const AdminBiler = () => {
                       </option>
                     ))}
                   </select>
-                </div>
-              </div>
-
-              <div className="grid md:grid-cols-2 gap-4">
-                {/* Year */}
-                <div>
-                  <label className="block font-display mb-2">ÅRSMODELL</label>
-                  <input
-                    type="number"
-                    value={formData.year}
-                    onChange={(e) =>
-                      setFormData({ ...formData, year: e.target.value })
-                    }
-                    placeholder="f.eks. 1967"
-                    min="1900"
-                    max={new Date().getFullYear()}
-                    className="w-full p-3 border-2 border-foreground bg-card"
-                  />
                 </div>
               </div>
 

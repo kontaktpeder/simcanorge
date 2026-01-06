@@ -4,10 +4,13 @@ import { Layout } from "@/components/layout/Layout";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { supabase } from "@/integrations/supabase/client";
 import { Car, Filter, X, Search, History, CheckCircle, Wrench, AlertTriangle } from "lucide-react";
+import { CAR_BRANDS } from "@/data/carBrands";
+
 interface CarPost {
   id: string;
   title: string;
   slug: string;
+  brand: string | null;
   model: string;
   year: number | null;
   story: string | null;
@@ -21,7 +24,9 @@ interface CarPost {
     alt_text: string | null;
   }[];
 }
-const MODELS = ["Aronde", "Vedette", "1000", "1000 Rallye", "1100", "1200", "1300", "1301", "1500", "1501", "Horizon", "Annet"];
+
+const BRANDS = CAR_BRANDS.map(b => b.name);
+
 const CATEGORIES = [{
   id: "alle",
   label: "Alle biler",
@@ -48,6 +53,7 @@ const CATEGORIES = [{
   icon: AlertTriangle,
   description: "Biler som finnes, men som av ulike årsaker ikke er kjørbare."
 }];
+
 const Biler = () => {
   const [cars, setCars] = useState<CarPost[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -55,16 +61,17 @@ const Biler = () => {
 
   // Filters
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedModel, setSelectedModel] = useState<string>("");
+  const [selectedBrand, setSelectedBrand] = useState<string>("");
   const [selectedDecade, setSelectedDecade] = useState<string>("");
   const [selectedCategory, setSelectedCategory] = useState<string>("alle");
+
   useEffect(() => {
     const fetchCars = async () => {
       const {
         data,
         error
       } = await supabase.from("cars").select(`
-          id, title, slug, model, year, story, overhauled, tags, featured, published_at, category,
+          id, title, slug, brand, model, year, story, overhauled, tags, featured, published_at, category,
           car_images(image_url, alt_text)
         `).not("published_at", "is", null).lte("published_at", new Date().toISOString()).order("published_at", {
         ascending: false
@@ -87,12 +94,16 @@ const Biler = () => {
     // Search query
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
-      const matchesSearch = car.title.toLowerCase().includes(query) || car.model.toLowerCase().includes(query) || car.story?.toLowerCase().includes(query) || car.tags?.some(tag => tag.toLowerCase().includes(query));
+      const matchesSearch = car.title.toLowerCase().includes(query) || 
+        car.brand?.toLowerCase().includes(query) ||
+        car.model.toLowerCase().includes(query) || 
+        car.story?.toLowerCase().includes(query) || 
+        car.tags?.some(tag => tag.toLowerCase().includes(query));
       if (!matchesSearch) return false;
     }
 
-    // Model filter
-    if (selectedModel && car.model !== selectedModel) return false;
+    // Brand filter
+    if (selectedBrand && car.brand !== selectedBrand) return false;
 
     // Decade filter
     if (selectedDecade && car.year) {
@@ -101,14 +112,17 @@ const Biler = () => {
     }
     return true;
   });
+
   const featuredCars = filteredCars.filter(car => car.featured);
   const regularCars = filteredCars.filter(car => !car.featured);
+
   const clearFilters = () => {
     setSearchQuery("");
-    setSelectedModel("");
+    setSelectedBrand("");
     setSelectedDecade("");
   };
-  const hasActiveFilters = searchQuery || selectedModel || selectedDecade;
+
+  const hasActiveFilters = searchQuery || selectedBrand || selectedDecade;
   const currentCategoryInfo = CATEGORIES.find(c => c.id === selectedCategory);
 
   // Count cars per category
@@ -175,10 +189,10 @@ const Biler = () => {
 
             {/* Desktop Filters */}
             <div className="hidden lg:flex items-center gap-3">
-              <select value={selectedModel} onChange={e => setSelectedModel(e.target.value)} className="px-5 py-3 text-base border-2 border-foreground/30 bg-card rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-all cursor-pointer hover:border-primary/50">
-                <option value="">Alle modeller</option>
-                {MODELS.map(model => <option key={model} value={model}>
-                    {model}
+              <select value={selectedBrand} onChange={e => setSelectedBrand(e.target.value)} className="px-5 py-3 text-base border-2 border-foreground/30 bg-card rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-all cursor-pointer hover:border-primary/50">
+                <option value="">Alle merker</option>
+                {BRANDS.map(brand => <option key={brand} value={brand}>
+                    {brand}
                   </option>)}
               </select>
 
@@ -200,11 +214,11 @@ const Biler = () => {
           {/* Mobile Filters Dropdown */}
           {showFilters && <div className="lg:hidden mt-4 pt-4 border-t border-border space-y-4 animate-fade-in">
               <div>
-                <label className="block font-display text-sm mb-2">MODELL</label>
-                <select value={selectedModel} onChange={e => setSelectedModel(e.target.value)} className="w-full px-4 py-2 border-2 border-foreground bg-card">
-                  <option value="">Alle modeller</option>
-                  {MODELS.map(model => <option key={model} value={model}>
-                      {model}
+                <label className="block font-display text-sm mb-2">MERKE</label>
+                <select value={selectedBrand} onChange={e => setSelectedBrand(e.target.value)} className="w-full px-4 py-2 border-2 border-foreground bg-card">
+                  <option value="">Alle merker</option>
+                  {BRANDS.map(brand => <option key={brand} value={brand}>
+                      {brand}
                     </option>)}
                 </select>
               </div>

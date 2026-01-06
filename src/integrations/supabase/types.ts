@@ -52,6 +52,7 @@ export type Database = {
       car_submissions: {
         Row: {
           admin_notes: string | null
+          brand: string | null
           car_model: string
           car_story: string | null
           car_year: number | null
@@ -70,6 +71,7 @@ export type Database = {
         }
         Insert: {
           admin_notes?: string | null
+          brand?: string | null
           car_model: string
           car_story?: string | null
           car_year?: number | null
@@ -88,6 +90,7 @@ export type Database = {
         }
         Update: {
           admin_notes?: string | null
+          brand?: string | null
           car_model?: string
           car_story?: string | null
           car_year?: number | null
@@ -108,6 +111,7 @@ export type Database = {
       }
       cars: {
         Row: {
+          brand: string | null
           category: string
           created_at: string
           featured: boolean | null
@@ -123,6 +127,7 @@ export type Database = {
           year: number | null
         }
         Insert: {
+          brand?: string | null
           category?: string
           created_at?: string
           featured?: boolean | null
@@ -138,6 +143,7 @@ export type Database = {
           year?: number | null
         }
         Update: {
+          brand?: string | null
           category?: string
           created_at?: string
           featured?: boolean | null

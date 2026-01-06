@@ -16,6 +16,7 @@ interface CarDetail {
   id: string;
   title: string;
   slug: string;
+  brand: string | null;
   model: string;
   year: number | null;
   story: string | null;
@@ -39,7 +40,7 @@ const BilDetalj = () => {
       const { data, error } = await supabase
         .from("cars")
         .select(`
-          id, title, slug, model, year, story, overhauled, tags, featured, published_at,
+          id, title, slug, brand, model, year, story, overhauled, tags, featured, published_at,
           car_images(id, image_url, alt_text, sort_order)
         `)
         .eq("slug", slug)
