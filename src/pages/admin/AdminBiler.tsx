@@ -411,9 +411,9 @@ const AdminBiler = () => {
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="p-6 space-y-4">
+            <form onSubmit={handleSubmit} className="p-6 space-y-4 bg-white">
               {/* Brand, Model, Year - Cascading selects */}
-              <div className="space-y-4 p-4 bg-muted/30 border-2 border-muted">
+              <div className="space-y-4 p-4 bg-gray-50 border-2 border-gray-200 rounded-lg">
                 <p className="text-sm text-muted-foreground font-medium">Velg merke, modell og årstall – dette genererer bilens tittel</p>
                 
                 <div className="grid md:grid-cols-3 gap-4">
@@ -481,9 +481,9 @@ const AdminBiler = () => {
 
                 {/* Generated title preview */}
                 {generatedTitle && (
-                  <div className="mt-2 p-3 bg-primary/10 border border-primary/30">
-                    <p className="text-sm text-muted-foreground">Bilens tittel blir:</p>
-                    <p className="text-lg font-display text-primary">{generatedTitle}</p>
+                  <div className="mt-2 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                    <p className="text-sm text-gray-600">Bilens tittel blir:</p>
+                    <p className="text-lg font-display text-blue-700">{generatedTitle}</p>
                   </div>
                 )}
               </div>
@@ -499,7 +499,7 @@ const AdminBiler = () => {
                       setFormData({ ...formData, slug: e.target.value })
                     }
                     placeholder={generateSlug(generatedTitle || formData.title) || "auto-generert"}
-                    className="w-full p-3 border-2 border-foreground bg-card"
+                    className="w-full p-3 border-2 border-gray-300 bg-white rounded"
                   />
                 </div>
 
@@ -511,7 +511,7 @@ const AdminBiler = () => {
                     onChange={(e) =>
                       setFormData({ ...formData, category: e.target.value })
                     }
-                    className="w-full p-3 border-2 border-foreground bg-card"
+                    className="w-full p-3 border-2 border-gray-300 bg-white rounded"
                     required
                   >
                     {CATEGORIES.map((cat) => (
@@ -532,7 +532,7 @@ const AdminBiler = () => {
                     setFormData({ ...formData, story: e.target.value })
                   }
                   rows={6}
-                  className="w-full p-3 border-2 border-foreground bg-card resize-none"
+                  className="w-full p-3 border-2 border-gray-300 bg-white resize-none rounded"
                   placeholder="Fortell historien om denne bilen..."
                 />
               </div>
@@ -545,7 +545,7 @@ const AdminBiler = () => {
                   value={tagsInput}
                   onChange={(e) => setTagsInput(e.target.value)}
                   placeholder="f.eks. original, rally, restaurert"
-                  className="w-full p-3 border-2 border-foreground bg-card"
+                  className="w-full p-3 border-2 border-gray-300 bg-white rounded"
                 />
               </div>
 
