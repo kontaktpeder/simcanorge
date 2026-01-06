@@ -84,22 +84,23 @@ const AdminDashboard = () => {
 
   return (
     <AdminLayout title="DASHBOARD">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      {/* Stats Grid - responsive */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6 mb-6 md:mb-8">
         {statCards.map((card) => (
           <Link
             key={card.label}
             to={card.href}
-            className="retro-card hover-lift relative"
+            className="bg-card border border-border rounded-xl p-4 md:p-6 hover:shadow-lg transition-shadow relative"
           >
-            <div className={`w-12 h-12 ${card.color} text-white rounded flex items-center justify-center mb-4`}>
-              <card.icon className="w-6 h-6" />
+            <div className={`w-10 h-10 md:w-12 md:h-12 ${card.color} text-white rounded-lg flex items-center justify-center mb-3`}>
+              <card.icon className="w-5 h-5 md:w-6 md:h-6" />
             </div>
-            <p className="text-muted-foreground font-display">{card.label}</p>
-            <p className="text-4xl font-display">
+            <p className="text-muted-foreground text-xs md:text-sm font-medium">{card.label}</p>
+            <p className="text-2xl md:text-4xl font-display">
               {isLoading ? "..." : card.value}
             </p>
             {card.badge && (
-              <span className="absolute top-4 right-4 bg-accent text-accent-foreground px-2 py-1 text-sm font-display rounded">
+              <span className="absolute top-2 right-2 md:top-4 md:right-4 bg-accent text-accent-foreground px-1.5 py-0.5 md:px-2 md:py-1 text-xs font-medium rounded">
                 {card.badge} nye
               </span>
             )}
@@ -107,44 +108,45 @@ const AdminDashboard = () => {
         ))}
       </div>
 
-      <div className="grid lg:grid-cols-2 gap-6">
-        <div className="retro-card">
-          <h2 className="headline-md mb-4">HURTIGLENKER</h2>
-          <div className="space-y-3">
+      {/* Quick Links - stack on mobile */}
+      <div className="grid lg:grid-cols-2 gap-4 md:gap-6">
+        <div className="bg-card border border-border rounded-xl p-4 md:p-6">
+          <h2 className="font-display text-lg md:text-xl mb-3 md:mb-4">HURTIGLENKER</h2>
+          <div className="space-y-2">
             <Link
               to="/admin/biler"
-              className="flex items-center gap-3 p-3 border-2 border-foreground hover:bg-muted transition-colors"
+              className="flex items-center gap-3 p-3 bg-muted/50 hover:bg-muted rounded-lg transition-colors"
             >
               <Car className="w-5 h-5 text-primary" />
-              <span>Legg til ny bil</span>
+              <span className="text-sm md:text-base">Legg til ny bil</span>
             </Link>
             <Link
               to="/admin/deler"
-              className="flex items-center gap-3 p-3 border-2 border-foreground hover:bg-muted transition-colors"
+              className="flex items-center gap-3 p-3 bg-muted/50 hover:bg-muted rounded-lg transition-colors"
             >
               <Wrench className="w-5 h-5 text-accent" />
-              <span>Legg til ny del</span>
+              <span className="text-sm md:text-base">Legg til ny del</span>
             </Link>
             <Link
               to="/admin/foresporsler"
-              className="flex items-center gap-3 p-3 border-2 border-foreground hover:bg-muted transition-colors"
+              className="flex items-center gap-3 p-3 bg-muted/50 hover:bg-muted rounded-lg transition-colors"
             >
               <Inbox className="w-5 h-5 text-green-600" />
-              <span>Se forespørsler</span>
+              <span className="text-sm md:text-base">Se forespørsler</span>
             </Link>
           </div>
         </div>
 
-        <div className="retro-card">
-          <h2 className="headline-md mb-4">VELKOMMEN!</h2>
-          <p className="text-muted-foreground mb-4">
-            Her kan du administrere alt innhold på Simca Norge-nettsiden.
+        <div className="bg-card border border-border rounded-xl p-4 md:p-6">
+          <h2 className="font-display text-lg md:text-xl mb-3 md:mb-4">VELKOMMEN!</h2>
+          <p className="text-muted-foreground text-sm md:text-base mb-3">
+            Her kan du administrere alt innhold på Simca Norge.
           </p>
-          <ul className="space-y-2 text-sm">
+          <ul className="space-y-1.5 text-xs md:text-sm">
             <li>📝 <strong>Biler:</strong> Legg til og rediger bilhistorier</li>
             <li>🔧 <strong>Deler:</strong> Administrer deler-katalogen</li>
-            <li>📁 <strong>Kategorier:</strong> Organiser deler i kategorier</li>
-            <li>📬 <strong>Forespørsler:</strong> Se innkomne henvendelser</li>
+            <li>📁 <strong>Kategorier:</strong> Organiser deler</li>
+            <li>📬 <strong>Meldinger:</strong> Se innkomne henvendelser</li>
           </ul>
         </div>
       </div>
