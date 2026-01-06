@@ -20,6 +20,7 @@ const navItems = [
   { href: "/send-inn", label: "Send inn din bil", description: "Del din Simca-historie med oss" },
   { href: "/historie", label: "Simcaens historie" , description: "Lær om Simcas rike historie" },
   { href: "/om-oss", label: "Om oss", description: "Hvem står bak Simca Norge" },
+  { href: "/kontakt", label: "Kontakt", description: "Ta kontakt med oss" },
 ];
 
 const LEAVE_HOME_ANIM_KEY = "simca_leave_home_anim";

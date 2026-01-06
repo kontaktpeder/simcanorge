@@ -1,8 +1,9 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { AnimatedSection } from "@/components/layout/AnimatedSection";
-import { Mail, Send, CheckCircle, Phone, MessageSquare } from "lucide-react";
+import { Send, CheckCircle, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -248,6 +249,31 @@ export default function Kontakt() {
                 </div>
               </div>
             </AnimatedSection>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-16 bg-muted/30">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-8">
+            <h2 className="font-display text-2xl md:text-3xl text-foreground mb-2">
+              ELLER UTFORSK VIDERE
+            </h2>
+            <p className="text-muted-foreground">
+              Se bilene våre eller finn deler til din Simca
+            </p>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <Link to="/biler" className="btn-enamel-blue">
+              Se alle biler
+            </Link>
+            <Link to="/deler" className="btn-enamel-red">
+              Finn deler
+            </Link>
+            <Link to="/send-inn" className="inline-flex items-center gap-2 font-display text-lg uppercase tracking-wide text-foreground hover:text-accent transition-colors border-2 border-foreground px-6 py-3 rounded-lg hover:bg-foreground hover:text-background">
+              Send inn din bil
+            </Link>
           </div>
         </div>
       </section>
