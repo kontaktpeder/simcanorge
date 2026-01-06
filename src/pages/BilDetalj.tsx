@@ -159,55 +159,50 @@ const BilDetalj = () => {
       </div>
 
       {/* Hero Image Gallery */}
-      <section className="bg-foreground">
-        <div className="container mx-auto">
-          <div className="relative aspect-[16/9] md:aspect-[21/9]">
+      <section className="bg-foreground/95">
+        <div className="container mx-auto py-6">
+          <div className="relative flex items-center justify-center min-h-[400px] md:min-h-[500px] lg:min-h-[600px]">
             {sortedImages.length > 0 ? (
               <>
-                <img
-                  src={currentImage.image_url}
-                  alt={currentImage.alt_text || car.title}
-                  className="w-full h-full object-cover"
-                />
+                {/* Main image with smooth transition */}
+                <div className="relative w-full flex items-center justify-center">
+                  <img
+                    key={currentImageIndex}
+                    src={currentImage.image_url}
+                    alt={currentImage.alt_text || car.title}
+                    className="max-w-full max-h-[70vh] w-auto h-auto object-contain rounded-lg shadow-2xl animate-fade-in"
+                  />
+                </div>
 
                 {/* Navigation arrows */}
                 {sortedImages.length > 1 && (
                   <>
                     <button
                       onClick={prevImage}
-                      className="absolute left-4 top-1/2 -translate-y-1/2 bg-card/80 hover:bg-card p-3 rounded-full transition-colors"
+                      className="absolute left-2 md:left-6 top-1/2 -translate-y-1/2 bg-card/90 hover:bg-card p-3 md:p-4 rounded-full shadow-lg transition-all hover:scale-110"
                       aria-label="Forrige bilde"
                     >
-                      <ChevronLeft className="w-6 h-6" />
+                      <ChevronLeft className="w-6 h-6 md:w-7 md:h-7" />
                     </button>
                     <button
                       onClick={nextImage}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 bg-card/80 hover:bg-card p-3 rounded-full transition-colors"
+                      className="absolute right-2 md:right-6 top-1/2 -translate-y-1/2 bg-card/90 hover:bg-card p-3 md:p-4 rounded-full shadow-lg transition-all hover:scale-110"
                       aria-label="Neste bilde"
                     >
-                      <ChevronRight className="w-6 h-6" />
+                      <ChevronRight className="w-6 h-6 md:w-7 md:h-7" />
                     </button>
 
-                    {/* Dots */}
-                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-                      {sortedImages.map((_, index) => (
-                        <button
-                          key={index}
-                          onClick={() => setCurrentImageIndex(index)}
-                          className={`w-3 h-3 rounded-full transition-colors ${
-                            index === currentImageIndex
-                              ? "bg-accent"
-                              : "bg-card/60 hover:bg-card"
-                          }`}
-                          aria-label={`Gå til bilde ${index + 1}`}
-                        />
-                      ))}
+                    {/* Image counter */}
+                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-card/90 px-4 py-2 rounded-full shadow-lg">
+                      <span className="font-display text-sm">
+                        {currentImageIndex + 1} / {sortedImages.length}
+                      </span>
                     </div>
                   </>
                 )}
               </>
             ) : (
-              <div className="w-full h-full bg-muted flex items-center justify-center">
+              <div className="w-full h-[400px] bg-muted flex items-center justify-center rounded-lg">
                 <Car className="w-24 h-24 text-muted-foreground" />
               </div>
             )}
