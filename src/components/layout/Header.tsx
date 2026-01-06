@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { useCart } from "@/hooks/useCart";
@@ -23,6 +23,8 @@ const navItems = [
 ];
 
 const LEAVE_HOME_ANIM_KEY = "simca_leave_home_anim";
+const NORMAL_DURATION = 10; // seconds
+const BOOST_DURATION = 3; // seconds
 
 export function Header() {
   const location = useLocation();
@@ -30,11 +32,14 @@ export function Header() {
   const [isSpeedBoost, setIsSpeedBoost] = useState(false);
   const [isDrivingToGarage, setIsDrivingToGarage] = useState(false);
   const [roadFading, setRoadFading] = useState(false);
+  const [animationOffset, setAnimationOffset] = useState(0);
+  const boostStartTimeRef = useRef<number | null>(null);
+  const animationStartTimeRef = useRef<number>(Date.now());
   const { itemCount } = useCart();
 
   const isHome = location.pathname === "/";
 
-  // Trigger drive-to-garage ONLY when we left home via a click (Header remounts between routes)
+  // Trigger drive-to-garage ONLY when we left home via a click
   useEffect(() => {
     if (isHome) {
       setIsDrivingToGarage(false);
@@ -49,7 +54,6 @@ export function Header() {
     setIsDrivingToGarage(true);
     setRoadFading(false);
 
-    // Start fading road after car starts moving
     const fadeTimer = setTimeout(() => setRoadFading(true), 400);
     const endTimer = setTimeout(() => setIsDrivingToGarage(false), 900);
     
@@ -65,14 +69,40 @@ export function Header() {
     sessionStorage.setItem(LEAVE_HOME_ANIM_KEY, "1");
   };
 
+  // Calculate current animation progress (0-1)
+  const getAnimationProgress = useCallback(() => {
+    const now = Date.now();
+    const elapsed = (now - animationStartTimeRef.current) / 1000;
+    const duration = isSpeedBoost ? BOOST_DURATION : NORMAL_DURATION;
+    return ((elapsed + animationOffset) % duration) / duration;
+  }, [isSpeedBoost, animationOffset]);
+
   const handleCarClick = () => {
     if (isSpeedBoost || !isHome) return;
+    
+    // Calculate current progress and set offset to continue from same position
+    const progress = getAnimationProgress();
+    const newOffset = progress * BOOST_DURATION;
+    
+    setAnimationOffset(newOffset);
+    animationStartTimeRef.current = Date.now();
+    boostStartTimeRef.current = Date.now();
     setIsSpeedBoost(true);
   };
 
   useEffect(() => {
     if (isSpeedBoost) {
-      const timer = setTimeout(() => setIsSpeedBoost(false), 1000);
+      const timer = setTimeout(() => {
+        // When boost ends, calculate where we are and continue from there
+        const now = Date.now();
+        const boostElapsed = (now - (boostStartTimeRef.current || now)) / 1000;
+        const progressDuringBoost = boostElapsed / BOOST_DURATION;
+        const newOffset = (progressDuringBoost % 1) * NORMAL_DURATION;
+        
+        setAnimationOffset(newOffset);
+        animationStartTimeRef.current = Date.now();
+        setIsSpeedBoost(false);
+      }, 1000);
       return () => clearTimeout(timer);
     }
   }, [isSpeedBoost]);
@@ -273,8 +303,11 @@ export function Header() {
           {/* Exhaust smoke - only when driving normally on home */}
           {isHome && !isDrivingToGarage && (
             <div 
-              className="absolute bottom-[6px] md:bottom-[10px] animate-header-drive pointer-events-none" 
-              style={{ animationDuration: isSpeedBoost ? '3s' : '10s' }}
+              className="absolute bottom-[6px] md:bottom-[10px] pointer-events-none" 
+              style={{ 
+                animation: `headerDrive ${isSpeedBoost ? BOOST_DURATION : NORMAL_DURATION}s linear infinite`,
+                animationDelay: `-${animationOffset}s`
+              }}
             >
               <div className="relative">
                 <div className="absolute left-full ml-2 top-1 flex gap-1">
@@ -295,8 +328,12 @@ export function Header() {
           {/* The Simca car - driving normally on home */}
           {isHome && !isDrivingToGarage && (
             <div 
-              className="absolute bottom-[4px] md:bottom-[6px] animate-header-drive cursor-pointer" 
-              style={{ animationDuration: isSpeedBoost ? '3s' : '10s', pointerEvents: 'auto' }}
+              className="absolute bottom-[4px] md:bottom-[6px] cursor-pointer" 
+              style={{ 
+                animation: `headerDrive ${isSpeedBoost ? BOOST_DURATION : NORMAL_DURATION}s linear infinite`,
+                animationDelay: `-${animationOffset}s`,
+                pointerEvents: 'auto' 
+              }}
               onClick={handleCarClick}
             >
               <div className="animate-car-bump-subtle relative">
