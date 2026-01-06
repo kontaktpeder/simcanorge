@@ -12,6 +12,7 @@ import Deler from "./pages/Deler";
 import Foresporsel from "./pages/Foresporsel";
 import OmOss from "./pages/OmOss";
 import Historie from "./pages/Historie";
+import Kontakt from "./pages/Kontakt";
 import AdminLogin from "./pages/admin/AdminLogin";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminBiler from "./pages/admin/AdminBiler";
@@ -19,6 +20,7 @@ import AdminDeler from "./pages/admin/AdminDeler";
 import AdminKategorier from "./pages/admin/AdminKategorier";
 import AdminForesporsler from "./pages/admin/AdminForesporsler";
 import AdminInnsendinger from "./pages/admin/AdminInnsendinger";
+import AdminMeldinger from "./pages/admin/AdminMeldinger";
 import SendInnBil from "./pages/SendInnBil";
 import NotFound from "./pages/NotFound";
 
@@ -41,7 +43,7 @@ const App = () => (
             <Route path="/om-oss" element={<OmOss />} />
             <Route path="/historie" element={<Historie />} />
             <Route path="/send-inn" element={<SendInnBil />} />
-            
+            <Route path="/kontakt" element={<Kontakt />} />
             {/* Admin routes */}
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
@@ -50,7 +52,7 @@ const App = () => (
             <Route path="/admin/kategorier" element={<AdminKategorier />} />
             <Route path="/admin/foresporsler" element={<AdminForesporsler />} />
             <Route path="/admin/innsendinger" element={<AdminInnsendinger />} />
-            
+            <Route path="/admin/meldinger" element={<AdminMeldinger />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
