@@ -289,9 +289,7 @@ const Biler = () => {
           <h2 className="headline-md mb-4">HAR DU EN SIMCA,
 TALBOT ELLER MATRA?  
   </h2>
-          <p className="text-xl mb-6 opacity-90">
-            Del historien om din franske klassiker med oss!
-          </p>
+          <p className="text-xl mb-6 opacity-90">Del historien om din franske klassiker med oss, så vi kan få den ut på siden!</p>
           <Link to="/send-inn" className="btn-retro bg-accent-foreground text-primary-foreground">
             Send inn din bil
           </Link>
