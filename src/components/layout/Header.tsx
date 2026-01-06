@@ -26,52 +26,47 @@ export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isSpeedBoost, setIsSpeedBoost] = useState(false);
   const [isDrivingToGarage, setIsDrivingToGarage] = useState(false);
-  const [isParked, setIsParked] = useState(false);
-  const [roadVisible, setRoadVisible] = useState(true);
-  const prevPathRef = useRef<string | null>(null);
-  const location = useLocation();
+  const [isParked, setIsParked] = useState(() => location.pathname !== "/");
+  const [roadVisible, setRoadVisible] = useState(() => location.pathname === "/");
+  const prevPathRef = useRef<string>(location.pathname);
   const { itemCount } = useCart();
 
   const isHome = location.pathname === "/";
 
-  // Handle navigation changes
+  // Handle navigation changes - only animate when leaving home
   useEffect(() => {
     const prevPath = prevPathRef.current;
+    const currentPath = location.pathname;
     
-    // If navigating away from home
-    if (prevPath === "/" && !isHome) {
-      setIsDrivingToGarage(true);
-      setIsParked(false);
-      setRoadVisible(true);
+    // Update ref AFTER checking
+    if (prevPath !== currentPath) {
+      // If navigating away from home to another page
+      if (prevPath === "/" && currentPath !== "/") {
+        setIsDrivingToGarage(true);
+        setIsParked(false);
+        setRoadVisible(true);
+        
+        // After car reaches garage, park it and fade road
+        const parkTimer = setTimeout(() => {
+          setIsDrivingToGarage(false);
+          setIsParked(true);
+          setRoadVisible(false);
+        }, 800);
+        
+        prevPathRef.current = currentPath;
+        return () => clearTimeout(parkTimer);
+      }
       
-      // After car reaches garage, park it and fade road
-      const parkTimer = setTimeout(() => {
+      // If navigating to home
+      if (currentPath === "/") {
+        setIsParked(false);
         setIsDrivingToGarage(false);
-        setIsParked(true);
-        setRoadVisible(false);
-      }, 800);
+        setRoadVisible(true);
+      }
       
-      return () => clearTimeout(parkTimer);
+      prevPathRef.current = currentPath;
     }
-    
-    // If navigating to home
-    if (isHome) {
-      setIsParked(false);
-      setIsDrivingToGarage(false);
-      setRoadVisible(true);
-    }
-    
-    prevPathRef.current = location.pathname;
-  }, [location.pathname, isHome]);
-
-  // Initialize on mount - if not on home, just show parked state immediately (no animation)
-  useEffect(() => {
-    prevPathRef.current = location.pathname;
-    if (!isHome) {
-      setIsParked(true);
-      setRoadVisible(false);
-    }
-  }, []);
+  }, [location.pathname]);
 
   const handleCarClick = () => {
     if (isSpeedBoost || !isHome) return;
