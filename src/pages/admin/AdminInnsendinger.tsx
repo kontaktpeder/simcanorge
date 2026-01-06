@@ -41,6 +41,8 @@ interface CarSubmission {
   phone: string | null;
   car_model: string;
   car_year: number | null;
+  variant: string | null;
+  body_type: string | null;
   category: string;
   tags: string[] | null;
   car_story: string | null;
@@ -81,6 +83,8 @@ export default function AdminInnsendinger() {
           title: submission.title,
           brand: submission.brand,
           model: submission.car_model,
+          variant: submission.variant,
+          body_type: submission.body_type,
           year: submission.car_year,
           category: submission.category,
           tags: submission.tags,
