@@ -97,14 +97,38 @@ export function Header() {
           {/* Garage with parked car - visible on non-home pages (desktop only) */}
           {!isHome && !isDrivingToGarage && (
             <div className="hidden lg:flex items-center mx-4">
-              <div className="relative bg-gradient-to-b from-gray-700 to-gray-800 rounded-t-lg px-3 py-1 border-2 border-b-0 border-gray-600 shadow-inner">
-                {/* Garage roof */}
-                <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-full h-2 bg-gradient-to-b from-gray-500 to-gray-600 rounded-t-lg" />
+              <div 
+                className="relative px-4 py-2 rounded-t-xl"
+                style={{
+                  background: 'linear-gradient(180deg, #2a2a2a 0%, #1a1a1a 50%, #0f0f0f 100%)',
+                  boxShadow: 'inset 0 2px 8px rgba(0,0,0,0.6), inset 0 -1px 0 rgba(255,255,255,0.1), 0 4px 12px rgba(0,0,0,0.4)',
+                  border: '1px solid #333',
+                  borderBottom: 'none'
+                }}
+              >
+                {/* Garage roof with realistic shingles look */}
+                <div 
+                  className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-t-lg"
+                  style={{
+                    width: 'calc(100% + 16px)',
+                    height: '12px',
+                    background: 'linear-gradient(180deg, #4a3728 0%, #3d2d22 50%, #2a1f18 100%)',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1)',
+                    borderRadius: '6px 6px 0 0'
+                  }}
+                />
+                {/* Concrete floor */}
+                <div 
+                  className="absolute bottom-0 left-0 right-0 h-1"
+                  style={{
+                    background: 'linear-gradient(90deg, #555 0%, #666 50%, #555 100%)'
+                  }}
+                />
                 {/* Parked car */}
                 <img 
                   src={simcaRallye} 
                   alt="Parkert Simca" 
-                  className="h-[24px] w-auto object-contain drop-shadow-md"
+                  className="h-[24px] w-auto object-contain drop-shadow-md relative z-10"
                 />
               </div>
             </div>
@@ -219,27 +243,32 @@ export function Header() {
       {/* Animated car lane - only on home page OR during drive-to-garage animation */}
       {(isHome || isDrivingToGarage) && (
         <div 
-          className={`hidden sm:block relative w-full h-[30px] md:h-[45px] overflow-hidden transition-opacity duration-500 ${
-            roadFading ? 'opacity-0' : 'opacity-100'
+          className={`hidden sm:block relative w-full overflow-hidden transition-all duration-500 ease-out ${
+            roadFading ? 'h-0' : 'h-[30px] md:h-[45px]'
           }`}
           style={{
-            background: 'linear-gradient(to bottom, #B8860B, #DAA520, #B8860B)',
-            boxShadow: 'inset 0 2px 4px rgba(255,215,0,0.3), inset 0 -2px 4px rgba(0,0,0,0.2)'
+            background: 'linear-gradient(to bottom, #3a3a3a, #2a2a2a 30%, #1f1f1f 70%, #151515)',
+            boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.5), inset 0 -1px 0 rgba(255,255,255,0.05)'
           }}
         >
-          {/* Metallic shine overlay */}
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none" />
+          {/* Asphalt texture overlay */}
+          <div 
+            className="absolute inset-0 opacity-30 pointer-events-none"
+            style={{
+              backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 100 100\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noise\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.8\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noise)\'/%3E%3C/svg%3E")'
+            }}
+          />
           
-          {/* Center road stripe - static */}
+          {/* Center road stripe - yellow dashed line */}
           <div className="absolute top-1/2 -translate-y-1/2 left-0 right-0 flex justify-center gap-6 pointer-events-none">
             {[...Array(40)].map((_, i) => (
-              <div key={i} className="w-6 h-1 bg-white/90 rounded-sm flex-shrink-0 shadow-sm" />
+              <div key={i} className="w-6 h-1 bg-yellow-400/90 rounded-sm flex-shrink-0" />
             ))}
           </div>
           
-          {/* Road edges - golden chrome */}
-          <div className="absolute top-0.5 left-0 right-0 h-0.5 bg-gradient-to-r from-amber-300/60 via-yellow-200/80 to-amber-300/60 pointer-events-none" />
-          <div className="absolute bottom-0.5 left-0 right-0 h-0.5 bg-gradient-to-r from-amber-600/60 via-amber-400/80 to-amber-600/60 pointer-events-none" />
+          {/* Road edges - white lines */}
+          <div className="absolute top-1 left-0 right-0 h-0.5 bg-white/50 pointer-events-none" />
+          <div className="absolute bottom-1 left-0 right-0 h-0.5 bg-white/50 pointer-events-none" />
 
           {/* Exhaust smoke - only when driving normally on home */}
           {isHome && !isDrivingToGarage && (
