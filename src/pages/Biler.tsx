@@ -133,22 +133,34 @@ const Biler = () => {
             {CATEGORIES.map(cat => {
             const Icon = cat.icon;
             const isActive = selectedCategory === cat.id;
-            return <button key={cat.id} onClick={() => setSelectedCategory(cat.id)} className={`group relative flex flex-col items-center justify-center gap-1 md:gap-2 px-2 py-3 md:px-4 md:py-5 font-display text-[10px] md:text-sm rounded-xl transition-all duration-300 ${isActive ? "bg-primary text-primary-foreground shadow-lg shadow-primary/25 ring-2 ring-primary/50" : "bg-card border border-foreground/10 hover:border-primary/50 hover:bg-primary/5 text-foreground hover:shadow-md"}`}>
+            // Short labels for mobile
+            const mobileLabels: Record<string, string> = {
+              "alle": "Alle",
+              "registrert": "Reg.",
+              "restaurering": "Rest.",
+              "historisk": "Hist.",
+              "vrak": "Vrak"
+            };
+            
+            return <button key={cat.id} onClick={() => setSelectedCategory(cat.id)} className={`group relative flex flex-col items-center justify-center gap-1 md:gap-2 px-1.5 py-2.5 md:px-4 md:py-5 font-display text-[8px] md:text-sm rounded-lg md:rounded-xl transition-all duration-300 ${isActive ? "bg-primary text-primary-foreground shadow-lg shadow-primary/25 ring-2 ring-primary/50" : "bg-card border border-foreground/10 hover:border-primary/50 hover:bg-primary/5 text-foreground hover:shadow-md"}`}>
                   {/* Icon with badge count */}
                   <div className="relative">
-                    <Icon className={`w-5 h-5 md:w-7 md:h-7 transition-transform group-hover:scale-110 ${isActive ? '' : 'text-primary'}`} />
-                    <span className={`absolute -top-1.5 -right-2 md:-top-2 md:-right-2.5 min-w-[16px] md:min-w-[20px] h-4 md:h-5 flex items-center justify-center text-[9px] md:text-xs font-bold rounded-full ${isActive ? "bg-white/25 text-primary-foreground" : "bg-accent text-accent-foreground"}`}>
+                    <Icon className={`w-4 h-4 md:w-7 md:h-7 transition-transform group-hover:scale-110 ${isActive ? '' : 'text-primary'}`} />
+                    <span className={`absolute -top-1 -right-1.5 md:-top-2 md:-right-2.5 min-w-[14px] md:min-w-[20px] h-3.5 md:h-5 flex items-center justify-center text-[8px] md:text-xs font-bold rounded-full ${isActive ? "bg-white/25 text-primary-foreground" : "bg-accent text-accent-foreground"}`}>
                       {categoryCounts[cat.id]}
                     </span>
                   </div>
                   
-                  {/* Label */}
-                  <span className="font-bold tracking-wide text-center leading-tight">
+                  {/* Label - shorter on mobile */}
+                  <span className="font-bold tracking-wide text-center leading-tight hidden md:block">
                     {cat.label.split(' ')[0]}
+                  </span>
+                  <span className="font-bold tracking-tight text-center leading-tight md:hidden">
+                    {mobileLabels[cat.id]}
                   </span>
                   
                   {/* Active indicator */}
-                  {isActive && <span className="absolute -bottom-0.5 left-1/2 -translate-x-1/2 w-8 md:w-12 h-1 bg-accent rounded-full" />}
+                  {isActive && <span className="absolute -bottom-0.5 left-1/2 -translate-x-1/2 w-6 md:w-12 h-0.5 md:h-1 bg-accent rounded-full" />}
                 </button>;
           })}
           </div>
