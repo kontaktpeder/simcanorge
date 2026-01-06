@@ -239,7 +239,7 @@ export default function SendInnBil() {
   return <Layout>
       <PageHeader 
         title="SEND INN DIN BIL" 
-        subtitle="Har du en Simca, Talbot eller Matra? Del historien din med oss!" 
+        subtitle={"Har du en Simca, Talbot eller Matra? Del bilen din med oss,\nså kan vi få lagt den ut på siden!"} 
       />
 
       {/* Form Section */}
