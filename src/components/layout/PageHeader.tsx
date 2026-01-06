@@ -10,12 +10,12 @@ export function PageHeader({ title, subtitle }: PageHeaderProps) {
     <section className="poster-section poster-section-blue relative overflow-hidden py-8 md:py-16 lg:py-20">
       <div className="absolute inset-0 stripes-diagonal opacity-30" />
       
-      {/* Swallow watermark - subtle on all screen sizes */}
+      {/* Swallow watermark - more prominent */}
       <img 
         src={simcaSwallow} 
         alt="" 
         aria-hidden="true"
-        className="absolute right-4 md:right-12 top-1/2 -translate-y-1/2 w-20 md:w-32 lg:w-40 opacity-15 md:opacity-20 pointer-events-none -rotate-6"
+        className="absolute right-2 md:right-8 lg:right-16 top-1/2 -translate-y-1/2 w-28 md:w-44 lg:w-56 opacity-25 md:opacity-35 pointer-events-none -rotate-6 drop-shadow-lg"
       />
       
       <div className="container mx-auto px-4 relative z-10">

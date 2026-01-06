@@ -79,13 +79,10 @@ const Deler = () => {
 
   return (
     <Layout>
-      {/* Minimal header for mobile */}
-      <div className="bg-card border-b border-border">
-        <div className="container mx-auto px-4 py-3">
-          <h1 className="font-display text-lg md:text-2xl">DELER</h1>
-          <p className="text-xs md:text-sm text-muted-foreground">Finn deler til din Simca</p>
-        </div>
-      </div>
+      <PageHeader 
+        title="DELER" 
+        subtitle="Finn deler til din Simca – legg i verktøykassen så sjekker vi hylla!"
+      />
 
       {/* Toolbox Banner - Compact sticky */}
       {itemCount > 0 && (
