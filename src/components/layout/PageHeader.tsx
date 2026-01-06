@@ -43,7 +43,7 @@ export function PageHeader({ title, subtitle }: PageHeaderProps) {
             {title}
           </h1>
           {subtitle && (
-            <p className="font-serif text-xl md:text-2xl text-white/90 italic">
+            <p className="font-serif text-xl md:text-2xl text-white/90 italic whitespace-pre-line">
               {subtitle}
             </p>
           )}
