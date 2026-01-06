@@ -60,16 +60,6 @@ export function HeroSection() {
       {/* Subtle stripes overlay */}
       <div className="absolute inset-0 stripes-diagonal" />
       
-      {/* Large swallow watermark */}
-      <div className="absolute inset-0 pointer-events-none" style={{
-      backgroundImage: `url(${simcaSwallow})`,
-      backgroundRepeat: 'no-repeat',
-      backgroundPosition: '50% 50%',
-      backgroundSize: '800px',
-      opacity: 0.10,
-      filter: 'blur(0.5px)',
-      transform: 'rotate(-8deg)'
-    }} />
       
       <div className="container mx-auto relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
