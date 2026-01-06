@@ -3,7 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowLeft, Calendar, Wrench, Tag, ChevronLeft, ChevronRight, Car, Share2, Facebook, Twitter, Linkedin, Link as LinkIcon, Check } from "lucide-react";
+import { ArrowLeft, Calendar, Wrench, Tag, ChevronLeft, ChevronRight, Car, Share2, Facebook, Twitter, Linkedin, Link as LinkIcon, Check, Instagram } from "lucide-react";
 import { toast } from "sonner";
 
 interface CarImage {
@@ -272,114 +272,125 @@ const BilDetalj = () => {
         )}
       </section>
 
-      {/* Content */}
-      <section className="poster-section">
-        <div className="container mx-auto">
-          <div className="max-w-4xl mx-auto animate-fade-in">
-            {/* Badges */}
-            <div className="flex flex-wrap gap-3 mb-6">
-              <span className="bg-primary text-primary-foreground px-4 py-2 font-display text-lg rounded-lg">
+      {/* Content - Mobile optimized */}
+      <section className="bg-background">
+        <div className="container mx-auto px-4 py-5 md:py-10">
+          <div className="max-w-4xl mx-auto">
+            {/* Title first on mobile */}
+            <h1 className="font-display text-xl md:text-4xl mb-3 md:mb-4">{car.title}</h1>
+            
+            {/* Compact badges row */}
+            <div className="flex flex-wrap gap-2 mb-4 md:mb-6">
+              <span className="bg-primary text-primary-foreground px-2.5 py-1 md:px-4 md:py-2 font-display text-xs md:text-base rounded-full">
                 {car.model}
               </span>
               {car.year && (
-                <span className="bg-accent text-accent-foreground px-4 py-2 font-display text-lg flex items-center gap-2 rounded-lg">
-                  <Calendar className="w-5 h-5" />
+                <span className="bg-accent text-accent-foreground px-2.5 py-1 md:px-4 md:py-2 font-display text-xs md:text-base flex items-center gap-1.5 rounded-full">
+                  <Calendar className="w-3 h-3 md:w-4 md:h-4" />
                   {car.year}
                 </span>
               )}
               {car.overhauled && (
-                <span className="bg-green-600 text-white px-4 py-2 font-display text-lg flex items-center gap-2 rounded-lg">
-                  <Wrench className="w-5 h-5" />
-                  OVERHALT
+                <span className="bg-green-600 text-white px-2.5 py-1 md:px-4 md:py-2 font-display text-xs md:text-base flex items-center gap-1.5 rounded-full">
+                  <Wrench className="w-3 h-3 md:w-4 md:h-4" />
+                  Overhalt
                 </span>
               )}
             </div>
 
-            {/* Title */}
-            <h1 className="headline-lg mb-8">{car.title}</h1>
-
             {/* Story */}
             {car.story && (
-              <div className="border-chrome card-enamel bg-card p-8 mb-8">
-                <div className="text-lg leading-relaxed whitespace-pre-wrap">
+              <div className="bg-card rounded-xl p-4 md:p-6 mb-4 md:mb-6 border border-border">
+                <p className="text-sm md:text-base leading-relaxed whitespace-pre-wrap text-foreground/90">
                   {car.story}
-                </div>
+                </p>
               </div>
             )}
 
-            {/* Tags */}
+            {/* Tags - horizontal scroll on mobile */}
             {car.tags && car.tags.length > 0 && (
-              <div className="pt-8 border-t border-border">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <Tag className="w-5 h-5 text-muted-foreground" />
-                  {car.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="bg-muted px-3 py-1 text-sm text-muted-foreground rounded-full"
-                    >
-                      #{tag}
-                    </span>
-                  ))}
-                </div>
+              <div className="flex items-center gap-2 overflow-x-auto pb-2 mb-4 md:mb-6 -mx-4 px-4 md:mx-0 md:px-0 md:flex-wrap">
+                {car.tags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="flex-shrink-0 bg-muted px-2.5 py-1 text-xs md:text-sm text-muted-foreground rounded-full"
+                  >
+                    #{tag}
+                  </span>
+                ))}
               </div>
             )}
 
-            {/* Actions */}
-            <div className="mt-12 flex flex-wrap gap-4 items-center">
-              <Link to="/biler" className="btn-enamel-blue inline-flex">
-                <ArrowLeft className="w-5 h-5 mr-2" />
-                Se flere biler
-              </Link>
-
-              {/* Share button */}
-              <div className="relative">
+            {/* Share section - inline icons on mobile */}
+            <div className="border-t border-border pt-4 md:pt-6">
+              <p className="text-xs text-muted-foreground mb-3">Del på sosiale medier</p>
+              <div className="flex items-center gap-2 mb-4">
                 <button
-                  onClick={() => setShowShareMenu(!showShareMenu)}
-                  className="btn-enamel-red inline-flex items-center gap-2"
+                  onClick={shareOnFacebook}
+                  className="w-10 h-10 md:w-11 md:h-11 rounded-full bg-blue-600 text-white flex items-center justify-center hover:opacity-90 transition-opacity"
+                  aria-label="Del på Facebook"
                 >
-                  <Share2 className="w-5 h-5" />
-                  Del denne bilen
+                  <Facebook className="w-5 h-5" />
                 </button>
-
-                {showShareMenu && (
-                  <div className="absolute bottom-full left-0 mb-2 bg-card border-2 border-foreground rounded-lg shadow-xl p-2 min-w-[180px] z-10">
-                    <button
-                      onClick={shareOnFacebook}
-                      className="w-full flex items-center gap-3 px-4 py-3 hover:bg-muted rounded-lg transition-colors text-left"
-                    >
-                      <Facebook className="w-5 h-5 text-blue-600" />
-                      Facebook
-                    </button>
-                    <button
-                      onClick={shareOnTwitter}
-                      className="w-full flex items-center gap-3 px-4 py-3 hover:bg-muted rounded-lg transition-colors text-left"
-                    >
-                      <Twitter className="w-5 h-5 text-sky-500" />
-                      X (Twitter)
-                    </button>
-                    <button
-                      onClick={shareOnLinkedIn}
-                      className="w-full flex items-center gap-3 px-4 py-3 hover:bg-muted rounded-lg transition-colors text-left"
-                    >
-                      <Linkedin className="w-5 h-5 text-blue-700" />
-                      LinkedIn
-                    </button>
-                    <div className="border-t border-border my-1" />
-                    <button
-                      onClick={copyLink}
-                      className="w-full flex items-center gap-3 px-4 py-3 hover:bg-muted rounded-lg transition-colors text-left"
-                    >
-                      {copied ? (
-                        <Check className="w-5 h-5 text-green-600" />
-                      ) : (
-                        <LinkIcon className="w-5 h-5 text-muted-foreground" />
-                      )}
-                      {copied ? "Kopiert!" : "Kopier lenke"}
-                    </button>
-                  </div>
-                )}
+                <button
+                  onClick={() => {
+                    const text = `Sjekk ut denne ${car.title}!`;
+                    window.open(`https://www.instagram.com/`, "_blank");
+                  }}
+                  className="w-10 h-10 md:w-11 md:h-11 rounded-full bg-gradient-to-br from-purple-600 via-pink-500 to-orange-400 text-white flex items-center justify-center hover:opacity-90 transition-opacity"
+                  aria-label="Del på Instagram"
+                >
+                  <Instagram className="w-5 h-5" />
+                </button>
+                <button
+                  onClick={() => {
+                    window.open(`https://www.tiktok.com/`, "_blank");
+                  }}
+                  className="w-10 h-10 md:w-11 md:h-11 rounded-full bg-black text-white flex items-center justify-center hover:opacity-90 transition-opacity border border-white/20"
+                  aria-label="Del på TikTok"
+                >
+                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+                  </svg>
+                </button>
+                <button
+                  onClick={() => {
+                    window.open(`https://www.snapchat.com/`, "_blank");
+                  }}
+                  className="w-10 h-10 md:w-11 md:h-11 rounded-full bg-yellow-400 text-black flex items-center justify-center hover:opacity-90 transition-opacity"
+                  aria-label="Del på Snapchat"
+                >
+                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12.206.793c.99 0 4.347.276 5.93 3.821.529 1.193.403 3.219.299 4.847l-.003.06c-.012.18-.022.345-.03.51.075.045.203.09.401.09.3-.016.659-.12 1.033-.301a.603.603 0 0 1 .243-.045c.158 0 .315.045.45.135.165.12.255.285.27.465.015.285-.135.45-.345.585-.09.06-.24.12-.42.18-.63.195-1.365.315-1.545.645-.18.315.06.705.165.87.93 1.455 2.16 2.58 3.57 3.255.21.105.39.27.435.495.045.3-.09.555-.315.735-.3.225-.645.375-1.05.465-.27.06-.57.09-.885.12-.06.015-.12.015-.18.03-.18.03-.36.075-.57.15-.27.09-.495.24-.66.45-.21.27-.3.555-.33.81-.03.225.015.45.09.645.12.3.315.525.525.69.24.18.525.315.825.39.315.075.66.12 1.02.12.525 0 1.035-.09 1.5-.24.285-.09.54-.195.765-.33a.89.89 0 0 1 .48-.135c.255 0 .51.105.69.3.21.225.27.525.195.78-.12.39-.405.675-.795.885-.705.375-1.56.6-2.52.675-.21.015-.435.03-.66.03-.27 0-.54-.015-.81-.045a6.84 6.84 0 0 1-1.29-.24c-.375-.105-.75-.24-1.11-.42-.39-.195-.78-.435-1.14-.735-.51-.42-.975-.93-1.38-1.545-.285-.435-.525-.9-.72-1.395-.12-.3-.21-.615-.285-.945-.075-.345-.12-.705-.12-1.08 0-.495.075-.975.225-1.425.18-.555.465-1.065.855-1.5.27-.3.585-.555.945-.75-.24-.615-.36-1.275-.36-1.965 0-2.13 1.23-4.02 3.15-4.92z"/>
+                  </svg>
+                </button>
+                <button
+                  onClick={shareOnTwitter}
+                  className="w-10 h-10 md:w-11 md:h-11 rounded-full bg-black text-white flex items-center justify-center hover:opacity-90 transition-opacity"
+                  aria-label="Del på X"
+                >
+                  <Twitter className="w-5 h-5" />
+                </button>
+                <button
+                  onClick={copyLink}
+                  className={`w-10 h-10 md:w-11 md:h-11 rounded-full flex items-center justify-center transition-all ${
+                    copied ? "bg-green-600 text-white" : "bg-muted text-foreground hover:bg-muted/80"
+                  }`}
+                  aria-label="Kopier lenke"
+                >
+                  {copied ? <Check className="w-5 h-5" /> : <LinkIcon className="w-5 h-5" />}
+                </button>
               </div>
             </div>
+
+            {/* Back button */}
+            <Link 
+              to="/biler" 
+              className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mt-2"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Tilbake til galleriet
+            </Link>
           </div>
         </div>
       </section>
