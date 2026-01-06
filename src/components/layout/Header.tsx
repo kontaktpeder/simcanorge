@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { useCart } from "@/hooks/useCart";
@@ -18,13 +18,18 @@ const navItems = [
   { href: "/biler", label: "Biler", description: "Utforsk Simca-biler og historier" },
   { href: "/deler", label: "Deler", description: "Finn deler til din Simca" },
   { href: "/send-inn", label: "Send inn din bil", description: "Del din Simca-historie med oss" },
-  { href: "/historie", label: "Simcaens historie", description: "Lær om Simcas rike historie" },
+  { href: "/historie", label: "Simcaens historie" , description: "Lær om Simcas rike historie" },
   { href: "/om-oss", label: "Om oss", description: "Hvem står bak Simca Norge" },
 ];
 
 const LEAVE_HOME_ANIM_KEY = "simca_leave_home_anim";
-const NORMAL_DURATION = 10; // seconds
-const BOOST_DURATION = 3; // seconds
+
+// Animation settings (JS-driven so it never jumps when boosting)
+const CAR_START_X = -100; // px
+const CAR_END_MARGIN = 100; // px beyond viewport
+const NORMAL_TRAVEL_TIME = 10; // seconds for one full pass
+const BOOST_MULTIPLIER = 3.2; // speed multiplier during boost
+const BOOST_MS = 1000; // boost duration
 
 export function Header() {
   const location = useLocation();
@@ -32,12 +37,16 @@ export function Header() {
   const [isSpeedBoost, setIsSpeedBoost] = useState(false);
   const [isDrivingToGarage, setIsDrivingToGarage] = useState(false);
   const [roadFading, setRoadFading] = useState(false);
-  const [animationOffset, setAnimationOffset] = useState(0);
-  const boostStartTimeRef = useRef<number | null>(null);
-  const animationStartTimeRef = useRef<number>(Date.now());
   const { itemCount } = useCart();
 
   const isHome = location.pathname === "/";
+
+  // Refs for JS-driven animation
+  const carWrapRef = useRef<HTMLDivElement | null>(null);
+  const smokeWrapRef = useRef<HTMLDivElement | null>(null);
+  const xRef = useRef(CAR_START_X);
+  const lastTsRef = useRef<number | null>(null);
+  const boostUntilRef = useRef<number>(0);
 
   // Trigger drive-to-garage ONLY when we left home via a click
   useEffect(() => {
@@ -56,7 +65,7 @@ export function Header() {
 
     const fadeTimer = setTimeout(() => setRoadFading(true), 400);
     const endTimer = setTimeout(() => setIsDrivingToGarage(false), 900);
-    
+
     return () => {
       clearTimeout(fadeTimer);
       clearTimeout(endTimer);
@@ -69,43 +78,57 @@ export function Header() {
     sessionStorage.setItem(LEAVE_HOME_ANIM_KEY, "1");
   };
 
-  // Calculate current animation progress (0-1)
-  const getAnimationProgress = useCallback(() => {
-    const now = Date.now();
-    const elapsed = (now - animationStartTimeRef.current) / 1000;
-    const duration = isSpeedBoost ? BOOST_DURATION : NORMAL_DURATION;
-    return ((elapsed + animationOffset) % duration) / duration;
-  }, [isSpeedBoost, animationOffset]);
+  // JS-driven continuous driving animation on home (no resets when boosting)
+  useEffect(() => {
+    if (!isHome || isDrivingToGarage) return;
+
+    const tick = (ts: number) => {
+      if (!carWrapRef.current || !smokeWrapRef.current) {
+        lastTsRef.current = ts;
+        requestAnimationFrame(tick);
+        return;
+      }
+
+      const last = lastTsRef.current;
+      lastTsRef.current = ts;
+      if (last == null) {
+        requestAnimationFrame(tick);
+        return;
+      }
+
+      const dt = (ts - last) / 1000;
+      const endX = window.innerWidth + CAR_END_MARGIN;
+      const distance = endX - CAR_START_X;
+      const baseSpeed = distance / NORMAL_TRAVEL_TIME; // px/s
+      const speed = ts < boostUntilRef.current ? baseSpeed * BOOST_MULTIPLIER : baseSpeed;
+
+      xRef.current += speed * dt;
+      if (xRef.current > endX) xRef.current = CAR_START_X;
+
+      const x = xRef.current;
+      const transform = `translateX(${x}px)`;
+      carWrapRef.current.style.transform = transform;
+      smokeWrapRef.current.style.transform = transform;
+
+      requestAnimationFrame(tick);
+    };
+
+    const raf = requestAnimationFrame(tick);
+    return () => {
+      cancelAnimationFrame(raf);
+      lastTsRef.current = null;
+    };
+  }, [isHome, isDrivingToGarage]);
 
   const handleCarClick = () => {
-    if (isSpeedBoost || !isHome) return;
-    
-    // Calculate current progress and set offset to continue from same position
-    const progress = getAnimationProgress();
-    const newOffset = progress * BOOST_DURATION;
-    
-    setAnimationOffset(newOffset);
-    animationStartTimeRef.current = Date.now();
-    boostStartTimeRef.current = Date.now();
-    setIsSpeedBoost(true);
-  };
+    if (!isHome || isDrivingToGarage) return;
 
-  useEffect(() => {
-    if (isSpeedBoost) {
-      const timer = setTimeout(() => {
-        // When boost ends, calculate where we are and continue from there
-        const now = Date.now();
-        const boostElapsed = (now - (boostStartTimeRef.current || now)) / 1000;
-        const progressDuringBoost = boostElapsed / BOOST_DURATION;
-        const newOffset = (progressDuringBoost % 1) * NORMAL_DURATION;
-        
-        setAnimationOffset(newOffset);
-        animationStartTimeRef.current = Date.now();
-        setIsSpeedBoost(false);
-      }, 1000);
-      return () => clearTimeout(timer);
-    }
-  }, [isSpeedBoost]);
+    const now = performance.now();
+    boostUntilRef.current = now + BOOST_MS;
+    setIsSpeedBoost(true);
+
+    window.setTimeout(() => setIsSpeedBoost(false), BOOST_MS);
+  };
 
   return (
     <header className="sticky top-0 z-50 header-chrome">
@@ -302,12 +325,10 @@ export function Header() {
 
           {/* Exhaust smoke - only when driving normally on home */}
           {isHome && !isDrivingToGarage && (
-            <div 
-              className="absolute bottom-[6px] md:bottom-[10px] pointer-events-none" 
-              style={{ 
-                animation: `headerDrive ${isSpeedBoost ? BOOST_DURATION : NORMAL_DURATION}s linear infinite`,
-                animationDelay: `-${animationOffset}s`
-              }}
+            <div
+              ref={smokeWrapRef}
+              className="absolute bottom-[6px] md:bottom-[10px] pointer-events-none"
+              style={{ transform: `translateX(${CAR_START_X}px)` }}
             >
               <div className="relative">
                 <div className="absolute left-full ml-2 top-1 flex gap-1">
@@ -327,13 +348,10 @@ export function Header() {
 
           {/* The Simca car - driving normally on home */}
           {isHome && !isDrivingToGarage && (
-            <div 
-              className="absolute bottom-[4px] md:bottom-[6px] cursor-pointer" 
-              style={{ 
-                animation: `headerDrive ${isSpeedBoost ? BOOST_DURATION : NORMAL_DURATION}s linear infinite`,
-                animationDelay: `-${animationOffset}s`,
-                pointerEvents: 'auto' 
-              }}
+            <div
+              ref={carWrapRef}
+              className="absolute bottom-[4px] md:bottom-[6px] cursor-pointer"
+              style={{ transform: `translateX(${CAR_START_X}px)`, pointerEvents: 'auto' }}
               onClick={handleCarClick}
             >
               <div className="animate-car-bump-subtle relative">
