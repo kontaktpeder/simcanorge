@@ -379,7 +379,7 @@ const AdminDeler = () => {
       {isLoading ? (
         <div className="text-center py-12">Laster...</div>
       ) : parts.length === 0 ? (
-        <div className="retro-card text-center py-12">
+        <div className="bg-card border border-border rounded-xl text-center py-12">
           <Wrench className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
           <p className="text-muted-foreground mb-4">Ingen deler lagt til ennå</p>
           <button onClick={() => setShowForm(true)} className="btn-retro">
@@ -388,88 +388,158 @@ const AdminDeler = () => {
           </button>
         </div>
       ) : (
-        <div className="bg-card border-4 border-foreground overflow-hidden">
-          <table className="w-full">
-            <thead className="bg-muted">
-              <tr>
-                <th className="text-left p-4 font-display w-16">BILDE</th>
-                <th className="text-left p-4 font-display">TITTEL</th>
-                <th className="text-left p-4 font-display">KATEGORI</th>
-                <th className="text-left p-4 font-display">STATUS</th>
-                <th className="text-right p-4 font-display">HANDLINGER</th>
-              </tr>
-            </thead>
-            <tbody>
-              {parts.map((part) => (
-                <tr key={part.id} className="border-t border-border">
-                  <td className="p-4">
-                    <div className="w-12 h-12 bg-muted rounded overflow-hidden">
-                      {part.image_url ? (
-                        <img
-                          src={part.image_url}
-                          alt={part.title}
-                          className="w-full h-full object-cover"
-                        />
+        <>
+          {/* Mobile Card View */}
+          <div className="md:hidden space-y-3">
+            {parts.map((part) => (
+              <div key={part.id} className="bg-card border border-border rounded-xl p-3">
+                <div className="flex gap-3">
+                  {/* Image */}
+                  <div className="w-16 h-16 bg-muted rounded-lg overflow-hidden flex-shrink-0">
+                    {part.image_url ? (
+                      <img
+                        src={part.image_url}
+                        alt={part.title}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <Wrench className="w-6 h-6 text-muted-foreground" />
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* Info */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="min-w-0">
+                        <span className="font-medium text-sm truncate block">{part.title}</span>
+                        <p className="text-xs text-muted-foreground">
+                          {part.categories?.name || "Ingen kategori"}
+                        </p>
+                      </div>
+                      {part.published ? (
+                        <span className="text-[10px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded flex-shrink-0">Publisert</span>
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center">
-                          <Wrench className="w-5 h-5 text-muted-foreground" />
-                        </div>
+                        <span className="text-[10px] bg-muted text-muted-foreground px-1.5 py-0.5 rounded flex-shrink-0">Skjult</span>
                       )}
                     </div>
-                  </td>
-                  <td className="p-4 font-medium">{part.title}</td>
-                  <td className="p-4">
-                    {part.categories?.name || (
-                      <span className="text-muted-foreground">Ingen kategori</span>
-                    )}
-                  </td>
-                  <td className="p-4">
-                    {part.published ? (
-                      <span className="text-green-600 flex items-center gap-1">
-                        <Eye className="w-4 h-4" />
-                        Publisert
-                      </span>
-                    ) : (
-                      <span className="text-muted-foreground flex items-center gap-1">
-                        <EyeOff className="w-4 h-4" />
-                        Skjult
-                      </span>
-                    )}
-                  </td>
-                  <td className="p-4">
-                    <div className="flex items-center justify-end gap-2">
+                    
+                    {/* Actions */}
+                    <div className="flex items-center justify-end mt-2 gap-0.5">
                       <button
                         onClick={() => togglePublish(part)}
-                        className="p-2 hover:bg-muted rounded"
-                        title={part.published ? "Skjul" : "Publiser"}
+                        className="p-1.5 hover:bg-muted rounded"
                       >
                         {part.published ? (
-                          <EyeOff className="w-5 h-5" />
+                          <EyeOff className="w-4 h-4" />
                         ) : (
-                          <Eye className="w-5 h-5 text-green-600" />
+                          <Eye className="w-4 h-4 text-green-600" />
                         )}
                       </button>
                       <button
                         onClick={() => startEdit(part)}
-                        className="p-2 hover:bg-muted rounded"
-                        title="Rediger"
+                        className="p-1.5 hover:bg-muted rounded"
                       >
-                        <Pencil className="w-5 h-5 text-primary" />
+                        <Pencil className="w-4 h-4 text-primary" />
                       </button>
                       <button
                         onClick={() => deletePart(part.id)}
-                        className="p-2 hover:bg-muted rounded"
-                        title="Slett"
+                        className="p-1.5 hover:bg-muted rounded"
                       >
-                        <Trash2 className="w-5 h-5 text-accent" />
+                        <Trash2 className="w-4 h-4 text-accent" />
                       </button>
                     </div>
-                  </td>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Desktop Table View */}
+          <div className="hidden md:block bg-card border border-border rounded-xl overflow-hidden">
+            <table className="w-full">
+              <thead className="bg-muted">
+                <tr>
+                  <th className="text-left p-4 font-display text-sm w-16">BILDE</th>
+                  <th className="text-left p-4 font-display text-sm">TITTEL</th>
+                  <th className="text-left p-4 font-display text-sm">KATEGORI</th>
+                  <th className="text-left p-4 font-display text-sm">STATUS</th>
+                  <th className="text-right p-4 font-display text-sm">HANDLINGER</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {parts.map((part) => (
+                  <tr key={part.id} className="border-t border-border">
+                    <td className="p-4">
+                      <div className="w-12 h-12 bg-muted rounded overflow-hidden">
+                        {part.image_url ? (
+                          <img
+                            src={part.image_url}
+                            alt={part.title}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center">
+                            <Wrench className="w-5 h-5 text-muted-foreground" />
+                          </div>
+                        )}
+                      </div>
+                    </td>
+                    <td className="p-4 font-medium">{part.title}</td>
+                    <td className="p-4">
+                      {part.categories?.name || (
+                        <span className="text-muted-foreground">Ingen kategori</span>
+                      )}
+                    </td>
+                    <td className="p-4">
+                      {part.published ? (
+                        <span className="text-green-600 flex items-center gap-1">
+                          <Eye className="w-4 h-4" />
+                          Publisert
+                        </span>
+                      ) : (
+                        <span className="text-muted-foreground flex items-center gap-1">
+                          <EyeOff className="w-4 h-4" />
+                          Skjult
+                        </span>
+                      )}
+                    </td>
+                    <td className="p-4">
+                      <div className="flex items-center justify-end gap-1">
+                        <button
+                          onClick={() => togglePublish(part)}
+                          className="p-2 hover:bg-muted rounded"
+                          title={part.published ? "Skjul" : "Publiser"}
+                        >
+                          {part.published ? (
+                            <EyeOff className="w-5 h-5" />
+                          ) : (
+                            <Eye className="w-5 h-5 text-green-600" />
+                          )}
+                        </button>
+                        <button
+                          onClick={() => startEdit(part)}
+                          className="p-2 hover:bg-muted rounded"
+                          title="Rediger"
+                        >
+                          <Pencil className="w-5 h-5 text-primary" />
+                        </button>
+                        <button
+                          onClick={() => deletePart(part.id)}
+                          className="p-2 hover:bg-muted rounded"
+                          title="Slett"
+                        >
+                          <Trash2 className="w-5 h-5 text-accent" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
       )}
     </AdminLayout>
   );
