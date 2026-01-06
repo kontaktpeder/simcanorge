@@ -52,6 +52,7 @@ export type Database = {
       car_submissions: {
         Row: {
           admin_notes: string | null
+          allow_edits: boolean
           brand: string | null
           car_model: string
           car_story: string | null
@@ -71,6 +72,7 @@ export type Database = {
         }
         Insert: {
           admin_notes?: string | null
+          allow_edits?: boolean
           brand?: string | null
           car_model: string
           car_story?: string | null
@@ -90,6 +92,7 @@ export type Database = {
         }
         Update: {
           admin_notes?: string | null
+          allow_edits?: boolean
           brand?: string | null
           car_model?: string
           car_story?: string | null
