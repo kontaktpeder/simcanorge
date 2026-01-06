@@ -125,7 +125,7 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-auto">
+      <main className="flex-1 overflow-auto bg-background">
         <header className="header-chrome p-6">
           <h1 className="headline-md text-foreground animate-fade-in">{title}</h1>
         </header>
