@@ -129,7 +129,7 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
         <header className="header-chrome p-6">
           <h1 className="headline-md text-foreground animate-fade-in">{title}</h1>
         </header>
-        <div className="p-6 animate-fade-in">
+        <div className="p-6">
           {children}
         </div>
       </main>
