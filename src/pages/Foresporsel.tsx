@@ -180,9 +180,9 @@ const Foresporsel = () => {
               {/* Contact Form */}
               <div className="animate-slide-in-right">
                 <h2 className="headline-md mb-6">DINE OPPLYSNINGER</h2>
-                <form onSubmit={handleSubmit} className="border-chrome card-enamel bg-card p-6 space-y-4">
+                <form onSubmit={handleSubmit} className="border-chrome card-enamel bg-card p-4 sm:p-6 space-y-3 sm:space-y-4">
                   <div>
-                    <label className="block font-display text-lg mb-2">
+                    <label className="block font-display text-base sm:text-lg mb-1.5 sm:mb-2">
                       NAVN *
                     </label>
                     <input
@@ -190,7 +190,7 @@ const Foresporsel = () => {
                       name="customer_name"
                       value={formData.customer_name}
                       onChange={handleChange}
-                      className={`w-full p-3 border-2 rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary transition-all ${
+                      className={`w-full h-12 sm:h-auto p-3 text-base border-2 rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary transition-all ${
                         errors.customer_name ? "border-accent" : "border-border"
                       }`}
                       required
@@ -201,7 +201,7 @@ const Foresporsel = () => {
                   </div>
 
                   <div>
-                    <label className="block font-display text-lg mb-2">
+                    <label className="block font-display text-base sm:text-lg mb-1.5 sm:mb-2">
                       E-POST *
                     </label>
                     <input
@@ -209,7 +209,7 @@ const Foresporsel = () => {
                       name="email"
                       value={formData.email}
                       onChange={handleChange}
-                      className={`w-full p-3 border-2 rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary transition-all ${
+                      className={`w-full h-12 sm:h-auto p-3 text-base border-2 rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary transition-all ${
                         errors.email ? "border-accent" : "border-border"
                       }`}
                       required
@@ -220,7 +220,7 @@ const Foresporsel = () => {
                   </div>
 
                   <div>
-                    <label className="block font-display text-lg mb-2">
+                    <label className="block font-display text-base sm:text-lg mb-1.5 sm:mb-2">
                       TELEFON (valgfritt)
                     </label>
                     <input
@@ -228,13 +228,13 @@ const Foresporsel = () => {
                       name="phone"
                       value={formData.phone}
                       onChange={handleChange}
-                      className="w-full p-3 border-2 border-border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary transition-all"
+                      className="w-full h-12 sm:h-auto p-3 text-base border-2 border-border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary transition-all"
                     />
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <div>
-                      <label className="block font-display text-lg mb-2">
+                      <label className="block font-display text-base sm:text-lg mb-1.5 sm:mb-2">
                         BILMODELL
                       </label>
                       <input
@@ -243,11 +243,11 @@ const Foresporsel = () => {
                         value={formData.car_model}
                         onChange={handleChange}
                         placeholder="f.eks. 1000 Rallye"
-                        className="w-full p-3 border-2 border-border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary transition-all"
+                        className="w-full h-12 sm:h-auto p-3 text-base border-2 border-border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary transition-all"
                       />
                     </div>
                     <div>
-                      <label className="block font-display text-lg mb-2">
+                      <label className="block font-display text-base sm:text-lg mb-1.5 sm:mb-2">
                         ÅRSMODELL
                       </label>
                       <input
@@ -258,13 +258,13 @@ const Foresporsel = () => {
                         placeholder="f.eks. 1972"
                         min="1900"
                         max={new Date().getFullYear() + 1}
-                        className="w-full p-3 border-2 border-border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary transition-all"
+                        className="w-full h-12 sm:h-auto p-3 text-base border-2 border-border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary transition-all"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block font-display text-lg mb-2">
+                    <label className="block font-display text-base sm:text-lg mb-1.5 sm:mb-2">
                       MELDING (valgfritt)
                     </label>
                     <textarea
@@ -273,14 +273,14 @@ const Foresporsel = () => {
                       onChange={handleChange}
                       rows={4}
                       placeholder="Eventuelle spørsmål eller tilleggsinformasjon..."
-                      className="w-full p-3 border-2 border-border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary transition-all resize-none"
+                      className="w-full p-3 text-base border-2 border-border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary transition-all resize-none min-h-[100px]"
                     />
                   </div>
 
                   <button
                     type="submit"
                     disabled={isSubmitting || items.length === 0}
-                    className="btn-enamel-red w-full disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="btn-enamel-red w-full h-12 sm:h-auto disabled:opacity-50 disabled:cursor-not-allowed text-base sm:text-lg"
                   >
                     {isSubmitting ? (
                       "Sender..."

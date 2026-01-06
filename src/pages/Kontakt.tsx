@@ -134,11 +134,11 @@ export default function Kontakt() {
                   </div>
                 </div>
 
-                <div className="bg-card p-8 md:p-10">
-                  <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="bg-card p-4 sm:p-6 md:p-10">
+                  <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
                     {/* Name */}
-                    <div className="space-y-2">
-                      <Label htmlFor="name" className="text-lg font-display">
+                    <div className="space-y-1.5 sm:space-y-2">
+                      <Label htmlFor="name" className="text-base sm:text-lg font-display">
                         DITT NAVN *
                       </Label>
                       <Input
@@ -147,16 +147,16 @@ export default function Kontakt() {
                         value={formData.name}
                         onChange={handleChange}
                         placeholder="Ola Nordmann"
-                        className={`text-lg py-6 border-2 ${errors.name ? "border-destructive" : "border-muted"}`}
+                        className={`text-base sm:text-lg h-12 sm:h-14 border-2 ${errors.name ? "border-destructive" : "border-muted"}`}
                         required
                       />
                       {errors.name && <p className="text-sm text-destructive">{errors.name}</p>}
                     </div>
 
                     {/* Email and Phone */}
-                    <div className="grid md:grid-cols-2 gap-6">
-                      <div className="space-y-2">
-                        <Label htmlFor="email" className="text-lg font-display">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                      <div className="space-y-1.5 sm:space-y-2">
+                        <Label htmlFor="email" className="text-base sm:text-lg font-display">
                           E-POST *
                         </Label>
                         <Input
@@ -166,14 +166,14 @@ export default function Kontakt() {
                           value={formData.email}
                           onChange={handleChange}
                           placeholder="ola@eksempel.no"
-                          className={`text-lg py-6 border-2 ${errors.email ? "border-destructive" : "border-muted"}`}
+                          className={`text-base sm:text-lg h-12 sm:h-14 border-2 ${errors.email ? "border-destructive" : "border-muted"}`}
                           required
                         />
                         {errors.email && <p className="text-sm text-destructive">{errors.email}</p>}
                       </div>
 
-                      <div className="space-y-2">
-                        <Label htmlFor="phone" className="text-lg font-display">
+                      <div className="space-y-1.5 sm:space-y-2">
+                        <Label htmlFor="phone" className="text-base sm:text-lg font-display">
                           TELEFON
                         </Label>
                         <Input
@@ -183,15 +183,15 @@ export default function Kontakt() {
                           value={formData.phone}
                           onChange={handleChange}
                           placeholder="123 45 678"
-                          className={`text-lg py-6 border-2 ${errors.phone ? "border-destructive" : "border-muted"}`}
+                          className={`text-base sm:text-lg h-12 sm:h-14 border-2 ${errors.phone ? "border-destructive" : "border-muted"}`}
                         />
                         {errors.phone && <p className="text-sm text-destructive">{errors.phone}</p>}
                       </div>
                     </div>
 
                     {/* Subject */}
-                    <div className="space-y-2">
-                      <Label htmlFor="subject" className="text-lg font-display">
+                    <div className="space-y-1.5 sm:space-y-2">
+                      <Label htmlFor="subject" className="text-base sm:text-lg font-display">
                         EMNE *
                       </Label>
                       <Input
@@ -200,15 +200,15 @@ export default function Kontakt() {
                         value={formData.subject}
                         onChange={handleChange}
                         placeholder="Hva gjelder henvendelsen?"
-                        className={`text-lg py-6 border-2 ${errors.subject ? "border-destructive" : "border-muted"}`}
+                        className={`text-base sm:text-lg h-12 sm:h-14 border-2 ${errors.subject ? "border-destructive" : "border-muted"}`}
                         required
                       />
                       {errors.subject && <p className="text-sm text-destructive">{errors.subject}</p>}
                     </div>
 
                     {/* Message */}
-                    <div className="space-y-2">
-                      <Label htmlFor="message" className="text-lg font-display">
+                    <div className="space-y-1.5 sm:space-y-2">
+                      <Label htmlFor="message" className="text-base sm:text-lg font-display">
                         MELDING *
                       </Label>
                       <Textarea
@@ -217,8 +217,8 @@ export default function Kontakt() {
                         value={formData.message}
                         onChange={handleChange}
                         placeholder="Skriv meldingen din her..."
-                        rows={6}
-                        className={`text-lg border-2 resize-none ${errors.message ? "border-destructive" : "border-muted"}`}
+                        rows={5}
+                        className={`text-base sm:text-lg border-2 resize-none min-h-[120px] sm:min-h-[150px] ${errors.message ? "border-destructive" : "border-muted"}`}
                         required
                       />
                       {errors.message && <p className="text-sm text-destructive">{errors.message}</p>}
@@ -228,7 +228,7 @@ export default function Kontakt() {
                     <Button
                       type="submit"
                       disabled={isSubmitting}
-                      className="w-full btn-enamel-blue text-xl py-6"
+                      className="w-full btn-enamel-blue text-lg sm:text-xl h-12 sm:h-14"
                     >
                       {isSubmitting ? (
                         "Sender..."

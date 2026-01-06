@@ -221,10 +221,10 @@ const AdminDeler = () => {
       {/* Form Modal */}
       {showForm && (
         <div className="fixed inset-0 bg-foreground/50 z-50 overflow-y-auto">
-          <div className="flex justify-center p-4 pt-0">
+          <div className="flex justify-center p-2 sm:p-4 pt-0">
             <div className="bg-card border-4 border-foreground w-full max-w-2xl">
-              <div className="flex items-center justify-between p-4 border-b-2 border-foreground">
-                <h2 className="font-display text-2xl">
+              <div className="flex items-center justify-between p-3 sm:p-4 border-b-2 border-foreground sticky top-0 bg-card z-10">
+                <h2 className="font-display text-xl sm:text-2xl">
                   {editingId ? "REDIGER DEL" : "NY DEL"}
                 </h2>
                 <button
@@ -235,17 +235,17 @@ const AdminDeler = () => {
                 </button>
               </div>
 
-              <form onSubmit={handleSubmit} className="p-6 space-y-4">
+              <form onSubmit={handleSubmit} className="p-3 sm:p-6 space-y-3 sm:space-y-4">
               {/* Title */}
               <div>
-                <label className="block font-display mb-2">TITTEL *</label>
+                <label className="block font-display text-sm sm:text-base mb-1.5 sm:mb-2">TITTEL *</label>
                 <input
                   type="text"
                   value={formData.title}
                   onChange={(e) =>
                     setFormData({ ...formData, title: e.target.value })
                   }
-                  className="w-full p-3 border-2 border-foreground bg-card"
+                  className="w-full h-12 p-3 text-base border-2 border-foreground bg-card rounded"
                   placeholder="f.eks. Bremsekloss fremre"
                   required
                 />
@@ -253,13 +253,13 @@ const AdminDeler = () => {
 
               {/* Category */}
               <div>
-                <label className="block font-display mb-2">KATEGORI</label>
+                <label className="block font-display text-sm sm:text-base mb-1.5 sm:mb-2">KATEGORI</label>
                 <select
                   value={formData.category_id}
                   onChange={(e) =>
                     setFormData({ ...formData, category_id: e.target.value })
                   }
-                  className="w-full p-3 border-2 border-foreground bg-card"
+                  className="w-full h-12 p-3 text-base border-2 border-foreground bg-card rounded"
                 >
                   <option value="">Velg kategori...</option>
                   {parentCategories.map((parent) => (
@@ -277,24 +277,24 @@ const AdminDeler = () => {
 
               {/* Description */}
               <div>
-                <label className="block font-display mb-2">BESKRIVELSE</label>
+                <label className="block font-display text-sm sm:text-base mb-1.5 sm:mb-2">BESKRIVELSE</label>
                 <textarea
                   value={formData.description}
                   onChange={(e) =>
                     setFormData({ ...formData, description: e.target.value })
                   }
                   rows={3}
-                  className="w-full p-3 border-2 border-foreground bg-card resize-none"
+                  className="w-full p-3 text-base border-2 border-foreground bg-card resize-none rounded min-h-[100px]"
                   placeholder="Kort beskrivelse av delen..."
                 />
               </div>
 
               {/* Image */}
               <div>
-                <label className="block font-display mb-2">BILDE</label>
-                <div className="flex gap-4 items-start">
+                <label className="block font-display text-sm sm:text-base mb-1.5 sm:mb-2">BILDE</label>
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-center sm:items-start">
                   {imagePreview ? (
-                    <div className="relative w-32 h-32 border-2 border-foreground">
+                    <div className="relative w-24 h-24 sm:w-32 sm:h-32 border-2 border-foreground rounded overflow-hidden">
                       <img
                         src={imagePreview}
                         alt="Preview"
@@ -306,20 +306,20 @@ const AdminDeler = () => {
                           setImageFile(null);
                           setImagePreview(null);
                         }}
-                        className="absolute -top-2 -right-2 bg-accent text-accent-foreground p-1 rounded-full"
+                        className="absolute -top-1 -right-1 bg-accent text-accent-foreground p-1 rounded-full"
                       >
-                        <X className="w-4 h-4" />
+                        <X className="w-3 h-3" />
                       </button>
                     </div>
                   ) : (
-                    <div className="w-32 h-32 border-2 border-dashed border-muted-foreground flex items-center justify-center">
-                      <Wrench className="w-8 h-8 text-muted-foreground" />
+                    <div className="w-24 h-24 sm:w-32 sm:h-32 border-2 border-dashed border-muted-foreground flex items-center justify-center rounded">
+                      <Wrench className="w-6 h-6 sm:w-8 sm:h-8 text-muted-foreground" />
                     </div>
                   )}
-                  <label className="flex-1 cursor-pointer">
-                    <div className="p-4 border-2 border-dashed border-muted-foreground hover:border-primary transition-colors text-center">
+                  <label className="flex-1 cursor-pointer w-full sm:w-auto">
+                    <div className="p-4 border-2 border-dashed border-muted-foreground hover:border-primary transition-colors text-center rounded">
                       <Upload className="w-6 h-6 mx-auto mb-2 text-muted-foreground" />
-                      <span className="text-sm text-muted-foreground">
+                      <span className="text-xs sm:text-sm text-muted-foreground">
                         Klikk for å laste opp bilde
                       </span>
                     </div>
@@ -334,7 +334,7 @@ const AdminDeler = () => {
               </div>
 
               {/* Published toggle */}
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 p-2 sm:p-0 bg-muted/30 sm:bg-transparent rounded">
                 <input
                   type="checkbox"
                   id="published"
@@ -344,17 +344,17 @@ const AdminDeler = () => {
                   }
                   className="w-5 h-5"
                 />
-                <label htmlFor="published" className="font-display">
+                <label htmlFor="published" className="font-display text-sm sm:text-base">
                   PUBLISER NÅ
                 </label>
               </div>
 
               {/* Buttons */}
-              <div className="flex gap-4 pt-4">
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-4 sticky bottom-0 bg-card pb-2">
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="btn-retro flex-1 disabled:opacity-50"
+                  className="btn-retro flex-1 h-12 disabled:opacity-50 text-base"
                 >
                   {isSubmitting
                     ? "Lagrer..."
@@ -365,7 +365,7 @@ const AdminDeler = () => {
                 <button
                   type="button"
                   onClick={resetForm}
-                  className="btn-retro bg-muted text-foreground"
+                  className="btn-retro bg-muted text-foreground h-12"
                 >
                   Avbryt
                 </button>

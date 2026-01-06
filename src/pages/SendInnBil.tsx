@@ -274,16 +274,16 @@ export default function SendInnBil() {
                   </div>
 
                   {/* Form content */}
-                  <div className="bg-card p-8 md:p-10">
-                    <form onSubmit={handleSubmit} className="space-y-6">
+                  <div className="bg-card p-4 sm:p-6 md:p-10">
+                    <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
                       {/* Brand, Model, Year - Cascading selects */}
-                      <div className="space-y-4 p-4 bg-muted/30 rounded-lg border-2 border-muted">
-                        <p className="text-sm text-muted-foreground font-medium">Velg merke, modell og årstall – dette blir bilens tittel på siden</p>
+                      <div className="space-y-3 sm:space-y-4 p-3 sm:p-4 bg-muted/30 rounded-lg border-2 border-muted">
+                        <p className="text-xs sm:text-sm text-muted-foreground font-medium">Velg merke, modell og årstall – dette blir bilens tittel på siden</p>
                         
-                        <div className="grid md:grid-cols-3 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
                           {/* Brand */}
-                          <div className="space-y-2">
-                            <Label htmlFor="brand" className="text-lg font-display">MERKE *</Label>
+                          <div className="space-y-1.5 sm:space-y-2">
+                            <Label htmlFor="brand" className="text-base sm:text-lg font-display">MERKE *</Label>
                             <select 
                               id="brand" 
                               name="brand" 
@@ -294,7 +294,7 @@ export default function SendInnBil() {
                                 car_model: "", 
                                 car_year: "" 
                               }))}
-                              className={`w-full h-12 px-3 text-lg rounded-md border-2 bg-background ${errors.brand ? 'border-destructive' : 'border-muted'}`}
+                              className={`w-full h-12 px-3 text-base rounded-md border-2 bg-background ${errors.brand ? 'border-destructive' : 'border-muted'}`}
                               required
                             >
                               <option value="">Velg merke...</option>
@@ -306,8 +306,8 @@ export default function SendInnBil() {
                           </div>
 
                           {/* Model */}
-                          <div className="space-y-2">
-                            <Label htmlFor="car_model" className="text-lg font-display">MODELL *</Label>
+                          <div className="space-y-1.5 sm:space-y-2">
+                            <Label htmlFor="car_model" className="text-base sm:text-lg font-display">MODELL *</Label>
                             <select 
                               id="car_model" 
                               name="car_model" 
@@ -317,7 +317,7 @@ export default function SendInnBil() {
                                 car_model: e.target.value, 
                                 car_year: "" 
                               }))}
-                              className={`w-full h-12 px-3 text-lg rounded-md border-2 bg-background ${errors.car_model ? 'border-destructive' : 'border-muted'}`}
+                              className={`w-full h-12 px-3 text-base rounded-md border-2 bg-background ${errors.car_model ? 'border-destructive' : 'border-muted'}`}
                               required
                               disabled={!formData.brand}
                             >
@@ -330,14 +330,14 @@ export default function SendInnBil() {
                           </div>
 
                           {/* Year */}
-                          <div className="space-y-2">
-                            <Label htmlFor="car_year" className="text-lg font-display">ÅRSTALL</Label>
+                          <div className="space-y-1.5 sm:space-y-2">
+                            <Label htmlFor="car_year" className="text-base sm:text-lg font-display">ÅRSTALL</Label>
                             <select 
                               id="car_year" 
                               name="car_year" 
                               value={formData.car_year} 
                               onChange={(e) => setFormData(prev => ({ ...prev, car_year: e.target.value }))}
-                              className={`w-full h-12 px-3 text-lg rounded-md border-2 bg-background ${errors.car_year ? 'border-destructive' : 'border-muted'}`}
+                              className={`w-full h-12 px-3 text-base rounded-md border-2 bg-background ${errors.car_year ? 'border-destructive' : 'border-muted'}`}
                               disabled={!formData.car_model}
                             >
                               <option value="">Velg år...</option>
@@ -351,22 +351,22 @@ export default function SendInnBil() {
 
                         {/* Generated title preview */}
                         {generatedTitle && (
-                          <div className="mt-2 p-3 bg-primary/10 rounded-md border border-primary/30">
-                            <p className="text-sm text-muted-foreground">Bilens tittel på siden blir:</p>
-                            <p className="text-lg font-display text-primary">{generatedTitle}</p>
+                          <div className="mt-2 p-2 sm:p-3 bg-primary/10 rounded-md border border-primary/30">
+                            <p className="text-xs sm:text-sm text-muted-foreground">Bilens tittel på siden blir:</p>
+                            <p className="text-base sm:text-lg font-display text-primary">{generatedTitle}</p>
                           </div>
                         )}
                       </div>
 
                       {/* Category */}
-                      <div className="space-y-2">
-                        <Label htmlFor="category" className="text-lg font-display">KATEGORI *</Label>
+                      <div className="space-y-1.5 sm:space-y-2">
+                        <Label htmlFor="category" className="text-base sm:text-lg font-display">KATEGORI *</Label>
                         <select 
                           id="category" 
                           name="category" 
                           value={formData.category} 
                           onChange={(e) => setFormData(prev => ({ ...prev, category: e.target.value }))}
-                          className={`w-full h-12 px-3 text-lg rounded-md border-2 bg-background ${errors.category ? 'border-destructive' : 'border-muted'}`}
+                          className={`w-full h-12 px-3 text-base rounded-md border-2 bg-background ${errors.category ? 'border-destructive' : 'border-muted'}`}
                           required
                         >
                           {CATEGORIES.map((cat) => (
@@ -377,48 +377,48 @@ export default function SendInnBil() {
                       </div>
 
                       {/* Name */}
-                      <div className="space-y-2">
-                        <Label htmlFor="owner_name" className="text-lg font-display">DITT NAVN *</Label>
-                        <Input id="owner_name" name="owner_name" value={formData.owner_name} onChange={handleChange} placeholder="Ola Nordmann" className={`text-lg py-6 border-2 ${errors.owner_name ? 'border-destructive' : 'border-muted'}`} required />
+                      <div className="space-y-1.5 sm:space-y-2">
+                        <Label htmlFor="owner_name" className="text-base sm:text-lg font-display">DITT NAVN *</Label>
+                        <Input id="owner_name" name="owner_name" value={formData.owner_name} onChange={handleChange} placeholder="Ola Nordmann" className={`text-base h-12 border-2 ${errors.owner_name ? 'border-destructive' : 'border-muted'}`} required />
                         {errors.owner_name && <p className="text-sm text-destructive">{errors.owner_name}</p>}
                       </div>
 
                       {/* Email and Phone */}
-                      <div className="grid md:grid-cols-2 gap-6">
-                        <div className="space-y-2">
-                          <Label htmlFor="email" className="text-lg font-display">E-POST *</Label>
-                          <Input id="email" name="email" type="email" value={formData.email} onChange={handleChange} placeholder="ola@eksempel.no" className={`text-lg py-6 border-2 ${errors.email ? 'border-destructive' : 'border-muted'}`} required />
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-6">
+                        <div className="space-y-1.5 sm:space-y-2">
+                          <Label htmlFor="email" className="text-base sm:text-lg font-display">E-POST *</Label>
+                          <Input id="email" name="email" type="email" value={formData.email} onChange={handleChange} placeholder="ola@eksempel.no" className={`text-base h-12 border-2 ${errors.email ? 'border-destructive' : 'border-muted'}`} required />
                           {errors.email && <p className="text-sm text-destructive">{errors.email}</p>}
                         </div>
 
-                        <div className="space-y-2">
-                          <Label htmlFor="phone" className="text-lg font-display">TELEFON</Label>
-                          <Input id="phone" name="phone" type="tel" value={formData.phone} onChange={handleChange} placeholder="123 45 678" className={`text-lg py-6 border-2 ${errors.phone ? 'border-destructive' : 'border-muted'}`} />
+                        <div className="space-y-1.5 sm:space-y-2">
+                          <Label htmlFor="phone" className="text-base sm:text-lg font-display">TELEFON</Label>
+                          <Input id="phone" name="phone" type="tel" value={formData.phone} onChange={handleChange} placeholder="123 45 678" className={`text-base h-12 border-2 ${errors.phone ? 'border-destructive' : 'border-muted'}`} />
                           {errors.phone && <p className="text-sm text-destructive">{errors.phone}</p>}
                         </div>
                       </div>
 
                       {/* Tags */}
-                      <div className="space-y-2">
-                        <Label htmlFor="tags" className="text-lg font-display">STIKKORD</Label>
-                        <Input id="tags" name="tags" value={formData.tags} onChange={handleChange} placeholder="f.eks. original, veteran, rally" className={`text-lg py-6 border-2 ${errors.tags ? 'border-destructive' : 'border-muted'}`} />
+                      <div className="space-y-1.5 sm:space-y-2">
+                        <Label htmlFor="tags" className="text-base sm:text-lg font-display">STIKKORD</Label>
+                        <Input id="tags" name="tags" value={formData.tags} onChange={handleChange} placeholder="f.eks. original, veteran, rally" className={`text-base h-12 border-2 ${errors.tags ? 'border-destructive' : 'border-muted'}`} />
                         {errors.tags && <p className="text-sm text-destructive">{errors.tags}</p>}
-                        <p className="text-sm text-muted-foreground">Skill med komma</p>
+                        <p className="text-xs sm:text-sm text-muted-foreground">Skill med komma</p>
                       </div>
 
                       {/* Story */}
-                      <div className="space-y-2">
-                        <Label htmlFor="car_story" className="text-lg font-display">HISTORIEN BAK BILEN</Label>
-                        <Textarea id="car_story" name="car_story" value={formData.car_story} onChange={handleChange} placeholder="Fortell oss om bilen din – hvordan du fant den, restaureringen, minner, planer..." className={`text-lg min-h-[180px] border-2 ${errors.car_story ? 'border-destructive' : 'border-muted'}`} />
+                      <div className="space-y-1.5 sm:space-y-2">
+                        <Label htmlFor="car_story" className="text-base sm:text-lg font-display">HISTORIEN BAK BILEN</Label>
+                        <Textarea id="car_story" name="car_story" value={formData.car_story} onChange={handleChange} placeholder="Fortell oss om bilen din – hvordan du fant den, restaureringen, minner, planer..." className={`text-base min-h-[150px] sm:min-h-[180px] border-2 ${errors.car_story ? 'border-destructive' : 'border-muted'}`} />
                         {errors.car_story && <p className="text-sm text-destructive">{errors.car_story}</p>}
-                        <p className="text-sm text-muted-foreground">
+                        <p className="text-xs sm:text-sm text-muted-foreground">
                           Jo mer du forteller, jo bedre kan vi presentere bilen din.
                         </p>
                       </div>
 
                       {/* Image Upload */}
-                      <div className="space-y-4">
-                        <Label className="text-lg font-display flex items-center gap-2">
+                      <div className="space-y-3 sm:space-y-4">
+                        <Label className="text-base sm:text-lg font-display flex items-center gap-2">
                           <Camera className="w-5 h-5" />
                           BILDER AV BILEN
                         </Label>
@@ -426,29 +426,29 @@ export default function SendInnBil() {
                         <input ref={fileInputRef} type="file" accept="image/*" multiple onChange={handleImageSelect} className="hidden" />
 
                         {/* Image previews */}
-                        {imagePreviews.length > 0 && <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
+                        {imagePreviews.length > 0 && <div className="grid grid-cols-3 gap-2 sm:gap-3">
                             {imagePreviews.map((preview, index) => <div key={index} className="relative aspect-square rounded-lg overflow-hidden border-2 border-muted">
                                 <img src={preview} alt={`Bilde ${index + 1}`} className="w-full h-full object-cover" />
-                                <button type="button" onClick={() => removeImage(index)} className="absolute top-1 right-1 bg-destructive text-white rounded-full p-1 hover:bg-destructive/80 transition-colors">
+                                <button type="button" onClick={() => removeImage(index)} className="absolute top-1 right-1 bg-destructive text-white rounded-full p-1.5 sm:p-1 hover:bg-destructive/80 transition-colors">
                                   <X className="w-4 h-4" />
                                 </button>
                               </div>)}
                           </div>}
 
                         {/* Upload button */}
-                        {images.length < 10 && <button type="button" onClick={() => fileInputRef.current?.click()} className="w-full border-2 border-dashed border-muted-foreground/30 rounded-xl p-8 hover:border-accent hover:bg-accent/5 transition-all group">
-                            <div className="flex flex-col items-center gap-3 text-muted-foreground group-hover:text-accent">
-                              <div className="w-14 h-14 rounded-full bg-muted flex items-center justify-center group-hover:bg-accent/10">
-                                <ImagePlus className="w-7 h-7" />
+                        {images.length < 10 && <button type="button" onClick={() => fileInputRef.current?.click()} className="w-full border-2 border-dashed border-muted-foreground/30 rounded-xl p-6 sm:p-8 hover:border-accent hover:bg-accent/5 transition-all group">
+                            <div className="flex flex-col items-center gap-2 sm:gap-3 text-muted-foreground group-hover:text-accent">
+                              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-muted flex items-center justify-center group-hover:bg-accent/10">
+                                <ImagePlus className="w-6 h-6 sm:w-7 sm:h-7" />
                               </div>
                               <div className="text-center">
-                                <p className="font-display text-lg">LAST OPP BILDER</p>
-                                <p className="text-sm">Maks 10 bilder, 10MB per bilde</p>
+                                <p className="font-display text-base sm:text-lg">LAST OPP BILDER</p>
+                                <p className="text-xs sm:text-sm">Maks 10 bilder, 10MB per bilde</p>
                               </div>
                             </div>
                           </button>}
 
-                        <p className="text-sm text-muted-foreground">
+                        <p className="text-xs sm:text-sm text-muted-foreground">
                           {images.length}/10 bilder valgt
                         </p>
                       </div>
@@ -460,40 +460,40 @@ export default function SendInnBil() {
                           width: `${uploadProgress}%`
                         }} />
                           </div>
-                          <p className="text-sm text-muted-foreground text-center">
+                          <p className="text-xs sm:text-sm text-muted-foreground text-center">
                             Laster opp bilder... {uploadProgress}%
                           </p>
                         </div>}
 
                       {/* Consent radio buttons */}
-                      <div className="space-y-3 p-4 bg-muted/30 rounded-lg border-2 border-muted">
-                        <p className="font-display text-lg mb-3">GODKJENNING FOR REDIGERING *</p>
-                        <p className="text-sm text-muted-foreground mb-4">
+                      <div className="space-y-2 sm:space-y-3 p-3 sm:p-4 bg-muted/30 rounded-lg border-2 border-muted">
+                        <p className="font-display text-base sm:text-lg mb-2 sm:mb-3">GODKJENNING FOR REDIGERING *</p>
+                        <p className="text-xs sm:text-sm text-muted-foreground mb-3 sm:mb-4">
                           Vi kan rette små skrivefeil, tydeliggjøre detaljer og legge til teknisk info (f.eks. modellvariant, årsmodell og historikk). Innholdet endres ikke helt – vi bygger videre på det du har sendt inn.
                         </p>
                         
-                        <label className="flex items-start gap-3 cursor-pointer p-3 rounded-lg hover:bg-muted/50 transition-colors">
+                        <label className="flex items-start gap-3 cursor-pointer p-2 sm:p-3 rounded-lg hover:bg-muted/50 transition-colors">
                           <input
                             type="radio"
                             name="allowEdits"
                             checked={allowEdits === true}
                             onChange={() => setAllowEdits(true)}
-                            className="w-5 h-5 mt-0.5 accent-primary"
+                            className="w-5 h-5 mt-0.5 accent-primary flex-shrink-0"
                           />
-                          <span className="text-foreground font-medium">
+                          <span className="text-sm sm:text-base text-foreground font-medium">
                             Ja, jeg godkjenner at Simca Norge kan redigere og forbedre innsendelsen min før publisering.
                           </span>
                         </label>
                         
-                        <label className="flex items-start gap-3 cursor-pointer p-3 rounded-lg hover:bg-muted/50 transition-colors">
+                        <label className="flex items-start gap-3 cursor-pointer p-2 sm:p-3 rounded-lg hover:bg-muted/50 transition-colors">
                           <input
                             type="radio"
                             name="allowEdits"
                             checked={allowEdits === false}
                             onChange={() => setAllowEdits(false)}
-                            className="w-5 h-5 mt-0.5 accent-primary"
+                            className="w-5 h-5 mt-0.5 accent-primary flex-shrink-0"
                           />
-                          <span className="text-foreground font-medium">
+                          <span className="text-sm sm:text-base text-foreground font-medium">
                             Nei, jeg ønsker at innsendelsen publiseres som den er.
                           </span>
                         </label>
@@ -503,7 +503,7 @@ export default function SendInnBil() {
                       <Button 
                         type="submit" 
                         disabled={isSubmitting || allowEdits === null} 
-                        className="w-full btn-enamel-blue text-xl py-6 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full btn-enamel-blue text-lg sm:text-xl h-12 sm:h-14 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         {isSubmitting ? "Sender..." : <>
                             <Send className="w-5 h-5 mr-2" />
