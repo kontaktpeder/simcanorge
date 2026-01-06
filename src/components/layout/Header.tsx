@@ -162,10 +162,10 @@ export function Header() {
 
       {/* Animated car lane - hidden on very small screens */}
       <div className="hidden sm:block relative w-full h-[30px] md:h-[45px] overflow-hidden bg-gradient-to-b from-gray-500 to-gray-600 pointer-events-none">
-        {/* Road stripes */}
-        <div className="absolute top-1/2 -translate-y-1/2 left-0 right-0 flex gap-8 animate-road-stripes">
-          {[...Array(30)].map((_, i) => (
-            <div key={i} className="w-10 h-1.5 md:w-12 md:h-2 bg-yellow-400 rounded-sm flex-shrink-0" />
+        {/* Center road stripe - static */}
+        <div className="absolute top-1/2 -translate-y-1/2 left-0 right-0 flex justify-center gap-6">
+          {[...Array(40)].map((_, i) => (
+            <div key={i} className="w-6 h-1 bg-yellow-400/80 rounded-sm flex-shrink-0" />
           ))}
         </div>
         
@@ -173,31 +173,30 @@ export function Header() {
         <div className="absolute top-0.5 left-0 right-0 h-0.5 bg-white/40" />
         <div className="absolute bottom-0.5 left-0 right-0 h-0.5 bg-white/40" />
 
-        {/* Exhaust smoke - more when boosting */}
-        <div className={`absolute bottom-[6px] md:bottom-[10px] ${isSpeedBoost ? 'animate-header-drive-fast' : 'animate-header-drive'}`}>
+        {/* Exhaust smoke */}
+        <div className="absolute bottom-[6px] md:bottom-[10px] animate-header-drive" style={{ animationDuration: isSpeedBoost ? '3s' : '10s' }}>
           <div className="relative">
-            <div className="absolute -left-6 top-1 flex gap-1">
+            <div className="absolute left-full ml-2 top-1 flex gap-1">
               <div className={`w-2 h-2 md:w-3 md:h-3 bg-gray-400/50 rounded-full animate-smoke-1 blur-[1px] ${isSpeedBoost ? 'scale-125' : ''}`} />
-              <div className={`w-1.5 h-1.5 md:w-2 md:h-2 bg-gray-400/40 rounded-full animate-smoke-2 blur-[1px] -ml-1 ${isSpeedBoost ? 'scale-125' : ''}`} />
-              <div className={`w-2.5 h-2.5 md:w-3.5 md:h-3.5 bg-gray-400/30 rounded-full animate-smoke-3 blur-[2px] -ml-1.5 ${isSpeedBoost ? 'scale-125' : ''}`} />
+              <div className={`w-1.5 h-1.5 md:w-2 md:h-2 bg-gray-400/40 rounded-full animate-smoke-2 blur-[1px] ml-1 ${isSpeedBoost ? 'scale-125' : ''}`} />
+              <div className={`w-2.5 h-2.5 md:w-3.5 md:h-3.5 bg-gray-400/30 rounded-full animate-smoke-3 blur-[2px] ml-1 ${isSpeedBoost ? 'scale-125' : ''}`} />
               {isSpeedBoost && (
                 <>
-                  <div className="w-2 h-2 md:w-3 md:h-3 bg-gray-300/40 rounded-full animate-smoke-4 blur-[1px] -ml-1" />
-                  <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-gray-300/30 rounded-full animate-smoke-1 blur-[1px] -ml-0.5" />
+                  <div className="w-2 h-2 md:w-3 md:h-3 bg-gray-300/40 rounded-full animate-smoke-4 blur-[1px] ml-1" />
+                  <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-gray-300/30 rounded-full animate-smoke-1 blur-[1px] ml-0.5" />
                 </>
               )}
             </div>
           </div>
         </div>
 
-        {/* The Simca car */}
-        <div className={`absolute bottom-[4px] md:bottom-[6px] ${isSpeedBoost ? 'animate-header-drive-fast' : 'animate-header-drive'}`}>
+        {/* The Simca car - facing right (no scaleX flip) */}
+        <div className="absolute bottom-[4px] md:bottom-[6px] animate-header-drive" style={{ animationDuration: isSpeedBoost ? '3s' : '10s' }}>
           <div className="animate-car-bump-subtle">
             <img 
               src={simcaRallye} 
               alt="Simca Rallye" 
               className="h-[22px] md:h-[34px] w-auto object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]"
-              style={{ transform: 'scaleX(-1)' }}
             />
             {/* Wheel spin effect */}
             <div className="absolute bottom-0.5 left-[18%] w-2 h-2 md:w-2.5 md:h-2.5 rounded-full border border-dashed border-gray-600/40 animate-wheel-spin" />
