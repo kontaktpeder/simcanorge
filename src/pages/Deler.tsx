@@ -4,7 +4,7 @@ import { Layout } from "@/components/layout/Layout";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { supabase } from "@/integrations/supabase/client";
 import { useCart } from "@/hooks/useCart";
-import { Plus, Check, Wrench, ChevronRight, Briefcase } from "lucide-react";
+import { Plus, Check, Wrench, ChevronRight, Briefcase, ChevronDown, X, Filter, Grid3X3, List } from "lucide-react";
 import { toast } from "sonner";
 
 interface Category {
@@ -27,6 +27,8 @@ const Deler = () => {
   const [parts, setParts] = useState<Part[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [showCategorySheet, setShowCategorySheet] = useState(false);
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('list');
   const { items, addItem, removeItem, isInCart, itemCount } = useCart();
 
   useEffect(() => {
@@ -50,7 +52,6 @@ const Deler = () => {
 
   const filteredParts = selectedCategory
     ? parts.filter((p) => {
-        // Check if part belongs to selected category or its children
         const childIds = getChildren(selectedCategory).map((c) => c.id);
         return p.category_id === selectedCategory || childIds.includes(p.category_id || "");
       })
@@ -72,213 +73,328 @@ const Deler = () => {
     return category?.name;
   };
 
+  const selectedCategoryName = selectedCategory 
+    ? categories.find((c) => c.id === selectedCategory)?.name 
+    : "Alle deler";
+
   return (
     <Layout>
-      <PageHeader 
-        title="DELER" 
-        subtitle="Bla gjennom vårt utvalg av deler til Simca-modeller – legg dem i verktøykassen så sjekker vi hylla! 🔧" 
-      />
+      {/* Minimal header for mobile */}
+      <div className="bg-card border-b border-border">
+        <div className="container mx-auto px-4 py-3">
+          <h1 className="font-display text-lg md:text-2xl">DELER</h1>
+          <p className="text-xs md:text-sm text-muted-foreground">Finn deler til din Simca</p>
+        </div>
+      </div>
 
-      {/* Toolbox Banner */}
+      {/* Toolbox Banner - Compact sticky */}
       {itemCount > 0 && (
-        <div className="bg-accent text-accent-foreground py-4 sticky top-20 z-40">
-          <div className="container mx-auto flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Briefcase className="w-6 h-6" />
-              <span className="font-display text-lg">
-                {itemCount} del{itemCount !== 1 ? "er" : ""} i verktøykassen
+        <div className="bg-accent text-accent-foreground py-2 md:py-3 sticky top-16 z-40 shadow-md">
+          <div className="container mx-auto px-4 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Briefcase className="w-4 h-4 md:w-5 md:h-5" />
+              <span className="font-medium text-sm md:text-base">
+                {itemCount} del{itemCount !== 1 ? "er" : ""}
               </span>
             </div>
             <Link
               to="/foresporsel"
-              className="bg-accent-foreground text-accent px-6 py-2 font-display hover:opacity-90 transition-opacity"
+              className="bg-accent-foreground text-accent px-3 py-1.5 md:px-4 md:py-2 text-xs md:text-sm font-medium rounded-full flex items-center gap-1"
             >
-              SE VERKTØYKASSEN
-              <ChevronRight className="w-5 h-5 inline ml-1" />
+              SE ALLE
+              <ChevronRight className="w-4 h-4" />
             </Link>
           </div>
         </div>
       )}
 
-      <section className="poster-section">
-        <div className="container mx-auto">
-          <div className="grid lg:grid-cols-4 gap-8">
-            {/* Sidebar - Categories */}
-            <aside className="lg:col-span-1">
-              <div className="border-chrome card-enamel bg-card p-6 sticky top-40 animate-slide-in-left">
-                <h2 className="font-display text-xl mb-4">KATEGORIER</h2>
-                
-                <button
-                  onClick={() => setSelectedCategory(null)}
-                  className={`w-full text-left py-2 px-3 mb-2 rounded-lg transition-all ${
-                    !selectedCategory
-                      ? "bg-primary text-primary-foreground"
-                      : "hover:bg-muted"
-                  }`}
-                >
-                  Alle deler ({parts.length})
-                </button>
+      {/* Filter bar - finn.no style */}
+      <div className="bg-muted/50 border-b border-border sticky top-16 z-30">
+        <div className="container mx-auto px-4 py-2 flex items-center gap-2">
+          {/* Category filter button */}
+          <button
+            onClick={() => setShowCategorySheet(true)}
+            className="flex items-center gap-2 bg-card border border-border rounded-full px-3 py-1.5 text-sm font-medium hover:border-primary transition-colors"
+          >
+            <Filter className="w-4 h-4" />
+            <span className="max-w-[120px] truncate">{selectedCategoryName}</span>
+            <ChevronDown className="w-4 h-4 text-muted-foreground" />
+          </button>
 
-                {parentCategories.map((parent) => {
-                  const children = getChildren(parent.id);
-                  const parentPartCount = parts.filter(
-                    (p) =>
-                      p.category_id === parent.id ||
-                      children.some((c) => c.id === p.category_id)
-                  ).length;
+          {/* Clear filter */}
+          {selectedCategory && (
+            <button
+              onClick={() => setSelectedCategory(null)}
+              className="flex items-center gap-1 bg-primary/10 text-primary rounded-full px-2 py-1.5 text-xs font-medium"
+            >
+              <X className="w-3 h-3" />
+              Nullstill
+            </button>
+          )}
 
-                  return (
-                    <div key={parent.id} className="mb-2">
-                      <button
-                        onClick={() => setSelectedCategory(parent.id)}
-                        className={`w-full text-left py-2 px-3 rounded-lg transition-all font-medium ${
-                          selectedCategory === parent.id
-                            ? "bg-primary text-primary-foreground"
-                            : "hover:bg-muted"
-                        }`}
-                      >
-                        {parent.name} ({parentPartCount})
-                      </button>
+          {/* Spacer */}
+          <div className="flex-1" />
 
-                      {children.length > 0 && (
-                        <div className="ml-4 border-l-2 border-primary/30">
-                          {children.map((child) => {
-                            const childPartCount = parts.filter(
-                              (p) => p.category_id === child.id
-                            ).length;
-                            return (
-                              <button
-                                key={child.id}
-                                onClick={() => setSelectedCategory(child.id)}
-                                className={`w-full text-left py-1.5 px-3 text-sm rounded-lg transition-all ${
-                                  selectedCategory === child.id
-                                    ? "bg-primary text-primary-foreground"
-                                    : "hover:bg-muted"
-                                }`}
-                              >
-                                {child.name} ({childPartCount})
-                              </button>
-                            );
-                          })}
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </aside>
+          {/* View toggle */}
+          <div className="flex items-center bg-card border border-border rounded-full p-0.5">
+            <button
+              onClick={() => setViewMode('list')}
+              className={`p-1.5 rounded-full transition-colors ${viewMode === 'list' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground'}`}
+            >
+              <List className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => setViewMode('grid')}
+              className={`p-1.5 rounded-full transition-colors ${viewMode === 'grid' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground'}`}
+            >
+              <Grid3X3 className="w-4 h-4" />
+            </button>
+          </div>
 
-            {/* Parts Grid */}
-            <div className="lg:col-span-3">
-              <div className="flex items-center justify-between mb-6 animate-fade-in">
-                <h2 className="headline-md">
-                  {selectedCategory
-                    ? categories.find((c) => c.id === selectedCategory)?.name.toUpperCase()
-                    : "ALLE DELER"}
-                </h2>
-                <span className="text-muted-foreground">
-                  {filteredParts.length} del{filteredParts.length !== 1 ? "er" : ""}
-                </span>
-              </div>
+          {/* Result count */}
+          <span className="text-xs text-muted-foreground hidden sm:block">
+            {filteredParts.length} treff
+          </span>
+        </div>
+      </div>
 
-              {isLoading ? (
-                <div className="text-center py-12 text-muted-foreground">Laster deler...</div>
-              ) : filteredParts.length === 0 ? (
-                <div className="border-chrome card-enamel bg-card text-center py-12 animate-fade-in">
-                  <Wrench className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
-                  <p className="text-muted-foreground">
-                    {selectedCategory
-                      ? "Ingen deler i denne kategorien ennå"
-                      : "Ingen deler lagt til ennå"}
-                  </p>
-                </div>
-              ) : (
-                <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-6 stagger-children">
-                  {filteredParts.map((part) => {
-                    const inCart = isInCart(part.id);
-                    return (
-                      <div key={part.id} className="border-chrome card-enamel bg-card p-4 card-hover-glow">
-                        {/* Image */}
-                        <div className="aspect-square bg-muted mb-4 rounded-lg overflow-hidden">
-                          {part.image_url ? (
-                            <img
-                              src={part.image_url}
-                              alt={part.title}
-                              className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
-                            />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center">
-                              <Wrench className="w-12 h-12 text-muted-foreground" />
-                            </div>
-                          )}
-                        </div>
+      {/* Category sheet overlay */}
+      {showCategorySheet && (
+        <div className="fixed inset-0 z-50 bg-black/50" onClick={() => setShowCategorySheet(false)}>
+          <div 
+            className="absolute bottom-0 left-0 right-0 bg-card rounded-t-2xl max-h-[70vh] overflow-y-auto animate-slide-up"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="sticky top-0 bg-card border-b border-border p-4 flex items-center justify-between">
+              <h3 className="font-display text-lg">Velg kategori</h3>
+              <button onClick={() => setShowCategorySheet(false)} className="p-2 -m-2">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <div className="p-4 space-y-1">
+              <button
+                onClick={() => { setSelectedCategory(null); setShowCategorySheet(false); }}
+                className={`w-full text-left py-3 px-4 rounded-lg flex items-center justify-between ${
+                  !selectedCategory ? "bg-primary text-primary-foreground" : "hover:bg-muted"
+                }`}
+              >
+                <span className="font-medium">Alle deler</span>
+                <span className="text-sm opacity-70">{parts.length}</span>
+              </button>
 
-                        {/* Category badge */}
-                        {part.category_id && (
-                          <span className="inline-block bg-primary text-primary-foreground text-xs px-2 py-1 font-display mb-2 rounded">
-                            {getCategoryName(part.category_id)}
-                          </span>
-                        )}
+              {parentCategories.map((parent) => {
+                const children = getChildren(parent.id);
+                const parentPartCount = parts.filter(
+                  (p) =>
+                    p.category_id === parent.id ||
+                    children.some((c) => c.id === p.category_id)
+                ).length;
 
-                        {/* Title */}
-                        <h3 className="font-display text-xl mb-2">{part.title}</h3>
+                return (
+                  <div key={parent.id}>
+                    <button
+                      onClick={() => { setSelectedCategory(parent.id); setShowCategorySheet(false); }}
+                      className={`w-full text-left py-3 px-4 rounded-lg flex items-center justify-between ${
+                        selectedCategory === parent.id ? "bg-primary text-primary-foreground" : "hover:bg-muted"
+                      }`}
+                    >
+                      <span className="font-medium">{parent.name}</span>
+                      <span className="text-sm opacity-70">{parentPartCount}</span>
+                    </button>
 
-                        {/* Description */}
-                        {part.description && (
-                          <p className="text-sm text-muted-foreground mb-2 line-clamp-2">
-                            {part.description}
-                          </p>
-                        )}
-
-                        {/* Variant info */}
-                        <p className="text-xs text-muted-foreground italic mb-4">
-                          Vi kan ha flere varianter – spør oss!
-                        </p>
-
-                        {/* Add to cart button */}
-                        <button
-                          onClick={() => handleAddToCart(part)}
-                          className={`w-full py-3 font-display text-sm flex items-center justify-center gap-2 rounded-lg transition-all ${
-                            inCart
-                              ? "bg-green-600 text-white"
-                              : "bg-accent text-accent-foreground hover:opacity-90"
-                          }`}
-                        >
-                          {inCart ? (
-                            <>
-                              <Check className="w-5 h-5" />
-                              I VERKTØYKASSEN
-                            </>
-                          ) : (
-                            <>
-                              <Plus className="w-5 h-5" />
-                              LEGG I VERKTØYKASSEN
-                            </>
-                          )}
-                        </button>
+                    {children.length > 0 && (
+                      <div className="ml-4 border-l-2 border-border pl-2">
+                        {children.map((child) => {
+                          const childPartCount = parts.filter((p) => p.category_id === child.id).length;
+                          return (
+                            <button
+                              key={child.id}
+                              onClick={() => { setSelectedCategory(child.id); setShowCategorySheet(false); }}
+                              className={`w-full text-left py-2 px-3 rounded-lg text-sm flex items-center justify-between ${
+                                selectedCategory === child.id ? "bg-primary text-primary-foreground" : "hover:bg-muted"
+                              }`}
+                            >
+                              <span>{child.name}</span>
+                              <span className="opacity-70">{childPartCount}</span>
+                            </button>
+                          );
+                        })}
                       </div>
-                    );
-                  })}
-                </div>
-              )}
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
+      )}
+
+      {/* Parts listing */}
+      <section className="bg-background min-h-screen">
+        <div className="container mx-auto px-4 py-4">
+          {isLoading ? (
+            <div className="space-y-3">
+              {[1,2,3,4].map(i => (
+                <div key={i} className="bg-card rounded-lg p-4 animate-pulse flex gap-3">
+                  <div className="w-20 h-20 bg-muted rounded-lg flex-shrink-0" />
+                  <div className="flex-1 space-y-2">
+                    <div className="h-4 bg-muted rounded w-3/4" />
+                    <div className="h-3 bg-muted rounded w-1/2" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : filteredParts.length === 0 ? (
+            <div className="bg-card rounded-lg text-center py-12">
+              <Wrench className="w-10 h-10 mx-auto mb-3 text-muted-foreground" />
+              <p className="text-muted-foreground text-sm">
+                {selectedCategory ? "Ingen deler i denne kategorien" : "Ingen deler lagt til ennå"}
+              </p>
+            </div>
+          ) : viewMode === 'list' ? (
+            /* List view - finn.no style */
+            <div className="space-y-2">
+              {filteredParts.map((part) => {
+                const inCart = isInCart(part.id);
+                return (
+                  <div 
+                    key={part.id} 
+                    className="bg-card rounded-lg border border-border overflow-hidden flex"
+                  >
+                    {/* Thumbnail */}
+                    <div className="w-24 h-24 md:w-32 md:h-32 bg-muted flex-shrink-0">
+                      {part.image_url ? (
+                        <img
+                          src={part.image_url}
+                          alt={part.title}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <Wrench className="w-6 h-6 text-muted-foreground" />
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Content */}
+                    <div className="flex-1 p-3 flex flex-col justify-between min-w-0">
+                      <div>
+                        {/* Category tag */}
+                        {part.category_id && (
+                          <span className="inline-block bg-muted text-muted-foreground text-[10px] px-1.5 py-0.5 rounded mb-1">
+                            {getCategoryName(part.category_id)}
+                          </span>
+                        )}
+                        
+                        {/* Title */}
+                        <h3 className="font-medium text-sm md:text-base leading-tight line-clamp-2">
+                          {part.title}
+                        </h3>
+                        
+                        {/* Description */}
+                        {part.description && (
+                          <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5">
+                            {part.description}
+                          </p>
+                        )}
+                      </div>
+
+                      {/* Add button */}
+                      <button
+                        onClick={() => handleAddToCart(part)}
+                        className={`self-end mt-2 px-3 py-1.5 text-xs font-medium rounded-full flex items-center gap-1 transition-colors ${
+                          inCart
+                            ? "bg-green-600 text-white"
+                            : "bg-accent text-accent-foreground hover:bg-accent/80"
+                        }`}
+                      >
+                        {inCart ? (
+                          <>
+                            <Check className="w-3 h-3" />
+                            Lagt til
+                          </>
+                        ) : (
+                          <>
+                            <Plus className="w-3 h-3" />
+                            Legg til
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            /* Grid view */
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+              {filteredParts.map((part) => {
+                const inCart = isInCart(part.id);
+                return (
+                  <div 
+                    key={part.id} 
+                    className="bg-card rounded-lg border border-border overflow-hidden"
+                  >
+                    {/* Image */}
+                    <div className="aspect-square bg-muted relative">
+                      {part.image_url ? (
+                        <img
+                          src={part.image_url}
+                          alt={part.title}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <Wrench className="w-8 h-8 text-muted-foreground" />
+                        </div>
+                      )}
+                      
+                      {/* Quick add button */}
+                      <button
+                        onClick={() => handleAddToCart(part)}
+                        className={`absolute bottom-2 right-2 p-2 rounded-full shadow-lg transition-colors ${
+                          inCart
+                            ? "bg-green-600 text-white"
+                            : "bg-card text-foreground hover:bg-accent"
+                        }`}
+                      >
+                        {inCart ? <Check className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
+                      </button>
+                    </div>
+
+                    {/* Content */}
+                    <div className="p-2.5">
+                      {part.category_id && (
+                        <span className="inline-block bg-muted text-muted-foreground text-[10px] px-1.5 py-0.5 rounded mb-1">
+                          {getCategoryName(part.category_id)}
+                        </span>
+                      )}
+                      <h3 className="font-medium text-xs md:text-sm leading-tight line-clamp-2">
+                        {part.title}
+                      </h3>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
       </section>
 
-      {/* CTA */}
-      <section className="poster-section poster-section-red relative overflow-hidden">
-        <div className="absolute inset-0 stripes-diagonal opacity-50" />
-        <div className="container mx-auto text-center relative z-10">
-          <h2 className="headline-md mb-4">FANT DU IKKE DET DU LETTE ETTER?</h2>
-          <p className="text-xl mb-6 opacity-90">
-            Ta kontakt med oss så hjelper vi deg å finne riktig del.
+      {/* CTA - Compact */}
+      <section className="bg-primary text-primary-foreground py-6 md:py-8">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="font-display text-base md:text-xl mb-2">Fant du ikke det du lette etter?</h2>
+          <p className="text-sm opacity-90 mb-4">
+            Ta kontakt så hjelper vi deg
           </p>
           <a
             href="mailto:kontaktpeder@gmail.com"
-            className="btn-retro bg-accent-foreground text-accent inline-flex"
+            className="inline-flex items-center gap-2 bg-card text-foreground px-4 py-2 rounded-full text-sm font-medium hover:bg-card/90 transition-colors"
           >
             Send e-post
+            <ChevronRight className="w-4 h-4" />
           </a>
         </div>
       </section>
