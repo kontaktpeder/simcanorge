@@ -724,25 +724,16 @@ const AdminBiler = () => {
           </button>
         </div>
       ) : (
-        <div className="bg-card border-4 border-foreground overflow-hidden overflow-x-auto">
-          <table className="w-full min-w-[700px]">
-            <thead className="bg-muted">
-              <tr>
-                <th className="text-left p-4 font-display w-16">BILDE</th>
-                <th className="text-left p-4 font-display">TITTEL</th>
-                <th className="text-left p-4 font-display">MODELL</th>
-                <th className="text-left p-4 font-display">KATEGORI</th>
-                <th className="text-left p-4 font-display">STATUS</th>
-                <th className="text-right p-4 font-display">HANDLINGER</th>
-              </tr>
-            </thead>
-            <tbody>
-              {cars.map((car) => {
-                const categoryLabel = CATEGORIES.find(c => c.id === car.category)?.label || car.category;
-                return (
-                <tr key={car.id} className="border-t border-border">
-                  <td className="p-4">
-                    <div className="w-12 h-12 bg-muted rounded overflow-hidden">
+        <>
+          {/* Mobile Card View */}
+          <div className="md:hidden space-y-3">
+            {cars.map((car) => {
+              const categoryLabel = CATEGORIES.find(c => c.id === car.category)?.label || car.category;
+              return (
+                <div key={car.id} className="bg-card border border-border rounded-xl p-3">
+                  <div className="flex gap-3">
+                    {/* Image */}
+                    <div className="w-16 h-16 bg-muted rounded-lg overflow-hidden flex-shrink-0">
                       {car.car_images?.[0] ? (
                         <img
                           src={car.car_images[0].image_url}
@@ -751,92 +742,198 @@ const AdminBiler = () => {
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
-                          <Car className="w-5 h-5 text-muted-foreground" />
+                          <Car className="w-6 h-6 text-muted-foreground" />
                         </div>
                       )}
                     </div>
-                  </td>
-                  <td className="p-4">
-                    <div className="flex flex-col">
-                      <div className="flex items-center gap-2">
-                        {car.featured && (
-                          <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
-                        )}
-                        <span className="font-medium">{car.title}</span>
-                      </div>
-                      {car.year && <span className="text-xs text-muted-foreground">{car.year}</span>}
-                    </div>
-                  </td>
-                  <td className="p-4">{car.model}</td>
-                  <td className="p-4">
-                    <span className={`text-xs px-2 py-1 rounded font-display ${
-                      car.category === 'registrert' ? 'bg-green-100 text-green-700' :
-                      car.category === 'restaurering' ? 'bg-orange-100 text-orange-700' :
-                      car.category === 'historisk' ? 'bg-blue-100 text-blue-700' :
-                      'bg-gray-100 text-gray-700'
-                    }`}>
-                      {categoryLabel}
-                    </span>
-                  </td>
-                  <td className="p-4">
-                    {car.published_at ? (
-                      <span className="text-green-600 flex items-center gap-1">
-                        <Eye className="w-4 h-4" />
-                        Publisert
-                      </span>
-                    ) : (
-                      <span className="text-muted-foreground flex items-center gap-1">
-                        <EyeOff className="w-4 h-4" />
-                        Kladd
-                      </span>
-                    )}
-                  </td>
-                  <td className="p-4">
-                    <div className="flex items-center justify-end gap-1">
-                      <button
-                        onClick={() => toggleFeatured(car)}
-                        className="p-2 hover:bg-muted rounded"
-                        title={car.featured ? "Fjern fra utvalgte" : "Legg til utvalgte"}
-                      >
-                        {car.featured ? (
-                          <StarOff className="w-5 h-5 text-yellow-500" />
-                        ) : (
-                          <Star className="w-5 h-5" />
-                        )}
-                      </button>
-                      <button
-                        onClick={() => togglePublish(car)}
-                        className="p-2 hover:bg-muted rounded"
-                        title={car.published_at ? "Avpubliser" : "Publiser"}
-                      >
+                    
+                    {/* Info */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-1.5">
+                            {car.featured && (
+                              <Star className="w-3.5 h-3.5 text-yellow-500 fill-yellow-500 flex-shrink-0" />
+                            )}
+                            <span className="font-medium text-sm truncate">{car.title}</span>
+                          </div>
+                          <p className="text-xs text-muted-foreground">{car.model} {car.year && `· ${car.year}`}</p>
+                        </div>
                         {car.published_at ? (
-                          <EyeOff className="w-5 h-5" />
+                          <span className="text-[10px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded flex-shrink-0">Publisert</span>
                         ) : (
-                          <Eye className="w-5 h-5 text-green-600" />
+                          <span className="text-[10px] bg-muted text-muted-foreground px-1.5 py-0.5 rounded flex-shrink-0">Kladd</span>
                         )}
-                      </button>
-                      <button
-                        onClick={() => startEdit(car)}
-                        className="p-2 hover:bg-muted rounded"
-                        title="Rediger"
-                      >
-                        <Pencil className="w-5 h-5 text-primary" />
-                      </button>
-                      <button
-                        onClick={() => deleteCar(car.id)}
-                        className="p-2 hover:bg-muted rounded"
-                        title="Slett"
-                      >
-                        <Trash2 className="w-5 h-5 text-accent" />
-                      </button>
+                      </div>
+                      
+                      <div className="flex items-center justify-between mt-2">
+                        <span className={`text-[10px] px-1.5 py-0.5 rounded ${
+                          car.category === 'registrert' ? 'bg-green-100 text-green-700' :
+                          car.category === 'restaurering' ? 'bg-orange-100 text-orange-700' :
+                          car.category === 'historisk' ? 'bg-blue-100 text-blue-700' :
+                          'bg-gray-100 text-gray-700'
+                        }`}>
+                          {categoryLabel}
+                        </span>
+                        
+                        {/* Actions */}
+                        <div className="flex items-center gap-0.5">
+                          <button
+                            onClick={() => toggleFeatured(car)}
+                            className="p-1.5 hover:bg-muted rounded"
+                          >
+                            {car.featured ? (
+                              <StarOff className="w-4 h-4 text-yellow-500" />
+                            ) : (
+                              <Star className="w-4 h-4" />
+                            )}
+                          </button>
+                          <button
+                            onClick={() => togglePublish(car)}
+                            className="p-1.5 hover:bg-muted rounded"
+                          >
+                            {car.published_at ? (
+                              <EyeOff className="w-4 h-4" />
+                            ) : (
+                              <Eye className="w-4 h-4 text-green-600" />
+                            )}
+                          </button>
+                          <button
+                            onClick={() => startEdit(car)}
+                            className="p-1.5 hover:bg-muted rounded"
+                          >
+                            <Pencil className="w-4 h-4 text-primary" />
+                          </button>
+                          <button
+                            onClick={() => deleteCar(car.id)}
+                            className="p-1.5 hover:bg-muted rounded"
+                          >
+                            <Trash2 className="w-4 h-4 text-accent" />
+                          </button>
+                        </div>
+                      </div>
                     </div>
-                  </td>
-                </tr>
+                  </div>
+                </div>
               );
-              })}
-            </tbody>
-          </table>
-        </div>
+            })}
+          </div>
+
+          {/* Desktop Table View */}
+          <div className="hidden md:block bg-card border border-border rounded-xl overflow-hidden">
+            <table className="w-full">
+              <thead className="bg-muted">
+                <tr>
+                  <th className="text-left p-4 font-display text-sm w-16">BILDE</th>
+                  <th className="text-left p-4 font-display text-sm">TITTEL</th>
+                  <th className="text-left p-4 font-display text-sm">MODELL</th>
+                  <th className="text-left p-4 font-display text-sm">KATEGORI</th>
+                  <th className="text-left p-4 font-display text-sm">STATUS</th>
+                  <th className="text-right p-4 font-display text-sm">HANDLINGER</th>
+                </tr>
+              </thead>
+              <tbody>
+                {cars.map((car) => {
+                  const categoryLabel = CATEGORIES.find(c => c.id === car.category)?.label || car.category;
+                  return (
+                  <tr key={car.id} className="border-t border-border">
+                    <td className="p-4">
+                      <div className="w-12 h-12 bg-muted rounded overflow-hidden">
+                        {car.car_images?.[0] ? (
+                          <img
+                            src={car.car_images[0].image_url}
+                            alt={car.title}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center">
+                            <Car className="w-5 h-5 text-muted-foreground" />
+                          </div>
+                        )}
+                      </div>
+                    </td>
+                    <td className="p-4">
+                      <div className="flex flex-col">
+                        <div className="flex items-center gap-2">
+                          {car.featured && (
+                            <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
+                          )}
+                          <span className="font-medium">{car.title}</span>
+                        </div>
+                        {car.year && <span className="text-xs text-muted-foreground">{car.year}</span>}
+                      </div>
+                    </td>
+                    <td className="p-4">{car.model}</td>
+                    <td className="p-4">
+                      <span className={`text-xs px-2 py-1 rounded font-display ${
+                        car.category === 'registrert' ? 'bg-green-100 text-green-700' :
+                        car.category === 'restaurering' ? 'bg-orange-100 text-orange-700' :
+                        car.category === 'historisk' ? 'bg-blue-100 text-blue-700' :
+                        'bg-gray-100 text-gray-700'
+                      }`}>
+                        {categoryLabel}
+                      </span>
+                    </td>
+                    <td className="p-4">
+                      {car.published_at ? (
+                        <span className="text-green-600 flex items-center gap-1">
+                          <Eye className="w-4 h-4" />
+                          Publisert
+                        </span>
+                      ) : (
+                        <span className="text-muted-foreground flex items-center gap-1">
+                          <EyeOff className="w-4 h-4" />
+                          Kladd
+                        </span>
+                      )}
+                    </td>
+                    <td className="p-4">
+                      <div className="flex items-center justify-end gap-1">
+                        <button
+                          onClick={() => toggleFeatured(car)}
+                          className="p-2 hover:bg-muted rounded"
+                          title={car.featured ? "Fjern fra utvalgte" : "Legg til utvalgte"}
+                        >
+                          {car.featured ? (
+                            <StarOff className="w-5 h-5 text-yellow-500" />
+                          ) : (
+                            <Star className="w-5 h-5" />
+                          )}
+                        </button>
+                        <button
+                          onClick={() => togglePublish(car)}
+                          className="p-2 hover:bg-muted rounded"
+                          title={car.published_at ? "Avpubliser" : "Publiser"}
+                        >
+                          {car.published_at ? (
+                            <EyeOff className="w-5 h-5" />
+                          ) : (
+                            <Eye className="w-5 h-5 text-green-600" />
+                          )}
+                        </button>
+                        <button
+                          onClick={() => startEdit(car)}
+                          className="p-2 hover:bg-muted rounded"
+                          title="Rediger"
+                        >
+                          <Pencil className="w-5 h-5 text-primary" />
+                        </button>
+                        <button
+                          onClick={() => deleteCar(car.id)}
+                          className="p-2 hover:bg-muted rounded"
+                          title="Slett"
+                        >
+                          <Trash2 className="w-5 h-5 text-accent" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </>
       )}
     </AdminLayout>
   );
