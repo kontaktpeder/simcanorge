@@ -400,9 +400,8 @@ const AdminBiler = () => {
 
       {/* Form Modal */}
       {showForm && (
-        <div className="fixed inset-0 bg-black/60 z-50 overflow-y-auto">
-          <div className="min-h-full flex items-start justify-center p-4 py-12">
-            <div className="bg-white border-4 border-foreground w-full max-w-3xl rounded-lg shadow-2xl">
+        <div className="fixed inset-0 bg-black/60 z-50 overflow-y-auto flex items-center justify-center p-4">
+          <div className="bg-white border-4 border-foreground w-full max-w-3xl rounded-lg shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between p-4 border-b-2 border-foreground">
               <h2 className="font-display text-2xl">
                 {editingId ? "REDIGER BIL" : "NY BIL"}
@@ -706,7 +705,6 @@ const AdminBiler = () => {
                 </button>
               </div>
             </form>
-            </div>
           </div>
         </div>
       )}
