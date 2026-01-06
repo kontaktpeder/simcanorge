@@ -21,8 +21,10 @@ interface FeaturedCar {
   }[];
 }
 export function HeroSection() {
-  const { ref: cardRef, isInView } = useInView();
-  
+  const {
+    ref: cardRef,
+    isInView
+  } = useInView();
   const {
     data: featuredCar,
     isLoading
@@ -66,14 +68,9 @@ export function HeroSection() {
           {/* Text Content */}
           <div className="text-center lg:text-left">
             <div className="flex items-center justify-center lg:justify-start mb-8">
-              <img 
-                src={simcaBadge} 
-                alt="Simca Norge" 
-                className="h-56 md:h-72 lg:h-96 w-auto"
-                style={{
-                  filter: 'drop-shadow(0 8px 24px rgba(0,0,0,0.4)) drop-shadow(0 4px 8px rgba(0,0,0,0.3))',
-                }}
-              />
+              <img src={simcaBadge} alt="Simca Norge" className="h-56 md:h-72 lg:h-96 w-auto" style={{
+              filter: 'drop-shadow(0 8px 24px rgba(0,0,0,0.4)) drop-shadow(0 4px 8px rgba(0,0,0,0.3))'
+            }} />
             </div>
             <p className="text-xl font-light mb-10 max-w-lg mx-auto lg:mx-0 text-white/90 font-serif md:text-3xl">
               Din kilde til Simca, Talbot og Matra klassikere. Bildeler og historier fra entusiaster i Norge.
@@ -93,10 +90,7 @@ export function HeroSection() {
           </div>
 
           {/* Featured Car - Månedens bil */}
-          <div 
-            ref={cardRef}
-            className={`relative transition-all duration-700 ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
-          >
+          <div ref={cardRef} className={`relative transition-all duration-700 ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
             {/* Section Header */}
             <div className="text-center mb-4">
               <h2 className="font-display text-2xl md:text-3xl text-white flex items-center justify-center gap-2">
@@ -104,55 +98,41 @@ export function HeroSection() {
                 Månedens bil
               </h2>
               <p className="font-serif text-sm text-white/70 mt-1">
-                {new Date().toLocaleDateString('nb-NO', { month: 'long', year: 'numeric' })}
+                {new Date().toLocaleDateString('nb-NO', {
+                month: 'long',
+                year: 'numeric'
+              })}
               </p>
             </div>
 
             {/* Spotlight/vignette background */}
             <div className="absolute inset-0 -inset-x-8 -inset-y-4 rounded-3xl bg-radial-spotlight pointer-events-none z-0" />
 
-            {isLoading ? (
-              <div className="featured-card-premium p-6 relative z-10">
+            {isLoading ? <div className="featured-card-premium p-6 relative z-10">
                 <Skeleton className="aspect-[4/3] w-full rounded-lg" />
                 <div className="mt-4">
                   <Skeleton className="h-6 w-3/4 mx-auto" />
                   <Skeleton className="h-4 w-1/2 mx-auto mt-2" />
                 </div>
-              </div>
-            ) : featuredCar ? (
-              <Link 
-                to={`/biler/${featuredCar.slug}`} 
-                className="block featured-card-premium p-5 transition-all duration-300 group relative overflow-hidden z-10"
-              >
+              </div> : featuredCar ? <Link to={`/biler/${featuredCar.slug}`} className="block featured-card-premium p-5 transition-all duration-300 group relative overflow-hidden z-10">
                 {/* Checkered flag background with wave animation */}
-                <div 
-                  className={`absolute inset-0 pointer-events-none checkered-flag-wave z-[1] ${isInView ? 'animate-flag-fade-in' : 'opacity-0'}`}
-                  style={{
-                    backgroundImage: `url(${checkeredFlag})`,
-                    backgroundSize: '150%',
-                    backgroundPosition: 'top left',
-                    backgroundRepeat: 'no-repeat',
-                  }}
-                />
+                <div className={`absolute inset-0 pointer-events-none checkered-flag-wave z-[1] ${isInView ? 'animate-flag-fade-in' : 'opacity-0'}`} style={{
+              backgroundImage: `url(${checkeredFlag})`,
+              backgroundSize: '150%',
+              backgroundPosition: 'top left',
+              backgroundRepeat: 'no-repeat'
+            }} />
                 
                 {/* Car image with dark gradient for text readability */}
-                {getMainImage(featuredCar) ? (
-                  <div className="overflow-hidden rounded-lg relative z-[2] car-finish-glow">
-                    <img 
-                      src={getMainImage(featuredCar)!.image_url} 
-                      alt={getMainImage(featuredCar)!.alt_text || featuredCar.title} 
-                      className="w-full aspect-[16/10] object-cover shadow-lg group-hover:scale-105 transition-transform duration-500" 
-                    />
+                {getMainImage(featuredCar) ? <div className="overflow-hidden rounded-lg relative z-[2] car-finish-glow">
+                    <img src={getMainImage(featuredCar)!.image_url} alt={getMainImage(featuredCar)!.alt_text || featuredCar.title} className="w-full aspect-[16/10] object-cover shadow-lg group-hover:scale-105 transition-transform duration-500" />
                     {/* Dark gradient at bottom for text readability */}
                     <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
                     {/* Subtle shine overlay on hover */}
                     <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                  </div>
-                ) : (
-                  <div className="aspect-[16/10] bg-white/20 rounded-lg flex items-center justify-center relative z-[2]">
+                  </div> : <div className="aspect-[16/10] bg-white/20 rounded-lg flex items-center justify-center relative z-[2]">
                     <Car className="w-24 h-24 opacity-50" />
-                  </div>
-                )}
+                  </div>}
                 
                 {/* Text content with enhanced contrast */}
                 <div className="mt-5 text-center relative z-[2]">
@@ -161,18 +141,13 @@ export function HeroSection() {
                     {featuredCar.year && `${featuredCar.year} · `}{featuredCar.model}
                   </p>
                 </div>
-              </Link>
-            ) : (
-              <div className="featured-card-premium p-8 relative overflow-hidden z-10">
+              </Link> : <div className="featured-card-premium p-8 relative overflow-hidden z-10">
                 {/* Checkered flag background for empty state */}
-                <div 
-                  className="absolute inset-0 pointer-events-none checkered-flag-wave"
-                  style={{
-                    backgroundImage: `url(${checkeredFlag})`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                  }}
-                />
+                <div className="absolute inset-0 pointer-events-none checkered-flag-wave" style={{
+              backgroundImage: `url(${checkeredFlag})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center'
+            }} />
                 <div className="absolute inset-0 pointer-events-none bg-gradient-to-br from-black/50 via-transparent to-black/60 z-[1]" />
                 
                 <div className="aspect-[16/10] bg-white/20 rounded-lg flex items-center justify-center relative z-[2]">
@@ -182,17 +157,10 @@ export function HeroSection() {
                     <p className="font-serif italic text-white/60">Kommer snart...</p>
                   </div>
                 </div>
-              </div>
-            )}
+              </div>}
             
             {/* Decorative badge - enhanced emblem style */}
-            <Link 
-              to="/manedens-bil" 
-              className="absolute top-8 -right-3 manedens-bil-badge px-4 py-2 font-display text-sm rotate-12 flex items-center gap-1.5 hover:scale-110 transition-transform z-20"
-            >
-              <Star className="w-4 h-4 fill-current" />
-              MÅNEDENS BIL
-            </Link>
+            
           </div>
         </div>
       </div>
