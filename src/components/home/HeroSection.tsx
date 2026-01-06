@@ -68,8 +68,8 @@ export function HeroSection() {
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Text Content */}
           <div className="text-center lg:text-left">
-            <div className="flex items-center justify-center lg:justify-start mb-4">
-              <img src={simcaBadge} alt="Simca Norge" className="h-56 md:h-72 lg:h-96 w-auto" style={{
+            <div className="flex items-center justify-center mb-4">
+              <img src={simcaBadge} alt="Simca Norge" className="h-72 md:h-96 lg:h-[28rem] w-auto" style={{
               filter: 'drop-shadow(0 8px 24px rgba(0,0,0,0.4)) drop-shadow(0 4px 8px rgba(0,0,0,0.3))'
             }} />
             </div>
