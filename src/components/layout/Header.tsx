@@ -263,8 +263,8 @@ export function Header() {
     setIsDrivingToGarage(true);
     setRoadFading(false);
 
-    const fadeTimer = setTimeout(() => setRoadFading(true), 400);
-    const endTimer = setTimeout(() => setIsDrivingToGarage(false), 900);
+    const fadeTimer = setTimeout(() => setRoadFading(true), 900);
+    const endTimer = setTimeout(() => setIsDrivingToGarage(false), 1400);
 
     return () => {
       clearTimeout(fadeTimer);
