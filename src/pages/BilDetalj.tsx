@@ -3,7 +3,8 @@ import { useParams, Link } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowLeft, Calendar, Wrench, Tag, ChevronLeft, ChevronRight, Car } from "lucide-react";
+import { ArrowLeft, Calendar, Wrench, Tag, ChevronLeft, ChevronRight, Car, Share2, Facebook, Twitter, Linkedin, Link as LinkIcon, Check } from "lucide-react";
+import { toast } from "sonner";
 
 interface CarImage {
   id: string;
@@ -32,6 +33,10 @@ const BilDetalj = () => {
   const [car, setCar] = useState<CarDetail | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [showShareMenu, setShowShareMenu] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const currentUrl = typeof window !== "undefined" ? window.location.href : "";
 
   useEffect(() => {
     const fetchCar = async () => {
@@ -71,6 +76,30 @@ const BilDetalj = () => {
       setCurrentImageIndex((prev) =>
         prev === 0 ? car.car_images.length - 1 : prev - 1
       );
+    }
+  };
+
+  const shareOnFacebook = () => {
+    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(currentUrl)}`, "_blank", "width=600,height=400");
+  };
+
+  const shareOnTwitter = () => {
+    const text = car ? `Sjekk ut denne ${car.title}!` : "Sjekk ut denne bilen!";
+    window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(currentUrl)}&text=${encodeURIComponent(text)}`, "_blank", "width=600,height=400");
+  };
+
+  const shareOnLinkedIn = () => {
+    window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(currentUrl)}`, "_blank", "width=600,height=400");
+  };
+
+  const copyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(currentUrl);
+      setCopied(true);
+      toast.success("Lenke kopiert!");
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      toast.error("Kunne ikke kopiere lenke");
     }
   };
 
@@ -265,12 +294,61 @@ const BilDetalj = () => {
               </div>
             )}
 
-            {/* Back link */}
-            <div className="mt-12">
+            {/* Actions */}
+            <div className="mt-12 flex flex-wrap gap-4 items-center">
               <Link to="/biler" className="btn-enamel-blue inline-flex">
                 <ArrowLeft className="w-5 h-5 mr-2" />
                 Se flere biler
               </Link>
+
+              {/* Share button */}
+              <div className="relative">
+                <button
+                  onClick={() => setShowShareMenu(!showShareMenu)}
+                  className="btn-enamel-red inline-flex items-center gap-2"
+                >
+                  <Share2 className="w-5 h-5" />
+                  Del denne bilen
+                </button>
+
+                {showShareMenu && (
+                  <div className="absolute bottom-full left-0 mb-2 bg-card border-2 border-foreground rounded-lg shadow-xl p-2 min-w-[180px] z-10">
+                    <button
+                      onClick={shareOnFacebook}
+                      className="w-full flex items-center gap-3 px-4 py-3 hover:bg-muted rounded-lg transition-colors text-left"
+                    >
+                      <Facebook className="w-5 h-5 text-blue-600" />
+                      Facebook
+                    </button>
+                    <button
+                      onClick={shareOnTwitter}
+                      className="w-full flex items-center gap-3 px-4 py-3 hover:bg-muted rounded-lg transition-colors text-left"
+                    >
+                      <Twitter className="w-5 h-5 text-sky-500" />
+                      X (Twitter)
+                    </button>
+                    <button
+                      onClick={shareOnLinkedIn}
+                      className="w-full flex items-center gap-3 px-4 py-3 hover:bg-muted rounded-lg transition-colors text-left"
+                    >
+                      <Linkedin className="w-5 h-5 text-blue-700" />
+                      LinkedIn
+                    </button>
+                    <div className="border-t border-border my-1" />
+                    <button
+                      onClick={copyLink}
+                      className="w-full flex items-center gap-3 px-4 py-3 hover:bg-muted rounded-lg transition-colors text-left"
+                    >
+                      {copied ? (
+                        <Check className="w-5 h-5 text-green-600" />
+                      ) : (
+                        <LinkIcon className="w-5 h-5 text-muted-foreground" />
+                      )}
+                      {copied ? "Kopiert!" : "Kopier lenke"}
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
