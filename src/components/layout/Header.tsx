@@ -156,69 +156,7 @@ function DriveHomeAnimation({
           />
         </div>
       ))}
-      
-      {/* Animated garage that fades in - fixed position under logo */}
-      {showGarage && (
-        <div 
-          className="absolute left-[120px] md:left-[160px] -top-[48px] md:-top-[58px] animate-fade-in"
-          style={{ zIndex: 60 }}
-        >
-        <div 
-          className="relative px-5 py-3 rounded-t-lg overflow-hidden"
-          style={{
-            background: 'linear-gradient(180deg, #c4d4e0 0%, #a8bccf 40%, #8fa5b8 100%)',
-            boxShadow: 'inset 0 2px 6px rgba(255,255,255,0.3), inset 0 -2px 8px rgba(0,0,0,0.2), 0 4px 12px rgba(0,0,0,0.3)',
-            border: '2px solid #d4a520',
-            borderBottom: '3px solid #8b7355'
-          }}
-        >
-          {/* Wooden beam roof */}
-          <div 
-            className="absolute -top-1 left-0 right-0 h-3"
-            style={{
-              background: 'repeating-linear-gradient(90deg, #8b6914 0px, #a07818 3px, #6b5210 6px, #8b6914 9px)',
-              boxShadow: '0 2px 4px rgba(0,0,0,0.4)'
-            }}
-          />
-          {/* Yellow garage door frame */}
-          <div 
-            className="absolute top-2 left-1 right-1 h-1.5 rounded-sm"
-            style={{
-              background: 'linear-gradient(180deg, #f0c040 0%, #d4a520 50%, #b8901a 100%)',
-              boxShadow: '0 1px 2px rgba(0,0,0,0.3)'
-            }}
-          />
-          <div 
-            className="absolute top-2 left-1 bottom-0 w-1"
-            style={{ background: 'linear-gradient(90deg, #d4a520 0%, #f0c040 50%, #d4a520 100%)' }}
-          />
-          <div 
-            className="absolute top-2 right-1 bottom-0 w-1"
-            style={{ background: 'linear-gradient(90deg, #d4a520 0%, #f0c040 50%, #d4a520 100%)' }}
-          />
-          {/* Fluorescent light */}
-          <div 
-            className="absolute top-3 left-1/2 -translate-x-1/2 w-8 h-0.5 rounded-full"
-            style={{
-              background: 'rgba(255,255,255,0.9)',
-              boxShadow: '0 0 6px 2px rgba(255,255,255,0.5)'
-            }}
-          />
-          {/* Floor */}
-          <div 
-            className="absolute bottom-0 left-0 right-0 h-2"
-            style={{ background: 'linear-gradient(180deg, #9ca3af 0%, #6b7280 100%)' }}
-          >
-            <div 
-              className="absolute top-1/2 -translate-y-1/2 left-2 right-2 h-0.5"
-              style={{ background: '#eab308' }}
-            />
-          </div>
-          {/* Empty space for car */}
-          <div className="h-[26px] w-[60px]" />
-        </div>
-      </div>
-      )}
+
       
       {/* The driving car */}
       <div 
@@ -383,9 +321,9 @@ export function Header() {
             </div>
           </Link>
 
-          {/* Garage with parked car - workshop style inspired by image */}
-          {!isHome && !isDrivingToGarage && (
-            <div className="hidden lg:flex items-center mx-4">
+          {/* Garage with parked car - shows after animation or on non-home pages */}
+          {!isHome && (
+            <div className={`hidden lg:flex items-center mx-4 ${isDrivingToGarage ? 'animate-fade-in' : ''}`}>
               <div 
                 className="relative px-5 py-3 rounded-t-lg overflow-hidden"
                 style={{
