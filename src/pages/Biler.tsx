@@ -137,23 +137,48 @@ const Biler = () => {
   return <Layout>
       <PageHeader title="BILER" subtitle="Utforsk samlingen av Simca-biler i Norge – fra registrerte klassikere til historiske perler" />
 
-      {/* Category Tabs - mobile optimized */}
-      <section className="bg-gradient-to-b from-card to-muted/30 py-4 md:py-8 border-b-4 border-foreground">
-        <div className="container mx-auto px-2 md:px-4">
-          <div className="flex flex-wrap justify-center gap-2 md:gap-4">
+      {/* Category Tabs - symmetrical grid layout */}
+      <section className="bg-gradient-to-b from-card via-card to-muted/20 py-6 md:py-10 border-b-2 border-chrome-mid">
+        <div className="container mx-auto px-3 md:px-4">
+          {/* Grid layout for symmetry */}
+          <div className="grid grid-cols-5 gap-1.5 md:gap-3 max-w-4xl mx-auto">
             {CATEGORIES.map(cat => {
-            const Icon = cat.icon;
-            const isActive = selectedCategory === cat.id;
-            return <button key={cat.id} onClick={() => setSelectedCategory(cat.id)} className={`group relative flex items-center gap-2 md:gap-3 px-3 py-2 md:px-6 md:py-4 font-display text-xs md:text-base rounded-lg md:rounded-xl transition-all duration-300 transform hover:scale-105 ${isActive ? "bg-primary text-primary-foreground shadow-lg shadow-primary/30 scale-105" : "bg-card border-2 border-foreground/20 hover:border-primary hover:bg-primary/5 text-foreground"}`}>
-                  <Icon className={`w-4 h-4 md:w-6 md:h-6 transition-transform group-hover:scale-110 ${isActive ? 'animate-pulse' : ''}`} />
-                  <span className="hidden sm:inline font-bold tracking-wide">{cat.label}</span>
-                  <span className="sm:hidden font-bold">{cat.label.split(' ')[0]}</span>
-                  <span className={`text-xs font-bold px-2 py-0.5 md:px-3 md:py-1 rounded-full transition-colors ${isActive ? "bg-white/20 text-primary-foreground" : "bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground"}`}>
-                    {categoryCounts[cat.id]}
+              const Icon = cat.icon;
+              const isActive = selectedCategory === cat.id;
+              return (
+                <button 
+                  key={cat.id} 
+                  onClick={() => setSelectedCategory(cat.id)} 
+                  className={`group relative flex flex-col items-center justify-center gap-1 md:gap-2 px-2 py-3 md:px-4 md:py-5 font-display text-[10px] md:text-sm rounded-xl transition-all duration-300 ${
+                    isActive 
+                      ? "bg-primary text-primary-foreground shadow-lg shadow-primary/25 ring-2 ring-primary/50" 
+                      : "bg-card border border-foreground/10 hover:border-primary/50 hover:bg-primary/5 text-foreground hover:shadow-md"
+                  }`}
+                >
+                  {/* Icon with badge count */}
+                  <div className="relative">
+                    <Icon className={`w-5 h-5 md:w-7 md:h-7 transition-transform group-hover:scale-110 ${isActive ? '' : 'text-primary'}`} />
+                    <span className={`absolute -top-1.5 -right-2 md:-top-2 md:-right-2.5 min-w-[16px] md:min-w-[20px] h-4 md:h-5 flex items-center justify-center text-[9px] md:text-xs font-bold rounded-full ${
+                      isActive 
+                        ? "bg-white/25 text-primary-foreground" 
+                        : "bg-accent text-accent-foreground"
+                    }`}>
+                      {categoryCounts[cat.id]}
+                    </span>
+                  </div>
+                  
+                  {/* Label */}
+                  <span className="font-bold tracking-wide text-center leading-tight">
+                    {cat.label.split(' ')[0]}
                   </span>
-                  {isActive && <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-0 h-0 border-l-6 border-r-6 border-t-6 md:border-l-8 md:border-r-8 md:border-t-8 border-l-transparent border-r-transparent border-t-primary" />}
-                </button>;
-          })}
+                  
+                  {/* Active indicator */}
+                  {isActive && (
+                    <span className="absolute -bottom-0.5 left-1/2 -translate-x-1/2 w-8 md:w-12 h-1 bg-accent rounded-full" />
+                  )}
+                </button>
+              );
+            })}
           </div>
         </div>
       </section>
