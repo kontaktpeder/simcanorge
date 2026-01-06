@@ -27,61 +27,47 @@ export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isSpeedBoost, setIsSpeedBoost] = useState(false);
   const [isDrivingToGarage, setIsDrivingToGarage] = useState(false);
-  const [isParked, setIsParked] = useState(false);
-  const [roadVisible, setRoadVisible] = useState(true);
-  const prevPathRef = useRef<string | null>(null);
-  const isInitialMount = useRef(true);
+  const [isParked, setIsParked] = useState(location.pathname !== "/");
+  const [roadVisible, setRoadVisible] = useState(location.pathname === "/");
+  const prevPathRef = useRef<string>(location.pathname);
   const { itemCount } = useCart();
 
   const isHome = location.pathname === "/";
 
-  // Initialize on mount
-  useEffect(() => {
-    if (isInitialMount.current) {
-      isInitialMount.current = false;
-      prevPathRef.current = location.pathname;
-      if (!isHome) {
-        setIsParked(true);
-        setRoadVisible(false);
-      }
-    }
-  }, [location.pathname, isHome]);
-
   // Handle navigation changes - only animate when leaving home
   useEffect(() => {
-    // Skip on initial mount
-    if (isInitialMount.current) return;
-    
     const prevPath = prevPathRef.current;
     const currentPath = location.pathname;
     
-    if (prevPath !== currentPath && prevPath !== null) {
-      // If navigating away from home to another page
-      if (prevPath === "/" && currentPath !== "/") {
-        setIsDrivingToGarage(true);
-        setIsParked(false);
-        setRoadVisible(true);
-        
-        // After car reaches garage, park it and fade road
-        const parkTimer = setTimeout(() => {
-          setIsDrivingToGarage(false);
-          setIsParked(true);
-          setRoadVisible(false);
-        }, 800);
-        
-        prevPathRef.current = currentPath;
-        return () => clearTimeout(parkTimer);
-      }
+    // Only act if path actually changed
+    if (prevPath === currentPath) return;
+    
+    // If navigating away from home to another page - animate!
+    if (prevPath === "/" && currentPath !== "/") {
+      setIsDrivingToGarage(true);
+      setIsParked(false);
+      setRoadVisible(true);
       
-      // If navigating to home
-      if (currentPath === "/") {
-        setIsParked(false);
+      // After car reaches garage, park it and fade road
+      const parkTimer = setTimeout(() => {
         setIsDrivingToGarage(false);
-        setRoadVisible(true);
-      }
+        setIsParked(true);
+        setRoadVisible(false);
+      }, 800);
       
       prevPathRef.current = currentPath;
+      return () => clearTimeout(parkTimer);
     }
+    
+    // If navigating to home - just reset state instantly
+    if (currentPath === "/") {
+      setIsParked(false);
+      setIsDrivingToGarage(false);
+      setRoadVisible(true);
+    }
+    
+    // Update ref for any other navigation (between non-home pages)
+    prevPathRef.current = currentPath;
   }, [location.pathname]);
 
   const handleCarClick = () => {
