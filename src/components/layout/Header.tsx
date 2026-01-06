@@ -29,46 +29,69 @@ export function Header() {
   const [isDrivingToGarage, setIsDrivingToGarage] = useState(false);
   const [isParked, setIsParked] = useState(location.pathname !== "/");
   const [roadVisible, setRoadVisible] = useState(location.pathname === "/");
+  const [garageIntro, setGarageIntro] = useState(false);
+
   const prevPathRef = useRef<string>(location.pathname);
+  const parkTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const garageTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const { itemCount } = useCart();
 
   const isHome = location.pathname === "/";
 
-  // Handle navigation changes - only animate when leaving home
+  // Handle navigation changes - animate ONLY when leaving home
   useEffect(() => {
     const prevPath = prevPathRef.current;
     const currentPath = location.pathname;
-    
-    // Only act if path actually changed
+
     if (prevPath === currentPath) return;
-    
-    // Navigating between non-home pages - just update ref, no state changes
+
+    // Clear any pending timers from the leave-home animation
+    if (parkTimerRef.current) {
+      clearTimeout(parkTimerRef.current);
+      parkTimerRef.current = null;
+    }
+    if (garageTimerRef.current) {
+      clearTimeout(garageTimerRef.current);
+      garageTimerRef.current = null;
+    }
+
+    // Navigating between non-home pages: keep it stable (no animation, no jitter)
     if (prevPath !== "/" && currentPath !== "/") {
+      setIsDrivingToGarage(false);
+      setIsParked(true);
+      setRoadVisible(false);
+      setGarageIntro(false);
       prevPathRef.current = currentPath;
       return;
     }
-    
-    // If navigating away from home to another page - animate!
+
+    // Leaving home: run the drive-in animation once
     if (prevPath === "/" && currentPath !== "/") {
+      setGarageIntro(false);
       setIsDrivingToGarage(true);
       setIsParked(false);
       setRoadVisible(true);
-      
-      const parkTimer = setTimeout(() => {
+
+      parkTimerRef.current = setTimeout(() => {
         setIsDrivingToGarage(false);
         setIsParked(true);
         setRoadVisible(false);
-      }, 800);
-      
+        setGarageIntro(true);
+
+        garageTimerRef.current = setTimeout(() => setGarageIntro(false), 900);
+      }, 900);
+
       prevPathRef.current = currentPath;
-      return () => clearTimeout(parkTimer);
+      return;
     }
-    
-    // If navigating to home - reset state instantly
+
+    // Going back to home: reset instantly
     if (currentPath === "/") {
       setIsParked(false);
       setIsDrivingToGarage(false);
       setRoadVisible(true);
+      setGarageIntro(false);
       prevPathRef.current = currentPath;
     }
   }, [location.pathname]);
@@ -104,7 +127,7 @@ export function Header() {
 
           {/* Garage with parked car - visible when parked (desktop only) */}
           {isParked && !isHome && (
-            <div className="hidden lg:flex items-center mx-4 animate-fade-in">
+            <div className={`hidden lg:flex items-center mx-4 ${garageIntro ? "animate-fade-in" : ""}`}>
               <div className="relative bg-gradient-to-b from-gray-700 to-gray-800 rounded-t-lg px-3 py-1 border-2 border-b-0 border-gray-600 shadow-inner">
                 {/* Garage roof */}
                 <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-full h-2 bg-gradient-to-b from-gray-500 to-gray-600 rounded-t-lg" />
