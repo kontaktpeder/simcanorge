@@ -97,8 +97,22 @@ export function HeroSection() {
             ref={cardRef}
             className={`relative transition-all duration-700 ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
           >
+            {/* Section Header */}
+            <div className="text-center mb-4">
+              <h2 className="font-display text-2xl md:text-3xl text-white flex items-center justify-center gap-2">
+                <Star className="w-6 h-6 text-simca-gold fill-simca-gold" />
+                Månedens bil
+              </h2>
+              <p className="font-serif text-sm text-white/70 mt-1">
+                {new Date().toLocaleDateString('nb-NO', { month: 'long', year: 'numeric' })}
+              </p>
+            </div>
+
+            {/* Spotlight/vignette background */}
+            <div className="absolute inset-0 -inset-x-8 -inset-y-4 rounded-3xl bg-radial-spotlight pointer-events-none z-0" />
+
             {isLoading ? (
-              <div className="featured-car-frame p-6">
+              <div className="featured-card-premium p-6 relative z-10">
                 <Skeleton className="aspect-[4/3] w-full rounded-lg" />
                 <div className="mt-4">
                   <Skeleton className="h-6 w-3/4 mx-auto" />
@@ -108,7 +122,7 @@ export function HeroSection() {
             ) : featuredCar ? (
               <Link 
                 to={`/biler/${featuredCar.slug}`} 
-                className="block featured-car-frame p-5 hover-lift transition-all group relative overflow-hidden"
+                className="block featured-card-premium p-5 transition-all duration-300 group relative overflow-hidden z-10"
               >
                 {/* Checkered flag background with wave animation */}
                 <div 
@@ -120,9 +134,8 @@ export function HeroSection() {
                     backgroundRepeat: 'no-repeat',
                   }}
                 />
-                {/* No overlay - flag shows clearly */}
                 
-                {/* Car image with finish line glow */}
+                {/* Car image with dark gradient for text readability */}
                 {getMainImage(featuredCar) ? (
                   <div className="overflow-hidden rounded-lg relative z-[2] car-finish-glow">
                     <img 
@@ -130,6 +143,8 @@ export function HeroSection() {
                       alt={getMainImage(featuredCar)!.alt_text || featuredCar.title} 
                       className="w-full aspect-[16/10] object-cover shadow-lg group-hover:scale-105 transition-transform duration-500" 
                     />
+                    {/* Dark gradient at bottom for text readability */}
+                    <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
                     {/* Subtle shine overlay on hover */}
                     <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   </div>
@@ -139,16 +154,16 @@ export function HeroSection() {
                   </div>
                 )}
                 
-                {/* Text content */}
+                {/* Text content with enhanced contrast */}
                 <div className="mt-5 text-center relative z-[2]">
-                  <p className="font-display text-3xl font-bold text-white drop-shadow-lg">{featuredCar.title}</p>
+                  <p className="font-display text-3xl font-bold text-white featured-title-glow">{featuredCar.title}</p>
                   <p className="font-serif text-lg text-white/90 mt-1 drop-shadow-md">
                     {featuredCar.year && `${featuredCar.year} · `}{featuredCar.model}
                   </p>
                 </div>
               </Link>
             ) : (
-              <div className="featured-car-frame p-8 relative overflow-hidden">
+              <div className="featured-card-premium p-8 relative overflow-hidden z-10">
                 {/* Checkered flag background for empty state */}
                 <div 
                   className="absolute inset-0 pointer-events-none checkered-flag-wave"
@@ -173,7 +188,7 @@ export function HeroSection() {
             {/* Decorative badge - enhanced emblem style */}
             <Link 
               to="/manedens-bil" 
-              className="absolute -top-3 -right-3 manedens-bil-badge px-4 py-2 font-display text-sm rotate-12 flex items-center gap-1.5 hover:scale-110 transition-transform z-20"
+              className="absolute top-8 -right-3 manedens-bil-badge px-4 py-2 font-display text-sm rotate-12 flex items-center gap-1.5 hover:scale-110 transition-transform z-20"
             >
               <Star className="w-4 h-4 fill-current" />
               MÅNEDENS BIL
