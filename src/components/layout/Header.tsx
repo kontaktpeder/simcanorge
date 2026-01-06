@@ -28,8 +28,10 @@ export function Header() {
   const location = useLocation();
   const { itemCount } = useCart();
 
-  const handleHeaderHover = () => {
-    if (isSpeedBoost) return;
+  const isHome = location.pathname === "/";
+
+  const handleCarClick = () => {
+    if (isSpeedBoost || !isHome) return;
     setIsSpeedBoost(true);
   };
 
@@ -41,10 +43,7 @@ export function Header() {
   }, [isSpeedBoost]);
 
   return (
-    <header 
-      className="sticky top-0 z-50 header-chrome"
-      onMouseEnter={handleHeaderHover}
-    >
+    <header className="sticky top-0 z-50 header-chrome">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
@@ -59,6 +58,22 @@ export function Header() {
               <span className="font-display text-2xl text-accent ml-1">NORGE</span>
             </div>
           </Link>
+
+          {/* Garage with parked car - visible on non-home pages (desktop only) */}
+          {!isHome && (
+            <div className="hidden lg:flex items-center mx-4">
+              <div className="relative bg-gradient-to-b from-gray-700 to-gray-800 rounded-t-lg px-3 py-1 border-2 border-b-0 border-gray-600 shadow-inner">
+                {/* Garage roof */}
+                <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-full h-2 bg-gradient-to-b from-gray-500 to-gray-600 rounded-t-lg" />
+                {/* Parked car */}
+                <img 
+                  src={simcaRallye} 
+                  alt="Parkert Simca" 
+                  className="h-[24px] w-auto object-contain drop-shadow-md"
+                />
+              </div>
+            </div>
+          )}
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center gap-6">
@@ -160,60 +175,69 @@ export function Header() {
         )}
       </div>
 
-      {/* Animated car lane - hidden on very small screens */}
-      <div className="hidden sm:block relative w-full h-[30px] md:h-[45px] overflow-hidden bg-gradient-to-b from-gray-500 to-gray-600 pointer-events-none">
-        {/* Center road stripe - static */}
-        <div className="absolute top-1/2 -translate-y-1/2 left-0 right-0 flex justify-center gap-6">
-          {[...Array(40)].map((_, i) => (
-            <div key={i} className="w-6 h-1 bg-yellow-400/80 rounded-sm flex-shrink-0" />
-          ))}
-        </div>
-        
-        {/* Road edges */}
-        <div className="absolute top-0.5 left-0 right-0 h-0.5 bg-white/40" />
-        <div className="absolute bottom-0.5 left-0 right-0 h-0.5 bg-white/40" />
+      {/* Animated car lane - only visible on home page, hidden on very small screens */}
+      {isHome && (
+        <div className="hidden sm:block relative w-full h-[30px] md:h-[45px] overflow-hidden bg-gradient-to-b from-gray-500 to-gray-600">
+          {/* Center road stripe - static */}
+          <div className="absolute top-1/2 -translate-y-1/2 left-0 right-0 flex justify-center gap-6 pointer-events-none">
+            {[...Array(40)].map((_, i) => (
+              <div key={i} className="w-6 h-1 bg-yellow-400/80 rounded-sm flex-shrink-0" />
+            ))}
+          </div>
+          
+          {/* Road edges */}
+          <div className="absolute top-0.5 left-0 right-0 h-0.5 bg-white/40 pointer-events-none" />
+          <div className="absolute bottom-0.5 left-0 right-0 h-0.5 bg-white/40 pointer-events-none" />
 
-        {/* Exhaust smoke */}
-        <div className="absolute bottom-[6px] md:bottom-[10px] animate-header-drive" style={{ animationDuration: isSpeedBoost ? '3s' : '10s' }}>
-          <div className="relative">
-            <div className="absolute left-full ml-2 top-1 flex gap-1">
-              <div className={`w-2 h-2 md:w-3 md:h-3 bg-gray-400/50 rounded-full animate-smoke-1 blur-[1px] ${isSpeedBoost ? 'scale-125' : ''}`} />
-              <div className={`w-1.5 h-1.5 md:w-2 md:h-2 bg-gray-400/40 rounded-full animate-smoke-2 blur-[1px] ml-1 ${isSpeedBoost ? 'scale-125' : ''}`} />
-              <div className={`w-2.5 h-2.5 md:w-3.5 md:h-3.5 bg-gray-400/30 rounded-full animate-smoke-3 blur-[2px] ml-1 ${isSpeedBoost ? 'scale-125' : ''}`} />
-              {isSpeedBoost && (
-                <>
-                  <div className="w-2 h-2 md:w-3 md:h-3 bg-gray-300/40 rounded-full animate-smoke-4 blur-[1px] ml-1" />
-                  <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-gray-300/30 rounded-full animate-smoke-1 blur-[1px] ml-0.5" />
-                </>
-              )}
+          {/* Exhaust smoke */}
+          <div 
+            className="absolute bottom-[6px] md:bottom-[10px] animate-header-drive pointer-events-none" 
+            style={{ animationDuration: isSpeedBoost ? '3s' : '10s' }}
+          >
+            <div className="relative">
+              <div className="absolute left-full ml-2 top-1 flex gap-1">
+                <div className={`w-2 h-2 md:w-3 md:h-3 bg-gray-400/50 rounded-full animate-smoke-1 blur-[1px] ${isSpeedBoost ? 'scale-125' : ''}`} />
+                <div className={`w-1.5 h-1.5 md:w-2 md:h-2 bg-gray-400/40 rounded-full animate-smoke-2 blur-[1px] ml-1 ${isSpeedBoost ? 'scale-125' : ''}`} />
+                <div className={`w-2.5 h-2.5 md:w-3.5 md:h-3.5 bg-gray-400/30 rounded-full animate-smoke-3 blur-[2px] ml-1 ${isSpeedBoost ? 'scale-125' : ''}`} />
+                {isSpeedBoost && (
+                  <>
+                    <div className="w-2 h-2 md:w-3 md:h-3 bg-gray-300/40 rounded-full animate-smoke-4 blur-[1px] ml-1" />
+                    <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-gray-300/30 rounded-full animate-smoke-1 blur-[1px] ml-0.5" />
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* The Simca car - clickable for speed boost */}
+          <div 
+            className="absolute bottom-[4px] md:bottom-[6px] animate-header-drive cursor-pointer" 
+            style={{ animationDuration: isSpeedBoost ? '3s' : '10s', pointerEvents: 'auto' }}
+            onClick={handleCarClick}
+          >
+            <div className="animate-car-bump-subtle relative">
+              <img 
+                src={simcaRallye} 
+                alt="Simca Rallye" 
+                className="h-[22px] md:h-[34px] w-auto object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]"
+              />
+              {/* Wheel spin effect */}
+              <div className="absolute bottom-0.5 left-[18%] w-2 h-2 md:w-2.5 md:h-2.5 rounded-full border border-dashed border-gray-600/40 animate-wheel-spin" />
+              <div className="absolute bottom-0.5 right-[22%] w-2 h-2 md:w-2.5 md:h-2.5 rounded-full border border-dashed border-gray-600/40 animate-wheel-spin" />
+              
+              {/* Dust clouds behind wheels */}
+              <div className="absolute -bottom-0.5 left-[10%] flex gap-0.5">
+                <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-amber-200/40 rounded-full animate-dust-1 blur-[1px]" />
+                <div className="w-1 h-1 md:w-1.5 md:h-1.5 bg-amber-200/30 rounded-full animate-dust-2 blur-[1px]" />
+              </div>
+              <div className="absolute -bottom-0.5 right-[15%] flex gap-0.5">
+                <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-amber-200/40 rounded-full animate-dust-3 blur-[1px]" />
+                <div className="w-1 h-1 md:w-1.5 md:h-1.5 bg-amber-200/30 rounded-full animate-dust-1 blur-[1px]" />
+              </div>
             </div>
           </div>
         </div>
-
-        {/* The Simca car - facing right (no scaleX flip) */}
-        <div className="absolute bottom-[4px] md:bottom-[6px] animate-header-drive" style={{ animationDuration: isSpeedBoost ? '3s' : '10s' }}>
-          <div className="animate-car-bump-subtle relative">
-            <img 
-              src={simcaRallye} 
-              alt="Simca Rallye" 
-              className="h-[22px] md:h-[34px] w-auto object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]"
-            />
-            {/* Wheel spin effect */}
-            <div className="absolute bottom-0.5 left-[18%] w-2 h-2 md:w-2.5 md:h-2.5 rounded-full border border-dashed border-gray-600/40 animate-wheel-spin" />
-            <div className="absolute bottom-0.5 right-[22%] w-2 h-2 md:w-2.5 md:h-2.5 rounded-full border border-dashed border-gray-600/40 animate-wheel-spin" />
-            
-            {/* Dust clouds behind wheels */}
-            <div className="absolute -bottom-0.5 left-[10%] flex gap-0.5">
-              <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-amber-200/40 rounded-full animate-dust-1 blur-[1px]" />
-              <div className="w-1 h-1 md:w-1.5 md:h-1.5 bg-amber-200/30 rounded-full animate-dust-2 blur-[1px]" />
-            </div>
-            <div className="absolute -bottom-0.5 right-[15%] flex gap-0.5">
-              <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-amber-200/40 rounded-full animate-dust-3 blur-[1px]" />
-              <div className="w-1 h-1 md:w-1.5 md:h-1.5 bg-amber-200/30 rounded-full animate-dust-1 blur-[1px]" />
-            </div>
-          </div>
-        </div>
-      </div>
+      )}
     </header>
   );
 }
