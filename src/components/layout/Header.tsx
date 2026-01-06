@@ -49,9 +49,12 @@ function DriveHomeAnimation({
   const trackPointsRef = useRef<number[]>([]);
   const [tracks, setTracks] = useState<number[]>([]);
 
-  const DRIVE_HOME_DURATION = 1100; // ms
+  const TOTAL_DURATION = 1400; // ms total
+  const PHASE1_DURATION = 700; // ms - drive horizontally on road
+  const PHASE2_DURATION = 700; // ms - drive up into garage
   const GARAGE_LEFT_SM = 120;
   const GARAGE_LEFT_MD = 160;
+  const EXIT_X = 220; // X position where car exits the road and turns up
 
   useEffect(() => {
     setShowGarage(true);
@@ -59,43 +62,61 @@ function DriveHomeAnimation({
     const initialX = startX;
     const isMd = window.matchMedia("(min-width: 768px)").matches;
 
-    // Aim for the middle of the garage opening
-    const targetX = (isMd ? GARAGE_LEFT_MD : GARAGE_LEFT_SM) + 25;
-    // Drive clearly up under the logo area
-    const targetY = isMd ? -140 : -115;
+    // Target position in garage
+    const garageX = (isMd ? GARAGE_LEFT_MD : GARAGE_LEFT_SM) + 25;
+    const garageY = isMd ? -95 : -75;
 
     const animate = (ts: number) => {
       if (!carRef.current) return;
       if (startRef.current === null) startRef.current = ts;
 
       const elapsed = ts - startRef.current;
-      const progress = Math.min(elapsed / DRIVE_HOME_DURATION, 1);
+      
+      let currentX: number;
+      let currentY: number;
+      let opacity = 1;
 
-      // Ease out cubic for smooth deceleration
-      const eased = 1 - Math.pow(1 - progress, 3);
-
-      const currentX = initialX + (targetX - initialX) * eased;
-      const currentY = 0 + (targetY - 0) * eased;
-
-      // Fade out in last 15%
-      const opacity = progress > 0.85 ? 1 - (progress - 0.85) / 0.15 : 1;
+      if (elapsed < PHASE1_DURATION) {
+        // Phase 1: Drive horizontally along the road towards EXIT_X
+        const phase1Progress = elapsed / PHASE1_DURATION;
+        const eased = 1 - Math.pow(1 - phase1Progress, 2);
+        currentX = initialX + (EXIT_X - initialX) * eased;
+        currentY = 0;
+      } else {
+        // Phase 2: Drive up from the road into the garage
+        const phase2Elapsed = elapsed - PHASE1_DURATION;
+        const phase2Progress = Math.min(phase2Elapsed / PHASE2_DURATION, 1);
+        const eased = 1 - Math.pow(1 - phase2Progress, 3);
+        
+        currentX = EXIT_X + (garageX - EXIT_X) * eased;
+        currentY = 0 + (garageY - 0) * eased;
+        
+        // Fade out in last 20% of phase 2
+        if (phase2Progress > 0.8) {
+          opacity = 1 - (phase2Progress - 0.8) / 0.2;
+        }
+      }
 
       carRef.current.style.transform = `translate3d(${currentX}px, ${currentY}px, 0) scaleX(-1)`;
       carRef.current.style.opacity = String(opacity);
 
-      // Add tire tracks at intervals
-      const trackSpacing = 28;
-      const distanceTraveled = Math.abs(currentX - initialX);
-      const numTracks = Math.floor(distanceTraveled / trackSpacing);
+      // Add tire tracks only during phase 1 (on the road)
+      if (elapsed < PHASE1_DURATION) {
+        const trackSpacing = 30;
+        const distanceTraveled = Math.abs(currentX - initialX);
+        const numTracks = Math.floor(distanceTraveled / trackSpacing);
 
-      if (numTracks > trackPointsRef.current.length && progress < 0.9) {
-        const dir = initialX > targetX ? -1 : 1;
-        const newTrackX = initialX + dir * (trackPointsRef.current.length + 1) * trackSpacing;
-        trackPointsRef.current.push(newTrackX);
-        setTracks([...trackPointsRef.current]);
+        if (numTracks > trackPointsRef.current.length) {
+          const dir = initialX > EXIT_X ? -1 : 1;
+          const newTrackX = initialX + dir * (trackPointsRef.current.length + 1) * trackSpacing;
+          trackPointsRef.current.push(newTrackX);
+          setTracks([...trackPointsRef.current]);
+        }
       }
 
-      if (progress < 1) requestAnimationFrame(animate);
+      if (elapsed < TOTAL_DURATION) {
+        requestAnimationFrame(animate);
+      }
     };
 
     requestAnimationFrame(animate);
@@ -266,8 +287,8 @@ export function Header() {
     setIsDrivingToGarage(true);
     setRoadFading(false);
 
-    const fadeTimer = setTimeout(() => setRoadFading(true), 900);
-    const endTimer = setTimeout(() => setIsDrivingToGarage(false), 1400);
+    const fadeTimer = setTimeout(() => setRoadFading(true), 1300);
+    const endTimer = setTimeout(() => setIsDrivingToGarage(false), 1700);
 
     return () => {
       clearTimeout(fadeTimer);
