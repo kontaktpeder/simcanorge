@@ -137,45 +137,45 @@ const Biler = () => {
   return <Layout>
       <PageHeader title="BILER" subtitle="Utforsk samlingen av Simca-biler i Norge – fra registrerte klassikere til historiske perler" />
 
-      {/* Category Tabs */}
-      <section className="bg-gradient-to-b from-card to-muted/30 py-8 border-b-4 border-foreground">
-        <div className="container mx-auto">
-          <div className="flex flex-wrap justify-center gap-3 md:gap-4">
+      {/* Category Tabs - mobile optimized */}
+      <section className="bg-gradient-to-b from-card to-muted/30 py-4 md:py-8 border-b-4 border-foreground">
+        <div className="container mx-auto px-2 md:px-4">
+          <div className="flex flex-wrap justify-center gap-2 md:gap-4">
             {CATEGORIES.map(cat => {
             const Icon = cat.icon;
             const isActive = selectedCategory === cat.id;
-            return <button key={cat.id} onClick={() => setSelectedCategory(cat.id)} className={`group relative flex items-center gap-3 px-5 py-4 md:px-8 md:py-5 font-display text-sm md:text-base rounded-xl transition-all duration-300 transform hover:scale-105 ${isActive ? "bg-primary text-primary-foreground shadow-lg shadow-primary/30 scale-105" : "bg-card border-2 border-foreground/20 hover:border-primary hover:bg-primary/5 text-foreground"}`}>
-                  <Icon className={`w-6 h-6 md:w-7 md:h-7 transition-transform group-hover:scale-110 ${isActive ? 'animate-pulse' : ''}`} />
+            return <button key={cat.id} onClick={() => setSelectedCategory(cat.id)} className={`group relative flex items-center gap-2 md:gap-3 px-3 py-2 md:px-6 md:py-4 font-display text-xs md:text-base rounded-lg md:rounded-xl transition-all duration-300 transform hover:scale-105 ${isActive ? "bg-primary text-primary-foreground shadow-lg shadow-primary/30 scale-105" : "bg-card border-2 border-foreground/20 hover:border-primary hover:bg-primary/5 text-foreground"}`}>
+                  <Icon className={`w-4 h-4 md:w-6 md:h-6 transition-transform group-hover:scale-110 ${isActive ? 'animate-pulse' : ''}`} />
                   <span className="hidden sm:inline font-bold tracking-wide">{cat.label}</span>
                   <span className="sm:hidden font-bold">{cat.label.split(' ')[0]}</span>
-                  <span className={`text-sm font-bold px-3 py-1 rounded-full transition-colors ${isActive ? "bg-white/20 text-primary-foreground" : "bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground"}`}>
+                  <span className={`text-xs font-bold px-2 py-0.5 md:px-3 md:py-1 rounded-full transition-colors ${isActive ? "bg-white/20 text-primary-foreground" : "bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground"}`}>
                     {categoryCounts[cat.id]}
                   </span>
-                  {isActive && <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-0 h-0 border-l-8 border-r-8 border-t-8 border-l-transparent border-r-transparent border-t-primary" />}
+                  {isActive && <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-0 h-0 border-l-6 border-r-6 border-t-6 md:border-l-8 md:border-r-8 md:border-t-8 border-l-transparent border-r-transparent border-t-primary" />}
                 </button>;
           })}
           </div>
         </div>
       </section>
 
-      {/* Category Description */}
+      {/* Category Description - mobile optimized */}
       {currentCategoryInfo?.description && <section className="bg-primary/5 border-b-2 border-primary/20 animate-fade-in">
-          <div className="container mx-auto py-5">
-            <div className="flex items-center justify-center gap-4 text-center">
-              <currentCategoryInfo.icon className="w-8 h-8 text-primary shrink-0" />
-              <p className="text-lg text-foreground/80 max-w-2xl">{currentCategoryInfo.description}</p>
+          <div className="container mx-auto py-3 md:py-5 px-4">
+            <div className="flex items-center justify-center gap-3 md:gap-4 text-center">
+              <currentCategoryInfo.icon className="w-6 h-6 md:w-8 md:h-8 text-primary shrink-0" />
+              <p className="text-sm md:text-lg text-foreground/80 max-w-2xl">{currentCategoryInfo.description}</p>
             </div>
           </div>
         </section>}
 
-      {/* Filters Bar */}
+      {/* Filters Bar - mobile optimized */}
       <section className="bg-card/80 backdrop-blur-sm border-b-2 border-foreground/20 sticky top-20 z-40 shadow-md">
-        <div className="container mx-auto py-5">
-          <div className="flex flex-wrap items-center gap-4">
+        <div className="container mx-auto py-3 md:py-5 px-2 md:px-4">
+          <div className="flex flex-wrap items-center gap-2 md:gap-4">
             {/* Search */}
-            <div className="relative flex-1 min-w-[250px]">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-6 h-6 text-primary" />
-              <input type="text" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Søk etter bil, modell eller historie..." className="w-full pl-14 pr-6 py-4 text-lg border-3 border-foreground/30 bg-card rounded-xl focus:outline-none focus:ring-4 focus:ring-primary/30 focus:border-primary transition-all shadow-sm hover:shadow-md" />
+            <div className="relative flex-1 min-w-[180px] md:min-w-[250px]">
+              <Search className="absolute left-3 md:left-4 top-1/2 -translate-y-1/2 w-4 h-4 md:w-6 md:h-6 text-primary" />
+              <input type="text" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Søk etter bil..." className="w-full pl-10 md:pl-14 pr-4 md:pr-6 py-2.5 md:py-4 text-sm md:text-lg border-2 md:border-3 border-foreground/30 bg-card rounded-lg md:rounded-xl focus:outline-none focus:ring-2 md:focus:ring-4 focus:ring-primary/30 focus:border-primary transition-all shadow-sm hover:shadow-md" />
             </div>
 
             {/* Filter Toggle (Mobile) */}
@@ -336,9 +336,9 @@ function CarCard({
     }
   };
   const categoryBadge = getCategoryBadge();
-  return <Link to={`/biler/${car.slug}`} className={`border-chrome card-enamel bg-card group card-hover-glow ${featured ? "md:flex gap-6 p-6" : "p-4"}`}>
+  return <Link to={`/biler/${car.slug}`} className={`border-chrome card-enamel bg-card group card-hover-glow ${featured ? "md:flex gap-4 md:gap-6 p-3 md:p-6" : "p-3 md:p-4"}`}>
       {/* Image */}
-      <div className={`bg-muted rounded-lg overflow-hidden mb-4 relative ${featured ? "md:w-1/2 md:mb-0 aspect-[4/3]" : "aspect-[4/3]"}`}>
+      <div className={`bg-muted rounded-lg overflow-hidden mb-3 md:mb-4 relative ${featured ? "md:w-1/2 md:mb-0 aspect-[4/3]" : "aspect-[4/3]"}`}>
         {mainImage ? <img src={mainImage.image_url} alt={mainImage.alt_text || car.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" /> : <div className="w-full h-full flex items-center justify-center">
             <Car className="w-16 h-16 text-muted-foreground" />
           </div>}
@@ -351,28 +351,28 @@ function CarCard({
       {/* Content */}
       <div className={featured ? "md:w-1/2 md:flex md:flex-col md:justify-center" : ""}>
         {/* Badges */}
-        <div className="flex flex-wrap gap-2 mb-2">
-          <span className="bg-primary text-primary-foreground text-xs px-2 py-1 font-display rounded">
+        <div className="flex flex-wrap gap-1.5 md:gap-2 mb-1.5 md:mb-2">
+          <span className="bg-primary text-primary-foreground text-[10px] md:text-xs px-1.5 md:px-2 py-0.5 md:py-1 font-display rounded">
             {car.model}
           </span>
-          {car.year && <span className="bg-accent text-accent-foreground text-xs px-2 py-1 font-display rounded">
+          {car.year && <span className="bg-accent text-accent-foreground text-[10px] md:text-xs px-1.5 md:px-2 py-0.5 md:py-1 font-display rounded">
               {car.year}
             </span>}
         </div>
 
         {/* Title */}
-        <h3 className={`font-display group-hover:text-primary transition-colors ${featured ? "text-3xl mb-3" : "text-xl mb-2"}`}>
+        <h3 className={`font-display group-hover:text-primary transition-colors ${featured ? "text-xl md:text-3xl mb-2 md:mb-3" : "text-base md:text-xl mb-1 md:mb-2"}`}>
           {car.title}
         </h3>
 
         {/* Story excerpt */}
-        {car.story && <p className={`text-muted-foreground ${featured ? "line-clamp-3" : "line-clamp-2 text-sm"}`}>
+        {car.story && <p className={`text-muted-foreground ${featured ? "line-clamp-2 md:line-clamp-3 text-sm md:text-base" : "line-clamp-2 text-xs md:text-sm"}`}>
             {car.story}
           </p>}
 
         {/* Tags */}
-        {car.tags && car.tags.length > 0 && <div className="flex flex-wrap gap-1 mt-3">
-            {car.tags.slice(0, 3).map(tag => <span key={tag} className="text-xs bg-muted px-2 py-1 text-muted-foreground rounded">
+        {car.tags && car.tags.length > 0 && <div className="flex flex-wrap gap-1 mt-2 md:mt-3">
+            {car.tags.slice(0, 3).map(tag => <span key={tag} className="text-[10px] md:text-xs bg-muted px-1.5 md:px-2 py-0.5 md:py-1 text-muted-foreground rounded">
                 #{tag}
               </span>)}
           </div>}
