@@ -27,73 +27,32 @@ export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isSpeedBoost, setIsSpeedBoost] = useState(false);
   const [isDrivingToGarage, setIsDrivingToGarage] = useState(false);
-  const [isParked, setIsParked] = useState(location.pathname !== "/");
-  const [roadVisible, setRoadVisible] = useState(location.pathname === "/");
-  const [garageIntro, setGarageIntro] = useState(false);
-
   const prevPathRef = useRef<string>(location.pathname);
-  const parkTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const garageTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
   const { itemCount } = useCart();
 
   const isHome = location.pathname === "/";
 
-  // Handle navigation changes - animate ONLY when leaving home
+  // Handle navigation - animate ONLY when leaving home
   useEffect(() => {
     const prevPath = prevPathRef.current;
     const currentPath = location.pathname;
 
     if (prevPath === currentPath) return;
 
-    // Clear any pending timers from the leave-home animation
-    if (parkTimerRef.current) {
-      clearTimeout(parkTimerRef.current);
-      parkTimerRef.current = null;
-    }
-    if (garageTimerRef.current) {
-      clearTimeout(garageTimerRef.current);
-      garageTimerRef.current = null;
-    }
-
-    // Navigating between non-home pages: keep it stable (no animation, no jitter)
-    if (prevPath !== "/" && currentPath !== "/") {
-      setIsDrivingToGarage(false);
-      setIsParked(true);
-      setRoadVisible(false);
-      setGarageIntro(false);
-      prevPathRef.current = currentPath;
-      return;
-    }
-
-    // Leaving home: run the drive-in animation once
+    // Leaving home -> animate car driving to garage
     if (prevPath === "/" && currentPath !== "/") {
-      setGarageIntro(false);
       setIsDrivingToGarage(true);
-      setIsParked(false);
-      setRoadVisible(true);
-
-      parkTimerRef.current = setTimeout(() => {
+      
+      const timer = setTimeout(() => {
         setIsDrivingToGarage(false);
-        setIsParked(true);
-        setRoadVisible(false);
-        setGarageIntro(true);
-
-        garageTimerRef.current = setTimeout(() => setGarageIntro(false), 900);
       }, 900);
 
       prevPathRef.current = currentPath;
-      return;
+      return () => clearTimeout(timer);
     }
 
-    // Going back to home: reset instantly
-    if (currentPath === "/") {
-      setIsParked(false);
-      setIsDrivingToGarage(false);
-      setRoadVisible(true);
-      setGarageIntro(false);
-      prevPathRef.current = currentPath;
-    }
+    // All other navigations - just update ref
+    prevPathRef.current = currentPath;
   }, [location.pathname]);
 
   const handleCarClick = () => {
@@ -125,9 +84,9 @@ export function Header() {
             </div>
           </Link>
 
-          {/* Garage with parked car - visible when parked (desktop only) */}
-          {isParked && !isHome && (
-            <div className={`hidden lg:flex items-center mx-4 ${garageIntro ? "animate-fade-in" : ""}`}>
+          {/* Garage with parked car - visible on non-home pages (desktop only) */}
+          {!isHome && !isDrivingToGarage && (
+            <div className="hidden lg:flex items-center mx-4">
               <div className="relative bg-gradient-to-b from-gray-700 to-gray-800 rounded-t-lg px-3 py-1 border-2 border-b-0 border-gray-600 shadow-inner">
                 {/* Garage roof */}
                 <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-full h-2 bg-gradient-to-b from-gray-500 to-gray-600 rounded-t-lg" />
@@ -241,13 +200,9 @@ export function Header() {
         )}
       </div>
 
-      {/* Animated car lane - visible on home OR during driving animation */}
-      {(isHome || isDrivingToGarage || roadVisible) && (
-        <div 
-          className={`hidden sm:block relative w-full h-[30px] md:h-[45px] overflow-hidden bg-gradient-to-b from-gray-500 to-gray-600 transition-opacity duration-500 ${
-            !roadVisible && !isHome ? 'opacity-0' : 'opacity-100'
-          }`}
-        >
+      {/* Animated car lane - only on home page OR during drive-to-garage animation */}
+      {(isHome || isDrivingToGarage) && (
+        <div className="hidden sm:block relative w-full h-[30px] md:h-[45px] overflow-hidden bg-gradient-to-b from-gray-500 to-gray-600">
           {/* Center road stripe - static */}
           <div className="absolute top-1/2 -translate-y-1/2 left-0 right-0 flex justify-center gap-6 pointer-events-none">
             {[...Array(40)].map((_, i) => (
