@@ -547,11 +547,13 @@ export function Header() {
             }}
           />
           
-          {/* Center road stripe - yellow dashed line */}
-          <div className="absolute top-1/2 -translate-y-1/2 left-0 right-0 flex justify-center gap-6 pointer-events-none">
-            {[...Array(40)].map((_, i) => (
-              <div key={i} className="w-6 h-1 bg-yellow-400/90 rounded-sm flex-shrink-0" />
-            ))}
+          {/* Center road stripe - yellow dashed line with sliding animation */}
+          <div className="absolute top-1/2 -translate-y-1/2 left-0 right-0 overflow-hidden pointer-events-none">
+            <div className="flex gap-6 animate-road-stripes" style={{ width: 'max-content' }}>
+              {[...Array(80)].map((_, i) => (
+                <div key={i} className="w-6 h-1 bg-yellow-400/90 rounded-sm flex-shrink-0" />
+              ))}
+            </div>
           </div>
           
           {/* Road edges - white lines */}
