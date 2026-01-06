@@ -141,7 +141,6 @@ const Biler = () => {
               "historisk": "Hist.",
               "vrak": "Vrak"
             };
-            
             return <button key={cat.id} onClick={() => setSelectedCategory(cat.id)} className={`group relative flex flex-col items-center justify-center gap-1 md:gap-2 px-1.5 py-2.5 md:px-4 md:py-5 font-display text-[8px] md:text-sm rounded-lg md:rounded-xl transition-all duration-300 ${isActive ? "bg-primary text-primary-foreground shadow-lg shadow-primary/25 ring-2 ring-primary/50" : "bg-card border border-foreground/10 hover:border-primary/50 hover:bg-primary/5 text-foreground hover:shadow-md"}`}>
                   {/* Icon with badge count */}
                   <div className="relative">
@@ -271,7 +270,7 @@ const Biler = () => {
             </div> : <>
               {/* Featured Cars */}
               {featuredCars.length > 0 && <div className="mb-12 animate-fade-in">
-                  <h2 className="headline-md mb-6">UTVALGTE</h2>
+                  <h2 className="headline-md mb-6">MÅNEDENS BIL </h2>
                   <div className="grid md:grid-cols-2 gap-8 stagger-children">
                     {featuredCars.map(car => <CarCard key={car.id} car={car} featured />)}
                   </div>
