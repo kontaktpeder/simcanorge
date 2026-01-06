@@ -157,12 +157,12 @@ function DriveHomeAnimation({
         </div>
       ))}
       
-      {/* Animated garage that fades in above the road */}
-      <div 
-        ref={garageRef}
-        className={`absolute left-[120px] md:left-[160px] -top-[48px] md:-top-[58px] transition-opacity duration-300 ${showGarage ? 'opacity-100' : 'opacity-0'}`}
-        style={{ zIndex: 60 }}
-      >
+      {/* Animated garage that fades in - fixed position under logo */}
+      {showGarage && (
+        <div 
+          className="absolute left-[120px] md:left-[160px] -top-[48px] md:-top-[58px] animate-fade-in"
+          style={{ zIndex: 60 }}
+        >
         <div 
           className="relative px-5 py-3 rounded-t-lg overflow-hidden"
           style={{
@@ -218,6 +218,7 @@ function DriveHomeAnimation({
           <div className="h-[26px] w-[60px]" />
         </div>
       </div>
+      )}
       
       {/* The driving car */}
       <div 
