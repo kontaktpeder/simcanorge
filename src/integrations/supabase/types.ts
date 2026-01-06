@@ -53,6 +53,7 @@ export type Database = {
         Row: {
           admin_notes: string | null
           allow_edits: boolean
+          body_type: string | null
           brand: string | null
           car_model: string
           car_story: string | null
@@ -69,10 +70,12 @@ export type Database = {
           tags: string[] | null
           title: string | null
           updated_at: string
+          variant: string | null
         }
         Insert: {
           admin_notes?: string | null
           allow_edits?: boolean
+          body_type?: string | null
           brand?: string | null
           car_model: string
           car_story?: string | null
@@ -89,10 +92,12 @@ export type Database = {
           tags?: string[] | null
           title?: string | null
           updated_at?: string
+          variant?: string | null
         }
         Update: {
           admin_notes?: string | null
           allow_edits?: boolean
+          body_type?: string | null
           brand?: string | null
           car_model?: string
           car_story?: string | null
@@ -109,11 +114,13 @@ export type Database = {
           tags?: string[] | null
           title?: string | null
           updated_at?: string
+          variant?: string | null
         }
         Relationships: []
       }
       cars: {
         Row: {
+          body_type: string | null
           brand: string | null
           category: string
           created_at: string
@@ -127,9 +134,11 @@ export type Database = {
           tags: string[] | null
           title: string
           updated_at: string
+          variant: string | null
           year: number | null
         }
         Insert: {
+          body_type?: string | null
           brand?: string | null
           category?: string
           created_at?: string
@@ -143,9 +152,11 @@ export type Database = {
           tags?: string[] | null
           title: string
           updated_at?: string
+          variant?: string | null
           year?: number | null
         }
         Update: {
+          body_type?: string | null
           brand?: string | null
           category?: string
           created_at?: string
@@ -159,6 +170,7 @@ export type Database = {
           tags?: string[] | null
           title?: string
           updated_at?: string
+          variant?: string | null
           year?: number | null
         }
         Relationships: []

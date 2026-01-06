@@ -19,6 +19,8 @@ interface CarDetail {
   slug: string;
   brand: string | null;
   model: string;
+  variant: string | null;
+  body_type: string | null;
   year: number | null;
   story: string | null;
   overhauled: boolean;
@@ -45,7 +47,7 @@ const BilDetalj = () => {
       const { data, error } = await supabase
         .from("cars")
         .select(`
-          id, title, slug, brand, model, year, story, overhauled, tags, featured, published_at,
+          id, title, slug, brand, model, variant, body_type, year, story, overhauled, tags, featured, published_at,
           car_images(id, image_url, alt_text, sort_order)
         `)
         .eq("slug", slug)
@@ -177,8 +179,11 @@ const BilDetalj = () => {
             {/* Content */}
             <div>
               <h2 className="headline-md mb-2">{car.title}</h2>
-              <div className="flex items-center gap-4 mb-6 flex-wrap">
+              <div className="flex items-center gap-4 mb-4 flex-wrap">
                 <span className="font-display text-xl text-accent">{car.model}</span>
+                {car.variant && (
+                  <span className="text-muted-foreground font-medium">{car.variant}</span>
+                )}
                 {car.year && (
                   <span className="flex items-center gap-1 text-muted-foreground">
                     <Calendar className="w-4 h-4" />
@@ -192,6 +197,18 @@ const BilDetalj = () => {
                   </span>
                 )}
               </div>
+              
+              {/* Car specs row */}
+              {(car.brand || car.body_type) && (
+                <div className="flex flex-wrap gap-2 mb-6 text-sm">
+                  {car.brand && (
+                    <span className="bg-muted px-3 py-1 rounded-full">{car.brand}</span>
+                  )}
+                  {car.body_type && (
+                    <span className="bg-muted px-3 py-1 rounded-full capitalize">{car.body_type.replace('-', ' ')}</span>
+                  )}
+                </div>
+              )}
 
               {/* Tags */}
               {car.tags && car.tags.length > 0 && (

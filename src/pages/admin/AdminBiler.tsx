@@ -5,6 +5,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { Plus, Pencil, Trash2, Eye, EyeOff, X, Upload, Car, Star, StarOff } from "lucide-react";
 import { toast } from "sonner";
 import { CAR_BRANDS, getModelsForBrand, getYearsForModel, generateCarTitle } from "@/data/carBrands";
+import { CAR_BODY_TYPES } from "@/data/carBodyTypes";
+import { FormFieldWithTooltip } from "@/components/ui/form-field-with-tooltip";
+import { Input } from "@/components/ui/input";
 
 interface CarImage {
   id: string;
@@ -19,6 +22,8 @@ interface CarPost {
   slug: string;
   brand: string | null;
   model: string;
+  variant: string | null;
+  body_type: string | null;
   year: number | null;
   story: string | null;
   overhauled: boolean;
@@ -41,6 +46,8 @@ interface SubmissionData {
   title: string | null;
   brand: string | null;
   model: string;
+  variant: string | null;
+  body_type: string | null;
   year: number | null;
   category: string;
   tags: string[] | null;
@@ -66,6 +73,8 @@ const AdminBiler = () => {
     slug: "",
     brand: "",
     model: "",
+    variant: "",
+    body_type: "",
     year: "",
     story: "",
     overhauled: false,
@@ -94,7 +103,7 @@ const AdminBiler = () => {
     const { data, error } = await supabase
       .from("cars")
       .select(`
-        id, title, slug, brand, model, year, story, overhauled, tags, featured, published_at, created_at, category,
+        id, title, slug, brand, model, variant, body_type, year, story, overhauled, tags, featured, published_at, created_at, category,
         car_images(id, image_url, alt_text, sort_order)
       `)
       .order("created_at", { ascending: false });
@@ -122,6 +131,8 @@ const AdminBiler = () => {
         slug: "",
         brand: sub.brand || "",
         model: sub.model,
+        variant: sub.variant || "",
+        body_type: sub.body_type || "",
         year: sub.year?.toString() || "",
         story: sub.story || "",
         overhauled: false,
@@ -153,6 +164,8 @@ const AdminBiler = () => {
       slug: "",
       brand: "",
       model: "",
+      variant: "",
+      body_type: "",
       year: "",
       story: "",
       overhauled: false,
@@ -238,6 +251,8 @@ const AdminBiler = () => {
         slug,
         brand: formData.brand || null,
         model: formData.model,
+        variant: formData.variant || null,
+        body_type: formData.body_type || null,
         year: formData.year ? parseInt(formData.year) : null,
         story: formData.story.trim() || null,
         overhauled: formData.overhauled,
@@ -324,6 +339,8 @@ const AdminBiler = () => {
       slug: car.slug,
       brand: car.brand || "",
       model: car.model,
+      variant: car.variant || "",
+      body_type: car.body_type || "",
       year: car.year?.toString() || "",
       story: car.story || "",
       overhauled: car.overhauled,
@@ -413,14 +430,13 @@ const AdminBiler = () => {
               </div>
 
               <form onSubmit={handleSubmit} className="p-3 sm:p-6 space-y-3 sm:space-y-4">
-              {/* Brand, Model, Year - Cascading selects */}
+              {/* Brand, Model, Variant, Body Type, Year */}
               <div className="space-y-3 sm:space-y-4 p-3 sm:p-4 bg-gray-50 border-2 border-gray-200 rounded-lg">
                 <p className="text-xs sm:text-sm text-muted-foreground font-medium">Velg merke, modell og årstall – dette genererer bilens tittel</p>
                 
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                   {/* Brand */}
-                  <div>
-                    <label className="block font-display text-sm sm:text-base mb-1.5 sm:mb-2">MERKE *</label>
+                  <FormFieldWithTooltip label="MERKE" tooltip="Bilprodusent. Eks: Simca" required>
                     <select
                       value={formData.brand}
                       onChange={(e) =>
@@ -431,16 +447,13 @@ const AdminBiler = () => {
                     >
                       <option value="">Velg merke...</option>
                       {CAR_BRANDS.map((brand) => (
-                        <option key={brand.name} value={brand.name}>
-                          {brand.name}
-                        </option>
+                        <option key={brand.name} value={brand.name}>{brand.name}</option>
                       ))}
                     </select>
-                  </div>
+                  </FormFieldWithTooltip>
 
                   {/* Model */}
-                  <div>
-                    <label className="block font-display text-sm sm:text-base mb-1.5 sm:mb-2">MODELL *</label>
+                  <FormFieldWithTooltip label="MODELL" tooltip="Modellserie / plattform. Eks: 1100" required>
                     <select
                       value={formData.model}
                       onChange={(e) =>
@@ -452,32 +465,49 @@ const AdminBiler = () => {
                     >
                       <option value="">Velg modell...</option>
                       {availableModels.map((model) => (
-                        <option key={model.name} value={model.name}>
-                          {model.name}
-                        </option>
+                        <option key={model.name} value={model.name}>{model.name}</option>
                       ))}
                     </select>
-                  </div>
+                  </FormFieldWithTooltip>
+
+                  {/* Variant */}
+                  <FormFieldWithTooltip label="VARIANTBETEGNELSE" tooltip="Fabrikkens navn på en spesifikk utgave. Eks: VF1, Rallye 2">
+                    <Input
+                      value={formData.variant}
+                      onChange={(e) => setFormData({ ...formData, variant: e.target.value })}
+                      placeholder="F.eks. VF1, Rallye 2, TI..."
+                      className="h-12 text-base border-2 border-foreground"
+                    />
+                  </FormFieldWithTooltip>
+
+                  {/* Body Type */}
+                  <FormFieldWithTooltip label="KAROSSERIFORM" tooltip="Karosseritype / bruksform. Eks: Pick-Up, Sedan">
+                    <select
+                      value={formData.body_type}
+                      onChange={(e) => setFormData({ ...formData, body_type: e.target.value })}
+                      className="w-full h-12 p-3 text-base border-2 border-foreground bg-card rounded"
+                    >
+                      <option value="">Velg karosseriform...</option>
+                      {CAR_BODY_TYPES.map((type) => (
+                        <option key={type.id} value={type.id}>{type.label}</option>
+                      ))}
+                    </select>
+                  </FormFieldWithTooltip>
 
                   {/* Year */}
-                  <div>
-                    <label className="block font-display text-sm sm:text-base mb-1.5 sm:mb-2">ÅRSTALL</label>
+                  <FormFieldWithTooltip label="ÅRSTALL" tooltip="Produksjonsår for bilen">
                     <select
                       value={formData.year}
-                      onChange={(e) =>
-                        setFormData({ ...formData, year: e.target.value })
-                      }
+                      onChange={(e) => setFormData({ ...formData, year: e.target.value })}
                       className="w-full h-12 p-3 text-base border-2 border-foreground bg-card rounded"
                       disabled={!formData.model}
                     >
                       <option value="">Velg år...</option>
                       {availableYears.map((year) => (
-                        <option key={year} value={year}>
-                          {year}
-                        </option>
+                        <option key={year} value={year}>{year}</option>
                       ))}
                     </select>
-                  </div>
+                  </FormFieldWithTooltip>
                 </div>
 
                 {/* Generated title preview */}

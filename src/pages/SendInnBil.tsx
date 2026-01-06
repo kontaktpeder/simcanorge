@@ -11,6 +11,8 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { z } from "zod";
 import { CAR_BRANDS, getModelsForBrand, getYearsForModel, generateCarTitle } from "@/data/carBrands";
+import { CAR_BODY_TYPES } from "@/data/carBodyTypes";
+import { FormFieldWithTooltip } from "@/components/ui/form-field-with-tooltip";
 
 const CATEGORIES = [
   { id: "registrert", label: "Registrerte biler" },
@@ -22,6 +24,8 @@ const CATEGORIES = [
 const submissionSchema = z.object({
   brand: z.string().min(1, "Velg et merke"),
   car_model: z.string().min(1, "Velg en modell"),
+  variant: z.string().max(100, "Variant kan ikke være mer enn 100 tegn").optional().or(z.literal("")),
+  body_type: z.string().optional().or(z.literal("")),
   car_year: z.number().int().min(1900, "Ugyldig årstall").max(2000, "Ugyldig årstall").optional().nullable(),
   owner_name: z.string().trim().min(2, "Navn må være minst 2 tegn").max(100, "Navn kan ikke være mer enn 100 tegn"),
   email: z.string().trim().email("Ugyldig e-postadresse").max(255, "E-post kan ikke være mer enn 255 tegn"),
@@ -47,6 +51,8 @@ export default function SendInnBil() {
     email: "",
     phone: "",
     car_model: "",
+    variant: "",
+    body_type: "",
     car_year: "",
     category: "registrert",
     tags: "",
@@ -157,6 +163,8 @@ export default function SendInnBil() {
       ...formData,
       car_year: formData.car_year ? parseInt(formData.car_year) : null,
       phone: formData.phone || undefined,
+      variant: formData.variant || undefined,
+      body_type: formData.body_type || undefined,
       tags: formData.tags || undefined,
       car_story: formData.car_story || undefined
     };
@@ -200,6 +208,8 @@ export default function SendInnBil() {
         email: result.data.email,
         phone: result.data.phone || null,
         car_model: result.data.car_model,
+        variant: result.data.variant || null,
+        body_type: result.data.body_type || null,
         car_year: result.data.car_year,
         category: result.data.category,
         tags: tagsArray,
@@ -276,14 +286,19 @@ export default function SendInnBil() {
                   {/* Form content */}
                   <div className="bg-card p-4 sm:p-6 md:p-10">
                     <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
-                      {/* Brand, Model, Year - Cascading selects */}
+                      {/* Brand, Model, Variant, Body Type, Year - Car details */}
                       <div className="space-y-3 sm:space-y-4 p-3 sm:p-4 bg-muted/30 rounded-lg border-2 border-muted">
                         <p className="text-xs sm:text-sm text-muted-foreground font-medium">Velg merke, modell og årstall – dette blir bilens tittel på siden</p>
                         
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                           {/* Brand */}
-                          <div className="space-y-1.5 sm:space-y-2">
-                            <Label htmlFor="brand" className="text-base sm:text-lg font-display">MERKE *</Label>
+                          <FormFieldWithTooltip
+                            label="MERKE"
+                            tooltip="Bilprodusent. Eks: Simca"
+                            required
+                            htmlFor="brand"
+                            error={errors.brand}
+                          >
                             <select 
                               id="brand" 
                               name="brand" 
@@ -302,12 +317,16 @@ export default function SendInnBil() {
                                 <option key={brand.name} value={brand.name}>{brand.name}</option>
                               ))}
                             </select>
-                            {errors.brand && <p className="text-sm text-destructive">{errors.brand}</p>}
-                          </div>
+                          </FormFieldWithTooltip>
 
                           {/* Model */}
-                          <div className="space-y-1.5 sm:space-y-2">
-                            <Label htmlFor="car_model" className="text-base sm:text-lg font-display">MODELL *</Label>
+                          <FormFieldWithTooltip
+                            label="MODELL"
+                            tooltip="Modellserie / plattform. Eks: 1100"
+                            required
+                            htmlFor="car_model"
+                            error={errors.car_model}
+                          >
                             <select 
                               id="car_model" 
                               name="car_model" 
@@ -326,12 +345,53 @@ export default function SendInnBil() {
                                 <option key={model.name} value={model.name}>{model.name}</option>
                               ))}
                             </select>
-                            {errors.car_model && <p className="text-sm text-destructive">{errors.car_model}</p>}
-                          </div>
+                          </FormFieldWithTooltip>
+
+                          {/* Variant */}
+                          <FormFieldWithTooltip
+                            label="VARIANTBETEGNELSE"
+                            tooltip="Fabrikkens navn på en spesifikk utgave. Eks: VF1, Rallye 2"
+                            htmlFor="variant"
+                            error={errors.variant}
+                          >
+                            <Input 
+                              id="variant" 
+                              name="variant" 
+                              value={formData.variant} 
+                              onChange={handleChange} 
+                              placeholder="F.eks. VF1, Rallye 2, TI..."
+                              className={`text-base h-12 border-2 ${errors.variant ? 'border-destructive' : 'border-muted'}`}
+                            />
+                          </FormFieldWithTooltip>
+
+                          {/* Body Type */}
+                          <FormFieldWithTooltip
+                            label="KAROSSERIFORM"
+                            tooltip="Karosseritype / bruksform. Eks: Pick-Up, Sedan"
+                            htmlFor="body_type"
+                            error={errors.body_type}
+                          >
+                            <select 
+                              id="body_type" 
+                              name="body_type" 
+                              value={formData.body_type} 
+                              onChange={(e) => setFormData(prev => ({ ...prev, body_type: e.target.value }))}
+                              className={`w-full h-12 px-3 text-base rounded-md border-2 bg-background ${errors.body_type ? 'border-destructive' : 'border-muted'}`}
+                            >
+                              <option value="">Velg karosseriform...</option>
+                              {CAR_BODY_TYPES.map((type) => (
+                                <option key={type.id} value={type.id}>{type.label}</option>
+                              ))}
+                            </select>
+                          </FormFieldWithTooltip>
 
                           {/* Year */}
-                          <div className="space-y-1.5 sm:space-y-2">
-                            <Label htmlFor="car_year" className="text-base sm:text-lg font-display">ÅRSTALL</Label>
+                          <FormFieldWithTooltip
+                            label="ÅRSTALL"
+                            tooltip="Produksjonsår for bilen"
+                            htmlFor="car_year"
+                            error={errors.car_year}
+                          >
                             <select 
                               id="car_year" 
                               name="car_year" 
@@ -345,8 +405,7 @@ export default function SendInnBil() {
                                 <option key={year} value={year}>{year}</option>
                               ))}
                             </select>
-                            {errors.car_year && <p className="text-sm text-destructive">{errors.car_year}</p>}
-                          </div>
+                          </FormFieldWithTooltip>
                         </div>
 
                         {/* Generated title preview */}
