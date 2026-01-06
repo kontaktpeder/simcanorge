@@ -21,7 +21,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
-import { Car, Mail, Phone, Calendar, Eye, Trash2, MessageSquare, Image, Plus } from "lucide-react";
+import { Car, Mail, Phone, Calendar, Eye, Trash2, MessageSquare, Image, Plus, CheckCircle, XCircle } from "lucide-react";
 import { format } from "date-fns";
 import { nb } from "date-fns/locale";
 
@@ -48,6 +48,7 @@ interface CarSubmission {
   status: string;
   admin_notes: string | null;
   read: boolean;
+  allow_edits: boolean;
   created_at: string;
 }
 
@@ -280,6 +281,20 @@ export default function AdminInnsendinger() {
                         ))}
                       </div>
                     )}
+                    <div className="flex items-center gap-2">
+                      <span className="font-display">Godkjenner redigering:</span>
+                      {selectedSubmission.allow_edits ? (
+                        <Badge className="bg-green-500 flex items-center gap-1">
+                          <CheckCircle className="w-3 h-3" />
+                          Ja
+                        </Badge>
+                      ) : (
+                        <Badge className="bg-red-500 flex items-center gap-1">
+                          <XCircle className="w-3 h-3" />
+                          Nei
+                        </Badge>
+                      )}
+                    </div>
                   </div>
                   {/* Contact info */}
                   <div className="grid gap-3">

@@ -39,6 +39,7 @@ export default function SendInnBil() {
   const [images, setImages] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [allowEdits, setAllowEdits] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [formData, setFormData] = useState({
     brand: "",
@@ -203,7 +204,8 @@ export default function SendInnBil() {
         category: result.data.category,
         tags: tagsArray,
         car_story: result.data.car_story || null,
-        images: imageUrls
+        images: imageUrls,
+        allow_edits: allowEdits
       });
       if (error) throw error;
       setSubmitted(true);
@@ -463,8 +465,31 @@ export default function SendInnBil() {
                           </p>
                         </div>}
 
+                      {/* Consent checkbox */}
+                      <div className="space-y-3 p-4 bg-muted/30 rounded-lg border-2 border-muted">
+                        <label className="flex items-start gap-3 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={allowEdits}
+                            onChange={(e) => setAllowEdits(e.target.checked)}
+                            className="w-5 h-5 mt-0.5 rounded border-2 border-muted accent-primary"
+                            required
+                          />
+                          <span className="text-foreground font-medium">
+                            Jeg godkjenner at Simca Norge kan redigere og forbedre innsendelsen min før publisering. *
+                          </span>
+                        </label>
+                        <p className="text-sm text-muted-foreground ml-8">
+                          Vi kan rette små skrivefeil, tydeliggjøre detaljer og legge til teknisk info (f.eks. modellvariant, årsmodell og historikk). Innholdet endres ikke helt – vi bygger videre på det du har sendt inn.
+                        </p>
+                      </div>
+
                       {/* Submit */}
-                      <Button type="submit" disabled={isSubmitting} className="w-full btn-enamel-blue text-xl py-6">
+                      <Button 
+                        type="submit" 
+                        disabled={isSubmitting || !allowEdits} 
+                        className="w-full btn-enamel-blue text-xl py-6 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
                         {isSubmitting ? "Sender..." : <>
                             <Send className="w-5 h-5 mr-2" />
                             Send inn
