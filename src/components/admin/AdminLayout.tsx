@@ -22,11 +22,10 @@ interface AdminLayoutProps {
 
 const navItems = [
   { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/admin/meldinger", label: "Meldinger", icon: Inbox },
   { href: "/admin/biler", label: "Biler", icon: Car },
   { href: "/admin/deler", label: "Deler", icon: Wrench },
   { href: "/admin/kategorier", label: "Kategorier", icon: FolderTree },
-  { href: "/admin/foresporsler", label: "Forespørsler", icon: Inbox },
-  { href: "/admin/innsendinger", label: "Bil-innsendinger", icon: Send },
 ];
 
 export function AdminLayout({ children, title }: AdminLayoutProps) {
