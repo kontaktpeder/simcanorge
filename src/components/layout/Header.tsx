@@ -30,6 +30,66 @@ const CAR_END_MARGIN = 100; // px beyond viewport
 const NORMAL_TRAVEL_TIME = 10; // seconds for one full pass
 const BOOST_MULTIPLIER = 3.2; // speed multiplier during boost
 const BOOST_MS = 1000; // boost duration
+const DRIVE_HOME_DURATION = 900; // ms
+
+// Component for JS-controlled drive-home animation
+function DriveHomeAnimation({ startX, simcaRallye }: { startX: number; simcaRallye: string }) {
+  const ref = useRef<HTMLDivElement | null>(null);
+  const startRef = useRef<number | null>(null);
+  const opacityRef = useRef(1);
+
+  useEffect(() => {
+    const animate = (ts: number) => {
+      if (!ref.current) return;
+      if (startRef.current === null) startRef.current = ts;
+      
+      const elapsed = ts - startRef.current;
+      const progress = Math.min(elapsed / DRIVE_HOME_DURATION, 1);
+      
+      // Ease out
+      const eased = 1 - Math.pow(1 - progress, 2);
+      const targetX = -80; // off screen left
+      const currentX = startX + (targetX - startX) * eased;
+      
+      // Fade out in last 10%
+      opacityRef.current = progress > 0.9 ? 1 - (progress - 0.9) / 0.1 : 1;
+      
+      ref.current.style.transform = `translateX(${currentX}px) scaleX(-1)`;
+      ref.current.style.opacity = String(opacityRef.current);
+      
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      }
+    };
+    
+    requestAnimationFrame(animate);
+  }, [startX]);
+
+  return (
+    <div 
+      ref={ref}
+      className="absolute bottom-[4px] md:bottom-[6px] pointer-events-none"
+      style={{ transform: `translateX(${startX}px) scaleX(-1)`, opacity: 1 }}
+    >
+      <div className="relative">
+        <img 
+          src={simcaRallye} 
+          alt="Simca Rallye" 
+          className="h-[22px] md:h-[34px] w-auto object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]"
+        />
+        {/* Wheel spin effect */}
+        <div className="absolute bottom-0.5 left-[18%] w-2 h-2 md:w-2.5 md:h-2.5 rounded-full border border-dashed border-gray-600/40 animate-wheel-spin" />
+        <div className="absolute bottom-0.5 right-[22%] w-2 h-2 md:w-2.5 md:h-2.5 rounded-full border border-dashed border-gray-600/40 animate-wheel-spin" />
+        
+        {/* Dust clouds */}
+        <div className="absolute -bottom-0.5 left-[10%] flex gap-0.5">
+          <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-amber-200/40 rounded-full animate-dust-1 blur-[1px]" />
+          <div className="w-1 h-1 md:w-1.5 md:h-1.5 bg-amber-200/30 rounded-full animate-dust-2 blur-[1px]" />
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export function Header() {
   const location = useLocation();
@@ -52,17 +112,29 @@ export function Header() {
   const xRef = useRef(CAR_START_X);
   const lastTsRef = useRef<number | null>(null);
   const boostUntilRef = useRef<number>(0);
+  const driveHomeCarRef = useRef<HTMLDivElement | null>(null);
+  const driveHomeStartXRef = useRef<number | null>(null);
 
   // Trigger drive-to-garage ONLY when we left home via a click
   useEffect(() => {
     if (isHome) {
       setIsDrivingToGarage(false);
       setRoadFading(false);
+      driveHomeStartXRef.current = null;
       return;
     }
 
     const shouldAnimate = sessionStorage.getItem(LEAVE_HOME_ANIM_KEY) === "1";
     if (!shouldAnimate) return;
+
+    // Get car's current position before animating home
+    const savedX = sessionStorage.getItem("simca_car_x");
+    if (savedX) {
+      driveHomeStartXRef.current = parseFloat(savedX);
+      sessionStorage.removeItem("simca_car_x");
+    } else {
+      driveHomeStartXRef.current = window.innerWidth * 0.5;
+    }
 
     sessionStorage.removeItem(LEAVE_HOME_ANIM_KEY);
     setIsDrivingToGarage(true);
@@ -80,6 +152,8 @@ export function Header() {
   const markLeavingHome = (to: string) => {
     if (!isHome) return;
     if (to === "/") return;
+    // Save the car's current position so the drive-home animation starts from there
+    sessionStorage.setItem("simca_car_x", String(xRef.current));
     sessionStorage.setItem(LEAVE_HOME_ANIM_KEY, "1");
   };
 
@@ -416,28 +490,12 @@ export function Header() {
             </div>
           )}
 
-          {/* Car driving to garage animation */}
+          {/* Car driving to garage animation - JS controlled from current position */}
           {isDrivingToGarage && (
-            <div 
-              className="absolute bottom-[4px] md:bottom-[6px] animate-drive-to-garage pointer-events-none"
-            >
-              <div className="relative">
-                <img 
-                  src={simcaRallye} 
-                  alt="Simca Rallye" 
-                  className="h-[22px] md:h-[34px] w-auto object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]"
-                />
-                {/* Wheel spin effect */}
-                <div className="absolute bottom-0.5 left-[18%] w-2 h-2 md:w-2.5 md:h-2.5 rounded-full border border-dashed border-gray-600/40 animate-wheel-spin" />
-                <div className="absolute bottom-0.5 right-[22%] w-2 h-2 md:w-2.5 md:h-2.5 rounded-full border border-dashed border-gray-600/40 animate-wheel-spin" />
-                
-                {/* Dust clouds */}
-                <div className="absolute -bottom-0.5 left-[10%] flex gap-0.5">
-                  <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-amber-200/40 rounded-full animate-dust-1 blur-[1px]" />
-                  <div className="w-1 h-1 md:w-1.5 md:h-1.5 bg-amber-200/30 rounded-full animate-dust-2 blur-[1px]" />
-                </div>
-              </div>
-            </div>
+            <DriveHomeAnimation 
+              startX={driveHomeStartXRef.current ?? window.innerWidth * 0.5} 
+              simcaRallye={simcaRallye}
+            />
           )}
         </div>
       )}
