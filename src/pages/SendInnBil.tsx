@@ -39,7 +39,7 @@ export default function SendInnBil() {
   const [images, setImages] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [uploadProgress, setUploadProgress] = useState(0);
-  const [allowEdits, setAllowEdits] = useState(false);
+  const [allowEdits, setAllowEdits] = useState<boolean | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [formData, setFormData] = useState({
     brand: "",
@@ -205,7 +205,7 @@ export default function SendInnBil() {
         tags: tagsArray,
         car_story: result.data.car_story || null,
         images: imageUrls,
-        allow_edits: allowEdits
+        allow_edits: allowEdits === true
       });
       if (error) throw error;
       setSubmitted(true);
@@ -465,29 +465,44 @@ export default function SendInnBil() {
                           </p>
                         </div>}
 
-                      {/* Consent checkbox */}
+                      {/* Consent radio buttons */}
                       <div className="space-y-3 p-4 bg-muted/30 rounded-lg border-2 border-muted">
-                        <label className="flex items-start gap-3 cursor-pointer">
-                          <input
-                            type="checkbox"
-                            checked={allowEdits}
-                            onChange={(e) => setAllowEdits(e.target.checked)}
-                            className="w-5 h-5 mt-0.5 rounded border-2 border-muted accent-primary"
-                            required
-                          />
-                          <span className="text-foreground font-medium">
-                            Jeg godkjenner at Simca Norge kan redigere og forbedre innsendelsen min før publisering. *
-                          </span>
-                        </label>
-                        <p className="text-sm text-muted-foreground ml-8">
+                        <p className="font-display text-lg mb-3">GODKJENNING FOR REDIGERING *</p>
+                        <p className="text-sm text-muted-foreground mb-4">
                           Vi kan rette små skrivefeil, tydeliggjøre detaljer og legge til teknisk info (f.eks. modellvariant, årsmodell og historikk). Innholdet endres ikke helt – vi bygger videre på det du har sendt inn.
                         </p>
+                        
+                        <label className="flex items-start gap-3 cursor-pointer p-3 rounded-lg hover:bg-muted/50 transition-colors">
+                          <input
+                            type="radio"
+                            name="allowEdits"
+                            checked={allowEdits === true}
+                            onChange={() => setAllowEdits(true)}
+                            className="w-5 h-5 mt-0.5 accent-primary"
+                          />
+                          <span className="text-foreground font-medium">
+                            Ja, jeg godkjenner at Simca Norge kan redigere og forbedre innsendelsen min før publisering.
+                          </span>
+                        </label>
+                        
+                        <label className="flex items-start gap-3 cursor-pointer p-3 rounded-lg hover:bg-muted/50 transition-colors">
+                          <input
+                            type="radio"
+                            name="allowEdits"
+                            checked={allowEdits === false}
+                            onChange={() => setAllowEdits(false)}
+                            className="w-5 h-5 mt-0.5 accent-primary"
+                          />
+                          <span className="text-foreground font-medium">
+                            Nei, jeg ønsker at innsendelsen publiseres som den er.
+                          </span>
+                        </label>
                       </div>
 
                       {/* Submit */}
                       <Button 
                         type="submit" 
-                        disabled={isSubmitting || !allowEdits} 
+                        disabled={isSubmitting || allowEdits === null} 
                         className="w-full btn-enamel-blue text-xl py-6 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         {isSubmitting ? "Sender..." : <>
