@@ -94,10 +94,10 @@ export function HeroSection() {
             {/* Section Header */}
             <div className="text-center mb-4">
               <h2 className="font-display text-2xl md:text-3xl text-white flex items-center justify-center gap-2">
-                <Star className="w-6 h-6 text-simca-gold fill-simca-gold" />
+                <Star className="w-6 h-6 text-yellow-400 fill-yellow-400 drop-shadow-[0_0_6px_rgba(250,204,21,0.8)]" />
                 Månedens bil
               </h2>
-              <p className="font-serif text-sm text-white/70 mt-1">
+              <p className="font-serif text-sm text-white/50 mt-1">
                 {new Date().toLocaleDateString('nb-NO', {
                 month: 'long',
                 year: 'numeric'
