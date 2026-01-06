@@ -220,21 +220,22 @@ const AdminDeler = () => {
 
       {/* Form Modal */}
       {showForm && (
-        <div className="fixed inset-0 bg-foreground/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-card border-4 border-foreground w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between p-4 border-b-2 border-foreground">
-              <h2 className="font-display text-2xl">
-                {editingId ? "REDIGER DEL" : "NY DEL"}
-              </h2>
-              <button
-                onClick={resetForm}
-                className="p-2 hover:bg-muted rounded"
-              >
-                <X className="w-6 h-6" />
-              </button>
-            </div>
+        <div className="fixed inset-0 bg-foreground/50 z-50 overflow-y-auto">
+          <div className="min-h-full flex items-start justify-center p-4 py-10">
+            <div className="bg-card border-4 border-foreground w-full max-w-2xl">
+              <div className="flex items-center justify-between p-4 border-b-2 border-foreground">
+                <h2 className="font-display text-2xl">
+                  {editingId ? "REDIGER DEL" : "NY DEL"}
+                </h2>
+                <button
+                  onClick={resetForm}
+                  className="p-2 hover:bg-muted rounded"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
 
-            <form onSubmit={handleSubmit} className="p-6 space-y-4">
+              <form onSubmit={handleSubmit} className="p-6 space-y-4">
               {/* Title */}
               <div>
                 <label className="block font-display mb-2">TITTEL *</label>
@@ -369,7 +370,8 @@ const AdminDeler = () => {
                   Avbryt
                 </button>
               </div>
-            </form>
+              </form>
+            </div>
           </div>
         </div>
       )}
