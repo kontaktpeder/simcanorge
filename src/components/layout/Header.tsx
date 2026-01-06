@@ -33,30 +33,72 @@ const BOOST_MULTIPLIER = 3.2; // speed multiplier during boost
 const BOOST_MS = 1000; // boost duration
 const DRIVE_HOME_DURATION = 900; // ms
 
-// Component for JS-controlled drive-home animation
-function DriveHomeAnimation({ startX, simcaRallye }: { startX: number; simcaRallye: string }) {
-  const ref = useRef<HTMLDivElement | null>(null);
+// Component for JS-controlled drive-home animation - drives UP to garage under logo
+function DriveHomeAnimation({ 
+  startX, 
+  simcaRallye, 
+  garageRef 
+}: { 
+  startX: number; 
+  simcaRallye: string;
+  garageRef: React.RefObject<HTMLDivElement>;
+}) {
+  const carRef = useRef<HTMLDivElement | null>(null);
+  const tracksRef = useRef<HTMLDivElement | null>(null);
   const startRef = useRef<number | null>(null);
-  const opacityRef = useRef(1);
+  const [showGarage, setShowGarage] = useState(false);
+  const [trackPoints, setTrackPoints] = useState<{ x: number; y: number }[]>([]);
+
+  const DRIVE_HOME_DURATION = 1200; // ms
 
   useEffect(() => {
+    // Show garage after a short delay
+    const garageTimer = setTimeout(() => setShowGarage(true), 200);
+    
+    // Get garage target position
+    const getGaragePosition = () => {
+      if (garageRef.current) {
+        const rect = garageRef.current.getBoundingClientRect();
+        return { x: rect.left + rect.width / 2, y: rect.top + rect.height - 10 };
+      }
+      return { x: 200, y: 0 }; // fallback
+    };
+
     const animate = (ts: number) => {
-      if (!ref.current) return;
+      if (!carRef.current) return;
       if (startRef.current === null) startRef.current = ts;
       
       const elapsed = ts - startRef.current;
       const progress = Math.min(elapsed / DRIVE_HOME_DURATION, 1);
       
-      // Ease out
-      const eased = 1 - Math.pow(1 - progress, 2);
-      const targetX = -80; // off screen left
+      // Ease out cubic for smooth deceleration
+      const eased = 1 - Math.pow(1 - progress, 3);
+      
+      const garagePos = getGaragePosition();
+      const startY = 0;
+      const targetY = -(window.innerHeight * 0.06); // Drive up towards header
+      const targetX = garagePos.x - 30; // Center on garage
+      
       const currentX = startX + (targetX - startX) * eased;
+      const currentY = startY + (targetY - startY) * eased;
       
-      // Fade out in last 10%
-      opacityRef.current = progress > 0.9 ? 1 - (progress - 0.9) / 0.1 : 1;
+      // Scale down as it gets further away (perspective)
+      const scale = 1 - (progress * 0.3);
       
-      ref.current.style.transform = `translateX(${currentX}px) scaleX(-1)`;
-      ref.current.style.opacity = String(opacityRef.current);
+      // Fade out in last 20%
+      const opacity = progress > 0.8 ? 1 - (progress - 0.8) / 0.2 : 1;
+      
+      carRef.current.style.transform = `translate(${currentX}px, ${currentY}px) scale(${scale}) scaleX(-1)`;
+      carRef.current.style.opacity = String(opacity);
+      
+      // Add tire track points
+      if (progress < 0.85) {
+        setTrackPoints(prev => {
+          const newPoints = [...prev, { x: currentX + 20, y: currentY }, { x: currentX + 50, y: currentY }];
+          // Keep only last 30 points
+          return newPoints.slice(-30);
+        });
+      }
       
       if (progress < 1) {
         requestAnimationFrame(animate);
@@ -64,31 +106,113 @@ function DriveHomeAnimation({ startX, simcaRallye }: { startX: number; simcaRall
     };
     
     requestAnimationFrame(animate);
-  }, [startX]);
+    
+    return () => clearTimeout(garageTimer);
+  }, [startX, garageRef]);
 
   return (
-    <div 
-      ref={ref}
-      className="absolute bottom-[4px] md:bottom-[6px] pointer-events-none"
-      style={{ transform: `translateX(${startX}px) scaleX(-1)`, opacity: 1 }}
-    >
-      <div className="relative">
-        <img 
-          src={simcaRallye} 
-          alt="Simca Rallye" 
-          className="h-[22px] md:h-[34px] w-auto object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]"
-        />
-        {/* Wheel spin effect */}
-        <div className="absolute bottom-0.5 left-[18%] w-2 h-2 md:w-2.5 md:h-2.5 rounded-full border border-dashed border-gray-600/40 animate-wheel-spin" />
-        <div className="absolute bottom-0.5 right-[22%] w-2 h-2 md:w-2.5 md:h-2.5 rounded-full border border-dashed border-gray-600/40 animate-wheel-spin" />
-        
-        {/* Dust clouds */}
-        <div className="absolute -bottom-0.5 left-[10%] flex gap-0.5">
-          <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-amber-200/40 rounded-full animate-dust-1 blur-[1px]" />
-          <div className="w-1 h-1 md:w-1.5 md:h-1.5 bg-amber-200/30 rounded-full animate-dust-2 blur-[1px]" />
+    <>
+      {/* Tire tracks */}
+      <div className="absolute inset-0 pointer-events-none overflow-visible">
+        {trackPoints.map((point, i) => (
+          <div
+            key={i}
+            className="absolute w-1 h-1 rounded-full bg-gray-600/40"
+            style={{
+              left: point.x + (i % 2 === 0 ? 0 : 30),
+              bottom: 8 - point.y,
+              opacity: Math.max(0, 1 - (trackPoints.length - i) * 0.05),
+              transform: `scale(${0.5 + (i / trackPoints.length) * 0.5})`
+            }}
+          />
+        ))}
+      </div>
+      
+      {/* Animated garage that fades in */}
+      <div 
+        ref={garageRef}
+        className={`absolute left-[140px] md:left-[200px] -top-[50px] md:-top-[60px] transition-opacity duration-500 ${showGarage ? 'opacity-100' : 'opacity-0'}`}
+      >
+        <div 
+          className="relative px-6 py-4 rounded-t-lg overflow-hidden"
+          style={{
+            background: 'linear-gradient(180deg, #c4d4e0 0%, #a8bccf 40%, #8fa5b8 100%)',
+            boxShadow: 'inset 0 2px 6px rgba(255,255,255,0.3), inset 0 -2px 8px rgba(0,0,0,0.2), 0 4px 12px rgba(0,0,0,0.3)',
+            border: '2px solid #d4a520',
+            borderBottom: '3px solid #8b7355'
+          }}
+        >
+          {/* Wooden beam roof */}
+          <div 
+            className="absolute -top-1 left-0 right-0 h-3"
+            style={{
+              background: 'repeating-linear-gradient(90deg, #8b6914 0px, #a07818 3px, #6b5210 6px, #8b6914 9px)',
+              boxShadow: '0 2px 4px rgba(0,0,0,0.4)'
+            }}
+          />
+          {/* Yellow garage door frame */}
+          <div 
+            className="absolute top-2 left-1 right-1 h-1.5 rounded-sm"
+            style={{
+              background: 'linear-gradient(180deg, #f0c040 0%, #d4a520 50%, #b8901a 100%)',
+              boxShadow: '0 1px 2px rgba(0,0,0,0.3)'
+            }}
+          />
+          <div 
+            className="absolute top-2 left-1 bottom-0 w-1"
+            style={{ background: 'linear-gradient(90deg, #d4a520 0%, #f0c040 50%, #d4a520 100%)' }}
+          />
+          <div 
+            className="absolute top-2 right-1 bottom-0 w-1"
+            style={{ background: 'linear-gradient(90deg, #d4a520 0%, #f0c040 50%, #d4a520 100%)' }}
+          />
+          {/* Fluorescent light */}
+          <div 
+            className="absolute top-3 left-1/2 -translate-x-1/2 w-8 h-0.5 rounded-full"
+            style={{
+              background: 'rgba(255,255,255,0.9)',
+              boxShadow: '0 0 6px 2px rgba(255,255,255,0.5)'
+            }}
+          />
+          {/* Floor */}
+          <div 
+            className="absolute bottom-0 left-0 right-0 h-2"
+            style={{ background: 'linear-gradient(180deg, #9ca3af 0%, #6b7280 100%)' }}
+          >
+            <div 
+              className="absolute top-1/2 -translate-y-1/2 left-2 right-2 h-0.5"
+              style={{ background: '#eab308' }}
+            />
+          </div>
+          {/* Empty space for car */}
+          <div className="h-[26px] w-[60px]" />
         </div>
       </div>
-    </div>
+      
+      {/* The driving car */}
+      <div 
+        ref={carRef}
+        className="absolute bottom-[4px] md:bottom-[6px] pointer-events-none z-10"
+        style={{ transform: `translateX(${startX}px) scaleX(-1)`, opacity: 1 }}
+      >
+        <div className="relative">
+          <img 
+            src={simcaRallye} 
+            alt="Simca Rallye" 
+            className="h-[22px] md:h-[34px] w-auto object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]"
+          />
+          {/* Wheel spin effect */}
+          <div className="absolute bottom-0.5 left-[18%] w-2 h-2 md:w-2.5 md:h-2.5 rounded-full border border-dashed border-gray-600/40 animate-wheel-spin" />
+          <div className="absolute bottom-0.5 right-[22%] w-2 h-2 md:w-2.5 md:h-2.5 rounded-full border border-dashed border-gray-600/40 animate-wheel-spin" />
+          
+          {/* Dust clouds */}
+          <div className="absolute -bottom-0.5 left-[10%] flex gap-0.5">
+            <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-amber-200/40 rounded-full animate-dust-1 blur-[1px]" />
+            <div className="w-1 h-1 md:w-1.5 md:h-1.5 bg-amber-200/30 rounded-full animate-dust-2 blur-[1px]" />
+          </div>
+        </div>
+      </div>
+    </>
   );
 }
 
@@ -115,6 +239,7 @@ export function Header() {
   const boostUntilRef = useRef<number>(0);
   const driveHomeCarRef = useRef<HTMLDivElement | null>(null);
   const driveHomeStartXRef = useRef<number | null>(null);
+  const garageAnimRef = useRef<HTMLDivElement>(null);
 
   // Trigger drive-to-garage ONLY when we left home via a click
   useEffect(() => {
@@ -496,6 +621,7 @@ export function Header() {
             <DriveHomeAnimation 
               startX={driveHomeStartXRef.current ?? window.innerWidth * 0.5} 
               simcaRallye={simcaRallye}
+              garageRef={garageAnimRef}
             />
           )}
         </div>
