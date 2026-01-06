@@ -64,12 +64,22 @@ export function Header() {
     prevPathRef.current = location.pathname;
   }, [location.pathname, isHome]);
 
-  // Initialize prevPathRef on mount
+  // Initialize on mount - show driving animation if starting on non-home page
   useEffect(() => {
     prevPathRef.current = location.pathname;
     if (!isHome) {
-      setIsParked(true);
-      setRoadVisible(false);
+      // Show the driving animation on initial load for non-home pages
+      setIsDrivingToGarage(true);
+      setIsParked(false);
+      setRoadVisible(true);
+      
+      const parkTimer = setTimeout(() => {
+        setIsDrivingToGarage(false);
+        setIsParked(true);
+        setRoadVisible(false);
+      }, 800);
+      
+      return () => clearTimeout(parkTimer);
     }
   }, []);
 
