@@ -400,8 +400,8 @@ const AdminBiler = () => {
 
       {/* Form Modal */}
       {showForm && (
-        <div className="fixed inset-0 bg-black/60 z-50 overflow-y-auto flex items-center justify-center p-4">
-          <div className="bg-white border-4 border-foreground w-full max-w-3xl rounded-lg shadow-2xl max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-foreground/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-card border-4 border-foreground w-full max-w-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between p-4 border-b-2 border-foreground">
               <h2 className="font-display text-2xl">
                 {editingId ? "REDIGER BIL" : "NY BIL"}
@@ -411,7 +411,7 @@ const AdminBiler = () => {
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="p-6 space-y-4 bg-white">
+            <form onSubmit={handleSubmit} className="p-6 space-y-4">
               {/* Brand, Model, Year - Cascading selects */}
               <div className="space-y-4 p-4 bg-gray-50 border-2 border-gray-200 rounded-lg">
                 <p className="text-sm text-muted-foreground font-medium">Velg merke, modell og årstall – dette genererer bilens tittel</p>
