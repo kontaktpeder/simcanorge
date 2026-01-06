@@ -42,13 +42,18 @@ export function Header() {
     // Only act if path actually changed
     if (prevPath === currentPath) return;
     
+    // Navigating between non-home pages - just update ref, no state changes
+    if (prevPath !== "/" && currentPath !== "/") {
+      prevPathRef.current = currentPath;
+      return;
+    }
+    
     // If navigating away from home to another page - animate!
     if (prevPath === "/" && currentPath !== "/") {
       setIsDrivingToGarage(true);
       setIsParked(false);
       setRoadVisible(true);
       
-      // After car reaches garage, park it and fade road
       const parkTimer = setTimeout(() => {
         setIsDrivingToGarage(false);
         setIsParked(true);
@@ -59,15 +64,13 @@ export function Header() {
       return () => clearTimeout(parkTimer);
     }
     
-    // If navigating to home - just reset state instantly
+    // If navigating to home - reset state instantly
     if (currentPath === "/") {
       setIsParked(false);
       setIsDrivingToGarage(false);
       setRoadVisible(true);
+      prevPathRef.current = currentPath;
     }
-    
-    // Update ref for any other navigation (between non-home pages)
-    prevPathRef.current = currentPath;
   }, [location.pathname]);
 
   const handleCarClick = () => {
