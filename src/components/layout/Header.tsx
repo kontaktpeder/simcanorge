@@ -147,41 +147,75 @@ export function Header() {
             </div>
           </Link>
 
-          {/* Garage with parked car - visible on non-home pages (desktop only) */}
+          {/* Garage with parked car - workshop style inspired by image */}
           {!isHome && !isDrivingToGarage && (
             <div className="hidden lg:flex items-center mx-4">
               <div 
-                className="relative px-4 py-2 rounded-t-xl"
+                className="relative px-5 py-3 rounded-t-lg overflow-hidden"
                 style={{
-                  background: 'linear-gradient(180deg, #2a2a2a 0%, #1a1a1a 50%, #0f0f0f 100%)',
-                  boxShadow: 'inset 0 2px 8px rgba(0,0,0,0.6), inset 0 -1px 0 rgba(255,255,255,0.1), 0 4px 12px rgba(0,0,0,0.4)',
-                  border: '1px solid #333',
-                  borderBottom: 'none'
+                  background: 'linear-gradient(180deg, #c4d4e0 0%, #a8bccf 40%, #8fa5b8 100%)',
+                  boxShadow: 'inset 0 2px 6px rgba(255,255,255,0.3), inset 0 -2px 8px rgba(0,0,0,0.2), 0 4px 12px rgba(0,0,0,0.3)',
+                  border: '2px solid #d4a520',
+                  borderBottom: '3px solid #8b7355'
                 }}
               >
-                {/* Garage roof with realistic shingles look */}
+                {/* Wooden beam roof */}
                 <div 
-                  className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-t-lg"
+                  className="absolute -top-1 left-0 right-0 h-3"
                   style={{
-                    width: 'calc(100% + 16px)',
-                    height: '12px',
-                    background: 'linear-gradient(180deg, #4a3728 0%, #3d2d22 50%, #2a1f18 100%)',
-                    boxShadow: '0 2px 4px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1)',
-                    borderRadius: '6px 6px 0 0'
+                    background: 'repeating-linear-gradient(90deg, #8b6914 0px, #a07818 3px, #6b5210 6px, #8b6914 9px)',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.4)'
                   }}
                 />
-                {/* Concrete floor */}
+                {/* Yellow garage door frame (top) */}
                 <div 
-                  className="absolute bottom-0 left-0 right-0 h-1"
+                  className="absolute top-2 left-1 right-1 h-1.5 rounded-sm"
                   style={{
-                    background: 'linear-gradient(90deg, #555 0%, #666 50%, #555 100%)'
+                    background: 'linear-gradient(180deg, #f0c040 0%, #d4a520 50%, #b8901a 100%)',
+                    boxShadow: '0 1px 2px rgba(0,0,0,0.3)'
                   }}
                 />
+                {/* Yellow door frame sides */}
+                <div 
+                  className="absolute top-2 left-1 bottom-0 w-1"
+                  style={{
+                    background: 'linear-gradient(90deg, #d4a520 0%, #f0c040 50%, #d4a520 100%)'
+                  }}
+                />
+                <div 
+                  className="absolute top-2 right-1 bottom-0 w-1"
+                  style={{
+                    background: 'linear-gradient(90deg, #d4a520 0%, #f0c040 50%, #d4a520 100%)'
+                  }}
+                />
+                {/* Fluorescent light effect */}
+                <div 
+                  className="absolute top-3 left-1/2 -translate-x-1/2 w-8 h-0.5 rounded-full"
+                  style={{
+                    background: 'rgba(255,255,255,0.9)',
+                    boxShadow: '0 0 6px 2px rgba(255,255,255,0.5), 0 2px 8px rgba(255,255,255,0.3)'
+                  }}
+                />
+                {/* Concrete floor with yellow line */}
+                <div 
+                  className="absolute bottom-0 left-0 right-0 h-2"
+                  style={{
+                    background: 'linear-gradient(180deg, #9ca3af 0%, #6b7280 100%)'
+                  }}
+                >
+                  <div 
+                    className="absolute top-1/2 -translate-y-1/2 left-2 right-2 h-0.5"
+                    style={{ background: '#eab308' }}
+                  />
+                </div>
+                {/* Tool shadows on wall (subtle) */}
+                <div className="absolute top-4 right-2 w-1 h-2 bg-gray-500/30 rounded-sm" />
+                <div className="absolute top-4 right-4 w-0.5 h-3 bg-gray-500/20 rounded-sm" />
                 {/* Parked car */}
                 <img 
                   src={simcaRallye} 
                   alt="Parkert Simca" 
-                  className="h-[24px] w-auto object-contain drop-shadow-md relative z-10"
+                  className="h-[26px] w-auto object-contain drop-shadow-lg relative z-10 mt-1"
                 />
               </div>
             </div>
