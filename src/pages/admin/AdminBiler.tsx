@@ -401,10 +401,10 @@ const AdminBiler = () => {
       {/* Form Modal */}
       {showForm && (
         <div className="fixed inset-0 bg-foreground/50 z-50 overflow-y-auto">
-          <div className="flex justify-center p-4 pt-0">
+          <div className="flex justify-center p-2 sm:p-4 pt-0">
             <div className="bg-card border-4 border-foreground w-full max-w-2xl">
-              <div className="flex items-center justify-between p-4 border-b-2 border-foreground">
-                <h2 className="font-display text-2xl">
+              <div className="flex items-center justify-between p-3 sm:p-4 border-b-2 border-foreground sticky top-0 bg-card z-10">
+                <h2 className="font-display text-xl sm:text-2xl">
                   {editingId ? "REDIGER BIL" : "NY BIL"}
                 </h2>
                 <button onClick={resetForm} className="p-2 hover:bg-muted rounded">
@@ -412,21 +412,21 @@ const AdminBiler = () => {
                 </button>
               </div>
 
-              <form onSubmit={handleSubmit} className="p-6 space-y-4">
+              <form onSubmit={handleSubmit} className="p-3 sm:p-6 space-y-3 sm:space-y-4">
               {/* Brand, Model, Year - Cascading selects */}
-              <div className="space-y-4 p-4 bg-gray-50 border-2 border-gray-200 rounded-lg">
-                <p className="text-sm text-muted-foreground font-medium">Velg merke, modell og årstall – dette genererer bilens tittel</p>
+              <div className="space-y-3 sm:space-y-4 p-3 sm:p-4 bg-gray-50 border-2 border-gray-200 rounded-lg">
+                <p className="text-xs sm:text-sm text-muted-foreground font-medium">Velg merke, modell og årstall – dette genererer bilens tittel</p>
                 
-                <div className="grid md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
                   {/* Brand */}
                   <div>
-                    <label className="block font-display mb-2">MERKE *</label>
+                    <label className="block font-display text-sm sm:text-base mb-1.5 sm:mb-2">MERKE *</label>
                     <select
                       value={formData.brand}
                       onChange={(e) =>
                         setFormData({ ...formData, brand: e.target.value, model: "", year: "" })
                       }
-                      className="w-full p-3 border-2 border-foreground bg-card"
+                      className="w-full h-12 p-3 text-base border-2 border-foreground bg-card rounded"
                       required
                     >
                       <option value="">Velg merke...</option>
@@ -440,13 +440,13 @@ const AdminBiler = () => {
 
                   {/* Model */}
                   <div>
-                    <label className="block font-display mb-2">MODELL *</label>
+                    <label className="block font-display text-sm sm:text-base mb-1.5 sm:mb-2">MODELL *</label>
                     <select
                       value={formData.model}
                       onChange={(e) =>
                         setFormData({ ...formData, model: e.target.value, year: "" })
                       }
-                      className="w-full p-3 border-2 border-foreground bg-card"
+                      className="w-full h-12 p-3 text-base border-2 border-foreground bg-card rounded"
                       required
                       disabled={!formData.brand}
                     >
@@ -461,13 +461,13 @@ const AdminBiler = () => {
 
                   {/* Year */}
                   <div>
-                    <label className="block font-display mb-2">ÅRSTALL</label>
+                    <label className="block font-display text-sm sm:text-base mb-1.5 sm:mb-2">ÅRSTALL</label>
                     <select
                       value={formData.year}
                       onChange={(e) =>
                         setFormData({ ...formData, year: e.target.value })
                       }
-                      className="w-full p-3 border-2 border-foreground bg-card"
+                      className="w-full h-12 p-3 text-base border-2 border-foreground bg-card rounded"
                       disabled={!formData.model}
                     >
                       <option value="">Velg år...</option>
@@ -482,17 +482,17 @@ const AdminBiler = () => {
 
                 {/* Generated title preview */}
                 {generatedTitle && (
-                  <div className="mt-2 p-3 bg-blue-50 rounded-lg border border-blue-200">
-                    <p className="text-sm text-gray-600">Bilens tittel blir:</p>
-                    <p className="text-lg font-display text-blue-700">{generatedTitle}</p>
+                  <div className="mt-2 p-2 sm:p-3 bg-blue-50 rounded-lg border border-blue-200">
+                    <p className="text-xs sm:text-sm text-gray-600">Bilens tittel blir:</p>
+                    <p className="text-base sm:text-lg font-display text-blue-700">{generatedTitle}</p>
                   </div>
                 )}
               </div>
 
-              <div className="grid md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 {/* Slug */}
                 <div>
-                  <label className="block font-display mb-2">SLUG (URL)</label>
+                  <label className="block font-display text-sm sm:text-base mb-1.5 sm:mb-2">SLUG (URL)</label>
                   <input
                     type="text"
                     value={formData.slug}
@@ -500,19 +500,19 @@ const AdminBiler = () => {
                       setFormData({ ...formData, slug: e.target.value })
                     }
                     placeholder={generateSlug(generatedTitle || formData.title) || "auto-generert"}
-                    className="w-full p-3 border-2 border-gray-300 bg-white rounded"
+                    className="w-full h-12 p-3 text-base border-2 border-gray-300 bg-white rounded"
                   />
                 </div>
 
                 {/* Category */}
                 <div>
-                  <label className="block font-display mb-2">KATEGORI *</label>
+                  <label className="block font-display text-sm sm:text-base mb-1.5 sm:mb-2">KATEGORI *</label>
                   <select
                     value={formData.category}
                     onChange={(e) =>
                       setFormData({ ...formData, category: e.target.value })
                     }
-                    className="w-full p-3 border-2 border-gray-300 bg-white rounded"
+                    className="w-full h-12 p-3 text-base border-2 border-gray-300 bg-white rounded"
                     required
                   >
                     {CATEGORIES.map((cat) => (
@@ -526,41 +526,41 @@ const AdminBiler = () => {
 
               {/* Story */}
               <div>
-                <label className="block font-display mb-2">HISTORIEN</label>
+                <label className="block font-display text-sm sm:text-base mb-1.5 sm:mb-2">HISTORIEN</label>
                 <textarea
                   value={formData.story}
                   onChange={(e) =>
                     setFormData({ ...formData, story: e.target.value })
                   }
-                  rows={6}
-                  className="w-full p-3 border-2 border-gray-300 bg-white resize-none rounded"
+                  rows={5}
+                  className="w-full p-3 text-base border-2 border-gray-300 bg-white resize-none rounded min-h-[120px]"
                   placeholder="Fortell historien om denne bilen..."
                 />
               </div>
 
               {/* Tags */}
               <div>
-                <label className="block font-display mb-2">TAGS (kommaseparert)</label>
+                <label className="block font-display text-sm sm:text-base mb-1.5 sm:mb-2">TAGS (kommaseparert)</label>
                 <input
                   type="text"
                   value={tagsInput}
                   onChange={(e) => setTagsInput(e.target.value)}
                   placeholder="f.eks. original, rally, restaurert"
-                  className="w-full p-3 border-2 border-gray-300 bg-white rounded"
+                  className="w-full h-12 p-3 text-base border-2 border-gray-300 bg-white rounded"
                 />
               </div>
 
               {/* Images */}
               <div>
-                <label className="block font-display mb-2">BILDER</label>
+                <label className="block font-display text-sm sm:text-base mb-1.5 sm:mb-2">BILDER</label>
 
                 {/* Submission images (from innsending) */}
                 {submissionImageUrls.length > 0 && (
-                  <div className="mb-4">
-                    <p className="text-sm text-muted-foreground mb-2">Fra innsending:</p>
-                    <div className="flex gap-2 flex-wrap">
+                  <div className="mb-3 sm:mb-4">
+                    <p className="text-xs sm:text-sm text-muted-foreground mb-2">Fra innsending:</p>
+                    <div className="grid grid-cols-4 gap-2">
                       {submissionImageUrls.map((url, index) => (
-                        <div key={index} className="relative w-24 h-24 border-2 border-green-500">
+                        <div key={index} className="relative aspect-square border-2 border-green-500 rounded overflow-hidden">
                           <img
                             src={url}
                             alt=""
@@ -569,11 +569,11 @@ const AdminBiler = () => {
                           <button
                             type="button"
                             onClick={() => removeSubmissionImage(index)}
-                            className="absolute -top-2 -right-2 bg-accent text-accent-foreground p-1 rounded-full"
+                            className="absolute -top-1 -right-1 bg-accent text-accent-foreground p-1 rounded-full"
                           >
-                            <X className="w-4 h-4" />
+                            <X className="w-3 h-3" />
                           </button>
-                          <span className="absolute bottom-0 left-0 right-0 bg-green-500 text-white text-xs text-center">
+                          <span className="absolute bottom-0 left-0 right-0 bg-green-500 text-white text-[10px] sm:text-xs text-center py-0.5">
                             INNSENDT
                           </span>
                         </div>
@@ -584,9 +584,9 @@ const AdminBiler = () => {
 
                 {/* Existing images */}
                 {existingImages.length > 0 && (
-                  <div className="flex gap-2 flex-wrap mb-4">
+                  <div className="grid grid-cols-4 gap-2 mb-3 sm:mb-4">
                     {existingImages.map((img) => (
-                      <div key={img.id} className="relative w-24 h-24 border-2 border-foreground">
+                      <div key={img.id} className="relative aspect-square border-2 border-foreground rounded overflow-hidden">
                         <img
                           src={img.image_url}
                           alt=""
@@ -595,9 +595,9 @@ const AdminBiler = () => {
                         <button
                           type="button"
                           onClick={() => removeExistingImage(img.id)}
-                          className="absolute -top-2 -right-2 bg-accent text-accent-foreground p-1 rounded-full"
+                          className="absolute -top-1 -right-1 bg-accent text-accent-foreground p-1 rounded-full"
                         >
-                          <X className="w-4 h-4" />
+                          <X className="w-3 h-3" />
                         </button>
                       </div>
                     ))}
@@ -606,9 +606,9 @@ const AdminBiler = () => {
 
                 {/* New images preview */}
                 {imageFiles.length > 0 && (
-                  <div className="flex gap-2 flex-wrap mb-4">
+                  <div className="grid grid-cols-4 gap-2 mb-3 sm:mb-4">
                     {imageFiles.map((file, index) => (
-                      <div key={index} className="relative w-24 h-24 border-2 border-primary">
+                      <div key={index} className="relative aspect-square border-2 border-primary rounded overflow-hidden">
                         <img
                           src={URL.createObjectURL(file)}
                           alt=""
@@ -617,11 +617,11 @@ const AdminBiler = () => {
                         <button
                           type="button"
                           onClick={() => removeNewImage(index)}
-                          className="absolute -top-2 -right-2 bg-accent text-accent-foreground p-1 rounded-full"
+                          className="absolute -top-1 -right-1 bg-accent text-accent-foreground p-1 rounded-full"
                         >
-                          <X className="w-4 h-4" />
+                          <X className="w-3 h-3" />
                         </button>
-                        <span className="absolute bottom-0 left-0 right-0 bg-primary text-primary-foreground text-xs text-center">
+                        <span className="absolute bottom-0 left-0 right-0 bg-primary text-primary-foreground text-[10px] sm:text-xs text-center py-0.5">
                           NY
                         </span>
                       </div>
@@ -630,10 +630,10 @@ const AdminBiler = () => {
                 )}
 
                 {/* Upload button */}
-                <label className="cursor-pointer inline-block">
-                  <div className="px-4 py-3 border-2 border-dashed border-muted-foreground hover:border-primary transition-colors flex items-center gap-2">
+                <label className="cursor-pointer inline-block w-full sm:w-auto">
+                  <div className="px-4 py-3 border-2 border-dashed border-muted-foreground hover:border-primary transition-colors flex items-center justify-center gap-2 rounded">
                     <Upload className="w-5 h-5" />
-                    <span>Last opp bilder</span>
+                    <span className="text-sm sm:text-base">Last opp bilder</span>
                   </div>
                   <input
                     type="file"
@@ -646,8 +646,8 @@ const AdminBiler = () => {
               </div>
 
               {/* Toggles */}
-              <div className="flex flex-wrap gap-6">
-                <label className="flex items-center gap-2 cursor-pointer">
+              <div className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-6">
+                <label className="flex items-center gap-2 cursor-pointer p-2 sm:p-0 bg-muted/30 sm:bg-transparent rounded">
                   <input
                     type="checkbox"
                     checked={formData.overhauled}
@@ -656,10 +656,10 @@ const AdminBiler = () => {
                     }
                     className="w-5 h-5"
                   />
-                  <span className="font-display">OVERHALT</span>
+                  <span className="font-display text-sm sm:text-base">OVERHALT</span>
                 </label>
 
-                <label className="flex items-center gap-2 cursor-pointer">
+                <label className="flex items-center gap-2 cursor-pointer p-2 sm:p-0 bg-muted/30 sm:bg-transparent rounded">
                   <input
                     type="checkbox"
                     checked={formData.featured}
@@ -668,10 +668,10 @@ const AdminBiler = () => {
                     }
                     className="w-5 h-5"
                   />
-                  <span className="font-display">UTVALGT (FEATURED)</span>
+                  <span className="font-display text-sm sm:text-base">UTVALGT (FEATURED)</span>
                 </label>
 
-                <label className="flex items-center gap-2 cursor-pointer">
+                <label className="flex items-center gap-2 cursor-pointer p-2 sm:p-0 bg-muted/30 sm:bg-transparent rounded">
                   <input
                     type="checkbox"
                     checked={formData.published}
@@ -680,16 +680,16 @@ const AdminBiler = () => {
                     }
                     className="w-5 h-5"
                   />
-                  <span className="font-display">PUBLISER NÅ</span>
+                  <span className="font-display text-sm sm:text-base">PUBLISER NÅ</span>
                 </label>
               </div>
 
               {/* Buttons */}
-              <div className="flex gap-4 pt-4">
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-4 sticky bottom-0 bg-card pb-2">
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="btn-retro flex-1 disabled:opacity-50"
+                  className="btn-retro flex-1 h-12 disabled:opacity-50 text-base"
                 >
                   {isSubmitting
                     ? "Lagrer..."
@@ -700,7 +700,7 @@ const AdminBiler = () => {
                 <button
                   type="button"
                   onClick={resetForm}
-                  className="btn-retro bg-muted text-foreground"
+                  className="btn-retro bg-muted text-foreground h-12"
                 >
                   Avbryt
                 </button>

@@ -37,7 +37,7 @@ export function Footer() {
                 <Link to="/kontakt" className="hover:text-white/80 transition-colors text-white/90">
                   Kontakt oss
                 </Link>
-                <a href="https://facebook.com/groups/simcanorge" target="_blank" rel="noopener noreferrer" className="hover:text-white/80 transition-colors text-white/90">
+                <a href="https://www.facebook.com/groups/1569119639997670" target="_blank" rel="noopener noreferrer" className="hover:text-white/80 transition-colors text-white/90">
                   Facebook-gruppen
                 </a>
               </div>
