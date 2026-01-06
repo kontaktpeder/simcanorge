@@ -158,84 +158,119 @@ const BilDetalj = () => {
         </div>
       </div>
 
-      {/* Hero Image Gallery */}
-      <section className="bg-foreground/95">
-        <div className="container mx-auto py-6">
-          <div className="relative flex items-center justify-center min-h-[400px] md:min-h-[500px] lg:min-h-[600px]">
-            {sortedImages.length > 0 ? (
-              <>
-                {/* Main image with smooth transition */}
-                <div className="relative w-full flex items-center justify-center">
-                  <img
-                    key={currentImageIndex}
-                    src={currentImage.image_url}
-                    alt={currentImage.alt_text || car.title}
-                    className="max-w-full max-h-[70vh] w-auto h-auto object-contain rounded-lg shadow-2xl animate-fade-in"
-                  />
-                </div>
-
-                {/* Navigation arrows */}
+      {/* Hero Image Gallery - Mobile swipe style */}
+      <section className="bg-black">
+        {sortedImages.length > 0 ? (
+          <>
+            {/* Full-width mobile gallery */}
+            <div className="relative">
+              {/* Main image - edge to edge on mobile */}
+              <div 
+                className="relative w-full"
+                onTouchStart={(e) => {
+                  const touch = e.touches[0];
+                  (e.currentTarget as HTMLElement).dataset.touchStartX = touch.clientX.toString();
+                }}
+                onTouchEnd={(e) => {
+                  const touchStartX = parseFloat((e.currentTarget as HTMLElement).dataset.touchStartX || "0");
+                  const touchEndX = e.changedTouches[0].clientX;
+                  const diff = touchStartX - touchEndX;
+                  if (Math.abs(diff) > 50) {
+                    if (diff > 0) nextImage();
+                    else prevImage();
+                  }
+                }}
+              >
+                <img
+                  key={currentImageIndex}
+                  src={currentImage.image_url}
+                  alt={currentImage.alt_text || car.title}
+                  className="w-full aspect-[4/3] md:aspect-[16/10] object-cover"
+                />
+                
+                {/* Gradient overlay for counter visibility */}
+                <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
+                
+                {/* Image counter - bottom right pill style */}
                 {sortedImages.length > 1 && (
-                  <>
-                    <button
-                      onClick={prevImage}
-                      className="absolute left-2 md:left-6 top-1/2 -translate-y-1/2 bg-card/90 hover:bg-card p-3 md:p-4 rounded-full shadow-lg transition-all hover:scale-110"
-                      aria-label="Forrige bilde"
-                    >
-                      <ChevronLeft className="w-6 h-6 md:w-7 md:h-7" />
-                    </button>
-                    <button
-                      onClick={nextImage}
-                      className="absolute right-2 md:right-6 top-1/2 -translate-y-1/2 bg-card/90 hover:bg-card p-3 md:p-4 rounded-full shadow-lg transition-all hover:scale-110"
-                      aria-label="Neste bilde"
-                    >
-                      <ChevronRight className="w-6 h-6 md:w-7 md:h-7" />
-                    </button>
-
-                    {/* Image counter */}
-                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-card/90 px-4 py-2 rounded-full shadow-lg">
-                      <span className="font-display text-sm">
-                        {currentImageIndex + 1} / {sortedImages.length}
-                      </span>
-                    </div>
-                  </>
+                  <div className="absolute bottom-3 right-3 bg-black/70 backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-xs font-medium">
+                    {currentImageIndex + 1} / {sortedImages.length}
+                  </div>
                 )}
-              </>
-            ) : (
-              <div className="w-full h-[400px] bg-muted flex items-center justify-center rounded-lg">
-                <Car className="w-24 h-24 text-muted-foreground" />
+              </div>
+
+              {/* Navigation arrows - only on desktop */}
+              {sortedImages.length > 1 && (
+                <>
+                  <button
+                    onClick={prevImage}
+                    className="hidden md:flex absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white p-3 rounded-full shadow-lg transition-all hover:scale-110"
+                    aria-label="Forrige bilde"
+                  >
+                    <ChevronLeft className="w-6 h-6 text-foreground" />
+                  </button>
+                  <button
+                    onClick={nextImage}
+                    className="hidden md:flex absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white p-3 rounded-full shadow-lg transition-all hover:scale-110"
+                    aria-label="Neste bilde"
+                  >
+                    <ChevronRight className="w-6 h-6 text-foreground" />
+                  </button>
+                </>
+              )}
+            </div>
+
+            {/* Dot indicators for mobile */}
+            {sortedImages.length > 1 && (
+              <div className="md:hidden flex justify-center gap-1.5 py-3 bg-black">
+                {sortedImages.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentImageIndex(index)}
+                    className={`w-2 h-2 rounded-full transition-all ${
+                      index === currentImageIndex
+                        ? "bg-white w-4"
+                        : "bg-white/40"
+                    }`}
+                    aria-label={`Gå til bilde ${index + 1}`}
+                  />
+                ))}
               </div>
             )}
-          </div>
-        </div>
-      </section>
 
-      {/* Thumbnail Strip */}
-      {sortedImages.length > 1 && (
-        <section className="bg-muted py-4">
-          <div className="container mx-auto">
-            <div className="flex gap-2 overflow-x-auto pb-2">
-              {sortedImages.map((img, index) => (
-                <button
-                  key={img.id}
-                  onClick={() => setCurrentImageIndex(index)}
-                  className={`flex-shrink-0 w-20 h-20 rounded overflow-hidden border-2 transition-colors ${
-                    index === currentImageIndex
-                      ? "border-accent"
-                      : "border-transparent hover:border-primary"
-                  }`}
-                >
-                  <img
-                    src={img.image_url}
-                    alt={img.alt_text || `Bilde ${index + 1}`}
-                    className="w-full h-full object-cover"
-                  />
-                </button>
-              ))}
-            </div>
+            {/* Thumbnail strip - desktop only */}
+            {sortedImages.length > 1 && (
+              <div className="hidden md:block bg-muted/50 py-3">
+                <div className="container mx-auto">
+                  <div className="flex gap-2 overflow-x-auto pb-1 justify-center">
+                    {sortedImages.map((img, index) => (
+                      <button
+                        key={img.id}
+                        onClick={() => setCurrentImageIndex(index)}
+                        className={`flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition-all ${
+                          index === currentImageIndex
+                            ? "border-accent ring-2 ring-accent/30"
+                            : "border-transparent hover:border-white/50 opacity-60 hover:opacity-100"
+                        }`}
+                      >
+                        <img
+                          src={img.image_url}
+                          alt={img.alt_text || `Bilde ${index + 1}`}
+                          className="w-full h-full object-cover"
+                        />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+          </>
+        ) : (
+          <div className="w-full aspect-[4/3] bg-muted flex items-center justify-center">
+            <Car className="w-16 h-16 text-muted-foreground" />
           </div>
-        </section>
-      )}
+        )}
+      </section>
 
       {/* Content */}
       <section className="poster-section">
