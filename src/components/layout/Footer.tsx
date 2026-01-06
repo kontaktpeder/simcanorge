@@ -1,13 +1,13 @@
 import { Link } from "react-router-dom";
 import { Facebook, Mail } from "lucide-react";
-import simcaLogo from "@/assets/simca-logo.png";
+import simcaNorgeBadge from "@/assets/simca-norge-badge.png";
 export function Footer() {
   return <footer className="bg-metal-blue text-white">
       <div className="container mx-auto px-4 py-6 md:py-10">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-10">
           {/* Logo & Tagline */}
           <div className="flex flex-col items-center md:items-start gap-2 md:gap-3">
-            <img src={simcaLogo} alt="Simca Norge" className="h-12 md:h-16 w-auto drop-shadow-lg" />
+            <img src={simcaNorgeBadge} alt="Simca Norge" className="h-16 md:h-24 w-auto drop-shadow-lg" />
             <p className="font-serif italic text-sm md:text-base text-center md:text-left text-white/90">
               "La petite voiture française"
             </p>
