@@ -192,7 +192,7 @@ export function Header() {
 
         {/* The Simca car - facing right (no scaleX flip) */}
         <div className="absolute bottom-[4px] md:bottom-[6px] animate-header-drive" style={{ animationDuration: isSpeedBoost ? '3s' : '10s' }}>
-          <div className="animate-car-bump-subtle">
+          <div className="animate-car-bump-subtle relative">
             <img 
               src={simcaRallye} 
               alt="Simca Rallye" 
@@ -201,6 +201,16 @@ export function Header() {
             {/* Wheel spin effect */}
             <div className="absolute bottom-0.5 left-[18%] w-2 h-2 md:w-2.5 md:h-2.5 rounded-full border border-dashed border-gray-600/40 animate-wheel-spin" />
             <div className="absolute bottom-0.5 right-[22%] w-2 h-2 md:w-2.5 md:h-2.5 rounded-full border border-dashed border-gray-600/40 animate-wheel-spin" />
+            
+            {/* Dust clouds behind wheels */}
+            <div className="absolute -bottom-0.5 left-[10%] flex gap-0.5">
+              <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-amber-200/40 rounded-full animate-dust-1 blur-[1px]" />
+              <div className="w-1 h-1 md:w-1.5 md:h-1.5 bg-amber-200/30 rounded-full animate-dust-2 blur-[1px]" />
+            </div>
+            <div className="absolute -bottom-0.5 right-[15%] flex gap-0.5">
+              <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-amber-200/40 rounded-full animate-dust-3 blur-[1px]" />
+              <div className="w-1 h-1 md:w-1.5 md:h-1.5 bg-amber-200/30 rounded-full animate-dust-1 blur-[1px]" />
+            </div>
           </div>
         </div>
       </div>

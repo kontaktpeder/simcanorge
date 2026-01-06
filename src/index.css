@@ -845,6 +845,28 @@
     100% { transform: rotate(360deg); }
   }
 
+  /* Dust cloud animations */
+  .animate-dust-1 {
+    animation: dust 0.6s ease-out infinite;
+  }
+  .animate-dust-2 {
+    animation: dust 0.6s ease-out 0.15s infinite;
+  }
+  .animate-dust-3 {
+    animation: dust 0.6s ease-out 0.3s infinite;
+  }
+
+  @keyframes dust {
+    0% {
+      opacity: 0.5;
+      transform: translateX(0) translateY(0) scale(1);
+    }
+    100% {
+      opacity: 0;
+      transform: translateX(-8px) translateY(-6px) scale(1.5);
+    }
+  }
+
   /* Smoke particles */
   .animate-smoke-1 {
     animation: smoke 1.5s ease-out infinite;
