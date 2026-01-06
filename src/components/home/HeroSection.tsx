@@ -60,32 +60,32 @@ export function HeroSection() {
     const sorted = [...car.car_images].sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
     return sorted[0];
   };
-  return <section className="poster-section poster-section-blue hero-watermark relative overflow-hidden min-h-[85vh] flex flex-col justify-start pt-8">
+  return <section className="poster-section poster-section-blue hero-watermark relative overflow-hidden min-h-[70vh] md:min-h-[85vh] flex flex-col justify-start pt-4 md:pt-8">
       {/* Subtle stripes overlay */}
       <div className="absolute inset-0 stripes-diagonal" />
       
       <div className="container mx-auto relative z-10">
-        <div className="grid lg:grid-cols-2 gap-8 items-start">
+        <div className="grid lg:grid-cols-2 gap-6 md:gap-8 items-start">
           {/* Text Content */}
           <div className="text-center lg:text-left">
-            <div className="flex items-center justify-center mb-4">
-              <img src={simcaBadge} alt="Simca Norge" className="h-72 md:h-96 lg:h-[28rem] w-auto" style={{
+            <div className="flex items-center justify-center mb-3 md:mb-4">
+              <img src={simcaBadge} alt="Simca Norge" className="h-40 md:h-72 lg:h-96 xl:h-[28rem] w-auto" style={{
               filter: 'drop-shadow(0 8px 24px rgba(0,0,0,0.4)) drop-shadow(0 4px 8px rgba(0,0,0,0.3))'
             }} />
             </div>
-            <p className="text-xl font-light mb-6 max-w-lg mx-auto lg:mx-0 text-white/90 font-serif md:text-3xl">
+            <p className="text-base md:text-xl lg:text-3xl font-light mb-4 md:mb-6 max-w-lg mx-auto lg:mx-0 text-white/90 font-serif">
               Din kilde til Simca, Talbot og Matra klassikere. Bildeler og historier fra entusiaster i Norge.
             </p>
             
-            {/* Enhanced CTA buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-              <Link to="/biler" className="btn-enamel-red group text-lg md:text-xl px-10 py-5">
+            {/* Enhanced CTA buttons - smaller on mobile */}
+            <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center lg:justify-start">
+              <Link to="/biler" className="btn-enamel-red group">
                 <span>Se alle biler</span>
-                <ArrowRight className="w-6 h-6 ml-3 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="w-4 h-4 md:w-6 md:h-6 ml-2 md:ml-3 group-hover:translate-x-1 transition-transform" />
               </Link>
-              <Link to="/deler" className="btn-enamel-blue group text-lg md:text-xl px-10 py-5">
+              <Link to="/deler" className="btn-enamel-blue group">
                 <span>Finn deler</span>
-                <Car className="w-6 h-6 ml-3 group-hover:scale-110 transition-transform" />
+                <Car className="w-4 h-4 md:w-6 md:h-6 ml-2 md:ml-3 group-hover:scale-110 transition-transform" />
               </Link>
             </div>
           </div>
