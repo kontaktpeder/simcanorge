@@ -531,34 +531,35 @@ export function Header() {
       {/* Animated car lane - only on home page OR during drive-to-garage animation */}
       {(isHome || isDrivingToGarage) && (
         <div 
-          className={`hidden sm:block relative w-full ${isDrivingToGarage ? 'overflow-visible' : 'overflow-hidden'} transition-all duration-500 ease-out ${
-            roadFading ? 'h-0' : 'h-[30px] md:h-[45px]'
+          className={`hidden sm:block relative w-full overflow-hidden transition-all duration-500 ease-out ${
+            roadFading ? 'h-0 opacity-0' : 'h-[30px] md:h-[45px] opacity-100'
           }`}
           style={{
             background: 'linear-gradient(to bottom, #3a3a3a, #2a2a2a 30%, #1f1f1f 70%, #151515)',
             boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.5), inset 0 -1px 0 rgba(255,255,255,0.05)'
           }}
         >
-          {/* Asphalt texture overlay */}
-          <div 
-            className="absolute inset-0 opacity-30 pointer-events-none"
-            style={{
-              backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 100 100\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noise\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.8\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noise)\'/%3E%3C/svg%3E")'
-            }}
-          />
-          
-          {/* Center road stripe - yellow dashed line with sliding animation */}
-          <div className="absolute top-1/2 -translate-y-1/2 left-0 right-0 overflow-hidden pointer-events-none">
-            <div className="flex gap-6 animate-road-stripes" style={{ width: 'max-content' }}>
-              {[...Array(80)].map((_, i) => (
+          {/* Inner container that slides up together */}
+          <div className={`absolute inset-0 transition-transform duration-500 ease-out ${roadFading ? '-translate-y-full' : 'translate-y-0'}`}>
+            {/* Asphalt texture overlay */}
+            <div 
+              className="absolute inset-0 opacity-30 pointer-events-none"
+              style={{
+                backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 100 100\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noise\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.8\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noise)\'/%3E%3C/svg%3E")'
+              }}
+            />
+            
+            {/* Center road stripe - yellow dashed line (static) */}
+            <div className="absolute top-1/2 -translate-y-1/2 left-0 right-0 flex justify-center gap-6 pointer-events-none">
+              {[...Array(40)].map((_, i) => (
                 <div key={i} className="w-6 h-1 bg-yellow-400/90 rounded-sm flex-shrink-0" />
               ))}
             </div>
+            
+            {/* Road edges - white lines */}
+            <div className="absolute top-1 left-0 right-0 h-0.5 bg-white/50 pointer-events-none" />
+            <div className="absolute bottom-1 left-0 right-0 h-0.5 bg-white/50 pointer-events-none" />
           </div>
-          
-          {/* Road edges - white lines */}
-          <div className="absolute top-1 left-0 right-0 h-0.5 bg-white/50 pointer-events-none" />
-          <div className="absolute bottom-1 left-0 right-0 h-0.5 bg-white/50 pointer-events-none" />
 
           {/* Exhaust smoke - only when driving normally on home */}
           {isHome && !isDrivingToGarage && (
