@@ -60,12 +60,12 @@ export function HeroSection() {
     const sorted = [...car.car_images].sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
     return sorted[0];
   };
-  return <section className="poster-section poster-section-blue hero-watermark relative overflow-hidden min-h-[85vh] flex flex-col justify-center">
+  return <section className="poster-section poster-section-blue hero-watermark relative overflow-hidden min-h-[85vh] flex flex-col justify-start pt-8">
       {/* Subtle stripes overlay */}
       <div className="absolute inset-0 stripes-diagonal" />
       
       <div className="container mx-auto relative z-10">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+        <div className="grid lg:grid-cols-2 gap-8 items-start">
           {/* Text Content */}
           <div className="text-center lg:text-left">
             <div className="flex items-center justify-center mb-4">
