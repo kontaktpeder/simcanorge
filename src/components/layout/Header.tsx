@@ -64,22 +64,12 @@ export function Header() {
     prevPathRef.current = location.pathname;
   }, [location.pathname, isHome]);
 
-  // Initialize on mount - show driving animation if starting on non-home page
+  // Initialize on mount - if not on home, just show parked state immediately (no animation)
   useEffect(() => {
     prevPathRef.current = location.pathname;
     if (!isHome) {
-      // Show the driving animation on initial load for non-home pages
-      setIsDrivingToGarage(true);
-      setIsParked(false);
-      setRoadVisible(true);
-      
-      const parkTimer = setTimeout(() => {
-        setIsDrivingToGarage(false);
-        setIsParked(true);
-        setRoadVisible(false);
-      }, 800);
-      
-      return () => clearTimeout(parkTimer);
+      setIsParked(true);
+      setRoadVisible(false);
     }
   }, []);
 
