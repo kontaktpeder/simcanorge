@@ -33,7 +33,7 @@ const BOOST_MULTIPLIER = 3.2; // speed multiplier during boost
 const BOOST_MS = 1000; // boost duration
 const DRIVE_HOME_DURATION = 900; // ms
 
-// Component for JS-controlled drive-home animation - drives UP to garage under logo
+// Component for JS-controlled drive-home animation - drives smoothly to garage
 function DriveHomeAnimation({ 
   startX, 
   simcaRallye, 
@@ -44,26 +44,21 @@ function DriveHomeAnimation({
   garageRef: React.RefObject<HTMLDivElement>;
 }) {
   const carRef = useRef<HTMLDivElement | null>(null);
-  const tracksRef = useRef<HTMLDivElement | null>(null);
   const startRef = useRef<number | null>(null);
   const [showGarage, setShowGarage] = useState(false);
-  const [trackPoints, setTrackPoints] = useState<{ x: number; y: number }[]>([]);
+  const trackPointsRef = useRef<number[]>([]);
+  const [tracks, setTracks] = useState<number[]>([]);
 
-  const DRIVE_HOME_DURATION = 1200; // ms
+  const DRIVE_HOME_DURATION = 1000; // ms
+  const TARGET_X = 170; // Fixed target position (under logo area)
 
   useEffect(() => {
-    // Show garage after a short delay
-    const garageTimer = setTimeout(() => setShowGarage(true), 200);
+    // Show garage immediately
+    setShowGarage(true);
     
-    // Get garage target position
-    const getGaragePosition = () => {
-      if (garageRef.current) {
-        const rect = garageRef.current.getBoundingClientRect();
-        return { x: rect.left + rect.width / 2, y: rect.top + rect.height - 10 };
-      }
-      return { x: 200, y: 0 }; // fallback
-    };
-
+    // Store initial position for tracks
+    const initialX = startX;
+    
     const animate = (ts: number) => {
       if (!carRef.current) return;
       if (startRef.current === null) startRef.current = ts;
@@ -74,30 +69,25 @@ function DriveHomeAnimation({
       // Ease out cubic for smooth deceleration
       const eased = 1 - Math.pow(1 - progress, 3);
       
-      const garagePos = getGaragePosition();
-      const startY = 0;
-      const targetY = -(window.innerHeight * 0.06); // Drive up towards header
-      const targetX = garagePos.x - 30; // Center on garage
+      // Drive from current position to target (left side under logo)
+      const currentX = initialX + (TARGET_X - initialX) * eased;
       
-      const currentX = startX + (targetX - startX) * eased;
-      const currentY = startY + (targetY - startY) * eased;
+      // Fade out in last 15%
+      const opacity = progress > 0.85 ? 1 - (progress - 0.85) / 0.15 : 1;
       
-      // Scale down as it gets further away (perspective)
-      const scale = 1 - (progress * 0.3);
-      
-      // Fade out in last 20%
-      const opacity = progress > 0.8 ? 1 - (progress - 0.8) / 0.2 : 1;
-      
-      carRef.current.style.transform = `translate(${currentX}px, ${currentY}px) scale(${scale}) scaleX(-1)`;
+      // Car drives left (facing left with scaleX(-1))
+      carRef.current.style.transform = `translateX(${currentX}px) scaleX(-1)`;
       carRef.current.style.opacity = String(opacity);
       
-      // Add tire track points
-      if (progress < 0.85) {
-        setTrackPoints(prev => {
-          const newPoints = [...prev, { x: currentX + 20, y: currentY }, { x: currentX + 50, y: currentY }];
-          // Keep only last 30 points
-          return newPoints.slice(-30);
-        });
+      // Add tire track at intervals (every ~40px traveled)
+      const trackSpacing = 25;
+      const distanceTraveled = Math.abs(currentX - initialX);
+      const numTracks = Math.floor(distanceTraveled / trackSpacing);
+      
+      if (numTracks > trackPointsRef.current.length && progress < 0.9) {
+        const newTrackX = initialX - (trackPointsRef.current.length + 1) * trackSpacing * Math.sign(initialX - TARGET_X);
+        trackPointsRef.current.push(newTrackX);
+        setTracks([...trackPointsRef.current]);
       }
       
       if (progress < 1) {
@@ -106,35 +96,42 @@ function DriveHomeAnimation({
     };
     
     requestAnimationFrame(animate);
-    
-    return () => clearTimeout(garageTimer);
-  }, [startX, garageRef]);
+  }, [startX]);
 
   return (
     <>
-      {/* Tire tracks */}
-      <div className="absolute inset-0 pointer-events-none overflow-visible">
-        {trackPoints.map((point, i) => (
-          <div
-            key={i}
-            className="absolute w-1 h-1 rounded-full bg-gray-600/40"
-            style={{
-              left: point.x + (i % 2 === 0 ? 0 : 30),
-              bottom: 8 - point.y,
-              opacity: Math.max(0, 1 - (trackPoints.length - i) * 0.05),
-              transform: `scale(${0.5 + (i / trackPoints.length) * 0.5})`
-            }}
+      {/* Tire tracks on the road */}
+      {tracks.map((trackX, i) => (
+        <div key={i} className="absolute bottom-[10px] md:bottom-[14px] pointer-events-none" style={{ left: 0 }}>
+          {/* Left tire track */}
+          <div 
+            className="absolute w-[3px] h-[6px] rounded-sm"
+            style={{ 
+              left: trackX + 15,
+              background: 'rgba(60, 60, 60, 0.4)',
+              opacity: Math.max(0.2, 1 - i * 0.08)
+            }} 
           />
-        ))}
-      </div>
+          {/* Right tire track */}
+          <div 
+            className="absolute w-[3px] h-[6px] rounded-sm"
+            style={{ 
+              left: trackX + 45,
+              background: 'rgba(60, 60, 60, 0.4)',
+              opacity: Math.max(0.2, 1 - i * 0.08)
+            }} 
+          />
+        </div>
+      ))}
       
-      {/* Animated garage that fades in */}
+      {/* Animated garage that fades in above the road */}
       <div 
         ref={garageRef}
-        className={`absolute left-[140px] md:left-[200px] -top-[50px] md:-top-[60px] transition-opacity duration-500 ${showGarage ? 'opacity-100' : 'opacity-0'}`}
+        className={`absolute left-[120px] md:left-[160px] -top-[48px] md:-top-[58px] transition-opacity duration-300 ${showGarage ? 'opacity-100' : 'opacity-0'}`}
+        style={{ zIndex: 20 }}
       >
         <div 
-          className="relative px-6 py-4 rounded-t-lg overflow-hidden"
+          className="relative px-5 py-3 rounded-t-lg overflow-hidden"
           style={{
             background: 'linear-gradient(180deg, #c4d4e0 0%, #a8bccf 40%, #8fa5b8 100%)',
             boxShadow: 'inset 0 2px 6px rgba(255,255,255,0.3), inset 0 -2px 8px rgba(0,0,0,0.2), 0 4px 12px rgba(0,0,0,0.3)',
