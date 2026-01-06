@@ -401,7 +401,7 @@ const AdminBiler = () => {
       {/* Form Modal */}
       {showForm && (
         <div className="fixed inset-0 bg-foreground/50 z-50 overflow-y-auto">
-          <div className="min-h-full flex items-start justify-center p-4 py-10">
+          <div className="flex justify-center p-4 pt-0">
             <div className="bg-card border-4 border-foreground w-full max-w-2xl">
               <div className="flex items-center justify-between p-4 border-b-2 border-foreground">
                 <h2 className="font-display text-2xl">
