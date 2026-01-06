@@ -782,7 +782,34 @@
      SIMCA DRIVING HEADER ANIMATIONS
      ======================================== */
 
-  /* Car driving animation - left to right */
+  /* Header car driving animation - normal speed (10s) */
+  .animate-header-drive {
+    animation: headerDrive 10s linear infinite;
+  }
+
+  /* Header car driving animation - fast speed (3s for visible boost) */
+  .animate-header-drive-fast {
+    animation: headerDrive 3s linear infinite;
+  }
+
+  @keyframes headerDrive {
+    0% { transform: translateX(-100px); }
+    100% { transform: translateX(calc(100vw + 100px)); }
+  }
+
+  /* Subtle car bump for header (smaller than hero version) */
+  .animate-car-bump-subtle {
+    animation: carBumpSubtle 0.3s ease-in-out infinite;
+  }
+
+  @keyframes carBumpSubtle {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    25% { transform: translateY(-1.5px) rotate(0.5deg); }
+    50% { transform: translateY(0) rotate(0deg); }
+    75% { transform: translateY(-1px) rotate(-0.5deg); }
+  }
+
+  /* Legacy hero car driving animation - left to right */
   .animate-drive {
     animation: drive 8s linear infinite;
   }

@@ -7,7 +7,7 @@ import { useInView } from "@/hooks/useInView";
 import simcaBadge from "@/assets/simca-badge.png";
 import simcaSwallow from "@/assets/simca-swallow.png";
 import checkeredFlag from "@/assets/checkered-flag.png";
-import { SimcaDrivingHeader } from "./SimcaDrivingHeader";
+
 interface FeaturedCar {
   id: string;
   slug: string;
@@ -21,6 +21,7 @@ interface FeaturedCar {
     sort_order: number | null;
   }[];
 }
+
 export function HeroSection() {
   const {
     ref: cardRef,
@@ -62,11 +63,6 @@ export function HeroSection() {
   return <section className="poster-section poster-section-blue hero-watermark relative overflow-hidden min-h-[85vh] flex flex-col justify-center">
       {/* Subtle stripes overlay */}
       <div className="absolute inset-0 stripes-diagonal" />
-      
-      {/* Animated Simca Driving Header */}
-      <div className="container mx-auto relative z-10 mt-4">
-        <SimcaDrivingHeader />
-      </div>
       
       <div className="container mx-auto relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
