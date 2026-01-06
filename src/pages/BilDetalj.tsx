@@ -185,7 +185,7 @@ const BilDetalj = () => {
                   key={currentImageIndex}
                   src={currentImage.image_url}
                   alt={currentImage.alt_text || car.title}
-                  className="w-full aspect-[4/3] md:aspect-[16/10] object-cover"
+                  className="w-full max-h-[60vh] md:max-h-[70vh] object-contain"
                 />
                 
                 {/* Gradient overlay for counter visibility */}
