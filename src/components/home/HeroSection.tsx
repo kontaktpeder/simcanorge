@@ -92,7 +92,7 @@ export function HeroSection() {
           {/* Featured Car - Månedens bil */}
           <div ref={cardRef} className={`relative transition-all duration-700 ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
             {/* Section Header */}
-            <div className="text-center mb-4">
+            <div className="text-center mb-4 relative z-10">
               <h2 className="font-display text-2xl md:text-3xl text-white flex items-center justify-center gap-2">
                 <Star className="w-6 h-6 text-yellow-400 fill-yellow-400 drop-shadow-[0_0_6px_rgba(250,204,21,0.8)]" />
                 Månedens bil
