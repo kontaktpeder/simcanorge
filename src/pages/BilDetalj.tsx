@@ -33,6 +33,9 @@ const BilDetalj = () => {
   const [car, setCar] = useState<CarDetail | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [slideDirection, setSlideDirection] = useState<'left' | 'right' | null>(null);
+  const [touchStart, setTouchStart] = useState<{ x: number; y: number } | null>(null);
+  const [isSwiping, setIsSwiping] = useState(false);
   const [showShareMenu, setShowShareMenu] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -65,18 +68,57 @@ const BilDetalj = () => {
 
   const nextImage = () => {
     if (car && car.car_images.length > 0) {
+      setSlideDirection('left');
       setCurrentImageIndex((prev) =>
         prev === car.car_images.length - 1 ? 0 : prev + 1
       );
+      setTimeout(() => setSlideDirection(null), 300);
     }
   };
 
   const prevImage = () => {
     if (car && car.car_images.length > 0) {
+      setSlideDirection('right');
       setCurrentImageIndex((prev) =>
         prev === 0 ? car.car_images.length - 1 : prev - 1
       );
+      setTimeout(() => setSlideDirection(null), 300);
     }
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    const touch = e.touches[0];
+    setTouchStart({ x: touch.clientX, y: touch.clientY });
+    setIsSwiping(false);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!touchStart) return;
+    
+    const touch = e.touches[0];
+    const diffX = Math.abs(touch.clientX - touchStart.x);
+    const diffY = Math.abs(touch.clientY - touchStart.y);
+    
+    // If horizontal swipe is more prominent than vertical, prevent scroll
+    if (diffX > diffY && diffX > 10) {
+      setIsSwiping(true);
+      e.preventDefault();
+    }
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (!touchStart) return;
+    
+    const touchEndX = e.changedTouches[0].clientX;
+    const diff = touchStart.x - touchEndX;
+    
+    if (Math.abs(diff) > 50 && isSwiping) {
+      if (diff > 0) nextImage();
+      else prevImage();
+    }
+    
+    setTouchStart(null);
+    setIsSwiping(false);
   };
 
   const shareOnFacebook = () => {
@@ -162,39 +204,46 @@ const BilDetalj = () => {
       <section className="bg-black">
         {sortedImages.length > 0 ? (
           <>
-            {/* Full-width mobile gallery */}
-            <div className="relative">
-              {/* Main image - edge to edge on mobile */}
+            {/* Full-width mobile gallery with fixed aspect ratio */}
+            <div className="relative overflow-hidden">
+              {/* Fixed height container to prevent jumping */}
               <div 
-                className="relative w-full"
-                onTouchStart={(e) => {
-                  const touch = e.touches[0];
-                  (e.currentTarget as HTMLElement).dataset.touchStartX = touch.clientX.toString();
-                }}
-                onTouchEnd={(e) => {
-                  const touchStartX = parseFloat((e.currentTarget as HTMLElement).dataset.touchStartX || "0");
-                  const touchEndX = e.changedTouches[0].clientX;
-                  const diff = touchStartX - touchEndX;
-                  if (Math.abs(diff) > 50) {
-                    if (diff > 0) nextImage();
-                    else prevImage();
-                  }
-                }}
+                className="relative w-full aspect-[4/3] md:aspect-[16/10] bg-black"
+                onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleTouchEnd}
+                style={{ touchAction: isSwiping ? 'none' : 'pan-y' }}
               >
+                {/* Image with slide animation */}
                 <img
                   key={currentImageIndex}
                   src={currentImage.image_url}
                   alt={currentImage.alt_text || car.title}
-                  className="w-full max-h-[60vh] md:max-h-[70vh] object-contain"
+                  className={`absolute inset-0 w-full h-full object-contain transition-all duration-300 ease-out ${
+                    slideDirection === 'left' 
+                      ? 'animate-slide-in-from-right' 
+                      : slideDirection === 'right' 
+                        ? 'animate-slide-in-from-left' 
+                        : ''
+                  }`}
                 />
                 
                 {/* Gradient overlay for counter visibility */}
-                <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
+                <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/70 to-transparent pointer-events-none" />
                 
                 {/* Image counter - bottom right pill style */}
                 {sortedImages.length > 1 && (
                   <div className="absolute bottom-3 right-3 bg-black/70 backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-xs font-medium">
                     {currentImageIndex + 1} / {sortedImages.length}
+                  </div>
+                )}
+                
+                {/* Swipe hint on first image */}
+                {sortedImages.length > 1 && currentImageIndex === 0 && (
+                  <div className="md:hidden absolute bottom-3 left-3 bg-black/70 backdrop-blur-sm text-white/80 px-3 py-1.5 rounded-full text-xs flex items-center gap-1.5">
+                    <ChevronLeft className="w-3 h-3" />
+                    Sveip
+                    <ChevronRight className="w-3 h-3" />
                   </div>
                 )}
               </div>
@@ -226,11 +275,15 @@ const BilDetalj = () => {
                 {sortedImages.map((_, index) => (
                   <button
                     key={index}
-                    onClick={() => setCurrentImageIndex(index)}
-                    className={`w-2 h-2 rounded-full transition-all ${
+                    onClick={() => {
+                      setSlideDirection(index > currentImageIndex ? 'left' : 'right');
+                      setCurrentImageIndex(index);
+                      setTimeout(() => setSlideDirection(null), 300);
+                    }}
+                    className={`h-2 rounded-full transition-all duration-300 ${
                       index === currentImageIndex
-                        ? "bg-white w-4"
-                        : "bg-white/40"
+                        ? "bg-white w-6"
+                        : "bg-white/40 w-2"
                     }`}
                     aria-label={`Gå til bilde ${index + 1}`}
                   />
@@ -246,7 +299,11 @@ const BilDetalj = () => {
                     {sortedImages.map((img, index) => (
                       <button
                         key={img.id}
-                        onClick={() => setCurrentImageIndex(index)}
+                        onClick={() => {
+                          setSlideDirection(index > currentImageIndex ? 'left' : 'right');
+                          setCurrentImageIndex(index);
+                          setTimeout(() => setSlideDirection(null), 300);
+                        }}
                         className={`flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition-all ${
                           index === currentImageIndex
                             ? "border-accent ring-2 ring-accent/30"
