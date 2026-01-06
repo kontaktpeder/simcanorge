@@ -5,7 +5,6 @@ import { PageHeader } from "@/components/layout/PageHeader";
 import { supabase } from "@/integrations/supabase/client";
 import { Car, Filter, X, Search, History, CheckCircle, Wrench, AlertTriangle } from "lucide-react";
 import { CAR_BRANDS } from "@/data/carBrands";
-
 interface CarPost {
   id: string;
   title: string;
@@ -24,9 +23,7 @@ interface CarPost {
     alt_text: string | null;
   }[];
 }
-
 const BRANDS = CAR_BRANDS.map(b => b.name);
-
 const CATEGORIES = [{
   id: "alle",
   label: "Alle biler",
@@ -53,7 +50,6 @@ const CATEGORIES = [{
   icon: AlertTriangle,
   description: "Biler som finnes, men som av ulike årsaker ikke er kjørbare."
 }];
-
 const Biler = () => {
   const [cars, setCars] = useState<CarPost[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -64,7 +60,6 @@ const Biler = () => {
   const [selectedBrand, setSelectedBrand] = useState<string>("");
   const [selectedDecade, setSelectedDecade] = useState<string>("");
   const [selectedCategory, setSelectedCategory] = useState<string>("alle");
-
   useEffect(() => {
     const fetchCars = async () => {
       const {
@@ -94,11 +89,7 @@ const Biler = () => {
     // Search query
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
-      const matchesSearch = car.title.toLowerCase().includes(query) || 
-        car.brand?.toLowerCase().includes(query) ||
-        car.model.toLowerCase().includes(query) || 
-        car.story?.toLowerCase().includes(query) || 
-        car.tags?.some(tag => tag.toLowerCase().includes(query));
+      const matchesSearch = car.title.toLowerCase().includes(query) || car.brand?.toLowerCase().includes(query) || car.model.toLowerCase().includes(query) || car.story?.toLowerCase().includes(query) || car.tags?.some(tag => tag.toLowerCase().includes(query));
       if (!matchesSearch) return false;
     }
 
@@ -112,16 +103,13 @@ const Biler = () => {
     }
     return true;
   });
-
   const featuredCars = filteredCars.filter(car => car.featured);
   const regularCars = filteredCars.filter(car => !car.featured);
-
   const clearFilters = () => {
     setSearchQuery("");
     setSelectedBrand("");
     setSelectedDecade("");
   };
-
   const hasActiveFilters = searchQuery || selectedBrand || selectedDecade;
   const currentCategoryInfo = CATEGORIES.find(c => c.id === selectedCategory);
 
@@ -143,26 +131,13 @@ const Biler = () => {
           {/* Grid layout for symmetry */}
           <div className="grid grid-cols-5 gap-1.5 md:gap-3 max-w-4xl mx-auto">
             {CATEGORIES.map(cat => {
-              const Icon = cat.icon;
-              const isActive = selectedCategory === cat.id;
-              return (
-                <button 
-                  key={cat.id} 
-                  onClick={() => setSelectedCategory(cat.id)} 
-                  className={`group relative flex flex-col items-center justify-center gap-1 md:gap-2 px-2 py-3 md:px-4 md:py-5 font-display text-[10px] md:text-sm rounded-xl transition-all duration-300 ${
-                    isActive 
-                      ? "bg-primary text-primary-foreground shadow-lg shadow-primary/25 ring-2 ring-primary/50" 
-                      : "bg-card border border-foreground/10 hover:border-primary/50 hover:bg-primary/5 text-foreground hover:shadow-md"
-                  }`}
-                >
+            const Icon = cat.icon;
+            const isActive = selectedCategory === cat.id;
+            return <button key={cat.id} onClick={() => setSelectedCategory(cat.id)} className={`group relative flex flex-col items-center justify-center gap-1 md:gap-2 px-2 py-3 md:px-4 md:py-5 font-display text-[10px] md:text-sm rounded-xl transition-all duration-300 ${isActive ? "bg-primary text-primary-foreground shadow-lg shadow-primary/25 ring-2 ring-primary/50" : "bg-card border border-foreground/10 hover:border-primary/50 hover:bg-primary/5 text-foreground hover:shadow-md"}`}>
                   {/* Icon with badge count */}
                   <div className="relative">
                     <Icon className={`w-5 h-5 md:w-7 md:h-7 transition-transform group-hover:scale-110 ${isActive ? '' : 'text-primary'}`} />
-                    <span className={`absolute -top-1.5 -right-2 md:-top-2 md:-right-2.5 min-w-[16px] md:min-w-[20px] h-4 md:h-5 flex items-center justify-center text-[9px] md:text-xs font-bold rounded-full ${
-                      isActive 
-                        ? "bg-white/25 text-primary-foreground" 
-                        : "bg-accent text-accent-foreground"
-                    }`}>
+                    <span className={`absolute -top-1.5 -right-2 md:-top-2 md:-right-2.5 min-w-[16px] md:min-w-[20px] h-4 md:h-5 flex items-center justify-center text-[9px] md:text-xs font-bold rounded-full ${isActive ? "bg-white/25 text-primary-foreground" : "bg-accent text-accent-foreground"}`}>
                       {categoryCounts[cat.id]}
                     </span>
                   </div>
@@ -173,12 +148,9 @@ const Biler = () => {
                   </span>
                   
                   {/* Active indicator */}
-                  {isActive && (
-                    <span className="absolute -bottom-0.5 left-1/2 -translate-x-1/2 w-8 md:w-12 h-1 bg-accent rounded-full" />
-                  )}
-                </button>
-              );
-            })}
+                  {isActive && <span className="absolute -bottom-0.5 left-1/2 -translate-x-1/2 w-8 md:w-12 h-1 bg-accent rounded-full" />}
+                </button>;
+          })}
           </div>
         </div>
       </section>
@@ -314,7 +286,9 @@ const Biler = () => {
       <section className="poster-section poster-section-red relative overflow-hidden">
         <div className="absolute inset-0 stripes-diagonal opacity-50" />
         <div className="container mx-auto text-center relative z-10">
-          <h2 className="headline-md mb-4">HAR DU EN SIMCA?</h2>
+          <h2 className="headline-md mb-4">HAR DU EN SIMCA,
+TALBOT ELLER MATRA?  
+  </h2>
           <p className="text-xl mb-6 opacity-90">
             Del historien om din franske klassiker med oss!
           </p>
