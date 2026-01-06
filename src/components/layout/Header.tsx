@@ -29,6 +29,7 @@ export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isSpeedBoost, setIsSpeedBoost] = useState(false);
   const [isDrivingToGarage, setIsDrivingToGarage] = useState(false);
+  const [roadFading, setRoadFading] = useState(false);
   const { itemCount } = useCart();
 
   const isHome = location.pathname === "/";
@@ -37,6 +38,7 @@ export function Header() {
   useEffect(() => {
     if (isHome) {
       setIsDrivingToGarage(false);
+      setRoadFading(false);
       return;
     }
 
@@ -45,9 +47,16 @@ export function Header() {
 
     sessionStorage.removeItem(LEAVE_HOME_ANIM_KEY);
     setIsDrivingToGarage(true);
+    setRoadFading(false);
 
-    const t = setTimeout(() => setIsDrivingToGarage(false), 900);
-    return () => clearTimeout(t);
+    // Start fading road after car starts moving
+    const fadeTimer = setTimeout(() => setRoadFading(true), 400);
+    const endTimer = setTimeout(() => setIsDrivingToGarage(false), 900);
+    
+    return () => {
+      clearTimeout(fadeTimer);
+      clearTimeout(endTimer);
+    };
   }, [isHome]);
 
   const markLeavingHome = (to: string) => {
@@ -209,17 +218,28 @@ export function Header() {
 
       {/* Animated car lane - only on home page OR during drive-to-garage animation */}
       {(isHome || isDrivingToGarage) && (
-        <div className="hidden sm:block relative w-full h-[30px] md:h-[45px] overflow-hidden bg-gradient-to-b from-gray-500 to-gray-600">
+        <div 
+          className={`hidden sm:block relative w-full h-[30px] md:h-[45px] overflow-hidden transition-opacity duration-500 ${
+            roadFading ? 'opacity-0' : 'opacity-100'
+          }`}
+          style={{
+            background: 'linear-gradient(to bottom, #B8860B, #DAA520, #B8860B)',
+            boxShadow: 'inset 0 2px 4px rgba(255,215,0,0.3), inset 0 -2px 4px rgba(0,0,0,0.2)'
+          }}
+        >
+          {/* Metallic shine overlay */}
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none" />
+          
           {/* Center road stripe - static */}
           <div className="absolute top-1/2 -translate-y-1/2 left-0 right-0 flex justify-center gap-6 pointer-events-none">
             {[...Array(40)].map((_, i) => (
-              <div key={i} className="w-6 h-1 bg-yellow-400/80 rounded-sm flex-shrink-0" />
+              <div key={i} className="w-6 h-1 bg-white/90 rounded-sm flex-shrink-0 shadow-sm" />
             ))}
           </div>
           
-          {/* Road edges */}
-          <div className="absolute top-0.5 left-0 right-0 h-0.5 bg-white/40 pointer-events-none" />
-          <div className="absolute bottom-0.5 left-0 right-0 h-0.5 bg-white/40 pointer-events-none" />
+          {/* Road edges - golden chrome */}
+          <div className="absolute top-0.5 left-0 right-0 h-0.5 bg-gradient-to-r from-amber-300/60 via-yellow-200/80 to-amber-300/60 pointer-events-none" />
+          <div className="absolute bottom-0.5 left-0 right-0 h-0.5 bg-gradient-to-r from-amber-600/60 via-amber-400/80 to-amber-600/60 pointer-events-none" />
 
           {/* Exhaust smoke - only when driving normally on home */}
           {isHome && !isDrivingToGarage && (
