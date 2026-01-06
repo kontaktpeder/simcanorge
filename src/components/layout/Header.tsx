@@ -49,52 +49,55 @@ function DriveHomeAnimation({
   const trackPointsRef = useRef<number[]>([]);
   const [tracks, setTracks] = useState<number[]>([]);
 
-  const DRIVE_HOME_DURATION = 1000; // ms
-  const TARGET_X = 170; // Fixed target position (under logo area)
+  const DRIVE_HOME_DURATION = 1100; // ms
+  const GARAGE_LEFT_SM = 120;
+  const GARAGE_LEFT_MD = 160;
 
   useEffect(() => {
-    // Show garage immediately
     setShowGarage(true);
-    
-    // Store initial position for tracks
+
     const initialX = startX;
-    
+    const isMd = window.matchMedia("(min-width: 768px)").matches;
+
+    // Aim for the middle of the garage opening
+    const targetX = (isMd ? GARAGE_LEFT_MD : GARAGE_LEFT_SM) + 25;
+    // Drive clearly up under the logo area
+    const targetY = isMd ? -140 : -115;
+
     const animate = (ts: number) => {
       if (!carRef.current) return;
       if (startRef.current === null) startRef.current = ts;
-      
+
       const elapsed = ts - startRef.current;
       const progress = Math.min(elapsed / DRIVE_HOME_DURATION, 1);
-      
+
       // Ease out cubic for smooth deceleration
       const eased = 1 - Math.pow(1 - progress, 3);
-      
-      // Drive from current position to target (left side under logo)
-      const currentX = initialX + (TARGET_X - initialX) * eased;
-      
+
+      const currentX = initialX + (targetX - initialX) * eased;
+      const currentY = 0 + (targetY - 0) * eased;
+
       // Fade out in last 15%
       const opacity = progress > 0.85 ? 1 - (progress - 0.85) / 0.15 : 1;
-      
-      // Car drives left (facing left with scaleX(-1))
-      carRef.current.style.transform = `translateX(${currentX}px) scaleX(-1)`;
+
+      carRef.current.style.transform = `translate3d(${currentX}px, ${currentY}px, 0) scaleX(-1)`;
       carRef.current.style.opacity = String(opacity);
-      
-      // Add tire track at intervals (every ~40px traveled)
-      const trackSpacing = 25;
+
+      // Add tire tracks at intervals
+      const trackSpacing = 28;
       const distanceTraveled = Math.abs(currentX - initialX);
       const numTracks = Math.floor(distanceTraveled / trackSpacing);
-      
+
       if (numTracks > trackPointsRef.current.length && progress < 0.9) {
-        const newTrackX = initialX - (trackPointsRef.current.length + 1) * trackSpacing * Math.sign(initialX - TARGET_X);
+        const dir = initialX > targetX ? -1 : 1;
+        const newTrackX = initialX + dir * (trackPointsRef.current.length + 1) * trackSpacing;
         trackPointsRef.current.push(newTrackX);
         setTracks([...trackPointsRef.current]);
       }
-      
-      if (progress < 1) {
-        requestAnimationFrame(animate);
-      }
+
+      if (progress < 1) requestAnimationFrame(animate);
     };
-    
+
     requestAnimationFrame(animate);
   }, [startX]);
 
@@ -128,7 +131,7 @@ function DriveHomeAnimation({
       <div 
         ref={garageRef}
         className={`absolute left-[120px] md:left-[160px] -top-[48px] md:-top-[58px] transition-opacity duration-300 ${showGarage ? 'opacity-100' : 'opacity-0'}`}
-        style={{ zIndex: 20 }}
+        style={{ zIndex: 60 }}
       >
         <div 
           className="relative px-5 py-3 rounded-t-lg overflow-hidden"
@@ -189,7 +192,7 @@ function DriveHomeAnimation({
       {/* The driving car */}
       <div 
         ref={carRef}
-        className="absolute bottom-[4px] md:bottom-[6px] pointer-events-none z-10"
+        className="absolute bottom-[4px] md:bottom-[6px] pointer-events-none z-50"
         style={{ transform: `translateX(${startX}px) scaleX(-1)`, opacity: 1 }}
       >
         <div className="relative">
@@ -532,7 +535,7 @@ export function Header() {
       {/* Animated car lane - only on home page OR during drive-to-garage animation */}
       {(isHome || isDrivingToGarage) && (
         <div 
-          className={`hidden sm:block relative w-full overflow-hidden transition-all duration-500 ease-out ${
+          className={`hidden sm:block relative w-full ${isDrivingToGarage ? 'overflow-visible' : 'overflow-hidden'} transition-all duration-500 ease-out ${
             roadFading ? 'h-0' : 'h-[30px] md:h-[45px]'
           }`}
           style={{
