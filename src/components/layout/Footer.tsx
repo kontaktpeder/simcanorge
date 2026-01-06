@@ -32,11 +32,14 @@ export function Footer() {
           {/* Contact */}
           <div className="text-center md:text-left">
             <h3 className="font-display text-lg md:text-xl mb-2 md:mb-3 text-metal">KONTAKT</h3>
-            <div className="flex flex-col gap-1.5 md:gap-2 text-sm md:text-base">
-              <a href="mailto:kontaktpeder@gmail.com" className="flex items-center justify-center md:justify-start gap-2 hover:text-white/80 transition-colors text-white/90">
+            <div className="flex flex-col gap-2 md:gap-3 text-sm md:text-base">
+              <Link 
+                to="/kontakt" 
+                className="inline-flex items-center justify-center gap-2 bg-accent text-accent-foreground px-4 py-2 md:px-5 md:py-2.5 rounded-full font-medium text-sm hover:opacity-90 transition-opacity"
+              >
                 <Mail className="w-4 h-4" />
-                kontaktpeder@gmail.com
-              </a>
+                Kontakt oss
+              </Link>
               <a href="https://facebook.com/groups/simcanorge" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center md:justify-start gap-2 hover:text-white/80 transition-colors text-white/90">
                 <Facebook className="w-4 h-4" />
                 Facebook-gruppen
