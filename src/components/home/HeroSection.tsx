@@ -77,6 +77,54 @@ export function HeroSection() {
               Din kilde til Simca, Talbot og Matra klassikere. Bildeler og historier fra entusiaster i Norge.
             </p>
             
+            {/* Featured Car - Månedens bil - MOBILE ONLY above CTA */}
+            <div ref={cardRef} className={`lg:hidden mb-6 transition-all duration-700 ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+              {/* Section Header */}
+              <div className="text-center mb-3">
+                <h2 className="font-display text-xl text-white flex items-center justify-center gap-2">
+                  <Star className="w-5 h-5 text-yellow-400 fill-yellow-400 drop-shadow-[0_0_6px_rgba(250,204,21,0.8)]" />
+                  Månedens bil
+                </h2>
+                <p className="font-serif text-xs text-white/50 mt-0.5">
+                  {new Date().toLocaleDateString('nb-NO', {
+                  month: 'long',
+                  year: 'numeric'
+                })}
+                </p>
+              </div>
+
+              {isLoading ? <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                  <Skeleton className="aspect-[16/10] w-full rounded-lg" />
+                  <div className="mt-3">
+                    <Skeleton className="h-5 w-3/4 mx-auto" />
+                    <Skeleton className="h-4 w-1/2 mx-auto mt-1.5" />
+                  </div>
+                </div> : featuredCar ? <Link to={`/biler/${featuredCar.slug}`} className="block bg-white/10 backdrop-blur-sm rounded-xl p-3 transition-all duration-300 group overflow-hidden">
+                  {/* Car image */}
+                  {getMainImage(featuredCar) ? <div className="overflow-hidden rounded-lg relative">
+                      <img src={getMainImage(featuredCar)!.image_url} alt={getMainImage(featuredCar)!.alt_text || featuredCar.title} className="w-full aspect-[16/10] object-cover group-hover:scale-105 transition-transform duration-500" />
+                    </div> : <div className="aspect-[16/10] bg-white/20 rounded-lg flex items-center justify-center">
+                      <Car className="w-16 h-16 opacity-50" />
+                    </div>}
+                  
+                  {/* Text content */}
+                  <div className="mt-3 text-center">
+                    <p className="font-display text-lg font-bold text-white">{featuredCar.title}</p>
+                    <p className="font-serif text-sm text-white/80 mt-0.5">
+                      {featuredCar.year && `${featuredCar.year} · `}{featuredCar.model}
+                    </p>
+                  </div>
+                </Link> : <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                  <div className="aspect-[16/10] bg-white/20 rounded-lg flex items-center justify-center">
+                    <div className="text-center">
+                      <Car className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                      <p className="font-display text-lg text-white/75">MÅNEDENS BIL</p>
+                      <p className="font-serif italic text-sm text-white/60">Kommer snart...</p>
+                    </div>
+                  </div>
+                </div>}
+            </div>
+            
             {/* Enhanced CTA buttons - smaller on mobile */}
             <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center lg:justify-start">
               <Link to="/biler" className="btn-enamel-red group">
@@ -90,8 +138,8 @@ export function HeroSection() {
             </div>
           </div>
 
-          {/* Featured Car - Månedens bil */}
-          <div ref={cardRef} className={`relative transition-all duration-700 ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+          {/* Featured Car - Månedens bil - DESKTOP ONLY */}
+          <div className={`hidden lg:block relative transition-all duration-700 ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
             {/* Section Header */}
             <div className="text-center mb-4 relative z-10">
               <h2 className="font-display text-2xl md:text-3xl text-white flex items-center justify-center gap-2">
@@ -159,9 +207,6 @@ export function HeroSection() {
                   </div>
                 </div>
               </div>}
-            
-            {/* Decorative badge - enhanced emblem style */}
-            
           </div>
         </div>
       </div>
