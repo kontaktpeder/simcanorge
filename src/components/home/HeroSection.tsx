@@ -24,8 +24,12 @@ interface FeaturedCar {
 
 export function HeroSection() {
   const {
-    ref: cardRef,
-    isInView
+    ref: mobileCardRef,
+    isInView: isMobileInView
+  } = useInView();
+  const {
+    ref: desktopCardRef,
+    isInView: isDesktopInView
   } = useInView();
   const {
     data: featuredCar,
@@ -78,7 +82,7 @@ export function HeroSection() {
             </p>
             
             {/* Featured Car - Månedens bil - MOBILE ONLY above CTA */}
-            <div ref={cardRef} className={`lg:hidden mb-6 transition-all duration-700 ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+            <div ref={mobileCardRef} className={`lg:hidden mb-6 transition-all duration-700 ${isMobileInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
               {/* Section Header */}
               <div className="text-center mb-3">
                 <h2 className="font-display text-xl text-white flex items-center justify-center gap-2">
@@ -139,7 +143,7 @@ export function HeroSection() {
           </div>
 
           {/* Featured Car - Månedens bil - DESKTOP ONLY */}
-          <div className={`hidden lg:block relative transition-all duration-700 ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+          <div ref={desktopCardRef} className={`hidden lg:block relative transition-all duration-700 ${isDesktopInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
             {/* Section Header */}
             <div className="text-center mb-4 relative z-10">
               <h2 className="font-display text-2xl md:text-3xl text-white flex items-center justify-center gap-2">
@@ -165,7 +169,7 @@ export function HeroSection() {
                 </div>
               </div> : featuredCar ? <Link to={`/biler/${featuredCar.slug}`} className="block featured-card-premium p-5 transition-all duration-300 group relative overflow-hidden z-10">
                 {/* Checkered flag background with wave animation */}
-                <div className={`absolute inset-0 pointer-events-none checkered-flag-wave z-[1] ${isInView ? 'animate-flag-fade-in' : 'opacity-0'}`} style={{
+                <div className={`absolute inset-0 pointer-events-none checkered-flag-wave z-[1] ${isDesktopInView ? 'animate-flag-fade-in' : 'opacity-0'}`} style={{
               backgroundImage: `url(${checkeredFlag})`,
               backgroundSize: '150%',
               backgroundPosition: 'top left',
