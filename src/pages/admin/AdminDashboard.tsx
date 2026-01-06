@@ -1,17 +1,18 @@
 import { useEffect, useState } from "react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { supabase } from "@/integrations/supabase/client";
-import { Car, Wrench, Inbox, FolderTree, FileText, Mail, Plus, Eye } from "lucide-react";
+import { Car, Wrench, Inbox, FolderTree, FileText, Mail } from "lucide-react";
 import { Link } from "react-router-dom";
+import simcaSwallow from "@/assets/simca-chrome-swallow.png";
 
 interface Stats {
   cars: number;
+  submissions: number;
+  unreadSubmissions: number;
   parts: number;
   categories: number;
   inquiries: number;
   unreadInquiries: number;
-  submissions: number;
-  unreadSubmissions: number;
   messages: number;
   unreadMessages: number;
 }
@@ -19,12 +20,12 @@ interface Stats {
 const AdminDashboard = () => {
   const [stats, setStats] = useState<Stats>({
     cars: 0,
+    submissions: 0,
+    unreadSubmissions: 0,
     parts: 0,
     categories: 0,
     inquiries: 0,
     unreadInquiries: 0,
-    submissions: 0,
-    unreadSubmissions: 0,
     messages: 0,
     unreadMessages: 0,
   });
@@ -35,34 +36,34 @@ const AdminDashboard = () => {
       try {
         const [
           carsRes,
+          submissionsRes,
+          unreadSubmissionsRes,
           partsRes,
           categoriesRes,
           inquiriesRes,
           unreadInquiriesRes,
-          submissionsRes,
-          unreadSubmissionsRes,
           messagesRes,
           unreadMessagesRes,
         ] = await Promise.all([
           supabase.from("cars").select("id", { count: "exact", head: true }),
+          supabase.from("car_submissions").select("id", { count: "exact", head: true }),
+          supabase.from("car_submissions").select("id", { count: "exact", head: true }).eq("read", false),
           supabase.from("parts").select("id", { count: "exact", head: true }),
           supabase.from("categories").select("id", { count: "exact", head: true }),
           supabase.from("inquiries").select("id", { count: "exact", head: true }),
           supabase.from("inquiries").select("id", { count: "exact", head: true }).eq("read", false),
-          supabase.from("car_submissions").select("id", { count: "exact", head: true }),
-          supabase.from("car_submissions").select("id", { count: "exact", head: true }).eq("read", false),
           supabase.from("messages").select("id", { count: "exact", head: true }),
           supabase.from("messages").select("id", { count: "exact", head: true }).eq("read", false),
         ]);
 
         setStats({
           cars: carsRes.count || 0,
+          submissions: submissionsRes.count || 0,
+          unreadSubmissions: unreadSubmissionsRes.count || 0,
           parts: partsRes.count || 0,
           categories: categoriesRes.count || 0,
           inquiries: inquiriesRes.count || 0,
           unreadInquiries: unreadInquiriesRes.count || 0,
-          submissions: submissionsRes.count || 0,
-          unreadSubmissions: unreadSubmissionsRes.count || 0,
           messages: messagesRes.count || 0,
           unreadMessages: unreadMessagesRes.count || 0,
         });
@@ -76,24 +77,27 @@ const AdminDashboard = () => {
     fetchStats();
   }, []);
 
-  const statCards = [
+  const menuItems = [
     {
       label: "Biler",
+      description: "Administrer bilhistorier",
       value: stats.cars,
       icon: Car,
       href: "/admin/biler",
       color: "bg-primary",
     },
     {
-      label: "Bil-innsendinger",
+      label: "Innsendinger",
+      description: "Nye biler fra brukere",
       value: stats.submissions,
-      badge: stats.unreadSubmissions > 0 ? stats.unreadSubmissions : undefined,
+      badge: stats.unreadSubmissions,
       icon: FileText,
       href: "/admin/innsendinger",
       color: "bg-amber-600",
     },
     {
       label: "Deler",
+      description: "Deler-katalogen",
       value: stats.parts,
       icon: Wrench,
       href: "/admin/deler",
@@ -101,6 +105,7 @@ const AdminDashboard = () => {
     },
     {
       label: "Kategorier",
+      description: "Organiser deler",
       value: stats.categories,
       icon: FolderTree,
       href: "/admin/kategorier",
@@ -108,123 +113,75 @@ const AdminDashboard = () => {
     },
     {
       label: "Forespørsler",
+      description: "Henvendelser om deler",
       value: stats.inquiries,
-      badge: stats.unreadInquiries > 0 ? stats.unreadInquiries : undefined,
+      badge: stats.unreadInquiries,
       icon: Inbox,
       href: "/admin/foresporsler",
       color: "bg-green-600",
     },
     {
       label: "Meldinger",
+      description: "Kontaktskjema",
       value: stats.messages,
-      badge: stats.unreadMessages > 0 ? stats.unreadMessages : undefined,
+      badge: stats.unreadMessages,
       icon: Mail,
       href: "/admin/meldinger",
       color: "bg-blue-600",
     },
   ];
 
-  const quickLinks = [
-    {
-      label: "Legg til ny bil",
-      href: "/admin/biler",
-      icon: Car,
-      iconColor: "text-primary",
-    },
-    {
-      label: "Se bil-innsendinger",
-      href: "/admin/innsendinger",
-      icon: FileText,
-      iconColor: "text-amber-600",
-      badge: stats.unreadSubmissions,
-    },
-    {
-      label: "Legg til ny del",
-      href: "/admin/deler",
-      icon: Wrench,
-      iconColor: "text-accent",
-    },
-    {
-      label: "Se forespørsler",
-      href: "/admin/foresporsler",
-      icon: Inbox,
-      iconColor: "text-green-600",
-      badge: stats.unreadInquiries,
-    },
-    {
-      label: "Se meldinger",
-      href: "/admin/meldinger",
-      icon: Mail,
-      iconColor: "text-blue-600",
-      badge: stats.unreadMessages,
-    },
-  ];
+  const totalUnread = stats.unreadSubmissions + stats.unreadInquiries + stats.unreadMessages;
 
   return (
-    <AdminLayout title="DASHBOARD">
-      {/* Stats Grid - responsive */}
-      <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 mb-6 md:mb-8">
-        {statCards.map((card) => (
-          <Link
-            key={card.label}
-            to={card.href}
-            className="bg-card border border-border rounded-xl p-4 md:p-5 hover:shadow-lg transition-shadow relative"
-          >
-            <div className={`w-10 h-10 ${card.color} text-white rounded-lg flex items-center justify-center mb-3`}>
-              <card.icon className="w-5 h-5" />
-            </div>
-            <p className="text-muted-foreground text-xs md:text-sm font-medium">{card.label}</p>
-            <p className="text-2xl md:text-3xl font-display">
-              {isLoading ? "..." : card.value}
+    <AdminLayout title="KONTROLLPANEL">
+      {/* Welcome header with swallow */}
+      <div className="bg-card border border-border rounded-xl p-6 mb-6 flex items-center gap-6">
+        <img 
+          src={simcaSwallow} 
+          alt="Simca svale" 
+          className="w-16 h-16 object-contain opacity-80"
+        />
+        <div>
+          <h1 className="font-display text-2xl md:text-3xl">Velkommen til Simca Norge</h1>
+          {totalUnread > 0 ? (
+            <p className="text-muted-foreground">
+              Du har <span className="text-accent font-semibold">{totalUnread} uleste</span> henvendelser
             </p>
-            {card.badge && (
-              <span className="absolute top-2 right-2 bg-accent text-accent-foreground px-1.5 py-0.5 text-xs font-medium rounded">
-                {card.badge} nye
-              </span>
-            )}
-          </Link>
-        ))}
+          ) : (
+            <p className="text-muted-foreground">Alt er i orden – ingen nye henvendelser</p>
+          )}
+        </div>
       </div>
 
-      {/* Quick Links - stack on mobile */}
-      <div className="grid lg:grid-cols-2 gap-4 md:gap-6">
-        <div className="bg-card border border-border rounded-xl p-4 md:p-6">
-          <h2 className="font-display text-lg md:text-xl mb-3 md:mb-4">HURTIGLENKER</h2>
-          <div className="space-y-2">
-            {quickLinks.map((link) => (
-              <Link
-                key={link.label}
-                to={link.href}
-                className="flex items-center justify-between p-3 bg-muted/50 hover:bg-muted rounded-lg transition-colors"
-              >
-                <div className="flex items-center gap-3">
-                  <link.icon className={`w-5 h-5 ${link.iconColor}`} />
-                  <span className="text-sm md:text-base">{link.label}</span>
-                </div>
-                {link.badge && link.badge > 0 && (
-                  <span className="bg-accent text-accent-foreground px-2 py-0.5 text-xs font-medium rounded">
-                    {link.badge}
-                  </span>
-                )}
-              </Link>
-            ))}
-          </div>
-        </div>
-
-        <div className="bg-card border border-border rounded-xl p-4 md:p-6">
-          <h2 className="font-display text-lg md:text-xl mb-3 md:mb-4">VELKOMMEN!</h2>
-          <p className="text-muted-foreground text-sm md:text-base mb-3">
-            Her kan du administrere alt innhold på Simca Norge.
-          </p>
-          <ul className="space-y-1.5 text-xs md:text-sm">
-            <li>🚗 <strong>Biler:</strong> Legg til og rediger bilhistorier</li>
-            <li>📝 <strong>Innsendinger:</strong> Godkjenn brukerinnsendte biler</li>
-            <li>🔧 <strong>Deler:</strong> Administrer deler-katalogen</li>
-            <li>📁 <strong>Kategorier:</strong> Organiser deler</li>
-            <li>📬 <strong>Forespørsler:</strong> Henvendelser om deler</li>
-            <li>✉️ <strong>Meldinger:</strong> Kontakt-skjema henvendelser</li>
-          </ul>
-        </div>
+      {/* Simple menu grid */}
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
+        {menuItems.map((item) => (
+          <Link
+            key={item.label}
+            to={item.href}
+            className="bg-card border border-border rounded-xl p-4 md:p-5 hover:border-primary/50 hover:shadow-lg transition-all relative group"
+          >
+            {/* Badge */}
+            {item.badge && item.badge > 0 && (
+              <span className="absolute -top-2 -right-2 bg-accent text-accent-foreground w-6 h-6 flex items-center justify-center text-xs font-bold rounded-full">
+                {item.badge}
+              </span>
+            )}
+            
+            {/* Icon */}
+            <div className={`w-10 h-10 ${item.color} text-white rounded-lg flex items-center justify-center mb-3 group-hover:scale-110 transition-transform`}>
+              <item.icon className="w-5 h-5" />
+            </div>
+            
+            {/* Label & count */}
+            <p className="font-display text-base md:text-lg">{item.label}</p>
+            <p className="text-muted-foreground text-xs hidden md:block">{item.description}</p>
+            <p className="text-2xl font-display text-primary mt-1">
+              {isLoading ? "–" : item.value}
+            </p>
+          </Link>
+        ))}
       </div>
     </AdminLayout>
   );
