@@ -528,6 +528,100 @@ export function Header() {
         )}
       </div>
 
+      {/* Animated car lane - only on home page OR during drive-to-garage animation */}
+      {(isHome || isDrivingToGarage) && (
+        <div 
+          className={`hidden sm:block relative w-full ${isDrivingToGarage ? 'overflow-visible' : 'overflow-hidden'} transition-all duration-500 ease-out ${
+            roadFading ? 'h-0' : 'h-[30px] md:h-[45px]'
+          }`}
+          style={{
+            background: 'linear-gradient(to bottom, #3a3a3a, #2a2a2a 30%, #1f1f1f 70%, #151515)',
+            boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.5), inset 0 -1px 0 rgba(255,255,255,0.05)'
+          }}
+        >
+          {/* Asphalt texture overlay */}
+          <div 
+            className="absolute inset-0 opacity-30 pointer-events-none"
+            style={{
+              backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 100 100\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noise\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.8\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noise)\'/%3E%3C/svg%3E")'
+            }}
+          />
+          
+          {/* Center road stripe - yellow dashed line */}
+          <div className="absolute top-1/2 -translate-y-1/2 left-0 right-0 flex justify-center gap-6 pointer-events-none">
+            {[...Array(40)].map((_, i) => (
+              <div key={i} className="w-6 h-1 bg-yellow-400/90 rounded-sm flex-shrink-0" />
+            ))}
+          </div>
+          
+          {/* Road edges - white lines */}
+          <div className="absolute top-1 left-0 right-0 h-0.5 bg-white/50 pointer-events-none" />
+          <div className="absolute bottom-1 left-0 right-0 h-0.5 bg-white/50 pointer-events-none" />
+
+          {/* Exhaust smoke - only when driving normally on home */}
+          {isHome && !isDrivingToGarage && (
+            <div
+              ref={smokeWrapRef}
+              className="absolute bottom-[6px] md:bottom-[10px] pointer-events-none"
+              style={{ transform: `translateX(${CAR_START_X}px)` }}
+            >
+              <div className="relative">
+                <div className="absolute left-full ml-2 top-1 flex gap-1">
+                  <div className={`w-2 h-2 md:w-3 md:h-3 bg-gray-400/50 rounded-full animate-smoke-1 blur-[1px] ${isSpeedBoost ? 'scale-125' : ''}`} />
+                  <div className={`w-1.5 h-1.5 md:w-2 md:h-2 bg-gray-400/40 rounded-full animate-smoke-2 blur-[1px] ml-1 ${isSpeedBoost ? 'scale-125' : ''}`} />
+                  <div className={`w-2.5 h-2.5 md:w-3.5 md:h-3.5 bg-gray-400/30 rounded-full animate-smoke-3 blur-[2px] ml-1 ${isSpeedBoost ? 'scale-125' : ''}`} />
+                  {isSpeedBoost && (
+                    <>
+                      <div className="w-2 h-2 md:w-3 md:h-3 bg-gray-300/40 rounded-full animate-smoke-4 blur-[1px] ml-1" />
+                      <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-gray-300/30 rounded-full animate-smoke-1 blur-[1px] ml-0.5" />
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* The Simca car - driving normally on home */}
+          {isHome && !isDrivingToGarage && (
+            <div
+              ref={carWrapRef}
+              className="absolute bottom-[4px] md:bottom-[6px] cursor-pointer"
+              style={{ transform: `translateX(${CAR_START_X}px)`, pointerEvents: 'auto' }}
+              onClick={handleCarClick}
+            >
+              <div className="animate-car-bump-subtle relative">
+                <img 
+                  src={simcaRallye} 
+                  alt="Simca Rallye" 
+                  className="h-[22px] md:h-[34px] w-auto object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]"
+                />
+                {/* Wheel spin effect */}
+                <div className="absolute bottom-0.5 left-[18%] w-2 h-2 md:w-2.5 md:h-2.5 rounded-full border border-dashed border-gray-600/40 animate-wheel-spin" />
+                <div className="absolute bottom-0.5 right-[22%] w-2 h-2 md:w-2.5 md:h-2.5 rounded-full border border-dashed border-gray-600/40 animate-wheel-spin" />
+                
+                {/* Dust clouds behind wheels */}
+                <div className="absolute -bottom-0.5 left-[10%] flex gap-0.5">
+                  <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-amber-200/40 rounded-full animate-dust-1 blur-[1px]" />
+                  <div className="w-1 h-1 md:w-1.5 md:h-1.5 bg-amber-200/30 rounded-full animate-dust-2 blur-[1px]" />
+                </div>
+                <div className="absolute -bottom-0.5 right-[15%] flex gap-0.5">
+                  <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-amber-200/40 rounded-full animate-dust-3 blur-[1px]" />
+                  <div className="w-1 h-1 md:w-1.5 md:h-1.5 bg-amber-200/30 rounded-full animate-dust-1 blur-[1px]" />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Car driving to garage animation - JS controlled from current position */}
+          {isDrivingToGarage && (
+            <DriveHomeAnimation 
+              startX={driveHomeStartXRef.current ?? window.innerWidth * 0.5} 
+              simcaRallye={simcaRallye}
+              garageRef={garageAnimRef}
+            />
+          )}
+        </div>
+      )}
     </header>
   );
 }
