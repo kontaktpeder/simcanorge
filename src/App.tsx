@@ -18,6 +18,7 @@ import Kontakt from "./pages/Kontakt";
 import AdminLogin from "./pages/admin/AdminLogin";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminBiler from "./pages/admin/AdminBiler";
+import AdminBilProfil from "./pages/admin/AdminBilProfil";
 import AdminDeler from "./pages/admin/AdminDeler";
 import AdminKategorier from "./pages/admin/AdminKategorier";
 import AdminForesporsler from "./pages/admin/AdminForesporsler";
@@ -54,6 +55,7 @@ const App = () => (
               <Route path="/admin/login" element={<AdminLogin />} />
               <Route path="/admin/dashboard" element={<AdminDashboard />} />
               <Route path="/admin/biler" element={<AdminBiler />} />
+              <Route path="/admin/biler/:carId" element={<AdminBilProfil />} />
               <Route path="/admin/deler" element={<AdminDeler />} />
               <Route path="/admin/kategorier" element={<AdminKategorier />} />
               <Route path="/admin/foresporsler" element={<AdminForesporsler />} />
