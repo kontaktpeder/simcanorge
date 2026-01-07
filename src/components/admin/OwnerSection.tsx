@@ -24,16 +24,24 @@ interface Invitation {
 interface OwnerSectionProps {
   carId: string;
   isApproved: boolean;
+  submittedEmail?: string | null;
 }
 
-export function OwnerSection({ carId, isApproved }: OwnerSectionProps) {
-  const [ownerEmail, setOwnerEmail] = useState('');
+export function OwnerSection({ carId, isApproved, submittedEmail }: OwnerSectionProps) {
+  const [ownerEmail, setOwnerEmail] = useState(submittedEmail || '');
   const [owners, setOwners] = useState<Owner[]>([]);
   const [invitations, setInvitations] = useState<Invitation[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [copiedLink, setCopiedLink] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const { user } = useAuth();
+
+  // Pre-fill email from submitted email when it changes
+  useEffect(() => {
+    if (submittedEmail && !ownerEmail) {
+      setOwnerEmail(submittedEmail);
+    }
+  }, [submittedEmail]);
 
   // Fetch owners
   useEffect(() => {
@@ -295,6 +303,16 @@ export function OwnerSection({ carId, isApproved }: OwnerSectionProps) {
                   }
                 }}
               />
+              {submittedEmail && ownerEmail !== submittedEmail && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setOwnerEmail(submittedEmail)}
+                  className="text-xs whitespace-nowrap"
+                >
+                  Bruk innsendt
+                </Button>
+              )}
               <Button onClick={generateInvitation} disabled={isGenerating || !ownerEmail}>
                 {isGenerating ? 'Genererer...' : 'Generer invitasjon'}
               </Button>

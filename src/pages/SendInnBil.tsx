@@ -249,6 +249,24 @@ export default function SendInnBil() {
 
       // Generate title from brand, model and year
       const generatedTitle = generateCarTitle(result.data.brand, result.data.car_model, result.data.car_year);
+      // Create submission payload for archival
+      const submissionPayload = {
+        submitted_at: new Date().toISOString(),
+        owner_name: result.data.owner_name,
+        email: result.data.email,
+        phone: result.data.phone || null,
+        brand: result.data.brand,
+        car_model: result.data.car_model,
+        variant: result.data.variant || null,
+        body_type: result.data.body_type || null,
+        car_year: result.data.car_year,
+        category: result.data.category,
+        tags: tagsArray,
+        car_story: result.data.car_story || null,
+        allow_edits: allowEdits === true,
+        image_count: imageUrls.length,
+      };
+
       const {
         error
       } = await supabase.from("car_submissions").insert({

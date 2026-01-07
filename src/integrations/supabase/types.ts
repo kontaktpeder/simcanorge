@@ -211,8 +211,11 @@ export type Database = {
           source: Database["public"]["Enums"]["car_source"]
           status: Database["public"]["Enums"]["car_status"]
           story: string | null
+          submission_payload: Json | null
           submitted_by_email: string | null
           submitted_by_name: string | null
+          submitted_by_phone: string | null
+          submitted_notes: string | null
           tags: string[] | null
           title: string
           updated_at: string
@@ -235,8 +238,11 @@ export type Database = {
           source?: Database["public"]["Enums"]["car_source"]
           status?: Database["public"]["Enums"]["car_status"]
           story?: string | null
+          submission_payload?: Json | null
           submitted_by_email?: string | null
           submitted_by_name?: string | null
+          submitted_by_phone?: string | null
+          submitted_notes?: string | null
           tags?: string[] | null
           title: string
           updated_at?: string
@@ -259,8 +265,11 @@ export type Database = {
           source?: Database["public"]["Enums"]["car_source"]
           status?: Database["public"]["Enums"]["car_status"]
           story?: string | null
+          submission_payload?: Json | null
           submitted_by_email?: string | null
           submitted_by_name?: string | null
+          submitted_by_phone?: string | null
+          submitted_notes?: string | null
           tags?: string[] | null
           title?: string
           updated_at?: string
