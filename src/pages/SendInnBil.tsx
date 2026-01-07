@@ -354,10 +354,10 @@ export default function SendInnBil() {
       }
 
       setSubmitted(true);
-      toast({
-        title: "Takk for innsendingen!",
-        description: "Bilen din er registrert og vil bli gjennomgått av admin."
-      });
+    toast({
+      title: "Takk for innsendingen!",
+      description: "Vi gleder oss til å se hva du har sendt inn! Du vil få tilsendt en lenke på e-post, som lar deg logge inn i ditt eget bilrom, og redigere selv hva folk får se av bilen din."
+    });
     } catch (error: any) {
       console.error("Submission error:", error);
       toast({
