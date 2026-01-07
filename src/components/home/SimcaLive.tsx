@@ -3,10 +3,10 @@ import { supabase } from "@/integrations/supabase/client";
 
 // Generate or retrieve session ID
 const getSessionId = (): string => {
-  let sessionId = sessionStorage.getItem("simca_session_id");
+  let sessionId = localStorage.getItem("simca_session_id");
   if (!sessionId) {
     sessionId = crypto.randomUUID();
-    sessionStorage.setItem("simca_session_id", sessionId);
+    localStorage.setItem("simca_session_id", sessionId);
   }
   return sessionId;
 };
@@ -94,7 +94,7 @@ export const SimcaLive = ({ isHeaderMode = false }: SimcaLiveProps) => {
     };
 
     trackSession();
-    const interval = setInterval(trackSession, 30000);
+    const interval = setInterval(trackSession, 60000);
     return () => clearInterval(interval);
   }, []);
 
@@ -102,11 +102,11 @@ export const SimcaLive = ({ isHeaderMode = false }: SimcaLiveProps) => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const threeMinutesAgo = new Date(Date.now() - 3 * 60 * 1000).toISOString();
+        const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000).toISOString();
         const { count: activeCount, error: activeError } = await supabase
           .from("page_views")
           .select("*", { count: "exact", head: true })
-          .gte("last_seen_at", threeMinutesAgo);
+          .gte("last_seen_at", tenMinutesAgo);
 
         if (activeError) throw activeError;
 
@@ -130,7 +130,7 @@ export const SimcaLive = ({ isHeaderMode = false }: SimcaLiveProps) => {
     };
 
     fetchStats();
-    const interval = setInterval(fetchStats, 30000);
+    const interval = setInterval(fetchStats, 60000);
     return () => clearInterval(interval);
   }, []);
 
@@ -139,9 +139,9 @@ export const SimcaLive = ({ isHeaderMode = false }: SimcaLiveProps) => {
     if (hasError) return "Oppdateres…";
     if (!isLoaded) return "Oppdateres…";
     if (displayActiveUsers <= 2 && displayActiveUsers > 0) {
-      return "Noen få entusiaster er inne nå";
+      return "Få entusiaster aktive nå";
     }
-    return `${displayActiveUsers} entusiaster på siden nå`;
+    return `${displayActiveUsers} aktive siste 10 min`;
   };
 
   const getTotalVisitsText = () => {
