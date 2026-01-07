@@ -30,8 +30,8 @@ export const CAR_BRANDS: CarBrand[] = [
       // 1100-serien
       { name: "1100", yearFrom: 1967, yearTo: 1985, variants: ["Standard", "GL", "GLS", "Special", "TI", "ES"] },
       { name: "1100 TI", yearFrom: 1973, yearTo: 1978 },
-      { name: "1100 VF1", yearFrom: 1968, yearTo: 1981, variants: ["Standard", "Fourgonnette", "Break"] },
-      { name: "1100 VF2", yearFrom: 1968, yearTo: 1981, variants: ["Standard", "Fourgonnette", "Break"] },
+      { name: "1100 VF1", yearFrom: 1972, yearTo: 1985, variants: ["Standard", "Fourgonnette", "Break"] },
+      { name: "1100 VF2", yearFrom: 1972, yearTo: 1985, variants: ["Standard", "Fourgonnette", "Break"] },
       { name: "1100 VF Pick-Up", yearFrom: 1972, yearTo: 1978 },
       { name: "1100 Pickup / Van", yearFrom: 1967, yearTo: 1981 },
       // 1200 S Coupé
