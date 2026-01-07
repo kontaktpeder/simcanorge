@@ -13,7 +13,7 @@ import { z } from "zod";
 import { CAR_BRANDS, getModelsForBrand, getYearsForModel, getVariantsForModel, generateCarTitle } from "@/data/carBrands";
 import { CAR_BODY_TYPES } from "@/data/carBodyTypes";
 import { FormFieldWithTooltip } from "@/components/ui/form-field-with-tooltip";
-import { compressImages, generateImageId, getSubmissionImagePath, formatFileSize, type CompressionProgress } from "@/lib/imageCompression";
+import { compressImages, generateImageId, getCarImagePath, formatFileSize, type CompressionProgress } from "@/lib/imageCompression";
 import { ImageUploadProgress } from "@/components/ui/image-upload-progress";
 const CATEGORIES = [{
   id: "registrert",
@@ -42,6 +42,16 @@ const submissionSchema = z.object({
   car_story: z.string().trim().max(5000, "Historien kan ikke være mer enn 5000 tegn").optional().or(z.literal(""))
 });
 const MIN_SUBMIT_INTERVAL = 2000; // 2 sekunder mellom submits
+
+const generateSlug = (title: string) => {
+  return title
+    .toLowerCase()
+    .replace(/æ/g, "ae")
+    .replace(/ø/g, "o")
+    .replace(/å/g, "a")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+};
 
 export default function SendInnBil() {
   const {
@@ -155,9 +165,8 @@ export default function SendInnBil() {
     setImages(prev => prev.filter((_, i) => i !== index));
     setImagePreviews(prev => prev.filter((_, i) => i !== index));
   };
-  const uploadImages = async (): Promise<string[]> => {
+  const uploadImages = async (carId: string): Promise<string[]> => {
     const uploadedUrls: string[] = [];
-    const submissionId = generateImageId();
 
     // Step 1: Compress all images
     const compressedResults = await compressImages(images, progress => {
@@ -173,29 +182,23 @@ export default function SendInnBil() {
       reduction: Math.round((1 - totalCompressed / totalOriginal) * 100)
     });
 
-    // Step 2: Upload compressed images
+    // Step 2: Upload compressed images to cars/[carId]/ path
     for (let i = 0; i < compressedResults.length; i++) {
-      const {
-        file
-      } = compressedResults[i];
+      const { file } = compressedResults[i];
       const imageId = generateImageId();
-      const filePath = getSubmissionImagePath(submissionId, imageId);
+      const filePath = getCarImagePath(carId, imageId);
       setUploadProgress({
         stage: 'uploading',
         current: i + 1,
         total: compressedResults.length,
         percentage: Math.round((i + 1) / compressedResults.length * 100)
       });
-      const {
-        error: uploadError
-      } = await supabase.storage.from('simca-images').upload(filePath, file);
+      const { error: uploadError } = await supabase.storage.from('simca-images').upload(filePath, file);
       if (uploadError) {
         console.error('Upload error:', uploadError);
         continue;
       }
-      const {
-        data: urlData
-      } = supabase.storage.from('simca-images').getPublicUrl(filePath);
+      const { data: urlData } = supabase.storage.from('simca-images').getPublicUrl(filePath);
       uploadedUrls.push(urlData.publicUrl);
     }
     return uploadedUrls;
@@ -239,16 +242,13 @@ export default function SendInnBil() {
     setUploadProgress(null);
     setCompressionStats(null);
     try {
-      // Upload images first
-      let imageUrls: string[] = [];
-      if (images.length > 0) {
-        imageUrls = await uploadImages();
-      }
       // Parse tags into array
       const tagsArray = result.data.tags ? result.data.tags.split(",").map(t => t.trim()).filter(t => t.length > 0) : [];
 
-      // Generate title from brand, model and year
+      // Generate title and slug from brand, model and year
       const generatedTitle = generateCarTitle(result.data.brand, result.data.car_model, result.data.car_year);
+      const baseSlug = generateSlug(generatedTitle);
+      
       // Create submission payload for archival
       const submissionPayload = {
         submitted_at: new Date().toISOString(),
@@ -264,38 +264,105 @@ export default function SendInnBil() {
         tags: tagsArray,
         car_story: result.data.car_story || null,
         allow_edits: allowEdits === true,
-        image_count: imageUrls.length,
+        image_count: images.length,
       };
 
-      const {
-        error
-      } = await supabase.from("car_submissions").insert({
-        title: generatedTitle,
-        brand: result.data.brand,
-        owner_name: result.data.owner_name,
-        email: result.data.email,
-        phone: result.data.phone || null,
-        car_model: result.data.car_model,
-        variant: result.data.variant || null,
-        body_type: result.data.body_type || null,
-        car_year: result.data.car_year,
-        category: result.data.category,
-        tags: tagsArray,
-        car_story: result.data.car_story || null,
-        images: imageUrls,
-        allow_edits: allowEdits === true
-      });
-      if (error) throw error;
+      // Create car directly in cars table with status='submitted'
+      let newCar: { id: string } | null = null;
+      
+      const { data: carData, error: carError } = await supabase
+        .from("cars")
+        .insert({
+          title: generatedTitle,
+          slug: baseSlug,
+          brand: result.data.brand,
+          model: result.data.car_model,
+          variant: result.data.variant || null,
+          body_type: result.data.body_type || null,
+          year: result.data.car_year,
+          category: result.data.category,
+          tags: tagsArray,
+          story: result.data.car_story || null,
+          status: 'submitted' as const,
+          published_at: null,
+          source: 'submission' as const,
+          submitted_by_email: result.data.email,
+          submitted_by_name: result.data.owner_name,
+          submitted_by_phone: result.data.phone || null,
+          submitted_notes: null,
+          submission_payload: submissionPayload,
+          approved_at: null,
+          approved_by: null,
+        })
+        .select('id')
+        .single();
+
+      if (carError) {
+        // Handle slug collision
+        if (carError.code === '23505') {
+          const uniqueSlug = `${baseSlug}-${Date.now()}`;
+          const { data: retryData, error: retryError } = await supabase
+            .from("cars")
+            .insert({
+              title: generatedTitle,
+              slug: uniqueSlug,
+              brand: result.data.brand,
+              model: result.data.car_model,
+              variant: result.data.variant || null,
+              body_type: result.data.body_type || null,
+              year: result.data.car_year,
+              category: result.data.category,
+              tags: tagsArray,
+              story: result.data.car_story || null,
+              status: 'submitted' as const,
+              published_at: null,
+              source: 'submission' as const,
+              submitted_by_email: result.data.email,
+              submitted_by_name: result.data.owner_name,
+              submitted_by_phone: result.data.phone || null,
+              submitted_notes: null,
+              submission_payload: submissionPayload,
+              approved_at: null,
+              approved_by: null,
+            })
+            .select('id')
+            .single();
+          
+          if (retryError) throw retryError;
+          newCar = retryData;
+        } else {
+          throw carError;
+        }
+      } else {
+        newCar = carData;
+      }
+
+      if (!newCar) throw new Error('Bil kunne ikke opprettes');
+
+      // Upload images to car_images after car is created
+      if (images.length > 0) {
+        const carImageUrls = await uploadImages(newCar.id);
+        
+        // Create car_images records
+        for (let i = 0; i < carImageUrls.length; i++) {
+          await supabase.from("car_images").insert({
+            car_id: newCar.id,
+            image_url: carImageUrls[i],
+            sort_order: i,
+          });
+        }
+      }
+
       setSubmitted(true);
       toast({
         title: "Takk for innsendingen!",
-        description: "Vi ser gjennom historien din og tar kontakt."
+        description: "Bilen din er registrert og vil bli gjennomgått av admin."
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Submission error:", error);
       toast({
         title: "Noe gikk galt",
-        description: "Prøv igjen senere.",
+        description: error.message || "Prøv igjen senere.",
         variant: "destructive"
       });
     } finally {
