@@ -26,6 +26,7 @@ import AdminInnsendinger from "./pages/admin/AdminInnsendinger";
 import AdminMeldinger from "./pages/admin/AdminMeldinger";
 import SendInnBil from "./pages/SendInnBil";
 import Personvern from "./pages/Personvern";
+import AcceptInvitation from "./pages/AcceptInvitation";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -51,6 +52,7 @@ const App = () => (
               <Route path="/send-inn" element={<SendInnBil />} />
               <Route path="/kontakt" element={<Kontakt />} />
               <Route path="/personvern" element={<Personvern />} />
+              <Route path="/accept-invitation" element={<AcceptInvitation />} />
               {/* Admin routes */}
               <Route path="/admin/login" element={<AdminLogin />} />
               <Route path="/admin/dashboard" element={<AdminDashboard />} />

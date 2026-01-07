@@ -8,6 +8,7 @@ import {
   Pencil, X, Upload, Car, ExternalLink, Send, Calendar,
   User, Mail, ImagePlus
 } from "lucide-react";
+import { OwnerSection } from "@/components/admin/OwnerSection";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -725,6 +726,9 @@ const AdminBilProfil = () => {
             </div>
           )}
         </div>
+
+        {/* Eiere & Tilgang */}
+        <OwnerSection carId={car.id} />
 
         {/* Forhåndsvisning */}
         {status === 'published' && car.slug && (
