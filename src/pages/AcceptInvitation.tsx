@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useSearchParams, useNavigate, Link } from 'react-router-dom';
+import { useSearchParams, useNavigate, Link, useParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { Layout } from '@/components/layout/Layout';
@@ -10,6 +10,7 @@ import { toast } from 'sonner';
 
 export default function AcceptInvitation() {
   const [searchParams] = useSearchParams();
+  const { token: pathToken } = useParams<{ token: string }>();
   const navigate = useNavigate();
   const { user, isLoading: authLoading } = useAuth();
   const [isProcessing, setIsProcessing] = useState(true);
@@ -25,7 +26,8 @@ export default function AcceptInvitation() {
   const [password, setPassword] = useState('');
   const [isAuthLoading, setIsAuthLoading] = useState(false);
 
-  const token = searchParams.get('token');
+  // Support both /i/:token and /accept-invitation?token=xxx
+  const token = pathToken || searchParams.get('token');
 
   // Validate invitation on load
   useEffect(() => {
@@ -149,7 +151,7 @@ export default function AcceptInvitation() {
           email,
           password,
           options: {
-            emailRedirectTo: `${window.location.origin}/accept-invitation?token=${token}`
+            emailRedirectTo: `${window.location.origin}/i/${token}`
           }
         });
 

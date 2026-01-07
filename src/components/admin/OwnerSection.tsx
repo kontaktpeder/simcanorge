@@ -117,7 +117,7 @@ export function OwnerSection({ carId, isApproved }: OwnerSectionProps) {
 
       if (existingInvitation) {
         // Use existing invitation
-        const magicLink = `${window.location.origin}/accept-invitation?token=${existingInvitation.token}`;
+        const magicLink = `${window.location.origin}/i/${existingInvitation.token}`;
         await navigator.clipboard.writeText(magicLink);
         setCopiedLink(existingInvitation.token);
         setTimeout(() => setCopiedLink(null), 3000);
@@ -131,8 +131,8 @@ export function OwnerSection({ carId, isApproved }: OwnerSectionProps) {
         return;
       }
 
-      // Generate token
-      const token = crypto.randomUUID();
+      // Generate short, readable token (8 chars)
+      const token = crypto.randomUUID().replace(/-/g, '').substring(0, 8);
       const expiresAt = new Date();
       expiresAt.setDate(expiresAt.getDate() + 7); // 7 days
 
@@ -156,8 +156,8 @@ export function OwnerSection({ carId, isApproved }: OwnerSectionProps) {
       // Update state
       setInvitations(prev => [data, ...prev]);
       
-      // Generate magic link
-      const magicLink = `${window.location.origin}/accept-invitation?token=${token}`;
+      // Generate short magic link
+      const magicLink = `${window.location.origin}/i/${token}`;
       
       // Copy to clipboard
       await navigator.clipboard.writeText(magicLink);
@@ -177,7 +177,7 @@ export function OwnerSection({ carId, isApproved }: OwnerSectionProps) {
 
   // Copy link
   const copyLink = async (token: string) => {
-    const magicLink = `${window.location.origin}/accept-invitation?token=${token}`;
+    const magicLink = `${window.location.origin}/i/${token}`;
     await navigator.clipboard.writeText(magicLink);
     setCopiedLink(token);
     setTimeout(() => setCopiedLink(null), 3000);
@@ -312,7 +312,7 @@ export function OwnerSection({ carId, isApproved }: OwnerSectionProps) {
           <p className="text-sm font-medium mb-2">Aktive invitasjoner:</p>
           <div className="space-y-3">
             {invitations.map(invitation => {
-              const magicLink = `${window.location.origin}/accept-invitation?token=${invitation.token}`;
+              const magicLink = `${window.location.origin}/i/${invitation.token}`;
               const isCopied = copiedLink === invitation.token;
               const daysLeft = getDaysUntilExpiry(invitation.expires_at);
               

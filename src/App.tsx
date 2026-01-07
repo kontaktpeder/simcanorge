@@ -57,6 +57,7 @@ const App = () => (
               <Route path="/kontakt" element={<Kontakt />} />
               <Route path="/personvern" element={<Personvern />} />
               <Route path="/accept-invitation" element={<AcceptInvitation />} />
+              <Route path="/i/:token" element={<AcceptInvitation />} />
               <Route path="/login" element={<Login />} />
               {/* Dashboard routes for car owners */}
               <Route path="/dashboard" element={<Dashboard />} />
