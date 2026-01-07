@@ -18,6 +18,8 @@ const inquirySchema = z.object({
   message: z.string().trim().max(1000).optional(),
 });
 
+const MIN_SUBMIT_INTERVAL = 2000; // 2 sekunder mellom submits
+
 const Foresporsel = () => {
   const { items, removeItem, clearCart } = useCart();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -31,6 +33,7 @@ const Foresporsel = () => {
     message: "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [lastSubmitTime, setLastSubmitTime] = useState<number>(0);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -46,10 +49,21 @@ const Foresporsel = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Rate limiting check
+    const now = Date.now();
+    if (now - lastSubmitTime < MIN_SUBMIT_INTERVAL) {
+      toast.error("Vent litt", {
+        description: "Vennligst vent før du sender inn igjen.",
+      });
+      return;
+    }
+
     if (items.length === 0) {
       toast.error("Du må legge til minst én del i verktøykassen");
       return;
     }
+
+    setLastSubmitTime(now);
 
     // Validate form
     const validationData = {
