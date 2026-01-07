@@ -3,6 +3,8 @@ import { AdminLayout } from "@/components/admin/AdminLayout";
 import { supabase } from "@/integrations/supabase/client";
 import { Plus, Pencil, Trash2, Eye, EyeOff, X, Upload, Wrench } from "lucide-react";
 import { toast } from "sonner";
+import { compressImage, generateImageId, getPartImagePath, formatFileSize, type CompressionProgress } from "@/lib/imageCompression";
+import { ImageUploadProgress } from "@/components/ui/image-upload-progress";
 
 interface Category {
   id: string;
@@ -30,6 +32,8 @@ const AdminDeler = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [uploadProgress, setUploadProgress] = useState<CompressionProgress | null>(null);
+  const [compressionStats, setCompressionStats] = useState<{ originalSize: number; compressedSize: number; reduction: number } | null>(null);
   
   const [formData, setFormData] = useState({
     title: "",
@@ -75,6 +79,8 @@ const AdminDeler = () => {
     setShowForm(false);
     setImageFile(null);
     setImagePreview(null);
+    setUploadProgress(null);
+    setCompressionStats(null);
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -89,14 +95,39 @@ const AdminDeler = () => {
     }
   };
 
-  const uploadImage = async (file: File): Promise<string | null> => {
-    const fileExt = file.name.split(".").pop();
-    const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
-    const filePath = `parts/${fileName}`;
+  const uploadImage = async (file: File, partId?: string): Promise<string | null> => {
+    setUploadProgress({
+      stage: 'compressing',
+      current: 1,
+      total: 1,
+      percentage: 50,
+    });
+    
+    // Compress the image
+    const result = await compressImage(file);
+    
+    setCompressionStats({
+      originalSize: result.originalSize,
+      compressedSize: result.compressedSize,
+      reduction: result.reduction,
+    });
+    
+    setUploadProgress({
+      stage: 'uploading',
+      current: 1,
+      total: 1,
+      percentage: 100,
+    });
+    
+    const imageId = generateImageId();
+    // Use partId if available, otherwise use imageId as folder
+    const filePath = partId 
+      ? getPartImagePath(partId, imageId)
+      : `parts/${imageId}/original.webp`;
 
     const { error } = await supabase.storage
       .from("simca-images")
-      .upload(filePath, file);
+      .upload(filePath, result.file);
 
     if (error) {
       console.error("Error uploading image:", error);
@@ -331,6 +362,14 @@ const AdminDeler = () => {
                     />
                   </label>
                 </div>
+
+                {/* Upload progress */}
+                {isSubmitting && uploadProgress && (
+                  <ImageUploadProgress 
+                    progress={uploadProgress} 
+                    compressionStats={compressionStats} 
+                  />
+                )}
               </div>
 
               {/* Published toggle */}

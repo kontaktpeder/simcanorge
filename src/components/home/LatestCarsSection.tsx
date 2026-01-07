@@ -52,6 +52,7 @@ export function LatestCarsSection() {
             >
               <div className="aspect-[4/3] bg-muted rounded-lg mb-4 flex items-center justify-center overflow-hidden">
                 <Car className="w-16 h-16 text-muted-foreground" />
+                {/* When real images are added, use: loading="lazy" */}
               </div>
               <div className="flex items-center gap-2 mb-2">
                 <span className="bg-primary text-primary-foreground px-3 py-1 text-sm font-display rounded-md shadow-sm">

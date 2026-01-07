@@ -13,6 +13,8 @@ import { z } from "zod";
 import { CAR_BRANDS, getModelsForBrand, getYearsForModel, getVariantsForModel, generateCarTitle } from "@/data/carBrands";
 import { CAR_BODY_TYPES } from "@/data/carBodyTypes";
 import { FormFieldWithTooltip } from "@/components/ui/form-field-with-tooltip";
+import { compressImages, generateImageId, getSubmissionImagePath, formatFileSize, type CompressionProgress } from "@/lib/imageCompression";
+import { ImageUploadProgress } from "@/components/ui/image-upload-progress";
 
 const CATEGORIES = [
   { id: "registrert", label: "Registrerte biler" },
@@ -42,7 +44,8 @@ export default function SendInnBil() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [images, setImages] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
-  const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadProgress, setUploadProgress] = useState<CompressionProgress | null>(null);
+  const [compressionStats, setCompressionStats] = useState<{ originalSize: number; compressedSize: number; reduction: number } | null>(null);
   const [allowEdits, setAllowEdits] = useState<boolean | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [formData, setFormData] = useState({
@@ -141,24 +144,51 @@ export default function SendInnBil() {
   };
   const uploadImages = async (): Promise<string[]> => {
     const uploadedUrls: string[] = [];
-    const timestamp = Date.now();
-    for (let i = 0; i < images.length; i++) {
-      const file = images[i];
-      const fileExt = file.name.split('.').pop();
-      const fileName = `submissions/${timestamp}_${i}.${fileExt}`;
-      const {
-        error: uploadError
-      } = await supabase.storage.from('simca-images').upload(fileName, file);
+    const submissionId = generateImageId();
+    
+    // Step 1: Compress all images
+    const compressedResults = await compressImages(images, (progress) => {
+      setUploadProgress(progress);
+    });
+    
+    // Calculate total compression stats
+    const totalOriginal = compressedResults.reduce((sum, r) => sum + r.originalSize, 0);
+    const totalCompressed = compressedResults.reduce((sum, r) => sum + r.compressedSize, 0);
+    setCompressionStats({
+      originalSize: totalOriginal,
+      compressedSize: totalCompressed,
+      reduction: Math.round((1 - totalCompressed / totalOriginal) * 100),
+    });
+    
+    // Step 2: Upload compressed images
+    for (let i = 0; i < compressedResults.length; i++) {
+      const { file } = compressedResults[i];
+      const imageId = generateImageId();
+      const filePath = getSubmissionImagePath(submissionId, imageId);
+      
+      setUploadProgress({
+        stage: 'uploading',
+        current: i + 1,
+        total: compressedResults.length,
+        percentage: Math.round(((i + 1) / compressedResults.length) * 100),
+      });
+      
+      const { error: uploadError } = await supabase.storage
+        .from('simca-images')
+        .upload(filePath, file);
+        
       if (uploadError) {
         console.error('Upload error:', uploadError);
         continue;
       }
-      const {
-        data: urlData
-      } = supabase.storage.from('simca-images').getPublicUrl(fileName);
+      
+      const { data: urlData } = supabase.storage
+        .from('simca-images')
+        .getPublicUrl(filePath);
+        
       uploadedUrls.push(urlData.publicUrl);
-      setUploadProgress(Math.round((i + 1) / images.length * 100));
     }
+    
     return uploadedUrls;
   };
   const handleSubmit = async (e: React.FormEvent) => {
@@ -185,7 +215,8 @@ export default function SendInnBil() {
       return;
     }
     setIsSubmitting(true);
-    setUploadProgress(0);
+    setUploadProgress(null);
+    setCompressionStats(null);
     try {
       // Upload images first
       let imageUrls: string[] = [];
@@ -536,16 +567,12 @@ export default function SendInnBil() {
                       </div>
 
                       {/* Progress bar during upload */}
-                      {isSubmitting && images.length > 0 && <div className="space-y-2">
-                          <div className="h-2 bg-muted rounded-full overflow-hidden">
-                            <div className="h-full bg-accent transition-all duration-300" style={{
-                          width: `${uploadProgress}%`
-                        }} />
-                          </div>
-                          <p className="text-xs sm:text-sm text-muted-foreground text-center">
-                            Laster opp bilder... {uploadProgress}%
-                          </p>
-                        </div>}
+                      {isSubmitting && uploadProgress && (
+                        <ImageUploadProgress 
+                          progress={uploadProgress} 
+                          compressionStats={compressionStats} 
+                        />
+                      )}
 
                       {/* Consent radio buttons */}
                       <div className="space-y-2 sm:space-y-3 p-3 sm:p-4 bg-muted/30 rounded-lg border-2 border-muted">

@@ -8,6 +8,8 @@ import { CAR_BRANDS, getModelsForBrand, getYearsForModel, getVariantsForModel, g
 import { CAR_BODY_TYPES } from "@/data/carBodyTypes";
 import { FormFieldWithTooltip } from "@/components/ui/form-field-with-tooltip";
 import { Input } from "@/components/ui/input";
+import { compressImages, generateImageId, getCarImagePath, type CompressionProgress } from "@/lib/imageCompression";
+import { ImageUploadProgress } from "@/components/ui/image-upload-progress";
 
 interface CarImage {
   id: string;
@@ -67,6 +69,8 @@ const AdminBiler = () => {
   const [existingImages, setExistingImages] = useState<CarImage[]>([]);
   const [tagsInput, setTagsInput] = useState("");
   const [submissionImageUrls, setSubmissionImageUrls] = useState<string[]>([]);
+  const [uploadProgress, setUploadProgress] = useState<CompressionProgress | null>(null);
+  const [compressionStats, setCompressionStats] = useState<{ originalSize: number; compressedSize: number; reduction: number } | null>(null);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -184,6 +188,8 @@ const AdminBiler = () => {
     setExistingImages([]);
     setTagsInput("");
     setSubmissionImageUrls([]);
+    setUploadProgress(null);
+    setCompressionStats(null);
   };
 
   const removeSubmissionImage = (index: number) => {
@@ -204,11 +210,32 @@ const AdminBiler = () => {
   };
 
   const uploadImages = async (carId: string): Promise<void> => {
-    for (let i = 0; i < imageFiles.length; i++) {
-      const file = imageFiles[i];
-      const fileExt = file.name.split(".").pop();
-      const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
-      const filePath = `cars/${fileName}`;
+    // Step 1: Compress all images
+    const compressedResults = await compressImages(imageFiles, (progress) => {
+      setUploadProgress(progress);
+    });
+    
+    // Calculate total compression stats
+    const totalOriginal = compressedResults.reduce((sum, r) => sum + r.originalSize, 0);
+    const totalCompressed = compressedResults.reduce((sum, r) => sum + r.compressedSize, 0);
+    setCompressionStats({
+      originalSize: totalOriginal,
+      compressedSize: totalCompressed,
+      reduction: Math.round((1 - totalCompressed / totalOriginal) * 100),
+    });
+    
+    // Step 2: Upload compressed images
+    for (let i = 0; i < compressedResults.length; i++) {
+      const { file } = compressedResults[i];
+      const imageId = generateImageId();
+      const filePath = getCarImagePath(carId, imageId);
+
+      setUploadProgress({
+        stage: 'uploading',
+        current: i + 1,
+        total: compressedResults.length,
+        percentage: Math.round(((i + 1) / compressedResults.length) * 100),
+      });
 
       const { error: uploadError } = await supabase.storage
         .from("simca-images")
@@ -693,6 +720,16 @@ const AdminBiler = () => {
                     className="hidden"
                   />
                 </label>
+
+                {/* Upload progress */}
+                {isSubmitting && uploadProgress && (
+                  <div className="mt-4">
+                    <ImageUploadProgress 
+                      progress={uploadProgress} 
+                      compressionStats={compressionStats} 
+                    />
+                  </div>
+                )}
               </div>
 
               {/* Toggles */}

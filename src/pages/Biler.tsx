@@ -347,7 +347,7 @@ function CarCard({
   return <Link to={`/biler/${car.slug}`} className={`border-chrome card-enamel bg-card group card-hover-glow ${featured ? "md:flex gap-4 md:gap-6 p-3 md:p-6" : "p-3 md:p-4"}`}>
       {/* Image */}
       <div className={`bg-muted rounded-lg overflow-hidden mb-3 md:mb-4 relative ${featured ? "md:w-1/2 md:mb-0 aspect-[4/3]" : "aspect-[4/3]"}`}>
-        {mainImage ? <img src={mainImage.image_url} alt={mainImage.alt_text || car.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" /> : <div className="w-full h-full flex items-center justify-center">
+        {mainImage ? <img src={mainImage.image_url} alt={mainImage.alt_text || car.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" /> : <div className="w-full h-full flex items-center justify-center">
             <Car className="w-16 h-16 text-muted-foreground" />
           </div>}
         {/* Category badge on image */}
