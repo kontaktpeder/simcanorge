@@ -66,11 +66,47 @@ export const SimcaLive = ({ isHeaderMode = false }: SimcaLiveProps) => {
   const displayActiveUsers = useAnimatedCounter(activeUsers);
   const displayTotalVisits = useAnimatedCounter(totalVisits);
 
-  // Track current session
+  // Use Realtime Presence for accurate live user count
   useEffect(() => {
     const sessionId = getSessionId();
+    const channel = supabase.channel('simca_live_presence', {
+      config: {
+        presence: {
+          key: sessionId,
+        },
+      },
+    });
 
-    const trackSession = async () => {
+    channel
+      .on('presence', { event: 'sync' }, () => {
+        const state = channel.presenceState();
+        const count = Object.keys(state).length;
+        setActiveUsers(count);
+        setIsLoaded(true);
+      })
+      .subscribe(async (status) => {
+        if (status === 'SUBSCRIBED') {
+          await channel.track({
+            online_at: new Date().toISOString(),
+            session_id: sessionId,
+          });
+        }
+      });
+
+    return () => {
+      channel.unsubscribe();
+    };
+  }, []);
+
+  // Track page view for total visits (only once per session)
+  useEffect(() => {
+    const sessionId = getSessionId();
+    const visitKey = `simca_visit_tracked_${new Date().toDateString()}`;
+    
+    // Only track once per day per session
+    if (localStorage.getItem(visitKey)) return;
+
+    const trackVisit = async () => {
       try {
         const { data: existing } = await supabase
           .from("page_views")
@@ -78,59 +114,44 @@ export const SimcaLive = ({ isHeaderMode = false }: SimcaLiveProps) => {
           .eq("session_id", sessionId)
           .maybeSingle();
 
-        if (existing) {
-          await supabase
-            .from("page_views")
-            .update({ last_seen_at: new Date().toISOString() })
-            .eq("session_id", sessionId);
-        } else {
+        if (!existing) {
           await supabase.from("page_views").insert({
             session_id: sessionId,
           });
         }
+        
+        localStorage.setItem(visitKey, "true");
       } catch (error) {
-        console.error("Error tracking session:", error);
+        console.error("Error tracking visit:", error);
       }
     };
 
-    trackSession();
-    const interval = setInterval(trackSession, 60000);
-    return () => clearInterval(interval);
+    trackVisit();
   }, []);
 
-  // Fetch stats
+  // Fetch total visits (unique sessions in last 30 days)
   useEffect(() => {
-    const fetchStats = async () => {
+    const fetchTotalVisits = async () => {
       try {
-        const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000).toISOString();
-        const { count: activeCount, error: activeError } = await supabase
-          .from("page_views")
-          .select("*", { count: "exact", head: true })
-          .gte("last_seen_at", tenMinutesAgo);
-
-        if (activeError) throw activeError;
-
         const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
-        const { count: totalCount, error: totalError } = await supabase
+        const { count, error } = await supabase
           .from("page_views")
           .select("*", { count: "exact", head: true })
           .gte("created_at", thirtyDaysAgo);
 
-        if (totalError) throw totalError;
+        if (error) throw error;
 
-        setActiveUsers(activeCount || 0);
-        setTotalVisits(totalCount || 0);
-        setIsLoaded(true);
+        setTotalVisits(count || 0);
         setHasError(false);
       } catch (error) {
-        console.error("Error fetching stats:", error);
+        console.error("Error fetching total visits:", error);
         setHasError(true);
-        setIsLoaded(true);
       }
     };
 
-    fetchStats();
-    const interval = setInterval(fetchStats, 60000);
+    fetchTotalVisits();
+    // Refresh less frequently since this doesn't change much
+    const interval = setInterval(fetchTotalVisits, 5 * 60 * 1000);
     return () => clearInterval(interval);
   }, []);
 
@@ -141,7 +162,7 @@ export const SimcaLive = ({ isHeaderMode = false }: SimcaLiveProps) => {
     if (displayActiveUsers <= 2 && displayActiveUsers > 0) {
       return "Få entusiaster aktive nå";
     }
-    return `${displayActiveUsers} aktive siste 10 min`;
+    return `${displayActiveUsers} ser på nå`;
   };
 
   const getTotalVisitsText = () => {
