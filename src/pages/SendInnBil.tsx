@@ -13,16 +13,21 @@ import { z } from "zod";
 import { CAR_BRANDS, getModelsForBrand, getYearsForModel, getVariantsForModel, generateCarTitle } from "@/data/carBrands";
 import { CAR_BODY_TYPES } from "@/data/carBodyTypes";
 import { FormFieldWithTooltip } from "@/components/ui/form-field-with-tooltip";
-import { compressImages, generateImageId, getCarImagePath, formatFileSize, type CompressionProgress } from "@/lib/imageCompression";
+import { compressImages, generateImageId, getSubmissionImagePath, formatFileSize, type CompressionProgress } from "@/lib/imageCompression";
 import { ImageUploadProgress } from "@/components/ui/image-upload-progress";
-
-const CATEGORIES = [
-  { id: "registrert", label: "Registrerte biler" },
-  { id: "restaurering", label: "Restaureringsprosjekter" },
-  { id: "historisk", label: "Historiske biler" },
-  { id: "vrak", label: "Vrak" },
-];
-
+const CATEGORIES = [{
+  id: "registrert",
+  label: "Registrerte biler"
+}, {
+  id: "restaurering",
+  label: "Restaureringsprosjekter"
+}, {
+  id: "historisk",
+  label: "Historiske biler"
+}, {
+  id: "vrak",
+  label: "Vrak"
+}];
 const submissionSchema = z.object({
   brand: z.string().min(1, "Velg et merke"),
   car_model: z.string().min(1, "Velg en modell"),
@@ -36,18 +41,23 @@ const submissionSchema = z.object({
   tags: z.string().max(500, "Tags kan ikke være mer enn 500 tegn").optional().or(z.literal("")),
   car_story: z.string().trim().max(5000, "Historien kan ikke være mer enn 5000 tegn").optional().or(z.literal(""))
 });
-
 const MIN_SUBMIT_INTERVAL = 2000; // 2 sekunder mellom submits
 
 export default function SendInnBil() {
-  const { toast } = useToast();
+  const {
+    toast
+  } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [images, setImages] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [uploadProgress, setUploadProgress] = useState<CompressionProgress | null>(null);
-  const [compressionStats, setCompressionStats] = useState<{ originalSize: number; compressedSize: number; reduction: number } | null>(null);
+  const [compressionStats, setCompressionStats] = useState<{
+    originalSize: number;
+    compressedSize: number;
+    reduction: number;
+  } | null>(null);
   const [allowEdits, setAllowEdits] = useState<boolean | null>(null);
   const [lastSubmitTime, setLastSubmitTime] = useState<number>(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -145,68 +155,54 @@ export default function SendInnBil() {
     setImages(prev => prev.filter((_, i) => i !== index));
     setImagePreviews(prev => prev.filter((_, i) => i !== index));
   };
-  // Generate slug from title
-  const generateSlug = (title: string) => {
-    return title
-      .toLowerCase()
-      .replace(/æ/g, "ae")
-      .replace(/ø/g, "o")
-      .replace(/å/g, "a")
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-|-$/g, "");
-  };
-
-  const uploadImages = async (carId: string): Promise<string[]> => {
+  const uploadImages = async (): Promise<string[]> => {
     const uploadedUrls: string[] = [];
-    
+    const submissionId = generateImageId();
+
     // Step 1: Compress all images
-    const compressedResults = await compressImages(images, (progress) => {
+    const compressedResults = await compressImages(images, progress => {
       setUploadProgress(progress);
     });
-    
+
     // Calculate total compression stats
     const totalOriginal = compressedResults.reduce((sum, r) => sum + r.originalSize, 0);
     const totalCompressed = compressedResults.reduce((sum, r) => sum + r.compressedSize, 0);
     setCompressionStats({
       originalSize: totalOriginal,
       compressedSize: totalCompressed,
-      reduction: Math.round((1 - totalCompressed / totalOriginal) * 100),
+      reduction: Math.round((1 - totalCompressed / totalOriginal) * 100)
     });
-    
-    // Step 2: Upload compressed images to cars/{carId}/ path
+
+    // Step 2: Upload compressed images
     for (let i = 0; i < compressedResults.length; i++) {
-      const { file } = compressedResults[i];
+      const {
+        file
+      } = compressedResults[i];
       const imageId = generateImageId();
-      const filePath = getCarImagePath(carId, imageId);
-      
+      const filePath = getSubmissionImagePath(submissionId, imageId);
       setUploadProgress({
         stage: 'uploading',
         current: i + 1,
         total: compressedResults.length,
-        percentage: Math.round(((i + 1) / compressedResults.length) * 100),
+        percentage: Math.round((i + 1) / compressedResults.length * 100)
       });
-      
-      const { error: uploadError } = await supabase.storage
-        .from('simca-images')
-        .upload(filePath, file);
-        
+      const {
+        error: uploadError
+      } = await supabase.storage.from('simca-images').upload(filePath, file);
       if (uploadError) {
         console.error('Upload error:', uploadError);
         continue;
       }
-      
-      const { data: urlData } = supabase.storage
-        .from('simca-images')
-        .getPublicUrl(filePath);
-        
+      const {
+        data: urlData
+      } = supabase.storage.from('simca-images').getPublicUrl(filePath);
       uploadedUrls.push(urlData.publicUrl);
     }
-    
     return uploadedUrls;
   };
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Rate limiting check
     const now = Date.now();
     if (now - lastSubmitTime < MIN_SUBMIT_INTERVAL) {
@@ -217,7 +213,6 @@ export default function SendInnBil() {
       });
       return;
     }
-    
     setLastSubmitTime(now);
     setErrors({});
     const dataToValidate = {
@@ -244,60 +239,35 @@ export default function SendInnBil() {
     setUploadProgress(null);
     setCompressionStats(null);
     try {
+      // Upload images first
+      let imageUrls: string[] = [];
+      if (images.length > 0) {
+        imageUrls = await uploadImages();
+      }
       // Parse tags into array
-      const tagsArray = result.data.tags 
-        ? result.data.tags.split(",").map(t => t.trim()).filter(t => t.length > 0)
-        : [];
+      const tagsArray = result.data.tags ? result.data.tags.split(",").map(t => t.trim()).filter(t => t.length > 0) : [];
 
       // Generate title from brand, model and year
-      const generatedTitle = generateCarTitle(
-        result.data.brand,
-        result.data.car_model,
-        result.data.car_year
-      );
-
-      // Generate slug from title
-      const slug = generateSlug(generatedTitle);
-
-      // Create car directly in cars table with status 'submitted'
-      const { data: newCar, error: carError } = await supabase
-        .from("cars")
-        .insert({
-          title: generatedTitle,
-          slug: slug,
-          brand: result.data.brand,
-          model: result.data.car_model,
-          variant: result.data.variant || null,
-          body_type: result.data.body_type || null,
-          year: result.data.car_year,
-          category: result.data.category,
-          tags: tagsArray,
-          story: result.data.car_story || null,
-          status: 'submitted' as const,
-          published_at: null,
-          source: 'submission' as const,
-          submitted_by_email: result.data.email,
-          submitted_by_name: result.data.owner_name,
-        })
-        .select()
-        .single();
-
-      if (carError) throw carError;
-
-      // Upload images and create car_images records
-      if (images.length > 0 && newCar) {
-        const imageUrls = await uploadImages(newCar.id);
-        
-        // Create car_images records
-        for (let i = 0; i < imageUrls.length; i++) {
-          await supabase.from("car_images").insert({
-            car_id: newCar.id,
-            image_url: imageUrls[i],
-            sort_order: i,
-          });
-        }
-      }
-
+      const generatedTitle = generateCarTitle(result.data.brand, result.data.car_model, result.data.car_year);
+      const {
+        error
+      } = await supabase.from("car_submissions").insert({
+        title: generatedTitle,
+        brand: result.data.brand,
+        owner_name: result.data.owner_name,
+        email: result.data.email,
+        phone: result.data.phone || null,
+        car_model: result.data.car_model,
+        variant: result.data.variant || null,
+        body_type: result.data.body_type || null,
+        car_year: result.data.car_year,
+        category: result.data.category,
+        tags: tagsArray,
+        car_story: result.data.car_story || null,
+        images: imageUrls,
+        allow_edits: allowEdits === true
+      });
+      if (error) throw error;
       setSubmitted(true);
       toast({
         title: "Takk for innsendingen!",
@@ -338,10 +308,7 @@ export default function SendInnBil() {
       </Layout>;
   }
   return <Layout>
-      <PageHeader 
-        title="SEND INN DIN BIL" 
-        subtitle={"Har du en Simca, Talbot eller Matra? Del bilen din med oss,\nså kan vi få lagt den ut på siden!"} 
-      />
+      <PageHeader title="SEND INN DIN BIL" subtitle={"Har du en Simca, Talbot eller Matra? Del bilen din med oss,\nså kan vi få lagt den ut på siden!"} />
 
       {/* Form Section */}
       <section className="poster-section">
@@ -351,14 +318,14 @@ export default function SendInnBil() {
               <AnimatedSection>
                 {/* Chrome-framed form card */}
                 <div className="border-4 border-transparent bg-clip-padding rounded-3xl overflow-hidden shadow-2xl" style={{
-                background: 'linear-gradient(white, white) padding-box, linear-gradient(180deg, #F2F4F7 0%, #B8C0CC 20%, #FFFFFF 40%, #7A8596 60%, #F2F4F7 80%, #5B6472 100%) border-box'
-              }}>
+              background: 'linear-gradient(white, white) padding-box, linear-gradient(180deg, #F2F4F7 0%, #B8C0CC 20%, #FFFFFF 40%, #7A8596 60%, #F2F4F7 80%, #5B6472 100%) border-box'
+            }}>
                   {/* Inner blue header */}
                   <div className="bg-gradient-to-r from-[#1F66B5] to-[#2B7BD4] p-6">
                     <div className="flex items-center gap-3">
                       <Car className="w-8 h-8 text-white" />
                       <h2 className="font-display text-2xl md:text-3xl text-white">
-                        FORTELL OSS OM BILEN DIN
+                        Vi ser gjennom historien din, og gleder oss til å vise den frem på siden!            
                       </h2>
                     </div>
                   </div>
@@ -372,163 +339,81 @@ export default function SendInnBil() {
                         
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                           {/* Brand */}
-                          <FormFieldWithTooltip
-                            label="MERKE"
-                            tooltip="Bilprodusent. Eks: Simca"
-                            required
-                            htmlFor="brand"
-                            error={errors.brand}
-                          >
-                            <select 
-                              id="brand" 
-                              name="brand" 
-                              value={formData.brand} 
-                              onChange={(e) => setFormData(prev => ({ 
-                                ...prev, 
-                                brand: e.target.value, 
-                                car_model: "", 
-                                car_year: "" 
-                              }))}
-                              className={`w-full h-12 px-3 text-base rounded-md border-2 bg-background ${errors.brand ? 'border-destructive' : 'border-muted'}`}
-                              required
-                            >
+                          <FormFieldWithTooltip label="MERKE" tooltip="Bilprodusent. Eks: Simca" required htmlFor="brand" error={errors.brand}>
+                            <select id="brand" name="brand" value={formData.brand} onChange={e => setFormData(prev => ({
+                          ...prev,
+                          brand: e.target.value,
+                          car_model: "",
+                          car_year: ""
+                        }))} className={`w-full h-12 px-3 text-base rounded-md border-2 bg-background ${errors.brand ? 'border-destructive' : 'border-muted'}`} required>
                               <option value="">Velg merke...</option>
-                              {CAR_BRANDS.map((brand) => (
-                                <option key={brand.name} value={brand.name}>{brand.name}</option>
-                              ))}
+                              {CAR_BRANDS.map(brand => <option key={brand.name} value={brand.name}>{brand.name}</option>)}
                             </select>
                           </FormFieldWithTooltip>
 
                           {/* Model */}
-                          <FormFieldWithTooltip
-                            label="MODELL"
-                            tooltip="Modellserie / plattform. Eks: 1100"
-                            required
-                            htmlFor="car_model"
-                            error={errors.car_model}
-                          >
-                            <select 
-                              id="car_model" 
-                              name="car_model" 
-                              value={formData.car_model} 
-                              onChange={(e) => setFormData(prev => ({ 
-                                ...prev, 
-                                car_model: e.target.value, 
-                                car_year: "",
-                                variant: ""
-                              }))}
-                              className={`w-full h-12 px-3 text-base rounded-md border-2 bg-background ${errors.car_model ? 'border-destructive' : 'border-muted'}`}
-                              required
-                              disabled={!formData.brand}
-                            >
+                          <FormFieldWithTooltip label="MODELL" tooltip="Modellserie / plattform. Eks: 1100" required htmlFor="car_model" error={errors.car_model}>
+                            <select id="car_model" name="car_model" value={formData.car_model} onChange={e => setFormData(prev => ({
+                          ...prev,
+                          car_model: e.target.value,
+                          car_year: "",
+                          variant: ""
+                        }))} className={`w-full h-12 px-3 text-base rounded-md border-2 bg-background ${errors.car_model ? 'border-destructive' : 'border-muted'}`} required disabled={!formData.brand}>
                               <option value="">Velg modell...</option>
-                              {availableModels.map((model) => (
-                                <option key={model.name} value={model.name}>{model.name}</option>
-                              ))}
+                              {availableModels.map(model => <option key={model.name} value={model.name}>{model.name}</option>)}
                             </select>
                           </FormFieldWithTooltip>
 
                           {/* Variant */}
-                          <FormFieldWithTooltip
-                            label="VARIANTBETEGNELSE"
-                            tooltip="Fabrikkens navn på en spesifikk utgave. Eks: VF1, Rallye 2"
-                            htmlFor="variant"
-                            error={errors.variant}
-                          >
-                            {availableVariants.length > 0 ? (
-                              <select 
-                                id="variant" 
-                                name="variant" 
-                                value={formData.variant} 
-                                onChange={(e) => setFormData(prev => ({ ...prev, variant: e.target.value }))}
-                                className={`w-full h-12 px-3 text-base rounded-md border-2 bg-background ${errors.variant ? 'border-destructive' : 'border-muted'}`}
-                                disabled={!formData.car_model}
-                              >
+                          <FormFieldWithTooltip label="VARIANTBETEGNELSE" tooltip="Fabrikkens navn på en spesifikk utgave. Eks: VF1, Rallye 2" htmlFor="variant" error={errors.variant}>
+                            {availableVariants.length > 0 ? <select id="variant" name="variant" value={formData.variant} onChange={e => setFormData(prev => ({
+                          ...prev,
+                          variant: e.target.value
+                        }))} className={`w-full h-12 px-3 text-base rounded-md border-2 bg-background ${errors.variant ? 'border-destructive' : 'border-muted'}`} disabled={!formData.car_model}>
                                 <option value="">Velg variant...</option>
-                                {availableVariants.map((variant) => (
-                                  <option key={variant} value={variant}>{variant}</option>
-                                ))}
+                                {availableVariants.map(variant => <option key={variant} value={variant}>{variant}</option>)}
                                 <option value="__other__">Annet (skriv inn)</option>
-                              </select>
-                            ) : (
-                              <Input 
-                                id="variant" 
-                                name="variant" 
-                                value={formData.variant} 
-                                onChange={handleChange} 
-                                placeholder="F.eks. VF1, Rallye 2, TI..."
-                                className={`text-base h-12 border-2 ${errors.variant ? 'border-destructive' : 'border-muted'}`}
-                              />
-                            )}
+                              </select> : <Input id="variant" name="variant" value={formData.variant} onChange={handleChange} placeholder="F.eks. VF1, Rallye 2, TI..." className={`text-base h-12 border-2 ${errors.variant ? 'border-destructive' : 'border-muted'}`} />}
                           </FormFieldWithTooltip>
 
                           {/* Body Type */}
-                          <FormFieldWithTooltip
-                            label="KAROSSERIFORM"
-                            tooltip="Karosseritype / bruksform. Eks: Pick-Up, Sedan"
-                            htmlFor="body_type"
-                            error={errors.body_type}
-                          >
-                            <select 
-                              id="body_type" 
-                              name="body_type" 
-                              value={formData.body_type} 
-                              onChange={(e) => setFormData(prev => ({ ...prev, body_type: e.target.value }))}
-                              className={`w-full h-12 px-3 text-base rounded-md border-2 bg-background ${errors.body_type ? 'border-destructive' : 'border-muted'}`}
-                            >
+                          <FormFieldWithTooltip label="KAROSSERIFORM" tooltip="Karosseritype / bruksform. Eks: Pick-Up, Sedan" htmlFor="body_type" error={errors.body_type}>
+                            <select id="body_type" name="body_type" value={formData.body_type} onChange={e => setFormData(prev => ({
+                          ...prev,
+                          body_type: e.target.value
+                        }))} className={`w-full h-12 px-3 text-base rounded-md border-2 bg-background ${errors.body_type ? 'border-destructive' : 'border-muted'}`}>
                               <option value="">Velg karosseriform...</option>
-                              {CAR_BODY_TYPES.map((type) => (
-                                <option key={type.id} value={type.id}>{type.label}</option>
-                              ))}
+                              {CAR_BODY_TYPES.map(type => <option key={type.id} value={type.id}>{type.label}</option>)}
                             </select>
                           </FormFieldWithTooltip>
 
                           {/* Year */}
-                          <FormFieldWithTooltip
-                            label="ÅRSTALL"
-                            tooltip="Produksjonsår for bilen"
-                            htmlFor="car_year"
-                            error={errors.car_year}
-                          >
-                            <select 
-                              id="car_year" 
-                              name="car_year" 
-                              value={formData.car_year} 
-                              onChange={(e) => setFormData(prev => ({ ...prev, car_year: e.target.value }))}
-                              className={`w-full h-12 px-3 text-base rounded-md border-2 bg-background ${errors.car_year ? 'border-destructive' : 'border-muted'}`}
-                              disabled={!formData.car_model}
-                            >
+                          <FormFieldWithTooltip label="ÅRSTALL" tooltip="Produksjonsår for bilen" htmlFor="car_year" error={errors.car_year}>
+                            <select id="car_year" name="car_year" value={formData.car_year} onChange={e => setFormData(prev => ({
+                          ...prev,
+                          car_year: e.target.value
+                        }))} className={`w-full h-12 px-3 text-base rounded-md border-2 bg-background ${errors.car_year ? 'border-destructive' : 'border-muted'}`} disabled={!formData.car_model}>
                               <option value="">Velg år...</option>
-                              {availableYears.map((year) => (
-                                <option key={year} value={year}>{year}</option>
-                              ))}
+                              {availableYears.map(year => <option key={year} value={year}>{year}</option>)}
                             </select>
                           </FormFieldWithTooltip>
                         </div>
 
                         {/* Generated title preview */}
-                        {generatedTitle && (
-                          <div className="mt-2 p-2 sm:p-3 bg-primary/10 rounded-md border border-primary/30">
+                        {generatedTitle && <div className="mt-2 p-2 sm:p-3 bg-primary/10 rounded-md border border-primary/30">
                             <p className="text-xs sm:text-sm text-muted-foreground">Bilens tittel på siden blir:</p>
                             <p className="text-base sm:text-lg font-display text-primary">{generatedTitle}</p>
-                          </div>
-                        )}
+                          </div>}
                       </div>
 
                       {/* Category */}
                       <div className="space-y-1.5 sm:space-y-2">
                         <Label htmlFor="category" className="text-base sm:text-lg font-display">KATEGORI *</Label>
-                        <select 
-                          id="category" 
-                          name="category" 
-                          value={formData.category} 
-                          onChange={(e) => setFormData(prev => ({ ...prev, category: e.target.value }))}
-                          className={`w-full h-12 px-3 text-base rounded-md border-2 bg-background ${errors.category ? 'border-destructive' : 'border-muted'}`}
-                          required
-                        >
-                          {CATEGORIES.map((cat) => (
-                            <option key={cat.id} value={cat.id}>{cat.label}</option>
-                          ))}
+                        <select id="category" name="category" value={formData.category} onChange={e => setFormData(prev => ({
+                      ...prev,
+                      category: e.target.value
+                    }))} className={`w-full h-12 px-3 text-base rounded-md border-2 bg-background ${errors.category ? 'border-destructive' : 'border-muted'}`} required>
+                          {CATEGORIES.map(cat => <option key={cat.id} value={cat.id}>{cat.label}</option>)}
                         </select>
                         {errors.category && <p className="text-sm text-destructive">{errors.category}</p>}
                       </div>
@@ -611,12 +496,7 @@ export default function SendInnBil() {
                       </div>
 
                       {/* Progress bar during upload */}
-                      {isSubmitting && uploadProgress && (
-                        <ImageUploadProgress 
-                          progress={uploadProgress} 
-                          compressionStats={compressionStats} 
-                        />
-                      )}
+                      {isSubmitting && uploadProgress && <ImageUploadProgress progress={uploadProgress} compressionStats={compressionStats} />}
 
                       {/* Consent radio buttons */}
                       <div className="space-y-2 sm:space-y-3 p-3 sm:p-4 bg-muted/30 rounded-lg border-2 border-muted">
@@ -626,26 +506,14 @@ export default function SendInnBil() {
                         </p>
                         
                         <label className="flex items-start gap-3 cursor-pointer p-2 sm:p-3 rounded-lg hover:bg-muted/50 transition-colors">
-                          <input
-                            type="radio"
-                            name="allowEdits"
-                            checked={allowEdits === true}
-                            onChange={() => setAllowEdits(true)}
-                            className="w-5 h-5 mt-0.5 accent-primary flex-shrink-0"
-                          />
+                          <input type="radio" name="allowEdits" checked={allowEdits === true} onChange={() => setAllowEdits(true)} className="w-5 h-5 mt-0.5 accent-primary flex-shrink-0" />
                           <span className="text-sm sm:text-base text-foreground font-medium">
                             Ja, jeg godkjenner at Simca Norge kan redigere og forbedre innsendelsen min før publisering.
                           </span>
                         </label>
                         
                         <label className="flex items-start gap-3 cursor-pointer p-2 sm:p-3 rounded-lg hover:bg-muted/50 transition-colors">
-                          <input
-                            type="radio"
-                            name="allowEdits"
-                            checked={allowEdits === false}
-                            onChange={() => setAllowEdits(false)}
-                            className="w-5 h-5 mt-0.5 accent-primary flex-shrink-0"
-                          />
+                          <input type="radio" name="allowEdits" checked={allowEdits === false} onChange={() => setAllowEdits(false)} className="w-5 h-5 mt-0.5 accent-primary flex-shrink-0" />
                           <span className="text-sm sm:text-base text-foreground font-medium">
                             Nei, jeg ønsker at innsendelsen publiseres som den er.
                           </span>
@@ -653,11 +521,7 @@ export default function SendInnBil() {
                       </div>
 
                       {/* Submit */}
-                      <Button 
-                        type="submit" 
-                        disabled={isSubmitting || allowEdits === null} 
-                        className="w-full btn-enamel-blue text-lg sm:text-xl h-12 sm:h-14 disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
+                      <Button type="submit" disabled={isSubmitting || allowEdits === null} className="w-full btn-enamel-blue text-lg sm:text-xl h-12 sm:h-14 disabled:opacity-50 disabled:cursor-not-allowed">
                         {isSubmitting ? "Sender..." : <>
                             <Send className="w-5 h-5 mr-2" />
                             Send inn
