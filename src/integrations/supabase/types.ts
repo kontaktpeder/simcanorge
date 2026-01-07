@@ -318,6 +318,27 @@ export type Database = {
         }
         Relationships: []
       }
+      page_views: {
+        Row: {
+          created_at: string
+          id: string
+          last_seen_at: string
+          session_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          last_seen_at?: string
+          session_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          last_seen_at?: string
+          session_id?: string
+        }
+        Relationships: []
+      }
       parts: {
         Row: {
           category_id: string | null
@@ -385,6 +406,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      cleanup_old_page_views: { Args: never; Returns: undefined }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
