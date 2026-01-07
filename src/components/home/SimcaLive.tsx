@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { Radio } from "lucide-react";
 
 // Generate or retrieve session ID
 const getSessionId = (): string => {
@@ -67,7 +68,6 @@ export const SimcaLive = () => {
 
     const trackSession = async () => {
       try {
-        // Try to upsert the session
         const { data: existing } = await supabase
           .from("page_views")
           .select("id")
@@ -75,13 +75,11 @@ export const SimcaLive = () => {
           .single();
 
         if (existing) {
-          // Update last_seen_at
           await supabase
             .from("page_views")
             .update({ last_seen_at: new Date().toISOString() })
             .eq("session_id", sessionId);
         } else {
-          // Insert new session
           await supabase.from("page_views").insert({
             session_id: sessionId,
           });
@@ -92,10 +90,7 @@ export const SimcaLive = () => {
     };
 
     trackSession();
-
-    // Update session every 30 seconds
     const interval = setInterval(trackSession, 30000);
-
     return () => clearInterval(interval);
   }, []);
 
@@ -103,14 +98,12 @@ export const SimcaLive = () => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        // Get active users (last 3 minutes)
         const threeMinutesAgo = new Date(Date.now() - 3 * 60 * 1000).toISOString();
         const { count: activeCount } = await supabase
           .from("page_views")
           .select("*", { count: "exact", head: true })
           .gte("last_seen_at", threeMinutesAgo);
 
-        // Get total visits last 30 days
         const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
         const { count: totalCount } = await supabase
           .from("page_views")
@@ -127,10 +120,7 @@ export const SimcaLive = () => {
     };
 
     fetchStats();
-
-    // Refresh active users every 30 seconds
     const interval = setInterval(fetchStats, 30000);
-
     return () => clearInterval(interval);
   }, []);
 
@@ -138,92 +128,158 @@ export const SimcaLive = () => {
     <div
       className={`
         fixed top-24 left-4 z-40
-        bg-gradient-to-br from-simca-blue via-simca-blue to-simca-blue/90
-        border-2 border-chrome-light
-        rounded-lg shadow-lg
-        px-4 py-3
-        transition-all duration-500
-        ${isLoaded ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-4"}
+        transition-all duration-700 ease-out
+        ${isLoaded ? "opacity-100 translate-x-0 scale-100" : "opacity-0 -translate-x-8 scale-95"}
       `}
-      style={{
-        boxShadow: `
-          inset 0 1px 2px rgba(255,255,255,0.3),
-          inset 0 -1px 2px rgba(0,0,0,0.2),
-          0 4px 12px rgba(0,0,0,0.3),
-          0 0 0 1px rgba(255,255,255,0.1)
-        `,
-        background: `
-          linear-gradient(135deg, 
-            hsl(var(--simca-blue)) 0%, 
-            hsl(210, 70%, 35%) 50%,
-            hsl(210, 65%, 30%) 100%)
-        `,
-      }}
     >
-      {/* Chrome frame effect */}
+      {/* Outer chrome frame */}
       <div
-        className="absolute inset-0 rounded-lg pointer-events-none"
+        className="relative rounded-xl p-[3px]"
         style={{
-          background: `
-            linear-gradient(180deg,
-              rgba(255,255,255,0.15) 0%,
-              transparent 50%,
-              rgba(0,0,0,0.1) 100%)
+          background: `linear-gradient(145deg, 
+            #e8e8e8 0%, 
+            #ffffff 15%, 
+            #b0b0b0 30%,
+            #d4d4d4 50%, 
+            #9a9a9a 70%,
+            #c0c0c0 85%,
+            #e0e0e0 100%)`,
+          boxShadow: `
+            0 8px 32px rgba(0,0,0,0.4),
+            0 4px 16px rgba(0,0,0,0.3),
+            inset 0 1px 0 rgba(255,255,255,0.8)
           `,
         }}
-      />
-
-      {/* Header with live indicator */}
-      <div className="flex items-center gap-2 mb-2">
-        <span className="relative flex h-2.5 w-2.5">
-          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-          <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500"></span>
-        </span>
-        <span
-          className="text-xs font-bold tracking-wider"
-          style={{
-            color: "rgba(255,255,255,0.95)",
-            textShadow: "0 1px 2px rgba(0,0,0,0.3)",
-            fontFamily: "var(--font-display)",
-          }}
-        >
-          SIMCA LIVE
-        </span>
-      </div>
-
-      {/* Stats */}
-      <div className="space-y-1 relative z-10">
+      >
+        {/* Inner enamel body */}
         <div
-          className="text-sm"
+          className="relative rounded-lg overflow-hidden"
           style={{
-            color: "rgba(255,255,255,0.9)",
-            textShadow: "0 1px 1px rgba(0,0,0,0.2)",
+            background: `linear-gradient(145deg, 
+              hsl(210, 75%, 38%) 0%, 
+              hsl(210, 70%, 32%) 40%,
+              hsl(210, 65%, 28%) 100%)`,
+            boxShadow: `
+              inset 0 2px 4px rgba(255,255,255,0.2),
+              inset 0 -2px 4px rgba(0,0,0,0.3),
+              inset 2px 0 4px rgba(0,0,0,0.1),
+              inset -2px 0 4px rgba(0,0,0,0.1)
+            `,
           }}
         >
-          <span
-            className="font-bold text-white"
-            style={{ fontVariantNumeric: "tabular-nums" }}
-          >
-            {displayActiveUsers}
-          </span>{" "}
-          <span className="text-xs opacity-90">
-            {displayActiveUsers === 1 ? "entusiast" : "entusiaster"} på siden nå
-          </span>
-        </div>
-        <div
-          className="text-sm"
-          style={{
-            color: "rgba(255,255,255,0.9)",
-            textShadow: "0 1px 1px rgba(0,0,0,0.2)",
-          }}
-        >
-          <span
-            className="font-bold text-white"
-            style={{ fontVariantNumeric: "tabular-nums" }}
-          >
-            {displayTotalVisits}
-          </span>{" "}
-          <span className="text-xs opacity-90">besøk siste 30 dager</span>
+          {/* Glass/enamel shine overlay */}
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background: `linear-gradient(135deg,
+                rgba(255,255,255,0.25) 0%,
+                rgba(255,255,255,0.1) 30%,
+                transparent 50%,
+                rgba(0,0,0,0.1) 100%)`,
+            }}
+          />
+
+          {/* Content */}
+          <div className="relative z-10 px-4 py-3">
+            {/* Header with live indicator */}
+            <div className="flex items-center gap-2 mb-2.5 pb-2 border-b border-white/10">
+              <div className="relative">
+                <Radio 
+                  className="w-4 h-4 text-simca-red animate-pulse" 
+                  style={{ 
+                    filter: "drop-shadow(0 0 4px hsl(var(--simca-red)))",
+                  }} 
+                />
+                <div 
+                  className="absolute inset-0 animate-ping"
+                  style={{
+                    background: "radial-gradient(circle, hsl(var(--simca-red) / 0.4) 0%, transparent 70%)",
+                  }}
+                />
+              </div>
+              <span
+                className="font-display text-xs font-bold tracking-[0.2em] uppercase"
+                style={{
+                  color: "#ffffff",
+                  textShadow: `
+                    0 1px 2px rgba(0,0,0,0.5),
+                    0 0 20px rgba(255,255,255,0.2)
+                  `,
+                }}
+              >
+                SIMCA LIVE
+              </span>
+            </div>
+
+            {/* Stats */}
+            <div className="space-y-1.5">
+              <div className="flex items-baseline gap-1.5">
+                <span
+                  className="font-display text-xl font-bold tabular-nums"
+                  style={{
+                    color: "#ffffff",
+                    textShadow: `
+                      0 2px 4px rgba(0,0,0,0.4),
+                      0 0 30px rgba(255,255,255,0.3)
+                    `,
+                  }}
+                >
+                  {displayActiveUsers}
+                </span>
+                <span
+                  className="text-[11px] font-medium"
+                  style={{
+                    color: "rgba(255,255,255,0.8)",
+                    textShadow: "0 1px 2px rgba(0,0,0,0.3)",
+                  }}
+                >
+                  {displayActiveUsers === 1 ? "entusiast" : "entusiaster"} online
+                </span>
+              </div>
+              
+              <div className="flex items-baseline gap-1.5">
+                <span
+                  className="font-display text-xl font-bold tabular-nums"
+                  style={{
+                    color: "#ffffff",
+                    textShadow: `
+                      0 2px 4px rgba(0,0,0,0.4),
+                      0 0 30px rgba(255,255,255,0.3)
+                    `,
+                  }}
+                >
+                  {displayTotalVisits}
+                </span>
+                <span
+                  className="text-[11px] font-medium"
+                  style={{
+                    color: "rgba(255,255,255,0.8)",
+                    textShadow: "0 1px 2px rgba(0,0,0,0.3)",
+                  }}
+                >
+                  besøk siste 30 dager
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom rivets/details */}
+          <div className="absolute bottom-1 left-1/2 -translate-x-1/2 flex gap-6">
+            <div 
+              className="w-1.5 h-1.5 rounded-full"
+              style={{
+                background: "linear-gradient(145deg, #c0c0c0, #808080)",
+                boxShadow: "inset 0 1px 1px rgba(255,255,255,0.5), 0 1px 2px rgba(0,0,0,0.3)",
+              }}
+            />
+            <div 
+              className="w-1.5 h-1.5 rounded-full"
+              style={{
+                background: "linear-gradient(145deg, #c0c0c0, #808080)",
+                boxShadow: "inset 0 1px 1px rgba(255,255,255,0.5), 0 1px 2px rgba(0,0,0,0.3)",
+              }}
+            />
+          </div>
         </div>
       </div>
     </div>
