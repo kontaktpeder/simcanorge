@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, Home, Star, Car, Wrench, Send, BookOpen, Users, Mail } from "lucide-react";
+import { Menu, X, Home, Star, Car, Wrench, Send, BookOpen, Users, Mail, LogIn, User } from "lucide-react";
 import { useCart } from "@/hooks/useCart";
+import { useAuth } from "@/hooks/useAuth";
 import { SimcaLive } from "@/components/home/SimcaLive";
 import simcaBadge from "@/assets/simca-badge.png";
 import toolboxIcon from "@/assets/toolbox-icon.png";
@@ -192,6 +193,7 @@ export function Header() {
   const [isSpeedBoost, setIsSpeedBoost] = useState(false);
   const [roadFading, setRoadFading] = useState(false);
   const { itemCount } = useCart();
+  const { user } = useAuth();
 
   const isHome = location.pathname === "/";
   
@@ -456,6 +458,41 @@ export function Header() {
                   <p>{itemCount > 0 ? `${itemCount} deler i verktøykassen` : "Min verktøykasse"}</p>
                 </TooltipContent>
               </Tooltip>
+
+              {/* User/Login button */}
+              {user ? (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Link
+                      to="/dashboard"
+                      onClick={() => markLeavingHome("/dashboard")}
+                      className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg font-display text-sm uppercase tracking-wide bg-primary text-primary-foreground hover:bg-primary/90 transition-all ml-1"
+                    >
+                      <User className="w-4 h-4" />
+                      <span className="hidden xl:inline">Min side</span>
+                    </Link>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Gå til din Simca-portal</p>
+                  </TooltipContent>
+                </Tooltip>
+              ) : (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Link
+                      to="/login?returnUrl=/dashboard"
+                      onClick={() => markLeavingHome("/login")}
+                      className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg font-display text-sm uppercase tracking-wide bg-accent text-accent-foreground hover:bg-accent/90 transition-all ml-1"
+                    >
+                      <LogIn className="w-4 h-4" />
+                      <span className="hidden xl:inline">Logg inn</span>
+                    </Link>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Logg inn i din bil</p>
+                  </TooltipContent>
+                </Tooltip>
+              )}
             </TooltipProvider>
           </nav>
 
@@ -528,6 +565,33 @@ export function Header() {
                   </Link>
                 );
               })}
+              
+              {/* User/Login button for mobile */}
+              {user ? (
+                <Link
+                  to="/dashboard"
+                  onClick={() => {
+                    markLeavingHome("/dashboard");
+                    setMobileMenuOpen(false);
+                  }}
+                  className="flex items-center gap-3 font-display text-base uppercase tracking-wide py-2.5 px-4 rounded-lg bg-primary text-primary-foreground mt-2"
+                >
+                  <User className="w-5 h-5" />
+                  Min side
+                </Link>
+              ) : (
+                <Link
+                  to="/login?returnUrl=/dashboard"
+                  onClick={() => {
+                    markLeavingHome("/login");
+                    setMobileMenuOpen(false);
+                  }}
+                  className="flex items-center gap-3 font-display text-base uppercase tracking-wide py-2.5 px-4 rounded-lg bg-accent text-accent-foreground mt-2"
+                >
+                  <LogIn className="w-5 h-5" />
+                  Logg inn i din bil
+                </Link>
+              )}
             </div>
           </nav>
         )}

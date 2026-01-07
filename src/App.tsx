@@ -27,6 +27,10 @@ import AdminMeldinger from "./pages/admin/AdminMeldinger";
 import SendInnBil from "./pages/SendInnBil";
 import Personvern from "./pages/Personvern";
 import AcceptInvitation from "./pages/AcceptInvitation";
+import Login from "./pages/Login";
+import Dashboard from "./pages/Dashboard";
+import DashboardMineBiler from "./pages/DashboardMineBiler";
+import DashboardBilDetalj from "./pages/DashboardBilDetalj";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -53,6 +57,11 @@ const App = () => (
               <Route path="/kontakt" element={<Kontakt />} />
               <Route path="/personvern" element={<Personvern />} />
               <Route path="/accept-invitation" element={<AcceptInvitation />} />
+              <Route path="/login" element={<Login />} />
+              {/* Dashboard routes for car owners */}
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/dashboard/mine-biler" element={<DashboardMineBiler />} />
+              <Route path="/dashboard/bil/:carId" element={<DashboardBilDetalj />} />
               {/* Admin routes */}
               <Route path="/admin/login" element={<AdminLogin />} />
               <Route path="/admin/dashboard" element={<AdminDashboard />} />

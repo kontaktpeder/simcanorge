@@ -128,7 +128,7 @@ export default function AcceptInvitation() {
 
       // Redirect after 2 seconds
       setTimeout(() => {
-        navigate(`/min-bil/${invitation.car_id}`);
+        navigate('/dashboard/mine-biler');
       }, 2000);
 
     } catch (error: any) {
