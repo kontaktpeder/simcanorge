@@ -149,9 +149,9 @@ export const SimcaLive = () => {
   return (
     <div
       className={`
-        fixed top-20 md:top-24 left-3 md:left-4 z-40
+        mb-3 md:mb-0 md:fixed md:top-24 md:left-4 md:z-40
         transition-all duration-700 ease-out
-        ${isLoaded ? "opacity-100 translate-x-0 scale-100" : "opacity-0 -translate-x-8 scale-95"}
+        ${isLoaded ? "opacity-100 translate-y-0 md:translate-x-0 scale-100" : "opacity-0 -translate-y-4 md:-translate-x-8 scale-95"}
       `}
     >
       {/* Outer chrome frame - tighter radius */}
