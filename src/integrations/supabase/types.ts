@@ -125,6 +125,53 @@ export type Database = {
           },
         ]
       }
+      car_publication_requests: {
+        Row: {
+          action: string
+          admin_note: string | null
+          car_id: string
+          created_at: string
+          id: string
+          message: string | null
+          requested_by: string
+          resolved_at: string | null
+          resolved_by: string | null
+          status: string
+        }
+        Insert: {
+          action: string
+          admin_note?: string | null
+          car_id: string
+          created_at?: string
+          id?: string
+          message?: string | null
+          requested_by: string
+          resolved_at?: string | null
+          resolved_by?: string | null
+          status?: string
+        }
+        Update: {
+          action?: string
+          admin_note?: string | null
+          car_id?: string
+          created_at?: string
+          id?: string
+          message?: string | null
+          requested_by?: string
+          resolved_at?: string | null
+          resolved_by?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "car_publication_requests_car_id_fkey"
+            columns: ["car_id"]
+            isOneToOne: false
+            referencedRelation: "cars"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       car_submissions: {
         Row: {
           admin_notes: string | null
@@ -420,6 +467,47 @@ export type Database = {
           subject?: string
         }
         Relationships: []
+      }
+      notifications: {
+        Row: {
+          body: string
+          car_id: string | null
+          created_at: string
+          id: string
+          is_read: boolean
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          body: string
+          car_id?: string | null
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          title: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          body?: string
+          car_id?: string | null
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_car_id_fkey"
+            columns: ["car_id"]
+            isOneToOne: false
+            referencedRelation: "cars"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       page_views: {
         Row: {

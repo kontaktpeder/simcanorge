@@ -6,7 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { 
   ArrowLeft, Save, Eye, EyeOff, Star, StarOff, Trash2, 
   Pencil, X, Upload, Car, ExternalLink, Send, Calendar,
-  User, Mail, ImagePlus, Check, ShieldCheck, Phone, ChevronDown
+  User, Mail, ImagePlus, Check, ShieldCheck, Phone, ChevronDown, Clock, XCircle
 } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { OwnerSection } from "@/components/admin/OwnerSection";
@@ -106,6 +106,28 @@ const AdminBilProfil = () => {
     enabled: !!carId,
   });
 
+  // Hent open publication request for denne bilen
+  const { data: openRequest } = useQuery({
+    queryKey: ['publication-request-admin', carId],
+    queryFn: async () => {
+      if (!carId) return null;
+      const { data } = await supabase
+        .from('car_publication_requests')
+        .select('*')
+        .eq('car_id', carId)
+        .eq('status', 'open')
+        .maybeSingle();
+      return data as { 
+        id: string; 
+        car_id: string; 
+        requested_by: string;
+        action: 'publish' | 'unpublish'; 
+        message: string | null;
+        created_at: string 
+      } | null;
+    },
+    enabled: !!carId
+  });
   // Initialize form when car data loads
   const initBasicForm = () => {
     if (car) {
@@ -290,6 +312,85 @@ const AdminBilProfil = () => {
       toast.success('Bil godkjent! Du kan nå generere invitasjon til eier.');
       queryClient.invalidateQueries({ queryKey: ['admin-car', carId] });
     }
+  };
+
+  const handlePublicationRequest = async (approve: boolean) => {
+    if (!openRequest || !car) return;
+    
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (approve) {
+      // Utfør handling
+      const newStatus = openRequest.action === 'publish' ? 'published' : 'draft';
+      const newPublishedAt = openRequest.action === 'publish' 
+        ? new Date().toISOString() 
+        : null;
+
+      // Oppdater bil status
+      const { error: carError } = await supabase
+        .from('cars')
+        .update({ 
+          status: newStatus,
+          published_at: newPublishedAt 
+        })
+        .eq('id', car.id);
+
+      if (carError) {
+        toast.error('Kunne ikke oppdatere bil status');
+        return;
+      }
+
+      // Oppdater request
+      await supabase
+        .from('car_publication_requests')
+        .update({
+          status: 'approved',
+          resolved_at: new Date().toISOString(),
+          resolved_by: user?.id
+        })
+        .eq('id', openRequest.id);
+
+      // Opprett notification til requester
+      await supabase
+        .from('notifications')
+        .insert({
+          user_id: openRequest.requested_by,
+          type: 'publication',
+          title: openRequest.action === 'publish' ? 'Bilen er publisert' : 'Bilen er avpublisert',
+          body: openRequest.action === 'publish' 
+            ? `Bilen "${car.title}" er nå publisert på nettsiden.`
+            : `Bilen "${car.title}" er nå avpublisert.`,
+          car_id: car.id
+        });
+
+      toast.success(`Bil ${openRequest.action === 'publish' ? 'publisert' : 'avpublisert'}! Eier er varslet.`);
+    } else {
+      // Avslå
+      await supabase
+        .from('car_publication_requests')
+        .update({
+          status: 'rejected',
+          resolved_at: new Date().toISOString(),
+          resolved_by: user?.id
+        })
+        .eq('id', openRequest.id);
+
+      // Opprett notification om avslag
+      await supabase
+        .from('notifications')
+        .insert({
+          user_id: openRequest.requested_by,
+          type: 'publication_rejected',
+          title: 'Forespørsel avslått',
+          body: `Forespørselen om å ${openRequest.action === 'publish' ? 'publisere' : 'avpublisere'} "${car.title}" ble avslått.`,
+          car_id: car.id
+        });
+
+      toast.success('Forespørsel avslått');
+    }
+
+    queryClient.invalidateQueries({ queryKey: ['publication-request-admin', carId] });
+    queryClient.invalidateQueries({ queryKey: ['admin-car', carId] });
   };
 
   const deleteImage = async (imageId: string) => {
@@ -555,6 +656,65 @@ const AdminBilProfil = () => {
                   </CollapsibleContent>
                 </Collapsible>
               )}
+            </div>
+          </div>
+        )}
+
+        {/* Publiseringsforespørsel */}
+        {openRequest && (
+          <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 md:p-6">
+            <h3 className="font-display text-sm mb-4 flex items-center gap-2 text-amber-800">
+              <Clock className="w-4 h-4" />
+              PUBLISERINGSFORESPØRSEL
+            </h3>
+            
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                <div>
+                  <p className="text-xs text-muted-foreground">Forespurt handling:</p>
+                  <p className="font-medium text-amber-800">
+                    {openRequest.action === 'publish' ? 'Publiser bil' : 'Avpubliser bil'}
+                  </p>
+                </div>
+                
+                <div>
+                  <p className="text-xs text-muted-foreground">Forespurt dato:</p>
+                  <p className="font-medium">
+                    {new Date(openRequest.created_at).toLocaleDateString('nb-NO', {
+                      day: 'numeric',
+                      month: 'long',
+                      year: 'numeric'
+                    })}
+                  </p>
+                </div>
+              </div>
+              
+              {openRequest.message && (
+                <div className="pt-3 border-t border-amber-200">
+                  <p className="text-xs text-muted-foreground">Melding:</p>
+                  <p className="text-sm">{openRequest.message}</p>
+                </div>
+              )}
+              
+              <div className="flex flex-wrap gap-2 pt-3 border-t border-amber-200">
+                <Button
+                  size="sm"
+                  onClick={() => handlePublicationRequest(true)}
+                  className="bg-green-600 hover:bg-green-700 gap-2"
+                >
+                  <Check className="w-4 h-4" />
+                  {openRequest.action === 'publish' ? 'Utfør publisering' : 'Utfør avpublisering'}
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handlePublicationRequest(false)}
+                  className="gap-2"
+                >
+                  <XCircle className="w-4 h-4" />
+                  Avslå
+                </Button>
+              </div>
             </div>
           </div>
         )}

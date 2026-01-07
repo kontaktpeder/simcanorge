@@ -1,8 +1,9 @@
 import { useEffect, useState, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { supabase } from "@/integrations/supabase/client";
-import { Plus, Pencil, Trash2, Eye, EyeOff, X, Upload, Car, Star, StarOff, Send, Filter } from "lucide-react";
+import { Plus, Pencil, Trash2, Eye, EyeOff, X, Upload, Car, Star, StarOff, Send, Filter, Clock } from "lucide-react";
 import { toast } from "sonner";
 import { CAR_BRANDS, getModelsForBrand, getYearsForModel, getVariantsForModel, generateCarTitle } from "@/data/carBrands";
 import { CAR_BODY_TYPES } from "@/data/carBodyTypes";
@@ -169,6 +170,37 @@ const AdminBiler = () => {
       archived: cars.filter(c => getCarStatus(c) === 'archived').length,
     };
   }, [cars]);
+
+  // Hent antall åpne publiseringsforespørsler
+  const { data: openRequestsCount } = useQuery({
+    queryKey: ['open-publication-requests-count'],
+    queryFn: async () => {
+      const { count } = await supabase
+        .from('car_publication_requests')
+        .select('*', { count: 'exact', head: true })
+        .eq('status', 'open');
+      return count || 0;
+    }
+  });
+
+  // Hent car_ids med open requests
+  const { data: carsWithRequests } = useQuery({
+    queryKey: ['cars-with-open-requests'],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('car_publication_requests')
+        .select('car_id, action')
+        .eq('status', 'open');
+      return data || [];
+    }
+  });
+
+  const requestCarIds = useMemo(() => 
+    new Set(carsWithRequests?.map(r => r.car_id) || []),
+  [carsWithRequests]);
+
+  const getRequestAction = (carId: string) => 
+    carsWithRequests?.find(r => r.car_id === carId)?.action;
 
   useEffect(() => {
     fetchCars();
@@ -507,6 +539,20 @@ const AdminBiler = () => {
     return null;
   };
 
+  // Request badge for cars with open publication requests
+  const RequestBadge = ({ car }: { car: CarPost }) => {
+    if (requestCarIds.has(car.id)) {
+      const action = getRequestAction(car.id);
+      return (
+        <span className="bg-amber-500 text-white text-[10px] px-1.5 py-0.5 rounded font-bold uppercase flex items-center gap-1">
+          <Clock className="w-3 h-3" />
+          {action === 'publish' ? 'Pub' : 'Avpub'}
+        </span>
+      );
+    }
+    return null;
+  };
+
   // Format submission date
   const formatSubmissionDate = (dateStr: string) => {
     return new Date(dateStr).toLocaleDateString('nb-NO', {
@@ -519,6 +565,17 @@ const AdminBiler = () => {
   return (
     <AdminLayout title="BILER">
       <div className="flex flex-col gap-4 mb-6">
+        {/* Publiseringsforespørsler alert */}
+        {openRequestsCount && openRequestsCount > 0 && (
+          <div className="bg-amber-500 hover:bg-amber-600 text-white px-4 py-3 rounded-lg font-display text-sm flex items-center justify-center gap-3 transition-colors animate-pulse">
+            <Clock className="w-5 h-5" />
+            <span className="bg-white text-amber-500 rounded-full w-7 h-7 flex items-center justify-center font-bold">
+              {openRequestsCount}
+            </span>
+            <span>Publiseringsforespørsler venter på behandling</span>
+          </div>
+        )}
+
         {/* Prominent alert for new submissions */}
         {statusCounts.submitted > 0 && (
           <button
@@ -965,6 +1022,7 @@ const AdminBiler = () => {
                         <div className="min-w-0">
                           <div className="flex items-center gap-1.5">
                             <NewBadge car={car} />
+                            <RequestBadge car={car} />
                             {car.featured && (
                               <Star className="w-3.5 h-3.5 text-yellow-500 fill-yellow-500 flex-shrink-0" />
                             )}
@@ -1073,6 +1131,7 @@ const AdminBiler = () => {
                       <div className="flex flex-col">
                         <div className="flex items-center gap-2">
                           <NewBadge car={car} />
+                          <RequestBadge car={car} />
                           {car.featured && (
                             <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
                           )}
