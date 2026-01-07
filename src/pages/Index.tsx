@@ -7,6 +7,7 @@ import { SimcaLive } from "@/components/home/SimcaLive";
 const Index = () => {
   return (
     <Layout>
+      {/* SimcaLive only shows on desktop as fixed element */}
       <SimcaLive />
       <HeroSection />
       <FunFactsSection />

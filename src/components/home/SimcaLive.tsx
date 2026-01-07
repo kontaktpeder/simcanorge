@@ -53,7 +53,11 @@ const useAnimatedCounter = (targetValue: number, duration: number = 1500) => {
   return displayValue;
 };
 
-export const SimcaLive = () => {
+interface SimcaLiveProps {
+  isHeaderMode?: boolean;
+}
+
+export const SimcaLive = ({ isHeaderMode = false }: SimcaLiveProps) => {
   const [activeUsers, setActiveUsers] = useState(0);
   const [totalVisits, setTotalVisits] = useState(0);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -146,12 +150,71 @@ export const SimcaLive = () => {
     return `${displayTotalVisits} besøk siste 30 dager`;
   };
 
+  // Header mode: ultra compact for mobile header
+  if (isHeaderMode) {
+    return (
+      <div
+        className={`
+          transition-all duration-500 ease-out
+          ${isLoaded ? "opacity-100 scale-100" : "opacity-0 scale-95"}
+        `}
+      >
+        <div
+          className="relative rounded-md p-[1.5px]"
+          style={{
+            background: `linear-gradient(145deg, #e0e0e0 0%, #a8a8a8 50%, #c8c8c8 100%)`,
+            boxShadow: `0 2px 8px rgba(0,0,0,0.25)`,
+          }}
+        >
+          <div
+            className="relative rounded-[5px] overflow-hidden px-2 py-1"
+            style={{
+              background: `linear-gradient(160deg, hsl(212, 75%, 28%) 0%, hsl(212, 68%, 18%) 100%)`,
+              boxShadow: `inset 0 1px 3px rgba(255,255,255,0.15), inset 0 -2px 4px rgba(0,0,0,0.3)`,
+            }}
+          >
+            <div className="flex items-center gap-1.5">
+              {/* Pulsing red indicator */}
+              <div className="relative flex items-center justify-center w-1.5 h-1.5">
+                <div 
+                  className="absolute inset-0 rounded-full animate-ping opacity-75"
+                  style={{ background: "hsl(2, 85%, 45%)", animationDuration: "2s" }}
+                />
+                <div 
+                  className="relative w-1 h-1 rounded-full"
+                  style={{
+                    background: "radial-gradient(circle at 35% 35%, #ff6666 0%, #d41515 50%, #9a0a0a 100%)",
+                    boxShadow: "0 0 3px rgba(212, 21, 21, 0.6)",
+                  }}
+                />
+              </div>
+              <span
+                className="font-display text-[7px] tracking-[0.1em] uppercase text-white/90"
+                style={{ textShadow: `0 1px 1px rgba(0,0,0,0.5)` }}
+              >
+                live
+              </span>
+              <span className="text-white/40 text-[7px]">·</span>
+              <span
+                className="font-display text-[8px] font-bold tabular-nums text-white"
+                style={{ textShadow: `0 1px 1px rgba(0,0,0,0.5)` }}
+              >
+                {displayActiveUsers > 0 ? displayActiveUsers : "–"}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Desktop mode: fixed position with full details
   return (
     <div
       className={`
-        mb-3 md:mb-0 md:fixed md:top-24 md:left-4 md:z-40
+        hidden md:block fixed top-24 left-4 z-40
         transition-all duration-700 ease-out
-        ${isLoaded ? "opacity-100 translate-y-0 md:translate-x-0 scale-100" : "opacity-0 -translate-y-4 md:-translate-x-8 scale-95"}
+        ${isLoaded ? "opacity-100 translate-x-0 scale-100" : "opacity-0 -translate-x-8 scale-95"}
       `}
     >
       {/* Outer chrome frame - tighter radius */}
