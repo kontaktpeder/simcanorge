@@ -1,17 +1,53 @@
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { Layout } from '@/components/layout/Layout';
 import { PageHeader } from '@/components/layout/PageHeader';
-import { ArrowLeft, Car, Calendar, Wrench, Loader2, XCircle } from 'lucide-react';
-import { useEffect } from 'react';
+import { 
+  ArrowLeft, Car, Calendar, Wrench, Loader2, XCircle, 
+  Pencil, Save, X, Eye, EyeOff, Upload, Trash2 
+} from 'lucide-react';
+import { useEffect, useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { toast } from 'sonner';
+import { compressImages, generateImageId, getCarImagePath } from '@/lib/imageCompression';
+import { CAR_BRANDS, getModelsForBrand } from '@/data/carBrands';
+import { CAR_BODY_TYPES } from '@/data/carBodyTypes';
+
+const CATEGORIES = [
+  { value: 'registrert', label: 'Registrert' },
+  { value: 'prosjekt', label: 'Prosjekt' },
+  { value: 'veteran', label: 'Veteranbil' },
+];
 
 export default function DashboardBilDetalj() {
   const { carId } = useParams<{ carId: string }>();
   const { user, isLoading: authLoading } = useAuth();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Editing states
+  const [isEditingBasic, setIsEditingBasic] = useState(false);
+  const [isEditingStory, setIsEditingStory] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [isUploadingImages, setIsUploadingImages] = useState(false);
+
+  // Form states
+  const [basicForm, setBasicForm] = useState({
+    brand: "",
+    model: "",
+    variant: "",
+    body_type: "",
+    year: "",
+    category: "registrert",
+    tags: "",
+  });
+  const [storyForm, setStoryForm] = useState("");
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -54,6 +90,191 @@ export default function DashboardBilDetalj() {
     enabled: !!user && !!carId
   });
 
+  const car = carData?.car;
+
+  // Populate forms when car loads
+  useEffect(() => {
+    if (car) {
+      setBasicForm({
+        brand: car.brand || "",
+        model: car.model || "",
+        variant: car.variant || "",
+        body_type: car.body_type || "",
+        year: car.year?.toString() || "",
+        category: car.category || "registrert",
+        tags: car.tags?.join(", ") || "",
+      });
+      setStoryForm(car.story || "");
+    }
+  }, [car]);
+
+  // Save basic info
+  const saveBasicInfo = async () => {
+    if (!car) return;
+    setIsSaving(true);
+    
+    try {
+      const { error } = await supabase
+        .from('cars')
+        .update({
+          brand: basicForm.brand || null,
+          model: basicForm.model,
+          variant: basicForm.variant || null,
+          body_type: basicForm.body_type || null,
+          year: basicForm.year ? parseInt(basicForm.year) : null,
+          category: basicForm.category,
+          tags: basicForm.tags.split(',').map(t => t.trim()).filter(t => t),
+        })
+        .eq('id', car.id);
+
+      if (error) {
+        console.error('Save error:', error);
+        if (error.code === '42501' || error.message?.includes('permission')) {
+          toast.error('Du har ikke tilgang til å redigere denne bilen');
+        } else {
+          toast.error(`Kunne ikke lagre: ${error.message || 'Ukjent feil'}`);
+        }
+        return;
+      }
+
+      toast.success('Lagret!');
+      setIsEditingBasic(false);
+      queryClient.invalidateQueries({ queryKey: ['my-car', carId, user?.id] });
+    } catch (err: any) {
+      console.error('Unexpected error:', err);
+      toast.error('Uventet feil ved lagring');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  // Save story
+  const saveStory = async () => {
+    if (!car) return;
+    setIsSaving(true);
+    
+    try {
+      const { error } = await supabase
+        .from('cars')
+        .update({ story: storyForm || null })
+        .eq('id', car.id);
+
+      if (error) {
+        console.error('Save error:', error);
+        toast.error(`Kunne ikke lagre: ${error.message || 'Ukjent feil'}`);
+        return;
+      }
+
+      toast.success('Historien er lagret!');
+      setIsEditingStory(false);
+      queryClient.invalidateQueries({ queryKey: ['my-car', carId, user?.id] });
+    } catch (err) {
+      console.error('Unexpected error:', err);
+      toast.error('Uventet feil ved lagring');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  // Toggle publish status
+  const togglePublish = async () => {
+    if (!car) return;
+    
+    const currentStatus = car.status;
+    if (currentStatus === 'archived') {
+      toast.error('Kan ikke publisere arkiverte biler');
+      return;
+    }
+
+    const newStatus = currentStatus === 'published' ? 'draft' : 'published';
+    const newPublishedAt = newStatus === 'published' ? new Date().toISOString() : null;
+
+    const { error } = await supabase
+      .from('cars')
+      .update({ status: newStatus, published_at: newPublishedAt })
+      .eq('id', car.id);
+
+    if (error) {
+      console.error('Status error:', error);
+      toast.error('Kunne ikke oppdatere status');
+    } else {
+      toast.success(newStatus === 'published' ? 'Bil publisert!' : 'Bil avpublisert');
+      queryClient.invalidateQueries({ queryKey: ['my-car', carId, user?.id] });
+    }
+  };
+
+  // Handle image upload
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0 || !car) return;
+
+    setIsUploadingImages(true);
+    
+    try {
+      const results = await compressImages(Array.from(files));
+      
+      for (const result of results) {
+        const imageId = generateImageId();
+        const filePath = getCarImagePath(car.id, imageId);
+        
+        const { error: uploadError } = await supabase.storage
+          .from('simca-images')
+          .upload(filePath, result.file, { contentType: 'image/webp' });
+        
+        if (uploadError) {
+          console.error('Upload error:', uploadError);
+          toast.error(`Feil ved opplasting: ${result.file.name}`);
+          continue;
+        }
+
+        const { data: urlData } = supabase.storage
+          .from('simca-images')
+          .getPublicUrl(filePath);
+
+        const { error: dbError } = await supabase
+          .from('car_images')
+          .insert({
+            car_id: car.id,
+            image_url: urlData.publicUrl,
+            alt_text: car.title,
+            sort_order: (car.car_images?.length || 0) + 1,
+          });
+
+        if (dbError) {
+          console.error('DB error:', dbError);
+          toast.error('Kunne ikke lagre bildereferanse');
+        }
+      }
+
+      toast.success(`${results.length} bilde(r) lastet opp`);
+      queryClient.invalidateQueries({ queryKey: ['my-car', carId, user?.id] });
+    } catch (err) {
+      console.error('Upload error:', err);
+      toast.error('Feil ved bildeopplasting');
+    } finally {
+      setIsUploadingImages(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
+
+  // Delete image
+  const deleteImage = async (imageId: string) => {
+    const { error } = await supabase
+      .from('car_images')
+      .delete()
+      .eq('id', imageId);
+
+    if (error) {
+      console.error('Delete error:', error);
+      toast.error('Kunne ikke slette bilde');
+    } else {
+      toast.success('Bilde slettet');
+      queryClient.invalidateQueries({ queryKey: ['my-car', carId, user?.id] });
+    }
+  };
+
   if (authLoading || isLoading) {
     return (
       <Layout>
@@ -87,7 +308,7 @@ export default function DashboardBilDetalj() {
     );
   }
 
-  if (!carData?.car) {
+  if (!car) {
     return (
       <Layout>
         <div className="container py-20 text-center">
@@ -97,7 +318,6 @@ export default function DashboardBilDetalj() {
     );
   }
 
-  const car = carData.car;
   const sortedImages = [...(car.car_images || [])].sort(
     (a: any, b: any) => (a.sort_order || 0) - (b.sort_order || 0)
   );
@@ -113,6 +333,8 @@ export default function DashboardBilDetalj() {
     return <span className={`px-3 py-1 rounded-full text-sm font-medium ${bg} ${text}`}>{label}</span>;
   };
 
+  const availableModels = basicForm.brand ? getModelsForBrand(basicForm.brand) : [];
+
   return (
     <Layout>
       <PageHeader title={car.title} />
@@ -127,83 +349,343 @@ export default function DashboardBilDetalj() {
             Tilbake til mine biler
           </Link>
 
-          <div className="bg-card border border-border rounded-xl overflow-hidden">
-            {/* Hovedbilde */}
-            <div className="aspect-video bg-muted">
-              {sortedImages[0] ? (
-                <img 
-                  src={sortedImages[0].image_url} 
-                  alt={car.title}
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center">
-                  <Car className="w-16 h-16 text-muted-foreground/50" />
+          <div className="space-y-6">
+            {/* Status & Publish */}
+            <div className="bg-card border border-border rounded-xl p-6">
+              <div className="flex flex-wrap items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  {getStatusBadge(car.status)}
+                  {car.year && (
+                    <span className="inline-flex items-center gap-1 text-sm text-muted-foreground">
+                      <Calendar className="w-4 h-4" />
+                      {car.year}
+                    </span>
+                  )}
+                  {car.overhauled && (
+                    <span className="inline-flex items-center gap-1 text-sm text-green-600">
+                      <Wrench className="w-4 h-4" />
+                      Overhalt
+                    </span>
+                  )}
                 </div>
-              )}
-            </div>
-
-            {/* Info */}
-            <div className="p-6">
-              <div className="flex flex-wrap items-center gap-3 mb-4">
-                {getStatusBadge(car.status)}
-                {car.year && (
-                  <span className="inline-flex items-center gap-1 text-sm text-muted-foreground">
-                    <Calendar className="w-4 h-4" />
-                    {car.year}
-                  </span>
-                )}
-                {car.overhauled && (
-                  <span className="inline-flex items-center gap-1 text-sm text-green-600">
-                    <Wrench className="w-4 h-4" />
-                    Overhalt
-                  </span>
+                
+                {car.status !== 'archived' && (
+                  <Button
+                    onClick={togglePublish}
+                    variant={car.status === 'published' ? 'outline' : 'default'}
+                    className="gap-2"
+                  >
+                    {car.status === 'published' ? (
+                      <>
+                        <EyeOff className="w-4 h-4" />
+                        Avpubliser
+                      </>
+                    ) : (
+                      <>
+                        <Eye className="w-4 h-4" />
+                        Publiser
+                      </>
+                    )}
+                  </Button>
                 )}
               </div>
 
               {car.status === 'submitted' && (
-                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mt-4">
                   <p className="text-sm text-yellow-800">
                     Bilen din er sendt inn og venter på godkjenning fra admin. 
-                    Du vil få beskjed når den er publisert.
+                    Du kan publisere den selv når du er klar.
                   </p>
                 </div>
               )}
-
-              {car.story && (
-                <div className="mb-6">
-                  <h2 className="font-display text-lg mb-2">Historien</h2>
-                  <p className="text-muted-foreground whitespace-pre-wrap">{car.story}</p>
-                </div>
-              )}
-
-              {/* Flere bilder */}
-              {sortedImages.length > 1 && (
-                <div>
-                  <h2 className="font-display text-lg mb-3">Flere bilder</h2>
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                    {sortedImages.slice(1).map((img: any) => (
-                      <div key={img.id} className="aspect-video rounded-lg overflow-hidden bg-muted">
-                        <img 
-                          src={img.image_url} 
-                          alt={img.alt_text || car.title}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Link til offentlig side hvis publisert */}
+              
               {car.status === 'published' && car.slug && (
-                <div className="mt-6 pt-6 border-t border-border">
+                <div className="mt-4 pt-4 border-t border-border">
                   <Link 
                     to={`/biler/${car.slug}`}
                     className="text-primary hover:underline text-sm"
                   >
                     Se offentlig side →
                   </Link>
+                </div>
+              )}
+            </div>
+
+            {/* Bilder */}
+            <div className="bg-card border border-border rounded-xl overflow-hidden">
+              <div className="p-4 border-b border-border flex items-center justify-between">
+                <h2 className="font-display text-lg">Bilder</h2>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={isUploadingImages}
+                  className="gap-2"
+                >
+                  <Upload className="w-4 h-4" />
+                  {isUploadingImages ? 'Laster opp...' : 'Last opp'}
+                </Button>
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleImageUpload}
+                  accept="image/*"
+                  multiple
+                  className="hidden"
+                />
+              </div>
+              
+              {sortedImages.length > 0 ? (
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-2 p-4">
+                  {sortedImages.map((img: any, index: number) => (
+                    <div key={img.id} className="relative group aspect-video rounded-lg overflow-hidden bg-muted">
+                      <img 
+                        src={img.image_url} 
+                        alt={img.alt_text || car.title}
+                        className="w-full h-full object-cover"
+                      />
+                      {index === 0 && (
+                        <span className="absolute top-2 left-2 bg-primary text-primary-foreground text-xs px-2 py-1 rounded">
+                          Hovedbilde
+                        </span>
+                      )}
+                      <button
+                        onClick={() => deleteImage(img.id)}
+                        className="absolute top-2 right-2 bg-destructive text-destructive-foreground p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <Trash2 className="w-3 h-3" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="p-8 text-center">
+                  <Car className="w-12 h-12 mx-auto text-muted-foreground/50 mb-2" />
+                  <p className="text-muted-foreground text-sm">Ingen bilder ennå</p>
+                </div>
+              )}
+            </div>
+
+            {/* Grunninfo */}
+            <div className="bg-card border border-border rounded-xl p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="font-display text-lg">Grunninfo</h2>
+                {!isEditingBasic ? (
+                  <Button variant="ghost" size="sm" onClick={() => setIsEditingBasic(true)} className="gap-2">
+                    <Pencil className="w-4 h-4" />
+                    Rediger
+                  </Button>
+                ) : (
+                  <div className="flex gap-2">
+                    <Button size="sm" onClick={saveBasicInfo} disabled={isSaving} className="gap-2">
+                      <Save className="w-4 h-4" />
+                      {isSaving ? 'Lagrer...' : 'Lagre'}
+                    </Button>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={() => {
+                        setIsEditingBasic(false);
+                        if (car) {
+                          setBasicForm({
+                            brand: car.brand || "",
+                            model: car.model || "",
+                            variant: car.variant || "",
+                            body_type: car.body_type || "",
+                            year: car.year?.toString() || "",
+                            category: car.category || "registrert",
+                            tags: car.tags?.join(", ") || "",
+                          });
+                        }
+                      }}
+                    >
+                      <X className="w-4 h-4" />
+                    </Button>
+                  </div>
+                )}
+              </div>
+
+              {isEditingBasic ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-sm text-muted-foreground mb-1 block">Merke</label>
+                    <Select
+                      value={basicForm.brand}
+                      onValueChange={(value) => setBasicForm({ ...basicForm, brand: value, model: "" })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Velg merke" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {CAR_BRANDS.map((brand) => (
+                          <SelectItem key={brand.name} value={brand.name}>{brand.name}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  <div>
+                    <label className="text-sm text-muted-foreground mb-1 block">Modell</label>
+                    <Select
+                      value={basicForm.model}
+                      onValueChange={(value) => setBasicForm({ ...basicForm, model: value })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Velg modell" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {availableModels.map((model) => (
+                          <SelectItem key={model.name} value={model.name}>{model.name}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  <div>
+                    <label className="text-sm text-muted-foreground mb-1 block">Variant</label>
+                    <Input
+                      value={basicForm.variant}
+                      onChange={(e) => setBasicForm({ ...basicForm, variant: e.target.value })}
+                      placeholder="f.eks. GLS, LS, Rallye"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="text-sm text-muted-foreground mb-1 block">Karosseri</label>
+                    <Select
+                      value={basicForm.body_type}
+                      onValueChange={(value) => setBasicForm({ ...basicForm, body_type: value })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Velg karosseri" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {CAR_BODY_TYPES.map((type) => (
+                          <SelectItem key={type.id} value={type.id}>{type.label}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  <div>
+                    <label className="text-sm text-muted-foreground mb-1 block">Årsmodell</label>
+                    <Input
+                      type="number"
+                      value={basicForm.year}
+                      onChange={(e) => setBasicForm({ ...basicForm, year: e.target.value })}
+                      placeholder="f.eks. 1972"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="text-sm text-muted-foreground mb-1 block">Kategori</label>
+                    <Select
+                      value={basicForm.category}
+                      onValueChange={(value) => setBasicForm({ ...basicForm, category: value })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Velg kategori" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {CATEGORIES.map((cat) => (
+                          <SelectItem key={cat.value} value={cat.value}>{cat.label}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  <div className="md:col-span-2">
+                    <label className="text-sm text-muted-foreground mb-1 block">Tags (kommaseparert)</label>
+                    <Input
+                      value={basicForm.tags}
+                      onChange={(e) => setBasicForm({ ...basicForm, tags: e.target.value })}
+                      placeholder="f.eks. original, restaurert, rally"
+                    />
+                  </div>
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
+                  <div>
+                    <span className="text-muted-foreground">Merke:</span>
+                    <p className="font-medium">{car.brand || '-'}</p>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">Modell:</span>
+                    <p className="font-medium">{car.model}</p>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">Variant:</span>
+                    <p className="font-medium">{car.variant || '-'}</p>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">Karosseri:</span>
+                    <p className="font-medium">{car.body_type || '-'}</p>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">Årsmodell:</span>
+                    <p className="font-medium">{car.year || '-'}</p>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">Kategori:</span>
+                    <p className="font-medium">{car.category || '-'}</p>
+                  </div>
+                  {car.tags && car.tags.length > 0 && (
+                    <div className="col-span-full">
+                      <span className="text-muted-foreground">Tags:</span>
+                      <div className="flex flex-wrap gap-1 mt-1">
+                        {car.tags.map((tag: string) => (
+                          <span key={tag} className="bg-muted px-2 py-0.5 rounded text-xs">{tag}</span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Historien */}
+            <div className="bg-card border border-border rounded-xl p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="font-display text-lg">Historien</h2>
+                {!isEditingStory ? (
+                  <Button variant="ghost" size="sm" onClick={() => setIsEditingStory(true)} className="gap-2">
+                    <Pencil className="w-4 h-4" />
+                    Rediger
+                  </Button>
+                ) : (
+                  <div className="flex gap-2">
+                    <Button size="sm" onClick={saveStory} disabled={isSaving} className="gap-2">
+                      <Save className="w-4 h-4" />
+                      {isSaving ? 'Lagrer...' : 'Lagre'}
+                    </Button>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={() => {
+                        setIsEditingStory(false);
+                        setStoryForm(car.story || "");
+                      }}
+                    >
+                      <X className="w-4 h-4" />
+                    </Button>
+                  </div>
+                )}
+              </div>
+
+              {isEditingStory ? (
+                <Textarea
+                  value={storyForm}
+                  onChange={(e) => setStoryForm(e.target.value)}
+                  placeholder="Fortell historien om bilen din..."
+                  rows={8}
+                />
+              ) : (
+                <div>
+                  {car.story ? (
+                    <p className="text-muted-foreground whitespace-pre-wrap">{car.story}</p>
+                  ) : (
+                    <p className="text-muted-foreground italic">Ingen historie lagt til ennå.</p>
+                  )}
                 </div>
               )}
             </div>
