@@ -50,9 +50,14 @@ export function Footer() {
 
         <div className="flex flex-col md:flex-row items-center justify-between gap-2 md:gap-4 text-xs md:text-sm text-white/70">
           <p>© {new Date().getFullYear()} Simca Norge. Laget med ❤️ for klassiske biler.</p>
-          <Link to="/admin/login" className="hover:text-white/90 transition-colors">
-            Admin
-          </Link>
+          <div className="flex items-center gap-4">
+            <Link to="/personvern" className="hover:text-white/90 transition-colors">
+              Personvern
+            </Link>
+            <Link to="/admin/login" className="hover:text-white/90 transition-colors">
+              Admin
+            </Link>
+          </div>
         </div>
       </div>
     </footer>;
