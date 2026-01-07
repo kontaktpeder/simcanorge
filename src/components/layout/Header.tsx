@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X, Home, Star, Car, Wrench, Send, BookOpen, Users, Mail } from "lucide-react";
 import { useCart } from "@/hooks/useCart";
+import { SimcaLive } from "@/components/home/SimcaLive";
 import simcaBadge from "@/assets/simca-badge.png";
 import toolboxIcon from "@/assets/toolbox-icon.png";
 import simcaRallye from "@/assets/simca-rallye-yellow.png";
@@ -458,8 +459,12 @@ export function Header() {
             </TooltipProvider>
           </nav>
 
-          {/* Mobile: Toolbox + Menu */}
-          <div className="lg:hidden flex items-center gap-1">
+          {/* Mobile: SimcaLive + Toolbox + Menu */}
+          <div className="lg:hidden flex items-center gap-2">
+            {/* SimcaLive in header on mobile */}
+            <div className="flex-shrink-0">
+              <SimcaLive isHeaderMode />
+            </div>
             <Link
               to="/foresporsel"
               onClick={() => markLeavingHome("/foresporsel")}
