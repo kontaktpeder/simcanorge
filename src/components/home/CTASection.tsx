@@ -1,22 +1,17 @@
 import { Link } from "react-router-dom";
 import { Send, Wrench, ArrowRight } from "lucide-react";
-
 export function CTASection() {
-  return (
-    <section className="relative overflow-hidden py-8 md:py-12 bg-gradient-to-br from-amber-500 via-amber-400 to-yellow-500">
+  return <section className="relative overflow-hidden py-8 md:py-12 bg-gradient-to-br from-amber-500 via-amber-400 to-yellow-500">
       {/* Bold diagonal stripes */}
-      <div 
-        className="absolute inset-0 opacity-20"
-        style={{
-          backgroundImage: `repeating-linear-gradient(
+      <div className="absolute inset-0 opacity-20" style={{
+      backgroundImage: `repeating-linear-gradient(
             -45deg,
             transparent,
             transparent 20px,
             rgba(0,0,0,0.3) 20px,
             rgba(0,0,0,0.3) 40px
           )`
-        }}
-      />
+    }} />
       
       <div className="container mx-auto px-4 relative z-10">
         <div className="grid md:grid-cols-2 gap-4 md:gap-6">
@@ -33,10 +28,7 @@ export function CTASection() {
                 <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
                   Del historien om din klassiker med Simca-miljøet i Norge.
                 </p>
-                <Link 
-                  to="/send-inn" 
-                  className="inline-flex items-center gap-2 bg-accent text-accent-foreground px-4 py-2 rounded-full text-sm font-medium hover:opacity-90 transition-opacity"
-                >
+                <Link to="/send-inn" className="inline-flex items-center gap-2 bg-accent text-accent-foreground px-4 py-2 rounded-full text-sm font-medium hover:opacity-90 transition-opacity">
                   Send inn din bil
                   <ArrowRight className="w-4 h-4" />
                 </Link>
@@ -55,12 +47,9 @@ export function CTASection() {
                   TRENGER DU DELER?
                 </h3>
                 <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
-                  Pappa sjekker hylla! Bla i vårt utvalg av Simca-deler.
+                  Bla i vårt utvalg av Simca-deler.
                 </p>
-                <Link 
-                  to="/deler" 
-                  className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-full text-sm font-medium hover:opacity-90 transition-opacity"
-                >
+                <Link to="/deler" className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-full text-sm font-medium hover:opacity-90 transition-opacity">
                   Bla i deler
                   <ArrowRight className="w-4 h-4" />
                 </Link>
@@ -69,6 +58,5 @@ export function CTASection() {
           </div>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 }
