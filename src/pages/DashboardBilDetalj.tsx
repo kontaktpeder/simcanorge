@@ -325,7 +325,7 @@ export default function DashboardBilDetalj() {
   const getStatusBadge = (status: string) => {
     const config: Record<string, { bg: string; text: string; label: string }> = {
       published: { bg: 'bg-green-100', text: 'text-green-700', label: 'Publisert' },
-      submitted: { bg: 'bg-yellow-100', text: 'text-yellow-700', label: 'Venter på godkjenning' },
+      submitted: { bg: 'bg-blue-100', text: 'text-blue-700', label: 'Godkjent' },
       draft: { bg: 'bg-gray-100', text: 'text-gray-700', label: 'Kladd' },
       archived: { bg: 'bg-slate-100', text: 'text-slate-500', label: 'Arkivert' },
     };
