@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { supabase } from "@/integrations/supabase/client";
 import { Plus, Pencil, Trash2, Eye, EyeOff, X, Upload, Car, Star, StarOff, Send, Filter } from "lucide-react";
@@ -64,6 +64,7 @@ interface SubmissionData {
 
 const AdminBiler = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [cars, setCars] = useState<CarPost[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -394,24 +395,8 @@ const AdminBiler = () => {
   };
 
   const startEdit = (car: CarPost) => {
-    setFormData({
-      title: car.title,
-      slug: car.slug,
-      brand: car.brand || "",
-      model: car.model,
-      variant: car.variant || "",
-      body_type: car.body_type || "",
-      year: car.year?.toString() || "",
-      story: car.story || "",
-      overhauled: car.overhauled,
-      featured: car.featured,
-      published: !!car.published_at,
-      category: car.category || "registrert",
-    });
-    setTagsInput(car.tags?.join(", ") || "");
-    setExistingImages(car.car_images || []);
-    setEditingId(car.id);
-    setShowForm(true);
+    // Navigate to the car profile dashboard
+    navigate(`/admin/biler/${car.id}`);
   };
 
   const togglePublish = async (car: CarPost) => {
