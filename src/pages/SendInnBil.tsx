@@ -37,6 +37,8 @@ const submissionSchema = z.object({
   car_story: z.string().trim().max(5000, "Historien kan ikke være mer enn 5000 tegn").optional().or(z.literal(""))
 });
 
+const MIN_SUBMIT_INTERVAL = 2000; // 2 sekunder mellom submits
+
 export default function SendInnBil() {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -47,6 +49,7 @@ export default function SendInnBil() {
   const [uploadProgress, setUploadProgress] = useState<CompressionProgress | null>(null);
   const [compressionStats, setCompressionStats] = useState<{ originalSize: number; compressedSize: number; reduction: number } | null>(null);
   const [allowEdits, setAllowEdits] = useState<boolean | null>(null);
+  const [lastSubmitTime, setLastSubmitTime] = useState<number>(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [formData, setFormData] = useState({
     brand: "",
@@ -193,6 +196,19 @@ export default function SendInnBil() {
   };
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Rate limiting check
+    const now = Date.now();
+    if (now - lastSubmitTime < MIN_SUBMIT_INTERVAL) {
+      toast({
+        title: "Vent litt",
+        description: "Vennligst vent før du sender inn igjen.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    setLastSubmitTime(now);
     setErrors({});
     const dataToValidate = {
       ...formData,

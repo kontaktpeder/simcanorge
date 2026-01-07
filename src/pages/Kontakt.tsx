@@ -20,11 +20,14 @@ const contactSchema = z.object({
   message: z.string().trim().min(10, "Meldingen må være minst 10 tegn").max(5000, "Meldingen kan ikke være mer enn 5000 tegn"),
 });
 
+const MIN_SUBMIT_INTERVAL = 2000; // 2 sekunder mellom submits
+
 export default function Kontakt() {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [lastSubmitTime, setLastSubmitTime] = useState<number>(0);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -43,6 +46,19 @@ export default function Kontakt() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Rate limiting check
+    const now = Date.now();
+    if (now - lastSubmitTime < MIN_SUBMIT_INTERVAL) {
+      toast({
+        title: "Vent litt",
+        description: "Vennligst vent før du sender inn igjen.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    setLastSubmitTime(now);
     setErrors({});
 
     const result = contactSchema.safeParse(formData);
