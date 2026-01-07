@@ -130,7 +130,11 @@ export type Database = {
           overhauled: boolean | null
           published_at: string | null
           slug: string
+          source: Database["public"]["Enums"]["car_source"]
+          status: Database["public"]["Enums"]["car_status"]
           story: string | null
+          submitted_by_email: string | null
+          submitted_by_name: string | null
           tags: string[] | null
           title: string
           updated_at: string
@@ -148,7 +152,11 @@ export type Database = {
           overhauled?: boolean | null
           published_at?: string | null
           slug: string
+          source?: Database["public"]["Enums"]["car_source"]
+          status?: Database["public"]["Enums"]["car_status"]
           story?: string | null
+          submitted_by_email?: string | null
+          submitted_by_name?: string | null
           tags?: string[] | null
           title: string
           updated_at?: string
@@ -166,7 +174,11 @@ export type Database = {
           overhauled?: boolean | null
           published_at?: string | null
           slug?: string
+          source?: Database["public"]["Enums"]["car_source"]
+          status?: Database["public"]["Enums"]["car_status"]
           story?: string | null
+          submitted_by_email?: string | null
+          submitted_by_name?: string | null
           tags?: string[] | null
           title?: string
           updated_at?: string
@@ -417,6 +429,8 @@ export type Database = {
     }
     Enums: {
       app_role: "admin"
+      car_source: "manual" | "submission"
+      car_status: "submitted" | "draft" | "published" | "archived"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -545,6 +559,8 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin"],
+      car_source: ["manual", "submission"],
+      car_status: ["submitted", "draft", "published", "archived"],
     },
   },
 } as const
