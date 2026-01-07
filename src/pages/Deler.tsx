@@ -269,10 +269,10 @@ const Deler = () => {
           <p className="text-sm opacity-90 mb-4">
             Ta kontakt så hjelper vi deg
           </p>
-          <a href="mailto:kontaktpeder@gmail.com" className="inline-flex items-center gap-2 bg-card text-foreground px-4 py-2 rounded-full text-sm font-medium hover:bg-card/90 transition-colors">
-            Send melding
+          <Link to="/kontakt" className="inline-flex items-center gap-2 bg-card text-foreground px-4 py-2 rounded-full text-sm font-medium hover:bg-card/90 transition-colors">
+            Kontakt oss
             <ChevronRight className="w-4 h-4" />
-          </a>
+          </Link>
         </div>
       </section>
     </Layout>;
