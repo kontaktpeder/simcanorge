@@ -163,6 +163,7 @@ const BilDetalj = () => {
                   alt={mainImage.alt_text || car.title} 
                   className="w-full aspect-[4/3] object-cover border-4 border-foreground shadow-brutal cursor-pointer hover:opacity-95 transition-opacity" 
                   onClick={() => setSelectedImageIndex(0)}
+                  loading="eager"
                 />
               ) : (
                 <div className="w-full aspect-[4/3] bg-muted border-4 border-foreground flex items-center justify-center">
@@ -310,6 +311,7 @@ const BilDetalj = () => {
                     src={img.image_url}
                     alt={img.alt_text || `Bilde ${index + 2}`}
                     className="w-full h-full object-cover"
+                    loading="lazy"
                   />
                 </button>
               ))}
