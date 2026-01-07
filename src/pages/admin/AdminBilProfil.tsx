@@ -6,7 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { 
   ArrowLeft, Save, Eye, EyeOff, Star, StarOff, Trash2, 
   Pencil, X, Upload, Car, ExternalLink, Send, Calendar,
-  User, Mail, ImagePlus
+  User, Mail, ImagePlus, Check, ShieldCheck
 } from "lucide-react";
 import { OwnerSection } from "@/components/admin/OwnerSection";
 import { toast } from "sonner";
@@ -44,6 +44,8 @@ interface CarDetail {
   source: 'manual' | 'submission';
   submitted_by_email: string | null;
   submitted_by_name: string | null;
+  approved_at: string | null;
+  approved_by: string | null;
   car_images: CarImage[];
 }
 
@@ -87,6 +89,7 @@ const AdminBilProfil = () => {
         .select(`
           id, title, slug, brand, model, variant, body_type, year, story, overhauled, tags, featured, 
           published_at, created_at, category, status, source, submitted_by_email, submitted_by_name,
+          approved_at, approved_by,
           car_images(id, image_url, alt_text, sort_order)
         `)
         .eq('id', carId)
@@ -262,6 +265,28 @@ const AdminBilProfil = () => {
     }
   };
 
+  const approveCar = async () => {
+    if (!car) return;
+    
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    const { error } = await supabase
+      .from('cars')
+      .update({ 
+        approved_at: new Date().toISOString(),
+        approved_by: user?.id
+      })
+      .eq('id', car.id);
+
+    if (error) {
+      toast.error('Kunne ikke godkjenne bilen');
+      console.error('Approval error:', error);
+    } else {
+      toast.success('Bil godkjent! Du kan nå generere invitasjon til eier.');
+      queryClient.invalidateQueries({ queryKey: ['admin-car', carId] });
+    }
+  };
+
   const deleteImage = async (imageId: string) => {
     if (!confirm('Slette dette bildet?')) return;
 
@@ -381,6 +406,27 @@ const AdminBilProfil = () => {
           </div>
 
           <div className="flex items-center gap-2 flex-wrap">
+            {/* Approve button - only show if not approved */}
+            {!car.approved_at && (
+              <Button
+                variant="default"
+                size="sm"
+                onClick={approveCar}
+                className="bg-green-600 hover:bg-green-700"
+              >
+                <ShieldCheck className="w-4 h-4 mr-1" />
+                Godkjenn bil
+              </Button>
+            )}
+
+            {/* Approved badge */}
+            {car.approved_at && (
+              <span className="inline-flex items-center gap-1 text-green-600 text-sm px-2 py-1 bg-green-50 rounded">
+                <Check className="w-4 h-4" />
+                Godkjent {new Date(car.approved_at).toLocaleDateString('nb-NO')}
+              </span>
+            )}
+
             <Button
               variant="outline"
               size="sm"
@@ -393,6 +439,8 @@ const AdminBilProfil = () => {
               variant={status === 'published' ? 'outline' : 'default'}
               size="sm"
               onClick={togglePublish}
+              disabled={!car.approved_at}
+              title={!car.approved_at ? 'Godkjenn bilen først for å kunne publisere' : undefined}
             >
               {status === 'published' ? <EyeOff className="w-4 h-4 mr-1" /> : <Eye className="w-4 h-4 mr-1" />}
               {status === 'published' ? 'Avpubliser' : 'Publiser'}
@@ -728,7 +776,7 @@ const AdminBilProfil = () => {
         </div>
 
         {/* Eiere & Tilgang */}
-        <OwnerSection carId={car.id} />
+        <OwnerSection carId={car.id} isApproved={!!car.approved_at} />
 
         {/* Forhåndsvisning */}
         {status === 'published' && car.slug && (

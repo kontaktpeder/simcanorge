@@ -39,6 +39,8 @@ interface CarPost {
   source?: 'manual' | 'submission';
   submitted_by_email?: string | null;
   submitted_by_name?: string | null;
+  approved_at?: string | null;
+  approved_by?: string | null;
 }
 
 const CATEGORIES = [
@@ -119,6 +121,7 @@ const AdminBiler = () => {
       .from("cars")
       .select(`
         id, title, slug, brand, model, variant, body_type, year, story, overhauled, tags, featured, published_at, created_at, category, status, source, submitted_by_email, submitted_by_name,
+        approved_at, approved_by,
         car_images(id, image_url, alt_text, sort_order)
       `)
       .order("created_at", { ascending: false });
@@ -468,6 +471,7 @@ const AdminBiler = () => {
   // Status badge helper
   const StatusBadge = ({ car }: { car: CarPost }) => {
     const status = getCarStatus(car);
+    const isApproved = !!car.approved_at;
     const config = {
       submitted: { bg: 'bg-orange-100', text: 'text-orange-700', label: 'Innsendt', icon: Send },
       draft: { bg: 'bg-gray-100', text: 'text-gray-700', label: 'Kladd', icon: EyeOff },
@@ -476,21 +480,31 @@ const AdminBiler = () => {
     };
     const { bg, text, label, icon: Icon } = config[status];
     return (
-      <span className={`${bg} ${text} text-xs px-2 py-1 rounded font-display flex items-center gap-1 w-fit`}>
-        <Icon className="w-3 h-3" />
-        {label}
-      </span>
+      <div className="flex items-center gap-2">
+        <span className={`${bg} ${text} text-xs px-2 py-1 rounded font-display flex items-center gap-1 w-fit`}>
+          <Icon className="w-3 h-3" />
+          {label}
+        </span>
+        {isApproved && (
+          <span className="text-green-600 text-xs flex items-center gap-1">
+            ✓ Godkjent
+          </span>
+        )}
+      </div>
     );
   };
 
-  // "NY" badge for new submissions
+  // "NY" badge for unapproved submissions
   const NewBadge = ({ car }: { car: CarPost }) => {
-    if (getCarStatus(car) !== 'submitted' || car.source !== 'submission') return null;
-    return (
-      <span className="bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded font-bold uppercase animate-pulse">
-        NY
-      </span>
-    );
+    // Show "NY" badge for unapproved submissions
+    if (!car.approved_at && (getCarStatus(car) === 'submitted' || car.source === 'submission')) {
+      return (
+        <span className="bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded font-bold uppercase animate-pulse">
+          NY
+        </span>
+      );
+    }
+    return null;
   };
 
   // Format submission date

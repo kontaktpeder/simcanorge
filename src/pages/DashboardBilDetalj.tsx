@@ -390,14 +390,7 @@ export default function DashboardBilDetalj() {
                 )}
               </div>
 
-              {car.status === 'submitted' && (
-                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mt-4">
-                  <p className="text-sm text-yellow-800">
-                    Bilen din er sendt inn og venter på godkjenning fra admin. 
-                    Du kan publisere den selv når du er klar.
-                  </p>
-                </div>
-              )}
+              {/* Removed: "waiting for approval" message - owners only get access to approved cars */}
               
               {car.status === 'published' && car.slug && (
                 <div className="mt-4 pt-4 border-t border-border">
