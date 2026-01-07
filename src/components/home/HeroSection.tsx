@@ -106,7 +106,7 @@ export function HeroSection() {
                 </div> : featuredCar ? <Link to={`/biler/${featuredCar.slug}`} className="block bg-white/10 backdrop-blur-sm rounded-xl p-3 transition-all duration-300 group overflow-hidden">
                   {/* Car image */}
                   {getMainImage(featuredCar) ? <div className="overflow-hidden rounded-lg relative">
-                      <img src={getMainImage(featuredCar)!.image_url} alt={getMainImage(featuredCar)!.alt_text || featuredCar.title} className="w-full aspect-[16/10] object-cover group-hover:scale-105 transition-transform duration-500" />
+                      <img src={getMainImage(featuredCar)!.image_url} alt={getMainImage(featuredCar)!.alt_text || featuredCar.title} className="w-full aspect-[16/10] object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
                     </div> : <div className="aspect-[16/10] bg-white/20 rounded-lg flex items-center justify-center">
                       <Car className="w-16 h-16 opacity-50" />
                     </div>}
@@ -221,7 +221,7 @@ export function HeroSection() {
                 
                 {/* Car image with dark gradient for text readability */}
                 {getMainImage(featuredCar) ? <div className="overflow-hidden rounded-lg relative z-[2] car-finish-glow">
-                    <img src={getMainImage(featuredCar)!.image_url} alt={getMainImage(featuredCar)!.alt_text || featuredCar.title} className="w-full aspect-[16/10] object-cover shadow-lg group-hover:scale-105 transition-transform duration-500" />
+                    <img src={getMainImage(featuredCar)!.image_url} alt={getMainImage(featuredCar)!.alt_text || featuredCar.title} className="w-full aspect-[16/10] object-cover shadow-lg group-hover:scale-105 transition-transform duration-500" loading="lazy" />
                     {/* Dark gradient at bottom for text readability */}
                     <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
                     {/* Subtle shine overlay on hover */}
