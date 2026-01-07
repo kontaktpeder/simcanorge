@@ -210,11 +210,11 @@ export const SimcaLive = () => {
           />
 
           {/* Content */}
-          <div className="relative z-10 px-2 md:px-2.5 py-1.5 md:py-2">
+          <div className="relative z-10 px-2 md:px-4 py-1.5 md:py-3">
             {/* Header with live indicator */}
-            <div className="flex items-center gap-1.5 mb-1 pb-1 border-b border-white/10">
+            <div className="flex items-center gap-1.5 md:gap-2 mb-1 md:mb-2 pb-1 md:pb-1.5 border-b border-white/10">
               {/* Pulsing red indicator */}
-              <div className="relative flex items-center justify-center w-2 h-2 md:w-2.5 md:h-2.5">
+              <div className="relative flex items-center justify-center w-2 h-2 md:w-3.5 md:h-3.5">
                 <div 
                   className="absolute inset-0 rounded-full animate-ping opacity-75"
                   style={{
@@ -223,7 +223,7 @@ export const SimcaLive = () => {
                   }}
                 />
                 <div 
-                  className="relative w-1.5 h-1.5 md:w-2 md:h-2 rounded-full"
+                  className="relative w-1.5 h-1.5 md:w-2.5 md:h-2.5 rounded-full"
                   style={{
                     background: "radial-gradient(circle at 35% 35%, #ff6666 0%, #d41515 50%, #9a0a0a 100%)",
                     boxShadow: "0 0 4px rgba(212, 21, 21, 0.6), 0 0 8px rgba(212, 21, 21, 0.3)",
@@ -231,7 +231,7 @@ export const SimcaLive = () => {
                 />
               </div>
               <span
-                className="font-display text-[8px] md:text-[9px] tracking-[0.12em] uppercase"
+                className="font-display text-[8px] md:text-xs tracking-[0.12em] md:tracking-[0.2em] uppercase"
                 style={{
                   color: "rgba(255,255,255,0.9)",
                   textShadow: `0 1px 2px rgba(0,0,0,0.5)`,
@@ -241,10 +241,10 @@ export const SimcaLive = () => {
               </span>
             </div>
 
-            {/* Stats - horizontal layout */}
-            <div className="flex items-center gap-2 md:gap-3">
+            {/* Stats - horizontal on mobile, stacked on desktop */}
+            <div className="flex md:flex-col items-center md:items-start gap-2 md:gap-1">
               <p
-                className="text-[8px] md:text-[9px] font-medium leading-tight whitespace-nowrap"
+                className="text-[8px] md:text-[11px] font-medium leading-tight whitespace-nowrap"
                 style={{
                   color: "rgba(255,255,255,0.85)",
                   textShadow: "0 1px 2px rgba(0,0,0,0.4)",
@@ -252,10 +252,10 @@ export const SimcaLive = () => {
               >
                 {displayActiveUsers > 2 && (
                   <span 
-                    className="font-display text-xs md:text-sm font-bold tabular-nums mr-0.5"
+                    className="font-display text-xs md:text-lg font-bold tabular-nums mr-0.5 md:mr-1"
                     style={{
                       color: "#ffffff",
-                      textShadow: `0 1px 2px rgba(0,0,0,0.5)`,
+                      textShadow: `0 1px 2px rgba(0,0,0,0.5), 0 0 20px rgba(255,255,255,0.2)`,
                     }}
                   >
                     {displayActiveUsers}
@@ -264,10 +264,10 @@ export const SimcaLive = () => {
                 {getActiveUsersText().replace(/^\d+\s*/, displayActiveUsers > 2 ? '' : getActiveUsersText())}
               </p>
               
-              <span className="text-white/30">·</span>
+              <span className="text-white/30 md:hidden">·</span>
               
               <p
-                className="text-[8px] md:text-[9px] font-medium leading-tight whitespace-nowrap"
+                className="text-[8px] md:text-[11px] font-medium leading-tight whitespace-nowrap"
                 style={{
                   color: "rgba(255,255,255,0.7)",
                   textShadow: "0 1px 2px rgba(0,0,0,0.4)",
@@ -275,16 +275,16 @@ export const SimcaLive = () => {
               >
                 {!hasError && isLoaded && (
                   <span 
-                    className="font-display text-xs md:text-sm font-bold tabular-nums mr-0.5"
+                    className="font-display text-xs md:text-lg font-bold tabular-nums mr-0.5 md:mr-1"
                     style={{
                       color: "#ffffff",
-                      textShadow: `0 1px 2px rgba(0,0,0,0.5)`,
+                      textShadow: `0 1px 2px rgba(0,0,0,0.5), 0 0 20px rgba(255,255,255,0.2)`,
                     }}
                   >
                     {displayTotalVisits}
                   </span>
                 )}
-                {hasError || !isLoaded ? getTotalVisitsText() : "besøk"}
+                {hasError || !isLoaded ? getTotalVisitsText() : "besøk siste 30 dager"}
               </p>
             </div>
           </div>
