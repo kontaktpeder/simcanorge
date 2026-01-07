@@ -49,6 +49,82 @@ export type Database = {
           },
         ]
       }
+      car_invitations: {
+        Row: {
+          car_id: string
+          created_at: string
+          created_by: string | null
+          email: string
+          expires_at: string
+          id: string
+          token: string
+          used_at: string | null
+        }
+        Insert: {
+          car_id: string
+          created_at?: string
+          created_by?: string | null
+          email: string
+          expires_at: string
+          id?: string
+          token: string
+          used_at?: string | null
+        }
+        Update: {
+          car_id?: string
+          created_at?: string
+          created_by?: string | null
+          email?: string
+          expires_at?: string
+          id?: string
+          token?: string
+          used_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "car_invitations_car_id_fkey"
+            columns: ["car_id"]
+            isOneToOne: false
+            referencedRelation: "cars"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      car_owners: {
+        Row: {
+          car_id: string
+          created_at: string
+          email: string
+          id: string
+          role: string
+          user_id: string
+        }
+        Insert: {
+          car_id: string
+          created_at?: string
+          email: string
+          id?: string
+          role?: string
+          user_id: string
+        }
+        Update: {
+          car_id?: string
+          created_at?: string
+          email?: string
+          id?: string
+          role?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "car_owners_car_id_fkey"
+            columns: ["car_id"]
+            isOneToOne: false
+            referencedRelation: "cars"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       car_submissions: {
         Row: {
           admin_notes: string | null
