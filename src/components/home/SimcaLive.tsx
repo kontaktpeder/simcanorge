@@ -210,11 +210,11 @@ export const SimcaLive = () => {
           />
 
           {/* Content */}
-          <div className="relative z-10 px-3 md:px-4 py-2.5 md:py-3">
+          <div className="relative z-10 px-2.5 md:px-3 py-2 md:py-2.5">
             {/* Header with live indicator */}
-            <div className="flex items-center gap-2 mb-2 pb-1.5 border-b border-white/10">
+            <div className="flex items-center gap-1.5 mb-1.5 pb-1 border-b border-white/10">
               {/* Pulsing red indicator */}
-              <div className="relative flex items-center justify-center w-3 h-3 md:w-3.5 md:h-3.5">
+              <div className="relative flex items-center justify-center w-2.5 h-2.5 md:w-3 md:h-3">
                 <div 
                   className="absolute inset-0 rounded-full animate-ping opacity-75"
                   style={{
@@ -223,15 +223,15 @@ export const SimcaLive = () => {
                   }}
                 />
                 <div 
-                  className="relative w-2 h-2 md:w-2.5 md:h-2.5 rounded-full"
+                  className="relative w-1.5 h-1.5 md:w-2 md:h-2 rounded-full"
                   style={{
                     background: "radial-gradient(circle at 35% 35%, #ff6666 0%, #d41515 50%, #9a0a0a 100%)",
-                    boxShadow: "0 0 8px rgba(212, 21, 21, 0.6), 0 0 16px rgba(212, 21, 21, 0.3)",
+                    boxShadow: "0 0 6px rgba(212, 21, 21, 0.6), 0 0 12px rgba(212, 21, 21, 0.3)",
                   }}
                 />
               </div>
               <span
-                className="font-display text-[10px] md:text-xs tracking-[0.2em] uppercase"
+                className="font-display text-[9px] md:text-[10px] tracking-[0.15em] uppercase"
                 style={{
                   color: "rgba(255,255,255,0.9)",
                   textShadow: `0 1px 2px rgba(0,0,0,0.5)`,
@@ -241,10 +241,10 @@ export const SimcaLive = () => {
               </span>
             </div>
 
-            {/* Stats - compact layout */}
-            <div className="space-y-1">
+            {/* Stats - more compact */}
+            <div className="space-y-0.5">
               <p
-                className="text-[10px] md:text-[11px] font-medium leading-tight"
+                className="text-[9px] md:text-[10px] font-medium leading-tight"
                 style={{
                   color: "rgba(255,255,255,0.85)",
                   textShadow: "0 1px 2px rgba(0,0,0,0.4)",
@@ -252,7 +252,7 @@ export const SimcaLive = () => {
               >
                 {displayActiveUsers > 2 && (
                   <span 
-                    className="font-display text-base md:text-lg font-bold tabular-nums mr-1"
+                    className="font-display text-sm md:text-base font-bold tabular-nums mr-0.5"
                     style={{
                       color: "#ffffff",
                       textShadow: `0 1px 3px rgba(0,0,0,0.5), 0 0 20px rgba(255,255,255,0.2)`,
@@ -265,7 +265,7 @@ export const SimcaLive = () => {
               </p>
               
               <p
-                className="text-[10px] md:text-[11px] font-medium leading-tight"
+                className="text-[9px] md:text-[10px] font-medium leading-tight"
                 style={{
                   color: "rgba(255,255,255,0.7)",
                   textShadow: "0 1px 2px rgba(0,0,0,0.4)",
@@ -273,7 +273,7 @@ export const SimcaLive = () => {
               >
                 {!hasError && isLoaded && (
                   <span 
-                    className="font-display text-base md:text-lg font-bold tabular-nums mr-1"
+                    className="font-display text-sm md:text-base font-bold tabular-nums mr-0.5"
                     style={{
                       color: "#ffffff",
                       textShadow: `0 1px 3px rgba(0,0,0,0.5), 0 0 20px rgba(255,255,255,0.2)`,
@@ -288,16 +288,16 @@ export const SimcaLive = () => {
           </div>
 
           {/* Bottom decorative screws/rivets */}
-          <div className="absolute bottom-1 left-1/2 -translate-x-1/2 flex gap-8 md:gap-10">
+          <div className="absolute bottom-0.5 left-1/2 -translate-x-1/2 flex gap-6 md:gap-8">
             <div 
-              className="w-1 h-1 md:w-1.5 md:h-1.5 rounded-full"
+              className="w-0.5 h-0.5 md:w-1 md:h-1 rounded-full"
               style={{
                 background: "linear-gradient(145deg, #a0a0a0, #606060)",
                 boxShadow: "inset 0 0.5px 0.5px rgba(255,255,255,0.4), 0 0.5px 1px rgba(0,0,0,0.3)",
               }}
             />
             <div 
-              className="w-1 h-1 md:w-1.5 md:h-1.5 rounded-full"
+              className="w-0.5 h-0.5 md:w-1 md:h-1 rounded-full"
               style={{
                 background: "linear-gradient(145deg, #a0a0a0, #606060)",
                 boxShadow: "inset 0 0.5px 0.5px rgba(255,255,255,0.4), 0 0.5px 1px rgba(0,0,0,0.3)",
