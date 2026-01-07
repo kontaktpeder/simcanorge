@@ -67,6 +67,9 @@ export const CAR_BRANDS: CarBrand[] = [
   {
     name: "Talbot",
     models: [
+      // 1100-serien (samme som Simca)
+      { name: "1100 VF1", yearFrom: 1979, yearTo: 1985, variants: ["Standard", "Fourgonnette", "Break"] },
+      { name: "1100 VF2", yearFrom: 1979, yearTo: 1985, variants: ["Standard", "Fourgonnette", "Break"] },
       { name: "Horizon", yearFrom: 1979, yearTo: 1986, variants: ["LS", "GL", "GLS", "SX", "Premium"] },
       { name: "Alpine", yearFrom: 1979, yearTo: 1985, variants: ["GL", "GLS", "SX"] },
       { name: "Solara", yearFrom: 1980, yearTo: 1986, variants: ["LS", "GL", "GLS", "SX"] },
