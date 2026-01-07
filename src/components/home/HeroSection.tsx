@@ -131,10 +131,10 @@ export function HeroSection() {
             
             {/* Enhanced CTA buttons with enamel effect */}
             <div className="flex flex-row gap-3 md:gap-4 justify-center lg:justify-start">
-              {/* Primary CTA - Red enamel, larger */}
+              {/* Primary CTA - Red enamel, larger - min 48px touch target */}
               <Link 
                 to="/biler" 
-                className="group relative inline-flex items-center justify-center px-5 py-3 md:px-8 md:py-4 font-display text-sm md:text-xl uppercase tracking-wide text-white overflow-hidden"
+                className="group relative inline-flex items-center justify-center min-h-[48px] px-6 py-3 md:px-8 md:py-4 font-display text-sm md:text-xl uppercase tracking-wide text-white overflow-hidden active:scale-[0.98] transition-transform"
                 style={{
                   background: 'linear-gradient(180deg, #E52020 0%, #D41515 25%, #C10D0D 50%, #9A0A0A 100%)',
                   borderRadius: '10px',
@@ -157,10 +157,10 @@ export function HeroSection() {
                 <ArrowRight className="relative z-10 w-4 h-4 md:w-5 md:h-5 ml-2 group-hover:translate-x-1 transition-transform drop-shadow-md" />
               </Link>
               
-              {/* Secondary CTA - Blue metallic, slightly smaller */}
+              {/* Secondary CTA - Blue metallic, slightly smaller - min 48px touch target */}
               <Link 
                 to="/deler" 
-                className="group relative inline-flex items-center justify-center px-4 py-2.5 md:px-6 md:py-3.5 font-display text-xs md:text-lg uppercase tracking-wide text-white overflow-hidden"
+                className="group relative inline-flex items-center justify-center min-h-[48px] px-5 py-3 md:px-6 md:py-3.5 font-display text-xs md:text-lg uppercase tracking-wide text-white overflow-hidden active:scale-[0.98] transition-transform"
                 style={{
                   background: 'linear-gradient(180deg, #3A8AE3 0%, #2B7BD4 25%, #1F66B5 50%, #0F3E7A 100%)',
                   borderRadius: '10px',
