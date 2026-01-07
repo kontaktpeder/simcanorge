@@ -3,14 +3,16 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useEffect } from 'react';
 import { Layout } from '@/components/layout/Layout';
 import { PageHeader } from '@/components/layout/PageHeader';
-import { Car, Plus, Clock, Settings } from 'lucide-react';
-import { useQuery } from '@tanstack/react-query';
+import { Car, Clock, Settings, Bell, CheckCircle } from 'lucide-react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Loader2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 export default function Dashboard() {
   const { user, isLoading: authLoading } = useAuth();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   // Redirect hvis ikke innlogget
   useEffect(() => {
@@ -33,6 +35,32 @@ export default function Dashboard() {
     },
     enabled: !!user
   });
+
+  // Hent uleste notifikasjoner
+  const { data: notifications } = useQuery({
+    queryKey: ['notifications', user?.id],
+    queryFn: async () => {
+      if (!user) return [];
+      const { data } = await supabase
+        .from('notifications')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('is_read', false)
+        .order('created_at', { ascending: false })
+        .limit(10);
+      return data || [];
+    },
+    enabled: !!user
+  });
+
+  // Marker som lest
+  const markAsRead = async (notificationId: string) => {
+    await supabase
+      .from('notifications')
+      .update({ is_read: true })
+      .eq('id', notificationId);
+    queryClient.invalidateQueries({ queryKey: ['notifications', user?.id] });
+  };
 
   if (authLoading) {
     return (
@@ -57,6 +85,44 @@ export default function Dashboard() {
 
       <div className="container py-8">
         <div className="max-w-4xl mx-auto">
+          {/* Notifikasjoner */}
+          {notifications && notifications.length > 0 && (
+            <div className="mb-6 bg-card border border-border rounded-xl overflow-hidden">
+              <div className="p-4 border-b border-border">
+                <h3 className="font-display text-lg flex items-center gap-2">
+                  <Bell className="w-5 h-5 text-primary" />
+                  Varsler ({notifications.length})
+                </h3>
+              </div>
+              <div className="divide-y divide-border">
+                {notifications.map((notif: any) => (
+                  <div key={notif.id} className="p-4 flex items-start justify-between gap-4 bg-amber-50/50">
+                    <div className="flex-1">
+                      <p className="font-medium text-sm">{notif.title}</p>
+                      <p className="text-sm text-muted-foreground">{notif.body}</p>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        {new Date(notif.created_at).toLocaleDateString('nb-NO', {
+                          day: 'numeric',
+                          month: 'long',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        })}
+                      </p>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => markAsRead(notif.id)}
+                      className="shrink-0"
+                    >
+                      <CheckCircle className="w-4 h-4" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Dashboard Grid */}
           <div className="grid sm:grid-cols-2 gap-4">
             

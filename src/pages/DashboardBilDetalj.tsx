@@ -6,7 +6,7 @@ import { Layout } from '@/components/layout/Layout';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { 
   ArrowLeft, Car, Calendar, Wrench, Loader2, XCircle, 
-  Pencil, Save, X, Eye, EyeOff, Upload, Trash2 
+  Pencil, Save, X, Eye, EyeOff, Upload, Trash2, Clock, Send
 } from 'lucide-react';
 import { useEffect, useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
@@ -176,30 +176,64 @@ export default function DashboardBilDetalj() {
     }
   };
 
-  // Toggle publish status
-  const togglePublish = async () => {
-    if (!car) return;
+  // Hent eksisterende open request
+  const { data: openRequest } = useQuery({
+    queryKey: ['publication-request', carId, user?.id],
+    queryFn: async () => {
+      if (!carId || !user) return null;
+      const { data } = await supabase
+        .from('car_publication_requests')
+        .select('*')
+        .eq('car_id', carId)
+        .eq('status', 'open')
+        .maybeSingle();
+      return data as { id: string; car_id: string; action: 'publish' | 'unpublish'; created_at: string } | null;
+    },
+    enabled: !!carId && !!user
+  });
+
+  // Opprett forespørsel om publisering
+  const requestPublication = async () => {
+    if (!car || !user) return;
     
-    const currentStatus = car.status;
-    if (currentStatus === 'archived') {
-      toast.error('Kan ikke publisere arkiverte biler');
-      return;
-    }
-
-    const newStatus = currentStatus === 'published' ? 'draft' : 'published';
-    const newPublishedAt = newStatus === 'published' ? new Date().toISOString() : null;
-
+    const action = car.status === 'published' ? 'unpublish' : 'publish';
+    
     const { error } = await supabase
-      .from('cars')
-      .update({ status: newStatus, published_at: newPublishedAt })
-      .eq('id', car.id);
+      .from('car_publication_requests')
+      .insert({
+        car_id: car.id,
+        requested_by: user.id,
+        action: action,
+        status: 'open'
+      });
 
     if (error) {
-      console.error('Status error:', error);
-      toast.error('Kunne ikke oppdatere status');
+      if (error.code === '23505') {
+        toast.error('Du har allerede sendt en forespørsel for denne bilen');
+      } else {
+        toast.error('Kunne ikke sende forespørsel');
+        console.error('Request error:', error);
+      }
     } else {
-      toast.success(newStatus === 'published' ? 'Bil publisert!' : 'Bil avpublisert');
-      queryClient.invalidateQueries({ queryKey: ['my-car', carId, user?.id] });
+      toast.success('Forespørsel sendt! Admin vil se på dette.');
+      queryClient.invalidateQueries({ queryKey: ['publication-request', carId, user?.id] });
+    }
+  };
+
+  // Avbryt eksisterende forespørsel
+  const cancelRequest = async () => {
+    if (!openRequest || !user) return;
+    
+    const { error } = await supabase
+      .from('car_publication_requests')
+      .delete()
+      .eq('id', openRequest.id);
+
+    if (error) {
+      toast.error('Kunne ikke avbryte forespørsel');
+    } else {
+      toast.success('Forespørsel avbrutt');
+      queryClient.invalidateQueries({ queryKey: ['publication-request', carId, user?.id] });
     }
   };
 
@@ -369,28 +403,49 @@ export default function DashboardBilDetalj() {
                   )}
                 </div>
                 
-                {car.status !== 'archived' && (
-                  <Button
-                    onClick={togglePublish}
-                    variant={car.status === 'published' ? 'outline' : 'default'}
-                    className="gap-2"
-                  >
-                    {car.status === 'published' ? (
-                      <>
-                        <EyeOff className="w-4 h-4" />
-                        Avpubliser
-                      </>
-                    ) : (
-                      <>
-                        <Eye className="w-4 h-4" />
-                        Publiser
-                      </>
-                    )}
-                  </Button>
-                )}
               </div>
-
-              {/* Removed: "waiting for approval" message - owners only get access to approved cars */}
+              
+              {/* Publiseringsforespørsel */}
+              {car.status !== 'archived' && (
+                <div className="mt-4 pt-4 border-t border-border">
+                  {openRequest ? (
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-amber-50 border border-amber-200 rounded-lg p-4">
+                      <div className="flex items-start gap-3">
+                        <Clock className="w-5 h-5 text-amber-600 mt-0.5 shrink-0" />
+                        <div>
+                          <p className="font-medium text-amber-800">
+                            Forespørsel sendt: {openRequest.action === 'publish' ? 'Publiser' : 'Avpubliser'}
+                          </p>
+                          <p className="text-sm text-amber-600">
+                            Sendt {new Date(openRequest.created_at).toLocaleDateString('nb-NO')}. Vent på admin.
+                          </p>
+                        </div>
+                      </div>
+                      <Button variant="outline" size="sm" onClick={cancelRequest}>
+                        Avbryt
+                      </Button>
+                    </div>
+                  ) : (
+                    <Button
+                      onClick={requestPublication}
+                      variant="outline"
+                      className="gap-2"
+                    >
+                      {car.status === 'published' ? (
+                        <>
+                          <EyeOff className="w-4 h-4" />
+                          Be admin avpublisere
+                        </>
+                      ) : (
+                        <>
+                          <Send className="w-4 h-4" />
+                          Be admin publisere
+                        </>
+                      )}
+                    </Button>
+                  )}
+                </div>
+              )}
               
               {car.status === 'published' && car.slug && (
                 <div className="mt-4 pt-4 border-t border-border">
