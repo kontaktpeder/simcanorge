@@ -21,8 +21,9 @@ export const CAR_BRANDS: CarBrand[] = [
       { name: "Aronde 1300", yearFrom: 1951, yearTo: 1958 },
       { name: "Aronde 90A / P60", yearFrom: 1958, yearTo: 1963 },
       // 1000-serien
-      { name: "1000", yearFrom: 1961, yearTo: 1978, variants: ["Standard", "GL", "GLS", "Special", "Commerciale", "Rallye"] },
+      { name: "1000", yearFrom: 1961, yearTo: 1978, variants: ["Standard", "GL", "GLS", "Special", "Commerciale"] },
       { name: "1000 Coupé (Bertone)", yearFrom: 1962, yearTo: 1967 },
+      { name: "1000 Rallye", yearFrom: 1970, yearTo: 1971 },
       { name: "1000 Rallye 1", yearFrom: 1970, yearTo: 1972 },
       { name: "1000 Rallye 2", yearFrom: 1972, yearTo: 1978 },
       { name: "1000 Rallye 3", yearFrom: 1970, yearTo: 1978 },
