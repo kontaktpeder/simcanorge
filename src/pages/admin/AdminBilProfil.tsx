@@ -6,8 +6,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { 
   ArrowLeft, Save, Eye, EyeOff, Star, StarOff, Trash2, 
   Pencil, X, Upload, Car, ExternalLink, Send, Calendar,
-  User, Mail, ImagePlus, Check, ShieldCheck
+  User, Mail, ImagePlus, Check, ShieldCheck, Phone, ChevronDown
 } from "lucide-react";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { OwnerSection } from "@/components/admin/OwnerSection";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -44,6 +45,9 @@ interface CarDetail {
   source: 'manual' | 'submission';
   submitted_by_email: string | null;
   submitted_by_name: string | null;
+  submitted_by_phone: string | null;
+  submitted_notes: string | null;
+  submission_payload: Record<string, unknown> | null;
   approved_at: string | null;
   approved_by: string | null;
   car_images: CarImage[];
@@ -89,6 +93,7 @@ const AdminBilProfil = () => {
         .select(`
           id, title, slug, brand, model, variant, body_type, year, story, overhauled, tags, featured, 
           published_at, created_at, category, status, source, submitted_by_email, submitted_by_name,
+          submitted_by_phone, submitted_notes, submission_payload,
           approved_at, approved_by,
           car_images(id, image_url, alt_text, sort_order)
         `)
@@ -459,27 +464,96 @@ const AdminBilProfil = () => {
 
       <div className="grid gap-6">
         {/* Innsender-info (if submission) */}
-        {car.source === 'submission' && (car.submitted_by_name || car.submitted_by_email) && (
-          <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
-            <h3 className="font-display text-sm mb-2 flex items-center gap-2">
+        {car.source === 'submission' && (
+          <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 md:p-6">
+            <h3 className="font-display text-sm mb-4 flex items-center gap-2">
               <Send className="w-4 h-4" />
-              INNSENDT AV
+              INNSENDT KONTAKT (SNAPSHOT)
             </h3>
-            <div className="flex flex-wrap gap-4 text-sm">
-              {car.submitted_by_name && (
-                <span className="flex items-center gap-1">
-                  <User className="w-4 h-4 text-muted-foreground" />
-                  {car.submitted_by_name}
-                </span>
+            
+            <div className="space-y-4">
+              {/* Grunnleggende info */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                {car.submitted_by_name && (
+                  <div className="flex items-start gap-2">
+                    <User className="w-4 h-4 text-blue-600 mt-0.5 shrink-0" />
+                    <div>
+                      <span className="text-xs text-muted-foreground block">Navn</span>
+                      <p className="font-medium">{car.submitted_by_name}</p>
+                    </div>
+                  </div>
+                )}
+                
+                {car.submitted_by_email && (
+                  <div className="flex items-start gap-2">
+                    <Mail className="w-4 h-4 text-blue-600 mt-0.5 shrink-0" />
+                    <div>
+                      <span className="text-xs text-muted-foreground block">E-post</span>
+                      <a 
+                        href={`mailto:${car.submitted_by_email}`}
+                        className="font-medium text-blue-600 hover:underline"
+                      >
+                        {car.submitted_by_email}
+                      </a>
+                    </div>
+                  </div>
+                )}
+                
+                {car.submitted_by_phone && (
+                  <div className="flex items-start gap-2">
+                    <Phone className="w-4 h-4 text-blue-600 mt-0.5 shrink-0" />
+                    <div>
+                      <span className="text-xs text-muted-foreground block">Telefon</span>
+                      <a 
+                        href={`tel:${car.submitted_by_phone}`}
+                        className="font-medium text-blue-600 hover:underline"
+                      >
+                        {car.submitted_by_phone}
+                      </a>
+                    </div>
+                  </div>
+                )}
+                
+                {car.created_at && (
+                  <div className="flex items-start gap-2">
+                    <Calendar className="w-4 h-4 text-blue-600 mt-0.5 shrink-0" />
+                    <div>
+                      <span className="text-xs text-muted-foreground block">Innsendt</span>
+                      <p className="font-medium">
+                        {new Date(car.created_at).toLocaleDateString('nb-NO', {
+                          day: 'numeric',
+                          month: 'long',
+                          year: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        })}
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Notater/melding */}
+              {car.submitted_notes && (
+                <div className="pt-3 border-t border-blue-200">
+                  <span className="text-xs text-muted-foreground block mb-1">Notat/Melding</span>
+                  <p className="text-sm whitespace-pre-wrap">{car.submitted_notes}</p>
+                </div>
               )}
-              {car.submitted_by_email && (
-                <a 
-                  href={`mailto:${car.submitted_by_email}`}
-                  className="flex items-center gap-1 text-blue-600 hover:underline"
-                >
-                  <Mail className="w-4 h-4" />
-                  {car.submitted_by_email}
-                </a>
+
+              {/* Detaljer fra innsending (collapsible) */}
+              {car.submission_payload && (
+                <Collapsible className="pt-3 border-t border-blue-200">
+                  <CollapsibleTrigger className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors">
+                    <ChevronDown className="w-3 h-3" />
+                    Detaljer fra innsending (JSON)
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="mt-2">
+                    <pre className="text-xs bg-white/50 p-3 rounded overflow-x-auto">
+                      {JSON.stringify(car.submission_payload, null, 2)}
+                    </pre>
+                  </CollapsibleContent>
+                </Collapsible>
               )}
             </div>
           </div>
@@ -776,7 +850,7 @@ const AdminBilProfil = () => {
         </div>
 
         {/* Eiere & Tilgang */}
-        <OwnerSection carId={car.id} isApproved={!!car.approved_at} />
+        <OwnerSection carId={car.id} isApproved={!!car.approved_at} submittedEmail={car.submitted_by_email} />
 
         {/* Forhåndsvisning */}
         {status === 'published' && car.slug && (
