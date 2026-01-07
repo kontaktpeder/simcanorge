@@ -2,7 +2,7 @@ import { useEffect, useState, useMemo } from "react";
 import { useLocation } from "react-router-dom";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { supabase } from "@/integrations/supabase/client";
-import { Plus, Pencil, Trash2, Eye, EyeOff, X, Upload, Car, Star, StarOff } from "lucide-react";
+import { Plus, Pencil, Trash2, Eye, EyeOff, X, Upload, Car, Star, StarOff, Send, Filter } from "lucide-react";
 import { toast } from "sonner";
 import { CAR_BRANDS, getModelsForBrand, getYearsForModel, getVariantsForModel, generateCarTitle } from "@/data/carBrands";
 import { CAR_BODY_TYPES } from "@/data/carBodyTypes";
@@ -35,6 +35,10 @@ interface CarPost {
   created_at: string;
   category: string;
   car_images: CarImage[];
+  status?: 'submitted' | 'draft' | 'published' | 'archived';
+  source?: 'manual' | 'submission';
+  submitted_by_email?: string | null;
+  submitted_by_name?: string | null;
 }
 
 const CATEGORIES = [
@@ -71,6 +75,7 @@ const AdminBiler = () => {
   const [submissionImageUrls, setSubmissionImageUrls] = useState<string[]>([]);
   const [uploadProgress, setUploadProgress] = useState<CompressionProgress | null>(null);
   const [compressionStats, setCompressionStats] = useState<{ originalSize: number; compressedSize: number; reduction: number } | null>(null);
+  const [statusFilter, setStatusFilter] = useState<string>('alle');
 
   const [formData, setFormData] = useState({
     title: "",
@@ -112,7 +117,7 @@ const AdminBiler = () => {
     const { data, error } = await supabase
       .from("cars")
       .select(`
-        id, title, slug, brand, model, variant, body_type, year, story, overhauled, tags, featured, published_at, created_at, category,
+        id, title, slug, brand, model, variant, body_type, year, story, overhauled, tags, featured, published_at, created_at, category, status, source, submitted_by_email, submitted_by_name,
         car_images(id, image_url, alt_text, sort_order)
       `)
       .order("created_at", { ascending: false });
@@ -121,10 +126,33 @@ const AdminBiler = () => {
       console.error("Error fetching cars:", error);
       toast.error("Kunne ikke hente biler");
     } else {
-      setCars(data || []);
+      setCars((data as CarPost[]) || []);
     }
     setIsLoading(false);
   };
+
+  // Helper function to get effective status
+  const getCarStatus = (car: CarPost): 'submitted' | 'draft' | 'published' | 'archived' => {
+    if (car.status) return car.status;
+    return car.published_at ? 'published' : 'draft';
+  };
+
+  // Filtered cars based on status filter
+  const filteredCars = useMemo(() => {
+    if (statusFilter === 'alle') return cars;
+    return cars.filter(car => getCarStatus(car) === statusFilter);
+  }, [cars, statusFilter]);
+
+  // Count cars by status
+  const statusCounts = useMemo(() => {
+    return {
+      alle: cars.length,
+      submitted: cars.filter(c => getCarStatus(c) === 'submitted').length,
+      draft: cars.filter(c => getCarStatus(c) === 'draft').length,
+      published: cars.filter(c => getCarStatus(c) === 'published').length,
+      archived: cars.filter(c => getCarStatus(c) === 'archived').length,
+    };
+  }, [cars]);
 
   useEffect(() => {
     fetchCars();
@@ -387,17 +415,28 @@ const AdminBiler = () => {
   };
 
   const togglePublish = async (car: CarPost) => {
-    const newPublishedAt = car.published_at ? null : new Date().toISOString();
+    const currentStatus = getCarStatus(car);
+    
+    if (currentStatus === 'archived') {
+      toast.error("Kan ikke publisere arkiverte biler");
+      return;
+    }
+
+    const newStatus = currentStatus === 'published' ? 'draft' : 'published';
+    const newPublishedAt = newStatus === 'published' ? new Date().toISOString() : null;
 
     const { error } = await supabase
       .from("cars")
-      .update({ published_at: newPublishedAt })
+      .update({ 
+        status: newStatus,
+        published_at: newPublishedAt 
+      })
       .eq("id", car.id);
 
     if (error) {
       toast.error("Kunne ikke oppdatere status");
     } else {
-      toast.success(newPublishedAt ? "Bil publisert!" : "Bil avpublisert");
+      toast.success(newStatus === 'published' ? "Bil publisert!" : "Bil avpublisert");
       fetchCars();
     }
   };
@@ -429,12 +468,48 @@ const AdminBiler = () => {
     }
   };
 
+  // Status badge helper
+  const StatusBadge = ({ car }: { car: CarPost }) => {
+    const status = getCarStatus(car);
+    const config = {
+      submitted: { bg: 'bg-yellow-100', text: 'text-yellow-700', label: 'Innsendt', icon: Send },
+      draft: { bg: 'bg-gray-100', text: 'text-gray-700', label: 'Kladd', icon: EyeOff },
+      published: { bg: 'bg-green-100', text: 'text-green-700', label: 'Publisert', icon: Eye },
+      archived: { bg: 'bg-slate-100', text: 'text-slate-500', label: 'Arkivert', icon: EyeOff },
+    };
+    const { bg, text, label, icon: Icon } = config[status];
+    return (
+      <span className={`${bg} ${text} text-xs px-2 py-1 rounded font-display flex items-center gap-1 w-fit`}>
+        <Icon className="w-3 h-3" />
+        {label}
+      </span>
+    );
+  };
+
   return (
     <AdminLayout title="BILER">
-      <div className="flex justify-between items-center mb-6">
-        <p className="text-muted-foreground">
-          {cars.length} bil{cars.length !== 1 ? "er" : ""} totalt
-        </p>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+        <div className="flex flex-wrap items-center gap-2">
+          <Filter className="w-4 h-4 text-muted-foreground" />
+          {[
+            { id: 'alle', label: 'Alle' },
+            { id: 'submitted', label: 'Innsendt' },
+            { id: 'draft', label: 'Kladd' },
+            { id: 'published', label: 'Publisert' },
+          ].map(({ id, label }) => (
+            <button
+              key={id}
+              onClick={() => setStatusFilter(id)}
+              className={`text-xs px-3 py-1.5 rounded-full transition-colors ${
+                statusFilter === id
+                  ? 'bg-primary text-primary-foreground'
+                  : 'bg-muted hover:bg-muted/80'
+              }`}
+            >
+              {label} ({statusCounts[id as keyof typeof statusCounts]})
+            </button>
+          ))}
+        </div>
         <button
           onClick={() => {
             resetForm();
@@ -801,10 +876,12 @@ const AdminBiler = () => {
       {/* Table */}
       {isLoading ? (
         <div className="text-center py-12">Laster...</div>
-      ) : cars.length === 0 ? (
+      ) : filteredCars.length === 0 ? (
         <div className="retro-card text-center py-12">
           <Car className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
-          <p className="text-muted-foreground mb-4">Ingen biler lagt til ennå</p>
+          <p className="text-muted-foreground mb-4">
+            {statusFilter === 'alle' ? 'Ingen biler lagt til ennå' : `Ingen biler med status "${statusFilter}"`}
+          </p>
           <button onClick={() => setShowForm(true)} className="btn-retro">
             <Plus className="w-5 h-5 mr-2" />
             Legg til din første bil
@@ -814,7 +891,7 @@ const AdminBiler = () => {
         <>
           {/* Mobile Card View */}
           <div className="md:hidden space-y-3">
-            {cars.map((car) => {
+            {filteredCars.map((car) => {
               const categoryLabel = CATEGORIES.find(c => c.id === car.category)?.label || car.category;
               return (
                 <div key={car.id} className="bg-card border border-border rounded-xl p-3">
@@ -846,12 +923,15 @@ const AdminBiler = () => {
                           </div>
                           <p className="text-xs text-muted-foreground">{car.model} {car.year && `· ${car.year}`}</p>
                         </div>
-                        {car.published_at ? (
-                          <span className="text-[10px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded flex-shrink-0">Publisert</span>
-                        ) : (
-                          <span className="text-[10px] bg-muted text-muted-foreground px-1.5 py-0.5 rounded flex-shrink-0">Kladd</span>
-                        )}
+                        <StatusBadge car={car} />
                       </div>
+                      
+                      {/* Innsender info for submissions */}
+                      {car.source === 'submission' && car.submitted_by_name && (
+                        <p className="text-[10px] text-muted-foreground mt-0.5">
+                          Fra: {car.submitted_by_name}
+                        </p>
+                      )}
                       
                       <div className="flex items-center justify-between mt-2">
                         <span className={`text-[10px] px-1.5 py-0.5 rounded ${
@@ -920,7 +1000,7 @@ const AdminBiler = () => {
                 </tr>
               </thead>
               <tbody>
-                {cars.map((car) => {
+                {filteredCars.map((car) => {
                   const categoryLabel = CATEGORIES.find(c => c.id === car.category)?.label || car.category;
                   return (
                   <tr key={car.id} className="border-t border-border">
@@ -948,6 +1028,9 @@ const AdminBiler = () => {
                           <span className="font-medium">{car.title}</span>
                         </div>
                         {car.year && <span className="text-xs text-muted-foreground">{car.year}</span>}
+                        {car.source === 'submission' && car.submitted_by_name && (
+                          <span className="text-xs text-muted-foreground">Fra: {car.submitted_by_name}</span>
+                        )}
                       </div>
                     </td>
                     <td className="p-4">{car.model}</td>
@@ -962,17 +1045,7 @@ const AdminBiler = () => {
                       </span>
                     </td>
                     <td className="p-4">
-                      {car.published_at ? (
-                        <span className="text-green-600 flex items-center gap-1">
-                          <Eye className="w-4 h-4" />
-                          Publisert
-                        </span>
-                      ) : (
-                        <span className="text-muted-foreground flex items-center gap-1">
-                          <EyeOff className="w-4 h-4" />
-                          Kladd
-                        </span>
-                      )}
+                      <StatusBadge car={car} />
                     </td>
                     <td className="p-4">
                       <div className="flex items-center justify-end gap-1">
