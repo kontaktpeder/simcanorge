@@ -23,9 +23,10 @@ interface Invitation {
 
 interface OwnerSectionProps {
   carId: string;
+  isApproved: boolean;
 }
 
-export function OwnerSection({ carId }: OwnerSectionProps) {
+export function OwnerSection({ carId, isApproved }: OwnerSectionProps) {
   const [ownerEmail, setOwnerEmail] = useState('');
   const [owners, setOwners] = useState<Owner[]>([]);
   const [invitations, setInvitations] = useState<Invitation[]>([]);
@@ -270,27 +271,39 @@ export function OwnerSection({ carId }: OwnerSectionProps) {
       {/* Generate new invitation */}
       <div className="mb-6">
         <p className="text-sm font-medium mb-2">Send tilgang til ny eier:</p>
-        <div className="flex gap-2">
-          <Input
-            type="email"
-            placeholder="epost@eksempel.no"
-            value={ownerEmail}
-            onChange={(e) => setOwnerEmail(e.target.value)}
-            className="flex-1"
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && ownerEmail && !isGenerating) {
-                e.preventDefault();
-                generateInvitation();
-              }
-            }}
-          />
-          <Button onClick={generateInvitation} disabled={isGenerating || !ownerEmail}>
-            {isGenerating ? 'Genererer...' : 'Generer invitasjon'}
-          </Button>
-        </div>
-        <p className="text-xs text-muted-foreground mt-1">
-          Kopier lenken nedenfor og send den til e-posten manuelt
-        </p>
+        
+        {!isApproved ? (
+          <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+            <p className="text-sm text-amber-800 flex items-center gap-2">
+              <span className="text-lg">⚠️</span>
+              Godkjenn bilen først for å kunne gi eier tilgang.
+            </p>
+          </div>
+        ) : (
+          <>
+            <div className="flex gap-2">
+              <Input
+                type="email"
+                placeholder="epost@eksempel.no"
+                value={ownerEmail}
+                onChange={(e) => setOwnerEmail(e.target.value)}
+                className="flex-1"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && ownerEmail && !isGenerating) {
+                    e.preventDefault();
+                    generateInvitation();
+                  }
+                }}
+              />
+              <Button onClick={generateInvitation} disabled={isGenerating || !ownerEmail}>
+                {isGenerating ? 'Genererer...' : 'Generer invitasjon'}
+              </Button>
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">
+              Kopier lenken nedenfor og send den til e-posten manuelt
+            </p>
+          </>
+        )}
       </div>
 
       {/* Active invitations */}

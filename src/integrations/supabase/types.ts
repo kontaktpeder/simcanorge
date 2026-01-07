@@ -196,6 +196,8 @@ export type Database = {
       }
       cars: {
         Row: {
+          approved_at: string | null
+          approved_by: string | null
           body_type: string | null
           brand: string | null
           category: string
@@ -218,6 +220,8 @@ export type Database = {
           year: number | null
         }
         Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
           body_type?: string | null
           brand?: string | null
           category?: string
@@ -240,6 +244,8 @@ export type Database = {
           year?: number | null
         }
         Update: {
+          approved_at?: string | null
+          approved_by?: string | null
           body_type?: string | null
           brand?: string | null
           category?: string
