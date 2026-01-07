@@ -86,7 +86,7 @@ const ManedensBil = () => {
   return <Layout>
       <PageHeader 
         title="MÅNEDENS BIL" 
-        subtitle="Hver måned løfter vi frem én bil fra vårt fellesskap – med sin unike historie og sjarm" 
+        subtitle="Hver måned løfter vi frem én bil fra vårt fellesskap – en kilde til inspirasjon, glede og ekte kjøreglede" 
       />
 
       {/* Featured Car */}
