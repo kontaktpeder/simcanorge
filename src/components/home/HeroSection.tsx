@@ -129,15 +129,58 @@ export function HeroSection() {
                 </div>}
             </div>
             
-            {/* Enhanced CTA buttons - smaller on mobile */}
-            <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center lg:justify-start">
-              <Link to="/biler" className="btn-enamel-red group">
-                <span>Se alle biler</span>
-                <ArrowRight className="w-4 h-4 md:w-6 md:h-6 ml-2 md:ml-3 group-hover:translate-x-1 transition-transform" />
+            {/* Enhanced CTA buttons with enamel effect */}
+            <div className="flex flex-row gap-3 md:gap-4 justify-center lg:justify-start">
+              {/* Primary CTA - Red enamel, larger */}
+              <Link 
+                to="/biler" 
+                className="group relative inline-flex items-center justify-center px-5 py-3 md:px-8 md:py-4 font-display text-sm md:text-xl uppercase tracking-wide text-white overflow-hidden"
+                style={{
+                  background: 'linear-gradient(180deg, #E52020 0%, #D41515 25%, #C10D0D 50%, #9A0A0A 100%)',
+                  borderRadius: '10px',
+                  boxShadow: `
+                    inset 0 1px 0 rgba(255,255,255,0.35),
+                    inset 0 -2px 6px rgba(0,0,0,0.25),
+                    0 4px 16px rgba(154,10,10,0.4),
+                    0 0 0 2px rgba(255,255,255,0.15)
+                  `,
+                }}
+              >
+                {/* Chrome border effect */}
+                <span 
+                  className="absolute inset-0 rounded-[10px] pointer-events-none"
+                  style={{
+                    background: 'linear-gradient(180deg, rgba(255,255,255,0.2) 0%, transparent 50%, rgba(0,0,0,0.1) 100%)',
+                  }}
+                />
+                <span className="relative z-10 drop-shadow-md">SE ALLE BILER</span>
+                <ArrowRight className="relative z-10 w-4 h-4 md:w-5 md:h-5 ml-2 group-hover:translate-x-1 transition-transform drop-shadow-md" />
               </Link>
-              <Link to="/deler" className="btn-enamel-blue group">
-                <span>Finn deler</span>
-                <Car className="w-4 h-4 md:w-6 md:h-6 ml-2 md:ml-3 group-hover:scale-110 transition-transform" />
+              
+              {/* Secondary CTA - Blue metallic, slightly smaller */}
+              <Link 
+                to="/deler" 
+                className="group relative inline-flex items-center justify-center px-4 py-2.5 md:px-6 md:py-3.5 font-display text-xs md:text-lg uppercase tracking-wide text-white overflow-hidden"
+                style={{
+                  background: 'linear-gradient(180deg, #3A8AE3 0%, #2B7BD4 25%, #1F66B5 50%, #0F3E7A 100%)',
+                  borderRadius: '10px',
+                  boxShadow: `
+                    inset 0 1px 0 rgba(255,255,255,0.3),
+                    inset 0 -2px 6px rgba(0,0,0,0.2),
+                    0 4px 12px rgba(15,62,122,0.35),
+                    0 0 0 2px rgba(255,255,255,0.1)
+                  `,
+                }}
+              >
+                {/* Chrome border effect */}
+                <span 
+                  className="absolute inset-0 rounded-[10px] pointer-events-none"
+                  style={{
+                    background: 'linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 50%, rgba(0,0,0,0.1) 100%)',
+                  }}
+                />
+                <span className="relative z-10 drop-shadow-md">FINN DELER</span>
+                <Car className="relative z-10 w-3.5 h-3.5 md:w-5 md:h-5 ml-2 group-hover:scale-110 transition-transform drop-shadow-md" />
               </Link>
             </div>
           </div>
