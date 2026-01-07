@@ -138,10 +138,22 @@ const AdminBiler = () => {
     return car.published_at ? 'published' : 'draft';
   };
 
-  // Filtered cars based on status filter
+  // Filtered and sorted cars: submitted first, then by created_at desc
   const filteredCars = useMemo(() => {
-    if (statusFilter === 'alle') return cars;
-    return cars.filter(car => getCarStatus(car) === statusFilter);
+    const filtered = statusFilter === 'alle' ? cars : cars.filter(car => getCarStatus(car) === statusFilter);
+    
+    // Sort: submitted first, then by created_at desc
+    return [...filtered].sort((a, b) => {
+      const statusA = getCarStatus(a);
+      const statusB = getCarStatus(b);
+      
+      // Submitted always first
+      if (statusA === 'submitted' && statusB !== 'submitted') return -1;
+      if (statusA !== 'submitted' && statusB === 'submitted') return 1;
+      
+      // Then by created_at desc
+      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+    });
   }, [cars, statusFilter]);
 
   // Count cars by status
@@ -457,7 +469,7 @@ const AdminBiler = () => {
   const StatusBadge = ({ car }: { car: CarPost }) => {
     const status = getCarStatus(car);
     const config = {
-      submitted: { bg: 'bg-yellow-100', text: 'text-yellow-700', label: 'Innsendt', icon: Send },
+      submitted: { bg: 'bg-orange-100', text: 'text-orange-700', label: 'Innsendt', icon: Send },
       draft: { bg: 'bg-gray-100', text: 'text-gray-700', label: 'Kladd', icon: EyeOff },
       published: { bg: 'bg-green-100', text: 'text-green-700', label: 'Publisert', icon: Eye },
       archived: { bg: 'bg-slate-100', text: 'text-slate-500', label: 'Arkivert', icon: EyeOff },
@@ -471,40 +483,77 @@ const AdminBiler = () => {
     );
   };
 
+  // "NY" badge for new submissions
+  const NewBadge = ({ car }: { car: CarPost }) => {
+    if (getCarStatus(car) !== 'submitted' || car.source !== 'submission') return null;
+    return (
+      <span className="bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded font-bold uppercase animate-pulse">
+        NY
+      </span>
+    );
+  };
+
+  // Format submission date
+  const formatSubmissionDate = (dateStr: string) => {
+    return new Date(dateStr).toLocaleDateString('nb-NO', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    });
+  };
+
   return (
     <AdminLayout title="BILER">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-        <div className="flex flex-wrap items-center gap-2">
-          <Filter className="w-4 h-4 text-muted-foreground" />
-          {[
-            { id: 'alle', label: 'Alle' },
-            { id: 'submitted', label: 'Innsendt' },
-            { id: 'draft', label: 'Kladd' },
-            { id: 'published', label: 'Publisert' },
-          ].map(({ id, label }) => (
-            <button
-              key={id}
-              onClick={() => setStatusFilter(id)}
-              className={`text-xs px-3 py-1.5 rounded-full transition-colors ${
-                statusFilter === id
-                  ? 'bg-primary text-primary-foreground'
-                  : 'bg-muted hover:bg-muted/80'
-              }`}
-            >
-              {label} ({statusCounts[id as keyof typeof statusCounts]})
-            </button>
-          ))}
+      <div className="flex flex-col gap-4 mb-6">
+        {/* Prominent alert for new submissions */}
+        {statusCounts.submitted > 0 && (
+          <button
+            onClick={() => setStatusFilter('submitted')}
+            className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-3 rounded-lg font-display text-sm flex items-center justify-center gap-3 transition-colors animate-pulse hover:animate-none"
+          >
+            <span className="bg-white text-orange-500 rounded-full w-7 h-7 flex items-center justify-center font-bold">
+              {statusCounts.submitted}
+            </span>
+            <span>Nye innsendte biler venter på behandling</span>
+            {statusFilter !== 'submitted' && (
+              <span className="text-orange-200 text-xs">(klikk for å se)</span>
+            )}
+          </button>
+        )}
+        
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div className="flex flex-wrap items-center gap-2">
+            <Filter className="w-4 h-4 text-muted-foreground" />
+            {[
+              { id: 'alle', label: 'Alle' },
+              { id: 'submitted', label: 'Innsendt' },
+              { id: 'draft', label: 'Kladd' },
+              { id: 'published', label: 'Publisert' },
+            ].map(({ id, label }) => (
+              <button
+                key={id}
+                onClick={() => setStatusFilter(id)}
+                className={`text-xs px-3 py-1.5 rounded-full transition-colors ${
+                  statusFilter === id
+                    ? 'bg-primary text-primary-foreground'
+                    : 'bg-muted hover:bg-muted/80'
+                }`}
+              >
+                {label} ({statusCounts[id as keyof typeof statusCounts]})
+              </button>
+            ))}
+          </div>
+          <button
+            onClick={() => {
+              resetForm();
+              setShowForm(true);
+            }}
+            className="btn-retro bg-primary"
+          >
+            <Plus className="w-5 h-5 mr-2" />
+            Ny bil
+          </button>
         </div>
-        <button
-          onClick={() => {
-            resetForm();
-            setShowForm(true);
-          }}
-          className="btn-retro bg-primary"
-        >
-          <Plus className="w-5 h-5 mr-2" />
-          Ny bil
-        </button>
       </div>
 
       {/* Form Modal */}
@@ -901,6 +950,7 @@ const AdminBiler = () => {
                       <div className="flex items-start justify-between gap-2">
                         <div className="min-w-0">
                           <div className="flex items-center gap-1.5">
+                            <NewBadge car={car} />
                             {car.featured && (
                               <Star className="w-3.5 h-3.5 text-yellow-500 fill-yellow-500 flex-shrink-0" />
                             )}
@@ -911,11 +961,12 @@ const AdminBiler = () => {
                         <StatusBadge car={car} />
                       </div>
                       
-                      {/* Innsender info for submissions */}
-                      {car.source === 'submission' && car.submitted_by_name && (
-                        <p className="text-[10px] text-muted-foreground mt-0.5">
-                          Fra: {car.submitted_by_name}
-                        </p>
+                      {/* Innsender info and submission date */}
+                      {car.source === 'submission' && (
+                        <div className="text-[10px] text-muted-foreground mt-0.5 space-y-0.5">
+                          {car.submitted_by_name && <p>Fra: {car.submitted_by_name}</p>}
+                          <p>Innsendt: {formatSubmissionDate(car.created_at)}</p>
+                        </div>
                       )}
                       
                       <div className="flex items-center justify-between mt-2">
@@ -1007,14 +1058,18 @@ const AdminBiler = () => {
                     <td className="p-4">
                       <div className="flex flex-col">
                         <div className="flex items-center gap-2">
+                          <NewBadge car={car} />
                           {car.featured && (
                             <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
                           )}
                           <span className="font-medium">{car.title}</span>
                         </div>
                         {car.year && <span className="text-xs text-muted-foreground">{car.year}</span>}
-                        {car.source === 'submission' && car.submitted_by_name && (
-                          <span className="text-xs text-muted-foreground">Fra: {car.submitted_by_name}</span>
+                        {car.source === 'submission' && (
+                          <div className="text-xs text-muted-foreground space-y-0.5">
+                            {car.submitted_by_name && <span>Fra: {car.submitted_by_name}</span>}
+                            <span className="block">Innsendt: {formatSubmissionDate(car.created_at)}</span>
+                          </div>
                         )}
                       </div>
                     </td>

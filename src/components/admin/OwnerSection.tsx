@@ -86,9 +86,17 @@ export function OwnerSection({ carId }: OwnerSectionProps) {
       return;
     }
 
-    // Validate email
-    const emailRegex = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;
-    if (!emailRegex.test(ownerEmail)) {
+    // Normalize email FIRST
+    const normalizedEmail = ownerEmail.trim().toLowerCase();
+    
+    if (!normalizedEmail) {
+      toast.error('E-postadresse kan ikke være tom');
+      return;
+    }
+
+    // Validate normalized email (supports + and modern TLDs)
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(normalizedEmail)) {
       toast.error('Ugyldig e-postadresse');
       return;
     }
@@ -96,17 +104,43 @@ export function OwnerSection({ carId }: OwnerSectionProps) {
     setIsGenerating(true);
     
     try {
+      // Check if active invitation already exists for this email
+      const { data: existingInvitation } = await supabase
+        .from('car_invitations')
+        .select('*')
+        .eq('car_id', carId)
+        .eq('email', normalizedEmail)
+        .is('used_at', null)
+        .gt('expires_at', new Date().toISOString())
+        .maybeSingle();
+
+      if (existingInvitation) {
+        // Use existing invitation
+        const magicLink = `${window.location.origin}/accept-invitation?token=${existingInvitation.token}`;
+        await navigator.clipboard.writeText(magicLink);
+        setCopiedLink(existingInvitation.token);
+        setTimeout(() => setCopiedLink(null), 3000);
+        toast.success('Aktiv link finnes allerede – bruker den. Lenken er kopiert.');
+        setOwnerEmail('');
+        // Update state if invitation not already in list
+        if (!invitations.find(inv => inv.id === existingInvitation.id)) {
+          setInvitations(prev => [existingInvitation, ...prev]);
+        }
+        setIsGenerating(false);
+        return;
+      }
+
       // Generate token
       const token = crypto.randomUUID();
       const expiresAt = new Date();
       expiresAt.setDate(expiresAt.getDate() + 7); // 7 days
 
-      // Save invitation
+      // Save invitation with normalized email
       const { data, error } = await supabase
         .from('car_invitations')
         .insert({
           car_id: carId,
-          email: ownerEmail.toLowerCase().trim(),
+          email: normalizedEmail,
           token: token,
           expires_at: expiresAt.toISOString(),
           created_by: user.id
