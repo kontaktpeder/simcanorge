@@ -253,25 +253,27 @@ export default function Dashboard() {
           </EnamelCard>
         </motion.div>
 
-        {/* Placeholder kort - Innstillinger */}
+        {/* Konto */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.4 }}
         >
-          <EnamelCard className="h-full min-h-[160px] opacity-60" hover={false}>
-            <div className="flex items-start justify-between mb-4">
-              <div className="p-3 bg-muted rounded-xl">
-                <Settings className="w-8 h-8 text-muted-foreground" />
+          <Link to="/konto" className="block h-full">
+            <EnamelCard className="h-full min-h-[160px] group">
+              <div className="flex items-start justify-between mb-4">
+                <div className="p-3 bg-primary/10 rounded-xl">
+                  <Settings className="w-8 h-8 text-primary" />
+                </div>
               </div>
-            </div>
-            <h3 className="font-display text-xl mb-2 text-muted-foreground">
-              Innstillinger
-            </h3>
-            <p className="text-base text-muted-foreground">
-              Kommer snart...
-            </p>
-          </EnamelCard>
+              <h3 className="font-display text-xl mb-2 group-hover:text-primary transition-colors">
+                Konto
+              </h3>
+              <p className="text-base text-muted-foreground">
+                Innlogging, personvern og innstillinger
+              </p>
+            </EnamelCard>
+          </Link>
         </motion.div>
 
       </div>
