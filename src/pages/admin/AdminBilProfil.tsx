@@ -4,14 +4,14 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { supabase } from "@/integrations/supabase/client";
 import { 
-  ArrowLeft, Save, Eye, EyeOff, Star, StarOff, Trash2, 
-  Pencil, X, Upload, Car, ExternalLink, Send, Calendar,
-  User, Mail, ImagePlus, Check, ShieldCheck, Phone, ChevronDown, Clock, XCircle,
-  FileEdit, CheckCircle, AlertTriangle
+  Save, Car, ExternalLink, Send, Calendar, ArrowLeft,
+  User, Mail, ImagePlus, Check, Phone, ChevronDown, Clock, XCircle,
+  FileEdit, CheckCircle, AlertTriangle, Pencil, X
 } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { OwnerSection } from "@/components/admin/OwnerSection";
-import { CarLinksSection } from "@/components/admin/car/CarLinksSection";
+import { CarLinksSection, CarProfileHeader } from "@/components/admin/car";
+import { StatusBadge, getCarStatus as getCarStatusHelper } from "@/components/car";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -164,17 +164,10 @@ const AdminBilProfil = () => {
   const availableVariants = basicForm.model ? getVariantsForModel(basicForm.brand, basicForm.model) : [];
   const availableYears = basicForm.model ? getYearsForModel(basicForm.brand, basicForm.model) : [];
 
-  // Status helpers
+  // Status helper - use shared helper
   const getCarStatus = (): 'submitted' | 'draft' | 'published' | 'archived' => {
-    if (car?.status) return car.status;
-    return car?.published_at ? 'published' : 'draft';
-  };
-
-  const statusConfig = {
-    submitted: { bg: 'bg-yellow-100', text: 'text-yellow-700', label: 'Innsendt', icon: Send },
-    draft: { bg: 'bg-gray-100', text: 'text-gray-700', label: 'Kladd', icon: EyeOff },
-    published: { bg: 'bg-green-100', text: 'text-green-700', label: 'Publisert', icon: Eye },
-    archived: { bg: 'bg-slate-100', text: 'text-slate-500', label: 'Arkivert', icon: EyeOff },
+    if (!car) return 'draft';
+    return getCarStatusHelper(car);
   };
 
   // Save functions
@@ -514,90 +507,20 @@ const AdminBilProfil = () => {
   }
 
   const status = getCarStatus();
-  const { bg, text, label, icon: StatusIcon } = statusConfig[status];
   const sortedImages = [...(car.car_images || [])].sort((a, b) => a.sort_order - b.sort_order);
   const categoryLabel = CATEGORIES.find(c => c.id === car.category)?.label || car.category;
 
   return (
     <AdminLayout title="">
       {/* Breadcrumb & Header */}
-      <div className="mb-6">
-        <Link 
-          to="/admin/biler" 
-          className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4"
-        >
-          <ArrowLeft className="w-4 h-4 mr-1" />
-          Tilbake til biler
-        </Link>
-
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-3 mb-1">
-              <h1 className="font-display text-2xl md:text-3xl">{car.title}</h1>
-              {car.featured && <Star className="w-5 h-5 text-yellow-500 fill-yellow-500" />}
-            </div>
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className={`${bg} ${text} text-xs px-2 py-1 rounded font-display flex items-center gap-1`}>
-                <StatusIcon className="w-3 h-3" />
-                {label}
-              </span>
-              {car.source === 'submission' && (
-                <span className="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded">Innsending</span>
-              )}
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2 flex-wrap">
-            {/* Approve button - only show if not approved */}
-            {!car.approved_at && (
-              <Button
-                variant="default"
-                size="sm"
-                onClick={approveCar}
-                className="bg-green-600 hover:bg-green-700"
-              >
-                <ShieldCheck className="w-4 h-4 mr-1" />
-                Godkjenn bil
-              </Button>
-            )}
-
-            {/* Approved badge */}
-            {car.approved_at && (
-              <span className="inline-flex items-center gap-1 text-green-600 text-sm px-2 py-1 bg-green-50 rounded">
-                <Check className="w-4 h-4" />
-                Godkjent {new Date(car.approved_at).toLocaleDateString('nb-NO')}
-              </span>
-            )}
-
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={toggleFeatured}
-            >
-              {car.featured ? <StarOff className="w-4 h-4 mr-1" /> : <Star className="w-4 h-4 mr-1" />}
-              {car.featured ? 'Fjern utvalgt' : 'Gjør utvalgt'}
-            </Button>
-            <Button
-              variant={status === 'published' ? 'outline' : 'default'}
-              size="sm"
-              onClick={togglePublish}
-              disabled={!car.approved_at}
-              title={!car.approved_at ? 'Godkjenn bilen først for å kunne publisere' : undefined}
-            >
-              {status === 'published' ? <EyeOff className="w-4 h-4 mr-1" /> : <Eye className="w-4 h-4 mr-1" />}
-              {status === 'published' ? 'Avpubliser' : 'Publiser'}
-            </Button>
-            <Button
-              variant="destructive"
-              size="sm"
-              onClick={deleteCar}
-            >
-              <Trash2 className="w-4 h-4 mr-1" />
-              Slett
-            </Button>
-          </div>
-        </div>
-      </div>
+      <CarProfileHeader
+        car={car}
+        status={status}
+        onApprove={approveCar}
+        onToggleFeatured={toggleFeatured}
+        onTogglePublish={togglePublish}
+        onDelete={deleteCar}
+      />
 
       <div className="grid gap-6">
         {/* Innsender-info (if submission) */}

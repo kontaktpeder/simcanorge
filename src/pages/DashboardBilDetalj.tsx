@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { Layout } from '@/components/layout/Layout';
 import { PageHeader } from '@/components/layout/PageHeader';
+import { StatusBadge } from '@/components/car';
 import { 
   ArrowLeft, Car, Calendar, Wrench, Loader2, XCircle, 
   Pencil, Save, X, Eye, EyeOff, Upload, Trash2, Clock, Send
@@ -356,17 +357,6 @@ export default function DashboardBilDetalj() {
     (a: any, b: any) => (a.sort_order || 0) - (b.sort_order || 0)
   );
 
-  const getStatusBadge = (status: string) => {
-    const config: Record<string, { bg: string; text: string; label: string }> = {
-      published: { bg: 'bg-green-100', text: 'text-green-700', label: 'Publisert' },
-      submitted: { bg: 'bg-blue-100', text: 'text-blue-700', label: 'Godkjent' },
-      draft: { bg: 'bg-gray-100', text: 'text-gray-700', label: 'Kladd' },
-      archived: { bg: 'bg-slate-100', text: 'text-slate-500', label: 'Arkivert' },
-    };
-    const { bg, text, label } = config[status] || config.draft;
-    return <span className={`px-3 py-1 rounded-full text-sm font-medium ${bg} ${text}`}>{label}</span>;
-  };
-
   const availableModels = basicForm.brand ? getModelsForBrand(basicForm.brand) : [];
 
   return (
@@ -388,7 +378,7 @@ export default function DashboardBilDetalj() {
             <div className="bg-card border border-border rounded-xl p-6">
               <div className="flex flex-wrap items-center justify-between gap-4">
                 <div className="flex items-center gap-3">
-                  {getStatusBadge(car.status)}
+                  <StatusBadge status={car.status || 'draft'} />
                   {car.year && (
                     <span className="inline-flex items-center gap-1 text-sm text-muted-foreground">
                       <Calendar className="w-4 h-4" />
