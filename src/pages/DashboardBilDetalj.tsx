@@ -39,6 +39,7 @@ export default function DashboardBilDetalj() {
   const [isEditingStory, setIsEditingStory] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isUploadingImages, setIsUploadingImages] = useState(false);
+  const [isReorderingImages, setIsReorderingImages] = useState(false);
 
   // Form states
   const [basicForm, setBasicForm] = useState({
@@ -358,8 +359,6 @@ export default function DashboardBilDetalj() {
   const sortedImages = [...(car.car_images || [])].sort(
     (a: any, b: any) => (a.sort_order || 0) - (b.sort_order || 0)
   );
-
-  const [isReorderingImages, setIsReorderingImages] = useState(false);
 
   const persistCarImageOrder = async (images: any[]) => {
     if (!car) return;
