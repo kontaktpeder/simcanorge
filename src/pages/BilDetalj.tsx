@@ -5,6 +5,7 @@ import { Layout } from "@/components/layout/Layout";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { AnimatedSection } from "@/components/layout/AnimatedSection";
 import { TimelineSection } from "@/components/car/TimelineSection";
+import { OwnerCard } from "@/components/car/OwnerCard";
 import { supabase } from "@/integrations/supabase/client";
 import { 
   ArrowLeft, Calendar, Wrench, ArrowRight, ChevronLeft, ChevronRight, Car, 
@@ -501,6 +502,15 @@ const BilDetalj = () => {
               />
             </div>
           </AnimatedSection>
+        </div>
+      </section>
+
+      {/* Owner Card Section */}
+      <section className="py-8 md:py-12">
+        <div className="container mx-auto px-4">
+          <div className="max-w-2xl mx-auto">
+            <OwnerCard carId={car.id} />
+          </div>
         </div>
       </section>
 
