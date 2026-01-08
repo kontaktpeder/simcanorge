@@ -590,6 +590,12 @@ const BilDetalj = () => {
               Send inn din bil
               <ArrowRight className="w-5 h-5" />
             </Link>
+            <p className="text-sm text-accent-foreground/70 mt-6">
+              Eier du denne bilen?{' '}
+              <Link to="/login" className="underline hover:text-accent-foreground transition-colors">
+                Logg inn i din bil
+              </Link>
+            </p>
           </AnimatedSection>
         </div>
       </section>
