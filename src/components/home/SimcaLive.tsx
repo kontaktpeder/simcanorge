@@ -134,14 +134,16 @@ export const SimcaLive = ({ isHeaderMode = false }: SimcaLiveProps) => {
     const fetchTotalVisits = async () => {
       try {
         const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
-        const { count, error } = await supabase
+        const { data, error } = await supabase
           .from("page_views")
-          .select("*", { count: "exact", head: true })
+          .select("session_id")
           .gte("created_at", thirtyDaysAgo);
 
         if (error) throw error;
 
-        setTotalVisits(count || 0);
+        // Count unique sessions
+        const uniqueSessions = new Set(data?.map(row => row.session_id) || []);
+        setTotalVisits(uniqueSessions.size);
         setHasError(false);
       } catch (error) {
         console.error("Error fetching total visits:", error);
