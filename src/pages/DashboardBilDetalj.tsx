@@ -431,7 +431,7 @@ export default function DashboardBilDetalj() {
       backTo="/dashboard/mine-biler"
       backLabel="Til bilgarasjen"
     >
-      <div className="space-y-6">
+      <div className="space-y-4 sm:space-y-6">
         {/* Status & Publish */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -538,7 +538,7 @@ export default function DashboardBilDetalj() {
             </div>
             
             {sortedImages.length > 0 ? (
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-3 p-5">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3 p-3 sm:p-5">
                 {sortedImages.map((img: any, index: number) => (
                   <div key={img.id} className="relative group aspect-video rounded-lg overflow-hidden bg-muted">
                     <img 
@@ -547,23 +547,23 @@ export default function DashboardBilDetalj() {
                       className="w-full h-full object-cover"
                     />
                     {index === 0 && (
-                      <span className="absolute top-2 left-2 bg-primary text-primary-foreground text-sm px-3 py-1.5 rounded inline-flex items-center gap-1 font-medium">
-                        <Star className="w-4 h-4 fill-current" />
-                        Hovedbilde
+                      <span className="absolute top-1.5 left-1.5 sm:top-2 sm:left-2 bg-primary text-primary-foreground text-xs sm:text-sm px-2 sm:px-3 py-1 sm:py-1.5 rounded inline-flex items-center gap-1 font-medium">
+                        <Star className="w-3 h-3 sm:w-4 sm:h-4 fill-current" />
+                        <span className="hidden sm:inline">Hovedbilde</span>
                       </span>
                     )}
 
-                    {/* reorder + main controls */}
-                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity bg-black/40 flex items-center justify-center gap-2">
+                    {/* reorder + main controls - alltid synlig på mobil */}
+                    <div className="absolute inset-0 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity bg-gradient-to-t from-black/60 via-transparent to-transparent sm:bg-black/40 flex items-end sm:items-center justify-center gap-1 sm:gap-2 p-2 sm:p-0">
                       {index > 0 && (
                         <button
                           type="button"
                           onClick={() => moveCarImageLeft(index)}
                           disabled={isReorderingImages}
-                          className="bg-white/10 hover:bg-white/20 text-white p-3 rounded-full transition-colors"
+                          className="bg-white/20 hover:bg-white/30 text-white p-2 sm:p-3 rounded-full transition-colors min-h-[40px] min-w-[40px] flex items-center justify-center active:scale-90"
                           aria-label="Flytt bilde til venstre"
                         >
-                          <ChevronLeft className="w-6 h-6" />
+                          <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
                         </button>
                       )}
                       {index !== 0 && (
@@ -571,11 +571,11 @@ export default function DashboardBilDetalj() {
                           type="button"
                           onClick={() => setCarMainImage(index)}
                           disabled={isReorderingImages}
-                          className="bg-white/10 hover:bg-white/20 text-white p-3 rounded-full transition-colors"
+                          className="bg-white/20 hover:bg-white/30 text-white p-2 sm:p-3 rounded-full transition-colors min-h-[40px] min-w-[40px] flex items-center justify-center active:scale-90"
                           aria-label="Sett som hovedbilde"
                           title="Sett som hovedbilde"
                         >
-                          <Star className="w-6 h-6" />
+                          <Star className="w-5 h-5 sm:w-6 sm:h-6" />
                         </button>
                       )}
                       {index < sortedImages.length - 1 && (
@@ -583,17 +583,17 @@ export default function DashboardBilDetalj() {
                           type="button"
                           onClick={() => moveCarImageRight(index)}
                           disabled={isReorderingImages}
-                          className="bg-white/10 hover:bg-white/20 text-white p-3 rounded-full transition-colors"
+                          className="bg-white/20 hover:bg-white/30 text-white p-2 sm:p-3 rounded-full transition-colors min-h-[40px] min-w-[40px] flex items-center justify-center active:scale-90"
                           aria-label="Flytt bilde til høyre"
                         >
-                          <ChevronRight className="w-6 h-6" />
+                          <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
                         </button>
                       )}
                     </div>
 
                     <button
                       onClick={() => deleteImage(img.id)}
-                      className="absolute top-2 right-2 bg-destructive text-destructive-foreground p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                      className="absolute top-1.5 right-1.5 sm:top-2 sm:right-2 bg-destructive text-destructive-foreground p-1.5 sm:p-2 rounded-full sm:opacity-0 sm:group-hover:opacity-100 transition-opacity min-h-[32px] min-w-[32px] flex items-center justify-center active:scale-90"
                       aria-label="Slett bilde"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -662,7 +662,7 @@ export default function DashboardBilDetalj() {
             />
 
             {isEditingBasic ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
                 <div>
                   <label className="text-base text-muted-foreground mb-2 block font-medium">Merke</label>
                   <Select
@@ -763,7 +763,7 @@ export default function DashboardBilDetalj() {
                 </div>
               </div>
             ) : (
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-5 text-base">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-5 text-sm sm:text-base">
                 <div>
                   <span className="text-muted-foreground">Merke:</span>
                   <p className="font-medium text-lg">{car.brand || '-'}</p>

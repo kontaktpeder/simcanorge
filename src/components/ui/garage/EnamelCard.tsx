@@ -20,10 +20,10 @@ export function EnamelCard({
     <Component
       onClick={onClick}
       className={cn(
-        'bg-card border-2 border-chrome rounded-xl p-6 text-left w-full',
+        'bg-card border-2 border-chrome rounded-xl p-4 sm:p-6 text-left w-full',
         'shadow-md',
         hover && 'transition-all duration-200 hover:shadow-lg hover:-translate-y-1',
-        onClick && 'cursor-pointer',
+        onClick && 'cursor-pointer active:scale-[0.98]',
         className
       )}
     >
