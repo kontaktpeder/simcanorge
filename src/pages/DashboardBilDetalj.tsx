@@ -5,6 +5,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { Layout } from '@/components/layout/Layout';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { StatusBadge } from '@/components/car';
+import { CarEventsList } from '@/components/car/CarEventsList';
 import { 
   ArrowLeft, Car, Calendar, Wrench, Loader2, XCircle, 
   Pencil, Save, X, Eye, EyeOff, Upload, Trash2, Clock, Send
@@ -727,6 +728,9 @@ export default function DashboardBilDetalj() {
                 </div>
               )}
             </div>
+
+            {/* Bilens reise (timeline) */}
+            <CarEventsList carId={car.id} />
           </div>
         </div>
       </div>

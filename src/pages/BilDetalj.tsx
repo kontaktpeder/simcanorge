@@ -4,6 +4,7 @@ import { Helmet } from "react-helmet-async";
 import { Layout } from "@/components/layout/Layout";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { AnimatedSection } from "@/components/layout/AnimatedSection";
+import { TimelineSection } from "@/components/car/TimelineSection";
 import { supabase } from "@/integrations/supabase/client";
 import { 
   ArrowLeft, Calendar, Wrench, ArrowRight, ChevronLeft, ChevronRight, Car, 
@@ -488,51 +489,20 @@ const BilDetalj = () => {
       )}
 
       {/* Timeline Section */}
-      {timelineEvents.length > 0 && (
-        <section className="py-8 md:py-16">
-          <div className="container mx-auto px-4">
-            <AnimatedSection delay={400}>
-              <h3 className="headline-sm mb-8 text-center">Bilens reise</h3>
-              <div className="relative max-w-2xl mx-auto">
-                {/* Vertical line */}
-                <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-0.5 bg-border md:-translate-x-0.5" />
-                
-                <div className="space-y-6">
-                  {timelineEvents.map((event, index) => (
-                    <div 
-                      key={index}
-                      className={`relative flex items-start gap-4 ${
-                        index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'
-                      }`}
-                    >
-                      {/* Dot */}
-                      <div className="absolute left-4 md:left-1/2 w-3 h-3 bg-accent border-2 border-foreground rounded-full md:-translate-x-1.5 z-10" />
-                      
-                      {/* Card */}
-                      <div className={`ml-10 md:ml-0 md:w-[calc(50%-2rem)] ${
-                        index % 2 === 0 ? 'md:pr-8' : 'md:pl-8'
-                      }`}>
-                        <div className="bg-card border-2 border-foreground p-4 shadow-brutal hover-lift">
-                          <div className="flex items-center gap-2 mb-2">
-                            <Calendar className="w-4 h-4 text-muted-foreground" />
-                            <span className="font-display text-sm">
-                              {event.year || (event.date && new Date(event.date).getFullYear())}
-                            </span>
-                          </div>
-                          <h4 className="font-display text-sm uppercase">{event.title}</h4>
-                          {event.description && (
-                            <p className="text-sm text-muted-foreground mt-1">{event.description}</p>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </AnimatedSection>
-          </div>
-        </section>
-      )}
+      <section className="py-8 md:py-16">
+        <div className="container mx-auto px-4">
+          <AnimatedSection delay={400}>
+            <h3 className="headline-sm mb-8 text-center">Bilens reise</h3>
+            <div className="max-w-2xl mx-auto">
+              <TimelineSection 
+                carId={car.id} 
+                createdAt={car.created_at} 
+                publishedAt={car.published_at} 
+              />
+            </div>
+          </AnimatedSection>
+        </div>
+      </section>
 
       {/* External Links Section */}
       {externalLinks.length > 0 && (
