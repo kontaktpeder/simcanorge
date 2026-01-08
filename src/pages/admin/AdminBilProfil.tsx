@@ -11,12 +11,11 @@ import {
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { OwnerSection } from "@/components/admin/OwnerSection";
 import { CarLinksSection, CarProfileHeader } from "@/components/admin/car";
-import { StatusBadge, getCarStatus as getCarStatusHelper } from "@/components/car";
+import { StatusBadge, getCarStatus as getCarStatusHelper, CarFormFields } from "@/components/car";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { CAR_BRANDS, getModelsForBrand, getVariantsForModel, getYearsForModel } from "@/data/carBrands";
 import { CAR_BODY_TYPES } from "@/data/carBodyTypes";
 import { compressImages, generateImageId, getCarImagePath } from "@/lib/imageCompression";
 
@@ -159,10 +158,16 @@ const AdminBilProfil = () => {
     }
   };
 
-  // Get available options based on selections
-  const availableModels = car?.brand ? getModelsForBrand(basicForm.brand || car.brand) : [];
-  const availableVariants = basicForm.model ? getVariantsForModel(basicForm.brand, basicForm.model) : [];
-  const availableYears = basicForm.model ? getYearsForModel(basicForm.brand, basicForm.model) : [];
+  // Handle CarFormFields changes with cascading resets
+  const handleFormFieldChange = (field: string, value: string) => {
+    if (field === 'brand') {
+      setBasicForm({ ...basicForm, brand: value, model: '', variant: '', year: '' });
+    } else if (field === 'model') {
+      setBasicForm({ ...basicForm, model: value, variant: '', year: '' });
+    } else {
+      setBasicForm({ ...basicForm, [field]: value });
+    }
+  };
 
   // Status helper - use shared helper
   const getCarStatus = (): 'submitted' | 'draft' | 'published' | 'archived' => {
@@ -799,92 +804,45 @@ const AdminBilProfil = () => {
               </div>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="text-sm font-medium">Merke</label>
-                <select
-                  value={basicForm.brand}
-                  onChange={(e) => setBasicForm({ ...basicForm, brand: e.target.value, model: '', variant: '' })}
-                  className="w-full h-10 px-3 border rounded-md bg-background"
-                >
-                  <option value="">Velg merke...</option>
-                  {CAR_BRANDS.map((b) => (
-                    <option key={b.name} value={b.name}>{b.name}</option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="text-sm font-medium">Modell</label>
-                <select
-                  value={basicForm.model}
-                  onChange={(e) => setBasicForm({ ...basicForm, model: e.target.value, variant: '' })}
-                  className="w-full h-10 px-3 border rounded-md bg-background"
-                  disabled={!basicForm.brand}
-                >
-                  <option value="">Velg modell...</option>
-                  {availableModels.map((m) => (
-                    <option key={m.name} value={m.name}>{m.name}</option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="text-sm font-medium">Variant</label>
-                <select
-                  value={basicForm.variant}
-                  onChange={(e) => setBasicForm({ ...basicForm, variant: e.target.value })}
-                  className="w-full h-10 px-3 border rounded-md bg-background"
-                >
-                  <option value="">Velg variant...</option>
-                  {availableVariants.map((v) => (
-                    <option key={v} value={v}>{v}</option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="text-sm font-medium">Karosseri</label>
-                <select
-                  value={basicForm.body_type}
-                  onChange={(e) => setBasicForm({ ...basicForm, body_type: e.target.value })}
-                  className="w-full h-10 px-3 border rounded-md bg-background"
-                >
-                  <option value="">Velg karosseri...</option>
-                  {CAR_BODY_TYPES.map((bt) => (
-                    <option key={bt.id} value={bt.id}>{bt.label}</option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="text-sm font-medium">År</label>
-                <select
-                  value={basicForm.year}
-                  onChange={(e) => setBasicForm({ ...basicForm, year: e.target.value })}
-                  className="w-full h-10 px-3 border rounded-md bg-background"
-                >
-                  <option value="">Velg år...</option>
-                  {availableYears.map((y) => (
-                    <option key={y} value={y.toString()}>{y}</option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="text-sm font-medium">Kategori</label>
-                <select
-                  value={basicForm.category}
-                  onChange={(e) => setBasicForm({ ...basicForm, category: e.target.value })}
-                  className="w-full h-10 px-3 border rounded-md bg-background"
-                >
-                  {CATEGORIES.map((c) => (
-                    <option key={c.id} value={c.id}>{c.label}</option>
-                  ))}
-                </select>
-              </div>
-              <div className="sm:col-span-2">
-                <label className="text-sm font-medium">Tags (kommaseparert)</label>
-                <Input
-                  value={basicForm.tags}
-                  onChange={(e) => setBasicForm({ ...basicForm, tags: e.target.value })}
-                  placeholder="original, veteran, rallye"
-                />
+            <div className="space-y-4">
+              <CarFormFields
+                formData={{
+                  brand: basicForm.brand,
+                  model: basicForm.model,
+                  variant: basicForm.variant,
+                  body_type: basicForm.body_type,
+                  year: basicForm.year,
+                }}
+                onChange={handleFormFieldChange}
+                disabled={isSaving}
+                showTooltips={false}
+              />
+              
+              {/* Kategori og Tags - ikke del av CarFormFields */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm font-medium mb-1 block">Kategori</label>
+                  <select
+                    value={basicForm.category}
+                    onChange={(e) => setBasicForm({ ...basicForm, category: e.target.value })}
+                    className="w-full h-12 px-3 text-base border-2 border-foreground bg-card rounded"
+                    disabled={isSaving}
+                  >
+                    {CATEGORIES.map((c) => (
+                      <option key={c.id} value={c.id}>{c.label}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="text-sm font-medium mb-1 block">Tags (kommaseparert)</label>
+                  <Input
+                    value={basicForm.tags}
+                    onChange={(e) => setBasicForm({ ...basicForm, tags: e.target.value })}
+                    placeholder="original, veteran, rallye"
+                    className="h-12 text-base border-2 border-foreground"
+                    disabled={isSaving}
+                  />
+                </div>
               </div>
             </div>
           )}
