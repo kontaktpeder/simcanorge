@@ -612,6 +612,45 @@ export type Database = {
           },
         ]
       }
+      owners: {
+        Row: {
+          bio: string | null
+          created_at: string
+          display_name: string
+          favorite_brands: string[] | null
+          id: string
+          location: string | null
+          slug: string | null
+          updated_at: string
+          user_id: string
+          visible_public: boolean
+        }
+        Insert: {
+          bio?: string | null
+          created_at?: string
+          display_name: string
+          favorite_brands?: string[] | null
+          id?: string
+          location?: string | null
+          slug?: string | null
+          updated_at?: string
+          user_id: string
+          visible_public?: boolean
+        }
+        Update: {
+          bio?: string | null
+          created_at?: string
+          display_name?: string
+          favorite_brands?: string[] | null
+          id?: string
+          location?: string | null
+          slug?: string | null
+          updated_at?: string
+          user_id?: string
+          visible_public?: boolean
+        }
+        Relationships: []
+      }
       page_views: {
         Row: {
           created_at: string

@@ -5,3 +5,5 @@ export { CarEventForm } from './CarEventForm';
 export { CarEventsList } from './CarEventsList';
 export { TimelineSection } from './TimelineSection';
 export { SendInnBilForm } from './SendInnBilForm';
+export { OwnerProfileSection } from './OwnerProfileSection';
+export { OwnerCard } from './OwnerCard';

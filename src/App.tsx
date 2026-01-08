@@ -32,6 +32,8 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import DashboardMineBiler from "./pages/DashboardMineBiler";
 import DashboardBilDetalj from "./pages/DashboardBilDetalj";
+import EierProfil from "./pages/EierProfil";
+import AdminEierprofiler from "./pages/admin/AdminEierprofiler";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -51,6 +53,7 @@ const App = () => (
               <Route path="/manedens-bil" element={<ManedensBil />} />
               <Route path="/biler" element={<Biler />} />
               <Route path="/biler/:slug" element={<BilDetalj />} />
+              <Route path="/eier/:slug" element={<EierProfil />} />
               <Route path="/deler" element={<Deler />} />
               <Route path="/foresporsel" element={<Foresporsel />} />
               <Route path="/om-oss" element={<OmOss />} />
@@ -72,6 +75,7 @@ const App = () => (
               <Route path="/admin/biler/:carId" element={<AdminBilProfil />} />
               <Route path="/admin/deler" element={<AdminDeler />} />
               <Route path="/admin/kategorier" element={<AdminKategorier />} />
+              <Route path="/admin/eierprofiler" element={<AdminEierprofiler />} />
               <Route path="/admin/foresporsler" element={<AdminForesporsler />} />
               <Route path="/admin/innsendinger" element={<AdminInnsendinger />} />
               <Route path="/admin/meldinger" element={<AdminMeldinger />} />
