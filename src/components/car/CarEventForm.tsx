@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -21,6 +21,18 @@ import {
 } from "@/data/carEventCategories";
 import { useCreateCarEvent, useUpdateCarEvent, type CarEvent, type CreateCarEventInput } from "@/hooks/useCarEvents";
 import { X, Save, Loader2 } from "lucide-react";
+
+// Generate year options from 1900 to current year + 5
+const generateYearOptions = (): number[] => {
+  const currentYear = new Date().getFullYear();
+  const years: number[] = [];
+  for (let year = currentYear + 5; year >= 1900; year--) {
+    years.push(year);
+  }
+  return years;
+};
+
+const YEAR_OPTIONS = generateYearOptions();
 
 interface CarEventFormProps {
   carId: string;
@@ -179,41 +191,51 @@ export function CarEventForm({ carId, event, onClose }: CarEventFormProps) {
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-2">
             <Label htmlFor="yearFrom">Fra år *</Label>
-            <Input
-              id="yearFrom"
-              type="number"
-              min="1900"
-              max="2100"
-              value={yearFrom}
-              onChange={(e) => setYearFrom(e.target.value)}
-              placeholder="1970"
-            />
+            <Select value={yearFrom} onValueChange={setYearFrom}>
+              <SelectTrigger>
+                <SelectValue placeholder="Velg år" />
+              </SelectTrigger>
+              <SelectContent className="max-h-60">
+                {YEAR_OPTIONS.map((yearOption) => (
+                  <SelectItem key={yearOption} value={yearOption.toString()}>
+                    {yearOption}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           <div className="space-y-2">
             <Label htmlFor="yearTo">Til år (tom = pågår)</Label>
-            <Input
-              id="yearTo"
-              type="number"
-              min="1900"
-              max="2100"
-              value={yearTo}
-              onChange={(e) => setYearTo(e.target.value)}
-              placeholder="1985"
-            />
+            <Select value={yearTo} onValueChange={(value) => setYearTo(value === "ongoing" ? "" : value)}>
+              <SelectTrigger>
+                <SelectValue placeholder="Pågår" />
+              </SelectTrigger>
+              <SelectContent className="max-h-60">
+                <SelectItem value="ongoing">Pågår (ingen sluttdato)</SelectItem>
+                {YEAR_OPTIONS.filter((yearOption) => !yearFrom || yearOption >= parseInt(yearFrom, 10)).map((yearOption) => (
+                  <SelectItem key={yearOption} value={yearOption.toString()}>
+                    {yearOption}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </div>
       ) : (
         <div className="space-y-2">
           <Label htmlFor="year">År *</Label>
-          <Input
-            id="year"
-            type="number"
-            min="1900"
-            max="2100"
-            value={year}
-            onChange={(e) => setYear(e.target.value)}
-            placeholder="1972"
-          />
+          <Select value={year} onValueChange={setYear}>
+            <SelectTrigger>
+              <SelectValue placeholder="Velg år" />
+            </SelectTrigger>
+            <SelectContent className="max-h-60">
+              {YEAR_OPTIONS.map((yearOption) => (
+                <SelectItem key={yearOption} value={yearOption.toString()}>
+                  {yearOption}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
       )}
       

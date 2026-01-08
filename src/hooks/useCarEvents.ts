@@ -61,16 +61,14 @@ export function useCarEvents(carId: string | undefined) {
           *,
           car_event_images (*)
         `)
-        .eq("car_id", carId)
-        .order("year", { ascending: true, nullsFirst: false })
-        .order("year_from", { ascending: true, nullsFirst: false });
+        .eq("car_id", carId);
       
       if (error) throw error;
       
-      // Sort by year or year_from
+      // Sort by year or year_from (oldest first)
       return (data as CarEvent[]).sort((a, b) => {
-        const yearA = a.year || a.year_from || 0;
-        const yearB = b.year || b.year_from || 0;
+        const yearA = a.year ?? a.year_from ?? 0;
+        const yearB = b.year ?? b.year_from ?? 0;
         return yearA - yearB;
       });
     },
