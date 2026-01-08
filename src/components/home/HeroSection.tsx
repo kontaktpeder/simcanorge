@@ -120,7 +120,9 @@ export function HeroSection() {
                   <div className="mt-3 text-center">
                     <p className="font-display text-lg font-bold text-white">{featuredCar.title}</p>
                     <p className="font-serif text-sm text-white/80 mt-0.5">
-                      {ownerProfile ? `Eier: ${ownerProfile.display_name}` : `${featuredCar.year ? `${featuredCar.year} · ` : ''}${featuredCar.model}`}
+                      {ownerProfile 
+                        ? `Eier: ${ownerProfile.display_name}${ownerProfile.location ? `, ${ownerProfile.location}` : ''}` 
+                        : `${featuredCar.year ? `${featuredCar.year} · ` : ''}${featuredCar.model}`}
                     </p>
                   </div>
                 </Link> : <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
@@ -239,7 +241,9 @@ export function HeroSection() {
                 <div className="mt-5 text-center relative z-[2]">
                   <p className="font-display text-3xl font-bold text-white featured-title-glow">{featuredCar.title}</p>
                   <p className="font-serif text-lg text-white/90 mt-1 drop-shadow-md">
-                    {ownerProfile ? `Eier: ${ownerProfile.display_name}` : `${featuredCar.year ? `${featuredCar.year} · ` : ''}${featuredCar.model}`}
+                    {ownerProfile 
+                      ? `Eier: ${ownerProfile.display_name}${ownerProfile.location ? `, ${ownerProfile.location}` : ''}` 
+                      : `${featuredCar.year ? `${featuredCar.year} · ` : ''}${featuredCar.model}`}
                   </p>
                 </div>
               </Link> : <div className="featured-card-premium p-8 relative overflow-hidden z-10">
