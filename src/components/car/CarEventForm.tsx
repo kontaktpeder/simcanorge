@@ -24,11 +24,12 @@ import {
   useUpdateCarEvent, 
   useAddCarEventImage,
   useDeleteCarEventImage,
+  useReorderCarEventImages,
   type CarEvent, 
   type CreateCarEventInput,
   type CarEventImage
 } from "@/hooks/useCarEvents";
-import { X, Save, Loader2, Trash2, ImagePlus } from "lucide-react";
+import { X, Save, Loader2, Trash2, ImagePlus, Star, ChevronLeft, ChevronRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { compressImage, generateImageId, getCarEventImagePath } from "@/lib/imageCompression";
 import { toast } from "sonner";
@@ -68,9 +69,9 @@ export function CarEventForm({ carId, event, onClose }: CarEventFormProps) {
   const [yearTo, setYearTo] = useState(event?.year_to?.toString() || "");
   const [description, setDescription] = useState(event?.description || "");
   
-  // Image state
+  // Image state - sort by sort_order
   const [existingImages, setExistingImages] = useState<CarEventImage[]>(
-    event?.car_event_images || []
+    [...(event?.car_event_images || [])].sort((a, b) => a.sort_order - b.sort_order)
   );
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
@@ -80,6 +81,7 @@ export function CarEventForm({ carId, event, onClose }: CarEventFormProps) {
   const updateMutation = useUpdateCarEvent();
   const addImageMutation = useAddCarEventImage();
   const deleteImageMutation = useDeleteCarEventImage();
+  const reorderMutation = useReorderCarEventImages();
   
   const isLoading = createMutation.isPending || updateMutation.isPending || isUploadingImages;
   
@@ -139,6 +141,53 @@ export function CarEventForm({ carId, event, onClose }: CarEventFormProps) {
     } catch (error) {
       console.error("Failed to delete image:", error);
     }
+  };
+  
+  // Move image left (decrease sort_order)
+  const handleMoveLeft = async (index: number) => {
+    if (index === 0) return;
+    
+    const newImages = [...existingImages];
+    [newImages[index - 1], newImages[index]] = [newImages[index], newImages[index - 1]];
+    
+    // Update local state immediately
+    setExistingImages(newImages);
+    
+    // Update sort_order in database
+    const updates = newImages.map((img, idx) => ({ id: img.id, sort_order: idx }));
+    await reorderMutation.mutateAsync({ images: updates, carId });
+  };
+  
+  // Move image right (increase sort_order)
+  const handleMoveRight = async (index: number) => {
+    if (index === existingImages.length - 1) return;
+    
+    const newImages = [...existingImages];
+    [newImages[index], newImages[index + 1]] = [newImages[index + 1], newImages[index]];
+    
+    // Update local state immediately
+    setExistingImages(newImages);
+    
+    // Update sort_order in database
+    const updates = newImages.map((img, idx) => ({ id: img.id, sort_order: idx }));
+    await reorderMutation.mutateAsync({ images: updates, carId });
+  };
+  
+  // Set as main image (move to first position)
+  const handleSetAsMain = async (index: number) => {
+    if (index === 0) return;
+    
+    const newImages = [...existingImages];
+    const [movedImage] = newImages.splice(index, 1);
+    newImages.unshift(movedImage);
+    
+    // Update local state immediately
+    setExistingImages(newImages);
+    
+    // Update sort_order in database
+    const updates = newImages.map((img, idx) => ({ id: img.id, sort_order: idx }));
+    await reorderMutation.mutateAsync({ images: updates, carId });
+    toast.success("Hovedbilde oppdatert");
   };
   
   const uploadEventImages = async (eventId: string) => {
@@ -383,27 +432,88 @@ export function CarEventForm({ carId, event, onClose }: CarEventFormProps) {
       {/* Image upload section */}
       <div className="space-y-3">
         <Label>Bilder (maks {MAX_IMAGES})</Label>
+        <p className="text-xs text-muted-foreground">
+          Første bilde brukes som hovedbilde. Bruk pilene for å endre rekkefølge.
+        </p>
         
         {/* Existing images (only when editing) */}
         {existingImages.length > 0 && (
           <div className="grid grid-cols-3 gap-2">
-            {existingImages.map((img) => (
+            {existingImages.map((img, index) => (
               <div key={img.id} className="relative group">
                 <img 
                   src={img.image_url} 
                   alt={img.alt_text || ""} 
-                  className="w-full h-24 object-cover rounded-lg border"
+                  className={`w-full h-24 object-cover rounded-lg border-2 ${
+                    index === 0 ? 'border-primary' : 'border-border'
+                  }`}
                 />
-                <Button
-                  type="button"
-                  variant="destructive"
-                  size="icon"
-                  className="absolute top-1 right-1 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
-                  onClick={() => handleDeleteExistingImage(img.id)}
-                  disabled={deleteImageMutation.isPending}
-                >
-                  <Trash2 className="h-3 w-3" />
-                </Button>
+                
+                {/* Main image indicator */}
+                {index === 0 && (
+                  <div className="absolute top-1 left-1 bg-primary text-primary-foreground text-xs px-1.5 py-0.5 rounded flex items-center gap-1">
+                    <Star className="h-3 w-3 fill-current" />
+                    Hoved
+                  </div>
+                )}
+                
+                {/* Controls overlay */}
+                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center gap-1">
+                  {/* Move left */}
+                  {index > 0 && (
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      size="icon"
+                      className="h-7 w-7"
+                      onClick={() => handleMoveLeft(index)}
+                      disabled={reorderMutation.isPending}
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                    </Button>
+                  )}
+                  
+                  {/* Set as main */}
+                  {index !== 0 && (
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      size="icon"
+                      className="h-7 w-7"
+                      onClick={() => handleSetAsMain(index)}
+                      disabled={reorderMutation.isPending}
+                      title="Sett som hovedbilde"
+                    >
+                      <Star className="h-4 w-4" />
+                    </Button>
+                  )}
+                  
+                  {/* Move right */}
+                  {index < existingImages.length - 1 && (
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      size="icon"
+                      className="h-7 w-7"
+                      onClick={() => handleMoveRight(index)}
+                      disabled={reorderMutation.isPending}
+                    >
+                      <ChevronRight className="h-4 w-4" />
+                    </Button>
+                  )}
+                  
+                  {/* Delete */}
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    size="icon"
+                    className="h-7 w-7"
+                    onClick={() => handleDeleteExistingImage(img.id)}
+                    disabled={deleteImageMutation.isPending}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
             ))}
           </div>
