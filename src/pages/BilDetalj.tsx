@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import { Layout } from "@/components/layout/Layout";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { AnimatedSection } from "@/components/layout/AnimatedSection";
@@ -11,6 +12,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
+const SITE_URL = "https://simcanorge.lovable.app";
 interface CarImage {
   id: string;
   image_url: string;
@@ -231,8 +233,36 @@ const BilDetalj = () => {
         }] : []),
       ];
 
+  // Build OG meta data
+  const ogTitle = `${car.title} | Simca Norge`;
+  const ogDescription = car.story 
+    ? car.story.substring(0, 155).trim() + (car.story.length > 155 ? '...' : '')
+    : `${car.brand || ''} ${car.model} ${car.variant || ''} ${car.year ? `(${car.year})` : ''} – Se historien og bildene.`.trim();
+  const ogImage = mainImage?.image_url || `${SITE_URL}/favicon.png`;
+  const canonicalUrl = `${SITE_URL}/biler/${car.slug}`;
+
   return (
     <Layout>
+      <Helmet>
+        <title>{ogTitle}</title>
+        <meta name="description" content={ogDescription} />
+        <link rel="canonical" href={canonicalUrl} />
+        
+        {/* Open Graph */}
+        <meta property="og:title" content={ogTitle} />
+        <meta property="og:description" content={ogDescription} />
+        <meta property="og:image" content={ogImage} />
+        <meta property="og:url" content={canonicalUrl} />
+        <meta property="og:type" content="article" />
+        <meta property="og:site_name" content="Simca Norge" />
+        
+        {/* Twitter Card */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={ogTitle} />
+        <meta name="twitter:description" content={ogDescription} />
+        <meta name="twitter:image" content={ogImage} />
+      </Helmet>
+
       <PageHeader 
         title="BILHISTORIE" 
         subtitle="En unik historie fra vårt fellesskap" 
