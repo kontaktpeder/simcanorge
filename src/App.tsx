@@ -34,6 +34,7 @@ import DashboardMineBiler from "./pages/DashboardMineBiler";
 import DashboardBilDetalj from "./pages/DashboardBilDetalj";
 import EierProfil from "./pages/EierProfil";
 import AdminEierprofiler from "./pages/admin/AdminEierprofiler";
+import Konto from "./pages/Konto";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -64,6 +65,7 @@ const App = () => (
               <Route path="/accept-invitation" element={<AcceptInvitation />} />
               <Route path="/i/:token" element={<AcceptInvitation />} />
               <Route path="/login" element={<Login />} />
+              <Route path="/konto" element={<Konto />} />
               {/* Dashboard routes for car owners */}
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/dashboard/mine-biler" element={<DashboardMineBiler />} />
