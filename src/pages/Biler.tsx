@@ -268,9 +268,9 @@ const Biler = () => {
       </section>
 
       {/* Gallery */}
-      <section className="poster-section">
-        <div className="container mx-auto">
-          {isLoading ? <div className="text-center py-12 text-muted-foreground">Laster biler...</div> : filteredCars.length === 0 ? <div className="border-chrome card-enamel bg-card text-center py-12 animate-fade-in">
+      <section className="py-6 md:py-10">
+        <div className="px-2 md:container md:mx-auto md:px-4">
+          {isLoading ? <div className="text-center py-12 text-muted-foreground">Laster biler...</div> : filteredCars.length === 0 ? <div className="border-chrome card-enamel bg-card text-center py-12 animate-fade-in mx-2 md:mx-0">
               <Car className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
               <h2 className="headline-md mb-2">INGEN BILER FUNNET</h2>
               <p className="text-muted-foreground mb-4">
@@ -286,28 +286,28 @@ const Biler = () => {
                 </div>}
             </div> : <>
               {/* Featured Cars - månedens bil - full width */}
-              {featuredCars.length > 0 && <div className="mb-10 animate-fade-in">
-                  <h2 className="headline-md mb-5">MÅNEDENS BIL</h2>
-                  <div className="space-y-4">
+              {featuredCars.length > 0 && <div className="mb-6 md:mb-10 animate-fade-in">
+                  <h2 className="headline-md mb-4 md:mb-5 px-1 md:px-0">MÅNEDENS BIL</h2>
+                  <div className="space-y-3">
                     {featuredCars.map(car => <CarCard key={car.id} car={car} featured />)}
                   </div>
                 </div>}
 
               {/* Regular Cars */}
               {regularCars.length > 0 && <div className="animate-fade-in-delay-1">
-                  {featuredCars.length > 0 && <h2 className="headline-md mb-6">
+                  {featuredCars.length > 0 && <h2 className="headline-md mb-4 md:mb-6 px-1 md:px-0">
                       {selectedCategory === "alle" ? "ALLE BILER" : currentCategoryInfo?.label.toUpperCase()}
                     </h2>}
-                  <div className={`grid gap-4 stagger-children ${
+                  <div className={`grid stagger-children ${
                     viewMode === "list" 
-                      ? "grid-cols-1" 
-                      : "grid-cols-1 sm:grid-cols-2 xl:grid-cols-3"
+                      ? "grid-cols-1 gap-2.5" 
+                      : "grid-cols-2 gap-2 sm:gap-3 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
                   }`}>
                     {regularCars.map(car => <CarCard key={car.id} car={car} viewMode={viewMode} />)}
                   </div>
                 </div>}
 
-              <p className="text-center text-muted-foreground mt-8">
+              <p className="text-center text-muted-foreground mt-6 md:mt-8 text-sm">
                 Viser {filteredCars.length} av {cars.length} biler
               </p>
             </>}
@@ -410,43 +410,65 @@ function CarCard({
     </Link>;
   }
   
-  // Regular cards: horizontal layout for better width usage
-  return <Link to={`/biler/${car.slug}`} className={`border-chrome card-enamel bg-card group card-hover-glow ${
-    isListView ? "flex gap-3 p-2" : "flex gap-3 p-3"
-  }`}>
-      {/* Image - square-ish for compact layout */}
-      <div className={`bg-muted rounded-lg overflow-hidden relative flex-shrink-0 ${
-        isListView ? "w-20 h-16" : "w-28 h-24 sm:w-32 sm:h-28"
-      }`}>
+  // Gallery view: vertical card with dominant image
+  if (!isListView) {
+    return <Link to={`/biler/${car.slug}`} className="border-chrome card-enamel bg-card group card-hover-glow p-1.5 sm:p-2">
+      {/* Image - dominant, ~65-70% of card */}
+      <div className="bg-muted rounded overflow-hidden relative aspect-[4/3]">
+        {mainImage ? <img src={mainImage.image_url} alt={mainImage.alt_text || car.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" /> : <div className="w-full h-full flex items-center justify-center">
+            <Car className="w-10 h-10 text-muted-foreground" />
+          </div>}
+        {categoryBadge && <span className={`absolute top-1 left-1 ${categoryBadge.color} text-white text-[7px] px-1 py-0.5 font-display rounded tracking-wide`}>
+            {categoryBadge.label}
+          </span>}
+      </div>
+
+      {/* Content - minimal: title + year only */}
+      <div className="pt-1.5 px-0.5">
+        <h3 className="font-display text-xs sm:text-sm group-hover:text-primary transition-colors leading-tight line-clamp-2">
+          {car.title}
+        </h3>
+        <div className="flex items-center gap-1 mt-1">
+          {car.year && <span className="text-[9px] sm:text-[10px] text-muted-foreground font-display">
+              {car.year}
+            </span>}
+          <span className="text-[9px] sm:text-[10px] text-muted-foreground">•</span>
+          <span className="text-[9px] sm:text-[10px] text-muted-foreground font-display">
+            {car.model}
+          </span>
+        </div>
+      </div>
+    </Link>;
+  }
+  
+  // List view: horizontal card with image left, text right
+  return <Link to={`/biler/${car.slug}`} className="border-chrome card-enamel bg-card group card-hover-glow flex gap-3 p-2">
+      {/* Image - 40-45% width */}
+      <div className="w-[42%] sm:w-[38%] bg-muted rounded overflow-hidden relative aspect-[4/3] flex-shrink-0">
         {mainImage ? <img src={mainImage.image_url} alt={mainImage.alt_text || car.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" /> : <div className="w-full h-full flex items-center justify-center">
             <Car className="w-8 h-8 text-muted-foreground" />
           </div>}
-        {categoryBadge && !isListView && <span className={`absolute top-1 left-1 ${categoryBadge.color} text-white text-[7px] sm:text-[8px] px-1 py-0.5 font-display rounded tracking-wide`}>
+        {categoryBadge && <span className={`absolute top-1 left-1 ${categoryBadge.color} text-white text-[7px] px-1 py-0.5 font-display rounded tracking-wide`}>
             {categoryBadge.label}
           </span>}
       </div>
 
       {/* Content */}
-      <div className="flex-1 min-w-0 flex flex-col justify-center">
-        <div className={`flex flex-wrap items-center gap-1 ${isListView ? "mb-0.5" : "mb-1"}`}>
-          <span className={`bg-primary text-primary-foreground font-display rounded ${isListView ? "text-[8px] px-1 py-0.5" : "text-[9px] sm:text-[10px] px-1.5 py-0.5"}`}>
+      <div className="flex-1 min-w-0 flex flex-col justify-center py-0.5">
+        <div className="flex flex-wrap items-center gap-1 mb-1">
+          <span className="bg-primary text-primary-foreground font-display rounded text-[8px] px-1 py-0.5">
             {car.model}
           </span>
-          {car.year && <span className={`bg-accent text-accent-foreground font-display rounded ${isListView ? "text-[8px] px-1 py-0.5" : "text-[9px] sm:text-[10px] px-1.5 py-0.5"}`}>
+          {car.year && <span className="bg-accent text-accent-foreground font-display rounded text-[8px] px-1 py-0.5">
               {car.year}
-            </span>}
-          {categoryBadge && isListView && <span className={`${categoryBadge.color} text-white text-[8px] px-1 py-0.5 font-display rounded`}>
-              {categoryBadge.label}
             </span>}
         </div>
 
-        <h3 className={`font-display group-hover:text-primary transition-colors leading-tight ${
-          isListView ? "text-sm truncate" : "text-sm sm:text-base mb-1"
-        }`}>
+        <h3 className="font-display group-hover:text-primary transition-colors leading-tight text-sm line-clamp-2 mb-1">
           {car.title}
         </h3>
 
-        {car.story && !isListView && <p className="text-muted-foreground line-clamp-2 text-[11px] sm:text-xs leading-relaxed">
+        {car.story && <p className="text-muted-foreground line-clamp-2 text-[10px] leading-relaxed hidden sm:block">
             {car.story}
           </p>}
       </div>
