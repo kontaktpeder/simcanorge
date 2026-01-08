@@ -410,21 +410,6 @@ const BilDetalj = () => {
                 )}
 
 
-                <Link 
-                  to="/biler" 
-                  className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mt-6"
-                >
-                  <ArrowLeft className="w-4 h-4" />
-                  Tilbake til galleriet
-                </Link>
-
-                <Link 
-                  to="/biler" 
-                  className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mt-2"
-                >
-                  <ArrowLeft className="w-4 h-4" />
-                  Tilbake til galleriet
-                </Link>
               </div>
             </AnimatedSection>
           </div>
@@ -610,6 +595,15 @@ const BilDetalj = () => {
                 )}
               </div>
             </AnimatedSection>
+            
+            {/* Back to gallery link */}
+            <Link 
+              to="/biler" 
+              className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mt-6"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Tilbake til galleriet
+            </Link>
           </div>
         </div>
       </section>
