@@ -176,7 +176,7 @@ export function OwnerProfileSection({ userId }: OwnerProfileSectionProps) {
               Favorittmerker
             </Label>
             <div className="flex flex-wrap gap-2">
-              {BRAND_OPTIONS.map((brand) => (
+              {BRAND_OPTIONS.filter(brand => !['Peugeot', 'Citroën', 'Annet'].includes(brand)).map((brand) => (
                 <Badge
                   key={brand}
                   variant={favoriteBrands.includes(brand) ? "default" : "outline"}
