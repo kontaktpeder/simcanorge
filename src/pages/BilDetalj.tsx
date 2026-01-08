@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { Layout } from "@/components/layout/Layout";
@@ -89,6 +89,23 @@ const BilDetalj = () => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
   const [copied, setCopied] = useState(false);
+  const [showScrollIndicator, setShowScrollIndicator] = useState(true);
+  const ctaSectionRef = useRef<HTMLElement>(null);
+
+  // Hide scroll indicator when CTA section is visible
+  useEffect(() => {
+    const handleScroll = () => {
+      if (ctaSectionRef.current) {
+        const rect = ctaSectionRef.current.getBoundingClientRect();
+        // Hide when CTA section enters viewport
+        setShowScrollIndicator(rect.top > window.innerHeight);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll(); // Check initial state
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const currentUrl = typeof window !== "undefined" ? window.location.href : "";
 
@@ -392,71 +409,14 @@ const BilDetalj = () => {
                   </button>
                 )}
 
-                {/* Share section */}
-                <AnimatedSection delay={300}>
-                  <div className="border-t border-border pt-6">
-                    <p className="text-sm font-display uppercase text-muted-foreground mb-3">Del denne historien</p>
-                    <div className="flex items-center gap-3">
-                      {/* Native share button - primary on mobile/mac */}
-                      {typeof navigator !== 'undefined' && navigator.share && (
-                        <button
-                          onClick={handleNativeShare}
-                          className="w-12 h-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center hover:scale-110 hover:shadow-lg transition-all"
-                          aria-label="Del"
-                        >
-                          <Share2 className="w-5 h-5" />
-                        </button>
-                      )}
-                      
-                      {/* Fallback buttons for desktop without Web Share API */}
-                      {typeof navigator !== 'undefined' && !navigator.share && (
-                        <>
-                          <button
-                            onClick={shareOnFacebook}
-                            className="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center hover:scale-110 hover:shadow-lg transition-all"
-                            aria-label="Del på Facebook"
-                          >
-                            <Facebook className="w-5 h-5" />
-                          </button>
-                          <button
-                            onClick={shareOnTwitter}
-                            className="w-12 h-12 rounded-full bg-black text-white flex items-center justify-center hover:scale-110 hover:shadow-lg transition-all"
-                            aria-label="Del på X"
-                          >
-                            <Twitter className="w-5 h-5" />
-                          </button>
-                        </>
-                      )}
-                      
-                      {/* Copy link - always available */}
-                      <button
-                        onClick={copyLink}
-                        className={`w-12 h-12 rounded-full flex items-center justify-center transition-all hover:scale-110 ${
-                          copied ? "bg-green-600 text-white" : "bg-muted text-foreground hover:bg-muted/80"
-                        }`}
-                        aria-label="Kopier lenke"
-                      >
-                        {copied ? <Check className="w-5 h-5" /> : <LinkIcon className="w-5 h-5" />}
-                      </button>
-                    </div>
-                    
-                    {typeof navigator !== 'undefined' && navigator.share && (
-                      <p className="text-xs text-muted-foreground mt-2">
-                        Trykk for å åpne systemets delingsmeny
-                      </p>
-                    )}
-                  </div>
-                </AnimatedSection>
 
-                {/* Scroll indicator - shows there's more content below */}
-                <div className="flex flex-col items-center mt-8 mb-4">
-                  <p className="text-sm text-muted-foreground font-display uppercase tracking-wide mb-2">
-                    Se mer om bilen
-                  </p>
-                  <div className="animate-bounce">
-                    <ChevronDown className="w-6 h-6 text-primary" />
-                  </div>
-                </div>
+                <Link 
+                  to="/biler" 
+                  className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mt-6"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                  Tilbake til galleriet
+                </Link>
 
                 <Link 
                   to="/biler" 
@@ -592,6 +552,68 @@ const BilDetalj = () => {
         </section>
       )}
 
+      {/* Share Section - moved below images */}
+      <section className="py-8 md:py-12">
+        <div className="container mx-auto px-4">
+          <div className="max-w-2xl mx-auto">
+            <AnimatedSection delay={650}>
+              <div className="bg-card border-4 border-foreground shadow-brutal p-6 text-center">
+                <p className="text-sm font-display uppercase text-muted-foreground mb-4">Del denne historien</p>
+                <div className="flex items-center justify-center gap-3">
+                  {/* Native share button - primary on mobile/mac */}
+                  {typeof navigator !== 'undefined' && navigator.share && (
+                    <button
+                      onClick={handleNativeShare}
+                      className="w-12 h-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center hover:scale-110 hover:shadow-lg transition-all"
+                      aria-label="Del"
+                    >
+                      <Share2 className="w-5 h-5" />
+                    </button>
+                  )}
+                  
+                  {/* Fallback buttons for desktop without Web Share API */}
+                  {typeof navigator !== 'undefined' && !navigator.share && (
+                    <>
+                      <button
+                        onClick={shareOnFacebook}
+                        className="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center hover:scale-110 hover:shadow-lg transition-all"
+                        aria-label="Del på Facebook"
+                      >
+                        <Facebook className="w-5 h-5" />
+                      </button>
+                      <button
+                        onClick={shareOnTwitter}
+                        className="w-12 h-12 rounded-full bg-black text-white flex items-center justify-center hover:scale-110 hover:shadow-lg transition-all"
+                        aria-label="Del på X"
+                      >
+                        <Twitter className="w-5 h-5" />
+                      </button>
+                    </>
+                  )}
+                  
+                  {/* Copy link - always available */}
+                  <button
+                    onClick={copyLink}
+                    className={`w-12 h-12 rounded-full flex items-center justify-center transition-all hover:scale-110 ${
+                      copied ? "bg-green-600 text-white" : "bg-muted text-foreground hover:bg-muted/80"
+                    }`}
+                    aria-label="Kopier lenke"
+                  >
+                    {copied ? <Check className="w-5 h-5" /> : <LinkIcon className="w-5 h-5" />}
+                  </button>
+                </div>
+                
+                {typeof navigator !== 'undefined' && navigator.share && (
+                  <p className="text-xs text-muted-foreground mt-3">
+                    Trykk for å åpne systemets delingsmeny
+                  </p>
+                )}
+              </div>
+            </AnimatedSection>
+          </div>
+        </div>
+      </section>
+
       {/* Lightbox */}
       {selectedImageIndex !== null && (
         <div 
@@ -638,8 +660,22 @@ const BilDetalj = () => {
         </div>
       )}
 
+      {/* Fixed Scroll Indicator - follows user until CTA section */}
+      {showScrollIndicator && (
+        <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-40 pointer-events-none">
+          <div className="flex flex-col items-center bg-background/80 backdrop-blur-sm px-4 py-2 rounded-full shadow-lg border border-border">
+            <p className="text-xs text-muted-foreground font-display uppercase tracking-wide mb-1">
+              Bla ned
+            </p>
+            <div className="animate-bounce">
+              <ChevronDown className="w-5 h-5 text-primary" />
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* CTA Section */}
-      <section className="py-16 bg-accent">
+      <section ref={ctaSectionRef} className="py-16 bg-accent">
         <div className="container mx-auto px-4 text-center">
           <AnimatedSection delay={700}>
             <h2 className="headline-md text-accent-foreground mb-4">Har du en Simca?</h2>
