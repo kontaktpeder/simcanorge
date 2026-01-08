@@ -19,6 +19,7 @@ import {
   type EventCategory,
   type EventType,
 } from "@/data/carEventCategories";
+import { CategoryIcon } from "./CategoryIcon";
 import { 
   useCreateCarEvent, 
   useUpdateCarEvent, 
@@ -33,6 +34,7 @@ import { X, Save, Loader2, Trash2, ImagePlus, Star, ChevronLeft, ChevronRight } 
 import { supabase } from "@/integrations/supabase/client";
 import { compressImage, generateImageId, getCarEventImagePath } from "@/lib/imageCompression";
 import { toast } from "sonner";
+import { BigActionButton } from "@/components/ui/garage";
 
 // Generate year options from 1900 to current year + 5
 const generateYearOptions = (): number[] => {
@@ -294,46 +296,49 @@ export function CarEventForm({ carId, event, onClose }: CarEventFormProps) {
     : "";
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-6">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold">
+        <h3 className="text-2xl font-display text-foreground">
           {isEditing ? "Rediger hendelse" : "Ny hendelse"}
         </h3>
-        <Button type="button" variant="ghost" size="icon" onClick={onClose}>
-          <X className="h-4 w-4" />
+        <Button type="button" variant="ghost" size="icon" className="h-10 w-10" onClick={onClose}>
+          <X className="h-5 w-5" />
         </Button>
       </div>
       
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div className="space-y-2">
-          <Label htmlFor="category">Kategori *</Label>
+      <div className="grid gap-5 sm:grid-cols-2">
+        <div className="space-y-3">
+          <Label htmlFor="category" className="text-base font-medium">Kategori *</Label>
           <Select value={category} onValueChange={handleCategoryChange}>
-            <SelectTrigger>
+            <SelectTrigger className="h-12 text-base">
               <SelectValue placeholder="Velg kategori" />
             </SelectTrigger>
             <SelectContent>
               {getAllCategories().map((cat) => (
-                <SelectItem key={cat} value={cat}>
-                  {EVENT_CATEGORIES[cat].icon} {EVENT_CATEGORIES[cat].label}
+                <SelectItem key={cat} value={cat} className="text-base py-3">
+                  <span className="flex items-center gap-3">
+                    <CategoryIcon iconName={EVENT_CATEGORIES[cat].icon} size="md" className="text-primary" />
+                    {EVENT_CATEGORIES[cat].label}
+                  </span>
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
         </div>
         
-        <div className="space-y-2">
-          <Label htmlFor="eventType">Hendelse *</Label>
+        <div className="space-y-3">
+          <Label htmlFor="eventType" className="text-base font-medium">Hendelse *</Label>
           <Select 
             value={eventType} 
             onValueChange={(v) => setEventType(v as EventType)}
             disabled={!category}
           >
-            <SelectTrigger>
+            <SelectTrigger className="h-12 text-base">
               <SelectValue placeholder="Velg hendelse" />
             </SelectTrigger>
             <SelectContent>
               {availableEvents.map((evt) => (
-                <SelectItem key={evt} value={evt}>
+                <SelectItem key={evt} value={evt} className="text-base py-3">
                   {getEventLabel(category as EventCategory, evt)}
                 </SelectItem>
               ))}
@@ -342,57 +347,59 @@ export function CarEventForm({ carId, event, onClose }: CarEventFormProps) {
         </div>
       </div>
       
-      <div className="space-y-2">
-        <Label htmlFor="title">Tittel (valgfritt)</Label>
+      <div className="space-y-3">
+        <Label htmlFor="title" className="text-base font-medium">Tittel (valgfritt)</Label>
         <Input
           id="title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder={autoTitle || "Auto-genereres fra hendelsestype"}
+          className="h-12 text-base"
         />
-        <p className="text-xs text-muted-foreground">
+        <p className="text-sm text-muted-foreground">
           La stå tom for å bruke standard tittel: "{autoTitle}"
         </p>
       </div>
       
-      <div className="flex items-center gap-3 py-2">
+      <div className="flex items-center gap-4 py-3 px-4 rounded-lg bg-muted/50 border">
         <Switch
           id="isPeriod"
           checked={isPeriod}
           onCheckedChange={setIsPeriod}
+          className="scale-110"
         />
-        <Label htmlFor="isPeriod" className="cursor-pointer">
+        <Label htmlFor="isPeriod" className="cursor-pointer text-base">
           Periode (fra–til) i stedet for enkeltår
         </Label>
       </div>
       
       {isPeriod ? (
-        <div className="grid gap-4 sm:grid-cols-2">
-          <div className="space-y-2">
-            <Label htmlFor="yearFrom">Fra år *</Label>
+        <div className="grid gap-5 sm:grid-cols-2">
+          <div className="space-y-3">
+            <Label htmlFor="yearFrom" className="text-base font-medium">Fra år *</Label>
             <Select value={yearFrom} onValueChange={setYearFrom}>
-              <SelectTrigger>
+              <SelectTrigger className="h-12 text-base">
                 <SelectValue placeholder="Velg år" />
               </SelectTrigger>
               <SelectContent className="max-h-60">
                 {YEAR_OPTIONS.map((yearOption) => (
-                  <SelectItem key={yearOption} value={yearOption.toString()}>
+                  <SelectItem key={yearOption} value={yearOption.toString()} className="text-base">
                     {yearOption}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="yearTo">Til år (tom = pågår)</Label>
+          <div className="space-y-3">
+            <Label htmlFor="yearTo" className="text-base font-medium">Til år (tom = pågår)</Label>
             <Select value={yearTo} onValueChange={(value) => setYearTo(value === "ongoing" ? "" : value)}>
-              <SelectTrigger>
+              <SelectTrigger className="h-12 text-base">
                 <SelectValue placeholder="Pågår" />
               </SelectTrigger>
               <SelectContent className="max-h-60">
-                <SelectItem value="ongoing">Pågår (ingen sluttdato)</SelectItem>
+                <SelectItem value="ongoing" className="text-base">Pågår (ingen sluttdato)</SelectItem>
                 {YEAR_OPTIONS.filter((yearOption) => !yearFrom || yearOption >= parseInt(yearFrom, 10)).map((yearOption) => (
-                  <SelectItem key={yearOption} value={yearOption.toString()}>
+                  <SelectItem key={yearOption} value={yearOption.toString()} className="text-base">
                     {yearOption}
                   </SelectItem>
                 ))}
@@ -401,15 +408,15 @@ export function CarEventForm({ carId, event, onClose }: CarEventFormProps) {
           </div>
         </div>
       ) : (
-        <div className="space-y-2">
-          <Label htmlFor="year">År *</Label>
+        <div className="space-y-3">
+          <Label htmlFor="year" className="text-base font-medium">År *</Label>
           <Select value={year} onValueChange={setYear}>
-            <SelectTrigger>
+            <SelectTrigger className="h-12 text-base">
               <SelectValue placeholder="Velg år" />
             </SelectTrigger>
             <SelectContent className="max-h-60">
               {YEAR_OPTIONS.map((yearOption) => (
-                <SelectItem key={yearOption} value={yearOption.toString()}>
+                <SelectItem key={yearOption} value={yearOption.toString()} className="text-base">
                   {yearOption}
                 </SelectItem>
               ))}
@@ -418,21 +425,22 @@ export function CarEventForm({ carId, event, onClose }: CarEventFormProps) {
         </div>
       )}
       
-      <div className="space-y-2">
-        <Label htmlFor="description">Beskrivelse (valgfritt)</Label>
+      <div className="space-y-3">
+        <Label htmlFor="description" className="text-base font-medium">Beskrivelse (valgfritt)</Label>
         <Textarea
           id="description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           placeholder="Legg til detaljer om denne hendelsen..."
-          rows={3}
+          rows={4}
+          className="text-base min-h-[120px]"
         />
       </div>
       
       {/* Image upload section */}
-      <div className="space-y-3">
-        <Label>Bilder (maks {MAX_IMAGES})</Label>
-        <p className="text-xs text-muted-foreground">
+      <div className="space-y-4">
+        <Label className="text-base font-medium">Bilder (maks {MAX_IMAGES})</Label>
+        <p className="text-sm text-muted-foreground">
           Første bilde brukes som hovedbilde. Bruk pilene for å endre rekkefølge.
         </p>
         
@@ -571,27 +579,21 @@ export function CarEventForm({ carId, event, onClose }: CarEventFormProps) {
         )}
       </div>
       
-      <div className="flex gap-2 pt-2">
-        <Button type="button" variant="outline" onClick={onClose} className="flex-1">
+      <div className="flex gap-3 pt-4">
+        <Button type="button" variant="outline" onClick={onClose} className="flex-1 h-12 text-base">
           Avbryt
         </Button>
-        <Button 
-          type="submit" 
-          className="flex-1"
+        <BigActionButton
+          type="submit"
           disabled={isLoading || !category || !eventType || (!year && !yearFrom)}
+          icon={isLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : <Save className="h-5 w-5" />}
+          className="flex-1"
         >
-          {isLoading ? (
-            <>
-              <Loader2 className="h-4 w-4 animate-spin mr-2" />
-              {isUploadingImages ? "Laster opp bilder..." : "Lagrer..."}
-            </>
-          ) : (
-            <>
-              <Save className="h-4 w-4 mr-2" />
-              {isEditing ? "Lagre" : "Legg til"}
-            </>
-          )}
-        </Button>
+          {isLoading 
+            ? (isUploadingImages ? "Laster opp bilder..." : "Lagrer...") 
+            : (isEditing ? "Lagre hendelse" : "Legg til hendelse")
+          }
+        </BigActionButton>
       </div>
     </form>
   );

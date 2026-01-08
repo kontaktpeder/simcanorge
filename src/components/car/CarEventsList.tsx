@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -14,7 +13,10 @@ import {
 import { useCarEvents, useDeleteCarEvent, type CarEvent } from "@/hooks/useCarEvents";
 import { CarEventForm } from "./CarEventForm";
 import { getCategoryIcon, getCategoryLabel, getEventLabel, type EventCategory, type EventType } from "@/data/carEventCategories";
+import { CategoryIcon } from "./CategoryIcon";
 import { Plus, Pencil, Trash2, Calendar, Clock, Loader2 } from "lucide-react";
+import { EnamelCard, SectionHeader, EmptyState, BigActionButton } from "@/components/ui/garage";
+import { motion } from "framer-motion";
 
 interface CarEventsListProps {
   carId: string;
@@ -60,77 +62,97 @@ export function CarEventsList({ carId }: CarEventsListProps) {
 
   if (isLoading) {
     return (
-      <Card>
-        <CardContent className="flex items-center justify-center py-8">
-          <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-        </CardContent>
-      </Card>
+      <EnamelCard>
+        <div className="flex items-center justify-center py-12">
+          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        </div>
+      </EnamelCard>
     );
   }
 
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="flex items-center gap-2">
-          <Clock className="h-5 w-5" />
-          Bilens reise
-        </CardTitle>
-        <Button size="sm" onClick={() => setShowForm(true)}>
-          <Plus className="h-4 w-4 mr-1" />
-          Legg til hendelse
-        </Button>
-      </CardHeader>
+    <EnamelCard className="p-0 overflow-hidden">
+      {/* Header */}
+      <div className="p-6 pb-4 border-b border-border/50">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <SectionHeader
+            title="Bilens reise"
+            icon={<Clock className="w-6 h-6" />}
+            description="Dokumenter viktige hendelser i bilens historie"
+          />
+          <BigActionButton
+            icon={<Plus className="w-5 h-5" />}
+            onClick={() => setShowForm(true)}
+          >
+            Legg til hendelse
+          </BigActionButton>
+        </div>
+      </div>
       
-      <CardContent className="space-y-4">
+      <div className="p-6 space-y-6">
         {showForm && (
-          <div className="border rounded-lg p-4 bg-muted/30">
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="border-2 border-primary/20 rounded-xl p-6 bg-primary/5"
+          >
             <CarEventForm
               carId={carId}
               event={editingEvent || undefined}
               onClose={handleCloseForm}
             />
-          </div>
+          </motion.div>
         )}
         
         {!events || events.length === 0 ? (
-          <div className="text-center py-8 text-muted-foreground">
-            <Calendar className="h-12 w-12 mx-auto mb-3 opacity-50" />
-            <p>Ingen hendelser lagt til ennå.</p>
-            <p className="text-sm mt-1">
-              Klikk "Legg til hendelse" for å starte bilens historie.
-            </p>
-          </div>
+          <EmptyState
+            icon={<Calendar className="w-16 h-16" />}
+            title="Ingen hendelser ennå"
+            description="Legg til hendelser for å dokumentere bilens historie. Når ble den produsert? Når skiftet den eier?"
+            action={{
+              label: "Legg til første hendelse",
+              onClick: () => setShowForm(true),
+            }}
+          />
         ) : (
-          <div className="space-y-3">
-            {events.map((event) => {
+          <div className="space-y-4">
+            {events.map((event, index) => {
               const category = event.category as EventCategory;
               const eventType = event.event_type as EventType;
               const displayTitle = event.title || getEventLabel(category, eventType);
+              const iconName = getCategoryIcon(category);
               
               return (
-                <div
+                <motion.div
                   key={event.id}
-                  className="flex items-start gap-3 p-3 rounded-lg border bg-card hover:bg-accent/50 transition-colors"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                  className="group relative flex items-start gap-4 p-5 rounded-xl border-2 border-border bg-card hover:border-primary/30 hover:shadow-md transition-all duration-200"
                 >
-                  <div className="text-2xl">{getCategoryIcon(category)}</div>
+                  {/* Icon */}
+                  <div className="flex-shrink-0 w-12 h-12 rounded-full bg-primary/10 border-2 border-primary/20 flex items-center justify-center">
+                    <CategoryIcon iconName={iconName} size="lg" className="text-primary" />
+                  </div>
                   
+                  {/* Content */}
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="font-medium text-sm text-primary">
+                    <div className="flex items-center gap-3 mb-2">
+                      <span className="text-lg font-bold text-primary font-display">
                         {formatTimeDisplay(event)}
                       </span>
-                      <span className="text-xs text-muted-foreground">
+                      <span className="px-2 py-0.5 rounded-full bg-muted text-sm text-muted-foreground">
                         {getCategoryLabel(category)}
                       </span>
                     </div>
-                    <h4 className="font-semibold">{displayTitle}</h4>
+                    <h4 className="text-xl font-semibold text-foreground mb-1">{displayTitle}</h4>
                     {event.description && (
-                      <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
+                      <p className="text-base text-muted-foreground leading-relaxed">
                         {event.description}
                       </p>
                     )}
                     {event.car_event_images && event.car_event_images.length > 0 && (
-                      <div className="flex gap-2 mt-2">
+                      <div className="flex gap-3 mt-4">
                         {event.car_event_images
                           .sort((a, b) => a.sort_order - b.sort_order)
                           .map((img) => (
@@ -138,57 +160,58 @@ export function CarEventsList({ carId }: CarEventsListProps) {
                             key={img.id}
                             src={img.image_url}
                             alt={img.alt_text || ""}
-                            className="h-16 w-16 rounded-lg object-cover"
+                            className="h-20 w-20 rounded-lg object-cover border-2 border-border hover:border-primary/50 transition-colors"
                           />
                         ))}
                       </div>
                     )}
                   </div>
                   
-                  <div className="flex gap-1">
+                  {/* Actions */}
+                  <div className="flex gap-2 opacity-60 group-hover:opacity-100 transition-opacity">
                     <Button
-                      variant="ghost"
+                      variant="outline"
                       size="icon"
-                      className="h-8 w-8"
+                      className="h-10 w-10"
                       onClick={() => handleEdit(event)}
                     >
                       <Pencil className="h-4 w-4" />
                     </Button>
                     <Button
-                      variant="ghost"
+                      variant="outline"
                       size="icon"
-                      className="h-8 w-8 text-destructive hover:text-destructive"
+                      className="h-10 w-10 text-destructive hover:text-destructive hover:bg-destructive/10"
                       onClick={() => setDeleteEventId(event.id)}
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
                   </div>
-                </div>
+                </motion.div>
               );
             })}
           </div>
         )}
-      </CardContent>
+      </div>
       
       <AlertDialog open={!!deleteEventId} onOpenChange={() => setDeleteEventId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Slett hendelse?</AlertDialogTitle>
-            <AlertDialogDescription>
+            <AlertDialogTitle className="text-xl">Slett hendelse?</AlertDialogTitle>
+            <AlertDialogDescription className="text-base">
               Er du sikker på at du vil slette denne hendelsen? Dette kan ikke angres.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Avbryt</AlertDialogCancel>
+            <AlertDialogCancel className="min-h-[48px] text-base">Avbryt</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDelete}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90 min-h-[48px] text-base"
             >
-              Slett
+              Slett hendelse
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </Card>
+    </EnamelCard>
   );
 }
