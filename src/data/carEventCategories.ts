@@ -57,10 +57,20 @@ export type EventType =
   | 'ny_eier_ansvar'
   | 'annet';
 
-export const EVENT_CATEGORIES: Record<EventCategory, { label: string; icon: string; events: Partial<Record<EventType, string>> }> = {
+export type CategoryIconName = 
+  | 'Factory'
+  | 'ClipboardList'
+  | 'Handshake'
+  | 'Car'
+  | 'Warehouse'
+  | 'Wrench'
+  | 'AlertTriangle'
+  | 'Sparkles';
+
+export const EVENT_CATEGORIES: Record<EventCategory, { label: string; icon: CategoryIconName; events: Partial<Record<EventType, string>> }> = {
   opprinnelse: {
     label: 'Opprinnelse',
-    icon: '🏭',
+    icon: 'Factory',
     events: {
       produksjonsår: 'Produksjonsår',
       levert_ny: 'Levert som ny',
@@ -71,7 +81,7 @@ export const EVENT_CATEGORIES: Record<EventCategory, { label: string; icon: stri
   },
   registrering: {
     label: 'Registrering',
-    icon: '📋',
+    icon: 'ClipboardList',
     events: {
       registrert: 'Registrert',
       avregistrert: 'Avregistrert',
@@ -84,7 +94,7 @@ export const EVENT_CATEGORIES: Record<EventCategory, { label: string; icon: stri
   },
   eierskap: {
     label: 'Eierskap',
-    icon: '🤝',
+    icon: 'Handshake',
     events: {
       kjopt: 'Kjøpt',
       solgt: 'Solgt',
@@ -96,7 +106,7 @@ export const EVENT_CATEGORIES: Record<EventCategory, { label: string; icon: stri
   },
   bruk: {
     label: 'Bruk',
-    icon: '🚗',
+    icon: 'Car',
     events: {
       daglig_brukt: 'Daglig brukt',
       familiebil: 'Familiebil',
@@ -109,7 +119,7 @@ export const EVENT_CATEGORIES: Record<EventCategory, { label: string; icon: stri
   },
   stillstand: {
     label: 'Stillstand / lagring',
-    icon: '🏚️',
+    icon: 'Warehouse',
     events: {
       statt_pa_lave: 'Stått på låve',
       lagret_garasje: 'Lagret i garasje',
@@ -121,7 +131,7 @@ export const EVENT_CATEGORIES: Record<EventCategory, { label: string; icon: stri
   },
   restaurering: {
     label: 'Restaurering / arbeid',
-    icon: '🔧',
+    icon: 'Wrench',
     events: {
       restaurering_startet: 'Restaurering startet',
       motor_overhalt: 'Motor overhalt',
@@ -136,7 +146,7 @@ export const EVENT_CATEGORIES: Record<EventCategory, { label: string; icon: stri
   },
   skade: {
     label: 'Skade / skjebne',
-    icon: '⚠️',
+    icon: 'AlertTriangle',
     events: {
       ulykke: 'Ulykke',
       brann: 'Brann',
@@ -149,7 +159,7 @@ export const EVENT_CATEGORIES: Record<EventCategory, { label: string; icon: stri
   },
   gjenoppdagelse: {
     label: 'Gjenoppdagelse / nåtid',
-    icon: '✨',
+    icon: 'Sparkles',
     events: {
       gjenoppdaget: 'Gjenoppdaget',
       dokumentert: 'Dokumentert',
@@ -166,8 +176,8 @@ export const getCategoryLabel = (category: EventCategory): string => {
   return EVENT_CATEGORIES[category]?.label || category;
 };
 
-export const getCategoryIcon = (category: EventCategory): string => {
-  return EVENT_CATEGORIES[category]?.icon || '📌';
+export const getCategoryIcon = (category: EventCategory): CategoryIconName => {
+  return EVENT_CATEGORIES[category]?.icon || 'Sparkles';
 };
 
 export const getEventsForCategory = (category: EventCategory): EventType[] => {
