@@ -213,3 +213,29 @@ export function useDeleteCarEventImage() {
     },
   });
 }
+
+export function useReorderCarEventImages() {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: async ({ images, carId }: { images: { id: string; sort_order: number }[]; carId: string }) => {
+      // Update each image's sort_order
+      for (const img of images) {
+        const { error } = await supabase
+          .from("car_event_images")
+          .update({ sort_order: img.sort_order })
+          .eq("id", img.id);
+        
+        if (error) throw error;
+      }
+      return { carId };
+    },
+    onSuccess: ({ carId }) => {
+      queryClient.invalidateQueries({ queryKey: ["car-events", carId] });
+    },
+    onError: (error) => {
+      console.error("Error reordering images:", error);
+      toast.error("Kunne ikke endre rekkefølge");
+    },
+  });
+}
