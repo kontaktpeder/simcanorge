@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { CAR_BRANDS, getModelsForBrand, getYearsForModel, getVariantsForModel, generateCarTitle } from "@/data/carBrands";
 import { CAR_BODY_TYPES } from "@/data/carBodyTypes";
 import { FormFieldWithTooltip } from "@/components/ui/form-field-with-tooltip";
+import { StatusBadge, getCarStatus as getCarStatusHelper } from "@/components/car";
 import { Input } from "@/components/ui/input";
 import { compressImages, generateImageId, getCarImagePath, type CompressionProgress } from "@/lib/imageCompression";
 import { ImageUploadProgress } from "@/components/ui/image-upload-progress";
@@ -136,10 +137,9 @@ const AdminBiler = () => {
     setIsLoading(false);
   };
 
-  // Helper function to get effective status
+  // Helper function to get effective status - use shared helper
   const getCarStatus = (car: CarPost): 'submitted' | 'draft' | 'published' | 'archived' => {
-    if (car.status) return car.status;
-    return car.published_at ? 'published' : 'draft';
+    return getCarStatusHelper(car);
   };
 
   // Filtered and sorted cars: submitted first, then by created_at desc
@@ -500,23 +500,13 @@ const AdminBiler = () => {
     }
   };
 
-  // Status badge helper
-  const StatusBadge = ({ car }: { car: CarPost }) => {
+  // Status badge helper - use shared component
+  const CarStatusBadge = ({ car }: { car: CarPost }) => {
     const status = getCarStatus(car);
     const isApproved = !!car.approved_at;
-    const config = {
-      submitted: { bg: 'bg-orange-100', text: 'text-orange-700', label: 'Innsendt', icon: Send },
-      draft: { bg: 'bg-gray-100', text: 'text-gray-700', label: 'Kladd', icon: EyeOff },
-      published: { bg: 'bg-green-100', text: 'text-green-700', label: 'Publisert', icon: Eye },
-      archived: { bg: 'bg-slate-100', text: 'text-slate-500', label: 'Arkivert', icon: EyeOff },
-    };
-    const { bg, text, label, icon: Icon } = config[status];
     return (
       <div className="flex items-center gap-2">
-        <span className={`${bg} ${text} text-xs px-2 py-1 rounded font-display flex items-center gap-1 w-fit`}>
-          <Icon className="w-3 h-3" />
-          {label}
-        </span>
+        <StatusBadge status={status} />
         {isApproved && (
           <span className="text-green-600 text-xs flex items-center gap-1">
             ✓ Godkjent
@@ -1030,7 +1020,7 @@ const AdminBiler = () => {
                           </div>
                           <p className="text-xs text-muted-foreground">{car.model} {car.year && `· ${car.year}`}</p>
                         </div>
-                        <StatusBadge car={car} />
+                        <CarStatusBadge car={car} />
                       </div>
                       
                       {/* Innsender info and submission date */}
@@ -1158,7 +1148,7 @@ const AdminBiler = () => {
                       </span>
                     </td>
                     <td className="p-4">
-                      <StatusBadge car={car} />
+                      <CarStatusBadge car={car} />
                     </td>
                     <td className="p-4">
                       <div className="flex items-center justify-end gap-1">

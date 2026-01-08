@@ -250,7 +250,9 @@ export type Database = {
           brand: string | null
           category: string
           created_at: string
+          external_links: Json | null
           featured: boolean | null
+          geography: Json | null
           id: string
           model: string
           overhauled: boolean | null
@@ -265,6 +267,8 @@ export type Database = {
           submitted_by_phone: string | null
           submitted_notes: string | null
           tags: string[] | null
+          technical_specs: Json | null
+          timeline_events: Json | null
           title: string
           updated_at: string
           variant: string | null
@@ -278,7 +282,9 @@ export type Database = {
           brand?: string | null
           category?: string
           created_at?: string
+          external_links?: Json | null
           featured?: boolean | null
+          geography?: Json | null
           id?: string
           model: string
           overhauled?: boolean | null
@@ -293,6 +299,8 @@ export type Database = {
           submitted_by_phone?: string | null
           submitted_notes?: string | null
           tags?: string[] | null
+          technical_specs?: Json | null
+          timeline_events?: Json | null
           title: string
           updated_at?: string
           variant?: string | null
@@ -306,7 +314,9 @@ export type Database = {
           brand?: string | null
           category?: string
           created_at?: string
+          external_links?: Json | null
           featured?: boolean | null
+          geography?: Json | null
           id?: string
           model?: string
           overhauled?: boolean | null
@@ -321,6 +331,8 @@ export type Database = {
           submitted_by_phone?: string | null
           submitted_notes?: string | null
           tags?: string[] | null
+          technical_specs?: Json | null
+          timeline_events?: Json | null
           title?: string
           updated_at?: string
           variant?: string | null
