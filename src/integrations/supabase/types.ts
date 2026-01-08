@@ -14,6 +14,94 @@ export type Database = {
   }
   public: {
     Tables: {
+      car_event_images: {
+        Row: {
+          alt_text: string | null
+          car_event_id: string
+          created_at: string
+          id: string
+          image_url: string
+          sort_order: number
+        }
+        Insert: {
+          alt_text?: string | null
+          car_event_id: string
+          created_at?: string
+          id?: string
+          image_url: string
+          sort_order?: number
+        }
+        Update: {
+          alt_text?: string | null
+          car_event_id?: string
+          created_at?: string
+          id?: string
+          image_url?: string
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "car_event_images_car_event_id_fkey"
+            columns: ["car_event_id"]
+            isOneToOne: false
+            referencedRelation: "car_events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      car_events: {
+        Row: {
+          car_id: string
+          category: string
+          created_at: string
+          created_by: string | null
+          description: string | null
+          event_type: string
+          id: string
+          title: string | null
+          updated_at: string
+          year: number | null
+          year_from: number | null
+          year_to: number | null
+        }
+        Insert: {
+          car_id: string
+          category: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          event_type: string
+          id?: string
+          title?: string | null
+          updated_at?: string
+          year?: number | null
+          year_from?: number | null
+          year_to?: number | null
+        }
+        Update: {
+          car_id?: string
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          event_type?: string
+          id?: string
+          title?: string | null
+          updated_at?: string
+          year?: number | null
+          year_from?: number | null
+          year_to?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "car_events_car_id_fkey"
+            columns: ["car_id"]
+            isOneToOne: false
+            referencedRelation: "cars"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       car_images: {
         Row: {
           alt_text: string | null
