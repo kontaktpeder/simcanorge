@@ -657,13 +657,10 @@ const BilDetalj = () => {
       {/* Fixed Scroll Indicator - follows user until CTA section */}
       {showScrollIndicator && (
         <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-40 pointer-events-none">
-          <div className="flex flex-col items-center bg-background/80 backdrop-blur-sm px-4 py-2 rounded-full shadow-lg border border-border">
-            <p className="text-xs text-muted-foreground font-display uppercase tracking-wide mb-1">
-              Bla ned
-            </p>
-            <div className="animate-bounce">
-              <ChevronDown className="w-5 h-5 text-primary" />
-            </div>
+          <div 
+            className="animate-[bounce_2.5s_ease-in-out_infinite]"
+          >
+            <ChevronDown className="w-8 h-8 text-primary/50" />
           </div>
         </div>
       )}
