@@ -8,7 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { 
   ArrowLeft, Calendar, Wrench, ArrowRight, ChevronLeft, ChevronRight, Car, 
   Facebook, Twitter, Link as LinkIcon, Check, Instagram, X, Youtube, ExternalLink,
-  Tag, Gauge, FileText
+  Tag, Gauge, FileText, Share2
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -123,15 +123,6 @@ const BilDetalj = () => {
     fetchCar();
   }, [slug]);
 
-  const shareOnFacebook = () => {
-    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(currentUrl)}`, "_blank", "width=600,height=400");
-  };
-
-  const shareOnTwitter = () => {
-    const text = car ? `Sjekk ut denne ${car.title}!` : "Sjekk ut denne bilen!";
-    window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(currentUrl)}&text=${encodeURIComponent(text)}`, "_blank", "width=600,height=400");
-  };
-
   const copyLink = async () => {
     try {
       await navigator.clipboard.writeText(currentUrl);
@@ -141,6 +132,41 @@ const BilDetalj = () => {
     } catch {
       toast.error("Kunne ikke kopiere lenke");
     }
+  };
+
+  const handleNativeShare = async () => {
+    if (!car) return;
+
+    const shareData = {
+      title: car.title,
+      text: car.story 
+        ? car.story.substring(0, 200) + (car.story.length > 200 ? '...' : '')
+        : `${car.brand || ''} ${car.model} ${car.variant || ''} ${car.year ? `(${car.year})` : ''}`.trim(),
+      url: currentUrl,
+    };
+
+    try {
+      if (navigator.share && navigator.canShare?.(shareData)) {
+        await navigator.share(shareData);
+        toast.success("Delt!");
+      } else {
+        await copyLink();
+      }
+    } catch (error: unknown) {
+      if (error instanceof Error && error.name !== 'AbortError') {
+        console.error('Error sharing:', error);
+        await copyLink();
+      }
+    }
+  };
+
+  const shareOnFacebook = () => {
+    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(currentUrl)}`, "_blank", "width=600,height=400");
+  };
+
+  const shareOnTwitter = () => {
+    const text = car ? `Sjekk ut denne ${car.title}!` : "Sjekk ut denne bilen!";
+    window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(currentUrl)}&text=${encodeURIComponent(text)}`, "_blank", "width=600,height=400");
   };
 
   const nextImage = () => {
@@ -369,27 +395,38 @@ const BilDetalj = () => {
                   <div className="border-t border-border pt-6">
                     <p className="text-sm font-display uppercase text-muted-foreground mb-3">Del denne historien</p>
                     <div className="flex items-center gap-3">
-                      <button
-                        onClick={shareOnFacebook}
-                        className="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center hover:scale-110 hover:shadow-lg transition-all"
-                        aria-label="Del på Facebook"
-                      >
-                        <Facebook className="w-5 h-5" />
-                      </button>
-                      <button
-                        onClick={() => window.open(`https://www.instagram.com/`, "_blank")}
-                        className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-600 via-pink-500 to-orange-400 text-white flex items-center justify-center hover:scale-110 hover:shadow-lg transition-all"
-                        aria-label="Del på Instagram"
-                      >
-                        <Instagram className="w-5 h-5" />
-                      </button>
-                      <button
-                        onClick={shareOnTwitter}
-                        className="w-12 h-12 rounded-full bg-black text-white flex items-center justify-center hover:scale-110 hover:shadow-lg transition-all"
-                        aria-label="Del på X"
-                      >
-                        <Twitter className="w-5 h-5" />
-                      </button>
+                      {/* Native share button - primary on mobile/mac */}
+                      {typeof navigator !== 'undefined' && navigator.share && (
+                        <button
+                          onClick={handleNativeShare}
+                          className="w-12 h-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center hover:scale-110 hover:shadow-lg transition-all"
+                          aria-label="Del"
+                        >
+                          <Share2 className="w-5 h-5" />
+                        </button>
+                      )}
+                      
+                      {/* Fallback buttons for desktop without Web Share API */}
+                      {typeof navigator !== 'undefined' && !navigator.share && (
+                        <>
+                          <button
+                            onClick={shareOnFacebook}
+                            className="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center hover:scale-110 hover:shadow-lg transition-all"
+                            aria-label="Del på Facebook"
+                          >
+                            <Facebook className="w-5 h-5" />
+                          </button>
+                          <button
+                            onClick={shareOnTwitter}
+                            className="w-12 h-12 rounded-full bg-black text-white flex items-center justify-center hover:scale-110 hover:shadow-lg transition-all"
+                            aria-label="Del på X"
+                          >
+                            <Twitter className="w-5 h-5" />
+                          </button>
+                        </>
+                      )}
+                      
+                      {/* Copy link - always available */}
                       <button
                         onClick={copyLink}
                         className={`w-12 h-12 rounded-full flex items-center justify-center transition-all hover:scale-110 ${
@@ -400,6 +437,12 @@ const BilDetalj = () => {
                         {copied ? <Check className="w-5 h-5" /> : <LinkIcon className="w-5 h-5" />}
                       </button>
                     </div>
+                    
+                    {typeof navigator !== 'undefined' && navigator.share && (
+                      <p className="text-xs text-muted-foreground mt-2">
+                        Trykk for å åpne systemets delingsmeny
+                      </p>
+                    )}
                   </div>
                 </AnimatedSection>
 
