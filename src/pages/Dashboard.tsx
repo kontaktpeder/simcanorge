@@ -5,7 +5,7 @@ import { GarageLayout } from '@/components/ui/garage/GarageLayout';
 import { EnamelCard } from '@/components/ui/garage/EnamelCard';
 import { BigActionButton } from '@/components/ui/garage/BigActionButton';
 import { SectionHeader } from '@/components/ui/garage/SectionHeader';
-import { Car, Clock, Settings, Bell, CheckCircle, Send, X } from 'lucide-react';
+import { Car, Clock, Settings, Bell, CheckCircle, Send, X, User } from 'lucide-react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Loader2 } from 'lucide-react';
@@ -13,13 +13,20 @@ import { Layout } from '@/components/layout/Layout';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { SendInnBilForm } from '@/components/car/SendInnBilForm';
+import { OwnerProfileSection } from '@/components/car/OwnerProfileSection';
+import { useOwnerProfile } from '@/hooks/useOwnerProfile';
 
 export default function Dashboard() {
   const { user, isLoading: authLoading } = useAuth();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [showCarForm, setShowCarForm] = useState(false);
+  const [showOwnerProfile, setShowOwnerProfile] = useState(false);
   const formRef = useRef<HTMLDivElement>(null);
+  const profileRef = useRef<HTMLDivElement>(null);
+  
+  // Hent eierprofil for å vise status
+  const { data: ownerProfile } = useOwnerProfile(user?.id);
 
   // Redirect hvis ikke innlogget
   useEffect(() => {
@@ -72,8 +79,18 @@ export default function Dashboard() {
   // Åpne skjema og scroll til det
   const handleOpenForm = () => {
     setShowCarForm(true);
+    setShowOwnerProfile(false);
     setTimeout(() => {
       formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
+  };
+
+  // Åpne eierprofil og scroll til det
+  const handleOpenOwnerProfile = () => {
+    setShowOwnerProfile(true);
+    setShowCarForm(false);
+    setTimeout(() => {
+      profileRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 100);
   };
 
@@ -207,23 +224,31 @@ export default function Dashboard() {
           </EnamelCard>
         </motion.div>
 
-        {/* Placeholder kort - Historikk */}
+        {/* Eierprofil */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.3 }}
         >
-          <EnamelCard className="h-full min-h-[160px] opacity-60" hover={false}>
+          <EnamelCard 
+            className="h-full min-h-[160px] group cursor-pointer" 
+            onClick={handleOpenOwnerProfile}
+          >
             <div className="flex items-start justify-between mb-4">
-              <div className="p-3 bg-muted rounded-xl">
-                <Clock className="w-8 h-8 text-muted-foreground" />
+              <div className="p-3 bg-primary/10 rounded-xl">
+                <User className="w-8 h-8 text-primary" />
               </div>
+              {ownerProfile?.visible_public && (
+                <span className="text-xs bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 px-2 py-1 rounded-full">
+                  Offentlig
+                </span>
+              )}
             </div>
-            <h3 className="font-display text-xl mb-2 text-muted-foreground">
-              Historikk
+            <h3 className="font-display text-xl mb-2 group-hover:text-primary transition-colors">
+              Min eierprofil
             </h3>
             <p className="text-base text-muted-foreground">
-              Kommer snart...
+              {ownerProfile ? 'Rediger din eierprofil' : 'Opprett din eierprofil'}
             </p>
           </EnamelCard>
         </motion.div>
@@ -282,6 +307,37 @@ export default function Dashboard() {
               onCancel={() => setShowCarForm(false)}
               showCancelButton={false}
             />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Eierprofil seksjon */}
+      <AnimatePresence>
+        {showOwnerProfile && user && (
+          <motion.div
+            ref={profileRef}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+            className="mt-8"
+          >
+            <div className="flex items-center justify-between mb-4">
+              <SectionHeader 
+                title="Min eierprofil" 
+                icon={<User className="w-6 h-6" />} 
+              />
+              <BigActionButton
+                variant="ghost"
+                size="lg"
+                onClick={() => setShowOwnerProfile(false)}
+                icon={<X className="w-5 h-5" />}
+              >
+                Lukk
+              </BigActionButton>
+            </div>
+            
+            <OwnerProfileSection userId={user.id} />
           </motion.div>
         )}
       </AnimatePresence>

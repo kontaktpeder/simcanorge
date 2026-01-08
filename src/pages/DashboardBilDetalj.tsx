@@ -10,7 +10,6 @@ import { EmptyState } from '@/components/ui/garage/EmptyState';
 import { Layout } from '@/components/layout/Layout';
 import { StatusBadge } from '@/components/car';
 import { CarEventsList } from '@/components/car/CarEventsList';
-import { OwnerProfileSection } from '@/components/car/OwnerProfileSection';
 import { 
   Car, Calendar, Wrench, Loader2, XCircle, 
   Pencil, Save, X, Eye, EyeOff, Upload, Trash2, Clock, Send,
@@ -868,17 +867,6 @@ export default function DashboardBilDetalj() {
         >
           <CarEventsList carId={car.id} />
         </motion.div>
-
-        {/* Om meg som bileier */}
-        {user && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: 0.5 }}
-          >
-            <OwnerProfileSection userId={user.id} />
-          </motion.div>
-        )}
       </div>
     </GarageLayout>
   );
