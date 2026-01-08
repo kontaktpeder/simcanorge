@@ -113,3 +113,10 @@ export function getSubmissionImagePath(submissionId: string, imageId: string): s
 export function getPartImagePath(partId: string, imageId: string): string {
   return `parts/${partId}/images/${imageId}/original.webp`;
 }
+
+/**
+ * Generate storage path for car event images
+ */
+export function getCarEventImagePath(carId: string, eventId: string, imageId: string): string {
+  return `car-events/${carId}/${eventId}/${imageId}/original.webp`;
+}

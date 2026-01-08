@@ -130,20 +130,17 @@ export function CarEventsList({ carId }: CarEventsListProps) {
                       </p>
                     )}
                     {event.car_event_images && event.car_event_images.length > 0 && (
-                      <div className="flex gap-1 mt-2">
-                        {event.car_event_images.slice(0, 4).map((img) => (
+                      <div className="flex gap-2 mt-2">
+                        {event.car_event_images
+                          .sort((a, b) => a.sort_order - b.sort_order)
+                          .map((img) => (
                           <img
                             key={img.id}
                             src={img.image_url}
                             alt={img.alt_text || ""}
-                            className="h-12 w-12 rounded object-cover"
+                            className="h-16 w-16 rounded-lg object-cover"
                           />
                         ))}
-                        {event.car_event_images.length > 4 && (
-                          <div className="h-12 w-12 rounded bg-muted flex items-center justify-center text-xs text-muted-foreground">
-                            +{event.car_event_images.length - 4}
-                          </div>
-                        )}
                       </div>
                     )}
                   </div>
