@@ -1,10 +1,20 @@
 import { useState } from "react";
 import { useCarEvents, type CarEvent } from "@/hooks/useCarEvents";
-import { getCategoryIcon, getCategoryLabel, getEventLabel, type EventCategory, type EventType } from "@/data/carEventCategories";
-import { Loader2 } from "lucide-react";
+import { getCategoryIcon, getCategoryLabel, getEventLabel, type EventCategory, type EventType, type CategoryIconName } from "@/data/carEventCategories";
+import { Loader2, Factory, ClipboardList, Handshake, Car, Warehouse, Wrench, AlertTriangle, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 import { ImageLightbox } from "@/components/ui/image-lightbox";
 
+const iconMap: Record<CategoryIconName, React.ComponentType<{ className?: string }>> = {
+  Factory,
+  ClipboardList,
+  Handshake,
+  Car,
+  Warehouse,
+  Wrench,
+  AlertTriangle,
+  Sparkles,
+};
 interface TimelineSectionProps {
   carId: string;
   createdAt?: string;
@@ -102,8 +112,11 @@ export function TimelineSection({ carId, createdAt, publishedAt }: TimelineSecti
                 className="relative pl-12"
               >
                 {/* Dot with icon */}
-                <div className="absolute left-0 top-0 w-8 h-8 rounded-full bg-muted border-2 border-background flex items-center justify-center text-sm">
-                  {getCategoryIcon(category)}
+                <div className="absolute left-0 top-0 w-8 h-8 rounded-full bg-muted border-2 border-background flex items-center justify-center">
+                  {(() => {
+                    const IconComponent = iconMap[getCategoryIcon(category)];
+                    return <IconComponent className="w-4 h-4 text-muted-foreground" />;
+                  })()}
                 </div>
                 
                 <div className="pb-2">

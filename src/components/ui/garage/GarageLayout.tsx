@@ -33,7 +33,7 @@ export function GarageLayout({
         />
         
         {/* Overlay for lesbarhet */}
-        <div className="fixed inset-0 bg-background/85 backdrop-blur-sm -z-10" />
+        <div className="fixed inset-0 bg-background/60 -z-10" />
         
         {/* Innhold */}
         <div className="container py-8 animate-fade-in">
