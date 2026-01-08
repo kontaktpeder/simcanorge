@@ -4,3 +4,4 @@ export { CategoryIcon } from './CategoryIcon';
 export { CarEventForm } from './CarEventForm';
 export { CarEventsList } from './CarEventsList';
 export { TimelineSection } from './TimelineSection';
+export { SendInnBilForm } from './SendInnBilForm';
