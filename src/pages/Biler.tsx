@@ -285,10 +285,10 @@ const Biler = () => {
                     </button>}
                 </div>}
             </div> : <>
-              {/* Featured Cars - månedens bil */}
+              {/* Featured Cars - månedens bil - full width */}
               {featuredCars.length > 0 && <div className="mb-10 animate-fade-in">
                   <h2 className="headline-md mb-5">MÅNEDENS BIL</h2>
-                  <div className="grid grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6 stagger-children">
+                  <div className="space-y-4">
                     {featuredCars.map(car => <CarCard key={car.id} car={car} featured />)}
                   </div>
                 </div>}
@@ -298,10 +298,10 @@ const Biler = () => {
                   {featuredCars.length > 0 && <h2 className="headline-md mb-6">
                       {selectedCategory === "alle" ? "ALLE BILER" : currentCategoryInfo?.label.toUpperCase()}
                     </h2>}
-                  <div className={`grid gap-5 md:gap-6 stagger-children ${
+                  <div className={`grid gap-4 stagger-children ${
                     viewMode === "list" 
                       ? "grid-cols-1" 
-                      : "grid-cols-2 lg:grid-cols-3"
+                      : "grid-cols-1 sm:grid-cols-2 xl:grid-cols-3"
                   }`}>
                     {regularCars.map(car => <CarCard key={car.id} car={car} viewMode={viewMode} />)}
                   </div>
@@ -369,60 +369,86 @@ function CarCard({
   const categoryBadge = getCategoryBadge();
   const isListView = viewMode === "list" && !featured;
   
-  return <Link to={`/biler/${car.slug}`} className={`border-chrome card-enamel bg-card group card-hover-glow ${
-    isListView ? "flex gap-3 p-2" : "p-4"
-  }`}>
-      {/* Image */}
-      <div className={`bg-muted rounded-lg overflow-hidden relative ${
-        isListView ? "w-24 h-20 flex-shrink-0" : "mb-3 aspect-[4/3]"
-      }`}>
+  // Featured: horizontal full-width layout
+  if (featured) {
+    return <Link to={`/biler/${car.slug}`} className="border-chrome card-enamel bg-card group card-hover-glow flex flex-col sm:flex-row gap-4 p-4">
+      {/* Image - wider aspect ratio */}
+      <div className="sm:w-2/5 lg:w-1/3 bg-muted rounded-lg overflow-hidden relative aspect-[16/10] sm:aspect-[4/3] flex-shrink-0">
         {mainImage ? <img src={mainImage.image_url} alt={mainImage.alt_text || car.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" /> : <div className="w-full h-full flex items-center justify-center">
-            <Car className={isListView ? "w-8 h-8 text-muted-foreground" : "w-12 h-12 text-muted-foreground"} />
+            <Car className="w-16 h-16 text-muted-foreground" />
           </div>}
-        {/* Category badge on image - smaller and hide in list view */}
-        {categoryBadge && !isListView && <span className={`absolute top-1.5 left-1.5 ${categoryBadge.color} text-white text-[8px] md:text-[10px] px-1.5 py-0.5 font-display rounded tracking-wide`}>
+        {categoryBadge && <span className={`absolute top-2 left-2 ${categoryBadge.color} text-white text-[10px] px-2 py-0.5 font-display rounded tracking-wide`}>
             {categoryBadge.label}
           </span>}
-        {/* Featured badge */}
-        {featured && <span className="absolute top-1.5 right-1.5 bg-accent text-accent-foreground text-[8px] md:text-[10px] px-1.5 py-0.5 font-display rounded tracking-wide">
-            ★ MÅNEDENS
+        <span className="absolute top-2 right-2 bg-accent text-accent-foreground text-[10px] px-2 py-0.5 font-display rounded tracking-wide">
+          ★ MÅNEDENS
+        </span>
+      </div>
+
+      {/* Content */}
+      <div className="flex-1 flex flex-col justify-center">
+        <div className="flex flex-wrap items-center gap-2 mb-2">
+          <span className="bg-primary text-primary-foreground text-xs px-2 py-0.5 font-display rounded">
+            {car.model}
+          </span>
+          {car.year && <span className="bg-accent text-accent-foreground text-xs px-2 py-0.5 font-display rounded">
+              {car.year}
+            </span>}
+        </div>
+        <h3 className="font-display text-xl md:text-2xl group-hover:text-primary transition-colors mb-2">
+          {car.title}
+        </h3>
+        {car.story && <p className="text-muted-foreground line-clamp-3 text-sm leading-relaxed">
+            {car.story}
+          </p>}
+        {car.tags && car.tags.length > 0 && <div className="flex flex-wrap gap-1.5 mt-3">
+            {car.tags.slice(0, 4).map(tag => <span key={tag} className="text-xs bg-muted px-2 py-0.5 text-muted-foreground rounded">
+                #{tag}
+              </span>)}
+          </div>}
+      </div>
+    </Link>;
+  }
+  
+  // Regular cards: horizontal layout for better width usage
+  return <Link to={`/biler/${car.slug}`} className={`border-chrome card-enamel bg-card group card-hover-glow ${
+    isListView ? "flex gap-3 p-2" : "flex gap-3 p-3"
+  }`}>
+      {/* Image - square-ish for compact layout */}
+      <div className={`bg-muted rounded-lg overflow-hidden relative flex-shrink-0 ${
+        isListView ? "w-20 h-16" : "w-28 h-24 sm:w-32 sm:h-28"
+      }`}>
+        {mainImage ? <img src={mainImage.image_url} alt={mainImage.alt_text || car.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" /> : <div className="w-full h-full flex items-center justify-center">
+            <Car className="w-8 h-8 text-muted-foreground" />
+          </div>}
+        {categoryBadge && !isListView && <span className={`absolute top-1 left-1 ${categoryBadge.color} text-white text-[7px] sm:text-[8px] px-1 py-0.5 font-display rounded tracking-wide`}>
+            {categoryBadge.label}
           </span>}
       </div>
 
       {/* Content */}
-      <div className={isListView ? "flex-1 min-w-0 flex flex-col justify-center" : ""}>
-        {/* Model & Year badges */}
-        <div className={`flex flex-wrap items-center gap-1.5 ${isListView ? "mb-0.5" : "mb-2"}`}>
-          <span className={`bg-primary text-primary-foreground font-display rounded ${isListView ? "text-[9px] px-1 py-0.5" : "text-[10px] md:text-xs px-1.5 py-0.5"}`}>
+      <div className="flex-1 min-w-0 flex flex-col justify-center">
+        <div className={`flex flex-wrap items-center gap-1 ${isListView ? "mb-0.5" : "mb-1"}`}>
+          <span className={`bg-primary text-primary-foreground font-display rounded ${isListView ? "text-[8px] px-1 py-0.5" : "text-[9px] sm:text-[10px] px-1.5 py-0.5"}`}>
             {car.model}
           </span>
-          {car.year && <span className={`bg-accent text-accent-foreground font-display rounded ${isListView ? "text-[9px] px-1 py-0.5" : "text-[10px] md:text-xs px-1.5 py-0.5"}`}>
+          {car.year && <span className={`bg-accent text-accent-foreground font-display rounded ${isListView ? "text-[8px] px-1 py-0.5" : "text-[9px] sm:text-[10px] px-1.5 py-0.5"}`}>
               {car.year}
             </span>}
-          {/* Show category badge inline in list view */}
-          {categoryBadge && isListView && <span className={`${categoryBadge.color} text-white text-[9px] px-1 py-0.5 font-display rounded`}>
+          {categoryBadge && isListView && <span className={`${categoryBadge.color} text-white text-[8px] px-1 py-0.5 font-display rounded`}>
               {categoryBadge.label}
             </span>}
         </div>
 
-        {/* Title */}
         <h3 className={`font-display group-hover:text-primary transition-colors leading-tight ${
-          isListView ? "text-sm truncate" : "text-sm md:text-lg mb-1.5"
+          isListView ? "text-sm truncate" : "text-sm sm:text-base mb-1"
         }`}>
           {car.title}
         </h3>
 
-        {/* Story excerpt - hide in list view */}
-        {car.story && !isListView && <p className="text-muted-foreground line-clamp-2 text-xs md:text-sm leading-relaxed">
+        {car.story && !isListView && <p className="text-muted-foreground line-clamp-2 text-[11px] sm:text-xs leading-relaxed">
             {car.story}
           </p>}
-
-        {/* Tags - hide in list view */}
-        {car.tags && car.tags.length > 0 && !isListView && <div className="flex flex-wrap gap-1 mt-2">
-            {car.tags.slice(0, 2).map(tag => <span key={tag} className="text-[10px] md:text-xs bg-muted px-1.5 py-0.5 text-muted-foreground rounded">
-                #{tag}
-              </span>)}
-          </div>}
       </div>
     </Link>;
 }
