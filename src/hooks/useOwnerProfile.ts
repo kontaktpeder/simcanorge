@@ -119,23 +119,25 @@ export function useCarOwnerProfile(carId: string | undefined) {
     queryFn: async () => {
       if (!carId) return null;
       
-      const { data, error } = await supabase
+      // Get all owners for this car
+      const { data: carOwners, error } = await supabase
         .from('car_owners')
         .select('user_id')
         .eq('car_id', carId)
-        .eq('role', 'owner')
-        .limit(1)
-        .maybeSingle();
+        .eq('role', 'owner');
       
       if (error) throw error;
-      if (!data) return null;
+      if (!carOwners || carOwners.length === 0) return null;
       
-      // Get owner profile
+      const userIds = carOwners.map(co => co.user_id);
+      
+      // Find the first owner with a public profile
       const { data: owner, error: ownerError } = await supabase
         .from('owners')
         .select('*')
-        .eq('user_id', data.user_id)
+        .in('user_id', userIds)
         .eq('visible_public', true)
+        .limit(1)
         .maybeSingle();
       
       if (ownerError) throw ownerError;
