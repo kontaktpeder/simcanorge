@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useInView } from "@/hooks/useInView";
+import { useCarOwnerProfile } from "@/hooks/useOwnerProfile";
 import simcaBadge from "@/assets/simca-badge.png";
 import simcaSwallow from "@/assets/simca-swallow.png";
 import checkeredFlag from "@/assets/checkered-flag.png";
@@ -59,6 +60,10 @@ export function HeroSection() {
       return data as FeaturedCar | null;
     }
   });
+
+  // Fetch owner profile for the featured car
+  const { data: ownerProfile } = useCarOwnerProfile(featuredCar?.id);
+
   const getMainImage = (car: FeaturedCar) => {
     if (!car.car_images || car.car_images.length === 0) return null;
     const sorted = [...car.car_images].sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
@@ -115,7 +120,7 @@ export function HeroSection() {
                   <div className="mt-3 text-center">
                     <p className="font-display text-lg font-bold text-white">{featuredCar.title}</p>
                     <p className="font-serif text-sm text-white/80 mt-0.5">
-                      {featuredCar.year && `${featuredCar.year} · `}{featuredCar.model}
+                      {ownerProfile ? `Eier: ${ownerProfile.display_name}` : `${featuredCar.year ? `${featuredCar.year} · ` : ''}${featuredCar.model}`}
                     </p>
                   </div>
                 </Link> : <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
@@ -234,7 +239,7 @@ export function HeroSection() {
                 <div className="mt-5 text-center relative z-[2]">
                   <p className="font-display text-3xl font-bold text-white featured-title-glow">{featuredCar.title}</p>
                   <p className="font-serif text-lg text-white/90 mt-1 drop-shadow-md">
-                    {featuredCar.year && `${featuredCar.year} · `}{featuredCar.model}
+                    {ownerProfile ? `Eier: ${ownerProfile.display_name}` : `${featuredCar.year ? `${featuredCar.year} · ` : ''}${featuredCar.model}`}
                   </p>
                 </div>
               </Link> : <div className="featured-card-premium p-8 relative overflow-hidden z-10">
