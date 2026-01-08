@@ -60,7 +60,7 @@ const Biler = () => {
   const [selectedBrand, setSelectedBrand] = useState<string>("");
   const [selectedDecade, setSelectedDecade] = useState<string>("");
   const [selectedCategory, setSelectedCategory] = useState<string>("alle");
-  const [viewMode, setViewMode] = useState<"gallery" | "list">("gallery");
+  const [viewMode, setViewMode] = useState<"gallery" | "list">("list");
   useEffect(() => {
     const fetchCars = async () => {
       const {
@@ -441,34 +441,33 @@ function CarCard({
     </Link>;
   }
   
-  // List view: horizontal card with image left, text right
-  return <Link to={`/biler/${car.slug}`} className="border-chrome card-enamel bg-card group card-hover-glow flex gap-3 p-2">
-      {/* Image - 40-45% width */}
-      <div className="w-[42%] sm:w-[38%] bg-muted rounded overflow-hidden relative aspect-[4/3] flex-shrink-0">
+  // List view: single column, larger vertical cards (same style as gallery but bigger)
+  return <Link to={`/biler/${car.slug}`} className="border-chrome card-enamel bg-card group card-hover-glow p-2 sm:p-3">
+      {/* Image - dominant */}
+      <div className="bg-muted rounded overflow-hidden relative aspect-[16/10]">
         {mainImage ? <img src={mainImage.image_url} alt={mainImage.alt_text || car.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" /> : <div className="w-full h-full flex items-center justify-center">
-            <Car className="w-8 h-8 text-muted-foreground" />
+            <Car className="w-12 h-12 text-muted-foreground" />
           </div>}
-        {categoryBadge && <span className={`absolute top-1 left-1 ${categoryBadge.color} text-white text-[7px] px-1 py-0.5 font-display rounded tracking-wide`}>
+        {categoryBadge && <span className={`absolute top-1.5 left-1.5 ${categoryBadge.color} text-white text-[8px] px-1.5 py-0.5 font-display rounded tracking-wide`}>
             {categoryBadge.label}
           </span>}
       </div>
 
-      {/* Content */}
-      <div className="flex-1 min-w-0 flex flex-col justify-center py-0.5">
-        <div className="flex flex-wrap items-center gap-1 mb-1">
-          <span className="bg-primary text-primary-foreground font-display rounded text-[8px] px-1 py-0.5">
-            {car.model}
-          </span>
-          {car.year && <span className="bg-accent text-accent-foreground font-display rounded text-[8px] px-1 py-0.5">
-              {car.year}
-            </span>}
-        </div>
-
-        <h3 className="font-display group-hover:text-primary transition-colors leading-tight text-sm line-clamp-2 mb-1">
+      {/* Content - below image */}
+      <div className="pt-2 px-0.5">
+        <h3 className="font-display text-base sm:text-lg group-hover:text-primary transition-colors leading-tight line-clamp-2 mb-1">
           {car.title}
         </h3>
-
-        {car.story && <p className="text-muted-foreground line-clamp-2 text-[10px] leading-relaxed hidden sm:block">
+        <div className="flex items-center gap-1.5">
+          {car.year && <span className="text-[10px] sm:text-xs text-muted-foreground font-display">
+              {car.year}
+            </span>}
+          <span className="text-[10px] sm:text-xs text-muted-foreground">•</span>
+          <span className="text-[10px] sm:text-xs text-muted-foreground font-display">
+            {car.model}
+          </span>
+        </div>
+        {car.story && <p className="text-muted-foreground line-clamp-2 text-xs leading-relaxed mt-1.5 hidden sm:block">
             {car.story}
           </p>}
       </div>
