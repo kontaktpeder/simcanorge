@@ -73,28 +73,30 @@ export function CarEventsList({ carId }: CarEventsListProps) {
   return (
     <EnamelCard className="p-0 overflow-hidden">
       {/* Header */}
-      <div className="p-6 pb-4 border-b border-border/50">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="p-4 sm:p-6 pb-3 sm:pb-4 border-b border-border/50">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
           <SectionHeader
             title="Bilens reise"
-            icon={<Clock className="w-6 h-6" />}
+            icon={<Clock className="w-5 h-5 sm:w-6 sm:h-6" />}
             description="Dokumenter viktige hendelser i bilens historie"
+            className="mb-0"
           />
           <BigActionButton
             icon={<Plus className="w-5 h-5" />}
             onClick={() => setShowForm(true)}
+            className="w-full sm:w-auto"
           >
             Legg til hendelse
           </BigActionButton>
         </div>
       </div>
       
-      <div className="p-6 space-y-6">
+      <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
         {showForm && (
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="border-2 border-primary/20 rounded-xl p-6 bg-primary/5"
+            className="border-2 border-primary/20 rounded-xl p-4 sm:p-6 bg-primary/5"
           >
             <CarEventForm
               carId={carId}
@@ -115,7 +117,7 @@ export function CarEventsList({ carId }: CarEventsListProps) {
             }}
           />
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             {events.map((event, index) => {
               const category = event.category as EventCategory;
               const eventType = event.event_type as EventType;
@@ -128,16 +130,22 @@ export function CarEventsList({ carId }: CarEventsListProps) {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.05 }}
-                  className="group relative flex items-start gap-4 p-5 rounded-xl border-2 border-border bg-card hover:border-primary/30 hover:shadow-md transition-all duration-200"
+                  className="group relative flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-4 p-4 sm:p-5 rounded-xl border-2 border-border bg-card hover:border-primary/30 hover:shadow-md transition-all duration-200"
                 >
-                  {/* Icon */}
-                  <div className="flex-shrink-0 w-12 h-12 rounded-full bg-primary/10 border-2 border-primary/20 flex items-center justify-center">
-                    <CategoryIcon iconName={iconName} size="lg" className="text-primary" />
+                  {/* Icon + Year on mobile */}
+                  <div className="flex items-center gap-3 sm:block">
+                    <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-primary/10 border-2 border-primary/20 flex items-center justify-center">
+                      <CategoryIcon iconName={iconName} size="md" className="text-primary sm:hidden" />
+                      <CategoryIcon iconName={iconName} size="lg" className="text-primary hidden sm:block" />
+                    </div>
+                    <span className="text-base sm:hidden font-bold text-primary font-display">
+                      {formatTimeDisplay(event)}
+                    </span>
                   </div>
                   
                   {/* Content */}
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-3 mb-2">
+                    <div className="hidden sm:flex items-center gap-3 mb-2">
                       <span className="text-lg font-bold text-primary font-display">
                         {formatTimeDisplay(event)}
                       </span>
@@ -145,14 +153,19 @@ export function CarEventsList({ carId }: CarEventsListProps) {
                         {getCategoryLabel(category)}
                       </span>
                     </div>
-                    <h4 className="text-xl font-semibold text-foreground mb-1">{displayTitle}</h4>
+                    <div className="sm:hidden mb-1">
+                      <span className="px-2 py-0.5 rounded-full bg-muted text-xs text-muted-foreground">
+                        {getCategoryLabel(category)}
+                      </span>
+                    </div>
+                    <h4 className="text-base sm:text-xl font-semibold text-foreground mb-1">{displayTitle}</h4>
                     {event.description && (
-                      <p className="text-base text-muted-foreground leading-relaxed">
+                      <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
                         {event.description}
                       </p>
                     )}
                     {event.car_event_images && event.car_event_images.length > 0 && (
-                      <div className="flex gap-3 mt-4">
+                      <div className="flex gap-2 sm:gap-3 mt-3 sm:mt-4 overflow-x-auto pb-1">
                         {event.car_event_images
                           .sort((a, b) => a.sort_order - b.sort_order)
                           .map((img) => (
@@ -160,7 +173,7 @@ export function CarEventsList({ carId }: CarEventsListProps) {
                             key={img.id}
                             src={img.image_url}
                             alt={img.alt_text || ""}
-                            className="h-20 w-20 rounded-lg object-cover border-2 border-border hover:border-primary/50 transition-colors"
+                            className="h-16 w-16 sm:h-20 sm:w-20 rounded-lg object-cover border-2 border-border hover:border-primary/50 transition-colors flex-shrink-0"
                           />
                         ))}
                       </div>
@@ -168,11 +181,11 @@ export function CarEventsList({ carId }: CarEventsListProps) {
                   </div>
                   
                   {/* Actions */}
-                  <div className="flex gap-2 opacity-60 group-hover:opacity-100 transition-opacity">
+                  <div className="flex gap-2 sm:opacity-60 sm:group-hover:opacity-100 transition-opacity self-end sm:self-start">
                     <Button
                       variant="outline"
                       size="icon"
-                      className="h-10 w-10"
+                      className="h-10 w-10 min-h-[44px] min-w-[44px] active:scale-95"
                       onClick={() => handleEdit(event)}
                     >
                       <Pencil className="h-4 w-4" />
@@ -180,7 +193,7 @@ export function CarEventsList({ carId }: CarEventsListProps) {
                     <Button
                       variant="outline"
                       size="icon"
-                      className="h-10 w-10 text-destructive hover:text-destructive hover:bg-destructive/10"
+                      className="h-10 w-10 min-h-[44px] min-w-[44px] text-destructive hover:text-destructive hover:bg-destructive/10 active:scale-95"
                       onClick={() => setDeleteEventId(event.id)}
                     >
                       <Trash2 className="h-4 w-4" />
