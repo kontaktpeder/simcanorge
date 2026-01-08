@@ -10,7 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { 
   ArrowLeft, Calendar, Wrench, ArrowRight, ChevronLeft, ChevronRight, Car, 
   Facebook, Twitter, Link as LinkIcon, Check, Instagram, X, Youtube, ExternalLink,
-  Tag, Gauge, FileText, Share2
+  Tag, Gauge, FileText, Share2, ChevronDown
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -448,9 +448,19 @@ const BilDetalj = () => {
                   </div>
                 </AnimatedSection>
 
+                {/* Scroll indicator - shows there's more content below */}
+                <div className="flex flex-col items-center mt-8 mb-4">
+                  <p className="text-sm text-muted-foreground font-display uppercase tracking-wide mb-2">
+                    Se mer om bilen
+                  </p>
+                  <div className="animate-bounce">
+                    <ChevronDown className="w-6 h-6 text-primary" />
+                  </div>
+                </div>
+
                 <Link 
                   to="/biler" 
-                  className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mt-6"
+                  className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mt-2"
                 >
                   <ArrowLeft className="w-4 h-4" />
                   Tilbake til galleriet
