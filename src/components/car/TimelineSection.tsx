@@ -1,7 +1,9 @@
+import { useState } from "react";
 import { useCarEvents, type CarEvent } from "@/hooks/useCarEvents";
 import { getCategoryIcon, getCategoryLabel, getEventLabel, type EventCategory, type EventType } from "@/data/carEventCategories";
-import { Loader2, Clock } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
+import { ImageLightbox } from "@/components/ui/image-lightbox";
 
 interface TimelineSectionProps {
   carId: string;
@@ -11,6 +13,9 @@ interface TimelineSectionProps {
 
 export function TimelineSection({ carId, createdAt, publishedAt }: TimelineSectionProps) {
   const { data: events, isLoading } = useCarEvents(carId);
+  const [lightboxImages, setLightboxImages] = useState<{ url: string; alt?: string }[]>([]);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
   
   const formatTimeDisplay = (event: CarEvent) => {
     if (event.year) {
@@ -23,6 +28,12 @@ export function TimelineSection({ carId, createdAt, publishedAt }: TimelineSecti
       return `${event.year_from}–nå`;
     }
     return "";
+  };
+  
+  const openLightbox = (images: { url: string; alt?: string }[], index: number) => {
+    setLightboxImages(images);
+    setLightboxIndex(index);
+    setLightboxOpen(true);
   };
   
   if (isLoading) {
@@ -65,69 +76,86 @@ export function TimelineSection({ carId, createdAt, publishedAt }: TimelineSecti
   }
 
   return (
-    <div className="relative">
-      {/* Vertical line */}
-      <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-border" />
-      
-      <div className="space-y-8">
-        {events.map((event, index) => {
-          const category = event.category as EventCategory;
-          const eventType = event.event_type as EventType;
-          const displayTitle = event.title || getEventLabel(category, eventType);
-          const timeDisplay = formatTimeDisplay(event);
-          
-          return (
-            <motion.div
-              key={event.id}
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.1 }}
-              className="relative pl-12"
-            >
-              {/* Dot with icon */}
-              <div className="absolute left-0 top-0 w-8 h-8 rounded-full bg-muted border-2 border-background flex items-center justify-center text-sm">
-                {getCategoryIcon(category)}
-              </div>
-              
-              <div className="pb-2">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-sm font-semibold text-primary">
-                    {timeDisplay}
-                  </span>
-                  <span className="text-xs px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
-                    {getCategoryLabel(category)}
-                  </span>
+    <>
+      <div className="relative">
+        {/* Vertical line */}
+        <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-border" />
+        
+        <div className="space-y-8">
+          {events.map((event, index) => {
+            const category = event.category as EventCategory;
+            const eventType = event.event_type as EventType;
+            const displayTitle = event.title || getEventLabel(category, eventType);
+            const timeDisplay = formatTimeDisplay(event);
+            
+            const eventImages = event.car_event_images
+              ?.sort((a, b) => a.sort_order - b.sort_order)
+              .map(img => ({ url: img.image_url, alt: img.alt_text || displayTitle })) || [];
+            
+            return (
+              <motion.div
+                key={event.id}
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+                className="relative pl-12"
+              >
+                {/* Dot with icon */}
+                <div className="absolute left-0 top-0 w-8 h-8 rounded-full bg-muted border-2 border-background flex items-center justify-center text-sm">
+                  {getCategoryIcon(category)}
                 </div>
                 
-                <h4 className="text-lg font-semibold">{displayTitle}</h4>
-                
-                {event.description && (
-                  <p className="text-muted-foreground mt-2 leading-relaxed">
-                    {event.description}
-                  </p>
-                )}
-                
-                {event.car_event_images && event.car_event_images.length > 0 && (
-                  <div className="flex flex-wrap gap-2 mt-3">
-                    {event.car_event_images
-                      .sort((a, b) => a.sort_order - b.sort_order)
-                      .map((img) => (
-                        <motion.img
-                          key={img.id}
-                          src={img.image_url}
-                          alt={img.alt_text || displayTitle}
-                          className="h-20 w-auto rounded-lg object-cover cursor-pointer hover:opacity-90 transition-opacity"
-                          whileHover={{ scale: 1.02 }}
-                        />
-                      ))}
+                <div className="pb-2">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-sm font-semibold text-primary">
+                      {timeDisplay}
+                    </span>
+                    <span className="text-xs px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
+                      {getCategoryLabel(category)}
+                    </span>
                   </div>
-                )}
-              </div>
-            </motion.div>
-          );
-        })}
+                  
+                  <h4 className="text-lg font-semibold">{displayTitle}</h4>
+                  
+                  {event.description && (
+                    <p className="text-muted-foreground mt-2 leading-relaxed">
+                      {event.description}
+                    </p>
+                  )}
+                  
+                  {eventImages.length > 0 && (
+                    <div className="grid grid-cols-3 gap-2 mt-3">
+                      {eventImages.map((img, imgIndex) => (
+                        <motion.div
+                          key={imgIndex}
+                          className="relative group cursor-pointer overflow-hidden rounded-lg"
+                          onClick={() => openLightbox(eventImages, imgIndex)}
+                          whileHover={{ scale: 1.02 }}
+                        >
+                          <img
+                            src={img.url}
+                            alt={img.alt}
+                            className="w-full h-32 object-cover transition-transform"
+                          />
+                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
+                        </motion.div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </motion.div>
+            );
+          })}
+        </div>
       </div>
-    </div>
+      
+      <ImageLightbox
+        images={lightboxImages}
+        initialIndex={lightboxIndex}
+        isOpen={lightboxOpen}
+        onClose={() => setLightboxOpen(false)}
+      />
+    </>
   );
 }
