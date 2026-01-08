@@ -38,7 +38,7 @@ export function CarCardLarge({
   const cardContent = (
     <>
       {/* Bilde */}
-      <div className="w-28 h-28 md:w-36 md:h-28 flex-shrink-0 rounded-lg overflow-hidden bg-muted">
+      <div className="w-24 h-24 sm:w-32 sm:h-28 md:w-36 md:h-32 flex-shrink-0 rounded-lg overflow-hidden bg-muted">
         {mainImage ? (
           <img
             src={mainImage.image_url}
@@ -47,28 +47,28 @@ export function CarCardLarge({
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center">
-            <Car className="w-10 h-10 text-muted-foreground/50" />
+            <Car className="w-8 h-8 sm:w-10 sm:h-10 text-muted-foreground/50" />
           </div>
         )}
       </div>
 
       {/* Info */}
-      <div className="flex-1 min-w-0 py-1">
-        <h3 className="font-display text-lg md:text-xl truncate group-hover:text-primary transition-colors">
+      <div className="flex-1 min-w-0 py-0.5 sm:py-1">
+        <h3 className="font-display text-base sm:text-lg md:text-xl line-clamp-2 group-hover:text-primary transition-colors leading-tight">
           {car.title}
         </h3>
         
-        <div className="flex flex-wrap items-center gap-2 mt-2">
+        <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mt-1.5 sm:mt-2">
           <StatusBadge status={status} size="md" />
           {car.year && (
-            <span className="text-sm text-muted-foreground">{car.year}</span>
+            <span className="text-xs sm:text-sm text-muted-foreground">{car.year}</span>
           )}
           {car.category && (
-            <span className="text-sm text-muted-foreground capitalize">{car.category}</span>
+            <span className="text-xs sm:text-sm text-muted-foreground capitalize">{car.category}</span>
           )}
         </div>
         
-        <p className="text-sm text-muted-foreground mt-2">
+        <p className="text-xs sm:text-sm text-muted-foreground mt-1.5 sm:mt-2 hidden sm:block">
           Sist oppdatert: {new Date(car.updated_at).toLocaleDateString('nb-NO')}
         </p>
       </div>
@@ -115,10 +115,11 @@ export function CarCardLarge({
         <button
           onClick={onClick}
           className={cn(
-            'flex gap-4 w-full text-left',
-            'bg-card border-2 border-chrome rounded-xl p-4',
+            'flex gap-3 sm:gap-4 w-full text-left',
+            'bg-card border-2 border-chrome rounded-xl p-3 sm:p-4',
             'shadow-md hover:shadow-lg hover:-translate-y-1',
-            'transition-all duration-200 group cursor-pointer'
+            'transition-all duration-200 group cursor-pointer',
+            'active:scale-[0.98] min-h-[100px] sm:min-h-[120px]'
           )}
         >
           {cardContent}

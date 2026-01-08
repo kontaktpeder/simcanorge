@@ -36,30 +36,30 @@ export function GarageLayout({
         <div className="fixed inset-0 bg-background/60 -z-10" />
         
         {/* Innhold */}
-        <div className="container py-8 animate-fade-in">
+        <div className="container px-4 sm:px-6 py-6 sm:py-8 animate-fade-in">
           {/* Header */}
-          <div className="max-w-4xl mx-auto mb-8">
+          <div className="max-w-4xl mx-auto mb-6 sm:mb-8">
             {showBackButton && (
               <Link
                 to={backTo}
-                className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-6 transition-colors text-lg min-h-[48px]"
+                className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-4 sm:mb-6 transition-colors text-base sm:text-lg min-h-[48px] active:scale-95"
               >
                 <ArrowLeft className="w-5 h-5" />
                 {backLabel}
               </Link>
             )}
             
-            <div className="space-y-2">
+            <div className="space-y-1 sm:space-y-2">
               {subtitle && (
-                <p className="text-sm font-medium text-primary uppercase tracking-wider">
+                <p className="text-xs sm:text-sm font-medium text-primary uppercase tracking-wider">
                   {subtitle}
                 </p>
               )}
-              <h1 className="font-display text-3xl md:text-4xl text-foreground">
+              <h1 className="font-display text-2xl sm:text-3xl md:text-4xl text-foreground leading-tight">
                 {title}
               </h1>
               {description && (
-                <p className="text-lg text-muted-foreground max-w-2xl">
+                <p className="text-base sm:text-lg text-muted-foreground max-w-2xl">
                   {description}
                 </p>
               )}
