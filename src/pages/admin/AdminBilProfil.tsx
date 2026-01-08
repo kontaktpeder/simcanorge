@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { OwnerSection } from "@/components/admin/OwnerSection";
+import { CarLinksSection } from "@/components/admin/car/CarLinksSection";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -52,7 +53,14 @@ interface CarDetail {
   approved_at: string | null;
   approved_by: string | null;
   allow_edits: boolean | null;
+  external_links: ExternalLinkData[] | null;
   car_images: CarImage[];
+}
+
+interface ExternalLinkData {
+  url: string;
+  type: 'facebook' | 'instagram' | 'youtube' | 'other';
+  title?: string;
 }
 
 const CATEGORIES = [
@@ -95,7 +103,7 @@ const AdminBilProfil = () => {
         .select(`
           id, title, slug, brand, model, variant, body_type, year, story, overhauled, tags, featured, 
           published_at, created_at, category, status, source, submitted_by_email, submitted_by_name,
-          submitted_by_phone, submitted_notes, submission_payload, allow_edits,
+          submitted_by_phone, submitted_notes, submission_payload, allow_edits, external_links,
           approved_at, approved_by,
           car_images(id, image_url, alt_text, sort_order)
         `)
@@ -103,7 +111,7 @@ const AdminBilProfil = () => {
         .single();
 
       if (error) throw error;
-      return data as CarDetail;
+      return data as unknown as CarDetail;
     },
     enabled: !!carId,
   });
@@ -1098,6 +1106,9 @@ const AdminBilProfil = () => {
             </div>
           )}
         </div>
+
+        {/* Eksterne lenker */}
+        <CarLinksSection carId={car.id} externalLinks={car.external_links} />
 
         {/* Eiere & Tilgang */}
         <OwnerSection carId={car.id} isApproved={!!car.approved_at} submittedEmail={car.submitted_by_email} />
