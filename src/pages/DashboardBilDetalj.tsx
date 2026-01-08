@@ -2,14 +2,18 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { GarageLayout } from '@/components/ui/garage/GarageLayout';
+import { EnamelCard } from '@/components/ui/garage/EnamelCard';
+import { BigActionButton } from '@/components/ui/garage/BigActionButton';
+import { SectionHeader } from '@/components/ui/garage/SectionHeader';
+import { EmptyState } from '@/components/ui/garage/EmptyState';
 import { Layout } from '@/components/layout/Layout';
-import { PageHeader } from '@/components/layout/PageHeader';
 import { StatusBadge } from '@/components/car';
 import { CarEventsList } from '@/components/car/CarEventsList';
 import { 
-  ArrowLeft, Car, Calendar, Wrench, Loader2, XCircle, 
+  Car, Calendar, Wrench, Loader2, XCircle, 
   Pencil, Save, X, Eye, EyeOff, Upload, Trash2, Clock, Send,
-  ChevronLeft, ChevronRight, Star
+  ChevronLeft, ChevronRight, Star, ImageIcon, BookOpen, Info
 } from 'lucide-react';
 import { useEffect, useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
@@ -20,6 +24,7 @@ import { toast } from 'sonner';
 import { compressImages, generateImageId, getCarImagePath } from '@/lib/imageCompression';
 import { CAR_BRANDS, getModelsForBrand } from '@/data/carBrands';
 import { CAR_BODY_TYPES } from '@/data/carBodyTypes';
+import { motion } from 'framer-motion';
 
 const CATEGORIES = [
   { value: 'registrert', label: 'Registrert' },
@@ -284,7 +289,7 @@ export default function DashboardBilDetalj() {
         }
       }
 
-      toast.success(`${results.length} bilde(r) lastet opp`);
+      toast.success(`${results.length} bilde(r) lastet opp!`);
       queryClient.invalidateQueries({ queryKey: ['my-car', carId, user?.id] });
     } catch (err) {
       console.error('Upload error:', err);
@@ -329,30 +334,41 @@ export default function DashboardBilDetalj() {
 
   if (carData && !carData.hasAccess) {
     return (
-      <Layout>
-        <PageHeader title="Ingen tilgang" />
-        <div className="container py-8">
-          <div className="max-w-md mx-auto text-center bg-card border border-border rounded-xl p-8">
-            <XCircle className="w-12 h-12 mx-auto mb-4 text-destructive" />
-            <p className="text-muted-foreground mb-6">
-              Du har ikke tilgang til denne bilen.
-            </p>
-            <Link to="/dashboard/mine-biler">
-              <Button variant="outline">Tilbake til mine biler</Button>
-            </Link>
-          </div>
-        </div>
-      </Layout>
+      <GarageLayout
+        title="Ingen tilgang"
+        subtitle="Bilgarasje"
+        showBackButton
+        backTo="/dashboard/mine-biler"
+        backLabel="Til bilgarasjen"
+      >
+        <EnamelCard className="text-center py-12">
+          <XCircle className="w-16 h-16 mx-auto mb-4 text-destructive" />
+          <h2 className="font-display text-xl mb-2">Du har ikke tilgang til denne bilen</h2>
+          <p className="text-muted-foreground mb-6">
+            Kontakt admin hvis du mener dette er feil.
+          </p>
+          <BigActionButton variant="outline" onClick={() => navigate('/dashboard/mine-biler')}>
+            Tilbake til mine biler
+          </BigActionButton>
+        </EnamelCard>
+      </GarageLayout>
     );
   }
 
   if (!car) {
     return (
-      <Layout>
-        <div className="container py-20 text-center">
-          <p className="text-muted-foreground">Bil ikke funnet</p>
-        </div>
-      </Layout>
+      <GarageLayout
+        title="Bil ikke funnet"
+        subtitle="Bilgarasje"
+        showBackButton
+        backTo="/dashboard/mine-biler"
+        backLabel="Til bilgarasjen"
+      >
+        <EnamelCard className="text-center py-12">
+          <Car className="w-16 h-16 mx-auto mb-4 text-muted-foreground/50" />
+          <p className="text-muted-foreground">Bilen finnes ikke eller er slettet.</p>
+        </EnamelCard>
+      </GarageLayout>
     );
   }
 
@@ -364,7 +380,6 @@ export default function DashboardBilDetalj() {
     if (!car) return;
     setIsReorderingImages(true);
     try {
-      // normalize to 0..n-1
       for (let i = 0; i < images.length; i++) {
         const { error } = await supabase
           .from('car_images')
@@ -409,214 +424,220 @@ export default function DashboardBilDetalj() {
   const availableModels = basicForm.brand ? getModelsForBrand(basicForm.brand) : [];
 
   return (
-    <Layout>
-      <PageHeader title={car.title} />
-      
-      <div className="container py-8">
-        <div className="max-w-4xl mx-auto">
-          <Link 
-            to="/dashboard/mine-biler" 
-            className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-6 transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Tilbake til mine biler
-          </Link>
-
-          <div className="space-y-6">
-            {/* Status & Publish */}
-            <div className="bg-card border border-border rounded-xl p-6">
-              <div className="flex flex-wrap items-center justify-between gap-4">
-                <div className="flex items-center gap-3">
-                  <StatusBadge status={car.status || 'draft'} />
-                  {car.year && (
-                    <span className="inline-flex items-center gap-1 text-sm text-muted-foreground">
-                      <Calendar className="w-4 h-4" />
-                      {car.year}
-                    </span>
-                  )}
-                  {car.overhauled && (
-                    <span className="inline-flex items-center gap-1 text-sm text-green-600">
-                      <Wrench className="w-4 h-4" />
-                      Overhalt
-                    </span>
-                  )}
-                </div>
-                
+    <GarageLayout
+      title={car.title}
+      subtitle="Bilgarasje"
+      showBackButton
+      backTo="/dashboard/mine-biler"
+      backLabel="Til bilgarasjen"
+    >
+      <div className="space-y-6">
+        {/* Status & Publish */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          <EnamelCard>
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <StatusBadge status={car.status || 'draft'} size="lg" />
+                {car.year && (
+                  <span className="inline-flex items-center gap-1 text-base text-muted-foreground">
+                    <Calendar className="w-5 h-5" />
+                    {car.year}
+                  </span>
+                )}
+                {car.overhauled && (
+                  <span className="inline-flex items-center gap-1 text-base text-green-600">
+                    <Wrench className="w-5 h-5" />
+                    Overhalt
+                  </span>
+                )}
               </div>
-              
-              {/* Publiseringsforespørsel */}
-              {car.status !== 'archived' && (
-                <div className="mt-4 pt-4 border-t border-border">
-                  {openRequest ? (
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-amber-50 border border-amber-200 rounded-lg p-4">
-                      <div className="flex items-start gap-3">
-                        <Clock className="w-5 h-5 text-amber-600 mt-0.5 shrink-0" />
-                        <div>
-                          <p className="font-medium text-amber-800">
-                            Forespørsel sendt: {openRequest.action === 'publish' ? 'Publiser' : 'Avpubliser'}
-                          </p>
-                          <p className="text-sm text-amber-600">
-                            Sendt {new Date(openRequest.created_at).toLocaleDateString('nb-NO')}. Vent på admin.
-                          </p>
-                        </div>
+            </div>
+            
+            {/* Publiseringsforespørsel */}
+            {car.status !== 'archived' && (
+              <div className="mt-5 pt-5 border-t border-border">
+                {openRequest ? (
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-lg p-5">
+                    <div className="flex items-start gap-3">
+                      <Clock className="w-6 h-6 text-amber-600 mt-0.5 shrink-0" />
+                      <div>
+                        <p className="font-medium text-base text-amber-800 dark:text-amber-200">
+                          Forespørsel sendt: {openRequest.action === 'publish' ? 'Publiser' : 'Avpubliser'}
+                        </p>
+                        <p className="text-base text-amber-600 dark:text-amber-400">
+                          Sendt {new Date(openRequest.created_at).toLocaleDateString('nb-NO')}. Vent på admin.
+                        </p>
                       </div>
-                      <Button variant="outline" size="sm" onClick={cancelRequest}>
-                        Avbryt
-                      </Button>
                     </div>
-                  ) : (
-                    <Button
-                      onClick={requestPublication}
-                      variant="outline"
-                      className="gap-2"
-                    >
-                      {car.status === 'published' ? (
-                        <>
-                          <EyeOff className="w-4 h-4" />
-                          Be admin avpublisere
-                        </>
-                      ) : (
-                        <>
-                          <Send className="w-4 h-4" />
-                          Be admin publisere
-                        </>
-                      )}
-                    </Button>
-                  )}
-                </div>
-              )}
-              
-              {car.status === 'published' && car.slug && (
-                <div className="mt-4 pt-4 border-t border-border">
-                  <Link 
-                    to={`/biler/${car.slug}`}
-                    className="text-primary hover:underline text-sm"
+                    <BigActionButton variant="outline" onClick={cancelRequest}>
+                      Avbryt
+                    </BigActionButton>
+                  </div>
+                ) : (
+                  <BigActionButton
+                    onClick={requestPublication}
+                    variant="outline"
+                    icon={car.status === 'published' ? <EyeOff className="w-5 h-5" /> : <Send className="w-5 h-5" />}
                   >
-                    Se offentlig side →
-                  </Link>
-                </div>
-              )}
-            </div>
-
-            {/* Bilder */}
-            <div className="bg-card border border-border rounded-xl overflow-hidden">
-              <div className="p-4 border-b border-border flex items-center justify-between">
-                <div>
-                  <h2 className="font-display text-lg">Bilder</h2>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Første bilde brukes som hovedbilde. Bruk pilene for å endre rekkefølge.
-                  </p>
-                </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => fileInputRef.current?.click()}
-                  disabled={isUploadingImages}
-                  className="gap-2"
-                >
-                  <Upload className="w-4 h-4" />
-                  {isUploadingImages ? 'Laster opp...' : 'Last opp'}
-                </Button>
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  onChange={handleImageUpload}
-                  accept="image/*"
-                  multiple
-                  className="hidden"
-                />
+                    {car.status === 'published' ? 'Be admin avpublisere' : 'Be admin publisere'}
+                  </BigActionButton>
+                )}
               </div>
-              
-              {sortedImages.length > 0 ? (
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-2 p-4">
-                  {sortedImages.map((img: any, index: number) => (
-                    <div key={img.id} className="relative group aspect-video rounded-lg overflow-hidden bg-muted">
-                      <img 
-                        src={img.image_url} 
-                        alt={img.alt_text || car.title}
-                        className="w-full h-full object-cover"
-                      />
-                      {index === 0 && (
-                        <span className="absolute top-2 left-2 bg-primary text-primary-foreground text-xs px-2 py-1 rounded inline-flex items-center gap-1">
-                          <Star className="w-3 h-3 fill-current" />
-                          Hovedbilde
-                        </span>
-                      )}
+            )}
+            
+            {car.status === 'published' && car.slug && (
+              <div className="mt-5 pt-5 border-t border-border">
+                <Link 
+                  to={`/biler/${car.slug}`}
+                  className="inline-flex items-center gap-2 text-primary hover:underline text-base font-medium"
+                >
+                  <Eye className="w-5 h-5" />
+                  Se offentlig side →
+                </Link>
+              </div>
+            )}
+          </EnamelCard>
+        </motion.div>
 
-                      {/* reorder + main controls */}
-                      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity bg-black/40 flex items-center justify-center gap-2">
-                        {index > 0 && (
-                          <button
-                            type="button"
-                            onClick={() => moveCarImageLeft(index)}
-                            disabled={isReorderingImages}
-                            className="bg-white/10 hover:bg-white/20 text-white p-2 rounded-full transition-colors"
-                            aria-label="Flytt bilde til venstre"
-                          >
-                            <ChevronLeft className="w-5 h-5" />
-                          </button>
-                        )}
-                        {index !== 0 && (
-                          <button
-                            type="button"
-                            onClick={() => setCarMainImage(index)}
-                            disabled={isReorderingImages}
-                            className="bg-white/10 hover:bg-white/20 text-white p-2 rounded-full transition-colors"
-                            aria-label="Sett som hovedbilde"
-                            title="Sett som hovedbilde"
-                          >
-                            <Star className="w-5 h-5" />
-                          </button>
-                        )}
-                        {index < sortedImages.length - 1 && (
-                          <button
-                            type="button"
-                            onClick={() => moveCarImageRight(index)}
-                            disabled={isReorderingImages}
-                            className="bg-white/10 hover:bg-white/20 text-white p-2 rounded-full transition-colors"
-                            aria-label="Flytt bilde til høyre"
-                          >
-                            <ChevronRight className="w-5 h-5" />
-                          </button>
-                        )}
-                      </div>
-
-                      <button
-                        onClick={() => deleteImage(img.id)}
-                        className="absolute top-2 right-2 bg-destructive text-destructive-foreground p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                        aria-label="Slett bilde"
-                      >
-                        <Trash2 className="w-3 h-3" />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="p-8 text-center">
-                  <Car className="w-12 h-12 mx-auto text-muted-foreground/50 mb-2" />
-                  <p className="text-muted-foreground text-sm">Ingen bilder ennå</p>
-                </div>
-              )}
+        {/* Bilder */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.1 }}
+        >
+          <EnamelCard className="p-0 overflow-hidden">
+            <div className="p-5 border-b border-border">
+              <SectionHeader
+                title="Bilder"
+                icon={<ImageIcon className="w-6 h-6" />}
+                description="Første bilde brukes som hovedbilde. Bruk pilene for å endre rekkefølge."
+                action={
+                  <BigActionButton
+                    variant="outline"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={isUploadingImages}
+                    icon={<Upload className="w-5 h-5" />}
+                  >
+                    {isUploadingImages ? 'Laster opp...' : 'Last opp'}
+                  </BigActionButton>
+                }
+                className="mb-0"
+              />
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleImageUpload}
+                accept="image/*"
+                multiple
+                className="hidden"
+              />
             </div>
+            
+            {sortedImages.length > 0 ? (
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3 p-5">
+                {sortedImages.map((img: any, index: number) => (
+                  <div key={img.id} className="relative group aspect-video rounded-lg overflow-hidden bg-muted">
+                    <img 
+                      src={img.image_url} 
+                      alt={img.alt_text || car.title}
+                      className="w-full h-full object-cover"
+                    />
+                    {index === 0 && (
+                      <span className="absolute top-2 left-2 bg-primary text-primary-foreground text-sm px-3 py-1.5 rounded inline-flex items-center gap-1 font-medium">
+                        <Star className="w-4 h-4 fill-current" />
+                        Hovedbilde
+                      </span>
+                    )}
 
-            {/* Grunninfo */}
-            <div className="bg-card border border-border rounded-xl p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="font-display text-lg">Grunninfo</h2>
-                {!isEditingBasic ? (
-                  <Button variant="ghost" size="sm" onClick={() => setIsEditingBasic(true)} className="gap-2">
-                    <Pencil className="w-4 h-4" />
+                    {/* reorder + main controls */}
+                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity bg-black/40 flex items-center justify-center gap-2">
+                      {index > 0 && (
+                        <button
+                          type="button"
+                          onClick={() => moveCarImageLeft(index)}
+                          disabled={isReorderingImages}
+                          className="bg-white/10 hover:bg-white/20 text-white p-3 rounded-full transition-colors"
+                          aria-label="Flytt bilde til venstre"
+                        >
+                          <ChevronLeft className="w-6 h-6" />
+                        </button>
+                      )}
+                      {index !== 0 && (
+                        <button
+                          type="button"
+                          onClick={() => setCarMainImage(index)}
+                          disabled={isReorderingImages}
+                          className="bg-white/10 hover:bg-white/20 text-white p-3 rounded-full transition-colors"
+                          aria-label="Sett som hovedbilde"
+                          title="Sett som hovedbilde"
+                        >
+                          <Star className="w-6 h-6" />
+                        </button>
+                      )}
+                      {index < sortedImages.length - 1 && (
+                        <button
+                          type="button"
+                          onClick={() => moveCarImageRight(index)}
+                          disabled={isReorderingImages}
+                          className="bg-white/10 hover:bg-white/20 text-white p-3 rounded-full transition-colors"
+                          aria-label="Flytt bilde til høyre"
+                        >
+                          <ChevronRight className="w-6 h-6" />
+                        </button>
+                      )}
+                    </div>
+
+                    <button
+                      onClick={() => deleteImage(img.id)}
+                      className="absolute top-2 right-2 bg-destructive text-destructive-foreground p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                      aria-label="Slett bilde"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <EmptyState
+                icon={<ImageIcon />}
+                title="Ingen bilder ennå"
+                description="Last opp ditt første bilde for å vise frem bilen din."
+                action={{
+                  label: 'Last opp bilde',
+                  onClick: () => fileInputRef.current?.click(),
+                  icon: <Upload className="w-5 h-5" />,
+                }}
+              />
+            )}
+          </EnamelCard>
+        </motion.div>
+
+        {/* Grunninfo */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.2 }}
+        >
+          <EnamelCard>
+            <SectionHeader
+              title="Grunninfo"
+              icon={<Info className="w-6 h-6" />}
+              action={
+                !isEditingBasic ? (
+                  <BigActionButton variant="ghost" onClick={() => setIsEditingBasic(true)} icon={<Pencil className="w-5 h-5" />}>
                     Rediger
-                  </Button>
+                  </BigActionButton>
                 ) : (
                   <div className="flex gap-2">
-                    <Button size="sm" onClick={saveBasicInfo} disabled={isSaving} className="gap-2">
-                      <Save className="w-4 h-4" />
+                    <BigActionButton onClick={saveBasicInfo} disabled={isSaving} icon={<Save className="w-5 h-5" />}>
                       {isSaving ? 'Lagrer...' : 'Lagre'}
-                    </Button>
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
+                    </BigActionButton>
+                    <BigActionButton 
+                      variant="ghost"
                       onClick={() => {
                         setIsEditingBasic(false);
                         if (car) {
@@ -631,203 +652,222 @@ export default function DashboardBilDetalj() {
                           });
                         }
                       }}
+                      icon={<X className="w-5 h-5" />}
                     >
-                      <X className="w-4 h-4" />
-                    </Button>
+                      Avbryt
+                    </BigActionButton>
+                  </div>
+                )
+              }
+            />
+
+            {isEditingBasic ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div>
+                  <label className="text-base text-muted-foreground mb-2 block font-medium">Merke</label>
+                  <Select
+                    value={basicForm.brand}
+                    onValueChange={(value) => setBasicForm({ ...basicForm, brand: value, model: "" })}
+                  >
+                    <SelectTrigger className="h-12 text-base">
+                      <SelectValue placeholder="Velg merke" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {CAR_BRANDS.map((brand) => (
+                        <SelectItem key={brand.name} value={brand.name}>{brand.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div>
+                  <label className="text-base text-muted-foreground mb-2 block font-medium">Modell</label>
+                  <Select
+                    value={basicForm.model}
+                    onValueChange={(value) => setBasicForm({ ...basicForm, model: value })}
+                  >
+                    <SelectTrigger className="h-12 text-base">
+                      <SelectValue placeholder="Velg modell" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {availableModels.map((model) => (
+                        <SelectItem key={model.name} value={model.name}>{model.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div>
+                  <label className="text-base text-muted-foreground mb-2 block font-medium">Variant</label>
+                  <Input
+                    value={basicForm.variant}
+                    onChange={(e) => setBasicForm({ ...basicForm, variant: e.target.value })}
+                    placeholder="f.eks. GLS, LS, Rallye"
+                    className="h-12 text-base"
+                  />
+                </div>
+                
+                <div>
+                  <label className="text-base text-muted-foreground mb-2 block font-medium">Karosseri</label>
+                  <Select
+                    value={basicForm.body_type}
+                    onValueChange={(value) => setBasicForm({ ...basicForm, body_type: value })}
+                  >
+                    <SelectTrigger className="h-12 text-base">
+                      <SelectValue placeholder="Velg karosseri" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {CAR_BODY_TYPES.map((type) => (
+                        <SelectItem key={type.id} value={type.id}>{type.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div>
+                  <label className="text-base text-muted-foreground mb-2 block font-medium">Årsmodell</label>
+                  <Input
+                    type="number"
+                    value={basicForm.year}
+                    onChange={(e) => setBasicForm({ ...basicForm, year: e.target.value })}
+                    placeholder="f.eks. 1972"
+                    className="h-12 text-base"
+                  />
+                </div>
+                
+                <div>
+                  <label className="text-base text-muted-foreground mb-2 block font-medium">Kategori</label>
+                  <Select
+                    value={basicForm.category}
+                    onValueChange={(value) => setBasicForm({ ...basicForm, category: value })}
+                  >
+                    <SelectTrigger className="h-12 text-base">
+                      <SelectValue placeholder="Velg kategori" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {CATEGORIES.map((cat) => (
+                        <SelectItem key={cat.value} value={cat.value}>{cat.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div className="md:col-span-2">
+                  <label className="text-base text-muted-foreground mb-2 block font-medium">Tags (kommaseparert)</label>
+                  <Input
+                    value={basicForm.tags}
+                    onChange={(e) => setBasicForm({ ...basicForm, tags: e.target.value })}
+                    placeholder="f.eks. original, restaurert, rally"
+                    className="h-12 text-base"
+                  />
+                </div>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-5 text-base">
+                <div>
+                  <span className="text-muted-foreground">Merke:</span>
+                  <p className="font-medium text-lg">{car.brand || '-'}</p>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">Modell:</span>
+                  <p className="font-medium text-lg">{car.model}</p>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">Variant:</span>
+                  <p className="font-medium text-lg">{car.variant || '-'}</p>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">Karosseri:</span>
+                  <p className="font-medium text-lg">{car.body_type || '-'}</p>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">Årsmodell:</span>
+                  <p className="font-medium text-lg">{car.year || '-'}</p>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">Kategori:</span>
+                  <p className="font-medium text-lg capitalize">{car.category || '-'}</p>
+                </div>
+                {car.tags && car.tags.length > 0 && (
+                  <div className="col-span-full">
+                    <span className="text-muted-foreground">Tags:</span>
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {car.tags.map((tag: string) => (
+                        <span key={tag} className="bg-muted px-3 py-1.5 rounded text-base">{tag}</span>
+                      ))}
+                    </div>
                   </div>
                 )}
               </div>
+            )}
+          </EnamelCard>
+        </motion.div>
 
-              {isEditingBasic ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-sm text-muted-foreground mb-1 block">Merke</label>
-                    <Select
-                      value={basicForm.brand}
-                      onValueChange={(value) => setBasicForm({ ...basicForm, brand: value, model: "" })}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Velg merke" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {CAR_BRANDS.map((brand) => (
-                          <SelectItem key={brand.name} value={brand.name}>{brand.name}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  
-                  <div>
-                    <label className="text-sm text-muted-foreground mb-1 block">Modell</label>
-                    <Select
-                      value={basicForm.model}
-                      onValueChange={(value) => setBasicForm({ ...basicForm, model: value })}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Velg modell" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {availableModels.map((model) => (
-                          <SelectItem key={model.name} value={model.name}>{model.name}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  
-                  <div>
-                    <label className="text-sm text-muted-foreground mb-1 block">Variant</label>
-                    <Input
-                      value={basicForm.variant}
-                      onChange={(e) => setBasicForm({ ...basicForm, variant: e.target.value })}
-                      placeholder="f.eks. GLS, LS, Rallye"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label className="text-sm text-muted-foreground mb-1 block">Karosseri</label>
-                    <Select
-                      value={basicForm.body_type}
-                      onValueChange={(value) => setBasicForm({ ...basicForm, body_type: value })}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Velg karosseri" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {CAR_BODY_TYPES.map((type) => (
-                          <SelectItem key={type.id} value={type.id}>{type.label}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  
-                  <div>
-                    <label className="text-sm text-muted-foreground mb-1 block">Årsmodell</label>
-                    <Input
-                      type="number"
-                      value={basicForm.year}
-                      onChange={(e) => setBasicForm({ ...basicForm, year: e.target.value })}
-                      placeholder="f.eks. 1972"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label className="text-sm text-muted-foreground mb-1 block">Kategori</label>
-                    <Select
-                      value={basicForm.category}
-                      onValueChange={(value) => setBasicForm({ ...basicForm, category: value })}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Velg kategori" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {CATEGORIES.map((cat) => (
-                          <SelectItem key={cat.value} value={cat.value}>{cat.label}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  
-                  <div className="md:col-span-2">
-                    <label className="text-sm text-muted-foreground mb-1 block">Tags (kommaseparert)</label>
-                    <Input
-                      value={basicForm.tags}
-                      onChange={(e) => setBasicForm({ ...basicForm, tags: e.target.value })}
-                      placeholder="f.eks. original, restaurert, rally"
-                    />
-                  </div>
-                </div>
-              ) : (
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
-                  <div>
-                    <span className="text-muted-foreground">Merke:</span>
-                    <p className="font-medium">{car.brand || '-'}</p>
-                  </div>
-                  <div>
-                    <span className="text-muted-foreground">Modell:</span>
-                    <p className="font-medium">{car.model}</p>
-                  </div>
-                  <div>
-                    <span className="text-muted-foreground">Variant:</span>
-                    <p className="font-medium">{car.variant || '-'}</p>
-                  </div>
-                  <div>
-                    <span className="text-muted-foreground">Karosseri:</span>
-                    <p className="font-medium">{car.body_type || '-'}</p>
-                  </div>
-                  <div>
-                    <span className="text-muted-foreground">Årsmodell:</span>
-                    <p className="font-medium">{car.year || '-'}</p>
-                  </div>
-                  <div>
-                    <span className="text-muted-foreground">Kategori:</span>
-                    <p className="font-medium">{car.category || '-'}</p>
-                  </div>
-                  {car.tags && car.tags.length > 0 && (
-                    <div className="col-span-full">
-                      <span className="text-muted-foreground">Tags:</span>
-                      <div className="flex flex-wrap gap-1 mt-1">
-                        {car.tags.map((tag: string) => (
-                          <span key={tag} className="bg-muted px-2 py-0.5 rounded text-xs">{tag}</span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-
-            {/* Historien */}
-            <div className="bg-card border border-border rounded-xl p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="font-display text-lg">Historien</h2>
-                {!isEditingStory ? (
-                  <Button variant="ghost" size="sm" onClick={() => setIsEditingStory(true)} className="gap-2">
-                    <Pencil className="w-4 h-4" />
+        {/* Historien */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.3 }}
+        >
+          <EnamelCard>
+            <SectionHeader
+              title="Historien"
+              icon={<BookOpen className="w-6 h-6" />}
+              description="Fortell historien om bilen din. Hvor kom den fra? Hva har den vært med på?"
+              action={
+                !isEditingStory ? (
+                  <BigActionButton variant="ghost" onClick={() => setIsEditingStory(true)} icon={<Pencil className="w-5 h-5" />}>
                     Rediger
-                  </Button>
+                  </BigActionButton>
                 ) : (
                   <div className="flex gap-2">
-                    <Button size="sm" onClick={saveStory} disabled={isSaving} className="gap-2">
-                      <Save className="w-4 h-4" />
+                    <BigActionButton onClick={saveStory} disabled={isSaving} icon={<Save className="w-5 h-5" />}>
                       {isSaving ? 'Lagrer...' : 'Lagre'}
-                    </Button>
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
+                    </BigActionButton>
+                    <BigActionButton 
+                      variant="ghost"
                       onClick={() => {
                         setIsEditingStory(false);
                         setStoryForm(car.story || "");
                       }}
+                      icon={<X className="w-5 h-5" />}
                     >
-                      <X className="w-4 h-4" />
-                    </Button>
+                      Avbryt
+                    </BigActionButton>
                   </div>
+                )
+              }
+            />
+
+            {isEditingStory ? (
+              <Textarea
+                value={storyForm}
+                onChange={(e) => setStoryForm(e.target.value)}
+                placeholder="Fortell historien om bilen din..."
+                rows={10}
+                className="text-base min-h-[200px]"
+              />
+            ) : (
+              <div>
+                {car.story ? (
+                  <p className="text-muted-foreground whitespace-pre-wrap text-base leading-relaxed">{car.story}</p>
+                ) : (
+                  <p className="text-muted-foreground italic text-base">Ingen historie lagt til ennå. Klikk "Rediger" for å legge til.</p>
                 )}
               </div>
+            )}
+          </EnamelCard>
+        </motion.div>
 
-              {isEditingStory ? (
-                <Textarea
-                  value={storyForm}
-                  onChange={(e) => setStoryForm(e.target.value)}
-                  placeholder="Fortell historien om bilen din..."
-                  rows={8}
-                />
-              ) : (
-                <div>
-                  {car.story ? (
-                    <p className="text-muted-foreground whitespace-pre-wrap">{car.story}</p>
-                  ) : (
-                    <p className="text-muted-foreground italic">Ingen historie lagt til ennå.</p>
-                  )}
-                </div>
-              )}
-            </div>
-
-            {/* Bilens reise (timeline) */}
-            <CarEventsList carId={car.id} />
-          </div>
-        </div>
+        {/* Bilens reise (timeline) */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.4 }}
+        >
+          <CarEventsList carId={car.id} />
+        </motion.div>
       </div>
-    </Layout>
+    </GarageLayout>
   );
 }
