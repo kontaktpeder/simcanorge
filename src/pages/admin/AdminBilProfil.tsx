@@ -6,7 +6,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { 
   ArrowLeft, Save, Eye, EyeOff, Star, StarOff, Trash2, 
   Pencil, X, Upload, Car, ExternalLink, Send, Calendar,
-  User, Mail, ImagePlus, Check, ShieldCheck, Phone, ChevronDown, Clock, XCircle
+  User, Mail, ImagePlus, Check, ShieldCheck, Phone, ChevronDown, Clock, XCircle,
+  FileEdit, CheckCircle, AlertTriangle
 } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { OwnerSection } from "@/components/admin/OwnerSection";
@@ -50,6 +51,7 @@ interface CarDetail {
   submission_payload: Record<string, unknown> | null;
   approved_at: string | null;
   approved_by: string | null;
+  allow_edits: boolean | null;
   car_images: CarImage[];
 }
 
@@ -93,7 +95,7 @@ const AdminBilProfil = () => {
         .select(`
           id, title, slug, brand, model, variant, body_type, year, story, overhauled, tags, featured, 
           published_at, created_at, category, status, source, submitted_by_email, submitted_by_name,
-          submitted_by_phone, submitted_notes, submission_payload,
+          submitted_by_phone, submitted_notes, submission_payload, allow_edits,
           approved_at, approved_by,
           car_images(id, image_url, alt_text, sort_order)
         `)
@@ -221,6 +223,21 @@ const AdminBilProfil = () => {
     }
   };
 
+  // Helper to get allow_edits with fallback to submission_payload
+  const getAllowEdits = (): boolean | null => {
+    if (car?.allow_edits !== null && car?.allow_edits !== undefined) {
+      return car.allow_edits;
+    }
+    // Fallback to submission_payload
+    if (car?.submission_payload && typeof car.submission_payload === 'object') {
+      const payload = car.submission_payload as Record<string, unknown>;
+      if (payload.allow_edits !== null && payload.allow_edits !== undefined) {
+        return payload.allow_edits as boolean;
+      }
+    }
+    return null;
+  };
+
   const togglePublish = async () => {
     if (!car) return;
     const currentStatus = getCarStatus();
@@ -228,6 +245,17 @@ const AdminBilProfil = () => {
     if (currentStatus === 'archived') {
       toast.error("Kan ikke publisere arkiverte biler");
       return;
+    }
+
+    // Check allow_edits warning for submissions
+    const allowEdits = getAllowEdits();
+    if (car.source === 'submission' && allowEdits === null) {
+      const confirmed = confirm(
+        'ADVARSEL: Redigeringsgodkjenning mangler for denne bilen.\n\n' +
+        'Verifiser med innsender om det er greit å publisere før du fortsetter.\n\n' +
+        'Vil du likevel publisere?'
+      );
+      if (!confirmed) return;
     }
 
     const newStatus = currentStatus === 'published' ? 'draft' : 'published';
@@ -641,6 +669,68 @@ const AdminBilProfil = () => {
                   <p className="text-sm whitespace-pre-wrap">{car.submitted_notes}</p>
                 </div>
               )}
+
+              {/* Redigeringsgodkjenning */}
+              <div className="mt-4 pt-4 border-t border-blue-200 dark:border-blue-800">
+                <h4 className="font-display text-sm mb-3 flex items-center gap-2">
+                  <FileEdit className="w-4 h-4 text-blue-600" />
+                  REDIGERINGSGODKJENNING
+                </h4>
+                
+                {(() => {
+                  const allowEdits = getAllowEdits();
+                  if (allowEdits !== null) {
+                    return (
+                      <div className={`flex items-center gap-2 p-3 rounded-lg ${
+                        allowEdits 
+                          ? 'bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800' 
+                          : 'bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800'
+                      }`}>
+                        {allowEdits ? (
+                          <>
+                            <CheckCircle className="w-5 h-5 text-green-600" />
+                            <div>
+                              <p className="font-medium text-green-800 dark:text-green-200">
+                                Ja – redigering tillatt
+                              </p>
+                              <p className="text-xs text-muted-foreground mt-0.5">
+                                Innsender godkjenner at du kan redigere og forbedre innholdet før publisering
+                              </p>
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <XCircle className="w-5 h-5 text-gray-600" />
+                            <div>
+                              <p className="font-medium text-gray-800 dark:text-gray-200">
+                                Nei – publiseres som den er
+                              </p>
+                              <p className="text-xs text-muted-foreground mt-0.5">
+                                Innsender ønsker at innholdet publiseres uten redigering
+                              </p>
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    );
+                  }
+                  return (
+                    <div className="bg-yellow-50 dark:bg-yellow-950 border border-yellow-200 dark:border-yellow-800 rounded-lg p-3">
+                      <div className="flex items-center gap-2">
+                        <AlertTriangle className="w-5 h-5 text-yellow-600" />
+                        <div>
+                          <p className="font-medium text-yellow-800 dark:text-yellow-200">
+                            Redigeringsgodkjenning mangler
+                          </p>
+                          <p className="text-xs text-muted-foreground mt-0.5">
+                            Verifiser med innsender før publisering
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })()}
+              </div>
 
               {/* Detaljer fra innsending (collapsible) */}
               {car.submission_payload && (
