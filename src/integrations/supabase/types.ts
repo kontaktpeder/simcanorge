@@ -243,6 +243,7 @@ export type Database = {
       }
       cars: {
         Row: {
+          allow_edits: boolean | null
           approved_at: string | null
           approved_by: string | null
           body_type: string | null
@@ -270,6 +271,7 @@ export type Database = {
           year: number | null
         }
         Insert: {
+          allow_edits?: boolean | null
           approved_at?: string | null
           approved_by?: string | null
           body_type?: string | null
@@ -297,6 +299,7 @@ export type Database = {
           year?: number | null
         }
         Update: {
+          allow_edits?: boolean | null
           approved_at?: string | null
           approved_by?: string | null
           body_type?: string | null

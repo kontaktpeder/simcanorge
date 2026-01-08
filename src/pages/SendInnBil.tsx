@@ -293,6 +293,7 @@ export default function SendInnBil() {
           submission_payload: submissionPayload,
           approved_at: null,
           approved_by: null,
+          allow_edits: allowEdits === true,
         })
         .select('id')
         .single();
@@ -324,6 +325,7 @@ export default function SendInnBil() {
               submission_payload: submissionPayload,
               approved_at: null,
               approved_by: null,
+              allow_edits: allowEdits === true,
             })
             .select('id')
             .single();
