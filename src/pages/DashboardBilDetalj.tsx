@@ -8,7 +8,8 @@ import { StatusBadge } from '@/components/car';
 import { CarEventsList } from '@/components/car/CarEventsList';
 import { 
   ArrowLeft, Car, Calendar, Wrench, Loader2, XCircle, 
-  Pencil, Save, X, Eye, EyeOff, Upload, Trash2, Clock, Send
+  Pencil, Save, X, Eye, EyeOff, Upload, Trash2, Clock, Send,
+  ChevronLeft, ChevronRight, Star
 } from 'lucide-react';
 import { useEffect, useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
@@ -358,6 +359,54 @@ export default function DashboardBilDetalj() {
     (a: any, b: any) => (a.sort_order || 0) - (b.sort_order || 0)
   );
 
+  const [isReorderingImages, setIsReorderingImages] = useState(false);
+
+  const persistCarImageOrder = async (images: any[]) => {
+    if (!car) return;
+    setIsReorderingImages(true);
+    try {
+      // normalize to 0..n-1
+      for (let i = 0; i < images.length; i++) {
+        const { error } = await supabase
+          .from('car_images')
+          .update({ sort_order: i })
+          .eq('id', images[i].id);
+
+        if (error) throw error;
+      }
+
+      toast.success('Rekkefølge oppdatert');
+      queryClient.invalidateQueries({ queryKey: ['my-car', carId, user?.id] });
+    } catch (err) {
+      console.error('Reorder error:', err);
+      toast.error('Kunne ikke endre rekkefølge');
+    } finally {
+      setIsReorderingImages(false);
+    }
+  };
+
+  const moveCarImageLeft = async (index: number) => {
+    if (index <= 0) return;
+    const next = [...sortedImages];
+    [next[index - 1], next[index]] = [next[index], next[index - 1]];
+    await persistCarImageOrder(next);
+  };
+
+  const moveCarImageRight = async (index: number) => {
+    if (index >= sortedImages.length - 1) return;
+    const next = [...sortedImages];
+    [next[index], next[index + 1]] = [next[index + 1], next[index]];
+    await persistCarImageOrder(next);
+  };
+
+  const setCarMainImage = async (index: number) => {
+    if (index <= 0) return;
+    const next = [...sortedImages];
+    const [picked] = next.splice(index, 1);
+    next.unshift(picked);
+    await persistCarImageOrder(next);
+  };
+
   const availableModels = basicForm.brand ? getModelsForBrand(basicForm.brand) : [];
 
   return (
@@ -453,7 +502,12 @@ export default function DashboardBilDetalj() {
             {/* Bilder */}
             <div className="bg-card border border-border rounded-xl overflow-hidden">
               <div className="p-4 border-b border-border flex items-center justify-between">
-                <h2 className="font-display text-lg">Bilder</h2>
+                <div>
+                  <h2 className="font-display text-lg">Bilder</h2>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Første bilde brukes som hovedbilde. Bruk pilene for å endre rekkefølge.
+                  </p>
+                </div>
                 <Button
                   variant="outline"
                   size="sm"
@@ -484,13 +538,54 @@ export default function DashboardBilDetalj() {
                         className="w-full h-full object-cover"
                       />
                       {index === 0 && (
-                        <span className="absolute top-2 left-2 bg-primary text-primary-foreground text-xs px-2 py-1 rounded">
+                        <span className="absolute top-2 left-2 bg-primary text-primary-foreground text-xs px-2 py-1 rounded inline-flex items-center gap-1">
+                          <Star className="w-3 h-3 fill-current" />
                           Hovedbilde
                         </span>
                       )}
+
+                      {/* reorder + main controls */}
+                      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity bg-black/40 flex items-center justify-center gap-2">
+                        {index > 0 && (
+                          <button
+                            type="button"
+                            onClick={() => moveCarImageLeft(index)}
+                            disabled={isReorderingImages}
+                            className="bg-white/10 hover:bg-white/20 text-white p-2 rounded-full transition-colors"
+                            aria-label="Flytt bilde til venstre"
+                          >
+                            <ChevronLeft className="w-5 h-5" />
+                          </button>
+                        )}
+                        {index !== 0 && (
+                          <button
+                            type="button"
+                            onClick={() => setCarMainImage(index)}
+                            disabled={isReorderingImages}
+                            className="bg-white/10 hover:bg-white/20 text-white p-2 rounded-full transition-colors"
+                            aria-label="Sett som hovedbilde"
+                            title="Sett som hovedbilde"
+                          >
+                            <Star className="w-5 h-5" />
+                          </button>
+                        )}
+                        {index < sortedImages.length - 1 && (
+                          <button
+                            type="button"
+                            onClick={() => moveCarImageRight(index)}
+                            disabled={isReorderingImages}
+                            className="bg-white/10 hover:bg-white/20 text-white p-2 rounded-full transition-colors"
+                            aria-label="Flytt bilde til høyre"
+                          >
+                            <ChevronRight className="w-5 h-5" />
+                          </button>
+                        )}
+                      </div>
+
                       <button
                         onClick={() => deleteImage(img.id)}
                         className="absolute top-2 right-2 bg-destructive text-destructive-foreground p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                        aria-label="Slett bilde"
                       >
                         <Trash2 className="w-3 h-3" />
                       </button>
