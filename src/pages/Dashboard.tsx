@@ -1,20 +1,25 @@
 import { useAuth } from '@/hooks/useAuth';
-import { useNavigate, Link } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useEffect, useState, useRef } from 'react';
 import { GarageLayout } from '@/components/ui/garage/GarageLayout';
 import { EnamelCard } from '@/components/ui/garage/EnamelCard';
 import { BigActionButton } from '@/components/ui/garage/BigActionButton';
-import { Car, Clock, Settings, Bell, CheckCircle, Send } from 'lucide-react';
+import { SectionHeader } from '@/components/ui/garage/SectionHeader';
+import { Car, Clock, Settings, Bell, CheckCircle, Send, X } from 'lucide-react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Loader2 } from 'lucide-react';
 import { Layout } from '@/components/layout/Layout';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Link } from 'react-router-dom';
+import { SendInnBilForm } from '@/components/car/SendInnBilForm';
 
 export default function Dashboard() {
   const { user, isLoading: authLoading } = useAuth();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const [showCarForm, setShowCarForm] = useState(false);
+  const formRef = useRef<HTMLDivElement>(null);
 
   // Redirect hvis ikke innlogget
   useEffect(() => {
@@ -62,6 +67,21 @@ export default function Dashboard() {
       .update({ is_read: true })
       .eq('id', notificationId);
     queryClient.invalidateQueries({ queryKey: ['notifications', user?.id] });
+  };
+
+  // Åpne skjema og scroll til det
+  const handleOpenForm = () => {
+    setShowCarForm(true);
+    setTimeout(() => {
+      formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
+  };
+
+  // Håndter suksess
+  const handleFormSuccess = () => {
+    setShowCarForm(false);
+    queryClient.invalidateQueries({ queryKey: ['my-cars-count', user?.id] });
+    queryClient.invalidateQueries({ queryKey: ['my-cars', user?.id] });
   };
 
   if (authLoading) {
@@ -163,27 +183,28 @@ export default function Dashboard() {
           </Link>
         </motion.div>
 
-        {/* Send inn bil */}
+        {/* Send inn ny bil */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.2 }}
         >
-          <Link to="/send-inn-bil" className="block h-full">
-            <EnamelCard className="h-full min-h-[160px] group">
-              <div className="flex items-start justify-between mb-4">
-                <div className="p-3 bg-primary/10 rounded-xl">
-                  <Send className="w-8 h-8 text-primary" />
-                </div>
+          <EnamelCard 
+            className="h-full min-h-[160px] group cursor-pointer" 
+            onClick={handleOpenForm}
+          >
+            <div className="flex items-start justify-between mb-4">
+              <div className="p-3 bg-primary/10 rounded-xl">
+                <Send className="w-8 h-8 text-primary" />
               </div>
-              <h3 className="font-display text-xl mb-2 group-hover:text-primary transition-colors">
-                Send inn bil
-              </h3>
-              <p className="text-base text-muted-foreground">
-                Registrer en ny bil i registeret
-              </p>
-            </EnamelCard>
-          </Link>
+            </div>
+            <h3 className="font-display text-xl mb-2 group-hover:text-primary transition-colors">
+              Send inn ny bil
+            </h3>
+            <p className="text-base text-muted-foreground">
+              Legg til en ny bil i din garasje
+            </p>
+          </EnamelCard>
         </motion.div>
 
         {/* Placeholder kort - Historikk */}
@@ -229,6 +250,41 @@ export default function Dashboard() {
         </motion.div>
 
       </div>
+
+      {/* Send inn ny bil skjema */}
+      <AnimatePresence>
+        {showCarForm && (
+          <motion.div
+            ref={formRef}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+            className="mt-8"
+          >
+            <div className="flex items-center justify-between mb-4">
+              <SectionHeader 
+                title="Send inn ny bil" 
+                icon={<Send className="w-6 h-6" />} 
+              />
+              <BigActionButton
+                variant="ghost"
+                size="lg"
+                onClick={() => setShowCarForm(false)}
+                icon={<X className="w-5 h-5" />}
+              >
+                Lukk
+              </BigActionButton>
+            </div>
+            
+            <SendInnBilForm
+              onSuccess={handleFormSuccess}
+              onCancel={() => setShowCarForm(false)}
+              showCancelButton={false}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </GarageLayout>
   );
 }
