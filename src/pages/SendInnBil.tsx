@@ -385,7 +385,7 @@ export default function SendInnBil() {
                 TAKK!
               </h1>
               <p className="font-serif text-xl text-white/90">
-                Vi ser gjennom historien din og tar kontakt på e-post hvis vi ønsker å vise den frem på siden.
+                Vi gleder oss til å se hva du har sendt inn! Du vil få tilsendt en lenke på e-post, som lar deg logge inn i ditt eget bilrom, og redigere selv hva folk får se av bilen din.
               </p>
             </div>
           </div>
