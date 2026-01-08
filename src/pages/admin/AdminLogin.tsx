@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { Layout } from "@/components/layout/Layout";
-import { Lock, Mail, AlertCircle } from "lucide-react";
+import { Lock, Mail, AlertCircle, Loader2 } from "lucide-react";
 import { z } from "zod";
 
 const loginSchema = z.object({
@@ -12,15 +12,30 @@ const loginSchema = z.object({
 
 const AdminLogin = () => {
   const navigate = useNavigate();
-  const { signIn, isAdmin, user } = useAuth();
+  const { signIn, isAdmin, user, isLoading: authLoading } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   // Redirect if already logged in as admin
+  useEffect(() => {
+    if (!authLoading && user && isAdmin) {
+      navigate("/admin/dashboard");
+    }
+  }, [user, isAdmin, authLoading, navigate]);
+
+  if (authLoading) {
+    return (
+      <Layout>
+        <div className="min-h-[50vh] flex items-center justify-center">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        </div>
+      </Layout>
+    );
+  }
+
   if (user && isAdmin) {
-    navigate("/admin/dashboard");
     return null;
   }
 

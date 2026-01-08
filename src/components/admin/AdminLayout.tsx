@@ -105,6 +105,13 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
             </ul>
             <div className="border-t border-white/20 mt-4 pt-4 space-y-1">
               <Link
+                to="/dashboard"
+                className="flex items-center gap-3 px-4 py-3 hover:bg-white/15 rounded-lg transition-all"
+              >
+                <Car className="w-5 h-5" />
+                <span>Min garasje</span>
+              </Link>
+              <Link
                 to="/"
                 className="flex items-center gap-3 px-4 py-3 hover:bg-white/15 rounded-lg transition-all"
               >
@@ -156,6 +163,13 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
         </nav>
 
         <div className="p-4 border-t border-white/20 relative z-10">
+          <Link
+            to="/dashboard"
+            className="flex items-center gap-3 px-4 py-3 hover:bg-white/15 rounded-xl transition-all mb-2"
+          >
+            <Car className="w-5 h-5" />
+            <span className="font-display">Min garasje</span>
+          </Link>
           <Link
             to="/"
             className="flex items-center gap-3 px-4 py-3 hover:bg-white/15 rounded-xl transition-all mb-2"
