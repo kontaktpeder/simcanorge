@@ -187,8 +187,8 @@ const Biler = () => {
               <input type="text" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Søk..." className="w-full pl-8 md:pl-9 pr-3 py-1.5 md:py-2 text-sm border border-foreground/20 bg-card rounded-md focus:outline-none focus:ring-1 focus:ring-primary/30 focus:border-primary transition-all" />
             </div>
 
-            {/* View Toggle (Mobile) */}
-            <div className="lg:hidden flex items-center border border-foreground/20 rounded-md overflow-hidden">
+            {/* View Toggle */}
+            <div className="flex items-center border border-foreground/20 rounded-md overflow-hidden">
               <button 
                 onClick={() => setViewMode("gallery")} 
                 className={`p-1.5 transition-colors ${viewMode === "gallery" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-muted"}`}
@@ -300,8 +300,8 @@ const Biler = () => {
                     </h2>}
                   <div className={`grid stagger-children ${
                     viewMode === "list" 
-                      ? "grid-cols-1 gap-2.5" 
-                      : "grid-cols-2 gap-2 sm:gap-3 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+                      ? "grid-cols-1 gap-2.5 lg:gap-4 lg:max-w-4xl lg:mx-auto" 
+                      : "grid-cols-2 gap-2 sm:gap-3 lg:grid-cols-2 lg:gap-6 lg:max-w-5xl lg:mx-auto xl:max-w-6xl"
                   }`}>
                     {regularCars.map(car => <CarCard key={car.id} car={car} viewMode={viewMode} />)}
                   </div>
