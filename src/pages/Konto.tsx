@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Helmet } from "react-helmet-async";
@@ -12,6 +12,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useAccountRequests, useCreateAccountRequest } from "@/hooks/useAccountRequests";
 import { toast } from "sonner";
+import { getBrowserAuthSupport } from "@/lib/browserSupport";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -32,6 +33,20 @@ export default function Konto() {
   const [magicLinkSent, setMagicLinkSent] = useState(false);
   const [anonymizeMessage, setAnonymizeMessage] = useState("");
   const [showAnonymizeForm, setShowAnonymizeForm] = useState(false);
+  const [compatWarning, setCompatWarning] = useState<string | null>(null);
+
+  useEffect(() => {
+    const support = getBrowserAuthSupport();
+    if (!support.ok) {
+      setCompatWarning(
+        "Denne PC-en/nettleseren ser ut til å mangle støtte som trengs for innlogging: " +
+          support.reasons.join(" ") +
+          " Prøv å oppdatere nettleseren (Chrome/Edge/Firefox) eller slå på cookies/lagring."
+      );
+    } else {
+      setCompatWarning(null);
+    }
+  }, []);
 
   const { data: accountRequests, isLoading: requestsLoading } = useAccountRequests(user?.id);
   const createRequest = useCreateAccountRequest();
@@ -129,6 +144,12 @@ export default function Konto() {
                 title={user ? "Innlogget" : "Logg inn"} 
                 icon={<User className="h-5 w-5" />} 
               />
+
+              {compatWarning && (
+                <div className="mb-4 p-4 bg-amber-500/10 border border-amber-500/20 rounded-lg">
+                  <p className="text-sm text-foreground">{compatWarning}</p>
+                </div>
+              )}
 
               {user ? (
                 <div className="space-y-4">
