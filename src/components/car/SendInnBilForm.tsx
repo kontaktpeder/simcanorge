@@ -232,6 +232,18 @@ export function SendInnBilForm({ onSuccess, onCancel, showCancelButton = false }
       const tagsArray = result.data.tags ? result.data.tags.split(",").map(t => t.trim()).filter(t => t.length > 0) : [];
       const generatedTitle = generateCarTitle(result.data.brand, result.data.car_model, result.data.car_year);
       const baseSlug = generateSlug(generatedTitle);
+
+      // Debug info (forstår hvorfor RLS kan stoppe innsending hos enkelte brukere)
+      const { data: sessionData } = await supabase.auth.getSession();
+      console.info("[SendInnBilForm] submit context", {
+        isAuthenticated: !!sessionData.session,
+        // Ikke logg hele e-postadressen (PII) i klartekst
+        emailDomain: result.data.email.split("@")[1] ?? null,
+        status: "submitted",
+        source: "submission",
+        published_at: null,
+        allow_edits: allowEdits === true,
+      });
       
       const submissionPayload = {
         submitted_at: new Date().toISOString(),
@@ -361,6 +373,8 @@ export function SendInnBilForm({ onSuccess, onCancel, showCancelButton = false }
           : errMsg,
         variant: "destructive",
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
