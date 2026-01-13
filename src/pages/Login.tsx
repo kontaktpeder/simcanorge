@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { z } from 'zod';
+import { getBrowserAuthSupport } from '@/lib/browserSupport';
 
 const loginSchema = z.object({
   email: z.string().email('Ugyldig e-postadresse'),
@@ -25,9 +26,23 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [compatWarning, setCompatWarning] = useState<string | null>(null);
 
   const returnUrl = searchParams.get('returnUrl') || '/dashboard';
   const prefillEmail = searchParams.get('email');
+
+  useEffect(() => {
+    const support = getBrowserAuthSupport();
+    if (!support.ok) {
+      setCompatWarning(
+        "Denne PC-en/nettleseren ser ut til å mangle støtte som trengs for innlogging: " +
+          support.reasons.join(" ") +
+          " Prøv å oppdatere nettleseren (Chrome/Edge/Firefox) eller slå på cookies/lagring."
+      );
+    } else {
+      setCompatWarning(null);
+    }
+  }, []);
 
   useEffect(() => {
     if (prefillEmail) {
@@ -140,6 +155,12 @@ export default function Login() {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
+              {compatWarning && (
+                <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-3">
+                  <p className="text-sm text-foreground">{compatWarning}</p>
+                </div>
+              )}
+
               {error && (
                 <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-3">
                   <p className="text-sm text-destructive">{error}</p>
