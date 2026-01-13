@@ -341,14 +341,26 @@ export function SendInnBilForm({ onSuccess, onCancel, showCancelButton = false }
       
       onSuccess?.();
     } catch (error: any) {
-      console.error("Submission error:", error);
+      const errMsg = error?.details || error?.message || "Prøv igjen senere.";
+
+      console.error("Submission error:", {
+        message: error?.message,
+        details: error?.details,
+        hint: error?.hint,
+        code: error?.code,
+      });
+
+      const isRlsError =
+        typeof error?.message === "string" &&
+        error.message.toLowerCase().includes("row-level security");
+
       toast({
         title: "Noe gikk galt",
-        description: error.message || "Prøv igjen senere.",
-        variant: "destructive"
+        description: isRlsError
+          ? "Innsendingen ble stoppet av tilgangsregler i backend. Prøv en hard refresh (Ctrl+F5) og send inn på nytt. Hvis det fortsatt skjer, gi oss beskjed."
+          : errMsg,
+        variant: "destructive",
       });
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
