@@ -28,6 +28,7 @@ const Personvern = () => {
                 <li><strong>Eier:</strong> Peter Arnt Halvorsen</li>
                 <li><strong>Teknisk ansvarlig:</strong> Peder August Halvorsen</li>
                 <li><strong>Sted:</strong> Grimstad, Norge</li>
+                <li><strong>Teknisk support:</strong> <a href="mailto:kontaktpeder@gmail.com" className="text-primary hover:underline">kontaktpeder@gmail.com</a></li>
                 <li><strong>Kontakt:</strong> <a href="mailto:p-ahalvo@online.no" className="text-primary hover:underline">p-ahalvo@online.no</a></li>
               </ul>
               <p className="mt-4 text-muted-foreground">
