@@ -786,6 +786,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      notify_admins_images_added: {
+        Args: { _car_id: string; _car_title: string }
+        Returns: undefined
+      }
     }
     Enums: {
       app_role: "admin"
