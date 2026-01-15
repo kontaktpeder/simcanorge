@@ -44,7 +44,7 @@ export default function SendInnBil() {
       <section className="poster-section">
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-2xl mx-auto">
-            <AnimatedSection>
+            <AnimatedSection triggerOnMount>
               <SendInnBilForm onSuccess={() => setSubmitted(true)} />
             </AnimatedSection>
           </div>
