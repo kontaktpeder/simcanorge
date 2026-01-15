@@ -1,5 +1,5 @@
 import { useInView } from "@/hooks/useInView";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useLayoutEffect } from "react";
 
 interface AnimatedSectionProps {
   children: React.ReactNode;
@@ -18,11 +18,15 @@ export function AnimatedSection({
   const { ref, isInView } = useInView();
   const [mountTriggered, setMountTriggered] = useState(false);
 
-  useEffect(() => {
+  // Use useLayoutEffect for immediate execution before paint
+  useLayoutEffect(() => {
     if (triggerOnMount) {
-      // Small delay to allow initial render, then trigger animation
-      const timer = setTimeout(() => setMountTriggered(true), 50);
-      return () => clearTimeout(timer);
+      // Request animation frame to ensure DOM is ready, then trigger
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setMountTriggered(true);
+        });
+      });
     }
   }, [triggerOnMount]);
 
