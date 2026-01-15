@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { AnimatedSection } from "@/components/layout/AnimatedSection";
-import { Send, CheckCircle, MessageSquare } from "lucide-react";
+import { Send, CheckCircle, MessageSquare, Phone, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -131,6 +131,34 @@ export default function Kontakt() {
         title="KONTAKT OSS"
         subtitle="Har du spørsmål eller tilbakemeldinger? Send oss en melding!"
       />
+
+      {/* Quick Contact Banner */}
+      <section className="bg-gradient-to-r from-primary to-primary/80 py-4">
+        <div className="container mx-auto px-4">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 text-white">
+            <div className="flex items-center gap-2">
+              <Phone className="w-5 h-5" />
+              <span className="font-display text-sm uppercase tracking-wide">Teknisk Support:</span>
+            </div>
+            <div className="flex items-center gap-4">
+              <a 
+                href="tel:+4745251280" 
+                className="flex items-center gap-2 bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg transition-colors"
+              >
+                <Phone className="w-4 h-4" />
+                <span className="font-medium">+47 452 51 280</span>
+              </a>
+              <a 
+                href="sms:+4745251280" 
+                className="flex items-center gap-2 bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg transition-colors"
+              >
+                <MessageCircle className="w-4 h-4" />
+                <span className="font-medium">Send SMS</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
 
       <section className="poster-section">
         <div className="container mx-auto px-4 relative z-10">
