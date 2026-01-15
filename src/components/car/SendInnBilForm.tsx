@@ -229,18 +229,20 @@ export function SendInnBilForm({ onSuccess, onCancel, showCancelButton = false }
     setCompressionStats(null);
     
     try {
-      // Logg ut brukeren hvis de er innlogget, slik at innsendingen skjer som anonym
-      // Dette er nødvendig fordi RLS-policyene på cars-tabellen forventer anonym innsending
-      const { data: sessionData } = await supabase.auth.getSession();
-      if (sessionData.session) {
-        console.info("[SendInnBilForm] Bruker er innlogget, logger ut før innsending");
-        const { error: signOutError } = await supabase.auth.signOut();
-        if (signOutError) {
-          console.warn("[SendInnBilForm] SignOut feilet:", signOutError);
+      // Opprett en anonym Supabase-klient for innsending
+      // Dette sikrer at forespørselen går som anon-bruker, uavhengig av innlogget status
+      const { createClient } = await import('@supabase/supabase-js');
+      const anonClient = createClient(
+        import.meta.env.VITE_SUPABASE_URL,
+        import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+        {
+          auth: {
+            persistSession: false,
+            autoRefreshToken: false,
+          }
         }
-        // Vent litt for å sikre at signOut er fullført og session er oppdatert
-        await new Promise(resolve => setTimeout(resolve, 150));
-      }
+      );
+      console.info("[SendInnBilForm] Bruker anonym klient for innsending");
       
       const tagsArray = result.data.tags ? result.data.tags.split(",").map(t => t.trim()).filter(t => t.length > 0) : [];
       const generatedTitle = generateCarTitle(result.data.brand, result.data.car_model, result.data.car_year);
@@ -272,7 +274,7 @@ export function SendInnBilForm({ onSuccess, onCancel, showCancelButton = false }
 
       let newCar: { id: string } | null = null;
       
-      const { data: carData, error: carError } = await supabase
+      const { data: carData, error: carError } = await anonClient
         .from("cars")
         .insert({
           title: generatedTitle,
@@ -303,7 +305,7 @@ export function SendInnBilForm({ onSuccess, onCancel, showCancelButton = false }
       if (carError) {
         if (carError.code === '23505') {
           const uniqueSlug = `${baseSlug}-${Date.now()}`;
-          const { data: retryData, error: retryError } = await supabase
+          const { data: retryData, error: retryError } = await anonClient
             .from("cars")
             .insert({
               title: generatedTitle,
@@ -346,7 +348,7 @@ export function SendInnBilForm({ onSuccess, onCancel, showCancelButton = false }
         const carImageUrls = await uploadImages(newCar.id);
         
         for (let i = 0; i < carImageUrls.length; i++) {
-          await supabase.from("car_images").insert({
+          await anonClient.from("car_images").insert({
             car_id: newCar.id,
             image_url: carImageUrls[i],
             sort_order: i,
