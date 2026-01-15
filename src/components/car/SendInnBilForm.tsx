@@ -190,10 +190,19 @@ export function SendInnBilForm({ onSuccess, onCancel, showCancelButton = false }
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Hvis backend-variablene mangler vil alle kall få 401 "No API key found".
+    if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY) {
+      toast({
+        title: "Feil konfigurasjon",
+        description: "Backend er ikke konfigurert riktig (mangler API-nøkkel). Prøv å laste siden på nytt, og kontakt admin hvis det fortsetter.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     const now = Date.now();
     if (now - lastSubmitTime < MIN_SUBMIT_INTERVAL) {
       toast({
-        title: "Vent litt",
         description: "Vennligst vent før du sender inn igjen.",
         variant: "destructive"
       });
@@ -229,21 +238,9 @@ export function SendInnBilForm({ onSuccess, onCancel, showCancelButton = false }
     setCompressionStats(null);
     
     try {
-      // Opprett en anonym Supabase-klient for innsending
-      // Dette sikrer at forespørselen går som anon-bruker, uavhengig av innlogget status
-      const { createClient } = await import('@supabase/supabase-js');
-      const anonClient = createClient(
-        import.meta.env.VITE_SUPABASE_URL,
-        import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
-        {
-          auth: {
-            persistSession: false,
-            autoRefreshToken: false,
-          }
-        }
-      );
-      console.info("[SendInnBilForm] Bruker anonym klient for innsending");
-      
+      // Innsending skal fungere både for innloggede og anonyme brukere.
+      // Vi bruker standard klienten slik at API-nøkkel alltid sendes med.
+
       const tagsArray = result.data.tags ? result.data.tags.split(",").map(t => t.trim()).filter(t => t.length > 0) : [];
       const generatedTitle = generateCarTitle(result.data.brand, result.data.car_model, result.data.car_year);
       const baseSlug = generateSlug(generatedTitle);
@@ -274,7 +271,7 @@ export function SendInnBilForm({ onSuccess, onCancel, showCancelButton = false }
 
       let newCar: { id: string } | null = null;
       
-      const { data: carData, error: carError } = await anonClient
+      const { data: carData, error: carError } = await supabase
         .from("cars")
         .insert({
           title: generatedTitle,
@@ -305,7 +302,7 @@ export function SendInnBilForm({ onSuccess, onCancel, showCancelButton = false }
       if (carError) {
         if (carError.code === '23505') {
           const uniqueSlug = `${baseSlug}-${Date.now()}`;
-          const { data: retryData, error: retryError } = await anonClient
+          const { data: retryData, error: retryError } = await supabase
             .from("cars")
             .insert({
               title: generatedTitle,
@@ -348,7 +345,7 @@ export function SendInnBilForm({ onSuccess, onCancel, showCancelButton = false }
         const carImageUrls = await uploadImages(newCar.id);
         
         for (let i = 0; i < carImageUrls.length; i++) {
-          await anonClient.from("car_images").insert({
+          await supabase.from("car_images").insert({
             car_id: newCar.id,
             image_url: carImageUrls[i],
             sort_order: i,
