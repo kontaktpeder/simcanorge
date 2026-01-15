@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, Home, Star, Car, Wrench, Send, BookOpen, Users, Mail, LogIn, User } from "lucide-react";
+import { Menu, X, Home, Star, Car, Wrench, Send, BookOpen, Users, Mail, LogIn, User, Phone, MessageCircle } from "lucide-react";
 import { useCart } from "@/hooks/useCart";
 import { useAuth } from "@/hooks/useAuth";
 import { SimcaLive } from "@/components/home/SimcaLive";
@@ -493,11 +493,49 @@ export function Header() {
                   </TooltipContent>
                 </Tooltip>
               )}
+              {/* Technical Support */}
+              <div className="flex items-center gap-1 ml-2 pl-2 border-l border-border/50">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <a
+                      href="tel:+4745251280"
+                      className="flex items-center gap-1 px-2 py-1.5 rounded-lg text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-all"
+                    >
+                      <Phone className="w-3.5 h-3.5" />
+                      <span className="hidden xl:inline">Support</span>
+                    </a>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Ring teknisk support: +47 452 51 280</p>
+                  </TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <a
+                      href="sms:+4745251280"
+                      className="flex items-center gap-1 px-2 py-1.5 rounded-lg text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-all"
+                    >
+                      <MessageCircle className="w-3.5 h-3.5" />
+                    </a>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Send SMS til support: +47 452 51 280</p>
+                  </TooltipContent>
+                </Tooltip>
+              </div>
             </TooltipProvider>
           </nav>
 
-          {/* Mobile: SimcaLive + Toolbox + Menu */}
-          <div className="lg:hidden flex items-center gap-2">
+          {/* Mobile: Support + SimcaLive + Toolbox + Menu */}
+          <div className="lg:hidden flex items-center gap-1.5">
+            {/* Support phone link on mobile */}
+            <a
+              href="tel:+4745251280"
+              className="p-1.5 hover:bg-muted/50 rounded-lg transition-colors"
+              aria-label="Ring teknisk support"
+            >
+              <Phone className="w-5 h-5 text-muted-foreground" />
+            </a>
             {/* SimcaLive in header on mobile */}
             <div className="flex-shrink-0">
               <SimcaLive isHeaderMode />
