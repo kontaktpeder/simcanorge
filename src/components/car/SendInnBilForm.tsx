@@ -234,7 +234,12 @@ export function SendInnBilForm({ onSuccess, onCancel, showCancelButton = false }
       const { data: sessionData } = await supabase.auth.getSession();
       if (sessionData.session) {
         console.info("[SendInnBilForm] Bruker er innlogget, logger ut før innsending");
-        await supabase.auth.signOut();
+        const { error: signOutError } = await supabase.auth.signOut();
+        if (signOutError) {
+          console.warn("[SendInnBilForm] SignOut feilet:", signOutError);
+        }
+        // Vent litt for å sikre at signOut er fullført og session er oppdatert
+        await new Promise(resolve => setTimeout(resolve, 150));
       }
       
       const tagsArray = result.data.tags ? result.data.tags.split(",").map(t => t.trim()).filter(t => t.length > 0) : [];
