@@ -10,7 +10,7 @@ import { z } from "zod";
 import { CAR_BRANDS, getModelsForBrand, getYearsForModel, getVariantsForModel, generateCarTitle } from "@/data/carBrands";
 import { CAR_BODY_TYPES } from "@/data/carBodyTypes";
 import { FormFieldWithTooltip } from "@/components/ui/form-field-with-tooltip";
-import { compressImages, generateImageId, getCarImagePath, type CompressionProgress } from "@/lib/imageCompression";
+import { compressImages, generateImageId, getSubmissionImagePath, type CompressionProgress } from "@/lib/imageCompression";
 import { ImageUploadProgress } from "@/components/ui/image-upload-progress";
 
 const CATEGORIES = [
@@ -169,7 +169,8 @@ export function SendInnBilForm({ onSuccess, onCancel, showCancelButton = false }
     for (let i = 0; i < compressedResults.length; i++) {
       const { file } = compressedResults[i];
       const imageId = generateImageId();
-      const filePath = getCarImagePath(carId, imageId);
+      // Use submissions folder - this is allowed by storage RLS for anonymous users
+      const filePath = getSubmissionImagePath(carId, imageId);
       setUploadProgress({
         stage: 'uploading',
         current: i + 1,
