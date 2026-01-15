@@ -251,10 +251,14 @@ export default function DashboardBilDetalj() {
     const files = e.target.files;
     if (!files || files.length === 0 || !car) return;
 
+    // Sjekk om dette er første bildeopplasting
+    const isFirstImageUpload = !car.car_images || car.car_images.length === 0;
+
     setIsUploadingImages(true);
     
     try {
       const results = await compressImages(Array.from(files));
+      let successfulUploads = 0;
       
       for (const result of results) {
         const imageId = generateImageId();
@@ -286,6 +290,24 @@ export default function DashboardBilDetalj() {
         if (dbError) {
           console.error('DB error:', dbError);
           toast.error('Kunne ikke lagre bildereferanse');
+        } else {
+          successfulUploads++;
+        }
+      }
+
+      // Send notifikasjon til admin hvis dette var første bildeopplasting
+      if (isFirstImageUpload && successfulUploads > 0) {
+        try {
+          const { error: notifyError } = await supabase.rpc('notify_admins_images_added', {
+            _car_id: car.id,
+            _car_title: car.title
+          });
+          
+          if (notifyError) {
+            console.warn('Kunne ikke sende notifikasjon til admin:', notifyError);
+          }
+        } catch (err) {
+          console.warn('Feil ved sending av notifikasjon:', err);
         }
       }
 
