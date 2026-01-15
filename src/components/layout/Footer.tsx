@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Facebook, Mail } from "lucide-react";
+import { Phone, MessageCircle } from "lucide-react";
 import simcaNorgeBadge from "@/assets/simca-norge-badge.png";
 export function Footer() {
   return <footer className="bg-metal-blue text-white">
@@ -33,7 +33,27 @@ export function Footer() {
             {/* Contact */}
             <div className="text-left">
               <h3 className="font-display text-base md:text-xl mb-2 md:mb-3 text-metal">KONTAKT</h3>
-              <div className="flex flex-col gap-1 md:gap-1.5 text-xs md:text-base">
+              <div className="flex flex-col gap-1.5 md:gap-2 text-xs md:text-base">
+                {/* Technical Support */}
+                <div className="flex flex-col gap-1">
+                  <span className="text-white/60 text-[10px] md:text-xs uppercase tracking-wide">Teknisk support</span>
+                  <div className="flex items-center gap-2">
+                    <a 
+                      href="tel:+4745251280" 
+                      className="flex items-center gap-1.5 hover:text-white transition-colors text-white/90"
+                    >
+                      <Phone className="w-3.5 h-3.5 md:w-4 md:h-4" />
+                      <span>+47 452 51 280</span>
+                    </a>
+                    <a 
+                      href="sms:+4745251280" 
+                      className="hover:text-white transition-colors text-white/90"
+                      aria-label="Send SMS"
+                    >
+                      <MessageCircle className="w-3.5 h-3.5 md:w-4 md:h-4" />
+                    </a>
+                  </div>
+                </div>
                 <Link to="/kontakt" className="hover:text-white/80 transition-colors text-white/90">
                   Kontakt oss
                 </Link>
@@ -41,7 +61,6 @@ export function Footer() {
                   Facebook-gruppen
                 </a>
               </div>
-              
             </div>
           </div>
         </div>
