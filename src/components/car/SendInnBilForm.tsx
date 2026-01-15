@@ -270,12 +270,30 @@ export function SendInnBilForm({ onSuccess, onCancel, showCancelButton = false }
       };
 
       let newCar: { id: string } | null = null;
-      
-      const { data: carData, error: carError } = await supabase
-        .from("cars")
-        .insert({
+
+      // Vi genererer id på klienten for å slippe å gjøre SELECT/returning etter INSERT.
+      // Dette er viktig fordi anonyme innsendinger ikke har SELECT-tilgang til "submitted"-rader,
+      // og .select('id') vil da feile selv om INSERT faktisk var ok.
+      const createUuidV4 = () => {
+        const g = globalThis as any;
+        if (g.crypto?.randomUUID) return g.crypto.randomUUID() as string;
+        const bytes = new Uint8Array(16);
+        g.crypto.getRandomValues(bytes);
+        // RFC4122 v4
+        bytes[6] = (bytes[6] & 0x0f) | 0x40;
+        bytes[8] = (bytes[8] & 0x3f) | 0x80;
+        const hex = [...bytes].map(b => b.toString(16).padStart(2, "0")).join("");
+        return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
+      };
+
+      const carId = createUuidV4();
+      let carSlug = baseSlug;
+
+      const tryInsertCar = async (slug: string) => {
+        return supabase.from("cars").insert({
+          id: carId,
           title: generatedTitle,
-          slug: baseSlug,
+          slug,
           brand: result.data.brand,
           model: result.data.car_model,
           variant: result.data.variant || null,
@@ -284,9 +302,9 @@ export function SendInnBilForm({ onSuccess, onCancel, showCancelButton = false }
           category: result.data.category,
           tags: tagsArray,
           story: result.data.car_story || null,
-          status: 'submitted' as const,
+          status: "submitted" as const,
           published_at: null,
-          source: 'submission' as const,
+          source: "submission" as const,
           submitted_by_email: result.data.email,
           submitted_by_name: result.data.owner_name,
           submitted_by_phone: result.data.phone || null,
@@ -295,51 +313,22 @@ export function SendInnBilForm({ onSuccess, onCancel, showCancelButton = false }
           approved_at: null,
           approved_by: null,
           allow_edits: allowEdits === true,
-        })
-        .select('id')
-        .single();
+        });
+      };
+
+      const { error: carError } = await tryInsertCar(carSlug);
 
       if (carError) {
-        if (carError.code === '23505') {
-          const uniqueSlug = `${baseSlug}-${Date.now()}`;
-          const { data: retryData, error: retryError } = await supabase
-            .from("cars")
-            .insert({
-              title: generatedTitle,
-              slug: uniqueSlug,
-              brand: result.data.brand,
-              model: result.data.car_model,
-              variant: result.data.variant || null,
-              body_type: result.data.body_type || null,
-              year: result.data.car_year,
-              category: result.data.category,
-              tags: tagsArray,
-              story: result.data.car_story || null,
-              status: 'submitted' as const,
-              published_at: null,
-              source: 'submission' as const,
-              submitted_by_email: result.data.email,
-              submitted_by_name: result.data.owner_name,
-              submitted_by_phone: result.data.phone || null,
-              submitted_notes: null,
-              submission_payload: submissionPayload,
-              approved_at: null,
-              approved_by: null,
-              allow_edits: allowEdits === true,
-            })
-            .select('id')
-            .single();
-          
+        if (carError.code === "23505") {
+          carSlug = `${baseSlug}-${Date.now()}`;
+          const { error: retryError } = await tryInsertCar(carSlug);
           if (retryError) throw retryError;
-          newCar = retryData;
         } else {
           throw carError;
         }
-      } else {
-        newCar = carData;
       }
 
-      if (!newCar) throw new Error('Bil kunne ikke opprettes');
+      newCar = { id: carId };
 
       if (images.length > 0) {
         const carImageUrls = await uploadImages(newCar.id);
