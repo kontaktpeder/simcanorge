@@ -19,6 +19,7 @@ interface GuideContextType {
   currentStepIndex: number;
   shouldShowGuide: boolean;
   isLoading: boolean;
+  firstCarId: string | null;
   
   // Actions
   startGuide: () => void;
@@ -48,7 +49,7 @@ export interface GuideStep {
   target: string; // data-guide attribute value
   title: string;
   content: string;
-  route?: string; // Optional route to navigate to if element not found
+  routeType?: 'dashboard' | 'my-cars' | 'car-detail'; // Which route type this step belongs to
   placement?: 'top' | 'bottom' | 'left' | 'right' | 'auto';
   disableBeacon?: boolean;
   spotlightClicks?: boolean;
@@ -59,7 +60,7 @@ export const GUIDE_STEPS: GuideStep[] = [
     target: '[data-guide="my-cars-card"]',
     title: 'Velkommen til Bilgarasjen! 🚗',
     content: 'Her ser du hvor mange biler du har registrert. Trykk for å se og redigere bilene dine.',
-    route: '/dashboard',
+    routeType: 'dashboard',
     placement: 'bottom',
     disableBeacon: true,
   },
@@ -67,43 +68,49 @@ export const GUIDE_STEPS: GuideStep[] = [
     target: '[data-guide="car-list-item-0"]',
     title: 'Dine biler',
     content: 'Velg en bil for å redigere detaljer, laste opp bilder og legge til historie.',
-    route: '/dashboard/mine-biler',
+    routeType: 'my-cars',
     placement: 'bottom',
   },
   {
     target: '[data-guide="publish-request"]',
     title: 'Publiser bilen din',
     content: 'Vil du at bilen skal vises offentlig på nettsiden? Trykk her for å be admin publisere den.',
+    routeType: 'car-detail',
     placement: 'bottom',
   },
   {
     target: '[data-guide="images-section"]',
     title: 'Last opp bilder',
     content: 'Bilder gjør bilen levende! Last opp bilder her. Det første bildet blir hovedbildet.',
+    routeType: 'car-detail',
     placement: 'top',
   },
   {
     target: '[data-guide="upload-image"]',
     title: 'Last opp',
     content: 'Trykk her for å laste opp ett eller flere bilder av bilen din.',
+    routeType: 'car-detail',
     placement: 'bottom',
   },
   {
     target: '[data-guide="edit-basic-info"]',
     title: 'Rediger grunninfo',
     content: 'Her kan du endre merke, modell, årsmodell og andre grunnleggende opplysninger.',
+    routeType: 'car-detail',
     placement: 'left',
   },
   {
     target: '[data-guide="edit-story"]',
     title: 'Fortell historien',
     content: 'Fortell litt om bilen din. Hvor kom den fra? Hva har den vært med på? 2-5 setninger holder.',
+    routeType: 'car-detail',
     placement: 'left',
   },
   {
     target: '[data-guide="add-timeline-event"]',
     title: 'Legg til hendelser',
     content: 'Dokumenter viktige hendelser i bilens liv. Dette blir en tidslinje på den offentlige siden.',
+    routeType: 'car-detail',
     placement: 'top',
   },
 ];
@@ -121,6 +128,28 @@ export function GuideProvider({ children }: GuideProviderProps) {
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [guideProgress, setGuideProgress] = useState<GuideProgress | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [firstCarId, setFirstCarId] = useState<string | null>(null);
+  
+  // Fetch first car ID for navigation
+  useEffect(() => {
+    if (!user) return;
+    
+    const fetchFirstCar = async () => {
+      const { data } = await supabase
+        .from('car_owners')
+        .select('car_id')
+        .eq('user_id', user.id)
+        .eq('role', 'owner')
+        .limit(1)
+        .maybeSingle();
+      
+      if (data) {
+        setFirstCarId(data.car_id);
+      }
+    };
+    
+    fetchFirstCar();
+  }, [user]);
   
   // Fetch or create guide progress
   useEffect(() => {
@@ -176,17 +205,51 @@ export function GuideProvider({ children }: GuideProviderProps) {
     guideProgress.completed_version < CURRENT_GUIDE_VERSION &&
     guideProgress.dismissed_at === null;
   
+  // Get route for step
+  const getRouteForStep = useCallback((stepIndex: number): string | null => {
+    const step = GUIDE_STEPS[stepIndex];
+    if (!step) return null;
+    
+    switch (step.routeType) {
+      case 'dashboard':
+        return '/dashboard';
+      case 'my-cars':
+        return '/dashboard/mine-biler';
+      case 'car-detail':
+        return firstCarId ? `/dashboard/bil/${firstCarId}` : null;
+      default:
+        return null;
+    }
+  }, [firstCarId]);
+  
+  // Check if we're on correct route for step
+  const isOnCorrectRoute = useCallback((stepIndex: number): boolean => {
+    const step = GUIDE_STEPS[stepIndex];
+    if (!step) return false;
+    
+    switch (step.routeType) {
+      case 'dashboard':
+        return location.pathname === '/dashboard';
+      case 'my-cars':
+        return location.pathname === '/dashboard/mine-biler';
+      case 'car-detail':
+        return location.pathname.startsWith('/dashboard/bil/');
+      default:
+        return true;
+    }
+  }, [location.pathname]);
+  
   // Start guide
   const startGuide = useCallback(() => {
     setCurrentStepIndex(0);
     setIsGuideRunning(true);
     
     // Navigate to first step route if needed
-    const firstStep = GUIDE_STEPS[0];
-    if (firstStep.route && location.pathname !== firstStep.route) {
-      navigate(firstStep.route);
+    const route = getRouteForStep(0);
+    if (route && location.pathname !== route) {
+      navigate(route);
     }
-  }, [navigate, location.pathname]);
+  }, [navigate, location.pathname, getRouteForStep]);
   
   // Stop guide
   const stopGuide = useCallback(() => {
@@ -198,15 +261,24 @@ export function GuideProvider({ children }: GuideProviderProps) {
     const step = GUIDE_STEPS[stepIndex];
     if (!step) return;
     
-    // If step has a route and we're not there, navigate
-    if (step.route && location.pathname !== step.route) {
-      navigate(step.route);
-      // Wait for navigation to complete
-      await new Promise(resolve => setTimeout(resolve, 300));
+    const route = getRouteForStep(stepIndex);
+    
+    // If step needs car-detail but no car exists, skip to end
+    if (step.routeType === 'car-detail' && !firstCarId) {
+      // User has no cars, complete guide early
+      await completeGuide();
+      return;
+    }
+    
+    // If we need to navigate
+    if (route && !isOnCorrectRoute(stepIndex)) {
+      navigate(route);
+      // Wait for navigation and render
+      await new Promise(resolve => setTimeout(resolve, 500));
     }
     
     setCurrentStepIndex(stepIndex);
-  }, [navigate, location.pathname]);
+  }, [getRouteForStep, isOnCorrectRoute, navigate, firstCarId]);
   
   // Next step
   const nextStep = useCallback(() => {
@@ -281,6 +353,7 @@ export function GuideProvider({ children }: GuideProviderProps) {
     currentStepIndex,
     shouldShowGuide,
     isLoading,
+    firstCarId,
     startGuide,
     stopGuide,
     nextStep,
