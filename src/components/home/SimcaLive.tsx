@@ -323,7 +323,7 @@ export const SimcaLive = ({ isHeaderMode = false }: SimcaLiveProps) => {
                   textShadow: `0 1px 2px rgba(0,0,0,0.5)`,
                 }}
               >
-                simca live broadcast
+                simca live
               </span>
             </div>
 
