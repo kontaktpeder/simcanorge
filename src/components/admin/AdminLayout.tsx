@@ -13,6 +13,7 @@ import {
   Menu,
   X,
   User,
+  Bug,
 } from "lucide-react";
 import simcaBadgeLogo from "@/assets/simca-badge-logo.png";
 
@@ -24,6 +25,7 @@ interface AdminLayoutProps {
 const navItems = [
   { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/admin/meldinger", label: "Meldinger", icon: Inbox },
+  { href: "/admin/support", label: "Support", icon: Bug },
   { href: "/admin/biler", label: "Biler", icon: Car },
   { href: "/admin/eierprofiler", label: "Eiere", icon: User },
   { href: "/admin/deler", label: "Deler", icon: Wrench },
