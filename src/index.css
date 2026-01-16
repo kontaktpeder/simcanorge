@@ -874,7 +874,8 @@
 
   @keyframes headerDrive {
     0% { transform: translateX(-100px); }
-    100% { transform: translateX(calc(100vw + 100px)); }
+    /* Bruk dvw for å unngå at 100vw (inkl. scrollbar) gir horisontal scroll i Chrome */
+    100% { transform: translateX(calc(100dvw + 100px)); }
   }
 
   /* Drive to garage animation - car drives from right to left (reversed) */
@@ -884,7 +885,7 @@
 
   @keyframes driveToGarage {
     0% {
-      transform: translateX(50vw) scaleX(-1);
+      transform: translateX(50dvw) scaleX(-1);
       opacity: 1;
     }
     90% {
@@ -919,7 +920,8 @@
 
   @keyframes drive {
     0% { transform: translateX(-150px); }
-    100% { transform: translateX(calc(100vw + 150px)); }
+    /* Bruk dvw for å unngå at 100vw (inkl. scrollbar) gir horisontal scroll i Chrome */
+    100% { transform: translateX(calc(100dvw + 150px)); }
   }
 
   /* Car bump/suspension effect */
@@ -1007,17 +1009,17 @@
 
   @keyframes cloudDrift1 {
     0% { transform: translateX(-100px); }
-    100% { transform: translateX(calc(100vw + 100px)); }
+    100% { transform: translateX(calc(100dvw + 100px)); }
   }
 
   @keyframes cloudDrift2 {
-    0% { transform: translateX(calc(100vw + 50px)); }
+    0% { transform: translateX(calc(100dvw + 50px)); }
     100% { transform: translateX(-150px); }
   }
 
   @keyframes cloudDrift3 {
     0% { transform: translateX(-80px); }
-    100% { transform: translateX(calc(100vw + 80px)); }
+    100% { transform: translateX(calc(100dvw + 80px)); }
   }
 
   /* Road stripes animation */
