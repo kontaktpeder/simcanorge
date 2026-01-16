@@ -18,6 +18,8 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { z } from "zod";
+import { ReportProblemModal } from "@/components/support";
+import { useAuth } from "@/hooks/useAuth";
 
 const contactSchema = z.object({
   name: z.string().trim().min(2, "Navn må være minst 2 tegn").max(100, "Navn kan ikke være mer enn 100 tegn"),
@@ -32,10 +34,12 @@ const MIN_SUBMIT_INTERVAL = 2000; // 2 sekunder mellom submits
 
 export default function Kontakt() {
   const { toast } = useToast();
+  const { user } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [lastSubmitTime, setLastSubmitTime] = useState<number>(0);
+  const [reportModalOpen, setReportModalOpen] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -197,9 +201,13 @@ export default function Kontakt() {
                       </Label>
                       <Select
                         value={formData.messageType}
-                        onValueChange={(value: "contact" | "report_problem") =>
-                          setFormData((prev) => ({ ...prev, messageType: value }))
-                        }
+                        onValueChange={(value: "contact" | "report_problem") => {
+                          if (value === "report_problem") {
+                            setReportModalOpen(true);
+                          } else {
+                            setFormData((prev) => ({ ...prev, messageType: value }));
+                          }
+                        }}
                       >
                         <SelectTrigger className="h-12 sm:h-14 border-2 border-muted">
                           <SelectValue />
@@ -352,6 +360,11 @@ export default function Kontakt() {
           </div>
         </div>
       </section>
+      <ReportProblemModal
+        open={reportModalOpen}
+        onOpenChange={setReportModalOpen}
+        userId={user?.id}
+      />
     </Layout>
   );
 }
