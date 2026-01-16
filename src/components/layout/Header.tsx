@@ -5,6 +5,7 @@ import { useCart } from "@/hooks/useCart";
 import { useAuth } from "@/hooks/useAuth";
 import { SimcaLive } from "@/components/home/SimcaLive";
 import { GuideHelpButton } from "@/components/guide";
+import { FadeImage } from "@/components/ui/FadeImage";
 import simcaBadge from "@/assets/simca-badge.png";
 import toolboxIcon from "@/assets/toolbox-icon.png";
 import simcaRallye from "@/assets/simca-rallye-yellow.png";
@@ -314,10 +315,11 @@ export function Header() {
         <div className="flex items-center justify-between h-14 md:h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 hover-lift">
-            <img 
+            <FadeImage 
               src={simcaBadge} 
               alt="Simca Norge" 
               className="h-10 md:h-12 w-auto drop-shadow-md"
+              fadeDuration={400}
             />
             <div className="hidden sm:block">
               <span className="font-display text-lg md:text-xl text-primary">SIMCA</span>
