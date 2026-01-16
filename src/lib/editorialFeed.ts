@@ -24,6 +24,7 @@ export interface CarBlock<T> {
 
 /**
  * Bestem størrelse basert på modul og variasjon
+ * Archive får ALLTID minst 'md' for lesbarhet
  */
 function getBlockSize(module: EditorialModule, index: number, car: { story?: string | null }): BlockSize {
   switch (module) {
@@ -37,9 +38,10 @@ function getBlockSize(module: EditorialModule, index: number, car: { story?: str
       const hasLongStory = car.story && car.story.length > 300;
       return hasLongStory ? 'md' : 'sm';
     case 'archive':
-      return 'sm';
+      // Archive skal ALDRI være for liten - minimum 'md' for notis-lesbarhet
+      return 'md';
     default:
-      return 'sm';
+      return 'md';
   }
 }
 
@@ -185,18 +187,20 @@ export function interleaveEditorialFeed<T extends { id: string; story?: string |
 
 /**
  * CSS grid klasser basert på BlockSize
+ * Archive/sm får større plass for lesbarhet
  */
 export function getGridClasses(size: BlockSize): string {
   switch (size) {
     case 'xl':
-      return 'col-span-12 md:col-span-8 lg:col-span-8 row-span-2';
+      return 'col-span-12 md:col-span-10 lg:col-span-12 row-span-2';
     case 'lg':
-      return 'col-span-12 md:col-span-6 lg:col-span-7';
+      return 'col-span-12 md:col-span-7 lg:col-span-7';
     case 'md':
       return 'col-span-12 md:col-span-6 lg:col-span-5';
     case 'sm':
-      return 'col-span-12 md:col-span-4 lg:col-span-4';
+      // Sm er nå minimum col-span-4 for lesbarhet
+      return 'col-span-12 md:col-span-6 lg:col-span-4';
     default:
-      return 'col-span-12 md:col-span-4';
+      return 'col-span-12 md:col-span-6';
   }
 }

@@ -377,59 +377,75 @@ function EditorialBlock({ block, index }: EditorialBlockProps): React.ReactNode 
     ? car.story.slice(0, module === 'hero' ? 200 : module === 'feature' ? 150 : 80) + (car.story.length > 80 ? '...' : '')
     : null;
 
+  // Build correct link - verify slug exists
+  const carLink = car.slug ? `/biler/${car.slug}` : null;
+  
+  // Guard: if no slug, log warning and don't make clickable
+  if (!carLink) {
+    console.warn(`Car missing slug: ${car.id} - ${car.title}`);
+  }
+
+  // Wrapper for links with optional disabled state
+  const LinkWrapper = ({ children, className }: { children: React.ReactNode; className?: string }) => {
+    if (!carLink) {
+      return <div className={className} title="Mangler slug">{children}</div>;
+    }
+    return <Link to={carLink} className={className}>{children}</Link>;
+  };
+
   // Render based on module type
   switch (module) {
     case 'hero':
       return (
         <article className={`${gridClasses} relative group`}>
-          <Link to={`/bil/${car.slug}`} className="block">
-            {/* Full hero image */}
-            <div className="relative aspect-[16/10] md:aspect-[21/9] overflow-hidden bg-muted">
+          <LinkWrapper className="block">
+            {/* Full hero image - aspect-video for safe framing */}
+            <div className="relative aspect-video md:aspect-[21/9] overflow-hidden bg-muted">
               {primaryImage && (
                 <img 
                   src={primaryImage} 
                   alt={imageAlt}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover object-center"
                 />
               )}
-              {/* Overlay gradient */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+              {/* Stronger overlay gradient for text readability */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10" />
               
               {/* Text overlay */}
-              <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10 lg:p-12">
+              <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10 lg:p-14">
                 {car.year && (
-                  <span className="font-serif text-4xl md:text-6xl lg:text-7xl text-white/90 block mb-2">
+                  <span className="font-serif text-5xl md:text-7xl lg:text-8xl text-white/90 block mb-2 md:mb-4">
                     {car.year}
                   </span>
                 )}
-                <h2 className="font-display text-xl md:text-2xl lg:text-3xl text-white tracking-wide uppercase mb-3">
+                <h2 className="font-display text-xl md:text-3xl lg:text-4xl text-white tracking-wide uppercase mb-3">
                   {car.title}
                 </h2>
                 {excerpt && (
-                  <p className="text-white/70 text-sm md:text-base max-w-2xl mb-4 line-clamp-2">
+                  <p className="text-white/80 text-sm md:text-base lg:text-lg max-w-2xl mb-4 line-clamp-2">
                     {excerpt}
                   </p>
                 )}
-                <span className="font-display text-xs tracking-[0.2em] text-white/80 uppercase">
+                <span className="font-display text-xs md:text-sm tracking-[0.2em] text-white/90 uppercase">
                   Les historien →
                 </span>
               </div>
             </div>
-          </Link>
+          </LinkWrapper>
         </article>
       );
 
     case 'feature':
       return (
         <article className={`${gridClasses} group`}>
-          <Link to={`/bil/${car.slug}`} className="block">
-            {/* Image */}
-            <div className="relative aspect-[4/3] overflow-hidden bg-muted mb-4">
+          <LinkWrapper className="block">
+            {/* Image - use 3/2 aspect ratio for magazine feel */}
+            <div className="relative aspect-[3/2] overflow-hidden bg-muted mb-4">
               {primaryImage && (
                 <img 
                   src={primaryImage} 
                   alt={imageAlt}
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.02]"
+                  className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-[1.02]"
                 />
               )}
             </div>
@@ -458,74 +474,92 @@ function EditorialBlock({ block, index }: EditorialBlockProps): React.ReactNode 
                 Les historien →
               </span>
             </div>
-          </Link>
+          </LinkWrapper>
         </article>
       );
 
     case 'standard':
       return (
         <article className={`${gridClasses} group`}>
-          <Link to={`/bil/${car.slug}`} className="block">
-            {/* Compact card */}
-            <div className="relative aspect-[3/4] overflow-hidden bg-muted">
+          <LinkWrapper className="block">
+            {/* Compact card - 4/3 aspect for balanced framing */}
+            <div className="relative aspect-[4/3] overflow-hidden bg-muted">
               {primaryImage && (
                 <img 
                   src={primaryImage} 
                   alt={imageAlt}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover object-center"
                 />
               )}
               {/* Bottom gradient */}
-              <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/60 to-transparent" />
+              <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/70 to-transparent" />
               
               {/* Text at bottom */}
-              <div className="absolute bottom-0 left-0 right-0 p-4">
+              <div className="absolute bottom-0 left-0 right-0 p-4 md:p-5">
                 {car.year && (
-                  <span className="font-serif text-2xl text-white/90 block">
+                  <span className="font-serif text-2xl md:text-3xl text-white/90 block">
                     {car.year}
                   </span>
                 )}
-                <h3 className="font-display text-sm tracking-wide text-white uppercase">
+                <h3 className="font-display text-sm md:text-base tracking-wide text-white uppercase">
                   {car.model}
                 </h3>
               </div>
             </div>
-          </Link>
+          </LinkWrapper>
         </article>
       );
 
     case 'archive':
+      // Archive as "notis" - larger, more readable newspaper clipping style
       return (
-        <article className={`${gridClasses} group border-b border-foreground/10 pb-4`}>
-          <Link to={`/bil/${car.slug}`} className="flex gap-4 items-start">
-            {/* Small thumbnail */}
-            {primaryImage && (
-              <div className="w-16 h-16 flex-shrink-0 overflow-hidden bg-muted">
-                <img 
-                  src={primaryImage} 
-                  alt={imageAlt}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            )}
-            
-            {/* Text */}
-            <div className="flex-1 min-w-0">
-              <div className="flex items-baseline gap-2">
+        <article className={`${gridClasses} group`}>
+          <LinkWrapper className="block p-5 md:p-6 bg-card/50 border border-foreground/10 hover:border-foreground/20 transition-colors">
+            <div className="flex gap-5 items-start">
+              {/* Optional thumbnail - larger and cleaner */}
+              {primaryImage && (
+                <div className="w-20 h-20 md:w-24 md:h-24 flex-shrink-0 overflow-hidden bg-muted">
+                  <img 
+                    src={primaryImage} 
+                    alt={imageAlt}
+                    className="w-full h-full object-cover object-center"
+                  />
+                </div>
+              )}
+              
+              {/* Text content - notis style */}
+              <div className="flex-1 min-w-0 space-y-2">
+                {/* Year as dominant element */}
                 {car.year && (
-                  <span className="font-serif text-lg text-foreground/70">
+                  <span className="font-serif text-3xl md:text-4xl text-primary/70 block leading-none">
                     {car.year}
                   </span>
                 )}
-                <span className="text-xs text-muted-foreground">
-                  {car.brand}
+                
+                {/* Brand/model line */}
+                <span className="font-display text-xs tracking-[0.15em] text-muted-foreground uppercase block">
+                  {car.brand} · {car.model}
+                </span>
+                
+                {/* Title */}
+                <h3 className="font-display text-base md:text-lg tracking-wide uppercase leading-tight">
+                  {car.title}
+                </h3>
+                
+                {/* Short excerpt/teaser */}
+                {excerpt && (
+                  <p className="text-muted-foreground text-sm line-clamp-2 leading-relaxed">
+                    {excerpt}
+                  </p>
+                )}
+                
+                {/* CTA */}
+                <span className="inline-block font-display text-xs tracking-[0.15em] text-primary uppercase pt-1">
+                  Les →
                 </span>
               </div>
-              <h3 className="font-display text-sm tracking-wide uppercase truncate">
-                {car.title}
-              </h3>
             </div>
-          </Link>
+          </LinkWrapper>
         </article>
       );
 
