@@ -187,8 +187,8 @@ export function interleaveEditorialFeed<T extends { id: string; story?: string |
 
 /**
  * CSS grid klasser basert på BlockSize
- * Justert for tettere pakking og færre hull
- * Bruker 12-col grid med spans som summerer pent
+ * Justert for tettere pakking uten hull
+ * Bruker 12-col grid med spans som alltid summerer til 12
  */
 export function getGridClasses(size: BlockSize): string {
   switch (size) {
@@ -196,14 +196,14 @@ export function getGridClasses(size: BlockSize): string {
       // Full bredde hero
       return 'col-span-12';
     case 'lg':
-      // 7/12 = ~58% - god for feature
-      return 'col-span-12 md:col-span-7';
+      // 8/12 = 66% - større feature, passer med md (4)
+      return 'col-span-12 md:col-span-8';
     case 'md':
-      // 5/12 = ~42% - komplementerer lg
-      return 'col-span-12 md:col-span-5';
+      // 4/12 = 33% - komplementerer lg (8), eller 2 x md = 8
+      return 'col-span-12 md:col-span-4';
     case 'sm':
-      // 4/12 = 33% - tre på rad, eller 8/12 på tablet
-      return 'col-span-12 md:col-span-6 lg:col-span-4';
+      // 3/12 = 25% - fire på rad for max tetthet
+      return 'col-span-6 md:col-span-3';
     default:
       return 'col-span-12 md:col-span-6';
   }
