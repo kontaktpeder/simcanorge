@@ -196,7 +196,7 @@ const Biler = () => {
       />
 
       {/* Category Tabs */}
-      <section className="bg-gradient-to-b from-card via-card to-muted/20 py-6 md:py-8 border-b border-foreground/10">
+      <section className="py-6 md:py-8 border-b border-foreground/10 bg-[hsl(36,16%,82%)]/60 backdrop-blur-sm">
         <div className="container mx-auto px-3 md:px-4">
           <div className="flex justify-center gap-2 md:gap-4 flex-wrap">
             {CATEGORIES.map(cat => {
