@@ -231,11 +231,11 @@ export const SimcaLive = ({ isHeaderMode = false }: SimcaLiveProps) => {
     );
   }
 
-  // Desktop mode: fixed position with full details
+  // Desktop mode: inline component (no longer fixed position)
   return (
     <div
       className={`
-        hidden md:block fixed top-24 left-4 z-40
+        hidden md:block
         transition-opacity duration-700 ease-out
         ${isLoaded ? "opacity-100" : "opacity-0"}
       `}

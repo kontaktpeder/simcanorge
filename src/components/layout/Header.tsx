@@ -328,6 +328,10 @@ export function Header() {
               <span className="font-display text-lg md:text-xl text-primary whitespace-nowrap">SIMCA</span>
               <span className="font-display text-lg md:text-xl text-accent ml-1 whitespace-nowrap">NORGE</span>
             </div>
+            {/* SimcaLive in desktop header */}
+            <div className="hidden lg:block ml-4">
+              <SimcaLive />
+            </div>
           </Link>
 
           {/* Garage with parked car - shows after animation or on non-home pages */}
