@@ -7,6 +7,7 @@ import { AnimatedSection } from "@/components/layout/AnimatedSection";
 import { TimelineSection } from "@/components/car/TimelineSection";
 import { OwnerCard } from "@/components/car/OwnerCard";
 import { supabase } from "@/integrations/supabase/client";
+import { getResponsiveImageProps, IMAGE_SIZES, getThumbnailUrl } from "@/lib/imageUtils";
 import { 
   ArrowLeft, Calendar, Wrench, ArrowRight, ChevronLeft, ChevronRight, Car, 
   Facebook, Twitter, Link as LinkIcon, Check, Instagram, X, Youtube, ExternalLink,
@@ -322,11 +323,13 @@ const BilDetalj = () => {
               <div className="relative">
                 {mainImage ? (
                   <img 
-                    src={mainImage.image_url} 
-                    alt={mainImage.alt_text || car.title} 
+                    {...getResponsiveImageProps(
+                      mainImage.image_url,
+                      mainImage.alt_text || car.title,
+                      { sizes: IMAGE_SIZES.hero, priority: true }
+                    )}
                     className="w-full aspect-[4/3] object-cover border-4 border-foreground shadow-brutal cursor-pointer hover:scale-[1.02] transition-transform duration-300" 
                     onClick={() => setSelectedImageIndex(0)}
-                    loading="eager"
                   />
                 ) : (
                   <div className="w-full aspect-[4/3] bg-muted border-4 border-foreground flex items-center justify-center">
@@ -519,10 +522,12 @@ const BilDetalj = () => {
                     style={{ animationDelay: `${index * 50}ms` }}
                   >
                     <img
-                      src={img.image_url}
-                      alt={img.alt_text || `Bilde ${index + 2}`}
+                      {...getResponsiveImageProps(
+                        img.image_url,
+                        img.alt_text || `Bilde ${index + 2}`,
+                        { sizes: IMAGE_SIZES.thumbnail, loading: 'lazy' }
+                      )}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                      loading="lazy"
                     />
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
                       <span className="opacity-0 group-hover:opacity-100 transition-opacity text-white font-display text-sm uppercase">

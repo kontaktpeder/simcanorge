@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Link } from "react-router-dom";
 import { Calendar, ArrowRight, Star } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { getResponsiveImageProps, IMAGE_SIZES } from "@/lib/imageUtils";
 interface Car {
   id: string;
   slug: string;
@@ -102,7 +103,10 @@ const ManedensBil = () => {
             </div> : featuredCar ? <div className="grid lg:grid-cols-2 gap-12 items-start">
               {/* Image */}
               <div className="relative">
-                {getMainImage(featuredCar) ? <img src={getMainImage(featuredCar)!.image_url} alt={getMainImage(featuredCar)!.alt_text || featuredCar.title} className="w-full aspect-[4/3] object-cover border-4 border-foreground shadow-brutal" /> : <div className="w-full aspect-[4/3] bg-muted border-4 border-foreground flex items-center justify-center">
+                {getMainImage(featuredCar) ? <img 
+                    {...getResponsiveImageProps(getMainImage(featuredCar)!.image_url, getMainImage(featuredCar)!.alt_text || featuredCar.title, { sizes: IMAGE_SIZES.hero, priority: true })}
+                    className="w-full aspect-[4/3] object-cover border-4 border-foreground shadow-brutal" 
+                  /> : <div className="w-full aspect-[4/3] bg-muted border-4 border-foreground flex items-center justify-center">
                     <span className="text-muted-foreground font-display">Ingen bilde</span>
                   </div>}
                 <div className="absolute top-4 left-4 bg-accent text-accent-foreground px-4 py-2 font-display uppercase text-sm border-2 border-foreground">
@@ -162,7 +166,10 @@ const ManedensBil = () => {
               {previousCars.map(car => {
             const mainImage = getMainImage(car);
             return <Link key={car.id} to={`/biler/${car.slug}`} className="bg-card border-4 border-foreground shadow-brutal hover-lift block">
-                    {mainImage ? <img src={mainImage.image_url} alt={mainImage.alt_text || car.title} className="w-full aspect-[3/2] object-cover border-b-4 border-foreground" /> : <div className="w-full aspect-[3/2] bg-muted flex items-center justify-center border-b-4 border-foreground">
+                    {mainImage ? <img 
+                        {...getResponsiveImageProps(mainImage.image_url, mainImage.alt_text || car.title, { sizes: IMAGE_SIZES.card, loading: 'lazy' })}
+                        className="w-full aspect-[3/2] object-cover border-b-4 border-foreground" 
+                      /> : <div className="w-full aspect-[3/2] bg-muted flex items-center justify-center border-b-4 border-foreground">
                         <span className="text-muted-foreground font-display">Ingen bilde</span>
                       </div>}
                     <div className="p-4">
