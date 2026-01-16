@@ -207,37 +207,52 @@ export function GarasjeGuide() {
   // Handle Joyride callbacks
   const handleJoyrideCallback = useCallback((data: CallBackProps) => {
     const { status, action, index, type } = data;
-    
+
     // Guide completed
-    if (status === STATUS.FINISHED || status === STATUS.SKIPPED) {
+    if (status === STATUS.FINISHED || status === STATUS.SKIPPED || type === EVENTS.TOUR_END) {
       void completeGuide();
       return;
     }
-    
+
     // User clicked close/skip
     if (action === ACTIONS.CLOSE || action === ACTIONS.SKIP) {
       void dismissGuide();
       return;
     }
-    
-    // Handle step changes
-    if (type === EVENTS.STEP_AFTER) {
+
+    // If a target isn't found (DOM not ready / conditional UI), skip deterministically
+    if (type === EVENTS.TARGET_NOT_FOUND) {
       const nextIndex = action === ACTIONS.PREV ? index - 1 : index + 1;
-      
-      // Check bounds
+
       if (nextIndex < 0) return;
-      
       if (nextIndex >= activeSteps.length) {
         void completeGuide();
         return;
       }
-      
-      // Check if we need to navigate to a different route
+
+      setIsReady(false);
+      setStepIndex(nextIndex);
+      return;
+    }
+
+    // Handle step changes
+    if (type === EVENTS.STEP_AFTER) {
+      const nextIndex = action === ACTIONS.PREV ? index - 1 : index + 1;
+
+      // Check bounds
+      if (nextIndex < 0) return;
+
+      if (nextIndex >= activeSteps.length) {
+        void completeGuide();
+        return;
+      }
+
+      // If we need to navigate to a different route, pause until it renders
       const nextStep = activeSteps[nextIndex];
       if (nextStep && !isOnRouteForStep(nextStep)) {
         setIsReady(false);
       }
-      
+
       setStepIndex(nextIndex);
     }
   }, [activeSteps, completeGuide, dismissGuide, isOnRouteForStep]);
