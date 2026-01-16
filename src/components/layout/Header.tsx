@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, Home, Star, Car, Wrench, Send, BookOpen, Users, Mail, LogIn, User, Phone, MessageCircle } from "lucide-react";
+import { Menu, X, Home, Star, Car, Wrench, Send, BookOpen, Users, Mail, LogIn, User, Bug } from "lucide-react";
 import { useCart } from "@/hooks/useCart";
 import { useAuth } from "@/hooks/useAuth";
 import { SimcaLive } from "@/components/home/SimcaLive";
 import { GuideHelpButton } from "@/components/guide";
 import { FadeImage } from "@/components/ui/FadeImage";
+import { ReportProblemButton, ReportProblemModal } from "@/components/support";
 import simcaBadge from "@/assets/simca-badge.png";
 import toolboxIcon from "@/assets/toolbox-icon.png";
 import simcaRallye from "@/assets/simca-rallye-yellow.png";
@@ -194,6 +195,7 @@ export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isSpeedBoost, setIsSpeedBoost] = useState(false);
   const [roadFading, setRoadFading] = useState(false);
+  const [reportModalOpen, setReportModalOpen] = useState(false);
   const { itemCount } = useCart();
   const { user } = useAuth();
 
@@ -310,6 +312,7 @@ export function Header() {
   };
 
   return (
+    <>
     <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/50 shadow-sm will-change-transform">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-14 md:h-16">
@@ -506,33 +509,20 @@ export function Header() {
                   </TooltipContent>
                 </Tooltip>
               )}
-              {/* Technical Support */}
+              {/* Report Problem */}
               <div className="flex items-center gap-1 ml-2 pl-2 border-l border-border/50">
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <a
-                      href="tel:+4745251280"
+                    <button
+                      onClick={() => setReportModalOpen(true)}
                       className="flex items-center gap-1 px-2 py-1.5 rounded-lg text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-all"
                     >
-                      <Phone className="w-3.5 h-3.5" />
-                      <span className="hidden xl:inline">Support</span>
-                    </a>
+                      <Bug className="w-3.5 h-3.5" />
+                      <span className="hidden xl:inline">Rapporter</span>
+                    </button>
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p>Ring teknisk support: +47 452 51 280</p>
-                  </TooltipContent>
-                </Tooltip>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <a
-                      href="sms:+4745251280"
-                      className="flex items-center gap-1 px-2 py-1.5 rounded-lg text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-all"
-                    >
-                      <MessageCircle className="w-3.5 h-3.5" />
-                    </a>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Send SMS til support: +47 452 51 280</p>
+                    <p>Rapporter et problem</p>
                   </TooltipContent>
                 </Tooltip>
               </div>
@@ -541,14 +531,14 @@ export function Header() {
 
           {/* Mobile: Support + SimcaLive + Toolbox + Menu */}
           <div className="lg:hidden flex items-center gap-1.5">
-            {/* Support phone link on mobile */}
-            <a
-              href="tel:+4745251280"
+            {/* Report problem on mobile */}
+            <button
+              onClick={() => setReportModalOpen(true)}
               className="p-1.5 hover:bg-muted/50 rounded-lg transition-colors"
-              aria-label="Ring teknisk support"
+              aria-label="Rapporter et problem"
             >
-              <Phone className="w-5 h-5 text-muted-foreground" />
-            </a>
+              <Bug className="w-5 h-5 text-muted-foreground" />
+            </button>
             {/* SimcaLive in header on mobile */}
             <div className="flex-shrink-0">
               <SimcaLive isHeaderMode />
@@ -746,5 +736,11 @@ export function Header() {
         </div>
       )}
     </header>
+    <ReportProblemModal
+      open={reportModalOpen}
+      onOpenChange={setReportModalOpen}
+      userId={user?.id}
+    />
+    </>
   );
 }
