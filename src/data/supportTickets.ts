@@ -65,7 +65,7 @@ export async function createSupportTicket(
 
         if (!uploadError) screenshotPath = filePath;
       } catch (uploadError) {
-        // Don’t block ticket creation if upload fails
+        // Don't block ticket creation if upload fails
         console.error('Screenshot upload failed:', uploadError);
       }
     }
@@ -206,6 +206,32 @@ export async function updateSupportTicket(
     return { data: data as SupportTicket, error: null };
   } catch (error) {
     return { data: null, error: error instanceof Error ? error : new Error('Unknown error') };
+  }
+}
+
+export async function deleteSupportTicket(id: string): Promise<{ error: Error | null }> {
+  try {
+    const { data: session } = await supabase.auth.getSession();
+    const token = session?.session?.access_token || import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+
+    const response = await fetch(
+      `${import.meta.env.VITE_SUPABASE_URL}/rest/v1/support_tickets?id=eq.${id}`,
+      {
+        method: 'DELETE',
+        headers: {
+          'apikey': import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+          'Authorization': `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (!response.ok) {
+      return { error: new Error('Failed to delete ticket') };
+    }
+
+    return { error: null };
+  } catch (error) {
+    return { error: error instanceof Error ? error : new Error('Unknown error') };
   }
 }
 

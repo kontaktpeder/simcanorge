@@ -25,7 +25,6 @@ import AdminBilProfil from "./pages/admin/AdminBilProfil";
 import AdminDeler from "./pages/admin/AdminDeler";
 import AdminKategorier from "./pages/admin/AdminKategorier";
 import AdminForesporsler from "./pages/admin/AdminForesporsler";
-import AdminInnsendinger from "./pages/admin/AdminInnsendinger";
 import AdminMeldinger from "./pages/admin/AdminMeldinger";
 import AdminSupport from "./pages/admin/AdminSupport";
 import SendInnBil from "./pages/SendInnBil";
