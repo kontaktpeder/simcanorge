@@ -36,6 +36,7 @@ import DashboardMineBiler from "./pages/DashboardMineBiler";
 import DashboardBilDetalj from "./pages/DashboardBilDetalj";
 import EierProfil from "./pages/EierProfil";
 import AdminEierprofiler from "./pages/admin/AdminEierprofiler";
+import AdminInviteEmail from "./pages/admin/AdminInviteEmail";
 import Konto from "./pages/Konto";
 import NotFound from "./pages/NotFound";
 
@@ -85,6 +86,7 @@ const App = () => (
                 <Route path="/admin/foresporsler" element={<AdminForesporsler />} />
                 <Route path="/admin/meldinger" element={<AdminMeldinger />} />
                 <Route path="/admin/support" element={<AdminSupport />} />
+                <Route path="/admin/invite-email" element={<AdminInviteEmail />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
