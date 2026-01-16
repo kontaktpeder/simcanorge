@@ -1,10 +1,7 @@
 /**
  * NewsprintBackground
  * 
- * Gir /biler en "gammel avis/magasin"-følelse:
- * - Mørkere kremhvit base
- * - Tydelig papirtekstur via CSS gradients
- * - Subtile temadetaljer
+ * Gammel avis/magasin-bakgrunn med tung tekstur
  */
 export function NewsprintBackground() {
   return (
@@ -13,7 +10,7 @@ export function NewsprintBackground() {
       <div 
         className="absolute inset-0"
         style={{
-          backgroundColor: 'hsl(38, 18%, 88%)',
+          backgroundColor: 'hsl(36, 16%, 82%)',
         }}
       />
 
@@ -22,44 +19,47 @@ export function NewsprintBackground() {
         className="absolute inset-0"
         style={{
           background: `
-            /* Vignette edges - stronger */
-            radial-gradient(ellipse at center, transparent 40%, hsla(35, 15%, 75%, 0.25) 100%),
-            /* Vertical fiber lines - more visible */
+            /* Strong vignette */
+            radial-gradient(ellipse at center, transparent 30%, hsla(32, 18%, 65%, 0.35) 100%),
+            /* Vertical fiber - strong */
             repeating-linear-gradient(
               90deg,
               transparent 0px,
-              transparent 1px,
-              hsla(35, 25%, 70%, 0.08) 1px,
-              hsla(35, 25%, 70%, 0.08) 2px
+              hsla(35, 30%, 60%, 0.12) 1px,
+              transparent 2px
             ),
-            /* Horizontal fiber lines - more visible */
+            /* Horizontal fiber - strong */
             repeating-linear-gradient(
               0deg,
               transparent 0px,
-              transparent 2px,
-              hsla(30, 20%, 65%, 0.06) 2px,
-              hsla(30, 20%, 65%, 0.06) 3px
+              hsla(30, 25%, 55%, 0.10) 1px,
+              transparent 3px
             ),
-            /* Diagonal noise pattern */
+            /* Diagonal noise */
             repeating-linear-gradient(
               45deg,
-              transparent 0px,
+              hsla(40, 20%, 50%, 0.06) 0px,
               transparent 1px,
-              hsla(40, 15%, 60%, 0.04) 1px,
-              hsla(40, 15%, 60%, 0.04) 2px
+              transparent 2px
             ),
-            /* Counter-diagonal for depth */
+            /* Counter-diagonal */
             repeating-linear-gradient(
               -45deg,
-              transparent 0px,
-              transparent 2px,
-              hsla(35, 20%, 65%, 0.03) 2px,
-              hsla(35, 20%, 65%, 0.03) 3px
+              hsla(35, 25%, 55%, 0.05) 0px,
+              transparent 1px,
+              transparent 3px
             ),
-            /* Larger grain pattern */
+            /* Coarse grain */
             repeating-linear-gradient(
               0deg,
-              hsla(40, 15%, 80%, 0.04) 0px,
+              hsla(38, 20%, 70%, 0.08) 0px,
+              transparent 1px,
+              transparent 6px
+            ),
+            /* Cross-hatch */
+            repeating-linear-gradient(
+              90deg,
+              hsla(34, 18%, 65%, 0.06) 0px,
               transparent 1px,
               transparent 8px
             )
@@ -67,36 +67,33 @@ export function NewsprintBackground() {
         }}
       />
 
-      {/* Aged paper spots/stains - subtle */}
+      {/* Aged paper spots */}
       <div 
         className="absolute inset-0"
         style={{
           background: `
-            radial-gradient(circle at 15% 25%, hsla(35, 30%, 70%, 0.08) 0%, transparent 20%),
-            radial-gradient(circle at 85% 45%, hsla(30, 25%, 65%, 0.06) 0%, transparent 25%),
-            radial-gradient(circle at 45% 80%, hsla(38, 20%, 72%, 0.07) 0%, transparent 18%),
-            radial-gradient(circle at 70% 15%, hsla(32, 22%, 68%, 0.05) 0%, transparent 22%)
+            radial-gradient(circle at 10% 20%, hsla(32, 35%, 60%, 0.15) 0%, transparent 15%),
+            radial-gradient(circle at 90% 35%, hsla(28, 30%, 55%, 0.12) 0%, transparent 20%),
+            radial-gradient(circle at 50% 85%, hsla(35, 25%, 62%, 0.14) 0%, transparent 18%),
+            radial-gradient(circle at 75% 10%, hsla(30, 28%, 58%, 0.10) 0%, transparent 22%),
+            radial-gradient(circle at 25% 60%, hsla(34, 22%, 65%, 0.08) 0%, transparent 25%)
           `,
         }}
       />
 
-      {/* Subtle decorative elements */}
-      
       {/* Left rule line */}
       <div 
-        className="absolute left-[2%] top-0 bottom-0 w-px hidden lg:block"
+        className="absolute left-[1.5%] top-0 bottom-0 w-px hidden lg:block"
         style={{
-          background: 'linear-gradient(to bottom, transparent, hsla(35, 25%, 55%, 0.12) 20%, hsla(35, 25%, 55%, 0.12) 80%, transparent)',
+          background: 'linear-gradient(to bottom, transparent, hsla(32, 30%, 45%, 0.18) 15%, hsla(32, 30%, 45%, 0.18) 85%, transparent)',
         }}
       />
       
-      {/* Right decorative stamp */}
-      <div className="absolute right-[3%] top-[12%] hidden xl:block">
+      {/* Right stamp */}
+      <div className="absolute right-[2%] top-[10%] hidden xl:block">
         <div 
-          className="font-serif text-[9px] tracking-[0.4em] rotate-90 origin-center uppercase"
-          style={{
-            color: 'hsla(35, 20%, 45%, 0.08)',
-          }}
+          className="font-serif text-[8px] tracking-[0.5em] rotate-90 origin-center uppercase"
+          style={{ color: 'hsla(32, 25%, 40%, 0.12)' }}
         >
           AUTO · ARCHIVE · 19—
         </div>
@@ -104,9 +101,9 @@ export function NewsprintBackground() {
 
       {/* Corner fold */}
       <div 
-        className="absolute top-0 right-0 w-24 h-24 hidden lg:block"
+        className="absolute top-0 right-0 w-20 h-20 hidden lg:block"
         style={{
-          background: 'linear-gradient(135deg, transparent 50%, hsla(35, 18%, 82%, 0.3) 50%)',
+          background: 'linear-gradient(135deg, transparent 50%, hsla(32, 20%, 75%, 0.4) 50%)',
         }}
       />
     </div>
