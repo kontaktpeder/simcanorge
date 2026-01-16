@@ -1,11 +1,16 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Copy, Mail, Check, Link as LinkIcon } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 
 interface SenderInfo {
   name: string;
@@ -26,14 +31,40 @@ const SENDER_INFO: Record<'peder' | 'peter', SenderInfo> = {
   },
 };
 
-export function InviteEmailGenerator() {
+interface InviteEmailGeneratorProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  recipientEmail?: string;
+  recipientName?: string;
+  inviteLink?: string;
+  carName?: string;
+}
+
+export function InviteEmailGenerator({
+  open,
+  onOpenChange,
+  recipientEmail: initialEmail = '',
+  recipientName: initialName = '',
+  inviteLink: initialLink = '',
+  carName: initialCarName = '',
+}: InviteEmailGeneratorProps) {
   const { toast } = useToast();
   const [sender, setSender] = useState<'peder' | 'peter'>('peder');
-  const [recipientName, setRecipientName] = useState('');
-  const [recipientEmail, setRecipientEmail] = useState('');
-  const [inviteLink, setInviteLink] = useState('');
-  const [carName, setCarName] = useState('');
+  const [recipientName, setRecipientName] = useState(initialName);
+  const [recipientEmail, setRecipientEmail] = useState(initialEmail);
+  const [inviteLink, setInviteLink] = useState(initialLink);
+  const [carName, setCarName] = useState(initialCarName);
   const [copiedSection, setCopiedSection] = useState<string | null>(null);
+
+  // Update state when props change (when modal opens with new data)
+  useEffect(() => {
+    if (open) {
+      setRecipientName(initialName);
+      setRecipientEmail(initialEmail);
+      setInviteLink(initialLink);
+      setCarName(initialCarName);
+    }
+  }, [open, initialName, initialEmail, initialLink, initialCarName]);
 
   const senderInfo = SENDER_INFO[sender];
 
@@ -106,60 +137,52 @@ ${senderInfo.email}`;
   };
 
   return (
-    <div className="grid lg:grid-cols-2 gap-6">
-      <Card>
-        <CardHeader className="pb-4">
-          <CardTitle className="flex items-center gap-2 text-lg">
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
             <Mail className="w-5 h-5" />
             Send tilgangslenke
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-5">
+          </DialogTitle>
+        </DialogHeader>
+
+        <div className="space-y-5">
           {/* Avsender */}
           <div className="space-y-2">
             <Label className="text-sm font-medium">Velg avsender *</Label>
-            <RadioGroup value={sender} onValueChange={(v) => setSender(v as 'peder' | 'peter')}>
+            <RadioGroup value={sender} onValueChange={(v) => setSender(v as 'peder' | 'peter')} className="flex gap-4">
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="peder" id="peder" />
-                <Label htmlFor="peder" className="cursor-pointer">
-                  Peder
-                </Label>
+                <Label htmlFor="peder" className="cursor-pointer">Peder</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="peter" id="peter" />
-                <Label htmlFor="peter" className="cursor-pointer">
-                  Peter
-                </Label>
+                <Label htmlFor="peter" className="cursor-pointer">Peter</Label>
               </div>
             </RadioGroup>
           </div>
 
           {/* Mottaker navn */}
           <div className="space-y-2">
-            <Label htmlFor="recipientName" className="text-sm font-medium">
-              Mottakers navn *
-            </Label>
+            <Label htmlFor="recipientName" className="text-sm font-medium">Mottakers navn</Label>
             <Input
               id="recipientName"
               value={recipientName}
               onChange={(e) => setRecipientName(e.target.value)}
               placeholder="Ola Nordmann"
-              className="h-11"
             />
           </div>
 
           {/* Mottaker e-post */}
           <div className="space-y-2">
-            <Label htmlFor="recipientEmail" className="text-sm font-medium">
-              Mottakers e-post *
-            </Label>
+            <Label htmlFor="recipientEmail" className="text-sm font-medium">Mottakers e-post *</Label>
             <Input
               id="recipientEmail"
               type="email"
               value={recipientEmail}
               onChange={(e) => setRecipientEmail(e.target.value)}
               placeholder="ola@eksempel.no"
-              className={`h-11 ${!validateEmail(recipientEmail) && recipientEmail ? 'border-destructive' : ''}`}
+              className={!validateEmail(recipientEmail) && recipientEmail ? 'border-destructive' : ''}
             />
             {!validateEmail(recipientEmail) && recipientEmail && (
               <p className="text-xs text-destructive">E-post må inneholde @</p>
@@ -177,138 +200,68 @@ ${senderInfo.email}`;
               value={inviteLink}
               onChange={(e) => setInviteLink(e.target.value)}
               placeholder="https://simcanorge.lovable.app/i/5f78fd57"
-              className={`h-11 font-mono text-sm ${!validateLink(inviteLink) && inviteLink ? 'border-destructive' : ''}`}
+              className={`font-mono text-sm ${!validateLink(inviteLink) && inviteLink ? 'border-destructive' : ''}`}
             />
             {!validateLink(inviteLink) && inviteLink && (
               <p className="text-xs text-destructive">Lenke må starte med http</p>
             )}
           </div>
 
-          {/* Bilnavn (valgfritt) */}
+          {/* Bilnavn */}
           <div className="space-y-2">
-            <Label htmlFor="carName" className="text-sm font-medium">
-              Bilnavn / modell (valgfritt)
-            </Label>
+            <Label htmlFor="carName" className="text-sm font-medium">Bilnavn / modell</Label>
             <Input
               id="carName"
               value={carName}
               onChange={(e) => setCarName(e.target.value)}
               placeholder="Simca 1000 Rallye"
-              className="h-11"
             />
           </div>
-        </CardContent>
-      </Card>
 
-      {/* Output panel */}
-      <Card>
-        <CardHeader className="pb-4">
-          <CardTitle className="text-lg">Generert e-post</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {/* Til: */}
-          <div className="space-y-2">
+          {/* Forhåndsvisning */}
+          <div className="border-t pt-4 space-y-3">
             <div className="flex items-center justify-between">
               <Label className="text-sm font-medium text-muted-foreground">Til:</Label>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={copyRecipient}
-                disabled={!recipientEmail}
-                className="h-8"
-              >
-                {copiedSection === 'mottaker' ? (
-                  <>
-                    <Check className="w-3 h-3 mr-1" />
-                    Kopiert
-                  </>
-                ) : (
-                  <>
-                    <Copy className="w-3 h-3 mr-1" />
-                    Kopier
-                  </>
-                )}
+              <Button variant="outline" size="sm" onClick={copyRecipient} disabled={!recipientEmail}>
+                {copiedSection === 'mottaker' ? <><Check className="w-3 h-3 mr-1" />Kopiert</> : <><Copy className="w-3 h-3 mr-1" />Kopier</>}
               </Button>
             </div>
-            <div className="bg-muted rounded-md p-3">
+            <div className="bg-muted rounded-md p-2">
               <p className="text-sm font-mono break-all">{recipientEmail || <span className="text-muted-foreground italic">Mangler e-post</span>}</p>
             </div>
-          </div>
 
-          {/* Emne: */}
-          <div className="space-y-2">
             <div className="flex items-center justify-between">
               <Label className="text-sm font-medium text-muted-foreground">Emne:</Label>
-              <Button variant="outline" size="sm" onClick={copySubject} className="h-8">
-                {copiedSection === 'emne' ? (
-                  <>
-                    <Check className="w-3 h-3 mr-1" />
-                    Kopiert
-                  </>
-                ) : (
-                  <>
-                    <Copy className="w-3 h-3 mr-1" />
-                    Kopier emne
-                  </>
-                )}
+              <Button variant="outline" size="sm" onClick={copySubject}>
+                {copiedSection === 'emne' ? <><Check className="w-3 h-3 mr-1" />Kopiert</> : <><Copy className="w-3 h-3 mr-1" />Kopier</>}
               </Button>
             </div>
-            <div className="bg-muted rounded-md p-3">
+            <div className="bg-muted rounded-md p-2">
               <p className="text-sm">{emailSubject}</p>
             </div>
-          </div>
 
-          {/* Brødtekst */}
-          <div className="space-y-2">
             <div className="flex items-center justify-between">
               <Label className="text-sm font-medium text-muted-foreground">Brødtekst:</Label>
-              <Button variant="outline" size="sm" onClick={copyBody} className="h-8">
-                {copiedSection === 'brødtekst' ? (
-                  <>
-                    <Check className="w-3 h-3 mr-1" />
-                    Kopiert
-                  </>
-                ) : (
-                  <>
-                    <Copy className="w-3 h-3 mr-1" />
-                    Kopier brødtekst
-                  </>
-                )}
+              <Button variant="outline" size="sm" onClick={copyBody}>
+                {copiedSection === 'brødtekst' ? <><Check className="w-3 h-3 mr-1" />Kopiert</> : <><Copy className="w-3 h-3 mr-1" />Kopier</>}
               </Button>
             </div>
-            <div className="bg-muted rounded-md p-3 max-h-64 overflow-y-auto">
+            <div className="bg-muted rounded-md p-3 max-h-48 overflow-y-auto">
               <pre className="text-sm whitespace-pre-wrap font-sans">{generateEmailBody()}</pre>
             </div>
           </div>
 
-          {/* Kopier alt knapp */}
-          <div className="pt-4 border-t">
-            <Button
-              onClick={copyAll}
-              disabled={!isValid}
-              className="w-full h-11"
-              size="lg"
-            >
-              {copiedSection === 'alt' ? (
-                <>
-                  <Check className="w-4 h-4 mr-2" />
-                  Alt kopiert!
-                </>
-              ) : (
-                <>
-                  <Copy className="w-4 h-4 mr-2" />
-                  Kopier alt
-                </>
-              )}
-            </Button>
-            {!isValid && (
-              <p className="text-xs text-muted-foreground mt-2 text-center">
-                Fyll ut mottaker e-post og tilgangslenke for å kunne kopiere
-              </p>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+          {/* Kopier alt */}
+          <Button onClick={copyAll} disabled={!isValid} className="w-full" size="lg">
+            {copiedSection === 'alt' ? <><Check className="w-4 h-4 mr-2" />Alt kopiert!</> : <><Copy className="w-4 h-4 mr-2" />Kopier alt</>}
+          </Button>
+          {!isValid && (
+            <p className="text-xs text-muted-foreground text-center">
+              Fyll ut mottaker e-post og tilgangslenke for å kunne kopiere
+            </p>
+          )}
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }

@@ -1,6 +1,7 @@
 import { ReactNode, useEffect, useState } from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { EmailGeneratorProvider } from "@/contexts/EmailGeneratorContext";
 import {
   LayoutDashboard,
   Car,
@@ -14,6 +15,7 @@ import {
   X,
   User,
   Bug,
+  Mail,
 } from "lucide-react";
 import simcaBadgeLogo from "@/assets/simca-badge-logo.png";
 
@@ -26,7 +28,7 @@ const navItems = [
   { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/admin/meldinger", label: "Meldinger", icon: Inbox },
   { href: "/admin/support", label: "Support", icon: Bug },
-  { href: "/admin/invite-email", label: "E-post", icon: Inbox },
+  { href: "/admin/invite-email", label: "E-post", icon: Mail },
   { href: "/admin/biler", label: "Biler", icon: Car },
   { href: "/admin/eierprofiler", label: "Eiere", icon: User },
   { href: "/admin/deler", label: "Deler", icon: Wrench },
@@ -67,6 +69,7 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
   }
 
   return (
+    <EmailGeneratorProvider>
     <div className="min-h-screen bg-background flex flex-col md:flex-row">
       {/* Mobile Header */}
       <header className="md:hidden bg-metal-blue text-white px-4 py-3 flex items-center justify-between sticky top-0 z-50">
@@ -221,5 +224,6 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
         </div>
       </nav>
     </div>
+    </EmailGeneratorProvider>
   );
 }
