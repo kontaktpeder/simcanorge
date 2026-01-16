@@ -752,6 +752,54 @@ export type Database = {
           },
         ]
       }
+      support_tickets: {
+        Row: {
+          action_text: string | null
+          admin_notes: string | null
+          app_version: string | null
+          created_at: string
+          debug_payload: Json | null
+          id: string
+          page: string | null
+          result_text: string | null
+          screenshot_url: string | null
+          severity: string
+          status: string
+          type: string
+          user_id: string | null
+        }
+        Insert: {
+          action_text?: string | null
+          admin_notes?: string | null
+          app_version?: string | null
+          created_at?: string
+          debug_payload?: Json | null
+          id?: string
+          page?: string | null
+          result_text?: string | null
+          screenshot_url?: string | null
+          severity: string
+          status?: string
+          type: string
+          user_id?: string | null
+        }
+        Update: {
+          action_text?: string | null
+          admin_notes?: string | null
+          app_version?: string | null
+          created_at?: string
+          debug_payload?: Json | null
+          id?: string
+          page?: string | null
+          result_text?: string | null
+          screenshot_url?: string | null
+          severity?: string
+          status?: string
+          type?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       user_guides: {
         Row: {
           completed_version: number
