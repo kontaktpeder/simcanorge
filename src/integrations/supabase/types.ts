@@ -504,6 +504,7 @@ export type Database = {
       }
       inquiries: {
         Row: {
+          admin_notes: string | null
           car_model: string | null
           car_year: number | null
           created_at: string
@@ -513,8 +514,10 @@ export type Database = {
           message: string | null
           phone: string | null
           read: boolean | null
+          status: string | null
         }
         Insert: {
+          admin_notes?: string | null
           car_model?: string | null
           car_year?: number | null
           created_at?: string
@@ -524,8 +527,10 @@ export type Database = {
           message?: string | null
           phone?: string | null
           read?: boolean | null
+          status?: string | null
         }
         Update: {
+          admin_notes?: string | null
           car_model?: string | null
           car_year?: number | null
           created_at?: string
@@ -535,6 +540,7 @@ export type Database = {
           message?: string | null
           phone?: string | null
           read?: boolean | null
+          status?: string | null
         }
         Relationships: []
       }
@@ -583,6 +589,7 @@ export type Database = {
           email: string
           id: string
           message: string
+          message_type: string | null
           name: string
           phone: string | null
           read: boolean
@@ -593,6 +600,7 @@ export type Database = {
           email: string
           id?: string
           message: string
+          message_type?: string | null
           name: string
           phone?: string | null
           read?: boolean
@@ -603,6 +611,7 @@ export type Database = {
           email?: string
           id?: string
           message?: string
+          message_type?: string | null
           name?: string
           phone?: string | null
           read?: boolean

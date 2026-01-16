@@ -5,13 +5,22 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Mail, Phone, Car, Calendar, Check, Eye, Wrench } from "lucide-react";
+import { Mail, Phone, Car, Calendar, Check, Eye, Wrench, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { nb } from "date-fns/locale";
@@ -30,13 +39,38 @@ interface Inquiry {
   car_year: number | null;
   message: string | null;
   read: boolean;
+  status: string | null;
+  admin_notes: string | null;
   created_at: string;
   inquiry_items: InquiryItem[];
 }
 
+type InquiryStatus = 'pending' | 'contacted' | 'quote_sent' | 'sold' | 'not_available' | 'cancelled';
+
+const statusLabels: Record<InquiryStatus, string> = {
+  pending: "Venter",
+  contacted: "Kontaktet",
+  quote_sent: "Tilbud sendt",
+  sold: "Solgt",
+  not_available: "Ikke tilgjengelig",
+  cancelled: "Avbrutt",
+};
+
+const statusColors: Record<InquiryStatus, string> = {
+  pending: "bg-yellow-500",
+  contacted: "bg-blue-500",
+  quote_sent: "bg-purple-500",
+  sold: "bg-green-500",
+  not_available: "bg-gray-500",
+  cancelled: "bg-red-500",
+};
+
 const AdminForesporsler = () => {
   const queryClient = useQueryClient();
   const [selectedInquiry, setSelectedInquiry] = useState<Inquiry | null>(null);
+  const [status, setStatus] = useState<InquiryStatus>('pending');
+  const [adminNotes, setAdminNotes] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
 
   const { data: inquiries, isLoading } = useQuery({
     queryKey: ["inquiries"],
@@ -67,11 +101,53 @@ const AdminForesporsler = () => {
     },
   });
 
+  const updateInquiry = useMutation({
+    mutationFn: async ({ id, status, notes }: { id: string; status: string; notes: string }) => {
+      const { error } = await supabase
+        .from("inquiries")
+        .update({ status, admin_notes: notes })
+        .eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["inquiries"] });
+      toast.success("Status oppdatert");
+    },
+  });
+
+  const deleteInquiry = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase
+        .from("inquiries")
+        .delete()
+        .eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["inquiries"] });
+      setSelectedInquiry(null);
+      toast.success("Forespørsel slettet");
+    },
+  });
+
   const openInquiry = (inquiry: Inquiry) => {
     setSelectedInquiry(inquiry);
+    setStatus((inquiry.status as InquiryStatus) || 'pending');
+    setAdminNotes(inquiry.admin_notes || '');
     if (!inquiry.read) {
       markAsRead.mutate(inquiry.id);
     }
+  };
+
+  const handleSave = async () => {
+    if (!selectedInquiry) return;
+    setIsSaving(true);
+    updateInquiry.mutate({ 
+      id: selectedInquiry.id, 
+      status, 
+      notes: adminNotes 
+    });
+    setIsSaving(false);
   };
 
   const unreadCount = inquiries?.filter((i) => !i.read).length || 0;
@@ -112,7 +188,7 @@ const AdminForesporsler = () => {
                 <CardContent className="p-4">
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
+                      <div className="flex items-center gap-2 mb-1 flex-wrap">
                         {!inquiry.read && (
                           <span className="w-2 h-2 bg-accent rounded-full flex-shrink-0" />
                         )}
@@ -122,6 +198,11 @@ const AdminForesporsler = () => {
                         <Badge className="bg-primary">
                           {inquiry.inquiry_items.length} del{inquiry.inquiry_items.length !== 1 ? "er" : ""}
                         </Badge>
+                        {inquiry.status && (
+                          <Badge className={statusColors[inquiry.status as InquiryStatus] || "bg-gray-500"}>
+                            {statusLabels[inquiry.status as InquiryStatus] || inquiry.status}
+                          </Badge>
+                        )}
                       </div>
                       <p className="text-sm text-muted-foreground">
                         {format(new Date(inquiry.created_at), "d. MMM yyyy 'kl.' HH:mm", { locale: nb })}
@@ -218,6 +299,40 @@ const AdminForesporsler = () => {
                     </div>
                   )}
 
+                  {/* Status & Notes */}
+                  <div className="space-y-4 pt-4 border-t">
+                    <div className="space-y-2">
+                      <Label>Status</Label>
+                      <Select value={status} onValueChange={(v) => setStatus(v as InquiryStatus)}>
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="pending">Venter</SelectItem>
+                          <SelectItem value="contacted">Kontaktet</SelectItem>
+                          <SelectItem value="quote_sent">Tilbud sendt</SelectItem>
+                          <SelectItem value="sold">Solgt</SelectItem>
+                          <SelectItem value="not_available">Ikke tilgjengelig</SelectItem>
+                          <SelectItem value="cancelled">Avbrutt</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label>Admin notater</Label>
+                      <Textarea
+                        value={adminNotes}
+                        onChange={(e) => setAdminNotes(e.target.value)}
+                        rows={4}
+                        placeholder="Interne notater om denne forespørselen..."
+                      />
+                    </div>
+
+                    <Button onClick={handleSave} disabled={isSaving} className="w-full">
+                      {isSaving ? 'Lagrer...' : 'Lagre'}
+                    </Button>
+                  </div>
+
                   {/* Actions */}
                   <div className="pt-4 border-t flex flex-wrap gap-3">
                     <Button asChild>
@@ -234,6 +349,17 @@ const AdminForesporsler = () => {
                         </a>
                       </Button>
                     )}
+                    <Button
+                      variant="destructive"
+                      onClick={() => {
+                        if (confirm("Er du sikker på at du vil slette denne forespørselen?")) {
+                          deleteInquiry.mutate(selectedInquiry.id);
+                        }
+                      }}
+                    >
+                      <Trash2 className="w-4 h-4 mr-2" />
+                      Slett forespørsel
+                    </Button>
                   </div>
                 </div>
               </>

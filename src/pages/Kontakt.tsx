@@ -8,6 +8,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { z } from "zod";
@@ -18,6 +25,7 @@ const contactSchema = z.object({
   phone: z.string().trim().max(20, "Telefonnummer kan ikke være mer enn 20 tegn").optional().or(z.literal("")),
   subject: z.string().trim().min(2, "Emne må være minst 2 tegn").max(200, "Emne kan ikke være mer enn 200 tegn"),
   message: z.string().trim().min(10, "Meldingen må være minst 10 tegn").max(5000, "Meldingen kan ikke være mer enn 5000 tegn"),
+  messageType: z.enum(["contact", "report_problem"]),
 });
 
 const MIN_SUBMIT_INTERVAL = 2000; // 2 sekunder mellom submits
@@ -34,6 +42,7 @@ export default function Kontakt() {
     phone: "",
     subject: "",
     message: "",
+    messageType: "contact" as "contact" | "report_problem",
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -82,6 +91,7 @@ export default function Kontakt() {
         phone: result.data.phone || null,
         subject: result.data.subject,
         message: result.data.message,
+        message_type: result.data.messageType,
       });
 
       if (error) throw error;
@@ -180,6 +190,27 @@ export default function Kontakt() {
 
                 <div className="bg-card p-4 sm:p-6 md:p-10">
                   <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+                    {/* Message Type */}
+                    <div className="space-y-1.5 sm:space-y-2">
+                      <Label htmlFor="messageType" className="text-base sm:text-lg font-display">
+                        TYPE MELDING *
+                      </Label>
+                      <Select
+                        value={formData.messageType}
+                        onValueChange={(value: "contact" | "report_problem") =>
+                          setFormData((prev) => ({ ...prev, messageType: value }))
+                        }
+                      >
+                        <SelectTrigger className="h-12 sm:h-14 border-2 border-muted">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="contact">Vanlig kontakt</SelectItem>
+                          <SelectItem value="report_problem">Rapportere problem</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
                     {/* Name */}
                     <div className="space-y-1.5 sm:space-y-2">
                       <Label htmlFor="name" className="text-base sm:text-lg font-display">

@@ -1,33 +1,34 @@
 import { useEffect, useState } from "react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { supabase } from "@/integrations/supabase/client";
-import { Car, Wrench, Inbox, FolderTree, FileText, Mail } from "lucide-react";
+import { Car, Wrench, Inbox, FolderTree, Mail, LifeBuoy, Bell } from "lucide-react";
 import { Link } from "react-router-dom";
 import simcaSwallow from "@/assets/simca-chrome-swallow.png";
+import { Badge } from "@/components/ui/badge";
 
 interface Stats {
   cars: number;
-  submissions: number;
-  unreadSubmissions: number;
   parts: number;
   categories: number;
   inquiries: number;
   unreadInquiries: number;
   messages: number;
   unreadMessages: number;
+  support: number;
+  unreadSupport: number;
 }
 
 const AdminDashboard = () => {
   const [stats, setStats] = useState<Stats>({
     cars: 0,
-    submissions: 0,
-    unreadSubmissions: 0,
     parts: 0,
     categories: 0,
     inquiries: 0,
     unreadInquiries: 0,
     messages: 0,
     unreadMessages: 0,
+    support: 0,
+    unreadSupport: 0,
   });
   const [isLoading, setIsLoading] = useState(true);
 
@@ -36,36 +37,36 @@ const AdminDashboard = () => {
       try {
         const [
           carsRes,
-          submissionsRes,
-          unreadSubmissionsRes,
           partsRes,
           categoriesRes,
           inquiriesRes,
           unreadInquiriesRes,
           messagesRes,
           unreadMessagesRes,
+          supportRes,
+          unreadSupportRes,
         ] = await Promise.all([
           supabase.from("cars").select("id", { count: "exact", head: true }),
-          supabase.from("car_submissions").select("id", { count: "exact", head: true }),
-          supabase.from("car_submissions").select("id", { count: "exact", head: true }).eq("read", false),
           supabase.from("parts").select("id", { count: "exact", head: true }),
           supabase.from("categories").select("id", { count: "exact", head: true }),
           supabase.from("inquiries").select("id", { count: "exact", head: true }),
           supabase.from("inquiries").select("id", { count: "exact", head: true }).eq("read", false),
           supabase.from("messages").select("id", { count: "exact", head: true }),
           supabase.from("messages").select("id", { count: "exact", head: true }).eq("read", false),
+          supabase.from("support_tickets").select("id", { count: "exact", head: true }),
+          supabase.from("support_tickets").select("id", { count: "exact", head: true }).eq("status", "new"),
         ]);
 
         setStats({
           cars: carsRes.count || 0,
-          submissions: submissionsRes.count || 0,
-          unreadSubmissions: unreadSubmissionsRes.count || 0,
           parts: partsRes.count || 0,
           categories: categoriesRes.count || 0,
           inquiries: inquiriesRes.count || 0,
           unreadInquiries: unreadInquiriesRes.count || 0,
           messages: messagesRes.count || 0,
           unreadMessages: unreadMessagesRes.count || 0,
+          support: supportRes.count || 0,
+          unreadSupport: unreadSupportRes.count || 0,
         });
       } catch (err) {
         console.error("Error fetching stats:", err);
@@ -85,15 +86,6 @@ const AdminDashboard = () => {
       icon: Car,
       href: "/admin/biler",
       color: "bg-primary",
-    },
-    {
-      label: "Innsendinger",
-      description: "Nye biler fra brukere",
-      value: stats.submissions,
-      badge: stats.unreadSubmissions,
-      icon: FileText,
-      href: "/admin/innsendinger",
-      color: "bg-amber-600",
     },
     {
       label: "Deler",
@@ -129,9 +121,18 @@ const AdminDashboard = () => {
       href: "/admin/meldinger",
       color: "bg-blue-600",
     },
+    {
+      label: "Support",
+      description: "Rapporterte problemer",
+      value: stats.support,
+      badge: stats.unreadSupport,
+      icon: LifeBuoy,
+      href: "/admin/support",
+      color: "bg-orange-600",
+    },
   ];
 
-  const totalUnread = stats.unreadSubmissions + stats.unreadInquiries + stats.unreadMessages;
+  const totalUnread = stats.unreadInquiries + stats.unreadMessages + stats.unreadSupport;
 
   return (
     <AdminLayout title="KONTROLLPANEL">
@@ -153,6 +154,43 @@ const AdminDashboard = () => {
           )}
         </div>
       </div>
+
+      {/* Alert card for unread items */}
+      {totalUnread > 0 && (
+        <div className="bg-accent/10 border border-accent/30 rounded-xl p-4 mb-6">
+          <div className="flex items-start gap-3">
+            <Bell className="w-5 h-5 text-accent flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="font-medium text-foreground">
+                Du har {totalUnread} ulest{totalUnread !== 1 ? 'e' : ''} melding{totalUnread !== 1 ? 'er' : ''}
+              </p>
+              <div className="flex flex-wrap gap-2 mt-2">
+                {stats.unreadInquiries > 0 && (
+                  <Link to="/admin/foresporsler">
+                    <Badge variant="outline" className="cursor-pointer hover:bg-accent/20">
+                      {stats.unreadInquiries} forespørsel{stats.unreadInquiries !== 1 ? 'er' : ''}
+                    </Badge>
+                  </Link>
+                )}
+                {stats.unreadMessages > 0 && (
+                  <Link to="/admin/meldinger">
+                    <Badge variant="outline" className="cursor-pointer hover:bg-accent/20">
+                      {stats.unreadMessages} kontaktmelding{stats.unreadMessages !== 1 ? 'er' : ''}
+                    </Badge>
+                  </Link>
+                )}
+                {stats.unreadSupport > 0 && (
+                  <Link to="/admin/support">
+                    <Badge variant="outline" className="cursor-pointer hover:bg-accent/20">
+                      {stats.unreadSupport} support ticket{stats.unreadSupport !== 1 ? 's' : ''}
+                    </Badge>
+                  </Link>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Simple menu grid */}
       <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">

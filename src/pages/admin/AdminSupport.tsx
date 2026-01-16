@@ -2,13 +2,14 @@ import { useState, useEffect } from 'react';
 import { AdminLayout } from '@/components/admin/AdminLayout';
 import { useAuth } from '@/hooks/useAuth';
 import { getSupportTickets, updateSupportTicket, getSupportTicketStats, type SupportTicket, type SupportTicketStatus } from '@/data/supportTickets';
+import { deleteSupportTicket } from '@/data/supportTickets';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { Copy, ChevronDown, Image as ImageIcon } from 'lucide-react';
+import { Copy, ChevronDown, Image as ImageIcon, Trash2 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { nb } from 'date-fns/locale';
 import { useToast } from '@/hooks/use-toast';
@@ -24,6 +25,7 @@ export default function AdminSupport() {
   const [status, setStatus] = useState<SupportTicketStatus>('new');
   const [adminNotes, setAdminNotes] = useState('');
   const [isSaving, setIsSaving] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [stats, setStats] = useState({ total: 0, new: 0, high: 0, recent: 0 });
   const [loading, setLoading] = useState(true);
 
@@ -104,6 +106,34 @@ export default function AdminSupport() {
       });
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!selectedTicket) return;
+    if (!confirm('Er du sikker på at du vil slette denne ticketen?')) return;
+
+    setIsDeleting(true);
+    try {
+      const { error } = await deleteSupportTicket(selectedTicket.id);
+      if (error) throw error;
+
+      toast({
+        title: 'Slettet',
+        description: 'Ticket slettet.',
+      });
+
+      setSelectedTicket(null);
+      await loadTickets();
+      await loadStats();
+    } catch (error) {
+      toast({
+        title: 'Feil',
+        description: 'Kunne ikke slette ticket.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -311,6 +341,19 @@ export default function AdminSupport() {
 
                   <Button onClick={handleSave} disabled={isSaving} className="w-full">
                     {isSaving ? 'Lagrer...' : 'Lagre'}
+                  </Button>
+                </div>
+
+                {/* Delete */}
+                <div className="pt-4 border-t">
+                  <Button
+                    variant="destructive"
+                    onClick={handleDelete}
+                    disabled={isDeleting}
+                    className="w-full"
+                  >
+                    <Trash2 className="w-4 h-4 mr-2" />
+                    {isDeleting ? 'Sletter...' : 'Slett ticket'}
                   </Button>
                 </div>
               </div>
