@@ -187,18 +187,22 @@ export function interleaveEditorialFeed<T extends { id: string; story?: string |
 
 /**
  * CSS grid klasser basert på BlockSize
- * Archive/sm får større plass for lesbarhet
+ * Justert for tettere pakking og færre hull
+ * Bruker 12-col grid med spans som summerer pent
  */
 export function getGridClasses(size: BlockSize): string {
   switch (size) {
     case 'xl':
-      return 'col-span-12 md:col-span-10 lg:col-span-12 row-span-2';
+      // Full bredde hero
+      return 'col-span-12';
     case 'lg':
-      return 'col-span-12 md:col-span-7 lg:col-span-7';
+      // 7/12 = ~58% - god for feature
+      return 'col-span-12 md:col-span-7';
     case 'md':
-      return 'col-span-12 md:col-span-6 lg:col-span-5';
+      // 5/12 = ~42% - komplementerer lg
+      return 'col-span-12 md:col-span-5';
     case 'sm':
-      // Sm er nå minimum col-span-4 for lesbarhet
+      // 4/12 = 33% - tre på rad, eller 8/12 på tablet
       return 'col-span-12 md:col-span-6 lg:col-span-4';
     default:
       return 'col-span-12 md:col-span-6';
