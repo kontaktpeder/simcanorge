@@ -404,34 +404,44 @@ function EditorialBlock({ block, index }: EditorialBlockProps): React.ReactNode 
       return (
         <article className={`${gridClasses} relative group`}>
           <LinkWrapper className="block">
-            {/* Full hero image */}
-            <div className="relative aspect-video md:aspect-[21/9] overflow-hidden bg-muted">
-              {primaryImage && (
-                <img 
-                  src={primaryImage} 
-                  alt={imageAlt}
-                  className="w-full h-full object-cover object-center transition-all duration-500 group-hover:-translate-y-1 group-hover:shadow-xl"
-                />
-              )}
-              {/* Overlay gradient */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10" />
+            {/* Månedens bil - featured layout without text overlay */}
+            <div className="grid grid-cols-1 lg:grid-cols-[1fr,340px] gap-0">
+              {/* Clean image - no overlay */}
+              <div className="relative aspect-[4/3] lg:aspect-[16/10] overflow-hidden bg-muted">
+                {primaryImage && (
+                  <img 
+                    src={primaryImage} 
+                    alt={imageAlt}
+                    className="w-full h-full object-cover object-center transition-all duration-500 group-hover:-translate-y-1 group-hover:shadow-xl"
+                  />
+                )}
+                {/* Badge */}
+                <div className="absolute top-4 left-4 md:top-6 md:left-6 bg-accent text-accent-foreground px-3 py-1.5 md:px-4 md:py-2 font-display uppercase text-xs md:text-sm border-2 border-foreground shadow-brutal">
+                  Månedens bil
+                </div>
+              </div>
               
-              {/* Text overlay */}
-              <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10 lg:p-14">
+              {/* Info panel */}
+              <div className="bg-foreground text-background p-6 md:p-8 lg:p-10 flex flex-col justify-center">
                 {car.year && (
-                  <span className="font-serif text-5xl md:text-7xl lg:text-8xl text-white/90 block mb-2 md:mb-4">
+                  <span className="font-serif text-5xl md:text-6xl lg:text-7xl text-background/90 block mb-3">
                     {car.year}
                   </span>
                 )}
-                <h2 className="font-display text-xl md:text-3xl lg:text-4xl text-white tracking-wide uppercase mb-3">
+                <h2 className="font-display text-xl md:text-2xl lg:text-3xl text-background tracking-wide uppercase mb-4">
                   {car.title}
                 </h2>
+                {car.model && (
+                  <span className="font-display text-sm md:text-base text-accent mb-4 block">
+                    {car.model}
+                  </span>
+                )}
                 {excerpt && (
-                  <p className="text-white/80 text-sm md:text-base lg:text-lg max-w-2xl mb-4 line-clamp-2">
+                  <p className="text-background/70 text-sm md:text-base leading-relaxed mb-6 line-clamp-4">
                     {excerpt}
                   </p>
                 )}
-                <span className="font-display text-xs md:text-sm tracking-[0.2em] text-white/90 uppercase">
+                <span className="font-display text-xs md:text-sm tracking-[0.2em] text-accent uppercase group-hover:tracking-[0.3em] transition-all">
                   Les historien →
                 </span>
               </div>
