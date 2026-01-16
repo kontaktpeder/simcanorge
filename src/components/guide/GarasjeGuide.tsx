@@ -280,6 +280,9 @@ export function GarasjeGuide() {
       hideCloseButton
       disableOverlayClose
       spotlightPadding={8}
+      scrollToFirstStep
+      scrollOffset={120}
+      scrollDuration={300}
       callback={handleJoyrideCallback}
       tooltipComponent={CustomTooltip}
       floaterProps={{
