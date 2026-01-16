@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { supabase } from "@/integrations/supabase/client";
+import { getResponsiveImageProps, IMAGE_SIZES } from "@/lib/imageUtils";
 import { Car, Filter, X, Search, History, CheckCircle, Wrench, AlertTriangle, LayoutGrid, List } from "lucide-react";
 import { CAR_BRANDS } from "@/data/carBrands";
 interface CarPost {
@@ -374,7 +375,10 @@ function CarCard({
     return <Link to={`/biler/${car.slug}`} className="border-chrome card-enamel bg-card group card-hover-glow flex flex-col sm:flex-row gap-4 p-4">
       {/* Image - wider aspect ratio */}
       <div className="sm:w-2/5 lg:w-1/3 bg-muted rounded-lg overflow-hidden relative aspect-[16/10] sm:aspect-[4/3] flex-shrink-0">
-        {mainImage ? <img src={mainImage.image_url} alt={mainImage.alt_text || car.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" /> : <div className="w-full h-full flex items-center justify-center">
+        {mainImage ? <img 
+            {...getResponsiveImageProps(mainImage.image_url, mainImage.alt_text || car.title, { sizes: IMAGE_SIZES.featured, priority: true })}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+          /> : <div className="w-full h-full flex items-center justify-center">
             <Car className="w-16 h-16 text-muted-foreground" />
           </div>}
         {categoryBadge && <span className={`absolute top-2 left-2 ${categoryBadge.color} text-white text-[10px] px-2 py-0.5 font-display rounded tracking-wide`}>
@@ -415,7 +419,10 @@ function CarCard({
     return <Link to={`/biler/${car.slug}`} className="border-chrome card-enamel bg-card group card-hover-glow p-1.5 sm:p-2">
       {/* Image - dominant, ~65-70% of card */}
       <div className="bg-muted rounded overflow-hidden relative aspect-[4/3]">
-        {mainImage ? <img src={mainImage.image_url} alt={mainImage.alt_text || car.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" /> : <div className="w-full h-full flex items-center justify-center">
+        {mainImage ? <img 
+            {...getResponsiveImageProps(mainImage.image_url, mainImage.alt_text || car.title, { sizes: IMAGE_SIZES.card, loading: 'lazy' })}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+          /> : <div className="w-full h-full flex items-center justify-center">
             <Car className="w-10 h-10 text-muted-foreground" />
           </div>}
         {categoryBadge && <span className={`absolute top-1 left-1 ${categoryBadge.color} text-white text-[7px] px-1 py-0.5 font-display rounded tracking-wide`}>
@@ -445,7 +452,10 @@ function CarCard({
   return <Link to={`/biler/${car.slug}`} className="border-chrome card-enamel bg-card group card-hover-glow p-2 sm:p-3">
       {/* Image - dominant */}
       <div className="bg-muted rounded overflow-hidden relative aspect-[16/10]">
-        {mainImage ? <img src={mainImage.image_url} alt={mainImage.alt_text || car.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" /> : <div className="w-full h-full flex items-center justify-center">
+        {mainImage ? <img 
+            {...getResponsiveImageProps(mainImage.image_url, mainImage.alt_text || car.title, { sizes: IMAGE_SIZES.card, loading: 'lazy' })}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+          /> : <div className="w-full h-full flex items-center justify-center">
             <Car className="w-12 h-12 text-muted-foreground" />
           </div>}
         {categoryBadge && <span className={`absolute top-1.5 left-1.5 ${categoryBadge.color} text-white text-[8px] px-1.5 py-0.5 font-display rounded tracking-wide`}>
