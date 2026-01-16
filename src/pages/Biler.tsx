@@ -7,14 +7,16 @@ import { Car, Filter, X, Search, History, CheckCircle, Wrench, AlertTriangle } f
 import { CAR_BRANDS } from "@/data/carBrands";
 import { 
   groupCarsByModule, 
-  getModuleOrder, 
   type EditorialModule 
 } from "@/lib/carEditorialResolver";
 import { 
+  interleaveEditorialFeed,
+  getGridClasses,
+  type CarBlock,
+} from "@/lib/editorialFeed";
+import { 
   HeroCarModule, 
   FeatureCarModule, 
-  StandardCarGrid, 
-  ArchiveCarList 
 } from "@/components/biler";
 
 interface CarPost {
@@ -177,11 +179,10 @@ const Biler = () => {
   };
 
   const hasActiveFilters = searchQuery || selectedBrand || selectedDecade;
-  const currentCategoryInfo = CATEGORIES.find(c => c.id === selectedCategory);
 
-  // Group cars by editorial module
+  // Build editorial feed: group → interleave → render as mixed magazine layout
   const groupedCars = groupCarsByModule(cars);
-  const moduleOrder = getModuleOrder();
+  const editorialFeed = interleaveEditorialFeed(groupedCars);
 
   return (
     <Layout>
@@ -287,7 +288,7 @@ const Biler = () => {
         </div>
       </section>
 
-      {/* Editorial Content */}
+      {/* Editorial Feed - Magazine Layout */}
       <section className="py-8 md:py-12">
         <div className="container mx-auto px-4">
           {isLoading ? (
@@ -309,23 +310,23 @@ const Biler = () => {
             </div>
           ) : (
             <>
-              {/* Render modules in order */}
-              {moduleOrder.map((module) => {
-                const moduleCars = groupedCars[module];
-                if (moduleCars.length === 0) return null;
-
-                return (
-                  <ModuleSection 
-                    key={module} 
-                    module={module} 
-                    cars={moduleCars} 
+              {/* Dense grid with mixed blocks */}
+              <div 
+                className="grid grid-cols-12 gap-4 md:gap-6 lg:gap-8"
+                style={{ gridAutoFlow: 'dense' }}
+              >
+                {editorialFeed.map((block, index) => (
+                  <EditorialBlock 
+                    key={block.key} 
+                    block={block} 
+                    index={index}
                   />
-                );
-              })}
+                ))}
+              </div>
 
               {/* Count footer */}
-              <p className="text-center text-muted-foreground mt-12 text-sm font-display">
-                {cars.length} {cars.length === 1 ? 'bil' : 'biler'} i arkivet
+              <p className="text-center text-muted-foreground mt-16 text-sm font-display tracking-wider">
+                {cars.length} {cars.length === 1 ? 'bil' : 'biler'} dokumentert
               </p>
             </>
           )}
@@ -354,58 +355,178 @@ const Biler = () => {
   );
 };
 
-// Module section renderer
-interface ModuleSectionProps {
-  module: EditorialModule;
-  cars: CarPost[];
+/**
+ * Editorial Block - renders a single car in the feed
+ * Uses different layouts based on module type and size
+ */
+interface EditorialBlockProps {
+  block: CarBlock<CarPost>;
+  index: number;
 }
 
-function ModuleSection({ module, cars }: ModuleSectionProps): React.ReactNode {
+function EditorialBlock({ block, index }: EditorialBlockProps): React.ReactNode {
+  const { car, module, size } = block;
+  const gridClasses = getGridClasses(size);
+  
+  // Get primary image
+  const primaryImage = car.car_images?.[0]?.image_url;
+  const imageAlt = car.car_images?.[0]?.alt_text || car.title;
+  
+  // Get excerpt from story
+  const excerpt = car.story 
+    ? car.story.slice(0, module === 'hero' ? 200 : module === 'feature' ? 150 : 80) + (car.story.length > 80 ? '...' : '')
+    : null;
+
+  // Render based on module type
   switch (module) {
     case 'hero':
       return (
-        <div className="mb-8">
-          {cars.map(car => (
-            <HeroCarModule key={car.id} car={car} />
-          ))}
-        </div>
+        <article className={`${gridClasses} relative group`}>
+          <Link to={`/bil/${car.slug}`} className="block">
+            {/* Full hero image */}
+            <div className="relative aspect-[16/10] md:aspect-[21/9] overflow-hidden bg-muted">
+              {primaryImage && (
+                <img 
+                  src={primaryImage} 
+                  alt={imageAlt}
+                  className="w-full h-full object-cover"
+                />
+              )}
+              {/* Overlay gradient */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+              
+              {/* Text overlay */}
+              <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10 lg:p-12">
+                {car.year && (
+                  <span className="font-serif text-4xl md:text-6xl lg:text-7xl text-white/90 block mb-2">
+                    {car.year}
+                  </span>
+                )}
+                <h2 className="font-display text-xl md:text-2xl lg:text-3xl text-white tracking-wide uppercase mb-3">
+                  {car.title}
+                </h2>
+                {excerpt && (
+                  <p className="text-white/70 text-sm md:text-base max-w-2xl mb-4 line-clamp-2">
+                    {excerpt}
+                  </p>
+                )}
+                <span className="font-display text-xs tracking-[0.2em] text-white/80 uppercase">
+                  Les historien →
+                </span>
+              </div>
+            </div>
+          </Link>
+        </article>
       );
 
     case 'feature':
       return (
-        <div className="mb-8 md:mb-12">
-          {/* Section label */}
-          <h2 className="font-display text-xs tracking-[0.3em] text-muted-foreground uppercase mb-8 text-center">
-            Utvalgte historier
-          </h2>
-          {cars.map((car, index) => (
-            <FeatureCarModule 
-              key={car.id} 
-              car={car} 
-              reverse={index % 2 === 1} 
-            />
-          ))}
-        </div>
+        <article className={`${gridClasses} group`}>
+          <Link to={`/bil/${car.slug}`} className="block">
+            {/* Image */}
+            <div className="relative aspect-[4/3] overflow-hidden bg-muted mb-4">
+              {primaryImage && (
+                <img 
+                  src={primaryImage} 
+                  alt={imageAlt}
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.02]"
+                />
+              )}
+            </div>
+            
+            {/* Text content */}
+            <div className="space-y-2">
+              <div className="flex items-baseline gap-3">
+                {car.year && (
+                  <span className="font-serif text-3xl md:text-4xl text-primary/80">
+                    {car.year}
+                  </span>
+                )}
+                <span className="font-display text-xs tracking-[0.15em] text-muted-foreground uppercase">
+                  {car.brand}
+                </span>
+              </div>
+              <h3 className="font-display text-lg md:text-xl tracking-wide uppercase">
+                {car.title}
+              </h3>
+              {excerpt && (
+                <p className="text-muted-foreground text-sm line-clamp-2">
+                  {excerpt}
+                </p>
+              )}
+              <span className="inline-block font-display text-xs tracking-[0.15em] text-primary uppercase pt-2">
+                Les historien →
+              </span>
+            </div>
+          </Link>
+        </article>
       );
 
     case 'standard':
       return (
-        <div className="mb-8 md:mb-12">
-          <h2 className="font-display text-xs tracking-[0.3em] text-muted-foreground uppercase mb-8 text-center">
-            Galleriet
-          </h2>
-          <StandardCarGrid cars={cars} />
-        </div>
+        <article className={`${gridClasses} group`}>
+          <Link to={`/bil/${car.slug}`} className="block">
+            {/* Compact card */}
+            <div className="relative aspect-[3/4] overflow-hidden bg-muted">
+              {primaryImage && (
+                <img 
+                  src={primaryImage} 
+                  alt={imageAlt}
+                  className="w-full h-full object-cover"
+                />
+              )}
+              {/* Bottom gradient */}
+              <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/60 to-transparent" />
+              
+              {/* Text at bottom */}
+              <div className="absolute bottom-0 left-0 right-0 p-4">
+                {car.year && (
+                  <span className="font-serif text-2xl text-white/90 block">
+                    {car.year}
+                  </span>
+                )}
+                <h3 className="font-display text-sm tracking-wide text-white uppercase">
+                  {car.model}
+                </h3>
+              </div>
+            </div>
+          </Link>
+        </article>
       );
 
     case 'archive':
       return (
-        <div className="mb-8 md:mb-12 max-w-3xl mx-auto">
-          <h2 className="font-display text-xs tracking-[0.3em] text-muted-foreground uppercase mb-6 text-center">
-            Arkivnotiser
-          </h2>
-          <ArchiveCarList cars={cars} />
-        </div>
+        <article className={`${gridClasses} group border-b border-foreground/10 pb-4`}>
+          <Link to={`/bil/${car.slug}`} className="flex gap-4 items-start">
+            {/* Small thumbnail */}
+            {primaryImage && (
+              <div className="w-16 h-16 flex-shrink-0 overflow-hidden bg-muted">
+                <img 
+                  src={primaryImage} 
+                  alt={imageAlt}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            )}
+            
+            {/* Text */}
+            <div className="flex-1 min-w-0">
+              <div className="flex items-baseline gap-2">
+                {car.year && (
+                  <span className="font-serif text-lg text-foreground/70">
+                    {car.year}
+                  </span>
+                )}
+                <span className="text-xs text-muted-foreground">
+                  {car.brand}
+                </span>
+              </div>
+              <h3 className="font-display text-sm tracking-wide uppercase truncate">
+                {car.title}
+              </h3>
+            </div>
+          </Link>
+        </article>
       );
 
     default:
