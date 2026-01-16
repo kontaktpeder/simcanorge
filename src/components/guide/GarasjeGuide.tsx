@@ -176,26 +176,31 @@ export function GarasjeGuide() {
   // Handle Joyride callbacks
   const handleJoyrideCallback = useCallback((data: CallBackProps) => {
     const { status, action, index, type } = data;
-    
-    // Handle completion
-    if (status === STATUS.FINISHED) {
-      completeGuide();
+
+    // react-joyride can end the tour either via STATUS.FINISHED/SKIPPED or via end events.
+    if (status === STATUS.FINISHED || type === EVENTS.TOUR_END) {
+      void completeGuide();
       return;
     }
-    
+
     // Handle skip/close
     if (status === STATUS.SKIPPED || action === 'close') {
-      dismissGuide();
+      void dismissGuide();
       return;
     }
-    
-    // Handle step changes
+
+    // Safety: when the user clicks "Neste" on the last step, explicitly complete.
     if (type === EVENTS.STEP_AFTER) {
+      const isLast = index >= GUIDE_STEPS.length - 1;
+      if (isLast && action !== 'prev') {
+        void completeGuide();
+        return;
+      }
+
       const nextIndex = action === 'prev' ? index - 1 : index + 1;
-      
       if (nextIndex >= 0 && nextIndex < GUIDE_STEPS.length) {
         setIsNavigating(true);
-        navigateToStep(nextIndex);
+        void navigateToStep(nextIndex);
       }
     }
   }, [completeGuide, dismissGuide, navigateToStep]);
@@ -237,13 +242,17 @@ export function GarasjeGuide() {
           options: {
             zIndex: 10000,
             primaryColor: 'hsl(var(--primary))',
-            overlayColor: 'rgba(0, 0, 0, 0.6)',
+            // We'll render the dimming via the spotlight boxShadow instead of the overlay layer
+            overlayColor: 'transparent',
           },
+          // Ensure the highlighted area is truly "see-through" and reveals the real UI beneath.
           spotlight: {
             borderRadius: '12px',
+            backgroundColor: 'transparent',
+            boxShadow: '0 0 0 9999px rgba(0, 0, 0, 0.6)',
           },
           overlay: {
-            mixBlendMode: 'normal' as const,
+            backgroundColor: 'transparent',
           },
         }}
         locale={{
