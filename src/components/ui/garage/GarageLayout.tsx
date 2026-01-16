@@ -1,7 +1,9 @@
 import { ReactNode } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, HelpCircle, Sparkles } from 'lucide-react';
+import { useGuide } from '@/hooks/useGuide';
+import { BigActionButton } from './BigActionButton';
 import garageBackground from '@/assets/garage-background.jpg';
 
 interface GarageLayoutProps {
@@ -23,6 +25,10 @@ export function GarageLayout({
   backTo = '/dashboard',
   backLabel = 'Tilbake',
 }: GarageLayoutProps) {
+  const location = useLocation();
+  const { shouldShowGuide, startGuide, isLoading: guideLoading } = useGuide();
+  const isDashboardRoot = location.pathname === '/dashboard';
+
   return (
     <Layout>
       <div className="relative min-h-[calc(100vh-80px)]">
@@ -55,9 +61,34 @@ export function GarageLayout({
                   {subtitle}
                 </p>
               )}
-              <h1 className="font-display text-2xl sm:text-3xl md:text-4xl text-foreground leading-tight">
-                {title}
-              </h1>
+              <div className="flex flex-wrap items-center gap-3 sm:gap-4">
+                <h1 className="font-display text-2xl sm:text-3xl md:text-4xl text-foreground leading-tight">
+                  {title}
+                </h1>
+                
+                {/* Guide-knapp - tydelig i headeren */}
+                {isDashboardRoot && !guideLoading && shouldShowGuide && (
+                  <BigActionButton
+                    onClick={startGuide}
+                    size="lg"
+                    icon={<Sparkles className="w-5 h-5" />}
+                    className="animate-pulse-subtle"
+                  >
+                    Start guide
+                  </BigActionButton>
+                )}
+                
+                {/* Hjelp-knapp for å starte guide manuelt (vises alltid på dashboard) */}
+                {isDashboardRoot && !guideLoading && !shouldShowGuide && (
+                  <button
+                    onClick={startGuide}
+                    className="p-2 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
+                    title="Start garasje-guiden"
+                  >
+                    <HelpCircle className="w-6 h-6" />
+                  </button>
+                )}
+              </div>
               {description && (
                 <p className="text-base sm:text-lg text-muted-foreground max-w-2xl">
                   {description}
