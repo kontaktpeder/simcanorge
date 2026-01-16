@@ -83,7 +83,6 @@ const App = () => (
                 <Route path="/admin/kategorier" element={<AdminKategorier />} />
                 <Route path="/admin/eierprofiler" element={<AdminEierprofiler />} />
                 <Route path="/admin/foresporsler" element={<AdminForesporsler />} />
-                <Route path="/admin/innsendinger" element={<AdminInnsendinger />} />
                 <Route path="/admin/meldinger" element={<AdminMeldinger />} />
                 <Route path="/admin/support" element={<AdminSupport />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
