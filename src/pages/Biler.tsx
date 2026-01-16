@@ -51,10 +51,17 @@ const CATEGORIES = [{
   icon: AlertTriangle,
   description: "Biler som finnes, men som av ulike årsaker ikke er kjørbare."
 }];
+const PAGE_SIZE = 20;
+
 const Biler = () => {
   const [cars, setCars] = useState<CarPost[]>([]);
+  const [featuredCars, setFeaturedCars] = useState<CarPost[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const [totalCount, setTotalCount] = useState(0);
+  const [categoryCounts, setCategoryCounts] = useState<Record<string, number>>({});
 
   // Filters
   const [searchQuery, setSearchQuery] = useState("");
@@ -62,68 +69,178 @@ const Biler = () => {
   const [selectedDecade, setSelectedDecade] = useState<string>("");
   const [selectedCategory, setSelectedCategory] = useState<string>("alle");
   const [viewMode, setViewMode] = useState<"gallery" | "list">("list");
-  useEffect(() => {
-    const fetchCars = async () => {
-      const {
-        data,
-        error
-      } = await supabase.from("cars").select(`
-          id, title, slug, brand, model, year, story, overhauled, tags, featured, published_at, category,
-          car_images(image_url, alt_text)
-        `).not("published_at", "is", null).lte("published_at", new Date().toISOString()).order("published_at", {
-        ascending: false
+
+  // Build base query with filters (for fetching data)
+  const buildQuery = () => {
+    let query = supabase
+      .from("cars")
+      .select(`id, title, slug, brand, model, year, story, overhauled, tags, featured, published_at, category, car_images(image_url, alt_text)`)
+      .not("published_at", "is", null)
+      .lte("published_at", new Date().toISOString());
+
+    // Category filter (server-side)
+    if (selectedCategory !== "alle") {
+      query = query.eq("category", selectedCategory);
+    }
+
+    // Brand filter (server-side)
+    if (selectedBrand) {
+      query = query.eq("brand", selectedBrand);
+    }
+
+    // Decade filter (server-side) - year between decade and decade+9
+    if (selectedDecade) {
+      const decadeStart = parseInt(selectedDecade);
+      const decadeEnd = decadeStart + 9;
+      query = query.gte("year", decadeStart).lte("year", decadeEnd);
+    }
+
+    // Search filter (server-side using ilike)
+    if (searchQuery.trim()) {
+      const q = `%${searchQuery.trim()}%`;
+      query = query.or(`title.ilike.${q},brand.ilike.${q},model.ilike.${q},story.ilike.${q}`);
+    }
+
+    return query;
+  };
+
+  // Build count query with filters
+  const buildCountQuery = () => {
+    let query = supabase
+      .from("cars")
+      .select("id", { count: "exact", head: true })
+      .not("published_at", "is", null)
+      .lte("published_at", new Date().toISOString());
+
+    if (selectedCategory !== "alle") {
+      query = query.eq("category", selectedCategory);
+    }
+    if (selectedBrand) {
+      query = query.eq("brand", selectedBrand);
+    }
+    if (selectedDecade) {
+      const decadeStart = parseInt(selectedDecade);
+      const decadeEnd = decadeStart + 9;
+      query = query.gte("year", decadeStart).lte("year", decadeEnd);
+    }
+    if (searchQuery.trim()) {
+      const q = `%${searchQuery.trim()}%`;
+      query = query.or(`title.ilike.${q},brand.ilike.${q},model.ilike.${q},story.ilike.${q}`);
+    }
+
+    return query;
+  };
+
+  // Fetch category counts (unfiltered)
+  const fetchCategoryCounts = async () => {
+    const { data, error } = await supabase
+      .from("cars")
+      .select("category")
+      .not("published_at", "is", null)
+      .lte("published_at", new Date().toISOString());
+
+    if (!error && data) {
+      const counts: Record<string, number> = { alle: data.length };
+      CATEGORIES.forEach(cat => {
+        if (cat.id !== "alle") {
+          counts[cat.id] = data.filter(c => c.category === cat.id).length;
+        }
       });
-      if (error) {
-        console.error("Error fetching cars:", error);
+      setCategoryCounts(counts);
+    }
+  };
+
+  // Fetch featured cars (always fetch all featured, separate from pagination)
+  const fetchFeaturedCars = async () => {
+    const { data, error } = await buildQuery()
+      .eq("featured", true)
+      .order("published_at", { ascending: false });
+
+    if (!error && data) {
+      setFeaturedCars(data as CarPost[]);
+    }
+  };
+
+  // Fetch paginated non-featured cars
+  const fetchCars = async (reset = true) => {
+    if (reset) {
+      setIsLoading(true);
+      setCars([]);
+    } else {
+      setIsLoadingMore(true);
+    }
+
+    const offset = reset ? 0 : cars.length;
+
+    // Build query for non-featured cars
+    const { data, error } = await buildQuery()
+      .eq("featured", false)
+      .order("published_at", { ascending: false })
+      .range(offset, offset + PAGE_SIZE - 1);
+
+    if (error) {
+      console.error("Error fetching cars:", error);
+    } else {
+      const newCars = (data || []) as CarPost[];
+      if (reset) {
+        setCars(newCars);
       } else {
-        setCars(data || []);
+        setCars(prev => [...prev, ...newCars]);
       }
-      setIsLoading(false);
-    };
-    fetchCars();
+      setHasMore(newCars.length === PAGE_SIZE);
+    }
+
+    // Get total count for display
+    if (reset) {
+      const { count: totalNonFeatured } = await buildCountQuery()
+        .eq("featured", false);
+      
+      setTotalCount((totalNonFeatured || 0) + featuredCars.length);
+    }
+
+    setIsLoading(false);
+    setIsLoadingMore(false);
+  };
+
+  // Initial load: fetch category counts
+  useEffect(() => {
+    fetchCategoryCounts();
   }, []);
 
-  // Filter cars
-  const filteredCars = cars.filter(car => {
-    // Category filter
-    if (selectedCategory !== "alle" && car.category !== selectedCategory) return false;
+  // Fetch cars when filters change
+  useEffect(() => {
+    fetchFeaturedCars();
+    fetchCars(true);
+  }, [selectedCategory, selectedBrand, selectedDecade, searchQuery]);
 
-    // Search query
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase();
-      const matchesSearch = car.title.toLowerCase().includes(query) || car.brand?.toLowerCase().includes(query) || car.model.toLowerCase().includes(query) || car.story?.toLowerCase().includes(query) || car.tags?.some(tag => tag.toLowerCase().includes(query));
-      if (!matchesSearch) return false;
+  // Update total count when featured cars change
+  useEffect(() => {
+    if (!isLoading) {
+      const updateTotalCount = async () => {
+        const { count: totalNonFeatured } = await buildCountQuery()
+          .eq("featured", false);
+        
+        setTotalCount((totalNonFeatured || 0) + featuredCars.length);
+      };
+      updateTotalCount();
     }
+  }, [featuredCars]);
 
-    // Brand filter
-    if (selectedBrand && car.brand !== selectedBrand) return false;
-
-    // Decade filter
-    if (selectedDecade && car.year) {
-      const decade = Math.floor(car.year / 10) * 10;
-      if (decade.toString() !== selectedDecade) return false;
+  const loadMore = () => {
+    if (!isLoadingMore && hasMore) {
+      fetchCars(false);
     }
-    return true;
-  });
-  const featuredCars = filteredCars.filter(car => car.featured);
-  const regularCars = filteredCars.filter(car => !car.featured);
+  };
+
   const clearFilters = () => {
     setSearchQuery("");
     setSelectedBrand("");
     setSelectedDecade("");
   };
+
   const hasActiveFilters = searchQuery || selectedBrand || selectedDecade;
   const currentCategoryInfo = CATEGORIES.find(c => c.id === selectedCategory);
-
-  // Count cars per category
-  const categoryCounts = CATEGORIES.reduce((acc, cat) => {
-    if (cat.id === "alle") {
-      acc[cat.id] = cars.length;
-    } else {
-      acc[cat.id] = cars.filter(c => c.category === cat.id).length;
-    }
-    return acc;
-  }, {} as Record<string, number>);
+  const displayedCount = featuredCars.length + cars.length;
   return <Layout>
       <PageHeader title="BILER" subtitle="Utforsk samlingen av Simca-biler i Norge – fra registrerte klassikere til historiske perler" />
 
@@ -271,47 +388,85 @@ const Biler = () => {
       {/* Gallery */}
       <section className="py-6 md:py-10">
         <div className="px-2 md:container md:mx-auto md:px-4">
-          {isLoading ? <div className="text-center py-12 text-muted-foreground">Laster biler...</div> : filteredCars.length === 0 ? <div className="border-chrome card-enamel bg-card text-center py-12 animate-fade-in mx-2 md:mx-0">
+          {isLoading ? (
+            <div className="text-center py-12 text-muted-foreground">Laster biler...</div>
+          ) : (featuredCars.length === 0 && cars.length === 0) ? (
+            <div className="border-chrome card-enamel bg-card text-center py-12 animate-fade-in mx-2 md:mx-0">
               <Car className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
               <h2 className="headline-md mb-2">INGEN BILER FUNNET</h2>
               <p className="text-muted-foreground mb-4">
                 {hasActiveFilters || selectedCategory !== "alle" ? "Prøv å endre filterene dine" : "Ingen biler er publisert ennå"}
               </p>
-              {(hasActiveFilters || selectedCategory !== "alle") && <div className="flex gap-4 justify-center">
-                  {hasActiveFilters && <button onClick={clearFilters} className="btn-enamel-red">
+              {(hasActiveFilters || selectedCategory !== "alle") && (
+                <div className="flex gap-4 justify-center">
+                  {hasActiveFilters && (
+                    <button onClick={clearFilters} className="btn-enamel-red">
                       Nullstill filter
-                    </button>}
-                  {selectedCategory !== "alle" && <button onClick={() => setSelectedCategory("alle")} className="btn-enamel-blue">
+                    </button>
+                  )}
+                  {selectedCategory !== "alle" && (
+                    <button onClick={() => setSelectedCategory("alle")} className="btn-enamel-blue">
                       Vis alle kategorier
-                    </button>}
-                </div>}
-            </div> : <>
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
+          ) : (
+            <>
               {/* Featured Cars - månedens bil - full width */}
-              {featuredCars.length > 0 && <div className="mb-6 md:mb-10 animate-fade-in">
+              {featuredCars.length > 0 && (
+                <div className="mb-6 md:mb-10 animate-fade-in">
                   <h2 className="headline-md mb-4 md:mb-5 px-1 md:px-0">MÅNEDENS BIL</h2>
                   <div className="space-y-3">
                     {featuredCars.map(car => <CarCard key={car.id} car={car} featured />)}
                   </div>
-                </div>}
+                </div>
+              )}
 
               {/* Regular Cars */}
-              {regularCars.length > 0 && <div className="animate-fade-in-delay-1">
-                  {featuredCars.length > 0 && <h2 className="headline-md mb-4 md:mb-6 px-1 md:px-0">
+              {cars.length > 0 && (
+                <div className="animate-fade-in-delay-1">
+                  {featuredCars.length > 0 && (
+                    <h2 className="headline-md mb-4 md:mb-6 px-1 md:px-0">
                       {selectedCategory === "alle" ? "ALLE BILER" : currentCategoryInfo?.label.toUpperCase()}
-                    </h2>}
+                    </h2>
+                  )}
                   <div className={`grid stagger-children ${
                     viewMode === "list" 
                       ? "grid-cols-1 gap-2.5 lg:gap-4 lg:max-w-4xl lg:mx-auto" 
                       : "grid-cols-2 gap-2 sm:gap-3 lg:grid-cols-2 lg:gap-6 lg:max-w-5xl lg:mx-auto xl:max-w-6xl"
                   }`}>
-                    {regularCars.map(car => <CarCard key={car.id} car={car} viewMode={viewMode} />)}
+                    {cars.map(car => <CarCard key={car.id} car={car} viewMode={viewMode} />)}
                   </div>
-                </div>}
+                </div>
+              )}
+
+              {/* Load More Button */}
+              {hasMore && cars.length > 0 && (
+                <div className="flex justify-center mt-8">
+                  <button
+                    onClick={loadMore}
+                    disabled={isLoadingMore}
+                    className="btn-enamel-blue px-8 py-3 flex items-center gap-2 disabled:opacity-50"
+                  >
+                    {isLoadingMore ? (
+                      <>
+                        <span className="animate-spin">⏳</span>
+                        Laster...
+                      </>
+                    ) : (
+                      "Last flere biler"
+                    )}
+                  </button>
+                </div>
+              )}
 
               <p className="text-center text-muted-foreground mt-6 md:mt-8 text-sm">
-                Viser {filteredCars.length} av {cars.length} biler
+                Viser {displayedCount} av {totalCount} biler
               </p>
-            </>}
+            </>
+          )}
         </div>
       </section>
 
