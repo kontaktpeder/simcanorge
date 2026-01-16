@@ -117,12 +117,13 @@ export default function DashboardMineBiler() {
             if (!car) return null;
             
             return (
-              <CarCardLarge
-                key={car.id}
-                car={car}
-                onClick={() => navigate(`/dashboard/bil/${car.id}`)}
-                index={index}
-              />
+              <div key={car.id} data-guide={index === 0 ? "car-list-item-0" : undefined}>
+                <CarCardLarge
+                  car={car}
+                  onClick={() => navigate(`/dashboard/bil/${car.id}`)}
+                  index={index}
+                />
+              </div>
             );
           })}
         </div>

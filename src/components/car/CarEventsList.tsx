@@ -81,13 +81,15 @@ export function CarEventsList({ carId }: CarEventsListProps) {
             description="Dokumenter viktige hendelser i bilens historie"
             className="mb-0"
           />
-          <BigActionButton
-            icon={<Plus className="w-5 h-5" />}
-            onClick={() => setShowForm(true)}
-            className="w-full sm:w-auto"
-          >
-            Legg til hendelse
-          </BigActionButton>
+          <div data-guide="add-timeline-event">
+            <BigActionButton
+              icon={<Plus className="w-5 h-5" />}
+              onClick={() => setShowForm(true)}
+              className="w-full sm:w-auto"
+            >
+              Legg til hendelse
+            </BigActionButton>
+          </div>
         </div>
       </div>
       

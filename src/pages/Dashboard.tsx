@@ -15,6 +15,7 @@ import { Link } from 'react-router-dom';
 import { SendInnBilForm } from '@/components/car/SendInnBilForm';
 import { OwnerProfileSection } from '@/components/car/OwnerProfileSection';
 import { useOwnerProfile } from '@/hooks/useOwnerProfile';
+import { GuideStartCard } from '@/components/guide';
 
 export default function Dashboard() {
   const { user, isLoading: authLoading } = useAuth();
@@ -166,6 +167,9 @@ export default function Dashboard() {
         </motion.div>
       )}
 
+      {/* Guide start card */}
+      <GuideStartCard />
+
       {/* Dashboard Grid */}
       <div className="grid sm:grid-cols-2 gap-4">
         
@@ -175,7 +179,7 @@ export default function Dashboard() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.1 }}
         >
-          <Link to="/dashboard/mine-biler" className="block h-full">
+          <Link to="/dashboard/mine-biler" className="block h-full" data-guide="my-cars-card">
             <EnamelCard className="h-full min-h-[160px] group">
               <div className="flex items-start justify-between mb-4">
                 <div className="p-3 bg-primary/10 rounded-xl">

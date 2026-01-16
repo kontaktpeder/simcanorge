@@ -4,6 +4,7 @@ import { Menu, X, Home, Star, Car, Wrench, Send, BookOpen, Users, Mail, LogIn, U
 import { useCart } from "@/hooks/useCart";
 import { useAuth } from "@/hooks/useAuth";
 import { SimcaLive } from "@/components/home/SimcaLive";
+import { GuideHelpButton } from "@/components/guide";
 import simcaBadge from "@/assets/simca-badge.png";
 import toolboxIcon from "@/assets/toolbox-icon.png";
 import simcaRallye from "@/assets/simca-rallye-yellow.png";
@@ -458,6 +459,11 @@ export function Header() {
                   <p>{itemCount > 0 ? `${itemCount} deler i verktøykassen` : "Min verktøykasse"}</p>
                 </TooltipContent>
               </Tooltip>
+
+              {/* Guide help button - only for logged in users */}
+              {user && location.pathname.startsWith('/dashboard') && (
+                <GuideHelpButton />
+              )}
 
               {/* User/Login button */}
               {user ? (
