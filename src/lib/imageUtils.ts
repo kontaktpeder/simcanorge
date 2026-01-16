@@ -7,7 +7,7 @@
  * For projects without transform support, we fall back to original images.
  */
 
-const SUPABASE_PROJECT_ID = import.meta.env.VITE_SUPABASE_PROJECT_ID || 'xsmjjkbycrzberloywqm';
+const SUPABASE_PROJECT_ID = import.meta.env.VITE_SUPABASE_PROJECT_ID;
 const SUPABASE_STORAGE_URL = `https://${SUPABASE_PROJECT_ID}.supabase.co/storage/v1`;
 
 // Standard responsive image widths
