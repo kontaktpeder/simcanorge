@@ -225,7 +225,7 @@ const Biler = () => {
       </section>
 
       {/* Filters Bar - minimal */}
-      <section className="bg-card/50 border-b border-foreground/5 sticky top-20 z-40">
+      <section className="border-b border-foreground/10 sticky top-20 z-40 backdrop-blur-sm bg-[hsl(36,16%,82%)]/80">
         <div className="container mx-auto py-3 px-4">
           <div className="flex items-center gap-3 max-w-2xl mx-auto">
             {/* Search */}
