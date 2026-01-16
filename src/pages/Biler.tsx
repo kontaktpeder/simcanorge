@@ -18,6 +18,7 @@ import {
   HeroCarModule, 
   FeatureCarModule, 
 } from "@/components/biler";
+import { NewsprintBackground } from "@/components/editorial/NewsprintBackground";
 
 interface CarPost {
   id: string;
@@ -186,6 +187,9 @@ const Biler = () => {
 
   return (
     <Layout>
+      {/* Newsprint background - only on /biler */}
+      <NewsprintBackground />
+
       <PageHeader 
         title="ARKIVET" 
         subtitle="Historier om Simca, Talbot og Matra i Norge" 
@@ -289,8 +293,9 @@ const Biler = () => {
       </section>
 
       {/* Editorial Feed - Magazine Layout */}
-      <section className="py-8 md:py-12">
-        <div className="container mx-auto px-4">
+      <section className="py-8 md:py-12 lg:py-16 relative">
+        {/* Container with slight right-lean asymmetry */}
+        <div className="max-w-[1440px] mx-auto pl-4 pr-4 md:pl-6 md:pr-10 lg:pl-8 lg:pr-16">
           {isLoading ? (
             <div className="text-center py-20 text-muted-foreground">
               <div className="font-serif text-2xl mb-2">Laster arkivet...</div>
@@ -310,9 +315,9 @@ const Biler = () => {
             </div>
           ) : (
             <>
-              {/* Dense grid with mixed blocks */}
+              {/* Dense grid - tighter gaps, proper auto-flow */}
               <div 
-                className="grid grid-cols-12 gap-4 md:gap-6 lg:gap-8"
+                className="grid grid-cols-12 gap-3 md:gap-4 lg:gap-5 items-start"
                 style={{ gridAutoFlow: 'dense' }}
               >
                 {editorialFeed.map((block, index) => (
