@@ -82,10 +82,10 @@ export function GarageLayout({
                 {isDashboardRoot && !guideLoading && !shouldShowGuide && (
                   <button
                     onClick={startGuide}
-                    className="p-2 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
-                    title="Start garasje-guiden"
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 border border-border hover:border-primary/30 transition-colors text-sm font-medium"
                   >
-                    <HelpCircle className="w-6 h-6" />
+                    <HelpCircle className="w-4 h-4" />
+                    Skal vi vise deg rundt?
                   </button>
                 )}
               </div>
