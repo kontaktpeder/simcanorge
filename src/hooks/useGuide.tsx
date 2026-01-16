@@ -34,14 +34,27 @@ interface GuideContextType {
   navigateToStep: (stepIndex: number) => Promise<void>;
 }
 
-const GuideContext = createContext<GuideContextType | null>(null);
+// Default/fallback values for when context is not available
+const defaultGuideContext: GuideContextType = {
+  isGuideRunning: false,
+  currentStepIndex: 0,
+  shouldShowGuide: false,
+  isLoading: true,
+  firstCarId: null,
+  startGuide: () => {},
+  stopGuide: () => {},
+  nextStep: () => {},
+  prevStep: () => {},
+  skipStep: () => {},
+  completeGuide: async () => {},
+  dismissGuide: async () => {},
+  navigateToStep: async () => {},
+};
+
+const GuideContext = createContext<GuideContextType>(defaultGuideContext);
 
 export function useGuide() {
-  const context = useContext(GuideContext);
-  if (!context) {
-    throw new Error('useGuide must be used within a GuideProvider');
-  }
-  return context;
+  return useContext(GuideContext);
 }
 
 // Guide steps configuration
