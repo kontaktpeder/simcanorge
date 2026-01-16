@@ -33,54 +33,102 @@ export function NewsprintBackground() {
         }}
       />
 
-      {/* Heavy texture layer */}
+      {/* Heavy texture layer - primary fibers */}
       <div
         className="absolute inset-0"
         style={{
           background: `
-            /* Strong vignette */
-            radial-gradient(ellipse at center, transparent 30%, hsla(32, 18%, 65%, 0.35) 100%),
-            /* Vertical fiber - strong */
+            /* Deep vignette */
+            radial-gradient(ellipse at center, transparent 20%, hsla(32, 20%, 58%, 0.45) 100%),
+            /* Thick vertical fibers */
             repeating-linear-gradient(
               90deg,
               transparent 0px,
-              hsla(35, 30%, 60%, 0.12) 1px,
-              transparent 2px
+              hsla(32, 35%, 52%, 0.18) 1px,
+              hsla(35, 30%, 58%, 0.08) 2px,
+              transparent 3px
             ),
-            /* Horizontal fiber - strong */
+            /* Thick horizontal fibers */
             repeating-linear-gradient(
               0deg,
               transparent 0px,
-              hsla(30, 25%, 55%, 0.10) 1px,
-              transparent 3px
-            ),
-            /* Diagonal noise */
+              hsla(30, 32%, 50%, 0.16) 1px,
+              hsla(28, 25%, 55%, 0.06) 2px,
+              transparent 4px
+            )
+          `,
+        }}
+      />
+
+      {/* Secondary grain layer */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background: `
+            /* Dense diagonal hatching */
             repeating-linear-gradient(
               45deg,
-              hsla(40, 20%, 50%, 0.06) 0px,
+              hsla(38, 25%, 48%, 0.12) 0px,
               transparent 1px,
-              transparent 2px
-            ),
-            /* Counter-diagonal */
-            repeating-linear-gradient(
-              -45deg,
-              hsla(35, 25%, 55%, 0.05) 0px,
-              transparent 1px,
+              hsla(35, 20%, 55%, 0.04) 2px,
               transparent 3px
             ),
-            /* Coarse grain */
+            /* Counter-diagonal hatching */
             repeating-linear-gradient(
-              0deg,
-              hsla(38, 20%, 70%, 0.08) 0px,
+              -45deg,
+              hsla(32, 28%, 50%, 0.10) 0px,
               transparent 1px,
-              transparent 6px
+              hsla(30, 22%, 58%, 0.03) 2px,
+              transparent 4px
             ),
-            /* Cross-hatch */
+            /* Micro vertical lines (pulp fibers) */
             repeating-linear-gradient(
               90deg,
-              hsla(34, 18%, 65%, 0.06) 0px,
+              hsla(36, 30%, 45%, 0.08) 0px,
+              transparent 0.5px,
+              transparent 1.5px
+            ),
+            /* Micro horizontal lines */
+            repeating-linear-gradient(
+              0deg,
+              hsla(34, 28%, 48%, 0.06) 0px,
+              transparent 0.5px,
+              transparent 2px
+            )
+          `,
+        }}
+      />
+
+      {/* Coarse grain overlay */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background: `
+            /* Irregular coarse pattern */
+            repeating-linear-gradient(
+              17deg,
+              hsla(35, 22%, 52%, 0.09) 0px,
               transparent 1px,
-              transparent 8px
+              transparent 5px
+            ),
+            repeating-linear-gradient(
+              73deg,
+              hsla(30, 25%, 55%, 0.07) 0px,
+              transparent 1px,
+              transparent 7px
+            ),
+            repeating-linear-gradient(
+              127deg,
+              hsla(38, 20%, 50%, 0.06) 0px,
+              transparent 1px,
+              transparent 4px
+            ),
+            /* Extra fine noise */
+            repeating-linear-gradient(
+              163deg,
+              hsla(33, 18%, 58%, 0.05) 0px,
+              transparent 0.5px,
+              transparent 2px
             )
           `,
         }}
