@@ -31,17 +31,51 @@ export interface CreateSupportTicketInput {
   userId?: string;
 }
 
-export async function createSupportTicket(input: CreateSupportTicketInput): Promise<{ data: SupportTicket | null; error: Error | null }> {
+export async function createSupportTicket(
+  input: CreateSupportTicketInput
+): Promise<{ data: SupportTicket | null; error: Error | null }> {
   try {
-    // Get current user if logged in
-    const { data: { user } } = await supabase.auth.getUser();
-    const userId = input.userId || user?.id || null;
+    const { data: sessionData } = await supabase.auth.getSession();
+    const user = sessionData.session?.user ?? null;
 
-    const debugPayload = input.includeDebugInfo 
-      ? supportLogger.getDebugPayload(userId || undefined) 
+    const userId = input.userId || user?.id || null;
+    const accessToken = sessionData.session?.access_token;
+
+    // For anon users, we must use the anon key as both apikey AND Authorization
+    const authToken = accessToken || import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+
+    // IMPORTANT:
+    // PostgREST will try to SELECT the inserted row when Prefer=return=representation.
+    // Anon users do NOT have SELECT on support_tickets (by design), so that would fail with 42501.
+    // Solution: for anon use return=minimal + generate id client-side.
+    const ticketId = crypto.randomUUID();
+
+    // Upload screenshot first (so we can store the path on INSERT even for anon)
+    let screenshotPath: string | null = null;
+    if (input.screenshot) {
+      try {
+        const timestamp = Date.now();
+        const fileExt = input.screenshot.name.split('.').pop() || 'png';
+        const fileName = `${ticketId}_${timestamp}.${fileExt}`;
+        const filePath = `screenshots/${fileName}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from('support-screenshots')
+          .upload(filePath, input.screenshot);
+
+        if (!uploadError) screenshotPath = filePath;
+      } catch (uploadError) {
+        // Don’t block ticket creation if upload fails
+        console.error('Screenshot upload failed:', uploadError);
+      }
+    }
+
+    const debugPayload = input.includeDebugInfo
+      ? supportLogger.getDebugPayload(userId || undefined)
       : null;
 
     const insertData = {
+      id: ticketId,
       user_id: userId,
       type: input.type,
       severity: input.severity,
@@ -49,26 +83,21 @@ export async function createSupportTicket(input: CreateSupportTicketInput): Prom
       result_text: input.result_text,
       page: window.location.href,
       debug_payload: debugPayload,
+      screenshot_url: screenshotPath, // store path (bucket is private)
       app_version: '1.0.0',
     };
 
-    // Get user's access token if logged in, otherwise use anon key
-    const { data: sessionData } = await supabase.auth.getSession();
-    const accessToken = sessionData?.session?.access_token;
-    
-    // For anon users, we must use the anon key as both apikey AND Authorization
-    const authToken = accessToken || import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+    const prefer = accessToken ? 'return=representation' : 'return=minimal';
 
-    // Use REST API directly to bypass type checking for new table
     const response = await fetch(
       `${import.meta.env.VITE_SUPABASE_URL}/rest/v1/support_tickets`,
       {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'apikey': import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
-          'Authorization': `Bearer ${authToken}`,
-          'Prefer': 'return=representation',
+          apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+          Authorization: `Bearer ${authToken}`,
+          Prefer: prefer,
         },
         body: JSON.stringify(insertData),
       }
@@ -80,50 +109,19 @@ export async function createSupportTicket(input: CreateSupportTicketInput): Prom
       return { data: null, error: new Error(errorData.message || `HTTP ${response.status}`) };
     }
 
-    const tickets = await response.json();
-    const ticket = Array.isArray(tickets) ? tickets[0] : tickets;
-
-    if (!ticket) {
-      return { data: null, error: new Error('Failed to create ticket') };
+    let ticket: SupportTicket;
+    if (accessToken) {
+      const json = await response.json();
+      ticket = (Array.isArray(json) ? json[0] : json) as SupportTicket;
+    } else {
+      ticket = {
+        ...(insertData as unknown as SupportTicket),
+        created_at: new Date().toISOString(),
+        status: 'new',
+      };
     }
 
-    // Upload screenshot if provided (non-blocking)
-    if (input.screenshot && ticket.id) {
-      try {
-        const timestamp = Date.now();
-        const fileExt = input.screenshot.name.split('.').pop();
-        const fileName = `${ticket.id}_${timestamp}.${fileExt}`;
-        const filePath = `screenshots/${fileName}`;
-
-        const { error: uploadError } = await supabase.storage
-          .from('support-screenshots')
-          .upload(filePath, input.screenshot);
-
-        if (!uploadError) {
-          const { data: urlData } = supabase.storage
-            .from('support-screenshots')
-            .getPublicUrl(filePath);
-
-          // Update ticket with screenshot URL
-          await fetch(
-            `${import.meta.env.VITE_SUPABASE_URL}/rest/v1/support_tickets?id=eq.${ticket.id}`,
-            {
-              method: 'PATCH',
-              headers: {
-                'Content-Type': 'application/json',
-                'apikey': import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
-                'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
-              },
-              body: JSON.stringify({ screenshot_url: urlData.publicUrl }),
-            }
-          );
-        }
-      } catch (uploadError) {
-        console.error('Screenshot upload failed:', uploadError);
-      }
-    }
-
-    return { data: ticket as SupportTicket, error: null };
+    return { data: ticket, error: null };
   } catch (error) {
     console.error('Create ticket error:', error);
     return { data: null, error: error instanceof Error ? error : new Error('Unknown error') };
