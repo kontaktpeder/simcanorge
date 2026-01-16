@@ -52,9 +52,12 @@ export async function createSupportTicket(input: CreateSupportTicketInput): Prom
       app_version: '1.0.0',
     };
 
-    // Get user's access token if logged in
-    const { data: session } = await supabase.auth.getSession();
-    const token = session?.session?.access_token || import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+    // Get user's access token if logged in, otherwise use anon key
+    const { data: sessionData } = await supabase.auth.getSession();
+    const accessToken = sessionData?.session?.access_token;
+    
+    // For anon users, we must use the anon key as both apikey AND Authorization
+    const authToken = accessToken || import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
     // Use REST API directly to bypass type checking for new table
     const response = await fetch(
@@ -64,7 +67,7 @@ export async function createSupportTicket(input: CreateSupportTicketInput): Prom
         headers: {
           'Content-Type': 'application/json',
           'apikey': import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
-          'Authorization': `Bearer ${token}`,
+          'Authorization': `Bearer ${authToken}`,
           'Prefer': 'return=representation',
         },
         body: JSON.stringify(insertData),
