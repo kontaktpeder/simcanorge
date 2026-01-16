@@ -294,8 +294,8 @@ const Biler = () => {
 
       {/* Editorial Feed - Magazine Layout */}
       <section className="py-8 md:py-12 lg:py-16 relative">
-        {/* Container with slight right-lean asymmetry */}
-        <div className="max-w-[1440px] mx-auto pl-4 pr-4 md:pl-6 md:pr-10 lg:pl-8 lg:pr-16">
+        {/* Full-width container */}
+        <div className="w-full px-3 md:px-6 lg:px-8 xl:px-12">
           {isLoading ? (
             <div className="text-center py-20 text-muted-foreground">
               <div className="font-serif text-2xl mb-2">Laster arkivet...</div>

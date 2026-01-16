@@ -1,145 +1,112 @@
-import { useEffect, useRef, useState } from 'react';
-
 /**
  * NewsprintBackground
  * 
  * Gir /biler en "gammel avis/magasin"-følelse:
- * - Mørk kremhvit base
- * - Subtil papirtekstur via CSS gradients
- * - Mild parallax på scroll
- * - Nesten usynlige temadetaljer
+ * - Mørkere kremhvit base
+ * - Tydelig papirtekstur via CSS gradients
+ * - Subtile temadetaljer
  */
 export function NewsprintBackground() {
-  const [bgOffset, setBgOffset] = useState(0);
-  const rafRef = useRef<number>();
-  const lastScrollRef = useRef(0);
-
-  useEffect(() => {
-    // Disable parallax on mobile for performance
-    const isMobile = window.innerWidth < 768;
-    if (isMobile) return;
-
-    const handleScroll = () => {
-      if (rafRef.current) return;
-      
-      rafRef.current = requestAnimationFrame(() => {
-        const scrollY = window.scrollY;
-        // Only update if scroll changed significantly
-        if (Math.abs(scrollY - lastScrollRef.current) > 2) {
-          setBgOffset(scrollY * 0.08); // Slow parallax factor
-          lastScrollRef.current = scrollY;
-        }
-        rafRef.current = undefined;
-      });
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-    };
-  }, []);
-
   return (
     <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
-      {/* Base layer: warm cream */}
+      {/* Base layer: darker warm cream */}
       <div 
         className="absolute inset-0"
         style={{
-          backgroundColor: 'hsl(40, 20%, 94%)',
+          backgroundColor: 'hsl(38, 18%, 88%)',
         }}
       />
 
-      {/* Texture layer with parallax */}
+      {/* Heavy texture layer */}
       <div 
-        className="absolute inset-0 will-change-transform"
+        className="absolute inset-0"
         style={{
-          transform: `translateY(${bgOffset}px)`,
-          // Multiple gradient layers for paper texture
           background: `
-            /* Vignette edges */
-            radial-gradient(ellipse at center, transparent 60%, hsl(35, 15%, 88%) 100%),
-            /* Vertical fiber lines */
+            /* Vignette edges - stronger */
+            radial-gradient(ellipse at center, transparent 40%, hsla(35, 15%, 75%, 0.25) 100%),
+            /* Vertical fiber lines - more visible */
             repeating-linear-gradient(
               90deg,
               transparent 0px,
-              transparent 2px,
-              hsla(35, 20%, 80%, 0.03) 2px,
-              hsla(35, 20%, 80%, 0.03) 3px
+              transparent 1px,
+              hsla(35, 25%, 70%, 0.08) 1px,
+              hsla(35, 25%, 70%, 0.08) 2px
             ),
-            /* Horizontal fiber lines */
+            /* Horizontal fiber lines - more visible */
             repeating-linear-gradient(
               0deg,
               transparent 0px,
-              transparent 4px,
-              hsla(30, 15%, 75%, 0.02) 4px,
-              hsla(30, 15%, 75%, 0.02) 5px
+              transparent 2px,
+              hsla(30, 20%, 65%, 0.06) 2px,
+              hsla(30, 20%, 65%, 0.06) 3px
             ),
-            /* Noise-like pattern via small gradients */
+            /* Diagonal noise pattern */
             repeating-linear-gradient(
               45deg,
               transparent 0px,
               transparent 1px,
-              hsla(40, 10%, 70%, 0.015) 1px,
-              hsla(40, 10%, 70%, 0.015) 2px
+              hsla(40, 15%, 60%, 0.04) 1px,
+              hsla(40, 15%, 60%, 0.04) 2px
+            ),
+            /* Counter-diagonal for depth */
+            repeating-linear-gradient(
+              -45deg,
+              transparent 0px,
+              transparent 2px,
+              hsla(35, 20%, 65%, 0.03) 2px,
+              hsla(35, 20%, 65%, 0.03) 3px
+            ),
+            /* Larger grain pattern */
+            repeating-linear-gradient(
+              0deg,
+              hsla(40, 15%, 80%, 0.04) 0px,
+              transparent 1px,
+              transparent 8px
             )
           `,
         }}
       />
 
-      {/* Subtle decorative elements - almost invisible */}
+      {/* Aged paper spots/stains - subtle */}
+      <div 
+        className="absolute inset-0"
+        style={{
+          background: `
+            radial-gradient(circle at 15% 25%, hsla(35, 30%, 70%, 0.08) 0%, transparent 20%),
+            radial-gradient(circle at 85% 45%, hsla(30, 25%, 65%, 0.06) 0%, transparent 25%),
+            radial-gradient(circle at 45% 80%, hsla(38, 20%, 72%, 0.07) 0%, transparent 18%),
+            radial-gradient(circle at 70% 15%, hsla(32, 22%, 68%, 0.05) 0%, transparent 22%)
+          `,
+        }}
+      />
+
+      {/* Subtle decorative elements */}
       
       {/* Left rule line */}
       <div 
-        className="absolute left-[3%] top-0 bottom-0 w-px hidden lg:block"
+        className="absolute left-[2%] top-0 bottom-0 w-px hidden lg:block"
         style={{
-          background: 'linear-gradient(to bottom, transparent, hsla(35, 20%, 60%, 0.06) 20%, hsla(35, 20%, 60%, 0.06) 80%, transparent)',
+          background: 'linear-gradient(to bottom, transparent, hsla(35, 25%, 55%, 0.12) 20%, hsla(35, 25%, 55%, 0.12) 80%, transparent)',
         }}
       />
       
-      {/* Right decorative stamp area */}
-      <div 
-        className="absolute right-[5%] top-[15%] hidden lg:block"
-        style={{
-          transform: `translateY(${bgOffset * 0.5}px)`,
-        }}
-      >
+      {/* Right decorative stamp */}
+      <div className="absolute right-[3%] top-[12%] hidden xl:block">
         <div 
-          className="font-serif text-[10px] tracking-[0.3em] rotate-90 origin-center"
+          className="font-serif text-[9px] tracking-[0.4em] rotate-90 origin-center uppercase"
           style={{
-            color: 'hsla(35, 15%, 50%, 0.04)',
-            textTransform: 'uppercase',
-            letterSpacing: '0.4em',
+            color: 'hsla(35, 20%, 45%, 0.08)',
           }}
         >
           AUTO · ARCHIVE · 19—
         </div>
       </div>
 
-      {/* Bottom ornament */}
+      {/* Corner fold */}
       <div 
-        className="absolute bottom-[10%] left-1/2 -translate-x-1/2 hidden md:block"
+        className="absolute top-0 right-0 w-24 h-24 hidden lg:block"
         style={{
-          transform: `translate(-50%, ${bgOffset * 0.3}px)`,
-        }}
-      >
-        <div 
-          className="font-serif text-2xl"
-          style={{
-            color: 'hsla(35, 20%, 55%, 0.03)',
-            filter: 'blur(0.5px)',
-          }}
-        >
-          ❧
-        </div>
-      </div>
-
-      {/* Top-right corner fold illusion */}
-      <div 
-        className="absolute top-0 right-0 w-32 h-32 hidden lg:block"
-        style={{
-          background: 'linear-gradient(135deg, transparent 50%, hsla(35, 15%, 85%, 0.15) 50%)',
-          opacity: 0.4,
+          background: 'linear-gradient(135deg, transparent 50%, hsla(35, 18%, 82%, 0.3) 50%)',
         }}
       />
     </div>
