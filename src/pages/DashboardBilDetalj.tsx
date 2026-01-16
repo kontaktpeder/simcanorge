@@ -500,13 +500,15 @@ export default function DashboardBilDetalj() {
                     </BigActionButton>
                   </div>
                 ) : (
-                  <BigActionButton
-                    onClick={requestPublication}
-                    variant="outline"
-                    icon={car.status === 'published' ? <EyeOff className="w-5 h-5" /> : <Send className="w-5 h-5" />}
-                  >
-                    {car.status === 'published' ? 'Be admin avpublisere' : 'Be admin publisere'}
-                  </BigActionButton>
+                  <div data-guide="publish-request">
+                    <BigActionButton
+                      onClick={requestPublication}
+                      variant="outline"
+                      icon={car.status === 'published' ? <EyeOff className="w-5 h-5" /> : <Send className="w-5 h-5" />}
+                    >
+                      {car.status === 'published' ? 'Be admin avpublisere' : 'Be admin publisere'}
+                    </BigActionButton>
+                  </div>
                 )}
               </div>
             )}
@@ -531,21 +533,23 @@ export default function DashboardBilDetalj() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.1 }}
         >
-          <EnamelCard className="p-0 overflow-hidden">
+          <EnamelCard className="p-0 overflow-hidden" data-guide="images-section">
             <div className="p-5 border-b border-border">
               <SectionHeader
                 title="Bilder"
                 icon={<ImageIcon className="w-6 h-6" />}
                 description="Første bilde brukes som hovedbilde. Bruk pilene for å endre rekkefølge."
                 action={
-                  <BigActionButton
-                    variant="outline"
-                    onClick={() => fileInputRef.current?.click()}
-                    disabled={isUploadingImages}
-                    icon={<Upload className="w-5 h-5" />}
-                  >
-                    {isUploadingImages ? 'Laster opp...' : 'Last opp'}
-                  </BigActionButton>
+                  <div data-guide="upload-image">
+                    <BigActionButton
+                      variant="outline"
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={isUploadingImages}
+                      icon={<Upload className="w-5 h-5" />}
+                    >
+                      {isUploadingImages ? 'Laster opp...' : 'Last opp'}
+                    </BigActionButton>
+                  </div>
                 }
                 className="mb-0"
               />
@@ -650,9 +654,11 @@ export default function DashboardBilDetalj() {
               icon={<Info className="w-6 h-6" />}
               action={
                 !isEditingBasic ? (
-                  <BigActionButton variant="ghost" onClick={() => setIsEditingBasic(true)} icon={<Pencil className="w-5 h-5" />}>
-                    Rediger
-                  </BigActionButton>
+                  <div data-guide="edit-basic-info">
+                    <BigActionButton variant="ghost" onClick={() => setIsEditingBasic(true)} icon={<Pencil className="w-5 h-5" />}>
+                      Rediger
+                    </BigActionButton>
+                  </div>
                 ) : (
                   <div className="flex gap-2">
                     <BigActionButton onClick={saveBasicInfo} disabled={isSaving} icon={<Save className="w-5 h-5" />}>
@@ -838,9 +844,11 @@ export default function DashboardBilDetalj() {
               description="Fortell historien om bilen din. Hvor kom den fra? Hva har den vært med på?"
               action={
                 !isEditingStory ? (
-                  <BigActionButton variant="ghost" onClick={() => setIsEditingStory(true)} icon={<Pencil className="w-5 h-5" />}>
-                    Rediger
-                  </BigActionButton>
+                  <div data-guide="edit-story">
+                    <BigActionButton variant="ghost" onClick={() => setIsEditingStory(true)} icon={<Pencil className="w-5 h-5" />}>
+                      Rediger
+                    </BigActionButton>
+                  </div>
                 ) : (
                   <div className="flex gap-2">
                     <BigActionButton onClick={saveStory} disabled={isSaving} icon={<Save className="w-5 h-5" />}>

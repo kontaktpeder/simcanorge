@@ -5,8 +5,10 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
+import { GuideProvider } from "@/hooks/useGuide";
 import { ScrollToTop } from "@/components/layout/ScrollToTop";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { GarasjeGuide } from "@/components/guide";
 import Index from "./pages/Index";
 import ManedensBil from "./pages/ManedensBil";
 import Biler from "./pages/Biler";
@@ -48,43 +50,46 @@ const App = () => (
       <BrowserRouter>
         <ScrollToTop />
         <AuthProvider>
-          <ErrorBoundary>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/manedens-bil" element={<ManedensBil />} />
-              <Route path="/biler" element={<Biler />} />
-              <Route path="/biler/:slug" element={<BilDetalj />} />
-              <Route path="/eier/:slug" element={<EierProfil />} />
-              <Route path="/deler" element={<Deler />} />
-              <Route path="/foresporsel" element={<Foresporsel />} />
-              <Route path="/om-oss" element={<OmOss />} />
-              <Route path="/historie" element={<Historie />} />
-              <Route path="/send-inn" element={<SendInnBil />} />
-              <Route path="/kontakt" element={<Kontakt />} />
-              <Route path="/personvern" element={<Personvern />} />
-              <Route path="/accept-invitation" element={<AcceptInvitation />} />
-              <Route path="/i/:token" element={<AcceptInvitation />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/konto" element={<Konto />} />
-              {/* Dashboard routes for car owners */}
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/dashboard/mine-biler" element={<DashboardMineBiler />} />
-              <Route path="/dashboard/bil/:carId" element={<DashboardBilDetalj />} />
-              {/* Admin routes */}
-              <Route path="/admin/login" element={<AdminLogin />} />
-              <Route path="/admin/dashboard" element={<AdminDashboard />} />
-              <Route path="/admin/biler" element={<AdminBiler />} />
-              <Route path="/admin/biler/:carId" element={<AdminBilProfil />} />
-              <Route path="/admin/deler" element={<AdminDeler />} />
-              <Route path="/admin/kategorier" element={<AdminKategorier />} />
-              <Route path="/admin/eierprofiler" element={<AdminEierprofiler />} />
-              <Route path="/admin/foresporsler" element={<AdminForesporsler />} />
-              <Route path="/admin/innsendinger" element={<AdminInnsendinger />} />
-              <Route path="/admin/meldinger" element={<AdminMeldinger />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </ErrorBoundary>
+          <GuideProvider>
+            <GarasjeGuide />
+            <ErrorBoundary>
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/manedens-bil" element={<ManedensBil />} />
+                <Route path="/biler" element={<Biler />} />
+                <Route path="/biler/:slug" element={<BilDetalj />} />
+                <Route path="/eier/:slug" element={<EierProfil />} />
+                <Route path="/deler" element={<Deler />} />
+                <Route path="/foresporsel" element={<Foresporsel />} />
+                <Route path="/om-oss" element={<OmOss />} />
+                <Route path="/historie" element={<Historie />} />
+                <Route path="/send-inn" element={<SendInnBil />} />
+                <Route path="/kontakt" element={<Kontakt />} />
+                <Route path="/personvern" element={<Personvern />} />
+                <Route path="/accept-invitation" element={<AcceptInvitation />} />
+                <Route path="/i/:token" element={<AcceptInvitation />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/konto" element={<Konto />} />
+                {/* Dashboard routes for car owners */}
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/dashboard/mine-biler" element={<DashboardMineBiler />} />
+                <Route path="/dashboard/bil/:carId" element={<DashboardBilDetalj />} />
+                {/* Admin routes */}
+                <Route path="/admin/login" element={<AdminLogin />} />
+                <Route path="/admin/dashboard" element={<AdminDashboard />} />
+                <Route path="/admin/biler" element={<AdminBiler />} />
+                <Route path="/admin/biler/:carId" element={<AdminBilProfil />} />
+                <Route path="/admin/deler" element={<AdminDeler />} />
+                <Route path="/admin/kategorier" element={<AdminKategorier />} />
+                <Route path="/admin/eierprofiler" element={<AdminEierprofiler />} />
+                <Route path="/admin/foresporsler" element={<AdminForesporsler />} />
+                <Route path="/admin/innsendinger" element={<AdminInnsendinger />} />
+                <Route path="/admin/meldinger" element={<AdminMeldinger />} />
+                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </ErrorBoundary>
+          </GuideProvider>
         </AuthProvider>
       </BrowserRouter>
       </TooltipProvider>
