@@ -992,7 +992,13 @@ const AdminBilProfil = () => {
         <CarLinksSection carId={car.id} externalLinks={car.external_links} />
 
         {/* Eiere & Tilgang */}
-        <OwnerSection carId={car.id} isApproved={!!car.approved_at} submittedEmail={car.submitted_by_email} />
+        <OwnerSection 
+          carId={car.id} 
+          isApproved={!!car.approved_at} 
+          submittedEmail={car.submitted_by_email}
+          carTitle={car.title}
+          submittedName={car.submitted_by_name}
+        />
 
         {/* Forhåndsvisning */}
         {status === 'published' && car.slug && (

@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { useEmailGenerator } from '@/contexts/EmailGeneratorContext';
 import { toast } from 'sonner';
-import { Copy, Check, Trash2, Users, Mail, Link as LinkIcon, Clock } from 'lucide-react';
+import { Copy, Check, Trash2, Users, Mail, Link as LinkIcon, Clock, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
@@ -25,9 +26,11 @@ interface OwnerSectionProps {
   carId: string;
   isApproved: boolean;
   submittedEmail?: string | null;
+  carTitle?: string;
+  submittedName?: string | null;
 }
 
-export function OwnerSection({ carId, isApproved, submittedEmail }: OwnerSectionProps) {
+export function OwnerSection({ carId, isApproved, submittedEmail, carTitle, submittedName }: OwnerSectionProps) {
   const [ownerEmail, setOwnerEmail] = useState(submittedEmail || '');
   const [owners, setOwners] = useState<Owner[]>([]);
   const [invitations, setInvitations] = useState<Invitation[]>([]);
@@ -35,6 +38,7 @@ export function OwnerSection({ carId, isApproved, submittedEmail }: OwnerSection
   const [copiedLink, setCopiedLink] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const { user } = useAuth();
+  const { openEmailGenerator } = useEmailGenerator();
 
   // Pre-fill email from submitted email when it changes
   useEffect(() => {
@@ -385,6 +389,21 @@ export function OwnerSection({ carId, isApproved, submittedEmail }: OwnerSection
                       Utløper om {daysLeft} {daysLeft === 1 ? 'dag' : 'dager'}
                     </span>
                   </div>
+                  
+                  {/* E-postgenerator knapp */}
+                  <Button
+                    onClick={() => openEmailGenerator({
+                      recipientEmail: invitation.email,
+                      recipientName: submittedName || '',
+                      inviteLink: magicLink,
+                      carName: carTitle || '',
+                    })}
+                    className="w-full mt-2"
+                    variant="default"
+                  >
+                    <Send className="w-4 h-4 mr-2" />
+                    Åpne E-postgenerator
+                  </Button>
                 </div>
               );
             })}
