@@ -38,8 +38,8 @@ function getBlockSize(module: EditorialModule, index: number, car: { story?: str
       const hasLongStory = car.story && car.story.length > 300;
       return hasLongStory ? 'md' : 'sm';
     case 'archive':
-      // Archive skal ALDRI være for liten - minimum 'md' for notis-lesbarhet
-      return 'md';
+      // Archive får 'lg' for å fylle mer av skjermen
+      return 'lg';
     default:
       return 'md';
   }

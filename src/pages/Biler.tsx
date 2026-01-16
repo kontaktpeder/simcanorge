@@ -404,16 +404,16 @@ function EditorialBlock({ block, index }: EditorialBlockProps): React.ReactNode 
       return (
         <article className={`${gridClasses} relative group`}>
           <LinkWrapper className="block">
-            {/* Full hero image - aspect-video for safe framing */}
+            {/* Full hero image */}
             <div className="relative aspect-video md:aspect-[21/9] overflow-hidden bg-muted">
               {primaryImage && (
                 <img 
                   src={primaryImage} 
                   alt={imageAlt}
-                  className="w-full h-full object-cover object-center"
+                  className="w-full h-full object-cover object-center transition-all duration-500 group-hover:-translate-y-1 group-hover:shadow-xl"
                 />
               )}
-              {/* Stronger overlay gradient for text readability */}
+              {/* Overlay gradient */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10" />
               
               {/* Text overlay */}
@@ -444,13 +444,13 @@ function EditorialBlock({ block, index }: EditorialBlockProps): React.ReactNode 
       return (
         <article className={`${gridClasses} group`}>
           <LinkWrapper className="block">
-            {/* Image - use 3/2 aspect ratio for magazine feel */}
+            {/* Image with float on hover */}
             <div className="relative aspect-[3/2] overflow-hidden bg-muted mb-4">
               {primaryImage && (
                 <img 
                   src={primaryImage} 
                   alt={imageAlt}
-                  className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-[1.02]"
+                  className="w-full h-full object-cover object-center transition-all duration-500 group-hover:-translate-y-1.5 group-hover:scale-[1.01]"
                 />
               )}
             </div>
@@ -487,8 +487,8 @@ function EditorialBlock({ block, index }: EditorialBlockProps): React.ReactNode 
       return (
         <article className={`${gridClasses} group`}>
           <LinkWrapper className="block">
-            {/* Compact card - 4/3 aspect for balanced framing */}
-            <div className="relative aspect-[4/3] overflow-hidden bg-muted">
+            {/* Compact card with float on hover */}
+            <div className="relative aspect-[4/3] overflow-hidden bg-muted transition-all duration-500 group-hover:-translate-y-1 group-hover:shadow-lg">
               {primaryImage && (
                 <img 
                   src={primaryImage} 
@@ -516,14 +516,14 @@ function EditorialBlock({ block, index }: EditorialBlockProps): React.ReactNode 
       );
 
     case 'archive':
-      // Archive as "notis" - larger, more readable newspaper clipping style
+      // Archive as full-width notis card with hover float
       return (
         <article className={`${gridClasses} group`}>
-          <LinkWrapper className="block p-5 md:p-6 bg-card/50 border border-foreground/10 hover:border-foreground/20 transition-colors">
-            <div className="flex gap-5 items-start">
-              {/* Optional thumbnail - larger and cleaner */}
+          <LinkWrapper className="block p-5 md:p-6 bg-card/60 border border-foreground/10 transition-all duration-500 hover:-translate-y-1 hover:shadow-md hover:border-foreground/20">
+            <div className="flex gap-5 md:gap-6 items-start">
+              {/* Thumbnail with float */}
               {primaryImage && (
-                <div className="w-20 h-20 md:w-24 md:h-24 flex-shrink-0 overflow-hidden bg-muted">
+                <div className="w-24 h-24 md:w-28 md:h-28 flex-shrink-0 overflow-hidden bg-muted transition-transform duration-500 group-hover:-translate-y-0.5">
                   <img 
                     src={primaryImage} 
                     alt={imageAlt}
@@ -532,26 +532,26 @@ function EditorialBlock({ block, index }: EditorialBlockProps): React.ReactNode 
                 </div>
               )}
               
-              {/* Text content - notis style */}
-              <div className="flex-1 min-w-0 space-y-2">
-                {/* Year as dominant element */}
+              {/* Text content */}
+              <div className="flex-1 min-w-0 space-y-1.5">
+                {/* Year */}
                 {car.year && (
-                  <span className="font-serif text-3xl md:text-4xl text-primary/70 block leading-none">
+                  <span className="font-serif text-4xl md:text-5xl text-primary/70 block leading-none">
                     {car.year}
                   </span>
                 )}
                 
-                {/* Brand/model line */}
+                {/* Brand/model */}
                 <span className="font-display text-xs tracking-[0.15em] text-muted-foreground uppercase block">
                   {car.brand} · {car.model}
                 </span>
                 
                 {/* Title */}
-                <h3 className="font-display text-base md:text-lg tracking-wide uppercase leading-tight">
+                <h3 className="font-display text-lg md:text-xl tracking-wide uppercase leading-tight">
                   {car.title}
                 </h3>
                 
-                {/* Short excerpt/teaser */}
+                {/* Excerpt */}
                 {excerpt && (
                   <p className="text-muted-foreground text-sm line-clamp-2 leading-relaxed">
                     {excerpt}
@@ -559,8 +559,8 @@ function EditorialBlock({ block, index }: EditorialBlockProps): React.ReactNode 
                 )}
                 
                 {/* CTA */}
-                <span className="inline-block font-display text-xs tracking-[0.15em] text-primary uppercase pt-1">
-                  Les →
+                <span className="inline-block font-display text-xs tracking-[0.15em] text-primary uppercase pt-2">
+                  Les historien →
                 </span>
               </div>
             </div>
