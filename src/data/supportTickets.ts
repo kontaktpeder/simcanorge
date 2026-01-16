@@ -33,6 +33,7 @@ export interface CreateSupportTicketInput {
 
 export async function createSupportTicket(input: CreateSupportTicketInput): Promise<{ data: SupportTicket | null; error: Error | null }> {
   try {
+    // Get current user if logged in
     const { data: { user } } = await supabase.auth.getUser();
     const userId = input.userId || user?.id || null;
 
@@ -40,8 +41,6 @@ export async function createSupportTicket(input: CreateSupportTicketInput): Prom
       ? supportLogger.getDebugPayload(userId || undefined) 
       : null;
 
-    // Use raw SQL-like approach via RPC or direct insert
-    // Since the table is new and types aren't generated yet, we work around it
     const insertData = {
       user_id: userId,
       type: input.type,
@@ -53,14 +52,10 @@ export async function createSupportTicket(input: CreateSupportTicketInput): Prom
       app_version: '1.0.0',
     };
 
-    const { data: ticket, error: insertError } = await supabase
-      .rpc('insert_support_ticket' as never, insertData as never)
-      .single();
-
-    // Fallback: try direct insert if RPC doesn't exist
-    if (insertError) {
-      // Direct REST API call
-      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/rest/v1/support_tickets`, {
+    // Use REST API directly to bypass type checking for new table
+    const response = await fetch(
+      `${import.meta.env.VITE_SUPABASE_URL}/rest/v1/support_tickets`,
+      {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -69,63 +64,62 @@ export async function createSupportTicket(input: CreateSupportTicketInput): Prom
           'Prefer': 'return=representation',
         },
         body: JSON.stringify(insertData),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        return { data: null, error: new Error(errorData.message || 'Failed to create ticket') };
       }
+    );
 
-      const [createdTicket] = await response.json();
-      
-      // Upload screenshot if provided
-      if (input.screenshot && createdTicket?.id) {
-        await uploadScreenshot(createdTicket.id, input.screenshot);
-      }
-
-      return { data: createdTicket as SupportTicket, error: null };
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
+      console.error('Insert error:', errorData);
+      return { data: null, error: new Error(errorData.message || `HTTP ${response.status}`) };
     }
 
-    // Upload screenshot if provided
-    if (input.screenshot && (ticket as any)?.id) {
-      await uploadScreenshot((ticket as any).id, input.screenshot);
+    const tickets = await response.json();
+    const ticket = Array.isArray(tickets) ? tickets[0] : tickets;
+
+    if (!ticket) {
+      return { data: null, error: new Error('Failed to create ticket') };
     }
 
-    return { data: ticket as unknown as SupportTicket, error: null };
+    // Upload screenshot if provided (non-blocking)
+    if (input.screenshot && ticket.id) {
+      try {
+        const timestamp = Date.now();
+        const fileExt = input.screenshot.name.split('.').pop();
+        const fileName = `${ticket.id}_${timestamp}.${fileExt}`;
+        const filePath = `screenshots/${fileName}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from('support-screenshots')
+          .upload(filePath, input.screenshot);
+
+        if (!uploadError) {
+          const { data: urlData } = supabase.storage
+            .from('support-screenshots')
+            .getPublicUrl(filePath);
+
+          // Update ticket with screenshot URL
+          await fetch(
+            `${import.meta.env.VITE_SUPABASE_URL}/rest/v1/support_tickets?id=eq.${ticket.id}`,
+            {
+              method: 'PATCH',
+              headers: {
+                'Content-Type': 'application/json',
+                'apikey': import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+                'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+              },
+              body: JSON.stringify({ screenshot_url: urlData.publicUrl }),
+            }
+          );
+        }
+      } catch (uploadError) {
+        console.error('Screenshot upload failed:', uploadError);
+      }
+    }
+
+    return { data: ticket as SupportTicket, error: null };
   } catch (error) {
+    console.error('Create ticket error:', error);
     return { data: null, error: error instanceof Error ? error : new Error('Unknown error') };
-  }
-}
-
-async function uploadScreenshot(ticketId: string, file: File): Promise<void> {
-  try {
-    const timestamp = Date.now();
-    const fileExt = file.name.split('.').pop();
-    const fileName = `${ticketId}_${timestamp}.${fileExt}`;
-    const filePath = `screenshots/${fileName}`;
-
-    const { error: uploadError } = await supabase.storage
-      .from('support-screenshots')
-      .upload(filePath, file);
-
-    if (!uploadError) {
-      const { data: urlData } = supabase.storage
-        .from('support-screenshots')
-        .getPublicUrl(filePath);
-
-      // Update ticket with screenshot URL via REST
-      await fetch(`${import.meta.env.VITE_SUPABASE_URL}/rest/v1/support_tickets?id=eq.${ticketId}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'apikey': import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
-          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
-        },
-        body: JSON.stringify({ screenshot_url: urlData.publicUrl }),
-      });
-    }
-  } catch (uploadError) {
-    console.error('Screenshot upload failed:', uploadError);
   }
 }
 
@@ -138,7 +132,7 @@ export async function getSupportTickets(filters?: {
     const { data: session } = await supabase.auth.getSession();
     const token = session?.session?.access_token || import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
-    let url = `${import.meta.env.VITE_SUPABASE_URL}/rest/v1/support_tickets?select=*&order=severity.desc,created_at.desc`;
+    let url = `${import.meta.env.VITE_SUPABASE_URL}/rest/v1/support_tickets?select=*&order=created_at.desc`;
 
     if (filters?.status) {
       url += `&status=eq.${filters.status}`;
@@ -162,7 +156,9 @@ export async function getSupportTickets(filters?: {
     });
 
     if (!response.ok) {
-      throw new Error('Failed to fetch tickets');
+      const errorData = await response.json().catch(() => ({}));
+      console.error('Fetch tickets error:', errorData);
+      return { data: null, error: new Error('Failed to fetch tickets') };
     }
 
     const data = await response.json();
@@ -183,19 +179,22 @@ export async function updateSupportTicket(
     const { data: session } = await supabase.auth.getSession();
     const token = session?.session?.access_token || import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
-    const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/rest/v1/support_tickets?id=eq.${id}`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-        'apikey': import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
-        'Authorization': `Bearer ${token}`,
-        'Prefer': 'return=representation',
-      },
-      body: JSON.stringify(updates),
-    });
+    const response = await fetch(
+      `${import.meta.env.VITE_SUPABASE_URL}/rest/v1/support_tickets?id=eq.${id}`,
+      {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+          'Authorization': `Bearer ${token}`,
+          'Prefer': 'return=representation',
+        },
+        body: JSON.stringify(updates),
+      }
+    );
 
     if (!response.ok) {
-      throw new Error('Failed to update ticket');
+      return { data: null, error: new Error('Failed to update ticket') };
     }
 
     const [data] = await response.json();
@@ -233,11 +232,18 @@ export async function getSupportTicketStats(): Promise<{
       fetch(`${baseUrl}/rest/v1/support_tickets?select=id&created_at=gte.${sevenDaysAgo.toISOString()}`, { headers, method: 'HEAD' }),
     ]);
 
+    const parseCount = (res: Response) => {
+      const range = res.headers.get('content-range');
+      if (!range) return 0;
+      const parts = range.split('/');
+      return parseInt(parts[1] || '0', 10);
+    };
+
     return {
-      total: parseInt(totalRes.headers.get('content-range')?.split('/')[1] || '0'),
-      new: parseInt(newRes.headers.get('content-range')?.split('/')[1] || '0'),
-      high: parseInt(highRes.headers.get('content-range')?.split('/')[1] || '0'),
-      recent: parseInt(recentRes.headers.get('content-range')?.split('/')[1] || '0'),
+      total: parseCount(totalRes),
+      new: parseCount(newRes),
+      high: parseCount(highRes),
+      recent: parseCount(recentRes),
     };
   } catch {
     return null;
