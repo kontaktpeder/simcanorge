@@ -1,21 +1,40 @@
 /**
  * NewsprintBackground
  * 
- * Gammel avis/magasin-bakgrunn med tung tekstur
+ * Gammel avis/magasin-bakgrunn med tung tekstur.
+ * Setter også document/body-bakgrunn for å unngå "hvit glippe" på mobil (Safari UI/overscroll).
  */
+
+import { useEffect } from "react";
+
+const NEWSPRINT_BASE = "hsl(36 16% 82%)";
+
 export function NewsprintBackground() {
+  useEffect(() => {
+    const prevHtmlBg = document.documentElement.style.backgroundColor;
+    const prevBodyBg = document.body.style.backgroundColor;
+
+    document.documentElement.style.backgroundColor = NEWSPRINT_BASE;
+    document.body.style.backgroundColor = NEWSPRINT_BASE;
+
+    return () => {
+      document.documentElement.style.backgroundColor = prevHtmlBg;
+      document.body.style.backgroundColor = prevBodyBg;
+    };
+  }, []);
+
   return (
     <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
       {/* Base layer: darker warm cream */}
-      <div 
+      <div
         className="absolute inset-0"
         style={{
-          backgroundColor: 'hsl(36, 16%, 82%)',
+          backgroundColor: NEWSPRINT_BASE,
         }}
       />
 
       {/* Heavy texture layer */}
-      <div 
+      <div
         className="absolute inset-0"
         style={{
           background: `
@@ -68,7 +87,7 @@ export function NewsprintBackground() {
       />
 
       {/* Aged paper spots */}
-      <div 
+      <div
         className="absolute inset-0"
         style={{
           background: `
@@ -82,30 +101,33 @@ export function NewsprintBackground() {
       />
 
       {/* Left rule line */}
-      <div 
+      <div
         className="absolute left-[1.5%] top-0 bottom-0 w-px hidden lg:block"
         style={{
-          background: 'linear-gradient(to bottom, transparent, hsla(32, 30%, 45%, 0.18) 15%, hsla(32, 30%, 45%, 0.18) 85%, transparent)',
+          background:
+            "linear-gradient(to bottom, transparent, hsla(32, 30%, 45%, 0.18) 15%, hsla(32, 30%, 45%, 0.18) 85%, transparent)",
         }}
       />
-      
+
       {/* Right stamp */}
       <div className="absolute right-[2%] top-[10%] hidden xl:block">
-        <div 
+        <div
           className="font-serif text-[8px] tracking-[0.5em] rotate-90 origin-center uppercase"
-          style={{ color: 'hsla(32, 25%, 40%, 0.12)' }}
+          style={{ color: "hsla(32, 25%, 40%, 0.12)" }}
         >
           AUTO · ARCHIVE · 19—
         </div>
       </div>
 
       {/* Corner fold */}
-      <div 
+      <div
         className="absolute top-0 right-0 w-20 h-20 hidden lg:block"
         style={{
-          background: 'linear-gradient(135deg, transparent 50%, hsla(32, 20%, 75%, 0.4) 50%)',
+          background:
+            "linear-gradient(135deg, transparent 50%, hsla(32, 20%, 75%, 0.4) 50%)",
         }}
       />
     </div>
   );
 }
+
