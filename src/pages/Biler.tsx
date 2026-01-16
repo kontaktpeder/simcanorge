@@ -315,9 +315,9 @@ const Biler = () => {
             </div>
           ) : (
             <>
-              {/* Dense grid - tighter gaps, proper auto-flow */}
+              {/* Dense grid - tighter gaps, auto-flow dense fills holes */}
               <div 
-                className="grid grid-cols-12 gap-3 md:gap-4 lg:gap-5 items-start"
+                className="grid grid-cols-12 gap-2 md:gap-3 lg:gap-4 auto-rows-auto"
                 style={{ gridAutoFlow: 'dense' }}
               >
                 {editorialFeed.map((block, index) => (
