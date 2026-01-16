@@ -1,6 +1,6 @@
 import Joyride, { CallBackProps, STATUS, EVENTS, Step } from 'react-joyride';
-import { useGuide, GUIDE_STEPS, CURRENT_GUIDE_VERSION } from '@/hooks/useGuide';
-import { useEffect, useState, useCallback } from 'react';
+import { useGuide, GUIDE_STEPS } from '@/hooks/useGuide';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -99,39 +99,79 @@ export function GarasjeGuide() {
   const { 
     isGuideRunning, 
     currentStepIndex, 
-    stopGuide, 
     completeGuide, 
     dismissGuide,
     navigateToStep,
+    nextStep,
+    firstCarId,
   } = useGuide();
   
   const location = useLocation();
   const [stepIndex, setStepIndex] = useState(currentStepIndex);
   const [targetExists, setTargetExists] = useState(false);
+  const [isNavigating, setIsNavigating] = useState(false);
+  const checkAttemptsRef = useRef(0);
+  const maxCheckAttempts = 10;
   
   // Sync step index with context
   useEffect(() => {
     setStepIndex(currentStepIndex);
+    checkAttemptsRef.current = 0;
+    setIsNavigating(true);
   }, [currentStepIndex]);
   
-  // Check if target element exists
+  // Check if target element exists with retries
   useEffect(() => {
     if (!isGuideRunning) return;
     
     const checkTarget = () => {
       const step = GUIDE_STEPS[stepIndex];
-      if (!step) return;
+      if (!step) {
+        setTargetExists(false);
+        setIsNavigating(false);
+        return;
+      }
       
       const element = document.querySelector(step.target);
-      setTargetExists(!!element);
+      
+      if (element) {
+        setTargetExists(true);
+        setIsNavigating(false);
+        checkAttemptsRef.current = 0;
+      } else {
+        checkAttemptsRef.current += 1;
+        
+        if (checkAttemptsRef.current >= maxCheckAttempts) {
+          // Element not found after max attempts, skip to next step or complete
+          console.warn(`Guide: Element ${step.target} not found, skipping step`);
+          setIsNavigating(false);
+          
+          if (stepIndex < GUIDE_STEPS.length - 1) {
+            nextStep();
+          } else {
+            completeGuide();
+          }
+        }
+      }
     };
     
-    // Check immediately and after a short delay (for elements that render after navigation)
+    // Check immediately
     checkTarget();
-    const timer = setTimeout(checkTarget, 500);
     
-    return () => clearTimeout(timer);
-  }, [isGuideRunning, stepIndex, location.pathname]);
+    // Keep checking with interval if navigating
+    const interval = setInterval(() => {
+      if (checkAttemptsRef.current < maxCheckAttempts && !targetExists) {
+        checkTarget();
+      }
+    }, 300);
+    
+    return () => clearInterval(interval);
+  }, [isGuideRunning, stepIndex, location.pathname, targetExists, nextStep, completeGuide]);
+  
+  // Reset targetExists when step changes
+  useEffect(() => {
+    setTargetExists(false);
+  }, [stepIndex]);
   
   // Handle Joyride callbacks
   const handleJoyrideCallback = useCallback((data: CallBackProps) => {
@@ -150,10 +190,11 @@ export function GarasjeGuide() {
     }
     
     // Handle step changes
-    if (type === EVENTS.STEP_AFTER || type === EVENTS.TARGET_NOT_FOUND) {
+    if (type === EVENTS.STEP_AFTER) {
       const nextIndex = action === 'prev' ? index - 1 : index + 1;
       
       if (nextIndex >= 0 && nextIndex < GUIDE_STEPS.length) {
+        setIsNavigating(true);
         navigateToStep(nextIndex);
       }
     }
@@ -171,12 +212,16 @@ export function GarasjeGuide() {
   
   if (!isGuideRunning) return null;
   
+  // If user has no cars and we're trying to show car-detail steps, skip those
+  const currentStep = GUIDE_STEPS[stepIndex];
+  const needsCarButHasNone = currentStep?.routeType === 'car-detail' && !firstCarId;
+  
   return (
     <>
       <Joyride
         steps={joyrideSteps}
         stepIndex={stepIndex}
-        run={isGuideRunning && targetExists}
+        run={isGuideRunning && targetExists && !isNavigating && !needsCarButHasNone}
         continuous
         showProgress
         showSkipButton
@@ -210,9 +255,9 @@ export function GarasjeGuide() {
         }}
       />
       
-      {/* Loading overlay when target doesn't exist */}
+      {/* Loading overlay when navigating */}
       <AnimatePresence>
-        {isGuideRunning && !targetExists && (
+        {isGuideRunning && isNavigating && !targetExists && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -221,7 +266,7 @@ export function GarasjeGuide() {
           >
             <div className="bg-card rounded-xl p-6 shadow-2xl max-w-sm mx-4 text-center">
               <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-              <p className="text-muted-foreground">Navigerer...</p>
+              <p className="text-muted-foreground">Laster inn...</p>
               <button
                 onClick={() => dismissGuide()}
                 className="mt-4 text-sm text-muted-foreground hover:text-foreground transition-colors"
