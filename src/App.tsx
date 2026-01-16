@@ -27,6 +27,7 @@ import AdminKategorier from "./pages/admin/AdminKategorier";
 import AdminForesporsler from "./pages/admin/AdminForesporsler";
 import AdminInnsendinger from "./pages/admin/AdminInnsendinger";
 import AdminMeldinger from "./pages/admin/AdminMeldinger";
+import AdminSupport from "./pages/admin/AdminSupport";
 import SendInnBil from "./pages/SendInnBil";
 import Personvern from "./pages/Personvern";
 import AcceptInvitation from "./pages/AcceptInvitation";
@@ -85,6 +86,7 @@ const App = () => (
                 <Route path="/admin/foresporsler" element={<AdminForesporsler />} />
                 <Route path="/admin/innsendinger" element={<AdminInnsendinger />} />
                 <Route path="/admin/meldinger" element={<AdminMeldinger />} />
+                <Route path="/admin/support" element={<AdminSupport />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
