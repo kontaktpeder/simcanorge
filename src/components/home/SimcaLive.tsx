@@ -236,8 +236,8 @@ export const SimcaLive = ({ isHeaderMode = false }: SimcaLiveProps) => {
     <div
       className={`
         hidden md:block fixed top-24 left-4 z-40
-        transition-all duration-700 ease-out
-        ${isLoaded ? "opacity-100 translate-x-0 scale-100" : "opacity-0 -translate-x-8 scale-95"}
+        transition-opacity duration-700 ease-out
+        ${isLoaded ? "opacity-100" : "opacity-0"}
       `}
     >
       {/* Outer chrome frame - tighter radius */}

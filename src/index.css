@@ -122,6 +122,8 @@
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
+    /* Hindre horisontal scroll i Chrome */
+    overflow-x: hidden;
   }
 
   body {
