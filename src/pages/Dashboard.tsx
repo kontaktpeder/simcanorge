@@ -167,7 +167,7 @@ export default function Dashboard() {
       )}
 
       {/* Dashboard Grid */}
-      <div className="grid sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
         
         {/* Mine biler - kort */}
         <motion.div
@@ -175,25 +175,25 @@ export default function Dashboard() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.1 }}
         >
-          <Link to="/dashboard/mine-biler" className="block h-full" data-guide="my-cars-card">
-            <EnamelCard className="h-full min-h-[160px] group">
-              <div className="flex items-start justify-between mb-4">
-                <div className="p-3 bg-primary/10 rounded-xl">
-                  <Car className="w-8 h-8 text-primary" />
+          <Link to="/dashboard/mine-biler" className="block h-full touch-manipulation" data-guide="my-cars-card">
+            <EnamelCard className="h-full min-h-[140px] sm:min-h-[160px] group">
+              <div className="flex items-start justify-between mb-3 sm:mb-4">
+                <div className="p-2.5 sm:p-3 bg-primary/10 rounded-xl flex-shrink-0">
+                  <Car className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
                 </div>
                 <div className="text-right">
-                  <p className="font-display text-3xl text-primary">
+                  <p className="font-display text-2xl sm:text-3xl text-primary">
                     {carsLoading ? '...' : carCount || 0}
                   </p>
-                  <p className="text-base text-muted-foreground">
+                  <p className="text-sm sm:text-base text-muted-foreground">
                     {carCount === 1 ? 'bil' : 'biler'}
                   </p>
                 </div>
               </div>
-              <h3 className="font-display text-xl mb-2 group-hover:text-primary transition-colors">
+              <h3 className="font-display text-lg sm:text-xl mb-1 sm:mb-2 group-hover:text-primary transition-colors">
                 Mine biler
               </h3>
-              <p className="text-base text-muted-foreground">
+              <p className="text-sm sm:text-base text-muted-foreground line-clamp-2">
                 Se og rediger biler du eier
               </p>
             </EnamelCard>
@@ -207,18 +207,18 @@ export default function Dashboard() {
           transition={{ duration: 0.3, delay: 0.2 }}
         >
           <EnamelCard 
-            className="h-full min-h-[160px] group cursor-pointer" 
+            className="h-full min-h-[140px] sm:min-h-[160px] group cursor-pointer touch-manipulation" 
             onClick={handleOpenForm}
           >
-            <div className="flex items-start justify-between mb-4">
-              <div className="p-3 bg-primary/10 rounded-xl">
-                <Send className="w-8 h-8 text-primary" />
+            <div className="flex items-start justify-between mb-3 sm:mb-4">
+              <div className="p-2.5 sm:p-3 bg-primary/10 rounded-xl flex-shrink-0">
+                <Send className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
               </div>
             </div>
-            <h3 className="font-display text-xl mb-2 group-hover:text-primary transition-colors">
+            <h3 className="font-display text-lg sm:text-xl mb-1 sm:mb-2 group-hover:text-primary transition-colors">
               Send inn ny bil
             </h3>
-            <p className="text-base text-muted-foreground">
+            <p className="text-sm sm:text-base text-muted-foreground line-clamp-2">
               Legg til en ny bil i din garasje
             </p>
           </EnamelCard>
@@ -231,23 +231,23 @@ export default function Dashboard() {
           transition={{ duration: 0.3, delay: 0.3 }}
         >
           <EnamelCard 
-            className="h-full min-h-[160px] group cursor-pointer" 
+            className="h-full min-h-[140px] sm:min-h-[160px] group cursor-pointer touch-manipulation" 
             onClick={handleOpenOwnerProfile}
           >
-            <div className="flex items-start justify-between mb-4">
-              <div className="p-3 bg-primary/10 rounded-xl">
-                <User className="w-8 h-8 text-primary" />
+            <div className="flex items-start justify-between mb-3 sm:mb-4">
+              <div className="p-2.5 sm:p-3 bg-primary/10 rounded-xl flex-shrink-0">
+                <User className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
               </div>
               {ownerProfile?.visible_public && (
-                <span className="text-xs bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 px-2 py-1 rounded-full">
+                <span className="text-[10px] sm:text-xs bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full whitespace-nowrap">
                   Offentlig
                 </span>
               )}
             </div>
-            <h3 className="font-display text-xl mb-2 group-hover:text-primary transition-colors">
+            <h3 className="font-display text-lg sm:text-xl mb-1 sm:mb-2 group-hover:text-primary transition-colors">
               Min eierprofil
             </h3>
-            <p className="text-base text-muted-foreground">
+            <p className="text-sm sm:text-base text-muted-foreground line-clamp-2">
               {ownerProfile ? 'Rediger din eierprofil' : 'Opprett din eierprofil'}
             </p>
           </EnamelCard>
@@ -259,17 +259,17 @@ export default function Dashboard() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.4 }}
         >
-          <Link to="/konto" className="block h-full">
-            <EnamelCard className="h-full min-h-[160px] group">
-              <div className="flex items-start justify-between mb-4">
-                <div className="p-3 bg-primary/10 rounded-xl">
-                  <Settings className="w-8 h-8 text-primary" />
+          <Link to="/konto" className="block h-full touch-manipulation">
+            <EnamelCard className="h-full min-h-[140px] sm:min-h-[160px] group">
+              <div className="flex items-start justify-between mb-3 sm:mb-4">
+                <div className="p-2.5 sm:p-3 bg-primary/10 rounded-xl flex-shrink-0">
+                  <Settings className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
                 </div>
               </div>
-              <h3 className="font-display text-xl mb-2 group-hover:text-primary transition-colors">
+              <h3 className="font-display text-lg sm:text-xl mb-1 sm:mb-2 group-hover:text-primary transition-colors">
                 Konto
               </h3>
-              <p className="text-base text-muted-foreground">
+              <p className="text-sm sm:text-base text-muted-foreground line-clamp-2">
                 Innlogging, personvern og innstillinger
               </p>
             </EnamelCard>

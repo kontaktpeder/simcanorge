@@ -31,27 +31,30 @@ export function GarageLayout({
 
   return (
     <Layout>
-      <div className="relative min-h-[calc(100vh-80px)]">
+      <div className="relative min-h-[calc(100vh-80px)] min-h-[calc(100dvh-80px)]">
         {/* Bakgrunnsbilde */}
         <div
-          className="fixed inset-0 bg-cover bg-center bg-no-repeat -z-10"
-          style={{ backgroundImage: `url(${garageBackground})` }}
+          className="fixed inset-0 bg-cover bg-center bg-no-repeat -z-10 will-change-transform"
+          style={{ 
+            backgroundImage: `url(${garageBackground})`,
+            backgroundAttachment: 'scroll' // Bedre ytelse på mobil
+          }}
         />
         
         {/* Overlay for lesbarhet */}
-        <div className="fixed inset-0 bg-background/60 -z-10" />
+        <div className="fixed inset-0 bg-background/60 -z-10 will-change-transform" />
         
         {/* Innhold */}
-        <div className="container px-4 sm:px-6 py-6 sm:py-8 animate-fade-in">
+        <div className="container px-4 sm:px-6 py-6 sm:py-8 animate-fade-in pb-safe">
           {/* Header */}
           <div className="max-w-4xl mx-auto mb-6 sm:mb-8">
             {showBackButton && (
               <Link
                 to={backTo}
-                className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-4 sm:mb-6 transition-colors text-base sm:text-lg min-h-[48px] active:scale-95"
+                className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-4 sm:mb-6 transition-colors text-base sm:text-lg min-h-[44px] active:scale-95 touch-manipulation"
               >
-                <ArrowLeft className="w-5 h-5" />
-                {backLabel}
+                <ArrowLeft className="w-5 h-5 flex-shrink-0" />
+                <span className="truncate">{backLabel}</span>
               </Link>
             )}
             
@@ -62,7 +65,7 @@ export function GarageLayout({
                 </p>
               )}
               <div className="flex flex-wrap items-center gap-3 sm:gap-4">
-                <h1 className="font-display text-2xl sm:text-3xl md:text-4xl text-foreground leading-tight">
+                <h1 className="font-display text-2xl sm:text-3xl md:text-4xl text-foreground leading-tight break-words hyphens-auto">
                   {title}
                 </h1>
                 

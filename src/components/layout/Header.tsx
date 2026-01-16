@@ -310,28 +310,28 @@ export function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/50 shadow-sm">
+    <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/50 shadow-sm will-change-transform">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-14 md:h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 hover-lift">
+          <Link to="/" className="flex items-center gap-2 hover-lift flex-shrink-0">
             <FadeImage 
               src={simcaBadge} 
               alt="Simca Norge" 
-              className="h-10 md:h-12 w-auto drop-shadow-md"
+              className="h-10 md:h-12 w-auto drop-shadow-md flex-shrink-0"
               fadeDuration={400}
             />
-            <div className="hidden sm:block">
-              <span className="font-display text-lg md:text-xl text-primary">SIMCA</span>
-              <span className="font-display text-lg md:text-xl text-accent ml-1">NORGE</span>
+            <div className="hidden sm:flex items-baseline flex-shrink-0">
+              <span className="font-display text-lg md:text-xl text-primary whitespace-nowrap">SIMCA</span>
+              <span className="font-display text-lg md:text-xl text-accent ml-1 whitespace-nowrap">NORGE</span>
             </div>
           </Link>
 
           {/* Garage with parked car - shows after animation or on non-home pages */}
           {!isHome && (
-            <div className={`hidden lg:flex items-center mx-4 ${isDrivingToGarage ? 'animate-fade-in' : ''}`}>
+            <div className={`hidden lg:flex items-center mx-4 flex-shrink-0 ${isDrivingToGarage ? 'animate-fade-in' : ''}`}>
               <div 
-                className="relative px-5 py-3 rounded-t-lg overflow-hidden"
+                className="relative px-5 py-3 rounded-t-lg overflow-hidden flex-shrink-0"
                 style={{
                   background: 'linear-gradient(180deg, #c4d4e0 0%, #a8bccf 40%, #8fa5b8 100%)',
                   boxShadow: 'inset 0 2px 6px rgba(255,255,255,0.3), inset 0 -2px 8px rgba(0,0,0,0.2), 0 4px 12px rgba(0,0,0,0.3)',
@@ -370,10 +370,11 @@ export function Header() {
                 />
                 {/* Fluorescent light effect */}
                 <div 
-                  className="absolute top-3 left-1/2 -translate-x-1/2 w-8 h-0.5 rounded-full"
+                  className="absolute top-3 left-1/2 w-8 h-0.5 rounded-full"
                   style={{
                     background: 'rgba(255,255,255,0.9)',
-                    boxShadow: '0 0 6px 2px rgba(255,255,255,0.5), 0 2px 8px rgba(255,255,255,0.3)'
+                    boxShadow: '0 0 6px 2px rgba(255,255,255,0.5), 0 2px 8px rgba(255,255,255,0.3)',
+                    transform: 'translateX(-50%)'
                   }}
                 />
                 {/* Concrete floor with yellow line */}
@@ -384,8 +385,12 @@ export function Header() {
                   }}
                 >
                   <div 
-                    className="absolute top-1/2 -translate-y-1/2 left-2 right-2 h-0.5"
-                    style={{ background: '#eab308' }}
+                    className="absolute left-2 right-2 h-0.5"
+                    style={{ 
+                      background: '#eab308',
+                      top: '50%',
+                      transform: 'translateY(-50%)'
+                    }}
                   />
                 </div>
                 {/* Tool shadows on wall (subtle) */}
@@ -395,14 +400,14 @@ export function Header() {
                 <img 
                   src={simcaRallye} 
                   alt="Parkert Simca" 
-                  className="h-[26px] w-auto object-contain drop-shadow-lg relative z-10 mt-1"
+                  className="h-[26px] w-auto object-contain drop-shadow-lg relative z-10 mt-1 flex-shrink-0"
                 />
               </div>
             </div>
           )}
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-1">
+          <nav className="hidden lg:flex items-center gap-1 flex-shrink min-w-0">
             <TooltipProvider delayDuration={200}>
               {navItems.map((item) => {
                 const IconComponent = item.icon;
