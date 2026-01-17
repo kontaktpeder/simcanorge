@@ -120,8 +120,8 @@ ${senderInfo.email}`;
   };
 
   const copyAll = () => {
-    // Only copy body text - mobile clipboards can URL-encode structured text with "Til:", "Emne:" etc.
-    copyToClipboard(generateEmailBody(), 'alt');
+    const fullEmail = `Til: ${recipientEmail}\nEmne: ${emailSubject}\n\n${generateEmailBody()}`;
+    copyToClipboard(fullEmail, 'alt');
   };
 
   const copySubject = () => {
