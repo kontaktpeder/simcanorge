@@ -529,16 +529,8 @@ export function Header() {
             </TooltipProvider>
           </nav>
 
-          {/* Mobile: Support + SimcaLive + Toolbox + Menu */}
+          {/* Mobile: SimcaLive + Toolbox + Menu */}
           <div className="lg:hidden flex items-center gap-1.5">
-            {/* Report problem on mobile */}
-            <button
-              onClick={() => setReportModalOpen(true)}
-              className="p-1.5 hover:bg-muted/50 rounded-lg transition-colors"
-              aria-label="Rapporter et problem"
-            >
-              <Bug className="w-5 h-5 text-muted-foreground" />
-            </button>
             {/* SimcaLive in header on mobile */}
             <div className="flex-shrink-0">
               <SimcaLive isHeaderMode />
@@ -633,6 +625,18 @@ export function Header() {
                   Logg inn i din bil
                 </Link>
               )}
+
+              {/* Report problem button in mobile menu */}
+              <button
+                onClick={() => {
+                  setReportModalOpen(true);
+                  setMobileMenuOpen(false);
+                }}
+                className="flex items-center gap-3 font-display text-sm uppercase tracking-wide py-2.5 px-4 rounded-lg text-muted-foreground hover:bg-muted/30 mt-3 border-t border-border/50 pt-4"
+              >
+                <Bug className="w-5 h-5" />
+                Rapporter et problem
+              </button>
             </div>
           </nav>
         )}
