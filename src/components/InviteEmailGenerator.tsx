@@ -119,9 +119,16 @@ ${senderInfo.email}`;
     }
   };
 
-  const copyAll = () => {
+  const copyAllBody = () => {
+    // Mobile e-post-apper kan oppføre seg rart hvis du limer flerlinjet tekst inn i "Til"-feltet.
+    // Denne varianten kopierer kun brødteksten, som er trygg å lime rett inn i meldingsfeltet.
+    copyToClipboard(generateEmailBody(), 'alt');
+  };
+
+  const copyAllFull = () => {
+    // Full e-post (Til + Emne + brødtekst). Tips: lim dette i brødtekst/Notater, ikke i "Til"-feltet.
     const fullEmail = `Til: ${recipientEmail}\nEmne: ${emailSubject}\n\n${generateEmailBody()}`;
-    copyToClipboard(fullEmail, 'alt');
+    copyToClipboard(fullEmail, 'alt_full');
   };
 
   const copySubject = () => {
@@ -251,13 +258,46 @@ ${senderInfo.email}`;
             </div>
           </div>
 
-          {/* Kopier alt */}
-          <Button onClick={copyAll} disabled={!isValid} className="w-full" size="lg">
-            {copiedSection === 'alt' ? <><Check className="w-4 h-4 mr-2" />Alt kopiert!</> : <><Copy className="w-4 h-4 mr-2" />Kopier alt</>}
-          </Button>
+          {/* Kopier */}
+          <div className="grid gap-2">
+            <Button onClick={copyAllBody} disabled={!isValid} className="w-full" size="lg">
+              {copiedSection === 'alt' ? (
+                <>
+                  <Check className="w-4 h-4 mr-2" />Brødtekst kopiert!
+                </>
+              ) : (
+                <>
+                  <Copy className="w-4 h-4 mr-2" />Kopier brødtekst
+                </>
+              )}
+            </Button>
+
+            <Button
+              onClick={copyAllFull}
+              disabled={!isValid}
+              className="w-full"
+              size="lg"
+              variant="outline"
+            >
+              {copiedSection === 'alt_full' ? (
+                <>
+                  <Check className="w-4 h-4 mr-2" />Alt kopiert!
+                </>
+              ) : (
+                <>
+                  <Copy className="w-4 h-4 mr-2" />Kopier alt (Til + Emne + tekst)
+                </>
+              )}
+            </Button>
+          </div>
           {!isValid && (
             <p className="text-xs text-muted-foreground text-center">
               Fyll ut mottaker e-post og tilgangslenke for å kunne kopiere
+            </p>
+          )}
+          {isValid && (
+            <p className="text-xs text-muted-foreground text-center">
+              Tips på mobil: Lim inn i brødtekstfeltet (ikke i «Til»-feltet).
             </p>
           )}
         </div>
