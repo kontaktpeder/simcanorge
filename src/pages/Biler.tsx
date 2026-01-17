@@ -16,7 +16,8 @@ import {
 } from "@/lib/editorialFeed";
 import { 
   HeroCarModule, 
-  FeatureCarModule, 
+  FeatureCarModule,
+  MonthlyCoverModule,
 } from "@/components/biler";
 import { NewsprintBackground } from "@/components/editorial/NewsprintBackground";
 
@@ -181,8 +182,12 @@ const Biler = () => {
 
   const hasActiveFilters = searchQuery || selectedBrand || selectedDecade;
 
+  // Extract "månedens bil" first - either featured=true or editorial_status='manedens_bil'
+  const monthlyCar = cars.find(c => c.featured || c.editorial_status === 'manedens_bil');
+  const remainingCars = cars.filter(c => c.id !== monthlyCar?.id);
+
   // Build editorial feed: group → interleave → render as mixed magazine layout
-  const groupedCars = groupCarsByModule(cars);
+  const groupedCars = groupCarsByModule(remainingCars);
   const editorialFeed = interleaveEditorialFeed(groupedCars);
 
   return (
@@ -315,6 +320,11 @@ const Biler = () => {
             </div>
           ) : (
             <>
+              {/* Månedens bil - Cover module at top */}
+              {monthlyCar && (
+                <MonthlyCoverModule car={monthlyCar} />
+              )}
+
               {/* Dense grid - tighter gaps, auto-flow dense fills holes */}
               <div 
                 className="grid grid-cols-12 gap-2 md:gap-3 lg:gap-4 auto-rows-auto"
@@ -401,49 +411,54 @@ function EditorialBlock({ block, index }: EditorialBlockProps): React.ReactNode 
   // Render based on module type
   switch (module) {
     case 'hero':
+      // TopStory style - newspaper lead article (not cover, that's MonthlyCoverModule)
       return (
         <article className={`${gridClasses} relative group`}>
           <LinkWrapper className="block">
-            {/* Månedens bil - featured layout without text overlay */}
-            <div className="grid grid-cols-1 lg:grid-cols-[1fr,340px] gap-0">
-              {/* Clean image - no overlay */}
-              <div className="relative aspect-[4/3] lg:aspect-[16/10] overflow-hidden bg-muted">
-                {primaryImage && (
-                  <img 
-                    src={primaryImage} 
-                    alt={imageAlt}
-                    className="w-full h-full object-cover object-center transition-all duration-500 group-hover:-translate-y-1 group-hover:shadow-xl"
-                  />
-                )}
-                {/* Badge */}
-                <div className="absolute top-4 left-4 md:top-6 md:left-6 bg-accent text-accent-foreground px-3 py-1.5 md:px-4 md:py-2 font-display uppercase text-xs md:text-sm border-2 border-foreground shadow-brutal">
-                  Månedens bil
-                </div>
-              </div>
+            {/* Full-width image with gradient */}
+            <div className="relative aspect-[16/9] md:aspect-[21/9] overflow-hidden bg-muted">
+              {primaryImage && (
+                <img 
+                  src={primaryImage} 
+                  alt={imageAlt}
+                  className="w-full h-full object-cover object-center transition-all duration-500 group-hover:scale-[1.01]"
+                />
+              )}
+              {/* Gradient overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
               
-              {/* Info panel */}
-              <div className="bg-foreground text-background p-6 md:p-8 lg:p-10 flex flex-col justify-center">
-                {car.year && (
-                  <span className="font-serif text-5xl md:text-6xl lg:text-7xl text-background/90 block mb-3">
-                    {car.year}
+              {/* Text overlay at bottom */}
+              <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10 lg:p-14">
+                <div className="max-w-4xl">
+                  {/* Year as dominant element */}
+                  {car.year && (
+                    <span className="font-serif text-4xl md:text-6xl lg:text-8xl text-white/90 block mb-2 md:mb-4">
+                      {car.year}
+                    </span>
+                  )}
+                  
+                  {/* Brand */}
+                  <span className="font-display text-xs md:text-sm tracking-[0.2em] text-white/60 uppercase block mb-2">
+                    {car.brand}
                   </span>
-                )}
-                <h2 className="font-display text-xl md:text-2xl lg:text-3xl text-background tracking-wide uppercase mb-4">
-                  {car.title}
-                </h2>
-                {car.model && (
-                  <span className="font-display text-sm md:text-base text-accent mb-4 block">
-                    {car.model}
+                  
+                  {/* Title */}
+                  <h2 className="font-display text-2xl md:text-4xl lg:text-5xl text-white leading-tight mb-3 md:mb-4">
+                    {car.title}
+                  </h2>
+                  
+                  {/* Excerpt on larger screens */}
+                  {excerpt && (
+                    <p className="hidden md:block text-white/80 text-lg lg:text-xl max-w-2xl leading-relaxed mb-4 line-clamp-2">
+                      {excerpt}
+                    </p>
+                  )}
+                  
+                  {/* CTA */}
+                  <span className="inline-block font-display text-sm md:text-base text-accent tracking-wider uppercase group-hover:tracking-widest transition-all">
+                    Les historien →
                   </span>
-                )}
-                {excerpt && (
-                  <p className="text-background/70 text-sm md:text-base leading-relaxed mb-6 line-clamp-4">
-                    {excerpt}
-                  </p>
-                )}
-                <span className="font-display text-xs md:text-sm tracking-[0.2em] text-accent uppercase group-hover:tracking-[0.3em] transition-all">
-                  Les historien →
-                </span>
+                </div>
               </div>
             </div>
           </LinkWrapper>
