@@ -2,8 +2,15 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Copy, Mail, Check, Link as LinkIcon } from 'lucide-react';
+import { Copy, Mail, Check, Link as LinkIcon, StickyNote } from 'lucide-react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import {
   Dialog,
@@ -157,16 +164,29 @@ ${senderInfo.email}`;
           {/* Avsender */}
           <div className="space-y-2">
             <Label className="text-sm font-medium">Velg avsender *</Label>
-            <RadioGroup value={sender} onValueChange={(v) => setSender(v as 'peder' | 'peter')} className="flex gap-4">
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="peder" id="peder" />
-                <Label htmlFor="peder" className="cursor-pointer">Peder</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="peter" id="peter" />
-                <Label htmlFor="peter" className="cursor-pointer">Peter</Label>
-              </div>
-            </RadioGroup>
+            <Select value={sender} onValueChange={(v) => setSender(v as 'peder' | 'peter')}>
+              <SelectTrigger className="w-full bg-background">
+                <SelectValue placeholder="Velg avsender" />
+              </SelectTrigger>
+              <SelectContent className="bg-background z-50">
+                <SelectItem value="peder">Peder August Halvorsen</SelectItem>
+                <SelectItem value="peter">Peter Arnt Halvorsen</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Notat */}
+          <div className="space-y-2">
+            <Label htmlFor="senderNote" className="text-sm font-medium flex items-center gap-1">
+              <StickyNote className="w-3 h-3" />
+              Internt notat (valgfritt)
+            </Label>
+            <Textarea
+              id="senderNote"
+              placeholder="F.eks. «Sendt via Gmail 17. jan», «Venter på svar»..."
+              className="resize-none h-16 text-sm"
+            />
+            <p className="text-xs text-muted-foreground">Notatet lagres ikke – kun for din egen oversikt mens modalen er åpen.</p>
           </div>
 
           {/* Mottaker navn */}
