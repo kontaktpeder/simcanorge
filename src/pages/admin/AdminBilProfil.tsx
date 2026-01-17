@@ -874,7 +874,7 @@ const AdminBilProfil = () => {
           </div>
 
           {sortedImages.length > 0 ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2">
               {sortedImages.map((img, index) => (
                 <div key={img.id} className="relative group">
                   <img
@@ -883,13 +883,13 @@ const AdminBilProfil = () => {
                     className="w-full aspect-square object-cover rounded-lg border"
                   />
                   {index === 0 && (
-                    <span className="absolute top-1 left-1 bg-primary text-primary-foreground text-[10px] px-1.5 py-0.5 rounded">
-                      Hovedbilde
+                    <span className="absolute top-1 left-1 bg-primary text-primary-foreground text-[10px] px-1 py-0.5 rounded">
+                      Hoved
                     </span>
                   )}
                   <button
                     onClick={() => deleteImage(img.id)}
-                    className="absolute top-1 right-1 bg-red-500 text-white p-1 rounded opacity-0 group-hover:opacity-100 transition-opacity"
+                    className="absolute top-1 right-1 bg-red-500/90 text-white p-1.5 rounded-full md:opacity-0 md:group-hover:opacity-100 transition-opacity"
                   >
                     <X className="w-3 h-3" />
                   </button>
