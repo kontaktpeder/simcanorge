@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useEmailGenerator } from '@/contexts/EmailGeneratorContext';
 import { toast } from 'sonner';
-import { Copy, Check, Trash2, Users, Mail, Link as LinkIcon, Clock, Send } from 'lucide-react';
+import { Copy, Check, Trash2, Users, Mail, Link as LinkIcon, Clock, Send, StickyNote, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
@@ -20,6 +20,8 @@ interface Invitation {
   token: string;
   expires_at: string;
   created_at: string;
+  sent_by?: string | null;
+  sender_note?: string | null;
 }
 
 interface OwnerSectionProps {
@@ -69,26 +71,26 @@ export function OwnerSection({ carId, isApproved, submittedEmail, carTitle, subm
   }, [carId]);
 
   // Fetch active invitations
-  useEffect(() => {
-    const fetchInvitations = async () => {
-      if (!carId) return;
-      
-      const { data, error } = await supabase
-        .from('car_invitations')
-        .select('*')
-        .eq('car_id', carId)
-        .is('used_at', null)
-        .gt('expires_at', new Date().toISOString())
-        .order('created_at', { ascending: false });
-      
-      if (error) {
-        console.error('Error fetching invitations:', error);
-      } else {
-        setInvitations(data || []);
-      }
-      setIsLoading(false);
-    };
+  const fetchInvitations = async () => {
+    if (!carId) return;
     
+    const { data, error } = await supabase
+      .from('car_invitations')
+      .select('*')
+      .eq('car_id', carId)
+      .is('used_at', null)
+      .gt('expires_at', new Date().toISOString())
+      .order('created_at', { ascending: false });
+    
+    if (error) {
+      console.error('Error fetching invitations:', error);
+    } else {
+      setInvitations(data || []);
+    }
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
     fetchInvitations();
   }, [carId]);
 
@@ -389,6 +391,24 @@ export function OwnerSection({ carId, isApproved, submittedEmail, carTitle, subm
                       Utløper om {daysLeft} {daysLeft === 1 ? 'dag' : 'dager'}
                     </span>
                   </div>
+
+                  {/* Viser hvem som sendte og eventuelt notat */}
+                  {invitation.sent_by && (
+                    <div className="bg-green-50 border border-green-200 rounded-lg p-2 space-y-1">
+                      <div className="flex items-center gap-2 text-xs text-green-800">
+                        <User className="w-3 h-3" />
+                        <span className="font-medium">
+                          Sendt av {invitation.sent_by === 'peder' ? 'Peder' : 'Peter'}
+                        </span>
+                      </div>
+                      {invitation.sender_note && (
+                        <div className="flex items-start gap-2 text-xs text-green-700">
+                          <StickyNote className="w-3 h-3 mt-0.5 shrink-0" />
+                          <span>{invitation.sender_note}</span>
+                        </div>
+                      )}
+                    </div>
+                  )}
                   
                   {/* E-postgenerator knapp */}
                   <Button
@@ -397,12 +417,14 @@ export function OwnerSection({ carId, isApproved, submittedEmail, carTitle, subm
                       recipientName: submittedName || '',
                       inviteLink: magicLink,
                       carName: carTitle || '',
+                      invitationId: invitation.id,
+                      onSaved: fetchInvitations,
                     })}
                     className="w-full mt-2"
-                    variant="default"
+                    variant={invitation.sent_by ? 'outline' : 'default'}
                   >
                     <Send className="w-4 h-4 mr-2" />
-                    Åpne E-postgenerator
+                    {invitation.sent_by ? 'Åpne E-postgenerator igjen' : 'Åpne E-postgenerator'}
                   </Button>
                 </div>
               );

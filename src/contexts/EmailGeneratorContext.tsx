@@ -1,11 +1,14 @@
-import { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, useContext, useState, ReactNode, useCallback, useRef } from 'react';
 import { InviteEmailGenerator } from '@/components/InviteEmailGenerator';
+import { supabase } from '@/integrations/supabase/client';
 
 interface EmailGeneratorData {
   recipientEmail?: string;
   recipientName?: string;
   inviteLink?: string;
   carName?: string;
+  invitationId?: string; // For updating sent_by/sender_note
+  onSaved?: () => void; // Callback to refresh data after saving
 }
 
 interface EmailGeneratorContextType {
@@ -17,11 +20,30 @@ const EmailGeneratorContext = createContext<EmailGeneratorContextType | undefine
 export function EmailGeneratorProvider({ children }: { children: ReactNode }) {
   const [isOpen, setIsOpen] = useState(false);
   const [emailData, setEmailData] = useState<EmailGeneratorData>({});
+  const onSavedRef = useRef<(() => void) | undefined>(undefined);
 
   const openEmailGenerator = (data: EmailGeneratorData) => {
     setEmailData(data);
+    onSavedRef.current = data.onSaved;
     setIsOpen(true);
   };
+
+  const handleEmailSent = useCallback(async (sender: 'peder' | 'peter', senderNote: string) => {
+    if (!emailData.invitationId) return;
+    
+    // Update invitation with sent_by and sender_note
+    const { error } = await supabase
+      .from('car_invitations')
+      .update({ 
+        sent_by: sender,
+        sender_note: senderNote || null
+      })
+      .eq('id', emailData.invitationId);
+
+    if (!error && onSavedRef.current) {
+      onSavedRef.current();
+    }
+  }, [emailData.invitationId]);
 
   return (
     <EmailGeneratorContext.Provider value={{ openEmailGenerator }}>
@@ -33,6 +55,7 @@ export function EmailGeneratorProvider({ children }: { children: ReactNode }) {
         recipientName={emailData.recipientName || ''}
         inviteLink={emailData.inviteLink || ''}
         carName={emailData.carName || ''}
+        onEmailSent={handleEmailSent}
       />
     </EmailGeneratorContext.Provider>
   );

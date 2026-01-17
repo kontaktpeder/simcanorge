@@ -45,6 +45,7 @@ interface InviteEmailGeneratorProps {
   recipientName?: string;
   inviteLink?: string;
   carName?: string;
+  onEmailSent?: (sender: 'peder' | 'peter', senderNote: string) => void;
 }
 
 export function InviteEmailGenerator({
@@ -54,6 +55,7 @@ export function InviteEmailGenerator({
   recipientName: initialName = '',
   inviteLink: initialLink = '',
   carName: initialCarName = '',
+  onEmailSent,
 }: InviteEmailGeneratorProps) {
   const { toast } = useToast();
   const [sender, setSender] = useState<'peder' | 'peter'>('peder');
@@ -61,7 +63,9 @@ export function InviteEmailGenerator({
   const [recipientEmail, setRecipientEmail] = useState(initialEmail);
   const [inviteLink, setInviteLink] = useState(initialLink);
   const [carName, setCarName] = useState(initialCarName);
+  const [senderNote, setSenderNote] = useState('');
   const [copiedSection, setCopiedSection] = useState<string | null>(null);
+  const [hasSaved, setHasSaved] = useState(false);
 
   // Update state when props change (when modal opens with new data)
   useEffect(() => {
@@ -70,6 +74,8 @@ export function InviteEmailGenerator({
       setRecipientEmail(initialEmail);
       setInviteLink(initialLink);
       setCarName(initialCarName);
+      setSenderNote('');
+      setHasSaved(false);
     }
   }, [open, initialName, initialEmail, initialLink, initialCarName]);
 
@@ -126,16 +132,29 @@ ${senderInfo.email}`;
     }
   };
 
+  const saveAndNotify = () => {
+    if (!hasSaved && onEmailSent) {
+      onEmailSent(sender, senderNote);
+      setHasSaved(true);
+      toast({
+        title: 'Lagret!',
+        description: `Registrert at ${sender === 'peder' ? 'Peder' : 'Peter'} sendte e-post.`,
+      });
+    }
+  };
+
   const copyAllBody = () => {
     // Mobile e-post-apper kan oppføre seg rart hvis du limer flerlinjet tekst inn i "Til"-feltet.
     // Denne varianten kopierer kun brødteksten, som er trygg å lime rett inn i meldingsfeltet.
     copyToClipboard(generateEmailBody(), 'alt');
+    saveAndNotify();
   };
 
   const copyAllFull = () => {
     // Full e-post (Til + Emne + brødtekst). Tips: lim dette i brødtekst/Notater, ikke i "Til"-feltet.
     const fullEmail = `Til: ${recipientEmail}\nEmne: ${emailSubject}\n\n${generateEmailBody()}`;
     copyToClipboard(fullEmail, 'alt_full');
+    saveAndNotify();
   };
 
   const copySubject = () => {
@@ -183,10 +202,14 @@ ${senderInfo.email}`;
             </Label>
             <Textarea
               id="senderNote"
+              value={senderNote}
+              onChange={(e) => setSenderNote(e.target.value)}
               placeholder="F.eks. «Sendt via Gmail 17. jan», «Venter på svar»..."
               className="resize-none h-16 text-sm"
             />
-            <p className="text-xs text-muted-foreground">Notatet lagres ikke – kun for din egen oversikt mens modalen er åpen.</p>
+            <p className="text-xs text-muted-foreground">
+              Notatet lagres når du kopierer e-posten – synlig på bilsiden for deg og pappa.
+            </p>
           </div>
 
           {/* Mottaker navn */}
