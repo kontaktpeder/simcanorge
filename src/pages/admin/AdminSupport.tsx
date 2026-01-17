@@ -166,42 +166,164 @@ export default function AdminSupport() {
 
   return (
     <AdminLayout title="Support Tickets">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Left: Ticket List */}
-        <div className="space-y-4">
-          {/* Filters */}
-          <div className="flex flex-wrap gap-2">
-            <Button
-              variant={filter === 'all' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setFilter('all')}
-            >
-              Alle ({stats.total})
-            </Button>
-            <Button
-              variant={filter === 'new' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setFilter('new')}
-            >
-              Ny ({stats.new})
-            </Button>
-            <Button
-              variant={filter === 'high' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setFilter('high')}
-            >
-              Kritisk ({stats.high})
-            </Button>
-            <Button
-              variant={filter === 'recent' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setFilter('recent')}
-            >
-              Siste 7 dager ({stats.recent})
-            </Button>
-          </div>
+      <div className="space-y-4">
+        {/* Filters - scrollable on mobile */}
+        <div className="flex gap-2 overflow-x-auto pb-2 -mx-4 px-4 md:mx-0 md:px-0 md:flex-wrap">
+          <Button
+            variant={filter === 'all' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setFilter('all')}
+            className="shrink-0"
+          >
+            Alle ({stats.total})
+          </Button>
+          <Button
+            variant={filter === 'new' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setFilter('new')}
+            className="shrink-0"
+          >
+            Ny ({stats.new})
+          </Button>
+          <Button
+            variant={filter === 'high' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setFilter('high')}
+            className="shrink-0"
+          >
+            Kritisk ({stats.high})
+          </Button>
+          <Button
+            variant={filter === 'recent' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setFilter('recent')}
+            className="shrink-0"
+          >
+            Siste 7d ({stats.recent})
+          </Button>
+        </div>
 
-          {/* Ticket List */}
+        {/* Mobile: Ticket list only, tap to expand */}
+        <div className="lg:hidden space-y-3">
+          {loading ? (
+            <p className="text-muted-foreground text-center py-8">Laster...</p>
+          ) : tickets.length === 0 ? (
+            <p className="text-muted-foreground text-center py-8">Ingen tickets funnet.</p>
+          ) : (
+            tickets.map((ticket) => {
+              const severity = getSeverityLabel(ticket.severity);
+              const isSelected = selectedTicket?.id === ticket.id;
+              return (
+                <div key={ticket.id} className="border rounded-lg overflow-hidden">
+                  <div
+                    onClick={() => isSelected ? setSelectedTicket(null) : handleTicketClick(ticket)}
+                    className={`p-3 cursor-pointer transition-colors ${
+                      isSelected ? 'bg-primary/5 border-primary' : 'hover:bg-muted/50'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <Badge variant={severity.variant} className="text-[10px]">{severity.label}</Badge>
+                        <Badge variant="outline" className="text-[10px]">{getTypeLabel(ticket.type)}</Badge>
+                        {ticket.status === 'new' && (
+                          <Badge variant="default" className="text-[10px]">Ny</Badge>
+                        )}
+                      </div>
+                      <span className="text-[10px] text-muted-foreground">
+                        {formatDistanceToNow(new Date(ticket.created_at), {
+                          addSuffix: true,
+                          locale: nb,
+                        })}
+                      </span>
+                    </div>
+                    <p className="text-sm line-clamp-2">{ticket.action_text}</p>
+                  </div>
+                  
+                  {/* Expanded details on mobile */}
+                  {isSelected && (
+                    <div className="border-t p-4 space-y-4 bg-muted/30">
+                      <div className="space-y-3">
+                        <div>
+                          <Label className="text-xs text-muted-foreground">Hva prøvde brukeren å gjøre?</Label>
+                          <p className="text-sm mt-1">{selectedTicket.action_text}</p>
+                        </div>
+                        <div>
+                          <Label className="text-xs text-muted-foreground">Hva skjedde i stedet?</Label>
+                          <p className="text-sm mt-1">{selectedTicket.result_text}</p>
+                        </div>
+                      </div>
+
+                      {selectedTicket.screenshot_url && (
+                        <div className="space-y-2">
+                          <div className="flex items-center gap-2 text-muted-foreground">
+                            <ImageIcon className="w-4 h-4" />
+                            <span className="text-xs">Skjermbilde</span>
+                          </div>
+                          <img
+                            src={selectedTicket.screenshot_url}
+                            alt="Skjermbilde"
+                            className="max-w-full rounded-lg border"
+                          />
+                        </div>
+                      )}
+
+                      <div className="text-xs text-muted-foreground">
+                        <p>Side: {selectedTicket.page}</p>
+                      </div>
+
+                      {/* Status & Save */}
+                      <div className="space-y-3 pt-3 border-t">
+                        <div className="space-y-2">
+                          <Label className="text-xs">Status</Label>
+                          <Select value={status} onValueChange={(v) => setStatus(v as SupportTicketStatus)}>
+                            <SelectTrigger className="h-10">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent className="bg-background">
+                              <SelectItem value="new">Ny</SelectItem>
+                              <SelectItem value="seen">Sett</SelectItem>
+                              <SelectItem value="in_progress">Under arbeid</SelectItem>
+                              <SelectItem value="resolved">Løst</SelectItem>
+                              <SelectItem value="not_a_bug">Ikke en bug</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label className="text-xs">Admin notater</Label>
+                          <Textarea
+                            value={adminNotes}
+                            onChange={(e) => setAdminNotes(e.target.value)}
+                            rows={3}
+                            placeholder="Interne notater..."
+                          />
+                        </div>
+
+                        <div className="flex gap-2">
+                          <Button onClick={handleSave} disabled={isSaving} className="flex-1">
+                            {isSaving ? 'Lagrer...' : 'Lagre'}
+                          </Button>
+                          <Button
+                            variant="destructive"
+                            size="icon"
+                            onClick={handleDelete}
+                            disabled={isDeleting}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })
+          )}
+        </div>
+
+        {/* Desktop: Two-column layout */}
+        <div className="hidden lg:grid lg:grid-cols-2 gap-6">
+          {/* Left: Ticket List */}
           <div className="space-y-3 max-h-[calc(100vh-280px)] overflow-y-auto">
             {loading ? (
               <p className="text-muted-foreground text-center py-8">Laster...</p>
@@ -243,126 +365,126 @@ export default function AdminSupport() {
               })
             )}
           </div>
-        </div>
 
-        {/* Right: Ticket Details */}
-        <div>
-          {selectedTicket ? (
-            <div className="border rounded-lg p-6 space-y-6">
-              <div className="space-y-4">
-                <h3 className="font-display text-lg">Ticket detaljer</h3>
-                
-                {/* Action & Result */}
+          {/* Right: Ticket Details */}
+          <div>
+            {selectedTicket ? (
+              <div className="border rounded-lg p-6 space-y-6">
                 <div className="space-y-4">
-                  <div>
-                    <Label className="text-muted-foreground">Hva prøvde brukeren å gjøre?</Label>
-                    <p className="mt-1">{selectedTicket.action_text}</p>
-                  </div>
-                  <div>
-                    <Label className="text-muted-foreground">Hva skjedde i stedet?</Label>
-                    <p className="mt-1">{selectedTicket.result_text}</p>
-                  </div>
-                </div>
-
-                {/* Screenshot */}
-                {selectedTicket.screenshot_url && (
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2 text-muted-foreground">
-                      <ImageIcon className="w-4 h-4" />
-                      <span className="text-sm">Skjermbilde</span>
+                  <h3 className="font-display text-lg">Ticket detaljer</h3>
+                  
+                  {/* Action & Result */}
+                  <div className="space-y-4">
+                    <div>
+                      <Label className="text-muted-foreground">Hva prøvde brukeren å gjøre?</Label>
+                      <p className="mt-1">{selectedTicket.action_text}</p>
                     </div>
-                    <img
-                      src={selectedTicket.screenshot_url}
-                      alt="Skjermbilde"
-                      className="max-w-full rounded-lg border"
-                    />
+                    <div>
+                      <Label className="text-muted-foreground">Hva skjedde i stedet?</Label>
+                      <p className="mt-1">{selectedTicket.result_text}</p>
+                    </div>
                   </div>
-                )}
 
-                {/* Context */}
-                <div className="text-sm text-muted-foreground space-y-1">
-                  <p>Side: {selectedTicket.page}</p>
-                  {selectedTicket.app_version && (
-                    <p>Versjon: {selectedTicket.app_version}</p>
-                  )}
-                  {selectedTicket.created_at && (
-                    <p>Opprettet: {new Date(selectedTicket.created_at).toLocaleString('nb-NO')}</p>
-                  )}
-                </div>
-
-                {/* Debug Payload */}
-                {selectedTicket.debug_payload && (
-                  <Collapsible>
-                    <CollapsibleTrigger className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
-                      <span>Teknisk logg (skjult)</span>
-                      <ChevronDown className="w-4 h-4" />
-                    </CollapsibleTrigger>
-                    <CollapsibleContent>
-                      <div className="mt-2 space-y-2">
-                        <pre className="text-xs bg-muted p-3 rounded-lg overflow-x-auto max-h-64">
-                          {JSON.stringify(selectedTicket.debug_payload, null, 2)}
-                        </pre>
-                        <Button variant="outline" size="sm" onClick={copyDebugInfo}>
-                          <Copy className="w-3 h-3 mr-2" />
-                          Kopier
-                        </Button>
+                  {/* Screenshot */}
+                  {selectedTicket.screenshot_url && (
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2 text-muted-foreground">
+                        <ImageIcon className="w-4 h-4" />
+                        <span className="text-sm">Skjermbilde</span>
                       </div>
-                    </CollapsibleContent>
-                  </Collapsible>
-                )}
+                      <img
+                        src={selectedTicket.screenshot_url}
+                        alt="Skjermbilde"
+                        className="max-w-full rounded-lg border"
+                      />
+                    </div>
+                  )}
 
-                {/* Status & Notes */}
-                <div className="space-y-4 pt-4 border-t">
-                  <div className="space-y-2">
-                    <Label>Status</Label>
-                    <Select value={status} onValueChange={(v) => setStatus(v as SupportTicketStatus)}>
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="new">Ny</SelectItem>
-                        <SelectItem value="seen">Sett</SelectItem>
-                        <SelectItem value="in_progress">Under arbeid</SelectItem>
-                        <SelectItem value="resolved">Løst</SelectItem>
-                        <SelectItem value="not_a_bug">Ikke en bug</SelectItem>
-                      </SelectContent>
-                    </Select>
+                  {/* Context */}
+                  <div className="text-sm text-muted-foreground space-y-1">
+                    <p>Side: {selectedTicket.page}</p>
+                    {selectedTicket.app_version && (
+                      <p>Versjon: {selectedTicket.app_version}</p>
+                    )}
+                    {selectedTicket.created_at && (
+                      <p>Opprettet: {new Date(selectedTicket.created_at).toLocaleString('nb-NO')}</p>
+                    )}
                   </div>
 
-                  <div className="space-y-2">
-                    <Label>Admin notater</Label>
-                    <Textarea
-                      value={adminNotes}
-                      onChange={(e) => setAdminNotes(e.target.value)}
-                      rows={4}
-                      placeholder="Interne notater om denne ticket..."
-                    />
+                  {/* Debug Payload */}
+                  {selectedTicket.debug_payload && (
+                    <Collapsible>
+                      <CollapsibleTrigger className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
+                        <span>Teknisk logg (skjult)</span>
+                        <ChevronDown className="w-4 h-4" />
+                      </CollapsibleTrigger>
+                      <CollapsibleContent>
+                        <div className="mt-2 space-y-2">
+                          <pre className="text-xs bg-muted p-3 rounded-lg overflow-x-auto max-h-64">
+                            {JSON.stringify(selectedTicket.debug_payload, null, 2)}
+                          </pre>
+                          <Button variant="outline" size="sm" onClick={copyDebugInfo}>
+                            <Copy className="w-3 h-3 mr-2" />
+                            Kopier
+                          </Button>
+                        </div>
+                      </CollapsibleContent>
+                    </Collapsible>
+                  )}
+
+                  {/* Status & Notes */}
+                  <div className="space-y-4 pt-4 border-t">
+                    <div className="space-y-2">
+                      <Label>Status</Label>
+                      <Select value={status} onValueChange={(v) => setStatus(v as SupportTicketStatus)}>
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="bg-background">
+                          <SelectItem value="new">Ny</SelectItem>
+                          <SelectItem value="seen">Sett</SelectItem>
+                          <SelectItem value="in_progress">Under arbeid</SelectItem>
+                          <SelectItem value="resolved">Løst</SelectItem>
+                          <SelectItem value="not_a_bug">Ikke en bug</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label>Admin notater</Label>
+                      <Textarea
+                        value={adminNotes}
+                        onChange={(e) => setAdminNotes(e.target.value)}
+                        rows={4}
+                        placeholder="Interne notater om denne ticket..."
+                      />
+                    </div>
+
+                    <Button onClick={handleSave} disabled={isSaving} className="w-full">
+                      {isSaving ? 'Lagrer...' : 'Lagre'}
+                    </Button>
                   </div>
 
-                  <Button onClick={handleSave} disabled={isSaving} className="w-full">
-                    {isSaving ? 'Lagrer...' : 'Lagre'}
-                  </Button>
-                </div>
-
-                {/* Delete */}
-                <div className="pt-4 border-t">
-                  <Button
-                    variant="destructive"
-                    onClick={handleDelete}
-                    disabled={isDeleting}
-                    className="w-full"
-                  >
-                    <Trash2 className="w-4 h-4 mr-2" />
-                    {isDeleting ? 'Sletter...' : 'Slett ticket'}
-                  </Button>
+                  {/* Delete */}
+                  <div className="pt-4 border-t">
+                    <Button
+                      variant="destructive"
+                      onClick={handleDelete}
+                      disabled={isDeleting}
+                      className="w-full"
+                    >
+                      <Trash2 className="w-4 h-4 mr-2" />
+                      {isDeleting ? 'Sletter...' : 'Slett ticket'}
+                    </Button>
+                  </div>
                 </div>
               </div>
-            </div>
-          ) : (
-            <div className="border rounded-lg p-12 text-center text-muted-foreground">
-              Velg en ticket for å se detaljer
-            </div>
-          )}
+            ) : (
+              <div className="border rounded-lg p-12 text-center text-muted-foreground">
+                Velg en ticket for å se detaljer
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </AdminLayout>
