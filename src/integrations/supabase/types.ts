@@ -184,6 +184,8 @@ export type Database = {
           email: string
           expires_at: string
           id: string
+          sender_note: string | null
+          sent_by: string | null
           token: string
           used_at: string | null
         }
@@ -194,6 +196,8 @@ export type Database = {
           email: string
           expires_at: string
           id?: string
+          sender_note?: string | null
+          sent_by?: string | null
           token: string
           used_at?: string | null
         }
@@ -204,6 +208,8 @@ export type Database = {
           email?: string
           expires_at?: string
           id?: string
+          sender_note?: string | null
+          sent_by?: string | null
           token?: string
           used_at?: string | null
         }
