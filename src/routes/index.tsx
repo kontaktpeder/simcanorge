@@ -3,7 +3,7 @@ import { Suspense } from "react";
 import { routes } from "./routes";
 import { Loader2 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
-import type { ReactElement } from "react";
+import type { ComponentType } from "react";
 
 // Loading fallback component
 function RouteLoadingFallback() {
@@ -14,13 +14,18 @@ function RouteLoadingFallback() {
   );
 }
 
+// Wrapper for lazy-loaded components (prevents ref warnings)
+function LazyComponentWrapper({ Component }: { Component: ComponentType }) {
+  return <Component />;
+}
+
 // Protected Route wrapper component
 function ProtectedRoute({ 
-  children, 
+  Component, 
   requiresAuth, 
   requiresAdmin 
 }: { 
-  children: ReactElement;
+  Component: ComponentType;
   requiresAuth?: boolean;
   requiresAdmin?: boolean;
 }) {
@@ -45,7 +50,7 @@ function ProtectedRoute({
   }
 
   // User has required permissions, render the route
-  return children;
+  return <LazyComponentWrapper Component={Component} />;
 }
 
 export function AppRoutes() {
@@ -59,13 +64,12 @@ export function AppRoutes() {
             element={
               route.requiresAuth || route.requiresAdmin ? (
                 <ProtectedRoute 
+                  Component={route.element}
                   requiresAuth={route.requiresAuth} 
                   requiresAdmin={route.requiresAdmin}
-                >
-                  <route.element />
-                </ProtectedRoute>
+                />
               ) : (
-                <route.element />
+                <LazyComponentWrapper Component={route.element} />
               )
             }
           />
