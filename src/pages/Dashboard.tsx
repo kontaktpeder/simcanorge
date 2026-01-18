@@ -36,10 +36,8 @@ export default function Dashboard() {
     }
     return false;
   });
-  const [showHelpSection, setShowHelpSection] = useState(false);
   const formRef = useRef<HTMLDivElement>(null);
   const profileRef = useRef<HTMLDivElement>(null);
-  const helpRef = useRef<HTMLDivElement>(null);
   
   // Hent eierprofil for å vise status
   const { data: ownerProfile } = useOwnerProfile(user?.id);
@@ -114,7 +112,6 @@ export default function Dashboard() {
   const handleOpenOwnerProfile = () => {
     setShowOwnerProfile(true);
     setShowCarForm(false);
-    setShowHelpSection(false);
     setTimeout(() => {
       profileRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 100);
@@ -125,21 +122,10 @@ export default function Dashboard() {
     setShowOwnerProfile(false);
   };
 
-  // Åpne hjelp-seksjon
-  const handleOpenHelp = () => {
-    setShowHelpSection(true);
-    setShowCarForm(false);
-    setShowOwnerProfile(false);
-    setTimeout(() => {
-      helpRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 100);
-  };
-
   // Start eierprofil-guide
   const handleStartOwnerProfileGuide = () => {
     setShowOwnerProfile(true);
     setShowCarForm(false);
-    setShowHelpSection(false);
     setTimeout(() => {
       profileRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       setTimeout(() => startGuide(), 200);
@@ -336,21 +322,37 @@ export default function Dashboard() {
           transition={{ duration: 0.3, delay: 0.5 }}
           className="sm:col-span-2"
         >
-          <EnamelCard 
-            className="group cursor-pointer touch-manipulation" 
-            onClick={handleOpenHelp}
-          >
-            <div className="flex items-center gap-4">
-              <div className="p-2.5 sm:p-3 bg-primary/10 rounded-xl flex-shrink-0">
-                <HelpCircle className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
+          <EnamelCard>
+            <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+              <div className="flex items-center gap-4 flex-1">
+                <div className="p-2.5 sm:p-3 bg-primary/10 rounded-xl flex-shrink-0">
+                  <HelpCircle className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
+                </div>
+                <div>
+                  <h3 className="font-display text-lg sm:text-xl mb-0.5">
+                    Hjelp og veiledning
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    Start en interaktiv guide
+                  </p>
+                </div>
               </div>
-              <div>
-                <h3 className="font-display text-lg sm:text-xl mb-0.5 group-hover:text-primary transition-colors">
-                  Hjelp og veiledning
-                </h3>
-                <p className="text-sm sm:text-base text-muted-foreground">
-                  Trenger du hjelp? Start en interaktiv guide
-                </p>
+              
+              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                <BigActionButton
+                  onClick={() => startGuide()}
+                  icon={<Sparkles className="w-4 h-4" />}
+                >
+                  Full guide
+                </BigActionButton>
+                
+                <BigActionButton
+                  variant="secondary"
+                  onClick={handleStartOwnerProfileGuide}
+                  icon={<User className="w-4 h-4" />}
+                >
+                  Eierprofil
+                </BigActionButton>
               </div>
             </div>
           </EnamelCard>
@@ -420,65 +422,6 @@ export default function Dashboard() {
             </div>
             
             <OwnerProfileSection userId={user.id} />
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Hjelp og veiledning seksjon */}
-      <AnimatePresence>
-        {showHelpSection && (
-          <motion.div
-            ref={helpRef}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3 }}
-            className="mt-8"
-          >
-            <div className="flex items-center justify-between mb-4">
-              <SectionHeader 
-                title="Hjelp og veiledning" 
-                icon={<HelpCircle className="w-6 h-6" />} 
-              />
-              <BigActionButton
-                variant="ghost"
-                size="lg"
-                onClick={() => setShowHelpSection(false)}
-                icon={<X className="w-5 h-5" />}
-              >
-                Lukk
-              </BigActionButton>
-            </div>
-            
-            <EnamelCard>
-              <div className="p-4 sm:p-6 space-y-6">
-                <p className="text-muted-foreground">
-                  Trenger du hjelp til å komme i gang? Start en interaktiv guide som viser deg rundt i garasjen.
-                </p>
-                
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <BigActionButton
-                    onClick={() => {
-                      setShowHelpSection(false);
-                      setTimeout(() => startGuide(), 100);
-                    }}
-                    icon={<Sparkles className="w-5 h-5" />}
-                    className="w-full"
-                  >
-                    Start full guide
-                  </BigActionButton>
-                  
-                  <BigActionButton
-                    variant="secondary"
-                    onClick={handleStartOwnerProfileGuide}
-                    icon={<User className="w-5 h-5" />}
-                    className="w-full"
-                  >
-                    Guide: Eierprofil
-                  </BigActionButton>
-                </div>
-              </div>
-            </EnamelCard>
           </motion.div>
         )}
       </AnimatePresence>
