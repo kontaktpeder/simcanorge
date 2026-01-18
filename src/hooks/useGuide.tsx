@@ -268,9 +268,9 @@ export function GuideProvider({ children }: GuideProviderProps) {
   const getStepsForGuideType = useCallback((type: GuideType): GuideStep[] => {
     switch (type) {
       case 'my-cars':
-        // Mine biler: dashboard -> my-cars -> car-detail steg
+        // Mine biler: dashboard my-cars-card -> my-cars -> car-detail steg
         return GUIDE_STEPS.filter(step => 
-          step.routeType === 'dashboard' && step.target.includes('my-cars') ||
+          (step.routeType === 'dashboard' && step.target.includes('my-cars')) ||
           step.routeType === 'my-cars' ||
           step.routeType === 'car-detail'
         );
