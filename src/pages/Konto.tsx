@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Helmet } from "react-helmet-async";
-import { User, LogOut, Shield, Trash2, Mail, Calendar, Loader2, AlertTriangle, Sparkles, HelpCircle } from "lucide-react";
+import { User, LogOut, Shield, Trash2, Mail, Calendar, Loader2, AlertTriangle } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 import { EnamelCard, SectionHeader, BigActionButton } from "@/components/ui/garage";
 import { Input } from "@/components/ui/input";
@@ -13,7 +13,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAccountRequests, useCreateAccountRequest } from "@/hooks/useAccountRequests";
 import { toast } from "sonner";
 import { getBrowserAuthSupport } from "@/lib/browserSupport";
-import { useGuide } from "@/hooks/useGuide";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -29,23 +28,12 @@ import {
 export default function Konto() {
   const navigate = useNavigate();
   const { user, isLoading: authLoading, signOut } = useAuth();
-  const { startGuide, shouldShowGuide, isLoading: guideLoading } = useGuide();
   const [email, setEmail] = useState("");
   const [isSendingMagicLink, setIsSendingMagicLink] = useState(false);
   const [magicLinkSent, setMagicLinkSent] = useState(false);
   const [anonymizeMessage, setAnonymizeMessage] = useState("");
   const [showAnonymizeForm, setShowAnonymizeForm] = useState(false);
   const [compatWarning, setCompatWarning] = useState<string | null>(null);
-
-  // Start guide og naviger til eierprofil-steg (steg 9 = owner-profile-card)
-  const handleStartOwnerProfileGuide = () => {
-    // Naviger til dashboard med eierprofil åpen, så start guiden
-    navigate('/dashboard?showOwnerProfile=true');
-    // Liten forsinkelse for å la navigasjon fullføre
-    setTimeout(() => {
-      startGuide();
-    }, 300);
-  };
 
   useEffect(() => {
     const support = getBrowserAuthSupport();
@@ -254,50 +242,6 @@ export default function Konto() {
             </EnamelCard>
           </motion.div>
 
-          {/* Hjelp og guide - kun synlig når innlogget */}
-          {user && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: 0.15 }}
-            >
-              <EnamelCard>
-                <SectionHeader 
-                  title="Hjelp og veiledning" 
-                  icon={<HelpCircle className="h-5 w-5" />} 
-                />
-
-                <div className="space-y-4">
-                  <p className="text-sm text-muted-foreground">
-                    Trenger du hjelp til å komme i gang? Start en interaktiv guide som viser deg rundt.
-                  </p>
-                  
-                  <div className="flex flex-col sm:flex-row gap-3">
-                    <Button
-                      variant="outline"
-                      className="justify-start"
-                      onClick={() => {
-                        navigate('/dashboard');
-                        setTimeout(() => startGuide(), 300);
-                      }}
-                    >
-                      <Sparkles className="h-4 w-4 mr-2" />
-                      Start full guide
-                    </Button>
-                    
-                    <Button
-                      variant="outline"
-                      className="justify-start"
-                      onClick={handleStartOwnerProfileGuide}
-                    >
-                      <User className="h-4 w-4 mr-2" />
-                      Guide: Eierprofil
-                    </Button>
-                  </div>
-                </div>
-              </EnamelCard>
-            </motion.div>
-          )}
 
           {/* Personvern og kontroll - kun synlig når innlogget */}
           {user && (
