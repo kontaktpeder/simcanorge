@@ -137,17 +137,18 @@ export function GarasjeGuide() {
   const isOnRouteForStep = useCallback((step: typeof GUIDE_STEPS[0]): boolean => {
     switch (step.routeType) {
       case 'dashboard':
-        return location.pathname === '/dashboard' && !location.search.includes('showOwnerProfile');
+        return location.pathname === '/dashboard';
       case 'my-cars':
         return location.pathname === '/dashboard/mine-biler';
       case 'car-detail':
         return location.pathname.startsWith('/dashboard/bil/');
       case 'owner-profile':
-        return location.pathname === '/dashboard' && location.search.includes('showOwnerProfile');
+        // For eierprofil sjekker vi bare at vi er på dashboard
+        return location.pathname === '/dashboard';
       default:
         return true;
     }
-  }, [location.pathname, location.search]);
+  }, [location.pathname]);
   
   // Navigate to correct route when guide starts or step changes
   useEffect(() => {

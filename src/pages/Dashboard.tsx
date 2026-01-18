@@ -1,5 +1,5 @@
 import { useAuth } from '@/hooks/useAuth';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useEffect, useState, useRef } from 'react';
 import { GarageLayout } from '@/components/ui/garage/GarageLayout';
 import { EnamelCard } from '@/components/ui/garage/EnamelCard';
@@ -19,13 +19,23 @@ import { useOwnerProfile } from '@/hooks/useOwnerProfile';
 export default function Dashboard() {
   const { user, isLoading: authLoading } = useAuth();
   const navigate = useNavigate();
-  const [searchParams, setSearchParams] = useSearchParams();
   const queryClient = useQueryClient();
   const [showCarForm, setShowCarForm] = useState(false);
-  const [showOwnerProfile, setShowOwnerProfile] = useState(false);
+  const [showOwnerProfile, setShowOwnerProfile] = useState(() => {
+    // Sjekk URL-parameter kun ved første render
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const shouldShow = params.get('showOwnerProfile') === 'true';
+      if (shouldShow) {
+        // Fjern parameteren fra URL umiddelbart
+        window.history.replaceState({}, '', '/dashboard');
+      }
+      return shouldShow;
+    }
+    return false;
+  });
   const formRef = useRef<HTMLDivElement>(null);
   const profileRef = useRef<HTMLDivElement>(null);
-  const hasProcessedOwnerProfileParam = useRef(false);
   
   // Hent eierprofil for å vise status
   const { data: ownerProfile } = useOwnerProfile(user?.id);
@@ -37,30 +47,14 @@ export default function Dashboard() {
     }
   }, [user, authLoading, navigate]);
 
-  // Åpne eierprofil fra URL-parameter (for guide) - kun én gang
+  // Scroll til eierprofil hvis åpnet via URL
   useEffect(() => {
-    const shouldShowOwnerProfile = searchParams.get('showOwnerProfile') === 'true';
-    
-    if (shouldShowOwnerProfile && !hasProcessedOwnerProfileParam.current) {
-      hasProcessedOwnerProfileParam.current = true;
-      setShowOwnerProfile(true);
-      setShowCarForm(false);
-      
-      // Fjern URL-parameteren etter at den er lest
-      const newParams = new URLSearchParams(searchParams);
-      newParams.delete('showOwnerProfile');
-      setSearchParams(newParams, { replace: true });
-      
+    if (showOwnerProfile && profileRef.current) {
       setTimeout(() => {
         profileRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 100);
+      }, 200);
     }
-    
-    // Reset flag når parameteren ikke er til stede
-    if (!shouldShowOwnerProfile) {
-      hasProcessedOwnerProfileParam.current = false;
-    }
-  }, [searchParams, setSearchParams]);
+  }, []);
 
   // Hent antall biler
   const { data: carCount, isLoading: carsLoading } = useQuery({
@@ -116,17 +110,14 @@ export default function Dashboard() {
   const handleOpenOwnerProfile = () => {
     setShowOwnerProfile(true);
     setShowCarForm(false);
-    // Oppdater URL slik at guiden vet vi er på eierprofil
-    setSearchParams({ showOwnerProfile: 'true' });
     setTimeout(() => {
       profileRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 100);
   };
 
-  // Lukk eierprofil og fjern URL-parameter
+  // Lukk eierprofil
   const handleCloseOwnerProfile = () => {
     setShowOwnerProfile(false);
-    setSearchParams({});
   };
 
   // Håndter suksess
