@@ -13,6 +13,9 @@ interface GuideProgress {
   dismissed_at: string | null;
 }
 
+// Guide types for partial guides
+export type GuideType = 'full' | 'my-cars' | 'owner-profile';
+
 interface GuideContextType {
   // State
   isGuideRunning: boolean;
@@ -20,9 +23,10 @@ interface GuideContextType {
   shouldShowGuide: boolean;
   isLoading: boolean;
   firstCarId: string | null;
+  activeGuideType: GuideType | null;
   
   // Actions
-  startGuide: () => void;
+  startGuide: (type?: GuideType) => void;
   stopGuide: () => void;
   nextStep: () => void;
   prevStep: () => void;
@@ -32,6 +36,9 @@ interface GuideContextType {
   
   // Navigation helper
   navigateToStep: (stepIndex: number) => Promise<void>;
+  
+  // Get filtered steps for current guide
+  getActiveSteps: () => GuideStep[];
 }
 
 // Default/fallback values for when context is not available
@@ -41,6 +48,7 @@ const defaultGuideContext: GuideContextType = {
   shouldShowGuide: false,
   isLoading: true,
   firstCarId: null,
+  activeGuideType: null,
   startGuide: () => {},
   stopGuide: () => {},
   nextStep: () => {},
@@ -49,6 +57,7 @@ const defaultGuideContext: GuideContextType = {
   completeGuide: async () => {},
   dismissGuide: async () => {},
   navigateToStep: async () => {},
+  getActiveSteps: () => [],
 };
 
 const GuideContext = createContext<GuideContextType>(defaultGuideContext);
@@ -178,6 +187,7 @@ export function GuideProvider({ children }: GuideProviderProps) {
   const [guideProgress, setGuideProgress] = useState<GuideProgress | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [firstCarId, setFirstCarId] = useState<string | null>(null);
+  const [activeGuideType, setActiveGuideType] = useState<GuideType | null>(null);
   
   // Fetch first car ID for navigation
   useEffect(() => {
@@ -254,9 +264,39 @@ export function GuideProvider({ children }: GuideProviderProps) {
     guideProgress.completed_version < CURRENT_GUIDE_VERSION &&
     guideProgress.dismissed_at === null;
   
-  // Get route for step
+  // Get filtered steps based on guide type
+  const getStepsForGuideType = useCallback((type: GuideType): GuideStep[] => {
+    switch (type) {
+      case 'my-cars':
+        // Mine biler: dashboard -> my-cars -> car-detail steg
+        return GUIDE_STEPS.filter(step => 
+          step.routeType === 'dashboard' && step.target.includes('my-cars') ||
+          step.routeType === 'my-cars' ||
+          step.routeType === 'car-detail'
+        );
+      case 'owner-profile':
+        // Eierprofil: dashboard eierprofil-kort -> owner-profile steg
+        return GUIDE_STEPS.filter(step => 
+          (step.routeType === 'dashboard' && step.target.includes('owner-profile')) ||
+          step.routeType === 'owner-profile'
+        );
+      case 'full':
+      default:
+        // Full guide: alle steg
+        return GUIDE_STEPS;
+    }
+  }, []);
+  
+  // Get active steps (for current guide type)
+  const getActiveSteps = useCallback((): GuideStep[] => {
+    if (!activeGuideType) return GUIDE_STEPS;
+    return getStepsForGuideType(activeGuideType);
+  }, [activeGuideType, getStepsForGuideType]);
+  
+  // Get route for step (using active steps)
   const getRouteForStep = useCallback((stepIndex: number): string | null => {
-    const step = GUIDE_STEPS[stepIndex];
+    const activeSteps = getActiveSteps();
+    const step = activeSteps[stepIndex];
     if (!step) return null;
     
     switch (step.routeType) {
@@ -272,11 +312,12 @@ export function GuideProvider({ children }: GuideProviderProps) {
       default:
         return null;
     }
-  }, [firstCarId]);
+  }, [firstCarId, getActiveSteps]);
   
   // Check if we're on correct route for step
   const isOnCorrectRoute = useCallback((stepIndex: number): boolean => {
-    const step = GUIDE_STEPS[stepIndex];
+    const activeSteps = getActiveSteps();
+    const step = activeSteps[stepIndex];
     if (!step) return false;
     
     switch (step.routeType) {
@@ -293,28 +334,50 @@ export function GuideProvider({ children }: GuideProviderProps) {
       default:
         return true;
     }
-  }, [location.pathname]);
+  }, [location.pathname, getActiveSteps]);
   
-  // Start guide
-  const startGuide = useCallback(() => {
+  // Start guide with optional type
+  const startGuide = useCallback((type: GuideType = 'full') => {
+    setActiveGuideType(type);
     setCurrentStepIndex(0);
     setIsGuideRunning(true);
     
-    // Navigate to first step route if needed
-    const route = getRouteForStep(0);
-    if (route && location.pathname !== route) {
+    // Get steps for this guide type and navigate to first step
+    const steps = getStepsForGuideType(type);
+    const firstStep = steps[0];
+    if (!firstStep) return;
+    
+    let route: string | null = null;
+    switch (firstStep.routeType) {
+      case 'dashboard':
+        route = '/dashboard';
+        break;
+      case 'my-cars':
+        route = '/dashboard/mine-biler';
+        break;
+      case 'car-detail':
+        route = firstCarId ? `/dashboard/bil/${firstCarId}` : null;
+        break;
+      case 'owner-profile':
+        route = '/dashboard?showOwnerProfile=true';
+        break;
+    }
+    
+    if (route && location.pathname !== route.split('?')[0]) {
       navigate(route);
     }
-  }, [navigate, location.pathname, getRouteForStep]);
+  }, [navigate, location.pathname, getStepsForGuideType, firstCarId]);
   
   // Stop guide
   const stopGuide = useCallback(() => {
     setIsGuideRunning(false);
+    setActiveGuideType(null);
   }, []);
   
-  // Navigate to step
+  // Navigate to step (within active guide)
   const navigateToStep = useCallback(async (stepIndex: number) => {
-    const step = GUIDE_STEPS[stepIndex];
+    const activeSteps = getActiveSteps();
+    const step = activeSteps[stepIndex];
     if (!step) return;
     
     const route = getRouteForStep(stepIndex);
@@ -334,17 +397,18 @@ export function GuideProvider({ children }: GuideProviderProps) {
     }
     
     setCurrentStepIndex(stepIndex);
-  }, [getRouteForStep, isOnCorrectRoute, navigate, firstCarId]);
+  }, [getRouteForStep, isOnCorrectRoute, navigate, firstCarId, getActiveSteps]);
   
-  // Next step
+  // Next step (within active guide)
   const nextStep = useCallback(() => {
-    if (currentStepIndex < GUIDE_STEPS.length - 1) {
+    const activeSteps = getActiveSteps();
+    if (currentStepIndex < activeSteps.length - 1) {
       navigateToStep(currentStepIndex + 1);
     } else {
       // Complete guide
       completeGuide();
     }
-  }, [currentStepIndex, navigateToStep]);
+  }, [currentStepIndex, navigateToStep, getActiveSteps]);
   
   // Previous step
   const prevStep = useCallback(() => {
@@ -380,6 +444,7 @@ export function GuideProvider({ children }: GuideProviderProps) {
     }
     
     setIsGuideRunning(false);
+    setActiveGuideType(null);
   }, [user]);
   
   // Dismiss guide (without completing)
@@ -402,6 +467,7 @@ export function GuideProvider({ children }: GuideProviderProps) {
     }
     
     setIsGuideRunning(false);
+    setActiveGuideType(null);
   }, [user]);
   
   const value: GuideContextType = {
@@ -410,6 +476,7 @@ export function GuideProvider({ children }: GuideProviderProps) {
     shouldShowGuide,
     isLoading,
     firstCarId,
+    activeGuideType,
     startGuide,
     stopGuide,
     nextStep,
@@ -418,6 +485,7 @@ export function GuideProvider({ children }: GuideProviderProps) {
     completeGuide,
     dismissGuide,
     navigateToStep,
+    getActiveSteps,
   };
   
   return (

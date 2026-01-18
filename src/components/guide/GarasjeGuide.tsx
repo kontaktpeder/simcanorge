@@ -100,6 +100,7 @@ export function GarasjeGuide() {
     completeGuide, 
     dismissGuide,
     firstCarId,
+    getActiveSteps,
   } = useGuide();
   
   const navigate = useNavigate();
@@ -108,8 +109,8 @@ export function GarasjeGuide() {
   const [isReady, setIsReady] = useState(false);
   const isNavigatingRef = useRef(false);
   
-  // Build the active steps based on whether user has cars
-  const activeSteps = GUIDE_STEPS.filter(step => {
+  // Build the active steps based on guide type and whether user has cars
+  const activeSteps = getActiveSteps().filter(step => {
     // If user has no cars, skip car-detail steps
     if (step.routeType === 'car-detail' && !firstCarId) {
       return false;
