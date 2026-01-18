@@ -1,12 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, Home, Star, Car, Wrench, Send, BookOpen, Users, Mail, LogIn, User, Bug } from "lucide-react";
+import { Menu, X, LogIn, User, Bug } from "lucide-react";
 import { useCart } from "@/hooks/useCart";
 import { useAuth } from "@/hooks/useAuth";
 import { SimcaLive } from "@/components/home/SimcaLive";
 import { GuideHelpButton } from "@/components/guide";
 import { FadeImage } from "@/components/ui/FadeImage";
 import { ReportProblemButton, ReportProblemModal } from "@/components/support";
+import { getNavItems } from "@/routes/routes";
 import simcaBadge from "@/assets/simca-badge.png";
 import toolboxIcon from "@/assets/toolbox-icon.png";
 import simcaRallye from "@/assets/simca-rallye-yellow.png";
@@ -17,16 +18,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-const navItems = [
-  { href: "/", label: "Hjem", description: "Tilbake til forsiden", icon: Home },
-  { href: "/manedens-bil", label: "Månedens bil", description: "Se denne månedens utvalgte Simca", icon: Star, glow: true },
-  { href: "/biler", label: "Biler", description: "Utforsk Simca-biler og historier", icon: Car },
-  { href: "/deler", label: "Deler", description: "Finn deler til din Simca", icon: Wrench },
-  { href: "/send-inn", label: "Send inn", description: "Del din Simca-historie med oss", icon: Send },
-  { href: "/historie", label: "Historie" , description: "Lær om Simcas rike historie", icon: BookOpen },
-  { href: "/om-oss", label: "Om oss", description: "Hvem står bak Simca Norge", icon: Users },
-  { href: "/kontakt", label: "Kontakt", description: "Ta kontakt med oss", icon: Mail },
-];
+// Get navigation items from centralized routes config
+const navItems = getNavItems();
 
 const LEAVE_HOME_ANIM_KEY = "simca_leave_home_anim";
 

@@ -1,0 +1,118 @@
+import { lazy, ComponentType } from "react";
+import { Home, Star, Car, Wrench, Send, BookOpen, Users, Mail } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+
+// Lazy load all pages for better performance
+// Public pages
+const Index = lazy(() => import("@/pages/Index"));
+const ManedensBil = lazy(() => import("@/pages/ManedensBil"));
+const Biler = lazy(() => import("@/pages/Biler"));
+const BilDetalj = lazy(() => import("@/pages/BilDetalj"));
+const EierProfil = lazy(() => import("@/pages/EierProfil"));
+const Deler = lazy(() => import("@/pages/Deler"));
+const Foresporsel = lazy(() => import("@/pages/Foresporsel"));
+const OmOss = lazy(() => import("@/pages/OmOss"));
+const Historie = lazy(() => import("@/pages/Historie"));
+const SendInnBil = lazy(() => import("@/pages/SendInnBil"));
+const Kontakt = lazy(() => import("@/pages/Kontakt"));
+const Personvern = lazy(() => import("@/pages/Personvern"));
+const AcceptInvitation = lazy(() => import("@/pages/AcceptInvitation"));
+const Login = lazy(() => import("@/pages/Login"));
+const Konto = lazy(() => import("@/pages/Konto"));
+const NotFound = lazy(() => import("@/pages/NotFound"));
+
+// Dashboard pages (user)
+const Dashboard = lazy(() => import("@/pages/Dashboard"));
+const DashboardMineBiler = lazy(() => import("@/pages/DashboardMineBiler"));
+const DashboardBilDetalj = lazy(() => import("@/pages/DashboardBilDetalj"));
+
+// Admin pages
+const AdminLogin = lazy(() => import("@/pages/admin/AdminLogin"));
+const AdminDashboard = lazy(() => import("@/pages/admin/AdminDashboard"));
+const AdminBiler = lazy(() => import("@/pages/admin/AdminBiler"));
+const AdminBilProfil = lazy(() => import("@/pages/admin/AdminBilProfil"));
+const AdminDeler = lazy(() => import("@/pages/admin/AdminDeler"));
+const AdminKategorier = lazy(() => import("@/pages/admin/AdminKategorier"));
+const AdminEierprofiler = lazy(() => import("@/pages/admin/AdminEierprofiler"));
+const AdminForesporsler = lazy(() => import("@/pages/admin/AdminForesporsler"));
+const AdminMeldinger = lazy(() => import("@/pages/admin/AdminMeldinger"));
+const AdminSupport = lazy(() => import("@/pages/admin/AdminSupport"));
+const AdminInviteEmail = lazy(() => import("@/pages/admin/AdminInviteEmail"));
+const AdminInnsendinger = lazy(() => import("@/pages/admin/AdminInnsendinger"));
+
+export interface RouteConfig {
+  path: string;
+  element: ComponentType;
+  label?: string;
+  description?: string;
+  icon?: LucideIcon;
+  glow?: boolean;
+  isPublic?: boolean;
+  requiresAuth?: boolean;
+  requiresAdmin?: boolean;
+  showInNav?: boolean;
+}
+
+export const routes: RouteConfig[] = [
+  // Public routes with navigation
+  { path: "/", element: Index, label: "Hjem", description: "Tilbake til forsiden", icon: Home, isPublic: true, showInNav: true },
+  { path: "/manedens-bil", element: ManedensBil, label: "Månedens bil", description: "Se denne månedens utvalgte Simca", icon: Star, glow: true, isPublic: true, showInNav: true },
+  { path: "/biler", element: Biler, label: "Biler", description: "Utforsk Simca-biler og historier", icon: Car, isPublic: true, showInNav: true },
+  { path: "/deler", element: Deler, label: "Deler", description: "Finn deler til din Simca", icon: Wrench, isPublic: true, showInNav: true },
+  { path: "/send-inn", element: SendInnBil, label: "Send inn", description: "Del din Simca-historie med oss", icon: Send, isPublic: true, showInNav: true },
+  { path: "/historie", element: Historie, label: "Historie", description: "Lær om Simcas rike historie", icon: BookOpen, isPublic: true, showInNav: true },
+  { path: "/om-oss", element: OmOss, label: "Om oss", description: "Hvem står bak Simca Norge", icon: Users, isPublic: true, showInNav: true },
+  { path: "/kontakt", element: Kontakt, label: "Kontakt", description: "Ta kontakt med oss", icon: Mail, isPublic: true, showInNav: true },
+  
+  // Public routes without navigation
+  { path: "/biler/:slug", element: BilDetalj, isPublic: true },
+  { path: "/eier/:slug", element: EierProfil, isPublic: true },
+  { path: "/foresporsel", element: Foresporsel, isPublic: true },
+  { path: "/personvern", element: Personvern, isPublic: true },
+  { path: "/accept-invitation", element: AcceptInvitation, isPublic: true },
+  { path: "/i/:token", element: AcceptInvitation, isPublic: true },
+  { path: "/login", element: Login, isPublic: true },
+  
+  // Auth required routes
+  { path: "/konto", element: Konto, requiresAuth: true },
+  
+  // Dashboard routes (user)
+  { path: "/dashboard", element: Dashboard, requiresAuth: true },
+  { path: "/dashboard/mine-biler", element: DashboardMineBiler, requiresAuth: true },
+  { path: "/dashboard/bil/:carId", element: DashboardBilDetalj, requiresAuth: true },
+  
+  // Admin routes
+  { path: "/admin/login", element: AdminLogin, isPublic: true },
+  { path: "/admin/dashboard", element: AdminDashboard, requiresAdmin: true },
+  { path: "/admin/biler", element: AdminBiler, requiresAdmin: true },
+  { path: "/admin/biler/:carId", element: AdminBilProfil, requiresAdmin: true },
+  { path: "/admin/deler", element: AdminDeler, requiresAdmin: true },
+  { path: "/admin/kategorier", element: AdminKategorier, requiresAdmin: true },
+  { path: "/admin/eierprofiler", element: AdminEierprofiler, requiresAdmin: true },
+  { path: "/admin/foresporsler", element: AdminForesporsler, requiresAdmin: true },
+  { path: "/admin/meldinger", element: AdminMeldinger, requiresAdmin: true },
+  { path: "/admin/support", element: AdminSupport, requiresAdmin: true },
+  { path: "/admin/invite-email", element: AdminInviteEmail, requiresAdmin: true },
+  { path: "/admin/innsendinger", element: AdminInnsendinger, requiresAdmin: true },
+  
+  // 404 - must be last
+  { path: "*", element: NotFound, isPublic: true },
+];
+
+// Helper: Get public navigation items (for Header.tsx)
+export const getNavItems = () => {
+  return routes
+    .filter(route => route.showInNav && route.label && route.icon)
+    .map(route => ({
+      href: route.path,
+      label: route.label!,
+      description: route.description || "",
+      icon: route.icon!,
+      glow: route.glow || false,
+    }));
+};
+
+// Helper: Get route by path
+export const getRouteByPath = (path: string) => {
+  return routes.find(route => route.path === path);
+};
