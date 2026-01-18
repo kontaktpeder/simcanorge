@@ -1,3 +1,4 @@
+import { forwardRef } from "react";
 import simcaSwallow from "@/assets/simca-swallow.png";
 
 interface PageHeaderProps {
@@ -5,31 +6,35 @@ interface PageHeaderProps {
   subtitle?: string;
 }
 
-export function PageHeader({ title, subtitle }: PageHeaderProps) {
-  return (
-    <section className="poster-section poster-section-blue relative overflow-hidden py-8 md:py-16 lg:py-20">
-      <div className="absolute inset-0 stripes-diagonal opacity-30" />
-      
-      {/* Swallow watermark - more prominent */}
-      <img 
-        src={simcaSwallow} 
-        alt="" 
-        aria-hidden="true"
-        className="absolute right-2 md:right-8 lg:right-16 top-1/2 -translate-y-1/2 w-28 md:w-44 lg:w-56 opacity-25 md:opacity-35 pointer-events-none -rotate-6 drop-shadow-lg"
-      />
-      
-      <div className="container mx-auto px-4 relative z-10">
-        <div className="max-w-3xl">
-          <h1 className="font-display text-2xl md:text-4xl lg:text-5xl text-white mb-2 md:mb-4 drop-shadow-lg">
-            {title}
-          </h1>
-          {subtitle && (
-            <p className="font-serif text-sm md:text-lg lg:text-xl text-white/85 italic whitespace-pre-line">
-              {subtitle}
-            </p>
-          )}
+export const PageHeader = forwardRef<HTMLElement, PageHeaderProps>(
+  ({ title, subtitle }, ref) => {
+    return (
+      <section ref={ref} className="poster-section poster-section-blue relative overflow-hidden py-8 md:py-16 lg:py-20">
+        <div className="absolute inset-0 stripes-diagonal opacity-30" />
+        
+        {/* Swallow watermark - more prominent */}
+        <img 
+          src={simcaSwallow} 
+          alt="" 
+          aria-hidden="true"
+          className="absolute right-2 md:right-8 lg:right-16 top-1/2 -translate-y-1/2 w-28 md:w-44 lg:w-56 opacity-25 md:opacity-35 pointer-events-none -rotate-6 drop-shadow-lg"
+        />
+        
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="max-w-3xl">
+            <h1 className="font-display text-2xl md:text-4xl lg:text-5xl text-white mb-2 md:mb-4 drop-shadow-lg">
+              {title}
+            </h1>
+            {subtitle && (
+              <p className="font-serif text-sm md:text-lg lg:text-xl text-white/85 italic whitespace-pre-line">
+                {subtitle}
+              </p>
+            )}
+          </div>
         </div>
-      </div>
-    </section>
-  );
-}
+      </section>
+    );
+  }
+);
+
+PageHeader.displayName = "PageHeader";
