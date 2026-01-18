@@ -126,6 +126,8 @@ export function GarasjeGuide() {
         return '/dashboard/mine-biler';
       case 'car-detail':
         return `/dashboard/bil/${firstCarId}`;
+      case 'owner-profile':
+        return '/dashboard?showOwnerProfile=true';
       default:
         return '/dashboard';
     }
@@ -135,15 +137,17 @@ export function GarasjeGuide() {
   const isOnRouteForStep = useCallback((step: typeof GUIDE_STEPS[0]): boolean => {
     switch (step.routeType) {
       case 'dashboard':
-        return location.pathname === '/dashboard';
+        return location.pathname === '/dashboard' && !location.search.includes('showOwnerProfile');
       case 'my-cars':
         return location.pathname === '/dashboard/mine-biler';
       case 'car-detail':
         return location.pathname.startsWith('/dashboard/bil/');
+      case 'owner-profile':
+        return location.pathname === '/dashboard' && location.search.includes('showOwnerProfile');
       default:
         return true;
     }
-  }, [location.pathname]);
+  }, [location.pathname, location.search]);
   
   // Navigate to correct route when guide starts or step changes
   useEffect(() => {
