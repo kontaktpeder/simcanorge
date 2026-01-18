@@ -18,7 +18,7 @@ export function GuideHelpButton() {
     <Tooltip>
       <TooltipTrigger asChild>
         <button
-          onClick={startGuide}
+          onClick={() => startGuide('full')}
           className="flex items-center gap-1 px-2 py-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-all"
           aria-label="Start garasje-guide"
         >

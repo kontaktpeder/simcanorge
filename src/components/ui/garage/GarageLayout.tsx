@@ -72,7 +72,7 @@ export function GarageLayout({
                 {/* Guide-knapp - tydelig i headeren */}
                 {isDashboardRoot && !guideLoading && shouldShowGuide && (
                   <BigActionButton
-                    onClick={startGuide}
+                    onClick={() => startGuide('full')}
                     size="lg"
                     icon={<Sparkles className="w-5 h-5" />}
                     className="animate-pulse-subtle"
@@ -84,7 +84,7 @@ export function GarageLayout({
                 {/* Hjelp-knapp for å starte guide manuelt (vises alltid på dashboard) */}
                 {isDashboardRoot && !guideLoading && !shouldShowGuide && (
                   <button
-                    onClick={startGuide}
+                    onClick={() => startGuide('full')}
                     className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 border border-border hover:border-primary/30 transition-colors text-sm font-medium"
                   >
                     <HelpCircle className="w-4 h-4" />

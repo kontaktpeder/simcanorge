@@ -122,14 +122,14 @@ export default function Dashboard() {
     setShowOwnerProfile(false);
   };
 
+  // Start mine biler-guide
+  const handleStartMyCarsGuide = () => {
+    startGuide('my-cars');
+  };
+
   // Start eierprofil-guide
   const handleStartOwnerProfileGuide = () => {
-    setShowOwnerProfile(true);
-    setShowCarForm(false);
-    setTimeout(() => {
-      profileRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      setTimeout(() => startGuide(), 200);
-    }, 100);
+    startGuide('owner-profile');
   };
 
   // Håndter suksess
@@ -340,10 +340,18 @@ export default function Dashboard() {
               
               <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
                 <BigActionButton
-                  onClick={() => startGuide()}
+                  onClick={() => startGuide('full')}
                   icon={<Sparkles className="w-4 h-4" />}
                 >
                   Full guide
+                </BigActionButton>
+                
+                <BigActionButton
+                  variant="secondary"
+                  onClick={handleStartMyCarsGuide}
+                  icon={<Car className="w-4 h-4" />}
+                >
+                  Mine biler
                 </BigActionButton>
                 
                 <BigActionButton
