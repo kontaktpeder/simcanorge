@@ -25,6 +25,7 @@ export default function Dashboard() {
   const [showOwnerProfile, setShowOwnerProfile] = useState(false);
   const formRef = useRef<HTMLDivElement>(null);
   const profileRef = useRef<HTMLDivElement>(null);
+  const hasProcessedOwnerProfileParam = useRef(false);
   
   // Hent eierprofil for å vise status
   const { data: ownerProfile } = useOwnerProfile(user?.id);
@@ -36,18 +37,28 @@ export default function Dashboard() {
     }
   }, [user, authLoading, navigate]);
 
-  // Åpne eierprofil fra URL-parameter (for guide)
+  // Åpne eierprofil fra URL-parameter (for guide) - kun én gang
   useEffect(() => {
-    if (searchParams.get('showOwnerProfile') === 'true') {
+    const shouldShowOwnerProfile = searchParams.get('showOwnerProfile') === 'true';
+    
+    if (shouldShowOwnerProfile && !hasProcessedOwnerProfileParam.current) {
+      hasProcessedOwnerProfileParam.current = true;
       setShowOwnerProfile(true);
       setShowCarForm(false);
-      // Fjern URL-parameteren etter at den er lest, så den ikke påvirker fremtidig navigasjon
+      
+      // Fjern URL-parameteren etter at den er lest
       const newParams = new URLSearchParams(searchParams);
       newParams.delete('showOwnerProfile');
       setSearchParams(newParams, { replace: true });
+      
       setTimeout(() => {
         profileRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }, 100);
+    }
+    
+    // Reset flag når parameteren ikke er til stede
+    if (!shouldShowOwnerProfile) {
+      hasProcessedOwnerProfileParam.current = false;
     }
   }, [searchParams, setSearchParams]);
 
