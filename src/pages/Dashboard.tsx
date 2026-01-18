@@ -41,11 +41,15 @@ export default function Dashboard() {
     if (searchParams.get('showOwnerProfile') === 'true') {
       setShowOwnerProfile(true);
       setShowCarForm(false);
+      // Fjern URL-parameteren etter at den er lest, så den ikke påvirker fremtidig navigasjon
+      const newParams = new URLSearchParams(searchParams);
+      newParams.delete('showOwnerProfile');
+      setSearchParams(newParams, { replace: true });
       setTimeout(() => {
         profileRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }, 100);
     }
-  }, [searchParams]);
+  }, [searchParams, setSearchParams]);
 
   // Hent antall biler
   const { data: carCount, isLoading: carsLoading } = useQuery({
