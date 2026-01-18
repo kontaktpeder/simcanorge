@@ -4,7 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 // Versjonering - øk dette tallet når guiden oppdateres
-export const CURRENT_GUIDE_VERSION = 2;
+export const CURRENT_GUIDE_VERSION = 3;
 
 interface GuideProgress {
   user_id: string;
@@ -62,7 +62,7 @@ export interface GuideStep {
   target: string; // data-guide attribute value
   title: string;
   content: string;
-  routeType?: 'dashboard' | 'my-cars' | 'car-detail'; // Which route type this step belongs to
+  routeType?: 'dashboard' | 'my-cars' | 'car-detail' | 'owner-profile'; // Which route type this step belongs to
   placement?: 'top' | 'bottom' | 'left' | 'right' | 'auto';
   disableBeacon?: boolean;
   spotlightClicks?: boolean;
@@ -124,6 +124,42 @@ export const GUIDE_STEPS: GuideStep[] = [
     title: 'Legg til hendelser',
     content: 'Dokumenter viktige hendelser i bilens liv. Dette blir en tidslinje på den offentlige siden.',
     routeType: 'car-detail',
+    placement: 'top',
+  },
+  // Eierprofil-steg
+  {
+    target: '[data-guide="owner-profile-card"]',
+    title: 'Din eierprofil 👤',
+    content: 'Her kan du opprette eller redigere din offentlige eierprofil. Trykk for å åpne.',
+    routeType: 'dashboard',
+    placement: 'bottom',
+  },
+  {
+    target: '[data-guide="owner-display-name"]',
+    title: 'Ditt visningsnavn',
+    content: 'Velg hva du vil hete på nettsiden. Dette vises på bilene dine og eierprofilen.',
+    routeType: 'owner-profile',
+    placement: 'bottom',
+  },
+  {
+    target: '[data-guide="owner-bio"]',
+    title: 'Fortell om deg selv',
+    content: 'Skriv litt om deg som bileier. Hvorfor liker du Simca? Hvor lenge har du vært entusiast?',
+    routeType: 'owner-profile',
+    placement: 'top',
+  },
+  {
+    target: '[data-guide="owner-visibility"]',
+    title: 'Synlighet',
+    content: 'Skru på dette for å vise profilen din offentlig. Da får du en egen eierside folk kan besøke.',
+    routeType: 'owner-profile',
+    placement: 'top',
+  },
+  {
+    target: '[data-guide="owner-save"]',
+    title: 'Lagre profilen',
+    content: 'Husk å lagre endringene dine! Trykk her når du er ferdig.',
+    routeType: 'owner-profile',
     placement: 'top',
   },
 ];
@@ -230,6 +266,8 @@ export function GuideProvider({ children }: GuideProviderProps) {
         return '/dashboard/mine-biler';
       case 'car-detail':
         return firstCarId ? `/dashboard/bil/${firstCarId}` : null;
+      case 'owner-profile':
+        return '/dashboard?showOwnerProfile=true';
       default:
         return null;
     }
@@ -242,15 +280,17 @@ export function GuideProvider({ children }: GuideProviderProps) {
     
     switch (step.routeType) {
       case 'dashboard':
-        return location.pathname === '/dashboard';
+        return location.pathname === '/dashboard' && !location.search.includes('showOwnerProfile');
       case 'my-cars':
         return location.pathname === '/dashboard/mine-biler';
       case 'car-detail':
         return location.pathname.startsWith('/dashboard/bil/');
+      case 'owner-profile':
+        return location.pathname === '/dashboard' && location.search.includes('showOwnerProfile');
       default:
         return true;
     }
-  }, [location.pathname]);
+  }, [location.pathname, location.search]);
   
   // Start guide
   const startGuide = useCallback(() => {

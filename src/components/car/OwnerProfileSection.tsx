@@ -127,7 +127,7 @@ export function OwnerProfileSection({ userId }: OwnerProfileSectionProps) {
           </div>
 
           {/* Display Name */}
-          <div className="space-y-2">
+          <div className="space-y-2" data-guide="owner-display-name">
             <Label htmlFor="display-name">Visningsnavn *</Label>
             <Input
               id="display-name"
@@ -139,7 +139,7 @@ export function OwnerProfileSection({ userId }: OwnerProfileSectionProps) {
           </div>
 
           {/* Bio */}
-          <div className="space-y-2">
+          <div className="space-y-2" data-guide="owner-bio">
             <Label htmlFor="bio">Om meg som bileier</Label>
             <Textarea
               id="bio"
@@ -190,7 +190,7 @@ export function OwnerProfileSection({ userId }: OwnerProfileSectionProps) {
           </div>
 
           {/* Visibility Toggle */}
-          <div className="flex items-center justify-between p-4 rounded-lg border bg-card">
+          <div className="flex items-center justify-between p-4 rounded-lg border bg-card" data-guide="owner-visibility">
             <div className="flex items-center gap-3">
               {visiblePublic ? (
                 <Eye className="h-5 w-5 text-green-600" />
@@ -222,14 +222,16 @@ export function OwnerProfileSection({ userId }: OwnerProfileSectionProps) {
           )}
 
           {/* Save Button */}
-          <BigActionButton
-            onClick={handleSave}
-            disabled={!displayName.trim() || isSaving || !hasChanges}
-            icon={isSaving ? <Loader2 className="h-5 w-5 animate-spin" /> : <Save className="h-5 w-5" />}
-            className="w-full sm:w-auto"
-          >
-            {isSaving ? 'Lagrer...' : profile ? 'Lagre endringer' : 'Opprett eierprofil'}
-          </BigActionButton>
+          <div data-guide="owner-save">
+            <BigActionButton
+              onClick={handleSave}
+              disabled={!displayName.trim() || isSaving || !hasChanges}
+              icon={isSaving ? <Loader2 className="h-5 w-5 animate-spin" /> : <Save className="h-5 w-5" />}
+              className="w-full sm:w-auto"
+            >
+              {isSaving ? 'Lagrer...' : profile ? 'Lagre endringer' : 'Opprett eierprofil'}
+            </BigActionButton>
+          </div>
         </div>
       </EnamelCard>
     </motion.div>

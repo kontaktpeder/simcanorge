@@ -1,5 +1,5 @@
 import { useAuth } from '@/hooks/useAuth';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useEffect, useState, useRef } from 'react';
 import { GarageLayout } from '@/components/ui/garage/GarageLayout';
 import { EnamelCard } from '@/components/ui/garage/EnamelCard';
@@ -19,6 +19,7 @@ import { useOwnerProfile } from '@/hooks/useOwnerProfile';
 export default function Dashboard() {
   const { user, isLoading: authLoading } = useAuth();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const queryClient = useQueryClient();
   const [showCarForm, setShowCarForm] = useState(false);
   const [showOwnerProfile, setShowOwnerProfile] = useState(false);
@@ -34,6 +35,17 @@ export default function Dashboard() {
       navigate('/login?returnUrl=/dashboard');
     }
   }, [user, authLoading, navigate]);
+
+  // Åpne eierprofil fra URL-parameter (for guide)
+  useEffect(() => {
+    if (searchParams.get('showOwnerProfile') === 'true') {
+      setShowOwnerProfile(true);
+      setShowCarForm(false);
+      setTimeout(() => {
+        profileRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
+    }
+  }, [searchParams]);
 
   // Hent antall biler
   const { data: carCount, isLoading: carsLoading } = useQuery({
@@ -89,9 +101,17 @@ export default function Dashboard() {
   const handleOpenOwnerProfile = () => {
     setShowOwnerProfile(true);
     setShowCarForm(false);
+    // Oppdater URL slik at guiden vet vi er på eierprofil
+    setSearchParams({ showOwnerProfile: 'true' });
     setTimeout(() => {
       profileRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 100);
+  };
+
+  // Lukk eierprofil og fjern URL-parameter
+  const handleCloseOwnerProfile = () => {
+    setShowOwnerProfile(false);
+    setSearchParams({});
   };
 
   // Håndter suksess
@@ -233,6 +253,7 @@ export default function Dashboard() {
           <EnamelCard 
             className="h-full min-h-[140px] sm:min-h-[160px] group cursor-pointer touch-manipulation" 
             onClick={handleOpenOwnerProfile}
+            data-guide="owner-profile-card"
           >
             <div className="flex items-start justify-between mb-3 sm:mb-4">
               <div className="p-2.5 sm:p-3 bg-primary/10 rounded-xl flex-shrink-0">
@@ -332,7 +353,7 @@ export default function Dashboard() {
               <BigActionButton
                 variant="ghost"
                 size="lg"
-                onClick={() => setShowOwnerProfile(false)}
+                onClick={handleCloseOwnerProfile}
                 icon={<X className="w-5 h-5" />}
               >
                 Lukk
