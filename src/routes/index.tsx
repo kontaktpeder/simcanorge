@@ -52,27 +52,24 @@ export function AppRoutes() {
   return (
     <Suspense fallback={<RouteLoadingFallback />}>
       <Routes>
-        {routes.map((route) => {
-          // Create route element with protection if needed
-          const routeElement = route.requiresAuth || route.requiresAdmin ? (
-            <ProtectedRoute 
-              requiresAuth={route.requiresAuth} 
-              requiresAdmin={route.requiresAdmin}
-            >
-              <route.element />
-            </ProtectedRoute>
-          ) : (
-            <route.element />
-          );
-
-          return (
-            <Route
-              key={route.path}
-              path={route.path}
-              element={routeElement}
-            />
-          );
-        })}
+        {routes.map((route) => (
+          <Route
+            key={route.path}
+            path={route.path}
+            element={
+              route.requiresAuth || route.requiresAdmin ? (
+                <ProtectedRoute 
+                  requiresAuth={route.requiresAuth} 
+                  requiresAdmin={route.requiresAdmin}
+                >
+                  <route.element />
+                </ProtectedRoute>
+              ) : (
+                <route.element />
+              )
+            }
+          />
+        ))}
       </Routes>
     </Suspense>
   );
