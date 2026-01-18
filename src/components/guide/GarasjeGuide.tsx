@@ -101,6 +101,7 @@ export function GarasjeGuide() {
     dismissGuide,
     firstCarId,
     getActiveSteps,
+    activeGuideType,
   } = useGuide();
   
   const navigate = useNavigate();
@@ -110,13 +111,28 @@ export function GarasjeGuide() {
   const isNavigatingRef = useRef(false);
   
   // Build the active steps based on guide type and whether user has cars
-  const activeSteps = getActiveSteps().filter(step => {
+  const rawSteps = getActiveSteps();
+  const activeSteps = rawSteps.filter(step => {
     // If user has no cars, skip car-detail steps
     if (step.routeType === 'car-detail' && !firstCarId) {
       return false;
     }
     return true;
   });
+  
+  // Debug log
+  useEffect(() => {
+    if (isGuideRunning) {
+      console.log('[GarasjeGuide] Guide running:', { 
+        activeGuideType, 
+        rawStepsCount: rawSteps.length,
+        activeStepsCount: activeSteps.length,
+        firstCarId,
+        isReady,
+        stepIndex
+      });
+    }
+  }, [isGuideRunning, activeGuideType, rawSteps.length, activeSteps.length, firstCarId, isReady, stepIndex]);
   
   // Get route for a step
   const getRouteForStep = useCallback((step: typeof GUIDE_STEPS[0]): string => {
