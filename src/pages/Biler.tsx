@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { supabase } from "@/integrations/supabase/client";
-import { Car, Filter, X, Search, History, CheckCircle, Wrench, AlertTriangle } from "lucide-react";
+import { Car, Filter, X, Search, History, CheckCircle, Wrench, AlertTriangle, ChevronLeft, ChevronRight } from "lucide-react";
 import { CAR_BRANDS } from "@/data/carBrands";
 import { 
   groupCarsByModule, 
@@ -43,6 +43,7 @@ interface CarPost {
 }
 
 const BRANDS = CAR_BRANDS.map(b => b.name);
+const ITEMS_PER_PAGE = 20;
 
 const CATEGORIES = [{
   id: "alle",
@@ -76,6 +77,10 @@ const Biler = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
   const [categoryCounts, setCategoryCounts] = useState<Record<string, number>>({});
+  
+  // Pagination
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalCount, setTotalCount] = useState(0);
 
   // Filters
   const [searchQuery, setSearchQuery] = useState("");
@@ -83,9 +88,14 @@ const Biler = () => {
   const [selectedDecade, setSelectedDecade] = useState<string>("");
   const [selectedCategory, setSelectedCategory] = useState<string>("alle");
 
-  // Fetch all cars with counts for scoring
-  const fetchCars = async () => {
+  const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
+
+  // Fetch cars with pagination
+  const fetchCars = async (page: number = 0) => {
     setIsLoading(true);
+
+    const from = page * ITEMS_PER_PAGE;
+    const to = from + ITEMS_PER_PAGE - 1;
 
     let query = supabase
       .from("cars")
@@ -93,10 +103,11 @@ const Biler = () => {
         id, title, slug, brand, model, year, story, tags, featured, 
         published_at, category, editorial_status,
         car_images(image_url, alt_text)
-      `)
+      `, { count: 'exact' })
       .not("published_at", "is", null)
       .lte("published_at", new Date().toISOString())
-      .order("published_at", { ascending: false });
+      .order("published_at", { ascending: false })
+      .range(from, to);
 
     // Apply filters
     if (selectedCategory !== "alle") {
@@ -115,7 +126,7 @@ const Biler = () => {
       query = query.or(`title.ilike.${q},brand.ilike.${q},model.ilike.${q},story.ilike.${q}`);
     }
 
-    const { data, error } = await query;
+    const { data, error, count } = await query;
 
     if (error) {
       console.error("Error fetching cars:", error);
@@ -142,6 +153,7 @@ const Biler = () => {
       );
 
       setCars(carsWithCounts);
+      setTotalCount(count || 0);
     }
 
     setIsLoading(false);
@@ -170,9 +182,15 @@ const Biler = () => {
     fetchCategoryCounts();
   }, []);
 
+  // Reset to first page when filters change
   useEffect(() => {
-    fetchCars();
+    setCurrentPage(0);
   }, [selectedCategory, selectedBrand, selectedDecade, searchQuery]);
+
+  // Fetch cars when page or filters change
+  useEffect(() => {
+    fetchCars(currentPage);
+  }, [currentPage, selectedCategory, selectedBrand, selectedDecade, searchQuery]);
 
   const clearFilters = () => {
     setSearchQuery("");
@@ -181,6 +199,13 @@ const Biler = () => {
   };
 
   const hasActiveFilters = searchQuery || selectedBrand || selectedDecade;
+
+  const handlePageChange = (newPage: number) => {
+    if (newPage >= 0 && newPage < totalPages) {
+      setCurrentPage(newPage);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
 
   // Extract "månedens bil" first - either featured=true or editorial_status='manedens_bil'
   const monthlyCar = cars.find(c => c.featured || c.editorial_status === 'manedens_bil');
@@ -339,10 +364,82 @@ const Biler = () => {
                 ))}
               </div>
 
-              {/* Count footer */}
-              <p className="text-center text-muted-foreground mt-16 text-sm font-display tracking-wider">
-                {cars.length} {cars.length === 1 ? 'bil' : 'biler'} dokumentert
-              </p>
+              {/* Pagination - Magazine style */}
+              {totalPages > 1 && (
+                <div className="mt-16 flex flex-col items-center gap-4">
+                  <div className="flex items-center gap-2">
+                    {/* Previous */}
+                    <button
+                      onClick={() => handlePageChange(currentPage - 1)}
+                      disabled={currentPage === 0}
+                      className={`flex items-center gap-1.5 px-4 py-2 font-display text-sm uppercase tracking-wider transition-colors ${
+                        currentPage === 0 
+                          ? "text-muted-foreground/40 cursor-not-allowed" 
+                          : "text-foreground hover:text-primary"
+                      }`}
+                    >
+                      <ChevronLeft className="w-4 h-4" />
+                      <span className="hidden sm:inline">Forrige</span>
+                    </button>
+
+                    {/* Page numbers */}
+                    <div className="flex items-center gap-1">
+                      {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
+                        let pageNum: number;
+                        if (totalPages <= 5) {
+                          pageNum = i;
+                        } else if (currentPage < 3) {
+                          pageNum = i;
+                        } else if (currentPage > totalPages - 4) {
+                          pageNum = totalPages - 5 + i;
+                        } else {
+                          pageNum = currentPage - 2 + i;
+                        }
+                        
+                        return (
+                          <button
+                            key={pageNum}
+                            onClick={() => handlePageChange(pageNum)}
+                            className={`w-10 h-10 font-serif text-lg transition-colors ${
+                              currentPage === pageNum
+                                ? "text-primary border-b-2 border-primary"
+                                : "text-muted-foreground hover:text-foreground"
+                            }`}
+                          >
+                            {pageNum + 1}
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    {/* Next */}
+                    <button
+                      onClick={() => handlePageChange(currentPage + 1)}
+                      disabled={currentPage >= totalPages - 1}
+                      className={`flex items-center gap-1.5 px-4 py-2 font-display text-sm uppercase tracking-wider transition-colors ${
+                        currentPage >= totalPages - 1 
+                          ? "text-muted-foreground/40 cursor-not-allowed" 
+                          : "text-foreground hover:text-primary"
+                      }`}
+                    >
+                      <span className="hidden sm:inline">Neste</span>
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  </div>
+
+                  {/* Page info */}
+                  <p className="text-muted-foreground text-sm font-display tracking-wider">
+                    Side {currentPage + 1} av {totalPages} · {totalCount} {totalCount === 1 ? 'bil' : 'biler'} totalt
+                  </p>
+                </div>
+              )}
+
+              {/* Count footer - only show if single page */}
+              {totalPages <= 1 && (
+                <p className="text-center text-muted-foreground mt-16 text-sm font-display tracking-wider">
+                  {totalCount} {totalCount === 1 ? 'bil' : 'biler'} dokumentert
+                </p>
+              )}
             </>
           )}
         </div>
