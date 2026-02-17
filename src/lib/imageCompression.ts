@@ -120,3 +120,10 @@ export function getPartImagePath(partId: string, imageId: string): string {
 export function getCarEventImagePath(carId: string, eventId: string, imageId: string): string {
   return `car-events/${carId}/${eventId}/${imageId}/original.webp`;
 }
+
+/**
+ * Generate storage path for marketplace images
+ */
+export function getMarketplaceImagePath(itemId: string, imageId: string): string {
+  return `marketplace/${itemId}/images/${imageId}/original.webp`;
+}

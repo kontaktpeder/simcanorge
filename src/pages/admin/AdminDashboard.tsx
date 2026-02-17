@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { supabase } from "@/integrations/supabase/client";
-import { Car, Wrench, Inbox, FolderTree, Mail, LifeBuoy, Bell } from "lucide-react";
+import { Car, Wrench, Inbox, FolderTree, Mail, LifeBuoy, Bell, ShoppingBag } from "lucide-react";
 import { Link } from "react-router-dom";
 import simcaSwallow from "@/assets/simca-chrome-swallow.png";
 import { Badge } from "@/components/ui/badge";
@@ -16,6 +16,7 @@ interface Stats {
   unreadMessages: number;
   support: number;
   unreadSupport: number;
+  submittedMarketplace: number;
 }
 
 const AdminDashboard = () => {
@@ -29,6 +30,7 @@ const AdminDashboard = () => {
     unreadMessages: 0,
     support: 0,
     unreadSupport: 0,
+    submittedMarketplace: 0,
   });
   const [isLoading, setIsLoading] = useState(true);
 
@@ -45,6 +47,7 @@ const AdminDashboard = () => {
           unreadMessagesRes,
           supportRes,
           unreadSupportRes,
+          submittedMarketplaceRes,
         ] = await Promise.all([
           supabase.from("cars").select("id", { count: "exact", head: true }),
           supabase.from("parts").select("id", { count: "exact", head: true }),
@@ -55,6 +58,7 @@ const AdminDashboard = () => {
           supabase.from("messages").select("id", { count: "exact", head: true }).eq("read", false),
           supabase.from("support_tickets").select("id", { count: "exact", head: true }),
           supabase.from("support_tickets").select("id", { count: "exact", head: true }).eq("status", "new"),
+          supabase.from("marketplace_items").select("id", { count: "exact", head: true }).eq("status", "submitted"),
         ]);
 
         setStats({
@@ -67,6 +71,7 @@ const AdminDashboard = () => {
           unreadMessages: unreadMessagesRes.count || 0,
           support: supportRes.count || 0,
           unreadSupport: unreadSupportRes.count || 0,
+          submittedMarketplace: submittedMarketplaceRes.count || 0,
         });
       } catch (err) {
         console.error("Error fetching stats:", err);
@@ -86,6 +91,15 @@ const AdminDashboard = () => {
       icon: Car,
       href: "/admin/biler",
       color: "bg-primary",
+    },
+    {
+      label: "Markedsplass",
+      description: "Annonser til godkjenning",
+      value: stats.submittedMarketplace,
+      badge: stats.submittedMarketplace,
+      icon: ShoppingBag,
+      href: "/admin/markedsplass",
+      color: "bg-orange-600",
     },
     {
       label: "Deler",
@@ -145,9 +159,16 @@ const AdminDashboard = () => {
         />
         <div>
           <h1 className="font-display text-2xl md:text-3xl">Velkommen til Simca Norge</h1>
-          {totalUnread > 0 ? (
+          {totalUnread > 0 || stats.submittedMarketplace > 0 ? (
             <p className="text-muted-foreground">
-              Du har <span className="text-accent font-semibold">{totalUnread} uleste</span> henvendelser
+              Du har{' '}
+              {totalUnread > 0 && <span className="text-accent font-semibold">{totalUnread} uleste</span>}
+              {totalUnread > 0 && ' henvendelser'}
+              {totalUnread > 0 && stats.submittedMarketplace > 0 && ' og '}
+              {stats.submittedMarketplace > 0 && (
+                <span className="text-accent font-semibold">{stats.submittedMarketplace} annonse{stats.submittedMarketplace !== 1 ? 'r' : ''}</span>
+              )}
+              {' '}til behandling
             </p>
           ) : (
             <p className="text-muted-foreground">Alt er i orden – ingen nye henvendelser</p>
@@ -156,13 +177,13 @@ const AdminDashboard = () => {
       </div>
 
       {/* Alert card for unread items */}
-      {totalUnread > 0 && (
+      {(totalUnread > 0 || stats.submittedMarketplace > 0) && (
         <div className="bg-accent/10 border border-accent/30 rounded-xl p-4 mb-6">
           <div className="flex items-start gap-3">
             <Bell className="w-5 h-5 text-accent flex-shrink-0 mt-0.5" />
             <div>
               <p className="font-medium text-foreground">
-                Du har {totalUnread} ulest{totalUnread !== 1 ? 'e' : ''} melding{totalUnread !== 1 ? 'er' : ''}
+                Du har saker til behandling
               </p>
               <div className="flex flex-wrap gap-2 mt-2">
                 {stats.unreadInquiries > 0 && (
@@ -183,6 +204,13 @@ const AdminDashboard = () => {
                   <Link to="/admin/support">
                     <Badge variant="outline" className="cursor-pointer hover:bg-accent/20">
                       {stats.unreadSupport} support ticket{stats.unreadSupport !== 1 ? 's' : ''}
+                    </Badge>
+                  </Link>
+                )}
+                {stats.submittedMarketplace > 0 && (
+                  <Link to="/admin/markedsplass">
+                    <Badge variant="outline" className="cursor-pointer hover:bg-accent/20">
+                      {stats.submittedMarketplace} annonse{stats.submittedMarketplace !== 1 ? 'r' : ''} til godkjenning
                     </Badge>
                   </Link>
                 )}
