@@ -317,7 +317,7 @@ const Deler = () => {
                 return (
                   <div
                     key={part.id}
-                    className="rounded-sm overflow-hidden group"
+                    className="rounded-sm overflow-hidden group flex flex-col"
                     style={{ background: 'rgba(255,255,255,0.85)', border: '1px solid rgba(0,0,0,0.06)' }}
                   >
                     {/* Image with fixed aspect ratio */}
@@ -338,7 +338,7 @@ const Deler = () => {
                     </div>
 
                     {/* Card body */}
-                    <div className="p-3 md:p-4">
+                    <div className="p-3 md:p-4 flex flex-col flex-1">
                       {/* Category tag */}
                       {part.category_id && (
                         <span className="inline-block text-muted-foreground text-[10px] uppercase tracking-wider mb-1">
@@ -364,7 +364,7 @@ const Deler = () => {
                       )}
 
                       {/* Thin rule + CTA */}
-                      <div className="mt-3 pt-3 border-t border-foreground/5">
+                      <div className="mt-auto pt-3 border-t border-foreground/5">
                         <button
                           onClick={() => handleAddToCart(part)}
                           className={`w-full py-2 text-xs font-medium rounded-sm flex items-center justify-center gap-1.5 transition-all ${
