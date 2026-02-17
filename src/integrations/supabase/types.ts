@@ -592,6 +592,142 @@ export type Database = {
           },
         ]
       }
+      marketplace_categories: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          parent_id: string | null
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          parent_id?: string | null
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          parent_id?: string | null
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "marketplace_categories_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "marketplace_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      marketplace_images: {
+        Row: {
+          alt_text: string | null
+          created_at: string
+          id: string
+          image_url: string
+          item_id: string
+          sort_order: number
+        }
+        Insert: {
+          alt_text?: string | null
+          created_at?: string
+          id?: string
+          image_url: string
+          item_id: string
+          sort_order?: number
+        }
+        Update: {
+          alt_text?: string | null
+          created_at?: string
+          id?: string
+          image_url?: string
+          item_id?: string
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "marketplace_images_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "marketplace_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      marketplace_items: {
+        Row: {
+          category_id: string | null
+          contact_mode: string
+          created_at: string
+          description: string | null
+          id: string
+          location: string | null
+          owner_id: string
+          price: number | null
+          price_note: string | null
+          published_at: string | null
+          slug: string
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category_id?: string | null
+          contact_mode?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          location?: string | null
+          owner_id: string
+          price?: number | null
+          price_note?: string | null
+          published_at?: string | null
+          slug: string
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category_id?: string | null
+          contact_mode?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          location?: string | null
+          owner_id?: string
+          price?: number | null
+          price_note?: string | null
+          published_at?: string | null
+          slug?: string
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "marketplace_items_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "marketplace_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "marketplace_items_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "owners"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       messages: {
         Row: {
           created_at: string
@@ -671,6 +807,8 @@ export type Database = {
       }
       owners: {
         Row: {
+          approved_at: string | null
+          avatar_url: string | null
           bio: string | null
           created_at: string
           display_name: string
@@ -683,6 +821,8 @@ export type Database = {
           visible_public: boolean
         }
         Insert: {
+          approved_at?: string | null
+          avatar_url?: string | null
           bio?: string | null
           created_at?: string
           display_name: string
@@ -695,6 +835,8 @@ export type Database = {
           visible_public?: boolean
         }
         Update: {
+          approved_at?: string | null
+          avatar_url?: string | null
           bio?: string | null
           created_at?: string
           display_name?: string
