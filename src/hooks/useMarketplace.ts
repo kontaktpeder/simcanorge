@@ -234,6 +234,34 @@ export function useUpdateMarketplaceItem() {
   });
 }
 
+// Insert marketplace images
+export function useInsertMarketplaceImages() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ itemId, images }: { itemId: string; images: { image_url: string; sort_order: number }[] }) => {
+      const rows = images.map((img) => ({
+        item_id: itemId,
+        image_url: img.image_url,
+        sort_order: img.sort_order,
+      }));
+
+      const { data, error } = await supabase
+        .from('marketplace_images')
+        .insert(rows)
+        .select();
+
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['my-listings'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-marketplace-items'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-marketplace-item', variables.itemId] });
+    },
+  });
+}
+
 // Fetch all marketplace items for admin (no published_at filter)
 export function useAdminMarketplaceItems(statusFilter?: string) {
   return useQuery({

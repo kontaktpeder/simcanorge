@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate, Link } from 'react-router-dom';
 import { useEffect } from 'react';
@@ -6,14 +6,17 @@ import { GarageLayout } from '@/components/ui/garage/GarageLayout';
 import { EnamelCard } from '@/components/ui/garage/EnamelCard';
 import { BigActionButton } from '@/components/ui/garage/BigActionButton';
 import { SectionHeader } from '@/components/ui/garage/SectionHeader';
-import { ShoppingBag, Save, Loader2, Clock, ChevronLeft } from 'lucide-react';
+import { ShoppingBag, Save, Loader2, Clock, ChevronLeft, ImagePlus, X } from 'lucide-react';
 import { Layout } from '@/components/layout/Layout';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { useOwnerProfile } from '@/hooks/useOwnerProfile';
-import { useCreateMarketplaceItem, useMarketplaceCategories } from '@/hooks/useMarketplace';
+import { useCreateMarketplaceItem, useMarketplaceCategories, useInsertMarketplaceImages } from '@/hooks/useMarketplace';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { compressImages, generateImageId, getMarketplaceImagePath, type CompressionProgress } from '@/lib/imageCompression';
+import { ImageUploadProgress } from '@/components/ui/image-upload-progress';
+import { supabase } from '@/integrations/supabase/client';
 
 export default function OpprettAnnonse() {
   const { user, isLoading: authLoading } = useAuth();
@@ -21,6 +24,7 @@ export default function OpprettAnnonse() {
   const { data: ownerProfile, isLoading: profileLoading } = useOwnerProfile(user?.id);
   const { data: categories } = useMarketplaceCategories();
   const createItem = useCreateMarketplaceItem();
+  const insertImages = useInsertMarketplaceImages();
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -28,6 +32,11 @@ export default function OpprettAnnonse() {
   const [priceNote, setPriceNote] = useState('');
   const [categoryId, setCategoryId] = useState<string>('');
   const [location, setLocation] = useState('');
+  const [images, setImages] = useState<File[]>([]);
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  const [uploadProgress, setUploadProgress] = useState<CompressionProgress | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -72,21 +81,82 @@ export default function OpprettAnnonse() {
     );
   }
 
-  const handleSubmit = async () => {
-    if (!title.trim() || !ownerProfile) return;
-
-    await createItem.mutateAsync({
-      owner_id: ownerProfile.id,
-      title: title.trim(),
-      description: description.trim() || null,
-      price: price ? parseFloat(price) : null,
-      price_note: priceNote.trim() || null,
-      category_id: categoryId || null,
-      location: location.trim() || ownerProfile.location || null,
-      status: 'submitted',
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []).filter((f) => f.type.startsWith('image/'));
+    setImages((prev) => [...prev, ...files]);
+    files.forEach((f) => {
+      const reader = new FileReader();
+      reader.onload = () => setImagePreviews((p) => [...p, reader.result as string]);
+      reader.readAsDataURL(f);
     });
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
 
-    navigate('/dashboard/mine-annonser');
+  const removeImage = (index: number) => {
+    setImages((prev) => prev.filter((_, i) => i !== index));
+    setImagePreviews((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const uploadImages = async (itemId: string): Promise<{ image_url: string; sort_order: number }[]> => {
+    if (images.length === 0) return [];
+
+    const compressed = await compressImages(images, (p) => setUploadProgress(p));
+    const uploaded: { image_url: string; sort_order: number }[] = [];
+
+    for (let i = 0; i < compressed.length; i++) {
+      const { file } = compressed[i];
+      const imageId = generateImageId();
+      const filePath = getMarketplaceImagePath(itemId, imageId);
+
+      setUploadProgress({
+        stage: 'uploading',
+        current: i + 1,
+        total: compressed.length,
+        percentage: Math.round(((i + 1) / compressed.length) * 100),
+      });
+
+      const { error } = await supabase.storage.from('simca-images').upload(filePath, file, { contentType: 'image/webp' });
+      if (error) {
+        console.error('Upload error:', error);
+        continue;
+      }
+
+      const { data } = supabase.storage.from('simca-images').getPublicUrl(filePath);
+      uploaded.push({ image_url: data.publicUrl, sort_order: i });
+    }
+    return uploaded;
+  };
+
+  const handleSubmit = async () => {
+    if (!title.trim() || !ownerProfile || isSubmitting) return;
+    setIsSubmitting(true);
+
+    try {
+      const data = await createItem.mutateAsync({
+        owner_id: ownerProfile.id,
+        title: title.trim(),
+        description: description.trim() || null,
+        price: price ? parseFloat(price) : null,
+        price_note: priceNote.trim() || null,
+        category_id: categoryId || null,
+        location: location.trim() || ownerProfile.location || null,
+        status: 'submitted',
+      });
+
+      if (images.length > 0 && data?.id) {
+        const uploaded = await uploadImages(data.id);
+        if (uploaded.length > 0) {
+          await insertImages.mutateAsync({ itemId: data.id, images: uploaded });
+        }
+      }
+
+      navigate('/dashboard/mine-annonser');
+    } catch (err) {
+      console.error('Submit error:', err);
+    } finally {
+      setIsSubmitting(false);
+      setUploadProgress(null);
+    }
   };
 
   return (
@@ -175,14 +245,52 @@ export default function OpprettAnnonse() {
             />
           </div>
 
+          {/* Images */}
+          <div className="space-y-2">
+            <Label>Bilder (valgfritt)</Label>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              multiple
+              onChange={handleFileChange}
+              className="hidden"
+            />
+            <div className="flex flex-wrap gap-2">
+              {imagePreviews.map((src, i) => (
+                <div key={i} className="relative w-20 h-20">
+                  <img src={src} alt={`Bilde ${i + 1}`} className="w-full h-full object-cover rounded-lg" />
+                  <button
+                    type="button"
+                    onClick={() => removeImage(i)}
+                    className="absolute top-1 right-1 p-0.5 bg-black/50 rounded-full text-white hover:bg-black/70"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="w-20 h-20 rounded-lg border-2 border-dashed border-muted-foreground/30 flex items-center justify-center hover:border-primary/50 transition-colors"
+              >
+                <ImagePlus className="w-6 h-6 text-muted-foreground" />
+              </button>
+            </div>
+          </div>
+
+          {uploadProgress && (
+            <ImageUploadProgress progress={uploadProgress} />
+          )}
+
           {/* Submit */}
           <BigActionButton
             onClick={handleSubmit}
-            disabled={!title.trim() || createItem.isPending}
-            icon={createItem.isPending ? <Loader2 className="h-5 w-5 animate-spin" /> : <Save className="h-5 w-5" />}
+            disabled={!title.trim() || isSubmitting}
+            icon={isSubmitting ? <Loader2 className="h-5 w-5 animate-spin" /> : <Save className="h-5 w-5" />}
             className="w-full sm:w-auto"
           >
-            {createItem.isPending ? 'Oppretter...' : 'Send inn annonse'}
+            {isSubmitting ? 'Oppretter...' : 'Send inn annonse'}
           </BigActionButton>
         </div>
       </EnamelCard>
