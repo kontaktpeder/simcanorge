@@ -9,7 +9,7 @@ import { FadeImage } from "@/components/ui/FadeImage";
 import { ReportProblemButton, ReportProblemModal } from "@/components/support";
 import { getNavItems } from "@/routes/routes";
 import simcaBadge from "@/assets/simca-badge.png";
-import toolboxIcon from "@/assets/toolbox-icon.png";
+import toolboxIcon from "@/assets/toolbox-blue.png";
 import simcaRallye from "@/assets/simca-rallye-yellow.png";
 import {
   Tooltip,
@@ -450,7 +450,7 @@ export function Header() {
                     className="relative p-1.5 hover:bg-muted/60 rounded-lg transition-colors ml-1"
                     aria-label="Min verktøykasse"
                   >
-                    <img src={toolboxIcon} alt="Verktøykasse" className="h-8 w-auto object-contain" />
+                    <img src={toolboxIcon} alt="Verktøykasse" className="h-10 w-auto object-contain" />
                     {itemCount > 0 && (
                       <span className="absolute -top-0.5 -right-0.5 bg-accent text-accent-foreground w-4 h-4 rounded-full text-[10px] font-display flex items-center justify-center shadow-md">
                         {itemCount}
@@ -534,7 +534,7 @@ export function Header() {
               className="relative p-1.5 hover:bg-muted/50 rounded-lg transition-colors"
               aria-label="Min verktøykasse"
             >
-              <img src={toolboxIcon} alt="Verktøykasse" className="h-8 w-auto object-contain" />
+              <img src={toolboxIcon} alt="Verktøykasse" className="h-10 w-auto object-contain" />
               {itemCount > 0 && (
                 <span className="absolute -top-0.5 -right-0.5 bg-accent text-accent-foreground w-4 h-4 rounded-full text-[10px] font-display flex items-center justify-center shadow-md">
                   {itemCount}
