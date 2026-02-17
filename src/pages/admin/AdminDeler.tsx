@@ -29,6 +29,7 @@ interface Part {
   category_id: string | null;
   price_min: number | null;
   price_max: number | null;
+  price_note: string | null;
   categories: { name: string } | null;
   part_images?: PartImage[];
 }
@@ -55,13 +56,14 @@ const AdminDeler = () => {
     published: false,
     price_min: "" as string | number,
     price_max: "" as string | number,
+    price_note: "",
   });
 
   const fetchData = async () => {
     const [partsRes, categoriesRes] = await Promise.all([
       supabase
         .from("parts")
-        .select("id, title, description, image_url, published, category_id, price_min, price_max, categories(name), part_images(id, image_url, sort_order)")
+        .select("id, title, description, image_url, published, category_id, price_min, price_max, price_note, categories(name), part_images(id, image_url, sort_order)")
         .order("created_at", { ascending: false }),
       supabase.from("categories").select("*").order("name"),
     ]);
@@ -89,7 +91,7 @@ const AdminDeler = () => {
     categories.filter((c) => c.parent_id === parentId);
 
   const resetForm = () => {
-    setFormData({ title: "", description: "", category_id: "", published: false, price_min: "", price_max: "" });
+    setFormData({ title: "", description: "", category_id: "", published: false, price_min: "", price_max: "", price_note: "" });
     setEditingId(null);
     setShowForm(false);
     setImageFile(null);
@@ -152,6 +154,7 @@ const AdminDeler = () => {
         published: formData.published,
         price_min: formData.price_min === "" ? null : Number(formData.price_min),
         price_max: formData.price_max === "" ? null : Number(formData.price_max),
+        price_note: formData.price_note.trim() || null,
         ...(imageUrl && { image_url: imageUrl }),
       };
 
@@ -183,6 +186,7 @@ const AdminDeler = () => {
       published: part.published,
       price_min: part.price_min ?? "",
       price_max: part.price_max ?? "",
+      price_note: part.price_note || "",
     });
     setEditingId(part.id);
     setImagePreview(part.image_url);
@@ -372,6 +376,19 @@ const AdminDeler = () => {
                   </div>
                 </div>
 
+                {/* Price note */}
+                <div>
+                  <label className="block font-display text-sm sm:text-base mb-1.5 sm:mb-2">PRISMERKNAD (valgfri)</label>
+                  <input
+                    type="text"
+                    value={formData.price_note}
+                    onChange={(e) => setFormData({ ...formData, price_note: e.target.value })}
+                    className="w-full h-10 p-2 text-sm border-2 border-foreground bg-card rounded"
+                    placeholder="F.eks. Kr 1000.- for komplett/uåpnet pakke"
+                    maxLength={200}
+                  />
+                </div>
+
                 {/* Images */}
                 <div>
                   <label className="block font-display text-sm sm:text-base mb-1.5 sm:mb-2">BILDER {editingId ? "(maks 5)" : ""}</label>
@@ -490,6 +507,7 @@ const AdminDeler = () => {
                           <span className="font-medium text-sm truncate block">{part.title}</span>
                           <p className="text-xs text-muted-foreground">{part.categories?.name || "Ingen kategori"}</p>
                           {price && <p className="text-xs text-primary font-medium mt-0.5">{price}</p>}
+                          {part.price_note && <p className="text-xs text-muted-foreground mt-0.5">{part.price_note}</p>}
                         </div>
                         {part.published ? (
                           <span className="text-[10px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded flex-shrink-0">Publisert</span>
@@ -553,6 +571,7 @@ const AdminDeler = () => {
                         ) : (
                           <span className="text-muted-foreground text-sm">–</span>
                         )}
+                        {part.price_note && <p className="text-xs text-muted-foreground mt-0.5">{part.price_note}</p>}
                       </td>
                       <td className="p-4">
                         {part.published ? (

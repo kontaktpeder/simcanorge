@@ -22,6 +22,7 @@ interface Part {
   category_id: string | null;
   price_min: number | null;
   price_max: number | null;
+  price_note: string | null;
   part_images?: { id: string; image_url: string; sort_order: number }[];
 }
 
@@ -55,7 +56,7 @@ const Deler = () => {
         supabase.from("categories").select("*").order("name"),
         supabase
           .from("parts")
-          .select("id, title, description, image_url, category_id, price_min, price_max, part_images(id, image_url, sort_order)")
+          .select("id, title, description, image_url, category_id, price_min, price_max, price_note, part_images(id, image_url, sort_order)")
           .eq("published", true)
           .order("title"),
       ]);
@@ -230,6 +231,7 @@ const Deler = () => {
                         <h3 className="font-medium text-sm md:text-base leading-tight line-clamp-2">{part.title}</h3>
                         {part.description && <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5">{part.description}</p>}
                         {price && <p className="text-xs text-primary font-medium mt-1">{price}</p>}
+                        {part.price_note && <p className="text-xs text-muted-foreground mt-0.5">{part.price_note}</p>}
                       </div>
                       <button onClick={() => handleAddToCart(part)} className={`self-end mt-2 px-3 py-1.5 text-xs font-medium rounded-full flex items-center gap-1 transition-colors ${inCart ? "bg-green-600 text-white" : "bg-accent text-accent-foreground hover:bg-accent/80"}`}>
                         {inCart ? <><Check className="w-3 h-3" />Lagt til</> : <><Plus className="w-3 h-3" />Legg til</>}
@@ -267,6 +269,7 @@ const Deler = () => {
                       )}
                       <h3 className="font-medium text-xs md:text-sm leading-tight line-clamp-2">{part.title}</h3>
                       {price && <p className="text-[10px] text-primary font-medium mt-1">{price}</p>}
+                      {part.price_note && <p className="text-[10px] text-muted-foreground mt-0.5">{part.price_note}</p>}
                     </div>
                   </div>
                 );

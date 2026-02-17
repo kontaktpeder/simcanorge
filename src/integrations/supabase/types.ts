@@ -770,6 +770,7 @@ export type Database = {
           image_url: string | null
           price_max: number | null
           price_min: number | null
+          price_note: string | null
           published: boolean | null
           title: string
           updated_at: string
@@ -782,6 +783,7 @@ export type Database = {
           image_url?: string | null
           price_max?: number | null
           price_min?: number | null
+          price_note?: string | null
           published?: boolean | null
           title: string
           updated_at?: string
@@ -794,6 +796,7 @@ export type Database = {
           image_url?: string | null
           price_max?: number | null
           price_min?: number | null
+          price_note?: string | null
           published?: boolean | null
           title?: string
           updated_at?: string
