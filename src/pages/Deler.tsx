@@ -35,9 +35,9 @@ function getPartCoverImage(part: Part): string | null {
 }
 
 function formatPartPrice(part: Part): string | null {
-  if (part.price_min != null && part.price_max != null) return `Veil. pris ${part.price_min}–${part.price_max} kr`;
-  if (part.price_min != null) return `Fra ${part.price_min} kr`;
-  if (part.price_max != null) return `Til ${part.price_max} kr`;
+  if (part.price_min != null && part.price_max != null) return `${part.price_min}–${part.price_max} kr`;
+  if (part.price_min != null) return `${part.price_min} kr`;
+  if (part.price_max != null) return `${part.price_max} kr`;
   return null;
 }
 
