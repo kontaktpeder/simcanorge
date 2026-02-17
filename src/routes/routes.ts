@@ -11,6 +11,7 @@ const BilDetalj = lazy(() => import("@/pages/BilDetalj"));
 const EierProfil = lazy(() => import("@/pages/EierProfil"));
 const Deler = lazy(() => import("@/pages/Deler"));
 const Foresporsel = lazy(() => import("@/pages/Foresporsel"));
+const DelDetalj = lazy(() => import("@/pages/DelDetalj"));
 const OmOss = lazy(() => import("@/pages/OmOss"));
 const Historie = lazy(() => import("@/pages/Historie"));
 const SendInnBil = lazy(() => import("@/pages/SendInnBil"));
@@ -66,6 +67,7 @@ export const routes: RouteConfig[] = [
   
   // Public routes without navigation
   { path: "/biler/:slug", element: BilDetalj, isPublic: true },
+  { path: "/deler/:partId", element: DelDetalj, isPublic: true },
   { path: "/eier/:slug", element: EierProfil, isPublic: true },
   { path: "/foresporsel", element: Foresporsel, isPublic: true },
   { path: "/personvern", element: Personvern, isPublic: true },

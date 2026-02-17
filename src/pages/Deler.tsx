@@ -321,21 +321,23 @@ const Deler = () => {
                     style={{ background: 'rgba(255,255,255,0.85)', border: '1px solid rgba(0,0,0,0.06)' }}
                   >
                     {/* Image with fixed aspect ratio */}
-                    <div className="aspect-[4/3] relative overflow-hidden bg-muted">
-                      {coverImage ? (
-                        <img src={getThumbnailUrl(coverImage, 400)} alt={part.title} loading="eager" decoding="async" className="w-full h-full object-cover object-center" />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center">
-                          <Wrench className="w-8 h-8 text-muted-foreground/50" />
-                        </div>
-                      )}
-                      {/* Condition badge */}
-                      {part.condition && (
-                        <span className={`absolute top-2 left-2 text-[9px] uppercase tracking-wider font-semibold px-1.5 py-0.5 rounded-sm ${CONDITION_COLORS[part.condition] || 'bg-muted text-foreground'}`}>
-                          {part.condition}
-                        </span>
-                      )}
-                    </div>
+                    <Link to={`/deler/${part.id}`} className="block">
+                      <div className="aspect-[4/3] relative overflow-hidden bg-muted">
+                        {coverImage ? (
+                          <img src={getThumbnailUrl(coverImage, 400)} alt={part.title} loading="eager" decoding="async" className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300" />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center">
+                            <Wrench className="w-8 h-8 text-muted-foreground/50" />
+                          </div>
+                        )}
+                        {/* Condition badge */}
+                        {part.condition && (
+                          <span className={`absolute top-2 left-2 text-[9px] uppercase tracking-wider font-semibold px-1.5 py-0.5 rounded-sm ${CONDITION_COLORS[part.condition] || 'bg-muted text-foreground'}`}>
+                            {part.condition}
+                          </span>
+                        )}
+                      </div>
+                    </Link>
 
                     {/* Card body */}
                     <div className="p-3 md:p-4 flex flex-col flex-1">
@@ -347,9 +349,11 @@ const Deler = () => {
                       )}
 
                       {/* Title */}
-                      <h3 className="font-display text-xl md:text-3xl leading-tight line-clamp-2 uppercase tracking-wide">
-                        {part.title}
-                      </h3>
+                      <Link to={`/deler/${part.id}`} className="hover:text-accent transition-colors">
+                        <h3 className="font-display text-xl md:text-3xl leading-tight line-clamp-2 uppercase tracking-wide">
+                          {part.title}
+                        </h3>
+                      </Link>
 
                       {/* Price — hero element, serif, large */}
                       {price && (
