@@ -316,6 +316,32 @@ export function useDeleteMarketplaceImage() {
   });
 }
 
+// Delete marketplace item
+export function useDeleteMarketplaceItem() {
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase
+        .from('marketplace_items')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+      return id;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['my-listings'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-marketplace-items'] });
+      toast({ title: 'Annonse slettet' });
+    },
+    onError: () => {
+      toast({ title: 'Feil', description: 'Kunne ikke slette annonse.', variant: 'destructive' });
+    },
+  });
+}
+
 // Fetch marketplace images for an item
 export function useMarketplaceImages(itemId: string | undefined) {
   return useQuery({

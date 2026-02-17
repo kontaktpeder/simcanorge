@@ -7,6 +7,7 @@ import {
   useUpdateMarketplaceItem,
   useInsertMarketplaceImages,
   useDeleteMarketplaceImage,
+  useDeleteMarketplaceItem,
   useMarketplaceCategories,
 } from '@/hooks/useMarketplace';
 import { compressImages, generateImageId, getMarketplaceImagePath } from '@/lib/imageCompression';
@@ -19,7 +20,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ShoppingBag, ChevronLeft, Save, Loader2, ImagePlus, X } from 'lucide-react';
+import { ShoppingBag, ChevronLeft, Save, Loader2, ImagePlus, X, Trash2 } from 'lucide-react';
 import { Layout } from '@/components/layout/Layout';
 
 export default function RedigerAnnonse() {
@@ -34,6 +35,7 @@ export default function RedigerAnnonse() {
   const updateItem = useUpdateMarketplaceItem();
   const insertImages = useInsertMarketplaceImages();
   const deleteImage = useDeleteMarketplaceImage();
+  const deleteItem = useDeleteMarketplaceItem();
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -257,13 +259,29 @@ export default function RedigerAnnonse() {
           </div>
 
           {canEdit && (
-            <BigActionButton
-              onClick={handleSubmit}
-              disabled={!title.trim() || isSubmitting}
-              icon={isSubmitting ? <Loader2 className="h-5 w-5 animate-spin" /> : <Save className="h-5 w-5" />}
-            >
-              {isSubmitting ? 'Lagrer...' : 'Lagre endringer'}
-            </BigActionButton>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <BigActionButton
+                onClick={handleSubmit}
+                disabled={!title.trim() || isSubmitting}
+                icon={isSubmitting ? <Loader2 className="h-5 w-5 animate-spin" /> : <Save className="h-5 w-5" />}
+                className="flex-1"
+              >
+                {isSubmitting ? 'Lagrer...' : 'Lagre endringer'}
+              </BigActionButton>
+              <button
+                type="button"
+                onClick={async () => {
+                  if (!confirm('Er du sikker på at du vil slette denne annonsen? Dette kan ikke angres.')) return;
+                  await deleteItem.mutateAsync(itemId!);
+                  navigate('/dashboard/mine-annonser');
+                }}
+                disabled={deleteItem.isPending}
+                className="text-sm text-destructive hover:underline py-2"
+              >
+                <Trash2 className="h-4 w-4 inline mr-1" />
+                Slett annonse
+              </button>
+            </div>
           )}
         </div>
       </EnamelCard>
