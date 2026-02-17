@@ -103,18 +103,41 @@ export default function AdminEierprofiler() {
                         )}
                       </div>
 
-                      {/* Visibility toggle */}
-                      <div className="flex items-center gap-2">
-                        {profile.visible_public ? (
-                          <Eye className="h-4 w-4 text-green-600" />
+                      {/* Status + Visibility toggle */}
+                      <div className="flex items-center gap-3">
+                        {profile.approved_at ? (
+                          <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 text-xs">
+                            Godkjent
+                          </Badge>
                         ) : (
-                          <EyeOff className="h-4 w-4 text-muted-foreground" />
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              updateProfile.mutateAsync({
+                                id: profile.id,
+                                updates: { approved_at: new Date().toISOString() },
+                              });
+                            }}
+                            disabled={updateProfile.isPending}
+                            className="text-xs"
+                          >
+                            Godkjenn
+                          </Button>
                         )}
-                        <Switch
-                          checked={profile.visible_public}
-                          onCheckedChange={() => handleToggleVisibility(profile.id, profile.visible_public)}
-                          disabled={updateProfile.isPending}
-                        />
+                        <div className="flex items-center gap-2">
+                          {profile.visible_public ? (
+                            <Eye className="h-4 w-4 text-green-600" />
+                          ) : (
+                            <EyeOff className="h-4 w-4 text-muted-foreground" />
+                          )}
+                          <Switch
+                            checked={profile.visible_public}
+                            onCheckedChange={() => handleToggleVisibility(profile.id, profile.visible_public)}
+                            disabled={updateProfile.isPending}
+                          />
+                        </div>
                       </div>
                     </div>
 
