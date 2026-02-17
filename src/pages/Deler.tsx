@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { PageHeader } from "@/components/layout/PageHeader";
@@ -57,6 +57,7 @@ const Deler = () => {
   const [parts, setParts] = useState<Part[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [imagesReady, setImagesReady] = useState(false);
   const [showCategorySheet, setShowCategorySheet] = useState(false);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const { items, addItem, removeItem, isInCart, itemCount } = useCart();
@@ -77,6 +78,37 @@ const Deler = () => {
     };
     fetchData();
   }, []);
+
+  // Preload images once data is fetched
+  useEffect(() => {
+    if (isLoading || parts.length === 0) return;
+    const imageUrls = parts
+      .map(p => getPartCoverImage(p))
+      .filter((url): url is string => !!url)
+      .slice(0, 12); // preload first 12
+
+    if (imageUrls.length === 0) {
+      setImagesReady(true);
+      return;
+    }
+
+    let loaded = 0;
+    const onDone = () => {
+      loaded++;
+      if (loaded >= imageUrls.length) setImagesReady(true);
+    };
+
+    imageUrls.forEach(url => {
+      const img = new Image();
+      img.onload = onDone;
+      img.onerror = onDone;
+      img.src = url;
+    });
+
+    // Fallback timeout so we never block forever
+    const timer = setTimeout(() => setImagesReady(true), 4000);
+    return () => clearTimeout(timer);
+  }, [isLoading, parts]);
 
   const parentCategories = categories.filter(c => !c.parent_id);
   const getChildren = (parentId: string) => categories.filter(c => c.parent_id === parentId);
@@ -123,7 +155,16 @@ const Deler = () => {
         </div>
       )}
 
-      {/* Filter bar */}
+      {/* Show loading splash until data + images ready */}
+      {(isLoading || !imagesReady) && (
+        <div className="flex flex-col items-center justify-center py-32 gap-4">
+          <img src={toolboxIcon} alt="" className="w-16 h-16 object-contain animate-pulse" />
+          <p className="text-muted-foreground font-display text-lg uppercase tracking-wider">Laster inn bildeler…</p>
+        </div>
+      )}
+
+      {/* Filter bar — only show when ready */}
+      {!isLoading && imagesReady && (
       <div className="bg-muted/50 border-b border-border sticky top-16 z-30">
         <div className="container mx-auto px-4 py-2 flex items-center gap-2">
           <button onClick={() => setShowCategorySheet(true)} className="flex items-center gap-2 bg-card border border-border rounded-full px-3 py-1.5 text-sm font-medium hover:border-primary transition-colors">
@@ -149,6 +190,7 @@ const Deler = () => {
           <span className="text-xs text-muted-foreground hidden sm:block">{filteredParts.length} treff</span>
         </div>
       </div>
+      )}
 
       {/* Category sheet overlay */}
       {showCategorySheet && (
@@ -193,28 +235,16 @@ const Deler = () => {
         </div>
       )}
 
-      {/* Parts listing — newsprint background */}
-      <section className="min-h-screen relative" style={{ background: 'hsl(42, 30%, 95%)' }}>
+      {/* Parts listing — newsprint background (hidden until images ready) */}
+      {!isLoading && imagesReady && (
+      <section className="min-h-screen relative animate-in fade-in duration-500" style={{ background: 'hsl(42, 30%, 95%)' }}>
         {/* Subtle paper texture */}
         <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{
           backgroundImage: `url("data:image/svg+xml,%3Csvg width='200' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E")`,
         }} />
 
         <div className="container mx-auto px-4 py-6 md:py-10 relative z-10">
-          {isLoading ? (
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-5 md:gap-8">
-              {[1, 2, 3, 4, 5, 6].map(i => (
-                <div key={i} className="rounded-sm overflow-hidden animate-pulse" style={{ background: 'rgba(255,255,255,0.85)', border: '1px solid rgba(0,0,0,0.06)' }}>
-                  <div className="aspect-[4/3] bg-muted" />
-                  <div className="p-4 space-y-2">
-                    <div className="h-3 bg-muted rounded w-1/3" />
-                    <div className="h-4 bg-muted rounded w-3/4" />
-                    <div className="h-5 bg-muted rounded w-1/2" />
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : filteredParts.length === 0 ? (
+          {filteredParts.length === 0 ? (
             <div className="rounded-sm text-center py-16" style={{ background: 'rgba(255,255,255,0.85)', border: '1px solid rgba(0,0,0,0.06)' }}>
               <Wrench className="w-10 h-10 mx-auto mb-3 text-muted-foreground" />
               <p className="text-muted-foreground text-sm">
@@ -354,6 +384,7 @@ const Deler = () => {
           )}
         </div>
       </section>
+      )}
 
       {/* CTA */}
       <section className="bg-primary text-primary-foreground py-6 md:py-8">
