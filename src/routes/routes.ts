@@ -1,5 +1,5 @@
 import { lazy, ComponentType } from "react";
-import { Home, Star, Car, Wrench, Send, BookOpen, Users, Mail } from "lucide-react";
+import { Home, Star, Car, Wrench, Send, BookOpen, Users, Mail, ShoppingBag } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 // Lazy load all pages for better performance
@@ -9,6 +9,8 @@ const ManedensBil = lazy(() => import("@/pages/ManedensBil"));
 const Biler = lazy(() => import("@/pages/Biler"));
 const BilDetalj = lazy(() => import("@/pages/BilDetalj"));
 const EierProfil = lazy(() => import("@/pages/EierProfil"));
+const Markedsplass = lazy(() => import("@/pages/Markedsplass"));
+const AnnonseDetalj = lazy(() => import("@/pages/AnnonseDetalj"));
 const Deler = lazy(() => import("@/pages/Deler"));
 const Foresporsel = lazy(() => import("@/pages/Foresporsel"));
 const DelDetalj = lazy(() => import("@/pages/DelDetalj"));
@@ -59,6 +61,7 @@ export const routes: RouteConfig[] = [
   { path: "/", element: Index, label: "Hjem", description: "Tilbake til forsiden", icon: Home, isPublic: true, showInNav: true },
   { path: "/manedens-bil", element: ManedensBil, label: "Månedens bil", description: "Se denne månedens utvalgte Simca", icon: Star, glow: true, isPublic: true, showInNav: true },
   { path: "/biler", element: Biler, label: "Biler", description: "Utforsk Simca-biler og historier", icon: Car, isPublic: true, showInNav: true },
+  { path: "/markedsplass", element: Markedsplass, label: "Markedsplass", description: "Kjøp og selg deler og tilbehør", icon: ShoppingBag, isPublic: true, showInNav: true },
   { path: "/deler", element: Deler, label: "Deler", description: "Finn deler til din Simca", icon: Wrench, isPublic: true, showInNav: true },
   { path: "/send-inn", element: SendInnBil, label: "Del din bil", description: "Del din bil med oss", icon: Send, isPublic: true, showInNav: true },
   { path: "/historie", element: Historie, label: "Historie", description: "Lær om Simcas rike historie", icon: BookOpen, isPublic: true, showInNav: true },
@@ -68,7 +71,9 @@ export const routes: RouteConfig[] = [
   // Public routes without navigation
   { path: "/biler/:slug", element: BilDetalj, isPublic: true },
   { path: "/deler/:partId", element: DelDetalj, isPublic: true },
-  { path: "/eier/:slug", element: EierProfil, isPublic: true },
+  { path: "/profil/:slug", element: EierProfil, isPublic: true },
+  { path: "/eier/:slug", element: EierProfil, isPublic: true }, // legacy redirect handled in component
+  { path: "/annonse/:slug", element: AnnonseDetalj, isPublic: true },
   { path: "/foresporsel", element: Foresporsel, isPublic: true },
   { path: "/personvern", element: Personvern, isPublic: true },
   { path: "/accept-invitation", element: AcceptInvitation, isPublic: true },

@@ -216,8 +216,8 @@ export function OwnerProfileSection({ userId }: OwnerProfileSectionProps) {
           {/* Public URL preview */}
           {profile?.slug && visiblePublic && (
             <div className="p-3 rounded-lg bg-muted/30 text-sm">
-              <p className="text-muted-foreground">Din offentlige eierside:</p>
-              <p className="font-mono text-xs text-primary">/eier/{profile.slug}</p>
+              <p className="text-muted-foreground">Din offentlige profilside:</p>
+              <p className="font-mono text-xs text-primary">/profil/{profile.slug}</p>
             </div>
           )}
 

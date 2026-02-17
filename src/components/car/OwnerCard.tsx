@@ -58,7 +58,7 @@ export function OwnerCard({ carId }: OwnerCardProps) {
           {/* Link to owner page */}
           {owner.slug && (
             <Link
-              to={`/eier/${owner.slug}`}
+              to={`/profil/${owner.slug}`}
               className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:text-primary/80 transition-colors mt-4 group"
             >
               Se alle biler fra denne eieren
