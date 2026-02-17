@@ -22,7 +22,7 @@ interface ItemDetail {
   updated_at: string;
   marketplace_images?: { id: string; image_url: string; sort_order: number }[];
   marketplace_categories?: { id: string; name: string; slug: string } | null;
-  owners?: { id: string; display_name: string | null; slug: string | null } | null;
+  owners?: { id: string; display_name: string | null; slug: string | null; user_id?: string } | null;
 }
 
 const statusLabels: Record<string, { label: string; className: string }> = {
@@ -47,7 +47,7 @@ const AdminAnnonseProfil = () => {
           *,
           marketplace_images(id, image_url, sort_order, alt_text),
           marketplace_categories(id, name, slug),
-          owners(id, display_name, slug)
+          owners(id, display_name, slug, user_id)
         `)
         .eq("id", itemId!)
         .single();
@@ -63,6 +63,19 @@ const AdminAnnonseProfil = () => {
       id: item.id,
       updates: { status: "published", published_at: new Date().toISOString() },
     });
+
+    // Notify owner
+    const owner = item.owners;
+    if (owner?.user_id) {
+      await supabase.from('notifications').insert({
+        user_id: owner.user_id,
+        type: 'marketplace_published',
+        title: 'Annonse publisert',
+        body: `Annonsen "${item.title}" er nå publisert på markedsplassen.`,
+        link: item.slug ? `/annonse/${item.slug}` : null,
+      });
+    }
+
     queryClient.invalidateQueries({ queryKey: ["admin-marketplace-item", itemId] });
     queryClient.invalidateQueries({ queryKey: ["admin-marketplace-items"] });
   };
