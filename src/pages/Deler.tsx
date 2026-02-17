@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useCart } from "@/hooks/useCart";
 import { Plus, Check, Wrench, ChevronRight, Briefcase, ChevronDown, X, Filter, Grid3X3, List } from "lucide-react";
 import { toast } from "sonner";
+import toolboxIcon from "@/assets/toolbox-blue.png";
 
 interface Category {
   id: string;
@@ -268,7 +269,7 @@ const Deler = () => {
                             : "border border-foreground/20 text-foreground hover:bg-foreground hover:text-background"
                         }`}
                       >
-                        {inCart ? <><Check className="w-3 h-3" />Lagt til</> : <><Plus className="w-3 h-3" />Verktøykassa</>}
+                        {inCart ? <><Check className="w-3.5 h-3.5" />Lagt til</> : <><img src={toolboxIcon} alt="" className="w-5 h-5 object-contain" />Verktøykassa</>}
                       </button>
                     </div>
                   </div>
@@ -341,7 +342,7 @@ const Deler = () => {
                               : "border border-foreground/20 text-foreground hover:bg-foreground hover:text-background"
                           }`}
                         >
-                          {inCart ? <><Check className="w-3.5 h-3.5" />Lagt til</> : <><Plus className="w-3.5 h-3.5" />Legg i verktøykassa</>}
+                          {inCart ? <><Check className="w-4 h-4" />Lagt til</> : <><img src={toolboxIcon} alt="" className="w-6 h-6 object-contain" />Legg i verktøykassa</>}
                         </button>
                       </div>
                     </div>

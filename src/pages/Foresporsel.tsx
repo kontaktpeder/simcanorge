@@ -7,7 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { X, Send, ArrowLeft, Check } from "lucide-react";
 import { z } from "zod";
 import { toast } from "sonner";
-import toolboxIcon from "@/assets/toolbox-icon.png";
+import toolboxIcon from "@/assets/toolbox-blue.png";
 
 const inquirySchema = z.object({
   customer_name: z.string().trim().min(1, "Navn er påkrevd").max(100),
@@ -155,7 +155,7 @@ const Foresporsel = () => {
                 <img 
                   src={toolboxIcon} 
                   alt="Verktøykasse" 
-                  className="w-20 h-auto md:w-28 object-contain drop-shadow-[0_8px_24px_rgba(0,0,0,0.25)] [filter:drop-shadow(0_0_8px_rgba(255,255,255,0.15))]" 
+                  className="w-28 h-auto md:w-36 object-contain drop-shadow-[0_8px_24px_rgba(0,0,0,0.25)] [filter:drop-shadow(0_0_8px_rgba(255,255,255,0.15))]" 
                 />
               </div>
               <h2 className="headline-md mb-4">VERKTØYKASSEN ER TOM</h2>
