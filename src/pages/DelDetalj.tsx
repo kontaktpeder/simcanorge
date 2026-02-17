@@ -7,6 +7,7 @@ import { useCart } from "@/hooks/useCart";
 import { ArrowLeft, Check, ChevronLeft, ChevronRight } from "lucide-react";
 import toolboxIcon from "@/assets/toolbox-blue.png";
 import { getOptimizedImageUrl, getThumbnailUrl } from "@/lib/imageUtils";
+import { ImageLightbox } from "@/components/ui/image-lightbox";
 
 interface PartImage {
   id: string;
@@ -54,6 +55,7 @@ export default function DelDetalj() {
   const [isLoading, setIsLoading] = useState(true);
   const [activeImage, setActiveImage] = useState(0);
   const { addItem, removeItem, isInCart } = useCart();
+  const [lightboxOpen, setLightboxOpen] = useState(false);
 
   useEffect(() => {
     if (!partId) return;
@@ -154,8 +156,9 @@ export default function DelDetalj() {
                   <div>
                     {/* Main image */}
                     <div
-                      className="relative aspect-square overflow-hidden rounded-sm bg-muted"
+                      className="relative aspect-square overflow-hidden rounded-sm bg-muted cursor-pointer"
                       style={{ border: '1px solid rgba(0,0,0,0.06)' }}
+                      onClick={() => setLightboxOpen(true)}
                     >
                       <img
                         src={getOptimizedImageUrl(allImages[activeImage], { width: 800 })}
@@ -291,6 +294,13 @@ export default function DelDetalj() {
           </div>
         </div>
       </section>
+
+      <ImageLightbox
+        images={allImages.map((url, i) => ({ url, alt: `${part.title} – bilde ${i + 1}` }))}
+        initialIndex={activeImage}
+        isOpen={lightboxOpen}
+        onClose={() => setLightboxOpen(false)}
+      />
     </Layout>
   );
 }
