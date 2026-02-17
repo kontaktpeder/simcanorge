@@ -315,29 +315,28 @@ const Deler = () => {
                 const coverImage = getPartCoverImage(part);
                 const price = formatPartPrice(part);
                 return (
-                  <div
+                  <Link
+                    to={`/deler/${part.id}`}
                     key={part.id}
-                    className="rounded-sm overflow-hidden group flex flex-col"
+                    className="rounded-sm overflow-hidden group flex flex-col cursor-pointer"
                     style={{ background: 'rgba(255,255,255,0.85)', border: '1px solid rgba(0,0,0,0.06)' }}
                   >
                     {/* Image with fixed aspect ratio */}
-                    <Link to={`/deler/${part.id}`} className="block">
-                      <div className="aspect-[4/3] relative overflow-hidden bg-muted">
-                        {coverImage ? (
-                          <img src={getThumbnailUrl(coverImage, 400)} alt={part.title} loading="eager" decoding="async" className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300" />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center">
-                            <Wrench className="w-8 h-8 text-muted-foreground/50" />
-                          </div>
-                        )}
-                        {/* Condition badge */}
-                        {part.condition && (
-                          <span className={`absolute top-2 left-2 text-[9px] uppercase tracking-wider font-semibold px-1.5 py-0.5 rounded-sm ${CONDITION_COLORS[part.condition] || 'bg-muted text-foreground'}`}>
-                            {part.condition}
-                          </span>
-                        )}
-                      </div>
-                    </Link>
+                    <div className="aspect-[4/3] relative overflow-hidden bg-muted">
+                      {coverImage ? (
+                        <img src={getThumbnailUrl(coverImage, 400)} alt={part.title} loading="eager" decoding="async" className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <Wrench className="w-8 h-8 text-muted-foreground/50" />
+                        </div>
+                      )}
+                      {/* Condition badge */}
+                      {part.condition && (
+                        <span className={`absolute top-2 left-2 text-[9px] uppercase tracking-wider font-semibold px-1.5 py-0.5 rounded-sm ${CONDITION_COLORS[part.condition] || 'bg-muted text-foreground'}`}>
+                          {part.condition}
+                        </span>
+                      )}
+                    </div>
 
                     {/* Card body */}
                     <div className="p-3 md:p-4 flex flex-col flex-1">
@@ -349,11 +348,9 @@ const Deler = () => {
                       )}
 
                       {/* Title */}
-                      <Link to={`/deler/${part.id}`} className="hover:text-accent transition-colors">
-                        <h3 className="font-display text-xl md:text-3xl leading-tight line-clamp-2 uppercase tracking-wide">
-                          {part.title}
-                        </h3>
-                      </Link>
+                      <h3 className="font-display text-xl md:text-3xl leading-tight line-clamp-2 uppercase tracking-wide">
+                        {part.title}
+                      </h3>
 
                       {/* Price — hero element, serif, large */}
                       {price && (
@@ -370,7 +367,7 @@ const Deler = () => {
                       {/* Thin rule + CTA */}
                       <div className="mt-auto pt-3 border-t border-foreground/5">
                         <button
-                          onClick={() => handleAddToCart(part)}
+                          onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleAddToCart(part); }}
                           className={`w-full py-2 text-xs font-medium rounded-sm flex items-center justify-center gap-1.5 transition-all ${
                             inCart
                               ? "bg-green-700 text-white"
@@ -381,7 +378,7 @@ const Deler = () => {
                         </button>
                       </div>
                     </div>
-                  </div>
+                  </Link>
                 );
               })}
             </div>
