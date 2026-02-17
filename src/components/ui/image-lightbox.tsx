@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { X, ChevronLeft, ChevronRight } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import { X, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface ImageLightboxProps {
@@ -9,16 +9,42 @@ interface ImageLightboxProps {
   onClose: () => void;
 }
 
+// Preload an image and return a promise
+function preloadImage(url: string): void {
+  const img = new Image();
+  img.src = url;
+}
+
 export function ImageLightbox({ images, initialIndex = 0, isOpen, onClose }: ImageLightboxProps) {
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
-  
-  const prevImage = () => {
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Reset index when opened with a new initialIndex
+  useEffect(() => {
+    if (isOpen) {
+      setCurrentIndex(initialIndex);
+      setIsLoading(true);
+    }
+  }, [isOpen, initialIndex]);
+
+  // Preload adjacent images whenever currentIndex changes
+  useEffect(() => {
+    if (!isOpen || images.length <= 1) return;
+    const next = (currentIndex + 1) % images.length;
+    const prev = (currentIndex - 1 + images.length) % images.length;
+    preloadImage(images[next].url);
+    preloadImage(images[prev].url);
+  }, [currentIndex, isOpen, images]);
+
+  const prevImage = useCallback(() => {
+    setIsLoading(true);
     setCurrentIndex((prev) => (prev > 0 ? prev - 1 : images.length - 1));
-  };
+  }, [images.length]);
   
-  const nextImage = () => {
+  const nextImage = useCallback(() => {
+    setIsLoading(true);
     setCurrentIndex((prev) => (prev < images.length - 1 ? prev + 1 : 0));
-  };
+  }, [images.length]);
   
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "ArrowLeft") prevImage();
@@ -68,16 +94,24 @@ export function ImageLightbox({ images, initialIndex = 0, isOpen, onClose }: Ima
           </>
         )}
 
+        {/* Loading spinner */}
+        {isLoading && (
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-5">
+            <Loader2 className="w-8 h-8 text-white/60 animate-spin" />
+          </div>
+        )}
+
         {/* Image */}
         <motion.img
           key={currentIndex}
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.2 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: isLoading ? 0 : 1 }}
+          transition={{ duration: 0.15 }}
           src={images[currentIndex].url}
           alt={images[currentIndex].alt || ""}
           className="max-w-[90vw] max-h-[90vh] object-contain"
           onClick={(e) => e.stopPropagation()}
+          onLoad={() => setIsLoading(false)}
         />
 
         {/* Counter */}
