@@ -28,6 +28,18 @@ import { nb } from "date-fns/locale";
 interface InquiryItem {
   id: string;
   part_title: string;
+  part_id: string | null;
+  parts: {
+    id: string;
+    title: string;
+    description: string | null;
+    condition: string | null;
+    price_min: number | null;
+    price_max: number | null;
+    price_note: string | null;
+    image_url: string | null;
+    part_images: { image_url: string; sort_order: number }[];
+  } | null;
 }
 
 interface Inquiry {
@@ -79,7 +91,7 @@ const AdminForesporsler = () => {
         .from("inquiries")
         .select(`
           *,
-          inquiry_items(id, part_title)
+          inquiry_items(id, part_title, part_id, parts(id, title, description, condition, price_min, price_max, price_note, image_url, part_images(image_url, sort_order)))
         `)
         .order("created_at", { ascending: false });
 
@@ -270,23 +282,63 @@ const AdminForesporsler = () => {
                     )}
                   </div>
 
-                  {/* Parts requested */}
+                  {/* Parts requested – visual cards */}
                   <div>
-                    <h4 className="font-display text-lg mb-2 flex items-center gap-2">
+                    <h4 className="font-display text-lg mb-3 flex items-center gap-2">
                       <Wrench className="w-4 h-4" />
                       Etterspurte deler ({selectedInquiry.inquiry_items.length})
                     </h4>
-                    <ul className="space-y-2">
-                      {selectedInquiry.inquiry_items.map((item) => (
-                        <li
-                          key={item.id}
-                          className="flex items-center gap-2 bg-muted/50 px-3 py-2 rounded-lg"
-                        >
-                          <Check className="w-4 h-4 text-green-600" />
-                          {item.part_title}
-                        </li>
-                      ))}
-                    </ul>
+                    <div className="grid gap-3">
+                      {selectedInquiry.inquiry_items.map((item) => {
+                        const part = item.parts;
+                        const imgUrl = part?.part_images?.sort((a, b) => a.sort_order - b.sort_order)[0]?.image_url || part?.image_url;
+                        const price = part?.price_min
+                          ? part.price_max && part.price_max !== part.price_min
+                            ? `kr ${part.price_min} – ${part.price_max}`
+                            : `kr ${part.price_min}`
+                          : null;
+
+                        return (
+                          <div
+                            key={item.id}
+                            className="flex gap-4 bg-muted/40 border border-border/50 rounded-lg p-3 items-start"
+                          >
+                            {/* Thumbnail */}
+                            {imgUrl ? (
+                              <img
+                                src={imgUrl}
+                                alt={item.part_title}
+                                className="w-20 h-20 rounded-md object-cover flex-shrink-0 border border-border/30"
+                              />
+                            ) : (
+                              <div className="w-20 h-20 rounded-md bg-muted flex items-center justify-center flex-shrink-0 border border-border/30">
+                                <Wrench className="w-6 h-6 text-muted-foreground/40" />
+                              </div>
+                            )}
+
+                            {/* Details */}
+                            <div className="flex-1 min-w-0">
+                              <h5 className="font-display text-base font-semibold leading-tight truncate">
+                                {item.part_title}
+                              </h5>
+                              {price && (
+                                <p className="font-serif text-sm font-bold mt-0.5">{price}
+                                  {part?.price_note && <span className="text-muted-foreground font-normal ml-1 text-xs">{part.price_note}</span>}
+                                </p>
+                              )}
+                              {part?.condition && (
+                                <Badge variant="outline" className="mt-1 text-xs">{part.condition}</Badge>
+                              )}
+                              {part?.description && (
+                                <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{part.description}</p>
+                              )}
+                            </div>
+
+                            <Check className="w-5 h-5 text-green-600 flex-shrink-0 mt-1" />
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
 
                   {/* Message */}
