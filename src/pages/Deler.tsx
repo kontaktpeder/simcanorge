@@ -7,6 +7,7 @@ import { useCart } from "@/hooks/useCart";
 import { Plus, Check, Wrench, ChevronRight, Briefcase, ChevronDown, X, Filter, Grid3X3, List } from "lucide-react";
 import { toast } from "sonner";
 import toolboxIcon from "@/assets/toolbox-blue.png";
+import { getThumbnailUrl } from "@/lib/imageUtils";
 
 interface Category {
   id: string;
@@ -235,7 +236,7 @@ const Deler = () => {
                   >
                     <div className="w-28 md:w-40 flex-shrink-0 relative" style={{ aspectRatio: '4/3' }}>
                       {coverImage ? (
-                        <img src={coverImage} alt={part.title} className="w-full h-full object-cover object-center" />
+                        <img src={getThumbnailUrl(coverImage, 300)} alt={part.title} loading="eager" decoding="async" className="w-full h-full object-cover object-center" />
                       ) : (
                         <div className="w-full h-full bg-muted flex items-center justify-center">
                           <Wrench className="w-6 h-6 text-muted-foreground" />
@@ -292,7 +293,7 @@ const Deler = () => {
                     {/* Image with fixed aspect ratio */}
                     <div className="aspect-[4/3] relative overflow-hidden bg-muted">
                       {coverImage ? (
-                        <img src={coverImage} alt={part.title} className="w-full h-full object-cover object-center" />
+                        <img src={getThumbnailUrl(coverImage, 400)} alt={part.title} loading="eager" decoding="async" className="w-full h-full object-cover object-center" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
                           <Wrench className="w-8 h-8 text-muted-foreground/50" />
