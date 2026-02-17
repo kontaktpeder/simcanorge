@@ -59,7 +59,7 @@ export const routes: RouteConfig[] = [
   { path: "/manedens-bil", element: ManedensBil, label: "Månedens bil", description: "Se denne månedens utvalgte Simca", icon: Star, glow: true, isPublic: true, showInNav: true },
   { path: "/biler", element: Biler, label: "Biler", description: "Utforsk Simca-biler og historier", icon: Car, isPublic: true, showInNav: true },
   { path: "/deler", element: Deler, label: "Deler", description: "Finn deler til din Simca", icon: Wrench, isPublic: true, showInNav: true },
-  { path: "/send-inn", element: SendInnBil, label: "Send inn", description: "Del din Simca-historie med oss", icon: Send, isPublic: true, showInNav: true },
+  { path: "/send-inn", element: SendInnBil, label: "Del din bil", description: "Del din bil med oss", icon: Send, isPublic: true, showInNav: true },
   { path: "/historie", element: Historie, label: "Historie", description: "Lær om Simcas rike historie", icon: BookOpen, isPublic: true, showInNav: true },
   { path: "/om-oss", element: OmOss, label: "Om oss", description: "Hvem står bak Simca Norge", icon: Users, isPublic: true, showInNav: true },
   { path: "/kontakt", element: Kontakt, label: "Kontakt", description: "Ta kontakt med oss", icon: Mail, isPublic: true, showInNav: true },
