@@ -729,6 +729,38 @@ export type Database = {
         }
         Relationships: []
       }
+      part_images: {
+        Row: {
+          created_at: string | null
+          id: string
+          image_url: string
+          part_id: string
+          sort_order: number
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          image_url: string
+          part_id: string
+          sort_order?: number
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          image_url?: string
+          part_id?: string
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "part_images_part_id_fkey"
+            columns: ["part_id"]
+            isOneToOne: false
+            referencedRelation: "parts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       parts: {
         Row: {
           category_id: string | null
@@ -736,6 +768,8 @@ export type Database = {
           description: string | null
           id: string
           image_url: string | null
+          price_max: number | null
+          price_min: number | null
           published: boolean | null
           title: string
           updated_at: string
@@ -746,6 +780,8 @@ export type Database = {
           description?: string | null
           id?: string
           image_url?: string | null
+          price_max?: number | null
+          price_min?: number | null
           published?: boolean | null
           title: string
           updated_at?: string
@@ -756,6 +792,8 @@ export type Database = {
           description?: string | null
           id?: string
           image_url?: string | null
+          price_max?: number | null
+          price_min?: number | null
           published?: boolean | null
           title?: string
           updated_at?: string
