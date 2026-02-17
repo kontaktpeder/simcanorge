@@ -151,7 +151,7 @@ const Foresporsel = () => {
           {items.length === 0 ? (
             <div className="text-center py-6 animate-fade-in">
               {/* Toolbox illustration container */}
-              <div className="pt-6 pb-4 md:pt-8 md:pb-6 flex justify-center">
+              <div className="pt-2 pb-2 md:pt-3 md:pb-3 flex justify-center">
                 <img 
                   src={toolboxIcon} 
                   alt="Verktøykasse" 
