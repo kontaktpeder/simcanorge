@@ -149,7 +149,7 @@ const Foresporsel = () => {
       <section className="poster-section">
         <div className="container mx-auto">
           {items.length === 0 ? (
-            <div className="text-center py-12 animate-fade-in">
+            <div className="text-center py-6 animate-fade-in">
               {/* Toolbox illustration container */}
               <div className="pt-6 pb-4 md:pt-8 md:pb-6 flex justify-center">
                 <img 
