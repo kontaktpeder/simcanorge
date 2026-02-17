@@ -23,6 +23,7 @@ interface Part {
   price_min: number | null;
   price_max: number | null;
   price_note: string | null;
+  condition: string | null;
   part_images?: { id: string; image_url: string; sort_order: number }[];
 }
 
@@ -41,6 +42,14 @@ function formatPartPrice(part: Part): string | null {
   return null;
 }
 
+const CONDITION_COLORS: Record<string, string> = {
+  "Ny": "bg-green-700/90 text-white",
+  "NOS": "bg-amber-700/90 text-white",
+  "Brukt": "bg-muted-foreground/80 text-white",
+  "Original": "bg-foreground/80 text-white",
+  "Repro": "bg-primary/80 text-white",
+};
+
 const Deler = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [parts, setParts] = useState<Part[]>([]);
@@ -56,7 +65,7 @@ const Deler = () => {
         supabase.from("categories").select("*").order("name"),
         supabase
           .from("parts")
-          .select("id, title, description, image_url, category_id, price_min, price_max, price_note, part_images(id, image_url, sort_order)")
+          .select("id, title, description, image_url, category_id, price_min, price_max, price_note, condition, part_images(id, image_url, sort_order)")
           .eq("published", true)
           .order("title"),
       ]);
@@ -182,59 +191,84 @@ const Deler = () => {
         </div>
       )}
 
-      {/* Parts listing */}
-      <section className="bg-background min-h-screen">
-        <div className="container mx-auto px-4 py-4">
+      {/* Parts listing — newsprint background */}
+      <section className="min-h-screen relative" style={{ background: 'hsl(42, 30%, 95%)' }}>
+        {/* Subtle paper texture */}
+        <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='200' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E")`,
+        }} />
+
+        <div className="container mx-auto px-4 py-6 md:py-10 relative z-10">
           {isLoading ? (
-            <div className="space-y-3">
-              {[1, 2, 3, 4].map(i => (
-                <div key={i} className="bg-card rounded-lg p-4 animate-pulse flex gap-3">
-                  <div className="w-20 h-20 bg-muted rounded-lg flex-shrink-0" />
-                  <div className="flex-1 space-y-2">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-5 md:gap-8">
+              {[1, 2, 3, 4, 5, 6].map(i => (
+                <div key={i} className="rounded-sm overflow-hidden animate-pulse" style={{ background: 'rgba(255,255,255,0.85)', border: '1px solid rgba(0,0,0,0.06)' }}>
+                  <div className="aspect-[4/3] bg-muted" />
+                  <div className="p-4 space-y-2">
+                    <div className="h-3 bg-muted rounded w-1/3" />
                     <div className="h-4 bg-muted rounded w-3/4" />
-                    <div className="h-3 bg-muted rounded w-1/2" />
+                    <div className="h-5 bg-muted rounded w-1/2" />
                   </div>
                 </div>
               ))}
             </div>
           ) : filteredParts.length === 0 ? (
-            <div className="bg-card rounded-lg text-center py-12">
+            <div className="rounded-sm text-center py-16" style={{ background: 'rgba(255,255,255,0.85)', border: '1px solid rgba(0,0,0,0.06)' }}>
               <Wrench className="w-10 h-10 mx-auto mb-3 text-muted-foreground" />
               <p className="text-muted-foreground text-sm">
                 {selectedCategory ? "Ingen deler i denne kategorien" : "Ingen deler lagt til ennå"}
               </p>
             </div>
           ) : viewMode === 'list' ? (
-            <div className="space-y-2">
+            /* ——— LIST VIEW ——— */
+            <div className="space-y-3">
               {filteredParts.map(part => {
                 const inCart = isInCart(part.id);
                 const coverImage = getPartCoverImage(part);
                 const price = formatPartPrice(part);
                 return (
-                  <div key={part.id} className="bg-card rounded-lg border border-border overflow-hidden flex">
-                    <div className="w-24 h-24 md:w-32 md:h-32 bg-muted flex-shrink-0">
+                  <div
+                    key={part.id}
+                    className="rounded-sm overflow-hidden flex"
+                    style={{ background: 'rgba(255,255,255,0.85)', border: '1px solid rgba(0,0,0,0.06)' }}
+                  >
+                    <div className="w-28 md:w-40 flex-shrink-0 relative" style={{ aspectRatio: '4/3' }}>
                       {coverImage ? (
-                        <img src={coverImage} alt={part.title} className="w-full h-full object-cover" />
+                        <img src={coverImage} alt={part.title} className="w-full h-full object-cover object-center" />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center">
+                        <div className="w-full h-full bg-muted flex items-center justify-center">
                           <Wrench className="w-6 h-6 text-muted-foreground" />
                         </div>
                       )}
+                      {part.condition && (
+                        <span className={`absolute top-2 left-2 text-[9px] uppercase tracking-wider font-semibold px-1.5 py-0.5 rounded-sm ${CONDITION_COLORS[part.condition] || 'bg-muted text-foreground'}`}>
+                          {part.condition}
+                        </span>
+                      )}
                     </div>
-                    <div className="flex-1 p-3 flex flex-col justify-between min-w-0">
+                    <div className="flex-1 p-3 md:p-4 flex flex-col justify-between min-w-0">
                       <div>
                         {part.category_id && (
-                          <span className="inline-block bg-muted text-muted-foreground text-[10px] px-1.5 py-0.5 rounded mb-1">
+                          <span className="inline-block text-muted-foreground text-[10px] uppercase tracking-wider mb-1">
                             {getCategoryName(part.category_id)}
                           </span>
                         )}
-                        <h3 className="font-medium text-sm md:text-base leading-tight line-clamp-2">{part.title}</h3>
-                        {part.description && <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5">{part.description}</p>}
-                        {price && <p className="text-xs text-primary font-medium mt-1">{price}</p>}
-                        {part.price_note && <p className="text-xs text-muted-foreground mt-0.5">{part.price_note}</p>}
+                        <h3 className="font-display text-sm md:text-base leading-tight uppercase tracking-wide">{part.title}</h3>
+                        {price && (
+                          <p className="font-serif text-lg md:text-xl text-foreground font-bold mt-2">{price}</p>
+                        )}
+                        {part.price_note && <p className="text-[11px] text-muted-foreground mt-0.5 italic">{part.price_note}</p>}
+                        {part.description && <p className="text-xs text-muted-foreground line-clamp-1 mt-1">{part.description}</p>}
                       </div>
-                      <button onClick={() => handleAddToCart(part)} className={`self-end mt-2 px-3 py-1.5 text-xs font-medium rounded-full flex items-center gap-1 transition-colors ${inCart ? "bg-green-600 text-white" : "bg-accent text-accent-foreground hover:bg-accent/80"}`}>
-                        {inCart ? <><Check className="w-3 h-3" />Lagt til</> : <><Plus className="w-3 h-3" />Legg til</>}
+                      <button
+                        onClick={() => handleAddToCart(part)}
+                        className={`self-end mt-2 px-3 py-1.5 text-xs font-medium rounded-sm flex items-center gap-1.5 transition-all ${
+                          inCart
+                            ? "bg-green-700 text-white"
+                            : "border border-foreground/20 text-foreground hover:bg-foreground hover:text-background"
+                        }`}
+                      >
+                        {inCart ? <><Check className="w-3 h-3" />Lagt til</> : <><Plus className="w-3 h-3" />Verktøykassa</>}
                       </button>
                     </div>
                   </div>
@@ -242,34 +276,74 @@ const Deler = () => {
               })}
             </div>
           ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+            /* ——— GRID VIEW (3 columns, magazine cards) ——— */
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-7">
               {filteredParts.map(part => {
                 const inCart = isInCart(part.id);
                 const coverImage = getPartCoverImage(part);
                 const price = formatPartPrice(part);
                 return (
-                  <div key={part.id} className="bg-card rounded-lg border border-border overflow-hidden">
-                    <div className="aspect-square bg-muted relative">
+                  <div
+                    key={part.id}
+                    className="rounded-sm overflow-hidden group"
+                    style={{ background: 'rgba(255,255,255,0.85)', border: '1px solid rgba(0,0,0,0.06)' }}
+                  >
+                    {/* Image with fixed aspect ratio */}
+                    <div className="aspect-[4/3] relative overflow-hidden bg-muted">
                       {coverImage ? (
-                        <img src={coverImage} alt={part.title} className="w-full h-full object-cover" />
+                        <img src={coverImage} alt={part.title} className="w-full h-full object-cover object-center" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
-                          <Wrench className="w-8 h-8 text-muted-foreground" />
+                          <Wrench className="w-8 h-8 text-muted-foreground/50" />
                         </div>
                       )}
-                      <button onClick={() => handleAddToCart(part)} className={`absolute bottom-2 right-2 p-2 rounded-full shadow-lg transition-colors ${inCart ? "bg-green-600 text-white" : "bg-card text-foreground hover:bg-accent"}`}>
-                        {inCart ? <Check className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
-                      </button>
+                      {/* Condition badge */}
+                      {part.condition && (
+                        <span className={`absolute top-2 left-2 text-[9px] uppercase tracking-wider font-semibold px-1.5 py-0.5 rounded-sm ${CONDITION_COLORS[part.condition] || 'bg-muted text-foreground'}`}>
+                          {part.condition}
+                        </span>
+                      )}
                     </div>
-                    <div className="p-2.5">
+
+                    {/* Card body */}
+                    <div className="p-3 md:p-4">
+                      {/* Category tag */}
                       {part.category_id && (
-                        <span className="inline-block bg-muted text-muted-foreground text-[10px] px-1.5 py-0.5 rounded mb-1">
+                        <span className="inline-block text-muted-foreground text-[10px] uppercase tracking-wider mb-1">
                           {getCategoryName(part.category_id)}
                         </span>
                       )}
-                      <h3 className="font-medium text-xs md:text-sm leading-tight line-clamp-2">{part.title}</h3>
-                      {price && <p className="text-[10px] text-primary font-medium mt-1">{price}</p>}
-                      {part.price_note && <p className="text-[10px] text-muted-foreground mt-0.5">{part.price_note}</p>}
+
+                      {/* Title */}
+                      <h3 className="font-display text-sm md:text-base leading-tight line-clamp-2 uppercase tracking-wide">
+                        {part.title}
+                      </h3>
+
+                      {/* Price — hero element, serif, large */}
+                      {price && (
+                        <p className="font-serif text-lg md:text-xl text-foreground font-bold mt-2 leading-none">
+                          {price}
+                        </p>
+                      )}
+
+                      {/* Price note */}
+                      {part.price_note && (
+                        <p className="text-[10px] md:text-[11px] text-muted-foreground mt-0.5 italic">{part.price_note}</p>
+                      )}
+
+                      {/* Thin rule + CTA */}
+                      <div className="mt-3 pt-3 border-t border-foreground/5">
+                        <button
+                          onClick={() => handleAddToCart(part)}
+                          className={`w-full py-2 text-xs font-medium rounded-sm flex items-center justify-center gap-1.5 transition-all ${
+                            inCart
+                              ? "bg-green-700 text-white"
+                              : "border border-foreground/20 text-foreground hover:bg-foreground hover:text-background"
+                          }`}
+                        >
+                          {inCart ? <><Check className="w-3.5 h-3.5" />Lagt til</> : <><Plus className="w-3.5 h-3.5" />Legg i verktøykassa</>}
+                        </button>
+                      </div>
                     </div>
                   </div>
                 );
