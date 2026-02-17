@@ -288,7 +288,7 @@ const AdminForesporsler = () => {
                       <Wrench className="w-4 h-4" />
                       Etterspurte deler ({selectedInquiry.inquiry_items.length})
                     </h4>
-                    <div className="grid gap-3">
+                    <div className="grid gap-4">
                       {selectedInquiry.inquiry_items.map((item) => {
                         const part = item.parts;
                         const imgUrl = part?.part_images?.sort((a, b) => a.sort_order - b.sort_order)[0]?.image_url || part?.image_url;
@@ -301,40 +301,40 @@ const AdminForesporsler = () => {
                         return (
                           <div
                             key={item.id}
-                            className="flex gap-4 bg-muted/40 border border-border/50 rounded-lg p-3 items-start"
+                            className="flex gap-5 bg-muted/40 border border-border/50 rounded-lg p-4 items-start"
                           >
                             {/* Thumbnail */}
                             {imgUrl ? (
                               <img
                                 src={imgUrl}
                                 alt={item.part_title}
-                                className="w-20 h-20 rounded-md object-cover flex-shrink-0 border border-border/30"
+                                className="w-32 h-32 rounded-md object-cover flex-shrink-0 border border-border/30"
                               />
                             ) : (
-                              <div className="w-20 h-20 rounded-md bg-muted flex items-center justify-center flex-shrink-0 border border-border/30">
-                                <Wrench className="w-6 h-6 text-muted-foreground/40" />
+                              <div className="w-32 h-32 rounded-md bg-muted flex items-center justify-center flex-shrink-0 border border-border/30">
+                                <Wrench className="w-8 h-8 text-muted-foreground/40" />
                               </div>
                             )}
 
                             {/* Details */}
                             <div className="flex-1 min-w-0">
-                              <h5 className="font-display text-base font-semibold leading-tight truncate">
+                              <h5 className="font-display text-lg md:text-xl font-semibold leading-tight">
                                 {item.part_title}
                               </h5>
                               {price && (
-                                <p className="font-serif text-sm font-bold mt-0.5">{price}
-                                  {part?.price_note && <span className="text-muted-foreground font-normal ml-1 text-xs">{part.price_note}</span>}
+                                <p className="font-serif text-base md:text-lg font-bold mt-1">{price}
+                                  {part?.price_note && <span className="text-muted-foreground font-normal ml-2 text-sm">{part.price_note}</span>}
                                 </p>
                               )}
                               {part?.condition && (
-                                <Badge variant="outline" className="mt-1 text-xs">{part.condition}</Badge>
+                                <Badge variant="outline" className="mt-1.5 text-sm">{part.condition}</Badge>
                               )}
                               {part?.description && (
-                                <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{part.description}</p>
+                                <p className="text-sm text-muted-foreground mt-1.5 line-clamp-3">{part.description}</p>
                               )}
                             </div>
 
-                            <Check className="w-5 h-5 text-green-600 flex-shrink-0 mt-1" />
+                            <Check className="w-6 h-6 text-green-600 flex-shrink-0 mt-1" />
                           </div>
                         );
                       })}
