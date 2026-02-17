@@ -11,6 +11,7 @@ import { getNavItems } from "@/routes/routes";
 import simcaBadge from "@/assets/simca-badge.png";
 import toolboxIcon from "@/assets/toolbox-blue.png";
 import simcaRallye from "@/assets/simca-rallye-yellow.png";
+import minSideBadge from "@/assets/min-side-badge.png";
 import {
   Tooltip,
   TooltipContent,
@@ -475,10 +476,9 @@ export function Header() {
                     <Link
                       to="/dashboard"
                       onClick={() => markLeavingHome("/dashboard")}
-                      className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg font-display text-sm uppercase tracking-wide bg-primary text-primary-foreground hover:bg-primary/90 transition-all ml-1"
+                      className="relative p-1.5 hover:bg-muted/60 rounded-lg transition-colors ml-1"
                     >
-                      <User className="w-4 h-4" />
-                      <span className="hidden xl:inline">Min side</span>
+                      <img src={minSideBadge} alt="Min side" className="h-10 w-auto object-contain" />
                     </Link>
                   </TooltipTrigger>
                   <TooltipContent>
@@ -602,7 +602,7 @@ export function Header() {
                   }}
                   className="flex items-center gap-3 font-display text-base uppercase tracking-wide py-2.5 px-4 rounded-lg bg-primary text-primary-foreground mt-2"
                 >
-                  <User className="w-5 h-5" />
+                  <img src={minSideBadge} alt="Min side" className="h-8 w-auto object-contain" />
                   Min side
                 </Link>
               ) : (
