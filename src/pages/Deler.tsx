@@ -253,7 +253,7 @@ const Deler = () => {
                             {getCategoryName(part.category_id)}
                           </span>
                         )}
-                        <h3 className="font-display text-lg md:text-2xl leading-tight uppercase tracking-wide">{part.title}</h3>
+                        <h3 className="font-display text-xl md:text-3xl leading-tight uppercase tracking-wide">{part.title}</h3>
                         {price && (
                           <p className="font-serif text-lg md:text-xl text-foreground font-bold mt-2">{price}</p>
                         )}
@@ -315,7 +315,7 @@ const Deler = () => {
                       )}
 
                       {/* Title */}
-                      <h3 className="font-display text-lg md:text-2xl leading-tight line-clamp-2 uppercase tracking-wide">
+                      <h3 className="font-display text-xl md:text-3xl leading-tight line-clamp-2 uppercase tracking-wide">
                         {part.title}
                       </h3>
 
