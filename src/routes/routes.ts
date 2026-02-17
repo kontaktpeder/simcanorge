@@ -44,6 +44,8 @@ const AdminMeldinger = lazy(() => import("@/pages/admin/AdminMeldinger"));
 const AdminSupport = lazy(() => import("@/pages/admin/AdminSupport"));
 const AdminInviteEmail = lazy(() => import("@/pages/admin/AdminInviteEmail"));
 const AdminInnsendinger = lazy(() => import("@/pages/admin/AdminInnsendinger"));
+const AdminMarkedsplass = lazy(() => import("@/pages/admin/AdminMarkedsplass"));
+const AdminAnnonseProfil = lazy(() => import("@/pages/admin/AdminAnnonseProfil"));
 
 export interface RouteConfig {
   path: string;
@@ -105,6 +107,8 @@ export const routes: RouteConfig[] = [
   { path: "/admin/support", element: AdminSupport, requiresAdmin: true },
   { path: "/admin/invite-email", element: AdminInviteEmail, requiresAdmin: true },
   { path: "/admin/innsendinger", element: AdminInnsendinger, requiresAdmin: true },
+  { path: "/admin/markedsplass", element: AdminMarkedsplass, requiresAdmin: true },
+  { path: "/admin/markedsplass/:itemId", element: AdminAnnonseProfil, requiresAdmin: true },
   
   // 404 - must be last
   { path: "*", element: NotFound, isPublic: true },

@@ -16,6 +16,7 @@ import {
   User,
   Bug,
   Mail,
+  ShoppingBag,
 } from "lucide-react";
 import simcaBadgeLogo from "@/assets/simca-badge-logo.png";
 
@@ -30,6 +31,7 @@ const navItems = [
   { href: "/admin/support", label: "Support", icon: Bug },
   { href: "/admin/invite-email", label: "E-post", icon: Mail },
   { href: "/admin/biler", label: "Biler", icon: Car },
+  { href: "/admin/markedsplass", label: "Markedsplass", icon: ShoppingBag },
   { href: "/admin/eierprofiler", label: "Eiere", icon: User },
   { href: "/admin/deler", label: "Deler", icon: Wrench },
   { href: "/admin/kategorier", label: "Kategorier", icon: FolderTree },
