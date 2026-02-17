@@ -47,7 +47,7 @@ const Deler = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [showCategorySheet, setShowCategorySheet] = useState(false);
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('list');
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const { items, addItem, removeItem, isInCart, itemCount } = useCart();
 
   useEffect(() => {
