@@ -11,6 +11,8 @@ interface OwnerProfile {
   favorite_brands: string[] | null;
   visible_public: boolean;
   slug: string | null;
+  avatar_url: string | null;
+  approved_at: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -30,6 +32,8 @@ interface OwnerProfileUpdate {
   location?: string | null;
   favorite_brands?: string[] | null;
   visible_public?: boolean;
+  avatar_url?: string | null;
+  approved_at?: string | null;
 }
 
 export function useOwnerProfile(userId: string | undefined) {

@@ -144,7 +144,7 @@ export default function AdminEierprofiler() {
                       
                       {profile.slug && profile.visible_public && (
                         <Link
-                          to={`/eier/${profile.slug}`}
+                          to={`/profil/${profile.slug}`}
                           className="text-xs text-primary hover:underline inline-flex items-center gap-1"
                         >
                           Se offentlig side
