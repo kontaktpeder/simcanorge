@@ -234,6 +234,32 @@ export function useUpdateMarketplaceItem() {
   });
 }
 
+// Fetch all marketplace items for admin (no published_at filter)
+export function useAdminMarketplaceItems(statusFilter?: string) {
+  return useQuery({
+    queryKey: ['admin-marketplace-items', statusFilter],
+    queryFn: async () => {
+      let query = supabase
+        .from('marketplace_items')
+        .select(`
+          *,
+          marketplace_images(id, image_url, sort_order, alt_text),
+          marketplace_categories(id, name, slug),
+          owners(id, display_name, slug, user_id)
+        `)
+        .order('created_at', { ascending: false });
+
+      if (statusFilter && statusFilter !== 'alle') {
+        query = query.eq('status', statusFilter);
+      }
+
+      const { data, error } = await query;
+      if (error) throw error;
+      return data || [];
+    },
+  });
+}
+
 // Fetch marketplace images for an item
 export function useMarketplaceImages(itemId: string | undefined) {
   return useQuery({
