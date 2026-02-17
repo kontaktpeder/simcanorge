@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { User, MapPin, Heart, Eye, EyeOff, Save, Loader2, Info } from 'lucide-react';
+import { User, MapPin, Heart, Eye, EyeOff, Save, Loader2, Info, Clock } from 'lucide-react';
 import { EnamelCard, SectionHeader, BigActionButton } from '@/components/ui/garage';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -117,11 +117,21 @@ export function OwnerProfileSection({ userId }: OwnerProfileSectionProps) {
       
       <EnamelCard className="mt-4">
         <div className="p-4 sm:p-6 space-y-6">
+          {/* Approval status */}
+          {profile && !profile.approved_at && (
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 text-sm">
+              <Clock className="h-4 w-4 mt-0.5 shrink-0 text-amber-600" />
+              <p className="text-amber-800 dark:text-amber-300">
+                Profilen din er sendt til godkjenning. Du kan opprette annonser på markedsplassen når profilen er godkjent av admin.
+              </p>
+            </div>
+          )}
+
           {/* Info text */}
           <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50 text-sm text-muted-foreground">
             <Info className="h-4 w-4 mt-0.5 shrink-0" />
             <p>
-              Eierprofilen din er redaksjonelt innhold som vises på bilene dine og på din offentlige eierside. 
+              Eierprofilen din er redaksjonelt innhold som vises på bilene dine og på din offentlige profilside. 
               Dette er ikke kontoinnstillinger.
             </p>
           </div>

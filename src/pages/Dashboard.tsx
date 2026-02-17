@@ -5,7 +5,7 @@ import { GarageLayout } from '@/components/ui/garage/GarageLayout';
 import { EnamelCard } from '@/components/ui/garage/EnamelCard';
 import { BigActionButton } from '@/components/ui/garage/BigActionButton';
 import { SectionHeader } from '@/components/ui/garage/SectionHeader';
-import { Car, Clock, Settings, Bell, CheckCircle, Send, X, User, HelpCircle, Sparkles } from 'lucide-react';
+import { Car, Clock, Settings, Bell, CheckCircle, Send, X, User, HelpCircle, Sparkles, ShoppingBag } from 'lucide-react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Loader2 } from 'lucide-react';
@@ -16,6 +16,7 @@ import { SendInnBilForm } from '@/components/car/SendInnBilForm';
 import { OwnerProfileSection } from '@/components/car/OwnerProfileSection';
 import { useOwnerProfile } from '@/hooks/useOwnerProfile';
 import { useGuide } from '@/hooks/useGuide';
+import { useMyListings } from '@/hooks/useMarketplace';
 
 export default function Dashboard() {
   const { user, isLoading: authLoading } = useAuth();
@@ -41,6 +42,7 @@ export default function Dashboard() {
   
   // Hent eierprofil for å vise status
   const { data: ownerProfile } = useOwnerProfile(user?.id);
+  const { data: myListings } = useMyListings(user?.id);
 
   // Redirect hvis ikke innlogget
   useEffect(() => {
@@ -290,6 +292,41 @@ export default function Dashboard() {
               {ownerProfile ? 'Rediger din eierprofil' : 'Opprett din eierprofil'}
             </p>
           </EnamelCard>
+        </motion.div>
+
+        {/* Dine annonser */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.35 }}
+        >
+          <Link to="/dashboard/mine-annonser" className="block h-full touch-manipulation">
+            <EnamelCard className="h-full min-h-[140px] sm:min-h-[160px] group">
+              <div className="flex items-start justify-between mb-3 sm:mb-4">
+                <div className="p-2.5 sm:p-3 bg-primary/10 rounded-xl flex-shrink-0">
+                  <ShoppingBag className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
+                </div>
+                <div className="text-right">
+                  <p className="font-display text-2xl sm:text-3xl text-primary">
+                    {myListings?.length || 0}
+                  </p>
+                  <p className="text-sm sm:text-base text-muted-foreground">
+                    {(myListings?.length || 0) === 1 ? 'annonse' : 'annonser'}
+                  </p>
+                </div>
+              </div>
+              <h3 className="font-display text-lg sm:text-xl mb-1 sm:mb-2 group-hover:text-primary transition-colors">
+                Dine annonser
+              </h3>
+              <p className="text-sm sm:text-base text-muted-foreground line-clamp-2">
+                {ownerProfile?.approved_at
+                  ? 'Se og rediger annonser du har lagt ut'
+                  : ownerProfile
+                    ? 'Profil venter på godkjenning'
+                    : 'Opprett profil for å legge ut annonser'}
+              </p>
+            </EnamelCard>
+          </Link>
         </motion.div>
 
         {/* Konto */}
