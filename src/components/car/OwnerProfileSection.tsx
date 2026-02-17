@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { User, MapPin, Heart, Eye, EyeOff, Save, Loader2, Info, Clock } from 'lucide-react';
+import { User, MapPin, Heart, Eye, EyeOff, Save, Loader2, Info, Clock, Camera } from 'lucide-react';
 import { EnamelCard, SectionHeader, BigActionButton } from '@/components/ui/garage';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -9,6 +9,9 @@ import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { useOwnerProfile, useCreateOwnerProfile, useUpdateOwnerProfile } from '@/hooks/useOwnerProfile';
 import { useAuth } from '@/hooks/useAuth';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { compressImage, getOwnerAvatarPath } from '@/lib/imageCompression';
+import { supabase } from '@/integrations/supabase/client';
 
 interface OwnerProfileSectionProps {
   userId: string;
@@ -29,6 +32,8 @@ export function OwnerProfileSection({ userId }: OwnerProfileSectionProps) {
   const [visiblePublic, setVisiblePublic] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
+  const avatarInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (profile) {
@@ -63,6 +68,34 @@ export function OwnerProfileSection({ userId }: OwnerProfileSectionProps) {
         ? prev.filter(b => b !== brand)
         : [...prev, brand]
     );
+  };
+
+  const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !profile || !file.type.startsWith('image/')) return;
+
+    setIsUploadingAvatar(true);
+    try {
+      const { file: compressed } = await compressImage(file);
+      const path = getOwnerAvatarPath(profile.id);
+
+      const { error: uploadErr } = await supabase.storage
+        .from('simca-images')
+        .upload(path, compressed, { contentType: 'image/webp', upsert: true });
+
+      if (uploadErr) throw uploadErr;
+
+      const { data } = supabase.storage.from('simca-images').getPublicUrl(path);
+      await updateProfile.mutateAsync({
+        id: profile.id,
+        updates: { avatar_url: `${data.publicUrl}?t=${Date.now()}` },
+      });
+    } catch (err) {
+      console.error('Avatar upload error:', err);
+    } finally {
+      setIsUploadingAvatar(false);
+      if (avatarInputRef.current) avatarInputRef.current.value = '';
+    }
   };
 
   const handleSave = async () => {
@@ -135,6 +168,31 @@ export function OwnerProfileSection({ userId }: OwnerProfileSectionProps) {
               Dette er ikke kontoinnstillinger.
             </p>
           </div>
+
+          {/* Avatar */}
+          {profile && (
+            <div className="space-y-2">
+              <Label>Profilbilde</Label>
+              <div className="flex items-center gap-4">
+                <div className="relative">
+                  <Avatar className="h-16 w-16">
+                    {profile.avatar_url && <AvatarImage src={profile.avatar_url} alt={profile.display_name} />}
+                    <AvatarFallback className="text-lg">{profile.display_name?.charAt(0) || '?'}</AvatarFallback>
+                  </Avatar>
+                  <input ref={avatarInputRef} type="file" accept="image/*" onChange={handleAvatarChange} className="hidden" />
+                  <button
+                    type="button"
+                    onClick={() => avatarInputRef.current?.click()}
+                    disabled={isUploadingAvatar}
+                    className="absolute -bottom-1 -right-1 p-1.5 bg-primary text-primary-foreground rounded-full hover:bg-primary/90"
+                  >
+                    {isUploadingAvatar ? <Loader2 className="h-3 w-3 animate-spin" /> : <Camera className="h-3 w-3" />}
+                  </button>
+                </div>
+                <p className="text-xs text-muted-foreground">Last opp profilbilde (kvadratisk anbefales)</p>
+              </div>
+            </div>
+          )}
 
           {/* Display Name */}
           <div className="space-y-2" data-guide="owner-display-name">

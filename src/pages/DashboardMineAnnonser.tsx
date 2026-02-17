@@ -130,6 +130,12 @@ export default function DashboardMineAnnonser() {
                       <p className="text-xs text-muted-foreground mt-2">
                         Opprettet {new Date(item.created_at).toLocaleDateString('nb-NO')}
                       </p>
+                      <Link
+                        to={`/dashboard/annonse/${item.id}/rediger`}
+                        className="text-sm text-primary hover:underline mt-2 inline-block"
+                      >
+                        Rediger annonse
+                      </Link>
                     </div>
                   </div>
                 </EnamelCard>
