@@ -764,6 +764,7 @@ export type Database = {
       parts: {
         Row: {
           category_id: string | null
+          condition: string | null
           created_at: string
           description: string | null
           id: string
@@ -777,6 +778,7 @@ export type Database = {
         }
         Insert: {
           category_id?: string | null
+          condition?: string | null
           created_at?: string
           description?: string | null
           id?: string
@@ -790,6 +792,7 @@ export type Database = {
         }
         Update: {
           category_id?: string | null
+          condition?: string | null
           created_at?: string
           description?: string | null
           id?: string
