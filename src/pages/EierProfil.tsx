@@ -2,6 +2,7 @@ import { useParams, Link, useLocation, Navigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
 import { User, MapPin, Heart, Car, ChevronRight, ShoppingBag } from 'lucide-react';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Layout } from '@/components/layout/Layout';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { Badge } from '@/components/ui/badge';
@@ -59,9 +60,10 @@ export default function EierProfil() {
       <section className="bg-gradient-to-b from-muted/50 to-background py-12 sm:py-16 md:py-20">
         <div className="container">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="max-w-3xl mx-auto text-center">
-            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6">
-              <User className="h-10 w-10 sm:h-12 sm:w-12 text-primary" />
-            </div>
+            <Avatar className="w-20 h-20 sm:w-24 sm:h-24 mx-auto mb-6">
+              {owner.avatar_url && <AvatarImage src={owner.avatar_url} alt={owner.display_name} />}
+              <AvatarFallback className="text-2xl sm:text-3xl"><User className="h-10 w-10 sm:h-12 sm:w-12 text-primary" /></AvatarFallback>
+            </Avatar>
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3">{owner.display_name}</h1>
             {owner.location && (
               <p className="text-muted-foreground flex items-center justify-center gap-2 mb-4">

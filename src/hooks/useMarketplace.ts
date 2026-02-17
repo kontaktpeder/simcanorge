@@ -288,6 +288,34 @@ export function useAdminMarketplaceItems(statusFilter?: string) {
   });
 }
 
+// Delete marketplace image
+export function useDeleteMarketplaceImage() {
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  return useMutation({
+    mutationFn: async ({ imageId, itemId }: { imageId: string; itemId: string }) => {
+      const { error } = await supabase
+        .from('marketplace_images')
+        .delete()
+        .eq('id', imageId);
+
+      if (error) throw error;
+      return { imageId, itemId };
+    },
+    onSuccess: (_, { itemId }) => {
+      queryClient.invalidateQueries({ queryKey: ['my-listings'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-marketplace-items'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-marketplace-item', itemId] });
+      queryClient.invalidateQueries({ queryKey: ['marketplace-item-slug'] });
+      toast({ title: 'Bilde slettet' });
+    },
+    onError: () => {
+      toast({ title: 'Feil', description: 'Kunne ikke slette bilde.', variant: 'destructive' });
+    },
+  });
+}
+
 // Fetch marketplace images for an item
 export function useMarketplaceImages(itemId: string | undefined) {
   return useQuery({

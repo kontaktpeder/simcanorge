@@ -127,3 +127,10 @@ export function getCarEventImagePath(carId: string, eventId: string, imageId: st
 export function getMarketplaceImagePath(itemId: string, imageId: string): string {
   return `marketplace/${itemId}/images/${imageId}/original.webp`;
 }
+
+/**
+ * Generate storage path for owner avatar
+ */
+export function getOwnerAvatarPath(ownerId: string): string {
+  return `owners/${ownerId}/avatar.webp`;
+}
