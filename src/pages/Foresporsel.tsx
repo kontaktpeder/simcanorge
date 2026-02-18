@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import { Layout } from "@/components/layout/Layout";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { useCart } from "@/hooks/useCart";
 import { supabase } from "@/integrations/supabase/client";
-import { X, Send, ArrowLeft, Check } from "lucide-react";
+import { X, Send, ArrowLeft, Check, User, Package } from "lucide-react";
 import { z } from "zod";
 import { toast } from "sonner";
 import toolboxIcon from "@/assets/toolbox-blue.png";
@@ -34,6 +35,82 @@ const Foresporsel = () => {
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [lastSubmitTime, setLastSubmitTime] = useState<number>(0);
+
+  // Fetch enriched data for cart items
+  const listingIds = useMemo(() => items.filter(i => i.type === "listing").map(i => i.id), [items]);
+  const partIds = useMemo(() => items.filter(i => i.type === "part").map(i => i.id), [items]);
+
+  const { data: listingsData } = useQuery({
+    queryKey: ["cart-listings", listingIds],
+    queryFn: async () => {
+      if (listingIds.length === 0) return [];
+      const { data } = await supabase
+        .from("marketplace_items")
+        .select(`
+          id, title, price, price_note, slug,
+          owners!marketplace_items_owner_id_fkey(display_name, avatar_url),
+          marketplace_images(image_url, sort_order)
+        `)
+        .in("id", listingIds)
+        .order("sort_order", { referencedTable: "marketplace_images", ascending: true });
+      return data ?? [];
+    },
+    enabled: listingIds.length > 0,
+  });
+
+  const { data: partsData } = useQuery({
+    queryKey: ["cart-parts", partIds],
+    queryFn: async () => {
+      if (partIds.length === 0) return [];
+      const { data } = await supabase
+        .from("parts")
+        .select(`
+          id, title, price_min, price_max, price_note, slug,
+          part_images(image_url, sort_order)
+        `)
+        .in("id", partIds)
+        .order("sort_order", { referencedTable: "part_images", ascending: true });
+      return data ?? [];
+    },
+    enabled: partIds.length > 0,
+  });
+
+  // Build enriched items map
+  const enrichedMap = useMemo(() => {
+    const map = new Map<string, {
+      image?: string;
+      price?: string;
+      ownerName?: string;
+      ownerAvatar?: string;
+    }>();
+    listingsData?.forEach((l: any) => {
+      const firstImage = l.marketplace_images?.[0]?.image_url;
+      const owner = l.owners;
+      let priceStr = l.price_note || undefined;
+      if (l.price != null) priceStr = `${Number(l.price).toLocaleString("nb-NO")} kr`;
+      map.set(l.id, {
+        image: firstImage,
+        price: priceStr,
+        ownerName: owner?.display_name,
+        ownerAvatar: owner?.avatar_url,
+      });
+    });
+    partsData?.forEach((p: any) => {
+      const firstImage = p.part_images?.[0]?.image_url;
+      let priceStr = p.price_note || undefined;
+      if (p.price_min != null && p.price_max != null) {
+        priceStr = `${p.price_min.toLocaleString("nb-NO")} – ${p.price_max.toLocaleString("nb-NO")} kr`;
+      } else if (p.price_min != null) {
+        priceStr = `fra ${p.price_min.toLocaleString("nb-NO")} kr`;
+      }
+      map.set(p.id, {
+        image: firstImage,
+        price: priceStr,
+        ownerName: "Simca Norge",
+      });
+    });
+    return map;
+  }, [listingsData, partsData]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -168,26 +245,63 @@ const Foresporsel = () => {
               <div className="animate-slide-in-left">
                 <h2 className="headline-md mb-6">I VERKTØYKASSEN ({items.length})</h2>
                 <div className="space-y-4 stagger-children">
-                  {items.map((item) => (
-                    <div
-                      key={item.id}
-                      className="flex items-center justify-between border-chrome bg-card p-4 rounded-xl"
-                    >
-                      <div>
-                        <span className="font-medium">{item.title}</span>
-                        <span className="text-xs text-muted-foreground ml-2">
-                          {item.type === "listing" ? "Annonse" : "Bildel"}
-                        </span>
-                      </div>
-                      <button
-                        onClick={() => removeItem(item.type, item.id)}
-                        className="p-2 text-accent hover:bg-accent hover:text-accent-foreground rounded-lg transition-colors"
-                        aria-label={`Fjern ${item.title}`}
+                  {items.map((item) => {
+                    const enriched = enrichedMap.get(item.id);
+                    return (
+                      <div
+                        key={item.id}
+                        className="flex items-start gap-4 border-chrome bg-card p-4 rounded-xl"
                       >
-                        <X className="w-5 h-5" />
-                      </button>
-                    </div>
-                  ))}
+                        {/* Image */}
+                        <div className="w-20 h-20 rounded-lg bg-muted flex-shrink-0 overflow-hidden">
+                          {enriched?.image ? (
+                            <img src={enriched.image} alt={item.title} className="w-full h-full object-cover" />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center">
+                              <Package className="w-8 h-8 text-muted-foreground" />
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Info */}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-start justify-between gap-2">
+                            <div className="min-w-0">
+                              <h3 className="font-display text-base sm:text-lg leading-tight truncate">{item.title}</h3>
+                              <span className="text-xs text-muted-foreground">
+                                {item.type === "listing" ? "Annonse" : "Bildel"}
+                              </span>
+                            </div>
+                            <button
+                              onClick={() => removeItem(item.type, item.id)}
+                              className="p-1.5 text-accent hover:bg-accent hover:text-accent-foreground rounded-lg transition-colors flex-shrink-0"
+                              aria-label={`Fjern ${item.title}`}
+                            >
+                              <X className="w-4 h-4" />
+                            </button>
+                          </div>
+
+                          {enriched?.price && (
+                            <p className="font-display text-base text-primary mt-1">{enriched.price}</p>
+                          )}
+
+                          {/* Seller */}
+                          {enriched?.ownerName && (
+                            <div className="flex items-center gap-2 mt-2">
+                              <div className="w-6 h-6 rounded-full bg-muted flex items-center justify-center overflow-hidden flex-shrink-0">
+                                {enriched.ownerAvatar ? (
+                                  <img src={enriched.ownerAvatar} alt={enriched.ownerName} className="w-full h-full object-cover" />
+                                ) : (
+                                  <User className="w-3.5 h-3.5 text-muted-foreground" />
+                                )}
+                              </div>
+                              <span className="text-xs text-muted-foreground truncate">{enriched.ownerName}</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
 
