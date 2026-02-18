@@ -4,18 +4,21 @@ import { useEffect } from 'react';
 import { GarageLayout } from '@/components/ui/garage/GarageLayout';
 import { EnamelCard } from '@/components/ui/garage/EnamelCard';
 import { BigActionButton } from '@/components/ui/garage/BigActionButton';
-import { ShoppingBag, Plus, Clock, Eye, Archive, Loader2 } from 'lucide-react';
+import { ShoppingBag, Plus, Clock, Eye, Archive, Loader2, User, Send } from 'lucide-react';
 import { Layout } from '@/components/layout/Layout';
 import { motion } from 'framer-motion';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { useOwnerProfile } from '@/hooks/useOwnerProfile';
 import { useMyListings } from '@/hooks/useMarketplace';
+import { useRequestSellerApproval } from '@/hooks/useRequestSellerApproval';
 
 export default function DashboardMineAnnonser() {
   const { user, isLoading: authLoading } = useAuth();
   const navigate = useNavigate();
   const { data: ownerProfile, isLoading: profileLoading } = useOwnerProfile(user?.id);
   const { data: listings, isLoading: listingsLoading } = useMyListings(user?.id);
+  const requestApproval = useRequestSellerApproval();
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -70,13 +73,31 @@ export default function DashboardMineAnnonser() {
 
       {ownerProfile && !ownerProfile.approved_at && (
         <EnamelCard className="mb-6">
-          <div className="p-5 flex items-start gap-3">
-            <Clock className="h-5 w-5 text-amber-600 mt-0.5 shrink-0" />
-            <div>
-              <p className="font-medium">Profil venter på godkjenning</p>
-              <p className="text-sm text-muted-foreground mt-1">
-                Du kan opprette annonser når admin har godkjent Entusiastprofilen din.
-              </p>
+          <div className="p-5">
+            <div className="flex items-start gap-3">
+              <Clock className="h-5 w-5 text-amber-600 mt-0.5 shrink-0" />
+              <div className="flex-1">
+                <p className="font-medium">Profil venter på godkjenning</p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Du kan opprette annonser når admin har godkjent Entusiastprofilen din.
+                </p>
+              </div>
+            </div>
+            <div className="flex flex-wrap gap-3 mt-4 ml-8">
+              <Link to="/dashboard?showOwnerProfile=true">
+                <Button variant="outline" size="sm">
+                  <User className="h-4 w-4 mr-1.5" />
+                  Se min profil
+                </Button>
+              </Link>
+              <Button
+                size="sm"
+                onClick={() => requestApproval.mutate()}
+                disabled={requestApproval.isPending}
+              >
+                <Send className="h-4 w-4 mr-1.5" />
+                {requestApproval.isPending ? 'Sender...' : 'Be om å bli godkjent selger'}
+              </Button>
             </div>
           </div>
         </EnamelCard>

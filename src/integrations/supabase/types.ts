@@ -1093,6 +1093,7 @@ export type Database = {
         Args: { _display_name: string; _owner_id: string; _user_id: string }
         Returns: undefined
       }
+      request_seller_approval: { Args: never; Returns: Json }
     }
     Enums: {
       app_role: "admin"

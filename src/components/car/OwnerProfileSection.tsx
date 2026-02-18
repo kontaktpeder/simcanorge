@@ -1,18 +1,20 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { User, MapPin, Heart, Eye, EyeOff, Save, Loader2, Info, Clock, Camera } from 'lucide-react';
+import { User, MapPin, Heart, Eye, EyeOff, Save, Loader2, Info, Clock, Camera, Send } from 'lucide-react';
 import { EnamelCard, SectionHeader, BigActionButton } from '@/components/ui/garage';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { useOwnerProfile, useCreateOwnerProfile, useUpdateOwnerProfile } from '@/hooks/useOwnerProfile';
 import { useAuth } from '@/hooks/useAuth';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { getOwnerAvatarPath, blobToWebPFile } from '@/lib/imageCompression';
 import { supabase } from '@/integrations/supabase/client';
 import { AvatarCropModal } from '@/components/avatar/AvatarCropModal';
+import { useRequestSellerApproval } from '@/hooks/useRequestSellerApproval';
 
 interface OwnerProfileSectionProps {
   userId: string;
@@ -25,6 +27,7 @@ export function OwnerProfileSection({ userId }: OwnerProfileSectionProps) {
   const { data: profile, isLoading } = useOwnerProfile(userId);
   const createProfile = useCreateOwnerProfile();
   const updateProfile = useUpdateOwnerProfile();
+  const requestApproval = useRequestSellerApproval();
   
   const [displayName, setDisplayName] = useState('');
   const [bio, setBio] = useState('');
@@ -159,11 +162,24 @@ export function OwnerProfileSection({ userId }: OwnerProfileSectionProps) {
         <div className="p-4 sm:p-6 space-y-6">
           {/* Approval status */}
           {profile && !profile.approved_at && (
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 text-sm">
-              <Clock className="h-4 w-4 mt-0.5 shrink-0 text-amber-600" />
-              <p className="text-amber-800 dark:text-amber-300">
-                Profilen din er sendt til godkjenning. Du kan opprette annonser på markedsplassen når profilen er godkjent av admin.
-              </p>
+            <div className="p-3 rounded-lg bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 text-sm space-y-3">
+              <div className="flex items-start gap-3">
+                <Clock className="h-4 w-4 mt-0.5 shrink-0 text-amber-600" />
+                <p className="text-amber-800 dark:text-amber-300">
+                  Profilen din er sendt til godkjenning. Du kan opprette annonser på markedsplassen når profilen er godkjent av admin.
+                </p>
+              </div>
+              <div className="flex justify-end">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => requestApproval.mutate()}
+                  disabled={requestApproval.isPending}
+                >
+                  <Send className="h-3.5 w-3.5 mr-1.5" />
+                  {requestApproval.isPending ? 'Sender...' : 'Be om å bli godkjent selger'}
+                </Button>
+              </div>
             </div>
           )}
 
