@@ -178,7 +178,7 @@ const Foresporsel = () => {
                         </span>
                       </div>
                       <button
-                        onClick={() => removeItem(item.id)}
+                        onClick={() => removeItem(item.type, item.id)}
                         className="p-2 text-accent hover:bg-accent hover:text-accent-foreground rounded-lg transition-colors"
                         aria-label={`Fjern ${item.title}`}
                       >

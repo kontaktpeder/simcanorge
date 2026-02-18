@@ -72,9 +72,7 @@ export const routes: RouteConfig[] = [
 
   // Public routes without navigation
   { path: "/biler/:slug", element: BilDetalj, isPublic: true },
-  { path: "/markedsplass/:slug", element: AnnonseDetalj, isPublic: true },
-  { path: "/annonse/:slug", element: AnnonseDetalj, isPublic: true }, // legacy
-  { path: "/deler/:partId", element: AnnonseDetalj, isPublic: true }, // legacy redirect
+  { path: "/annonse/:slug", element: AnnonseDetalj, isPublic: true },
   { path: "/profil/:slug", element: EierProfil, isPublic: true },
   { path: "/eier/:slug", element: EierProfil, isPublic: true },
   { path: "/foresporsel", element: Foresporsel, isPublic: true },
