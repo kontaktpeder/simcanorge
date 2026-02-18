@@ -10,6 +10,7 @@ interface OwnerData {
   slug?: string | null;
   contact_email?: string | null;
   contact_phone?: string | null;
+  avatar_url?: string | null;
 }
 
 interface OwnerCardProps {
@@ -47,18 +48,28 @@ export function OwnerCard({ carId, owner: ownerProp }: OwnerCardProps) {
       
       <div className="bg-card rounded-xl border shadow-sm overflow-hidden">
         <div className="p-5 sm:p-6 md:p-8">
-          {/* Owner name */}
-          <h3 className="text-lg sm:text-xl font-semibold mb-1">
-            {owner.display_name}
-          </h3>
+          <div className="flex items-center gap-4 mb-4">
+            {/* Avatar */}
+            <div className="h-14 w-14 rounded-full bg-muted flex items-center justify-center overflow-hidden shrink-0 border">
+              {owner.avatar_url ? (
+                <img src={owner.avatar_url} alt={owner.display_name} className="h-full w-full object-cover" />
+              ) : (
+                <User className="h-6 w-6 text-muted-foreground" />
+              )}
+            </div>
+            <div>
+              <h3 className="text-lg sm:text-xl font-semibold">
+                {owner.display_name}
+              </h3>
+              {owner.location && (
+                <p className="text-sm text-muted-foreground flex items-center gap-1.5">
+                  <MapPin className="h-3.5 w-3.5" />
+                  {owner.location}
+                </p>
+              )}
+            </div>
+          </div>
           
-          {/* Location */}
-          {owner.location && (
-            <p className="text-sm text-muted-foreground flex items-center gap-1.5 mb-4">
-              <MapPin className="h-3.5 w-3.5" />
-              {owner.location}
-            </p>
-          )}
           
           {/* Bio */}
           {bioPreview && (
