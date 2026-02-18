@@ -205,7 +205,7 @@ export function OwnerProfileSection({ userId }: OwnerProfileSectionProps) {
                     Du kan nå opprette annonser på markedsplassen.
                   </p>
                   <a
-                    href="/opprett-annonse"
+                    href="/dashboard/opprett-annonse"
                     className="inline-flex items-center gap-1.5 text-sm font-display uppercase tracking-wider text-green-800 dark:text-green-300 underline hover:no-underline mt-1"
                   >
                     Opprett din første annonse →
