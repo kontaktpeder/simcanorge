@@ -342,6 +342,29 @@ export function useDeleteMarketplaceItem() {
   });
 }
 
+// Reorder marketplace images
+export function useReorderMarketplaceImages() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ images }: { images: { id: string; sort_order: number }[] }) => {
+      for (const img of images) {
+        const { error } = await supabase
+          .from('marketplace_images')
+          .update({ sort_order: img.sort_order })
+          .eq('id', img.id);
+        if (error) throw error;
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['my-listings'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-marketplace-items'] });
+      queryClient.invalidateQueries({ queryKey: ['marketplace-items'] });
+      queryClient.invalidateQueries({ queryKey: ['marketplace-item-slug'] });
+    },
+  });
+}
+
 // Fetch marketplace images for an item
 export function useMarketplaceImages(itemId: string | undefined) {
   return useQuery({
