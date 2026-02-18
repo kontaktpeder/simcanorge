@@ -5,7 +5,7 @@ import { GarageLayout } from '@/components/ui/garage/GarageLayout';
 import { EnamelCard } from '@/components/ui/garage/EnamelCard';
 import { BigActionButton } from '@/components/ui/garage/BigActionButton';
 import { SectionHeader } from '@/components/ui/garage/SectionHeader';
-import { Car, Clock, Settings, Bell, CheckCircle, Send, X, User, HelpCircle, Sparkles, ShoppingBag, Plus, ExternalLink } from 'lucide-react';
+import { Car, Clock, Settings, Bell, CheckCircle, Send, X, User, HelpCircle, Sparkles, ShoppingBag, Plus, ExternalLink, Inbox } from 'lucide-react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Loader2 } from 'lucide-react';
@@ -366,6 +366,31 @@ export default function Dashboard() {
             </EnamelCard>
           </Link>
         </motion.div>
+
+        {/* Mine forespørsler */}
+        {ownerProfile && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: 0.37 }}
+          >
+            <Link to="/dashboard/mine-foresporsler" className="block h-full touch-manipulation">
+              <EnamelCard className="h-full min-h-[140px] sm:min-h-[160px] group">
+                <div className="flex items-start justify-between mb-3 sm:mb-4">
+                  <div className="p-2.5 sm:p-3 bg-primary/10 rounded-xl flex-shrink-0">
+                    <Inbox className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
+                  </div>
+                </div>
+                <h3 className="font-display text-lg sm:text-xl mb-1 sm:mb-2 group-hover:text-primary transition-colors">
+                  Mine forespørsler
+                </h3>
+                <p className="text-sm sm:text-base text-muted-foreground line-clamp-2">
+                  Se forespørsler fra kjøpere
+                </p>
+              </EnamelCard>
+            </Link>
+          </motion.div>
+        )}
 
         {/* Konto */}
         <motion.div

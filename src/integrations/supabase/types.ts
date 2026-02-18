@@ -523,6 +523,7 @@ export type Database = {
           message: string | null
           phone: string | null
           read: boolean | null
+          recipient_owner_id: string | null
           status: string | null
         }
         Insert: {
@@ -536,6 +537,7 @@ export type Database = {
           message?: string | null
           phone?: string | null
           read?: boolean | null
+          recipient_owner_id?: string | null
           status?: string | null
         }
         Update: {
@@ -549,9 +551,18 @@ export type Database = {
           message?: string | null
           phone?: string | null
           read?: boolean | null
+          recipient_owner_id?: string | null
           status?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "inquiries_recipient_owner_id_fkey"
+            columns: ["recipient_owner_id"]
+            isOneToOne: false
+            referencedRelation: "owners"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       inquiry_items: {
         Row: {
