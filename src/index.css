@@ -1095,3 +1095,12 @@
     }
   }
 }
+
+/* ReactCrop overrides for theme */
+.ReactCrop__crop-selection {
+  border: 2px solid hsl(var(--primary));
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.4);
+}
+.ReactCrop__drag-handle {
+  background: hsl(var(--primary)) !important;
+}

@@ -10,8 +10,9 @@ import { Badge } from '@/components/ui/badge';
 import { useOwnerProfile, useCreateOwnerProfile, useUpdateOwnerProfile } from '@/hooks/useOwnerProfile';
 import { useAuth } from '@/hooks/useAuth';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { compressImage, getOwnerAvatarPath } from '@/lib/imageCompression';
+import { getOwnerAvatarPath, blobToWebPFile } from '@/lib/imageCompression';
 import { supabase } from '@/integrations/supabase/client';
+import { AvatarCropModal } from '@/components/avatar/AvatarCropModal';
 
 interface OwnerProfileSectionProps {
   userId: string;
@@ -33,6 +34,8 @@ export function OwnerProfileSection({ userId }: OwnerProfileSectionProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
+  const [avatarCropFile, setAvatarCropFile] = useState<File | null>(null);
+  const [showCropModal, setShowCropModal] = useState(false);
   const avatarInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -70,21 +73,25 @@ export function OwnerProfileSection({ userId }: OwnerProfileSectionProps) {
     );
   };
 
-  const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !profile || !file.type.startsWith('image/')) return;
+    setAvatarCropFile(file);
+    setShowCropModal(true);
+    if (avatarInputRef.current) avatarInputRef.current.value = '';
+  };
 
+  const handleCropComplete = async (croppedBlob: Blob) => {
+    if (!profile) return;
     setIsUploadingAvatar(true);
+    setShowCropModal(false);
     try {
-      const { file: compressed } = await compressImage(file);
+      const file = blobToWebPFile(croppedBlob);
       const path = getOwnerAvatarPath(profile.id);
-
       const { error: uploadErr } = await supabase.storage
         .from('simca-images')
-        .upload(path, compressed, { contentType: 'image/webp', upsert: true });
-
+        .upload(path, file, { contentType: 'image/webp', upsert: true });
       if (uploadErr) throw uploadErr;
-
       const { data } = supabase.storage.from('simca-images').getPublicUrl(path);
       await updateProfile.mutateAsync({
         id: profile.id,
@@ -94,7 +101,7 @@ export function OwnerProfileSection({ userId }: OwnerProfileSectionProps) {
       console.error('Avatar upload error:', err);
     } finally {
       setIsUploadingAvatar(false);
-      if (avatarInputRef.current) avatarInputRef.current.value = '';
+      setAvatarCropFile(null);
     }
   };
 
@@ -302,6 +309,14 @@ export function OwnerProfileSection({ userId }: OwnerProfileSectionProps) {
           </div>
         </div>
       </EnamelCard>
+
+      <AvatarCropModal
+        open={showCropModal}
+        onClose={() => { setShowCropModal(false); setAvatarCropFile(null); }}
+        imageFile={avatarCropFile}
+        onCropComplete={handleCropComplete}
+        isLoading={isUploadingAvatar}
+      />
     </motion.div>
   );
 }
