@@ -20,6 +20,16 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Mail, Phone, Car, Calendar, Check, Eye, Wrench, Trash2, User, Package, ExternalLink, ShieldAlert, UserX } from "lucide-react";
 import { toast } from "sonner";
@@ -107,6 +117,29 @@ const AdminForesporsler = () => {
   const [accountRequestStatus, setAccountRequestStatus] = useState<AccountRequestStatus>('new');
   const [accountRequestAdminNote, setAccountRequestAdminNote] = useState('');
   const [isSaving, setIsSaving] = useState(false);
+  const [showDeleteUserConfirm, setShowDeleteUserConfirm] = useState(false);
+  const [isDeletingUser, setIsDeletingUser] = useState(false);
+
+  const handleConfirmDeleteUser = async () => {
+    if (!selectedAccountRequest || selectedAccountRequest.type !== "delete_account") return;
+    setIsDeletingUser(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("delete-user", {
+        body: { user_id: selectedAccountRequest.user_id },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      toast.success("Bruker er slettet og forespørselen er merket som fullført.");
+      queryClient.invalidateQueries({ queryKey: ["all-account-requests"] });
+      setSelectedAccountRequest(null);
+      setShowDeleteUserConfirm(false);
+    } catch (e) {
+      console.error(e);
+      toast.error(e instanceof Error ? e.message : "Kunne ikke slette bruker");
+    } finally {
+      setIsDeletingUser(false);
+    }
+  };
 
   const { data: inquiries, isLoading } = useQuery({
     queryKey: ["inquiries"],
@@ -739,6 +772,46 @@ const AdminForesporsler = () => {
                     >
                       {updateAccountRequest.isPending ? "Lagrer..." : "Lagre status"}
                     </Button>
+
+                    {isDelete && (
+                      <>
+                        <div className="pt-4 border-t">
+                          <Button
+                            variant="destructive"
+                            className="w-full"
+                            disabled={isDeletingUser}
+                            onClick={() => setShowDeleteUserConfirm(true)}
+                          >
+                            <Trash2 className="w-4 h-4 mr-2" />
+                            {isDeletingUser ? "Sletter..." : "Slett bruker helt"}
+                          </Button>
+                        </div>
+
+                        <AlertDialog open={showDeleteUserConfirm} onOpenChange={setShowDeleteUserConfirm}>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Slett bruker permanent?</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                Brukeren slettes fra systemet og kan ikke gjenopprettes. Forespørselen markeres som fullført med «Bruker slettet». Er du sikker?
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Avbryt</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  handleConfirmDeleteUser();
+                                }}
+                                disabled={isDeletingUser}
+                                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                              >
+                                {isDeletingUser ? "Sletter..." : "Ja, slett bruker"}
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </>
+                    )}
                   </div>
                 </>
               );
