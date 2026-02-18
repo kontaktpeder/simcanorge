@@ -178,19 +178,14 @@ export function OwnerProfileSection({ userId }: OwnerProfileSectionProps) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
     >
-      <SectionHeader 
-        title="Entusiastprofil" 
-        icon={<User className="h-5 w-5" />}
-      />
-      
-      <EnamelCard className="mt-4">
-        <div className="p-4 sm:p-6 space-y-6">
+      <div className="border-2 border-foreground/15 bg-card/90 backdrop-blur-sm">
+        <div className="p-6 sm:p-8 space-y-8">
           {/* Approval status */}
           {profile && !profile.approved_at && (
-            <div className="p-3 rounded-lg bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 text-sm space-y-3">
-              <div className="flex items-start gap-3">
-                <Clock className="h-4 w-4 mt-0.5 shrink-0 text-amber-600" />
-                <p className="text-amber-800 dark:text-amber-300">
+            <div className="p-5 border-2 border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-950/30">
+              <div className="flex items-start gap-4">
+                <Clock className="h-6 w-6 mt-0.5 shrink-0 text-amber-600" />
+                <p className="text-base text-amber-800 dark:text-amber-300">
                   Entusiastprofilen din er sendt til godkjenning. Du kan opprette annonser på markedsplassen når profilen er godkjent av admin.
                 </p>
               </div>
@@ -198,9 +193,9 @@ export function OwnerProfileSection({ userId }: OwnerProfileSectionProps) {
           )}
 
           {/* Info text */}
-          <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50 text-sm text-muted-foreground">
-            <Info className="h-4 w-4 mt-0.5 shrink-0" />
-            <p>
+          <div className="flex items-start gap-4 p-5 border-2 border-foreground/10 bg-muted/30">
+            <Info className="h-5 w-5 mt-0.5 shrink-0 text-muted-foreground" />
+            <p className="text-base text-muted-foreground">
               Entusiastprofilen din er redaksjonelt innhold som vises på bilene dine og på din offentlige profilside. 
               Dette er ikke kontoinnstillinger.
             </p>
@@ -208,44 +203,48 @@ export function OwnerProfileSection({ userId }: OwnerProfileSectionProps) {
 
           {/* Avatar */}
           {profile && (
-            <div className="space-y-2">
-              <Label>Profilbilde</Label>
-              <div className="flex items-center gap-4">
+            <div className="space-y-3">
+              <label className="font-display text-base uppercase tracking-wider block">Profilbilde</label>
+              <div className="flex items-center gap-5">
                 <div className="relative">
-                  <Avatar className="h-16 w-16">
+                  <Avatar className="h-20 w-20">
                     {profile.avatar_url && <AvatarImage src={profile.avatar_url} alt={profile.display_name} />}
-                    <AvatarFallback className="text-lg">{profile.display_name?.charAt(0) || '?'}</AvatarFallback>
+                    <AvatarFallback className="text-xl">{profile.display_name?.charAt(0) || '?'}</AvatarFallback>
                   </Avatar>
                   <input ref={avatarInputRef} type="file" accept="image/*" onChange={handleAvatarChange} className="hidden" />
                   <button
                     type="button"
                     onClick={() => avatarInputRef.current?.click()}
                     disabled={isUploadingAvatar}
-                    className="absolute -bottom-1 -right-1 p-1.5 bg-primary text-primary-foreground rounded-full hover:bg-primary/90"
+                    className="absolute -bottom-1 -right-1 p-2 bg-primary text-primary-foreground rounded-full hover:bg-primary/90 min-h-[36px] min-w-[36px] flex items-center justify-center"
                   >
-                    {isUploadingAvatar ? <Loader2 className="h-3 w-3 animate-spin" /> : <Camera className="h-3 w-3" />}
+                    {isUploadingAvatar ? <Loader2 className="h-4 w-4 animate-spin" /> : <Camera className="h-4 w-4" />}
                   </button>
                 </div>
-                <p className="text-xs text-muted-foreground">Last opp profilbilde (kvadratisk anbefales)</p>
+                <p className="text-base text-muted-foreground">Last opp profilbilde (kvadratisk anbefales)</p>
               </div>
             </div>
           )}
 
           {/* Display Name */}
-          <div className="space-y-2" data-guide="owner-display-name">
-            <Label htmlFor="display-name">Visningsnavn *</Label>
+          <div className="space-y-3" data-guide="owner-display-name">
+            <label htmlFor="display-name" className="font-display text-base uppercase tracking-wider block">
+              Visningsnavn <span className="text-destructive">*</span>
+            </label>
             <Input
               id="display-name"
               value={displayName}
               onChange={(e) => setDisplayName(e.target.value)}
               placeholder="Ditt navn eller kallenavn"
-              className="max-w-md"
+              className="max-w-md text-base h-12"
             />
           </div>
 
           {/* Username */}
-          <div className="space-y-2">
-            <Label htmlFor="username">Brukernavn (valgfritt)</Label>
+          <div className="space-y-3">
+            <label htmlFor="username" className="font-display text-base uppercase tracking-wider block">
+              Brukernavn (valgfritt)
+            </label>
             <Input
               id="username"
               value={username}
@@ -254,112 +253,120 @@ export function OwnerProfileSection({ userId }: OwnerProfileSectionProps) {
                 setUsername(v);
               }}
               placeholder="f.eks. peder-august"
-              className="max-w-md font-mono"
+              className="max-w-md font-mono text-base h-12"
               maxLength={30}
             />
-            <p className="text-xs text-muted-foreground">
+            <p className="text-sm text-muted-foreground">
               Brukes i profil-URL. Kun små bokstaver, tall, bindestrek og understrek.
             </p>
             {profile?.slug && visiblePublic && (
-              <p className="font-mono text-xs text-primary">/profil/{profile.slug}</p>
+              <p className="font-mono text-sm text-primary">/profil/{profile.slug}</p>
             )}
           </div>
 
           {/* Bio */}
-          <div className="space-y-2" data-guide="owner-bio">
-            <Label htmlFor="bio">Om meg</Label>
+          <div className="space-y-3" data-guide="owner-bio">
+            <label htmlFor="bio" className="font-display text-base uppercase tracking-wider block">Om meg</label>
             <Textarea
               id="bio"
               value={bio}
               onChange={(e) => setBio(e.target.value)}
               placeholder="Fortell hvorfor du eier en Simca, Talbot eller Matra. Hva betyr disse bilene for deg, og hvordan startet interessen?"
-              className="min-h-[120px] resize-y"
+              className="min-h-[140px] resize-y text-base"
               maxLength={800}
             />
-            <p className="text-xs text-muted-foreground">
+            <p className="text-sm text-muted-foreground">
               {bio.length}/800 tegn
             </p>
           </div>
 
           {/* Location */}
-          <div className="space-y-2">
-            <Label htmlFor="location" className="flex items-center gap-2">
-              <MapPin className="h-4 w-4" />
+          <div className="space-y-3">
+            <label htmlFor="location" className="font-display text-base uppercase tracking-wider flex items-center gap-2 block">
+              <MapPin className="h-5 w-5" />
               Bosted
-            </Label>
+            </label>
             <Input
               id="location"
               value={location}
               onChange={(e) => setLocation(e.target.value)}
               placeholder="f.eks. Grimstad, Norge"
-              className="max-w-md"
+              className="max-w-md text-base h-12"
             />
           </div>
 
           {/* Contact Email */}
-          <div className="space-y-2">
-            <Label htmlFor="contact-email">E-post for kontakt *</Label>
+          <div className="space-y-3">
+            <label htmlFor="contact-email" className="font-display text-base uppercase tracking-wider block">
+              E-post for kontakt <span className="text-destructive">*</span>
+            </label>
             <Input
               id="contact-email"
               type="email"
               value={contactEmail}
               onChange={(e) => setContactEmail(e.target.value)}
               placeholder="din@epost.no"
-              className="max-w-md"
+              className="max-w-md text-base h-12"
               required
             />
-            <p className="text-xs text-muted-foreground">
+            <p className="text-sm text-muted-foreground">
               Brukes slik at kjøpere kan ta kontakt med deg om annonser.
             </p>
           </div>
 
           {/* Contact Phone */}
-          <div className="space-y-2">
-            <Label htmlFor="contact-phone">Telefon (valgfritt)</Label>
+          <div className="space-y-3">
+            <label htmlFor="contact-phone" className="font-display text-base uppercase tracking-wider block">
+              Telefon (valgfritt)
+            </label>
             <Input
               id="contact-phone"
               type="tel"
               value={contactPhone}
               onChange={(e) => setContactPhone(e.target.value)}
               placeholder="f.eks. 912 34 567"
-              className="max-w-md"
+              className="max-w-md text-base h-12"
             />
-            <p className="text-xs text-muted-foreground">
+            <p className="text-sm text-muted-foreground">
               Valgfritt. Vises på annonsen slik at kjøpere kan ringe eller sende SMS.
             </p>
           </div>
 
           {/* Favorite Brands */}
-          <div className="space-y-3">
-            <Label className="flex items-center gap-2">
-              <Heart className="h-4 w-4" />
+          <div className="space-y-4">
+            <label className="font-display text-base uppercase tracking-wider flex items-center gap-2 block">
+              <Heart className="h-5 w-5" />
               Favorittmerker
-            </Label>
-            <div className="flex flex-wrap gap-2">
+            </label>
+            <div className="flex flex-wrap gap-3">
               {BRAND_OPTIONS.filter(brand => !['Peugeot', 'Citroën', 'Annet'].includes(brand)).map((brand) => (
-                <Badge
+                <button
                   key={brand}
-                  variant={favoriteBrands.includes(brand) ? "default" : "outline"}
-                  className="cursor-pointer transition-colors hover:bg-primary/80 select-none"
+                  type="button"
                   onClick={() => toggleBrand(brand)}
+                  className={`px-5 py-3 border-2 font-display text-sm uppercase tracking-wider transition-all min-h-[48px] select-none ${
+                    favoriteBrands.includes(brand)
+                      ? 'border-primary bg-primary text-primary-foreground'
+                      : 'border-foreground/20 hover:border-foreground/40'
+                  }`}
                 >
                   {brand}
-                </Badge>
+                </button>
               ))}
             </div>
           </div>
 
           {/* Visibility Toggle */}
-          <div className="flex items-center justify-between p-4 rounded-lg border bg-card" data-guide="owner-visibility">
-            <div className="flex items-center gap-3">
+          <div className="flex items-center justify-between p-5 border-2 border-foreground/10 bg-card" data-guide="owner-visibility">
+            <div className="flex items-center gap-4">
               {visiblePublic ? (
-                <Eye className="h-5 w-5 text-green-600" />
+                <Eye className="h-6 w-6 text-green-600" />
               ) : (
-                <EyeOff className="h-5 w-5 text-muted-foreground" />
+                <EyeOff className="h-6 w-6 text-muted-foreground" />
               )}
               <div>
-                <p className="font-medium text-sm">Vis entusiastprofil offentlig</p>
-                <p className="text-xs text-muted-foreground">
+                <p className="font-display text-base uppercase tracking-wider">Vis entusiastprofil offentlig</p>
+                <p className="text-sm text-muted-foreground mt-1">
                   {visiblePublic 
                     ? 'Entusiastprofilen din vises på bilene dine og på din offentlige profilside'
                     : 'Entusiastprofilen din er skjult for andre'
@@ -373,21 +380,20 @@ export function OwnerProfileSection({ userId }: OwnerProfileSectionProps) {
             />
           </div>
 
-
-
           {/* Save Button */}
           <div data-guide="owner-save">
-            <BigActionButton
+            <button
               onClick={handleSave}
               disabled={!displayName.trim() || !contactEmail.trim() || isSaving || !hasChanges}
-              icon={isSaving ? <Loader2 className="h-5 w-5 animate-spin" /> : <Save className="h-5 w-5" />}
-              className="w-full sm:w-auto"
+              className="px-8 py-4 font-display text-base uppercase tracking-wider text-white transition-all min-h-[56px] flex items-center gap-3 disabled:opacity-40 disabled:cursor-not-allowed w-full sm:w-auto justify-center"
+              style={{ background: 'hsl(2, 85%, 40%)' }}
             >
+              {isSaving ? <Loader2 className="h-5 w-5 animate-spin" /> : <Save className="h-5 w-5" />}
               {isSaving ? 'Lagrer...' : profile ? 'Lagre endringer' : 'Opprett entusiastprofil'}
-            </BigActionButton>
+            </button>
           </div>
         </div>
-      </EnamelCard>
+      </div>
 
       <AvatarCropModal
         open={showCropModal}
