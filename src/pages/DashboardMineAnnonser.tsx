@@ -164,19 +164,15 @@ export default function DashboardMineAnnonser() {
                       <p className="text-xs text-muted-foreground mt-2">
                         Opprettet {new Date(item.created_at).toLocaleDateString('nb-NO')}
                       </p>
-                      <div className="flex items-center gap-2 mt-2">
-                        {item.slug && item.status === 'published' && (
-                          <Link
-                            to={`/annonse/${item.slug}`}
-                            className="text-sm text-primary hover:underline inline-flex items-center gap-1"
-                          >
-                            <Eye className="h-3 w-3" />
-                            Se annonse
-                          </Link>
-                        )}
-                        {item.slug && item.status === 'published' && (
-                          <span className="text-muted-foreground">·</span>
-                        )}
+                      <div className="flex items-center gap-2 mt-2 flex-wrap">
+                        <Link
+                          to={item.slug && item.status === 'published' ? `/annonse/${item.slug}` : `/dashboard/annonse/${item.id}/forhandsvis`}
+                          className="text-sm text-primary hover:underline inline-flex items-center gap-1"
+                        >
+                          <Eye className="h-3 w-3" />
+                          {item.status === 'published' ? 'Se annonse' : 'Forhåndsvis'}
+                        </Link>
+                        <span className="text-muted-foreground">·</span>
                         <Link
                           to={`/dashboard/annonse/${item.id}/rediger`}
                           className="text-sm text-primary hover:underline inline-flex items-center gap-1"

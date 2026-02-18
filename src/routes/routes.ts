@@ -29,6 +29,7 @@ const DashboardBilDetalj = lazy(() => import("@/pages/DashboardBilDetalj"));
 const DashboardMineAnnonser = lazy(() => import("@/pages/DashboardMineAnnonser"));
 const OpprettAnnonse = lazy(() => import("@/pages/OpprettAnnonse"));
 const RedigerAnnonse = lazy(() => import("@/pages/RedigerAnnonse"));
+const ForhandsvisAnnonse = lazy(() => import("@/pages/ForhandsvisAnnonse"));
 
 // Admin pages
 const AdminLogin = lazy(() => import("@/pages/admin/AdminLogin"));
@@ -90,6 +91,7 @@ export const routes: RouteConfig[] = [
   { path: "/dashboard/mine-annonser", element: DashboardMineAnnonser, requiresAuth: true },
   { path: "/dashboard/opprett-annonse", element: OpprettAnnonse, requiresAuth: true },
   { path: "/dashboard/annonse/:itemId/rediger", element: RedigerAnnonse, requiresAuth: true },
+  { path: "/dashboard/annonse/:itemId/forhandsvis", element: ForhandsvisAnnonse, requiresAuth: true },
 
   // Admin
   { path: "/admin/login", element: AdminLogin, isPublic: true },
