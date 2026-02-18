@@ -4,6 +4,7 @@ import { Layout } from '@/components/layout/Layout';
 import { ArrowLeft, HelpCircle, Sparkles } from 'lucide-react';
 import { useGuide } from '@/hooks/useGuide';
 import { BigActionButton } from './BigActionButton';
+import garageBackground from '@/assets/garage-background.jpg';
 
 interface GarageLayoutProps {
   title: string;
@@ -30,7 +31,19 @@ export function GarageLayout({
 
   return (
     <Layout>
-      <div className="relative min-h-[calc(100vh-80px)] min-h-[calc(100dvh-80px)]" style={{ background: 'hsl(42, 30%, 93%)' }}>
+      <div className="relative min-h-[calc(100vh-80px)] min-h-[calc(100dvh-80px)]">
+        {/* Bakgrunnsbilde */}
+        <div
+          className="fixed inset-0 bg-cover bg-center bg-no-repeat -z-10 will-change-transform"
+          style={{ 
+            backgroundImage: `url(${garageBackground})`,
+            backgroundAttachment: 'scroll',
+          }}
+        />
+        
+        {/* Mørk gritty overlay */}
+        <div className="fixed inset-0 bg-background/70 -z-10 will-change-transform" />
+        
         {/* Innhold */}
         <div className="container px-4 sm:px-6 py-8 sm:py-12 animate-fade-in pb-safe">
           {/* Header */}
@@ -38,22 +51,22 @@ export function GarageLayout({
             {showBackButton && (
               <Link
                 to={backTo}
-                className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-6 transition-colors font-display text-xs uppercase tracking-[0.2em] min-h-[44px] active:scale-95 touch-manipulation"
+                className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-6 transition-colors font-display text-base uppercase tracking-wider min-h-[48px] active:scale-95 touch-manipulation"
               >
-                <ArrowLeft className="w-4 h-4 flex-shrink-0" />
+                <ArrowLeft className="w-5 h-5 flex-shrink-0" />
                 <span>{backLabel}</span>
               </Link>
             )}
             
             {/* Editorial header */}
             <div className="space-y-4">
-              {/* Top rule */}
-              <div className="w-12 h-0.5" style={{ background: 'hsl(2, 85%, 40%)' }} />
+              {/* Red accent rule */}
+              <div className="w-16 h-1" style={{ background: 'hsl(2, 85%, 40%)' }} />
               
               <div className="flex flex-wrap items-end justify-between gap-4">
                 <div className="space-y-2">
                   {title !== (subtitle || title) && (
-                    <p className="font-display text-[10px] sm:text-xs uppercase tracking-[0.4em] text-muted-foreground">
+                    <p className="font-display text-sm sm:text-base uppercase tracking-[0.3em] text-muted-foreground">
                       {title}
                     </p>
                   )}
@@ -62,14 +75,14 @@ export function GarageLayout({
                   </h1>
                 </div>
                 
-                {/* Guide-knapper – høyrestilt */}
+                {/* Guide-knapper */}
                 <div className="flex items-center gap-2">
                   {isDashboardRoot && !guideLoading && shouldShowGuide && (
                     <BigActionButton
                       onClick={() => startGuide('full')}
                       size="lg"
-                      icon={<Sparkles className="w-4 h-4" />}
-                      className="animate-pulse-subtle"
+                      icon={<Sparkles className="w-5 h-5" />}
+                      className="animate-pulse-subtle text-base"
                     >
                       Start guide
                     </BigActionButton>
@@ -78,9 +91,9 @@ export function GarageLayout({
                   {isDashboardRoot && !guideLoading && !shouldShowGuide && (
                     <button
                       onClick={() => startGuide('full')}
-                      className="inline-flex items-center gap-2 px-4 py-2 border-2 border-foreground/15 text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-all font-display text-[10px] uppercase tracking-[0.2em]"
+                      className="inline-flex items-center gap-2 px-5 py-3 border-2 border-foreground/20 text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-all font-display text-sm uppercase tracking-wider min-h-[48px]"
                     >
-                      <HelpCircle className="w-3.5 h-3.5" />
+                      <HelpCircle className="w-5 h-5" />
                       Veiledning
                     </button>
                   )}
@@ -88,13 +101,13 @@ export function GarageLayout({
               </div>
 
               {description && (
-                <p className="font-serif italic text-base sm:text-lg text-muted-foreground max-w-xl">
+                <p className="font-serif italic text-lg sm:text-xl text-muted-foreground max-w-xl">
                   {description}
                 </p>
               )}
 
               {/* Bottom rule */}
-              <div className="h-px bg-foreground/15" />
+              <div className="h-px bg-foreground/20" />
             </div>
           </div>
           

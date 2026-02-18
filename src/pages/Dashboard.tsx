@@ -170,7 +170,7 @@ export default function Dashboard() {
     <GarageLayout
       title="Min side"
       subtitle="Bilgarasje"
-      description="Her finner du bilene dine. Trykk på en bil for å legge til bilder og historie."
+      description="Her finner du bilene dine, profilen din og annonsene dine."
     >
       {/* Notifikasjoner */}
       {notifications && notifications.length > 0 && (
@@ -180,20 +180,20 @@ export default function Dashboard() {
           transition={{ duration: 0.3 }}
           className="mb-8"
         >
-          <div className="border-2 border-foreground/10 bg-card/80 backdrop-blur-sm">
-            <div className="px-5 py-4 border-b-2 border-foreground/10 flex items-center gap-3">
-              <Bell className="w-4 h-4 text-foreground" />
-              <h3 className="font-display text-xs uppercase tracking-[0.3em] text-foreground">
-                Varsler · {notifications.length}
+          <div className="border-2 border-foreground/15 bg-card/90 backdrop-blur-sm">
+            <div className="px-6 py-4 border-b-2 border-foreground/15 flex items-center gap-3">
+              <Bell className="w-5 h-5 text-foreground" />
+              <h3 className="font-display text-lg uppercase tracking-wider text-foreground">
+                Varsler ({notifications.length})
               </h3>
             </div>
-            <div className="divide-y divide-foreground/5">
+            <div className="divide-y divide-foreground/10">
               {notifications.map((notif: any) => (
-                <div key={notif.id} className="px-5 py-4 flex items-start justify-between gap-4">
+                <div key={notif.id} className="px-6 py-5 flex items-start justify-between gap-4">
                   <div className="flex-1">
-                    <p className="font-display text-sm uppercase tracking-wide">{notif.title}</p>
-                    <p className="font-serif italic text-sm text-muted-foreground mt-1">{notif.body}</p>
-                    <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground mt-2">
+                    <p className="font-display text-base uppercase tracking-wide">{notif.title}</p>
+                    <p className="text-base text-muted-foreground mt-1">{notif.body}</p>
+                    <p className="text-sm text-muted-foreground mt-2">
                       {new Date(notif.created_at).toLocaleDateString('nb-NO', {
                         day: 'numeric',
                         month: 'long',
@@ -205,16 +205,16 @@ export default function Dashboard() {
                   <div className="flex items-center gap-2">
                     {notif.link && (
                       <Link to={notif.link} onClick={() => markAsRead(notif.id)}>
-                        <button className="px-3 py-1.5 border border-foreground/20 font-display text-[10px] uppercase tracking-[0.15em] hover:bg-foreground/5 transition-colors">
+                        <button className="px-4 py-2 border-2 border-foreground/20 font-display text-sm uppercase tracking-wider hover:bg-foreground/5 transition-colors min-h-[44px]">
                           Vis
                         </button>
                       </Link>
                     )}
                     <button
                       onClick={() => markAsRead(notif.id)}
-                      className="px-3 py-1.5 font-display text-[10px] uppercase tracking-[0.15em] text-muted-foreground hover:text-foreground transition-colors"
+                      className="p-2 text-muted-foreground hover:text-foreground transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
                     >
-                      <CheckCircle className="w-4 h-4" />
+                      <CheckCircle className="w-5 h-5" />
                     </button>
                   </div>
                 </div>
@@ -224,107 +224,106 @@ export default function Dashboard() {
         </motion.div>
       )}
 
-      {/* Dashboard Grid – editorial magazine layout */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-px bg-foreground/10 border-2 border-foreground/10">
+      {/* Dashboard Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         
         {/* Mine biler */}
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.1 }}
         >
           <Link to="/dashboard/mine-biler" className="block h-full touch-manipulation" data-guide="my-cars-card">
-            <div className="h-full p-6 sm:p-8 bg-card/80 backdrop-blur-sm group hover:bg-card transition-colors">
-              <div className="flex items-start justify-between mb-6">
-                <p className="font-display text-[10px] uppercase tracking-[0.4em] text-muted-foreground">
+            <div className="h-full p-6 sm:p-8 border-2 border-foreground/15 bg-card/90 backdrop-blur-sm group hover:bg-card hover:border-foreground/25 transition-all min-h-[180px]">
+              <div className="flex items-start justify-between mb-5">
+                <p className="font-display text-sm uppercase tracking-wider text-muted-foreground">
                   Garasje
                 </p>
                 <div className="text-right">
-                  <p className="font-display text-3xl sm:text-4xl text-foreground leading-none">
+                  <p className="font-display text-4xl sm:text-5xl text-foreground leading-none">
                     {carsLoading ? '—' : carCount || 0}
                   </p>
-                  <p className="font-serif italic text-xs text-muted-foreground mt-1">
+                  <p className="text-base text-muted-foreground mt-1">
                     {carCount === 1 ? 'bil' : 'biler'}
                   </p>
                 </div>
               </div>
-              <h3 className="font-display text-xl sm:text-2xl uppercase tracking-wider mb-2 group-hover:text-primary transition-colors">
+              <h3 className="font-display text-2xl sm:text-3xl uppercase tracking-wider mb-2 group-hover:text-primary transition-colors">
                 Mine biler
               </h3>
-              <p className="font-serif italic text-sm text-muted-foreground">
-                Se og rediger biler du eier
+              <p className="text-base text-muted-foreground">
+                Se og rediger bilene dine
               </p>
-              <ChevronRight className="w-4 h-4 text-muted-foreground mt-4 group-hover:translate-x-1 transition-transform" />
             </div>
           </Link>
         </motion.div>
 
         {/* Send inn ny bil */}
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.15 }}
         >
           <div 
-            className="h-full p-6 sm:p-8 bg-card/80 backdrop-blur-sm group cursor-pointer hover:bg-card transition-colors touch-manipulation" 
+            className="h-full p-6 sm:p-8 border-2 border-foreground/15 bg-card/90 backdrop-blur-sm group cursor-pointer hover:bg-card hover:border-foreground/25 transition-all touch-manipulation min-h-[180px]" 
             onClick={handleOpenForm}
           >
-            <p className="font-display text-[10px] uppercase tracking-[0.4em] text-muted-foreground mb-6">
+            <p className="font-display text-sm uppercase tracking-wider text-muted-foreground mb-5">
               Innsending
             </p>
-            <h3 className="font-display text-xl sm:text-2xl uppercase tracking-wider mb-2 group-hover:text-primary transition-colors">
+            <h3 className="font-display text-2xl sm:text-3xl uppercase tracking-wider mb-2 group-hover:text-primary transition-colors">
               Send inn bil
             </h3>
-            <p className="font-serif italic text-sm text-muted-foreground">
-              Legg til en ny bil i din garasje
+            <p className="text-base text-muted-foreground mb-4">
+              Legg til en ny bil i garasjen din
             </p>
-            <div className="mt-4 w-8 h-8 border-2 border-foreground/15 flex items-center justify-center group-hover:border-primary group-hover:text-primary transition-colors">
-              <Plus className="w-4 h-4" />
+            <div className="w-12 h-12 border-2 border-foreground/20 flex items-center justify-center group-hover:border-primary group-hover:text-primary transition-colors">
+              <Plus className="w-6 h-6" />
             </div>
           </div>
         </motion.div>
 
         {/* Entusiastprofil */}
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.2 }}
         >
           <div 
-            className={`h-full p-6 sm:p-8 backdrop-blur-sm group cursor-pointer transition-colors touch-manipulation relative overflow-hidden ${
+            className={`h-full p-6 sm:p-8 border-2 backdrop-blur-sm group cursor-pointer transition-all touch-manipulation relative overflow-hidden min-h-[180px] ${
               profileNeedsAttention 
-                ? 'bg-card' 
-                : 'bg-card/80 hover:bg-card'
+                ? 'border-primary bg-card shadow-lg shadow-primary/10' 
+                : 'border-foreground/15 bg-card/90 hover:bg-card hover:border-foreground/25'
             }`}
             onClick={handleOpenOwnerProfile}
             data-guide="owner-profile-card"
           >
             {profileNeedsAttention && (
-              <div className="absolute top-0 left-0 right-0 h-1" style={{ background: 'hsl(2, 85%, 40%)' }} />
+              <div className="absolute top-0 left-0 right-0 h-1.5" style={{ background: 'hsl(2, 85%, 40%)' }} />
             )}
-            <div className="flex items-start justify-between mb-6">
-              <p className="font-display text-[10px] uppercase tracking-[0.4em] text-muted-foreground">
+            <div className="flex items-start justify-between mb-5">
+              <p className="font-display text-sm uppercase tracking-wider text-muted-foreground">
                 Profil
               </p>
               {ownerProfile?.visible_public && (
-                <span className="font-display text-[10px] uppercase tracking-[0.2em] text-green-700 dark:text-green-400 border border-green-300 dark:border-green-700 px-2 py-0.5">
+                <span className="font-display text-sm uppercase tracking-wider text-green-700 dark:text-green-400 border-2 border-green-300 dark:border-green-700 px-3 py-1">
                   Offentlig
                 </span>
               )}
             </div>
-            <h3 className={`font-display text-xl sm:text-2xl uppercase tracking-wider mb-2 transition-colors ${
+            <h3 className={`font-display text-2xl sm:text-3xl uppercase tracking-wider mb-2 transition-colors ${
               profileNeedsAttention ? 'text-primary' : 'group-hover:text-primary'
             }`}>
               {profileNeedsAttention ? 'Entusiastprofil' : 'Min profil'}
             </h3>
-            <p className={`font-serif italic text-sm ${profileNeedsAttention ? 'text-foreground' : 'text-muted-foreground'}`}>
+            <p className={`text-base ${profileNeedsAttention ? 'text-foreground font-medium' : 'text-muted-foreground'}`}>
               {ownerProfile 
-                ? (profileNeedsAttention ? 'Fullfør entusiastprofilen din →' : 'Rediger entusiastprofil') 
+                ? (profileNeedsAttention ? 'Fullfør profilen din →' : 'Rediger entusiastprofil') 
                 : 'Opprett entusiastprofil →'}
             </p>
             {profileNeedsAttention && (
-              <p className="font-display text-[10px] uppercase tracking-[0.3em] text-muted-foreground mt-3">
-                {ownerProfile ? `${filledFields} av 2 felt fylt ut` : 'Kom i gang'}
+              <p className="text-sm text-muted-foreground mt-2">
+                {ownerProfile ? `${filledFields} av 2 felt fylt ut` : 'Kom i gang her'}
               </p>
             )}
           </div>
@@ -332,44 +331,44 @@ export default function Dashboard() {
 
         {/* Dine annonser */}
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.25 }}
         >
           <Link to="/dashboard/mine-annonser" className="block h-full touch-manipulation">
-            <div className="h-full p-6 sm:p-8 bg-card/80 backdrop-blur-sm group hover:bg-card transition-colors">
-              <div className="flex items-start justify-between mb-6">
-                <p className="font-display text-[10px] uppercase tracking-[0.4em] text-muted-foreground">
+            <div className="h-full p-6 sm:p-8 border-2 border-foreground/15 bg-card/90 backdrop-blur-sm group hover:bg-card hover:border-foreground/25 transition-all min-h-[180px]">
+              <div className="flex items-start justify-between mb-5">
+                <p className="font-display text-sm uppercase tracking-wider text-muted-foreground">
                   Markedsplass
                 </p>
                 <div className="text-right">
-                  <p className="font-display text-3xl sm:text-4xl text-foreground leading-none">
+                  <p className="font-display text-4xl sm:text-5xl text-foreground leading-none">
                     {myListings?.length || 0}
                   </p>
-                  <p className="font-serif italic text-xs text-muted-foreground mt-1">
+                  <p className="text-base text-muted-foreground mt-1">
                     {(myListings?.length || 0) === 1 ? 'annonse' : 'annonser'}
                   </p>
                 </div>
               </div>
-              <h3 className="font-display text-xl sm:text-2xl uppercase tracking-wider mb-2 group-hover:text-primary transition-colors">
+              <h3 className="font-display text-2xl sm:text-3xl uppercase tracking-wider mb-2 group-hover:text-primary transition-colors">
                 Dine annonser
               </h3>
-              <p className="font-serif italic text-sm text-muted-foreground">
+              <p className="text-base text-muted-foreground">
                 {ownerProfile?.approved_at
                   ? (myListings?.length ?? 0) === 0
                     ? 'Du er klar til å selge. Opprett din første annonse.'
-                    : 'Se og rediger annonser du har lagt ut'
+                    : 'Se og rediger annonsene dine'
                   : ownerProfile
                     ? 'Entusiastprofil venter på godkjenning'
-                    : 'Opprett entusiastprofil for å legge ut annonser'}
+                    : 'Opprett entusiastprofil for å selge'}
               </p>
               {ownerProfile && !ownerProfile.approved_at && (
                 <Link
                   to="/dashboard?showOwnerProfile=true"
                   onClick={(e) => e.stopPropagation()}
-                  className="inline-flex items-center gap-1.5 font-display text-[10px] uppercase tracking-[0.15em] text-primary hover:underline mt-3"
+                  className="inline-flex items-center gap-2 text-base text-primary hover:underline mt-3 font-medium"
                 >
-                  <User className="h-3 w-3" />
+                  <User className="h-4 w-4" />
                   Se profil og be om godkjenning
                 </Link>
               )}
@@ -377,15 +376,12 @@ export default function Dashboard() {
                 <Link
                   to="/dashboard/opprett-annonse"
                   onClick={(e) => e.stopPropagation()}
-                  className="inline-flex items-center gap-1.5 font-display text-[10px] uppercase tracking-[0.15em] text-primary hover:underline mt-3"
+                  className="inline-flex items-center gap-2 text-base text-primary hover:underline mt-3 font-medium"
                 >
-                  <Plus className="h-3 w-3" />
+                  <Plus className="h-4 w-4" />
                   {(myListings?.length ?? 0) === 0 ? 'Opprett første annonse' : 'Opprett annonse'}
                 </Link>
               )}
-              <p className="font-serif italic text-[11px] text-muted-foreground/60 mt-2">
-                Alt som legges ut må godkjennes før publisering.
-              </p>
             </div>
           </Link>
         </motion.div>
@@ -393,29 +389,29 @@ export default function Dashboard() {
         {/* Mine forespørsler */}
         {ownerProfile && (
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.3 }}
           >
             <Link to="/dashboard/mine-foresporsler" className="block h-full touch-manipulation">
-              <div className="h-full p-6 sm:p-8 bg-card/80 backdrop-blur-sm group hover:bg-card transition-colors">
-                <div className="flex items-start justify-between mb-6">
-                  <p className="font-display text-[10px] uppercase tracking-[0.4em] text-muted-foreground">
+              <div className="h-full p-6 sm:p-8 border-2 border-foreground/15 bg-card/90 backdrop-blur-sm group hover:bg-card hover:border-foreground/25 transition-all min-h-[180px]">
+                <div className="flex items-start justify-between mb-5">
+                  <p className="font-display text-sm uppercase tracking-wider text-muted-foreground">
                     Innboks
                   </p>
                   {(myInquiries?.pending ?? 0) > 0 && (
-                    <span className="font-display text-[10px] uppercase tracking-[0.2em] text-destructive border border-destructive/30 px-2 py-0.5">
+                    <span className="font-display text-sm uppercase tracking-wider text-destructive border-2 border-destructive/30 px-3 py-1">
                       {myInquiries!.pending} nye
                     </span>
                   )}
                 </div>
-                <h3 className="font-display text-xl sm:text-2xl uppercase tracking-wider mb-2 group-hover:text-primary transition-colors">
+                <h3 className="font-display text-2xl sm:text-3xl uppercase tracking-wider mb-2 group-hover:text-primary transition-colors">
                   Forespørsler
                   {(myInquiries?.total ?? 0) > 0 && (
-                    <span className="ml-2 font-serif italic text-sm font-normal text-muted-foreground">({myInquiries!.total})</span>
+                    <span className="ml-2 text-lg font-normal text-muted-foreground">({myInquiries!.total})</span>
                   )}
                 </h3>
-                <p className="font-serif italic text-sm text-muted-foreground">
+                <p className="text-base text-muted-foreground">
                   {(myInquiries?.pending ?? 0) > 0
                     ? `${myInquiries!.pending} venter på svar`
                     : 'Se forespørsler fra kjøpere'}
@@ -427,19 +423,19 @@ export default function Dashboard() {
 
         {/* Konto */}
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.35 }}
         >
           <Link to="/konto" className="block h-full touch-manipulation">
-            <div className="h-full p-6 sm:p-8 bg-card/80 backdrop-blur-sm group hover:bg-card transition-colors">
-              <p className="font-display text-[10px] uppercase tracking-[0.4em] text-muted-foreground mb-6">
+            <div className="h-full p-6 sm:p-8 border-2 border-foreground/15 bg-card/90 backdrop-blur-sm group hover:bg-card hover:border-foreground/25 transition-all min-h-[180px]">
+              <p className="font-display text-sm uppercase tracking-wider text-muted-foreground mb-5">
                 Innstillinger
               </p>
-              <h3 className="font-display text-xl sm:text-2xl uppercase tracking-wider mb-2 group-hover:text-primary transition-colors">
+              <h3 className="font-display text-2xl sm:text-3xl uppercase tracking-wider mb-2 group-hover:text-primary transition-colors">
                 Konto
               </h3>
-              <p className="font-serif italic text-sm text-muted-foreground">
+              <p className="text-base text-muted-foreground">
                 Innlogging, personvern og innstillinger
               </p>
             </div>
@@ -447,47 +443,47 @@ export default function Dashboard() {
         </motion.div>
       </div>
 
-      {/* Hjelp og veiledning – editorial strip */}
+      {/* Hjelp og veiledning */}
       <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.5 }}
-        className="mt-px"
+        className="mt-4"
       >
-        <div className="border-2 border-foreground/10 border-t-0 bg-card/80 backdrop-blur-sm p-5 sm:p-6">
-          <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+        <div className="border-2 border-foreground/15 bg-card/90 backdrop-blur-sm p-6 sm:p-8">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-5">
             <div className="flex-1">
-              <p className="font-display text-[10px] uppercase tracking-[0.4em] text-muted-foreground mb-1">
+              <h3 className="font-display text-xl uppercase tracking-wider mb-1">
                 Veiledning
-              </p>
-              <p className="font-serif italic text-sm text-muted-foreground">
+              </h3>
+              <p className="text-base text-muted-foreground">
                 Start en interaktiv guide for å bli kjent med garasjen
               </p>
             </div>
             
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-3">
               <button
                 onClick={() => startGuide('full')}
-                className="px-4 py-2 font-display text-[10px] uppercase tracking-[0.2em] text-primary-foreground transition-colors flex items-center gap-2"
+                className="px-5 py-3 font-display text-sm uppercase tracking-wider text-white transition-colors flex items-center gap-2 min-h-[48px]"
                 style={{ background: 'hsl(2, 85%, 40%)' }}
               >
-                <Sparkles className="w-3 h-3" />
+                <Sparkles className="w-4 h-4" />
                 Full guide
               </button>
               
               <button
                 onClick={handleStartMyCarsGuide}
-                className="px-4 py-2 border border-foreground/20 font-display text-[10px] uppercase tracking-[0.2em] text-foreground hover:bg-foreground/5 transition-colors flex items-center gap-2"
+                className="px-5 py-3 border-2 border-foreground/20 font-display text-sm uppercase tracking-wider text-foreground hover:bg-foreground/5 transition-colors flex items-center gap-2 min-h-[48px]"
               >
-                <Car className="w-3 h-3" />
+                <Car className="w-4 h-4" />
                 Mine biler
               </button>
               
               <button
                 onClick={handleStartOwnerProfileGuide}
-                className="px-4 py-2 border border-foreground/20 font-display text-[10px] uppercase tracking-[0.2em] text-foreground hover:bg-foreground/5 transition-colors flex items-center gap-2"
+                className="px-5 py-3 border-2 border-foreground/20 font-display text-sm uppercase tracking-wider text-foreground hover:bg-foreground/5 transition-colors flex items-center gap-2 min-h-[48px]"
               >
-                <User className="w-3 h-3" />
+                <User className="w-4 h-4" />
                 Entusiastprofil
               </button>
             </div>
@@ -513,9 +509,9 @@ export default function Dashboard() {
               />
               <button
                 onClick={() => setShowCarForm(false)}
-                className="px-4 py-2 border border-foreground/20 font-display text-[10px] uppercase tracking-[0.2em] text-foreground hover:bg-foreground/5 transition-colors flex items-center gap-2"
+                className="px-5 py-3 border-2 border-foreground/20 font-display text-sm uppercase tracking-wider text-foreground hover:bg-foreground/5 transition-colors flex items-center gap-2 min-h-[48px]"
               >
-                <X className="w-3.5 h-3.5" />
+                <X className="w-4 h-4" />
                 Lukk
               </button>
             </div>
@@ -547,9 +543,9 @@ export default function Dashboard() {
               />
               <button
                 onClick={handleCloseOwnerProfile}
-                className="px-4 py-2 border border-foreground/20 font-display text-[10px] uppercase tracking-[0.2em] text-foreground hover:bg-foreground/5 transition-colors flex items-center gap-2"
+                className="px-5 py-3 border-2 border-foreground/20 font-display text-sm uppercase tracking-wider text-foreground hover:bg-foreground/5 transition-colors flex items-center gap-2 min-h-[48px]"
               >
-                <X className="w-3.5 h-3.5" />
+                <X className="w-4 h-4" />
                 Lukk
               </button>
             </div>
