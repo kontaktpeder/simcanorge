@@ -47,10 +47,10 @@ export function CTASection() {
                   TRENGER DU DELER?
                 </h3>
                 <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
-                  Bla i vårt utvalg av Simca-deler.
+                  Bla i vårt utvalg av deler og annonser.
                 </p>
-                <Link to="/deler" className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-full text-sm font-medium hover:opacity-90 transition-opacity">
-                  Bla i deler
+                <Link to="/markedsplass" className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-full text-sm font-medium hover:opacity-90 transition-opacity">
+                  Markedsplass
                   <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>

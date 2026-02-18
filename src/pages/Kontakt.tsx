@@ -256,15 +256,15 @@ export default function Kontakt() {
               ELLER UTFORSK VIDERE
             </h2>
             <p className="text-muted-foreground">
-              Se bilene våre eller finn deler til din Simca
+              Se bilene våre eller bla i markedsplassen
             </p>
           </div>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Link to="/biler" className="btn-enamel-blue">
               Se alle biler
             </Link>
-            <Link to="/deler" className="btn-enamel-red">
-              Finn deler
+            <Link to="/markedsplass" className="btn-enamel-red">
+              Markedsplass
             </Link>
             <Link to="/send-inn" className="inline-flex items-center gap-2 font-display text-lg uppercase tracking-wide text-foreground hover:text-accent transition-colors border-2 border-foreground px-6 py-3 rounded-lg hover:bg-foreground hover:text-background">
               Send inn din bil

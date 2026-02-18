@@ -139,8 +139,8 @@ export default function OmOss() {
             <Link to="/biler" className="btn-enamel-blue">
               Se alle biler
             </Link>
-            <Link to="/deler" className="btn-enamel-red">
-              Finn deler
+            <Link to="/markedsplass" className="btn-enamel-red">
+              Markedsplass
             </Link>
             <a 
               href="https://www.facebook.com/groups/1569119639997670" 

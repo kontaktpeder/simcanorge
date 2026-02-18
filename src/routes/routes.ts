@@ -2,8 +2,7 @@ import { lazy, ComponentType } from "react";
 import { Home, Star, Car, Wrench, Send, BookOpen, Users, Mail, ShoppingBag } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
-// Lazy load all pages for better performance
-// Public pages
+// Lazy load all pages
 const Index = lazy(() => import("@/pages/Index"));
 const ManedensBil = lazy(() => import("@/pages/ManedensBil"));
 const Biler = lazy(() => import("@/pages/Biler"));
@@ -11,9 +10,6 @@ const BilDetalj = lazy(() => import("@/pages/BilDetalj"));
 const EierProfil = lazy(() => import("@/pages/EierProfil"));
 const Markedsplass = lazy(() => import("@/pages/Markedsplass"));
 const AnnonseDetalj = lazy(() => import("@/pages/AnnonseDetalj"));
-const Deler = lazy(() => import("@/pages/Deler"));
-const Foresporsel = lazy(() => import("@/pages/Foresporsel"));
-const DelDetalj = lazy(() => import("@/pages/DelDetalj"));
 const OmOss = lazy(() => import("@/pages/OmOss"));
 const Historie = lazy(() => import("@/pages/Historie"));
 const SendInnBil = lazy(() => import("@/pages/SendInnBil"));
@@ -23,9 +19,10 @@ const AcceptInvitation = lazy(() => import("@/pages/AcceptInvitation"));
 const Login = lazy(() => import("@/pages/Login"));
 const StartAnnonse = lazy(() => import("@/pages/StartAnnonse"));
 const Konto = lazy(() => import("@/pages/Konto"));
+const Foresporsel = lazy(() => import("@/pages/Foresporsel"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
 
-// Dashboard pages (user)
+// Dashboard pages
 const Dashboard = lazy(() => import("@/pages/Dashboard"));
 const DashboardMineBiler = lazy(() => import("@/pages/DashboardMineBiler"));
 const DashboardBilDetalj = lazy(() => import("@/pages/DashboardBilDetalj"));
@@ -67,30 +64,28 @@ export const routes: RouteConfig[] = [
   { path: "/", element: Index, label: "Hjem", description: "Tilbake til forsiden", icon: Home, isPublic: true, showInNav: true },
   { path: "/manedens-bil", element: ManedensBil, label: "Månedens bil", description: "Se denne månedens utvalgte Simca", icon: Star, glow: true, isPublic: true, showInNav: true },
   { path: "/biler", element: Biler, label: "Biler", description: "Utforsk Simca-biler og historier", icon: Car, isPublic: true, showInNav: true },
-  { path: "/markedsplass", element: Markedsplass, label: "Markedsplass", description: "Kjøp og selg deler og tilbehør", icon: ShoppingBag, isPublic: true, showInNav: true },
-  { path: "/deler", element: Deler, label: "Deler", description: "Finn deler til din Simca", icon: Wrench, isPublic: true, showInNav: true },
+  { path: "/markedsplass", element: Markedsplass, label: "Markedsplass", description: "Deler, tilbehør og annonser", icon: ShoppingBag, isPublic: true, showInNav: true },
   { path: "/send-inn", element: SendInnBil, label: "Del din bil", description: "Del din bil med oss", icon: Send, isPublic: true, showInNav: true },
   { path: "/historie", element: Historie, label: "Historie", description: "Lær om Simcas rike historie", icon: BookOpen, isPublic: true, showInNav: true },
   { path: "/om-oss", element: OmOss, label: "Om oss", description: "Hvem står bak Simca Norge", icon: Users, isPublic: true, showInNav: true },
   { path: "/kontakt", element: Kontakt, label: "Kontakt", description: "Ta kontakt med oss", icon: Mail, isPublic: true, showInNav: true },
-  
+
   // Public routes without navigation
   { path: "/biler/:slug", element: BilDetalj, isPublic: true },
-  { path: "/deler/:partId", element: DelDetalj, isPublic: true },
+  { path: "/markedsplass/:slug", element: AnnonseDetalj, isPublic: true },
+  { path: "/annonse/:slug", element: AnnonseDetalj, isPublic: true }, // legacy
+  { path: "/deler/:partId", element: AnnonseDetalj, isPublic: true }, // legacy redirect
   { path: "/profil/:slug", element: EierProfil, isPublic: true },
-  { path: "/eier/:slug", element: EierProfil, isPublic: true }, // legacy redirect handled in component
-  { path: "/annonse/:slug", element: AnnonseDetalj, isPublic: true },
+  { path: "/eier/:slug", element: EierProfil, isPublic: true },
   { path: "/foresporsel", element: Foresporsel, isPublic: true },
   { path: "/personvern", element: Personvern, isPublic: true },
   { path: "/accept-invitation", element: AcceptInvitation, isPublic: true },
   { path: "/i/:token", element: AcceptInvitation, isPublic: true },
   { path: "/login", element: Login, isPublic: true },
   { path: "/start-annonse", element: StartAnnonse, isPublic: true },
-  
-  // Auth required routes
+
+  // Auth required
   { path: "/konto", element: Konto, requiresAuth: true },
-  
-  // Dashboard routes (user)
   { path: "/dashboard", element: Dashboard, requiresAuth: true },
   { path: "/dashboard/mine-biler", element: DashboardMineBiler, requiresAuth: true },
   { path: "/dashboard/bil/:carId", element: DashboardBilDetalj, requiresAuth: true },
@@ -98,7 +93,7 @@ export const routes: RouteConfig[] = [
   { path: "/dashboard/opprett-annonse", element: OpprettAnnonse, requiresAuth: true },
   { path: "/dashboard/annonse/:itemId/rediger", element: RedigerAnnonse, requiresAuth: true },
 
-  // Admin routes
+  // Admin
   { path: "/admin/login", element: AdminLogin, isPublic: true },
   { path: "/admin/dashboard", element: AdminDashboard, requiresAdmin: true },
   { path: "/admin/biler", element: AdminBiler, requiresAdmin: true },
@@ -113,12 +108,11 @@ export const routes: RouteConfig[] = [
   { path: "/admin/innsendinger", element: AdminInnsendinger, requiresAdmin: true },
   { path: "/admin/markedsplass", element: AdminMarkedsplass, requiresAdmin: true },
   { path: "/admin/markedsplass/:itemId", element: AdminAnnonseProfil, requiresAdmin: true },
-  
-  // 404 - must be last
+
+  // 404
   { path: "*", element: NotFound, isPublic: true },
 ];
 
-// Helper: Get public navigation items (for Header.tsx)
 export const getNavItems = () => {
   return routes
     .filter(route => route.showInNav && route.label && route.icon)
@@ -131,7 +125,6 @@ export const getNavItems = () => {
     }));
 };
 
-// Helper: Get route by path
 export const getRouteByPath = (path: string) => {
   return routes.find(route => route.path === path);
 };

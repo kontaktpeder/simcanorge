@@ -558,6 +558,7 @@ export type Database = {
           created_at: string
           id: string
           inquiry_id: string
+          marketplace_item_id: string | null
           part_id: string | null
           part_title: string
         }
@@ -565,6 +566,7 @@ export type Database = {
           created_at?: string
           id?: string
           inquiry_id: string
+          marketplace_item_id?: string | null
           part_id?: string | null
           part_title: string
         }
@@ -572,6 +574,7 @@ export type Database = {
           created_at?: string
           id?: string
           inquiry_id?: string
+          marketplace_item_id?: string | null
           part_id?: string | null
           part_title?: string
         }
@@ -581,6 +584,13 @@ export type Database = {
             columns: ["inquiry_id"]
             isOneToOne: false
             referencedRelation: "inquiries"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inquiry_items_marketplace_item_id_fkey"
+            columns: ["marketplace_item_id"]
+            isOneToOne: false
+            referencedRelation: "marketplace_items"
             referencedColumns: ["id"]
           },
           {
@@ -918,6 +928,7 @@ export type Database = {
           price_min: number | null
           price_note: string | null
           published: boolean | null
+          slug: string | null
           title: string
           updated_at: string
         }
@@ -932,6 +943,7 @@ export type Database = {
           price_min?: number | null
           price_note?: string | null
           published?: boolean | null
+          slug?: string | null
           title: string
           updated_at?: string
         }
@@ -946,6 +958,7 @@ export type Database = {
           price_min?: number | null
           price_note?: string | null
           published?: boolean | null
+          slug?: string | null
           title?: string
           updated_at?: string
         }
