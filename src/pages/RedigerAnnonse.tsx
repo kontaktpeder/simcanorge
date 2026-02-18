@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useQueryClient } from '@tanstack/react-query';
@@ -9,18 +9,20 @@ import {
   useInsertMarketplaceImages,
   useDeleteMarketplaceImage,
   useDeleteMarketplaceItem,
+  useReorderMarketplaceImages,
 } from '@/hooks/useMarketplace';
 import { useUnifiedCategories, getRootCategories } from '@/hooks/useUnifiedCategories';
 import { DelerAnnonseForm } from '@/components/markedsplass/DelerAnnonseForm';
 import { compressImages, generateImageId, getMarketplaceImagePath, type CompressionProgress } from '@/lib/imageCompression';
 import { ImageUploadProgress } from '@/components/ui/image-upload-progress';
+import { ImageUploadWithOrder, type ImageItem } from '@/components/shared/ImageUploadWithOrder';
 import { supabase } from '@/integrations/supabase/client';
 import type { ItemFormValues } from '@/lib/itemSubmit';
 import { GarageLayout } from '@/components/ui/garage/GarageLayout';
 import { EnamelCard } from '@/components/ui/garage/EnamelCard';
 import { SectionHeader } from '@/components/ui/garage/SectionHeader';
 import { Label } from '@/components/ui/label';
-import { ChevronLeft, Loader2, ImagePlus, X, Trash2, Pencil, Clock } from 'lucide-react';
+import { ChevronLeft, Loader2, Trash2, Pencil, Clock } from 'lucide-react';
 import { Layout } from '@/components/layout/Layout';
 import { toast } from 'sonner';
 
@@ -39,13 +41,15 @@ export default function RedigerAnnonse() {
   const insertImages = useInsertMarketplaceImages();
   const deleteImage = useDeleteMarketplaceImage();
   const deleteItem = useDeleteMarketplaceItem();
+  const reorderImages = useReorderMarketplaceImages();
 
-  const [images, setImages] = useState<File[]>([]);
-  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
-  const [existingImages, setExistingImages] = useState<{ id: string; image_url: string; sort_order: number }[]>([]);
+  const [newImages, setNewImages] = useState<File[]>([]);
+  const [newImagePreviews, setNewImagePreviews] = useState<string[]>([]);
+  const [existingImages, setExistingImages] = useState<ImageItem[]>([]);
   const [uploadProgress, setUploadProgress] = useState<CompressionProgress | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isReordering, setIsReordering] = useState(false);
+  
 
   useEffect(() => {
     if (item?.marketplace_images) {
@@ -99,31 +103,40 @@ export default function RedigerAnnonse() {
       }
     : {};
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []).filter((f) => f.type.startsWith('image/'));
-    setImages((prev) => [...prev, ...files]);
-    files.forEach((f) => {
-      const reader = new FileReader();
-      reader.onload = () => setImagePreviews((p) => [...p, reader.result as string]);
-      reader.readAsDataURL(f);
-    });
-    if (fileInputRef.current) fileInputRef.current.value = '';
+  const handleReorder = async (reordered: ImageItem[]) => {
+    setIsReordering(true);
+    try {
+      setExistingImages(reordered);
+      await reorderImages.mutateAsync({
+        images: reordered.map((img, i) => ({ id: img.id, sort_order: i })),
+      });
+    } finally {
+      setIsReordering(false);
+    }
   };
 
-  const removeNewImage = (index: number) => {
-    setImages((prev) => prev.filter((_, i) => i !== index));
-    setImagePreviews((prev) => prev.filter((_, i) => i !== index));
+  const handleSetMain = async (index: number) => {
+    // handled by ImageUploadWithOrder's internal setMain which calls onReorder
   };
 
-  const removeExistingImage = async (imageId: string) => {
+  const handleDeleteImage = async (imageId: string) => {
     if (!confirm('Fjerne dette bildet?')) return;
     await deleteImage.mutateAsync({ imageId, itemId: itemId! });
     setExistingImages((prev) => prev.filter((img) => img.id !== imageId));
   };
 
+  const handleUploadImages = async (files: File[]) => {
+    setNewImages((prev) => [...prev, ...files]);
+    files.forEach((f) => {
+      const reader = new FileReader();
+      reader.onload = () => setNewImagePreviews((p) => [...p, reader.result as string]);
+      reader.readAsDataURL(f);
+    });
+  };
+
   const uploadNewImages = async (): Promise<{ image_url: string; sort_order: number }[]> => {
-    if (images.length === 0) return [];
-    const compressed = await compressImages(images, (p) => setUploadProgress(p));
+    if (newImages.length === 0) return [];
+    const compressed = await compressImages(newImages, (p) => setUploadProgress(p));
     const uploaded: { image_url: string; sort_order: number }[] = [];
     const baseOrder = existingImages.length;
     for (let i = 0; i < compressed.length; i++) {
@@ -202,42 +215,30 @@ export default function RedigerAnnonse() {
             {/* Bilder */}
             <div className="space-y-2">
               <Label>Bilder</Label>
-              <input ref={fileInputRef} type="file" accept="image/*" multiple onChange={handleFileChange} className="hidden" />
-              <div className="flex flex-wrap gap-2">
-                {existingImages.map((img) => (
-                  <div key={img.id} className="relative w-20 h-20 rounded-lg overflow-hidden bg-muted">
-                    <img src={img.image_url} alt="" className="w-full h-full object-cover" />
-                    {canEdit && (
-                      <button
-                        type="button"
-                        onClick={() => removeExistingImage(img.id)}
-                        className="absolute top-1 right-1 p-0.5 bg-black/50 rounded-full text-white hover:bg-black/70"
-                      >
-                        <X className="w-3 h-3" />
-                      </button>
-                    )}
-                  </div>
-                ))}
-                {imagePreviews.map((src, i) => (
-                  <div key={`new-${i}`} className="relative w-20 h-20 rounded-lg overflow-hidden">
-                    <img src={src} alt="" className="w-full h-full object-cover" />
-                    {canEdit && (
-                      <button type="button" onClick={() => removeNewImage(i)} className="absolute top-1 right-1 p-0.5 bg-black/50 rounded-full text-white">
-                        <X className="w-3 h-3" />
-                      </button>
-                    )}
-                  </div>
-                ))}
-                {canEdit && (
-                  <button
-                    type="button"
-                    onClick={() => fileInputRef.current?.click()}
-                    className="w-20 h-20 rounded-lg border-2 border-dashed border-muted-foreground/30 flex items-center justify-center hover:border-primary/50 transition-colors"
-                  >
-                    <ImagePlus className="w-6 h-6 text-muted-foreground" />
-                  </button>
-                )}
-              </div>
+              <ImageUploadWithOrder
+                images={existingImages}
+                maxImages={20}
+                mainLabel="Hovedbilde"
+                isUploading={isSubmitting}
+                isReordering={isReordering}
+                onReorder={handleReorder}
+                onSetMain={handleSetMain}
+                onDelete={handleDeleteImage}
+                onUpload={handleUploadImages}
+                emptyTitle="Ingen bilder ennå"
+                emptyDescription="Last opp bilder til annonsen din."
+                altFallback={item?.title || ''}
+              />
+              {newImagePreviews.length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-2">
+                  <p className="text-xs text-muted-foreground w-full">Nye bilder (lagres ved innsending):</p>
+                  {newImagePreviews.map((src, i) => (
+                    <div key={`new-${i}`} className="relative w-20 h-20 rounded-lg overflow-hidden">
+                      <img src={src} alt="" className="w-full h-full object-cover" />
+                    </div>
+                  ))}
+                </div>
+              )}
               {!canEdit && <p className="text-xs text-muted-foreground">Kun arkiverte annonser kan ikke redigeres.</p>}
             </div>
 
