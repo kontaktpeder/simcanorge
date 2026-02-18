@@ -162,9 +162,11 @@ export function getResponsiveImageProps(
 ) {
   const { 
     sizes = IMAGE_SIZES.card, 
-    loading = 'lazy',
+    loading,
     priority = false 
   } = options || {};
+
+  const effectiveLoading = loading ?? (priority ? 'eager' : 'lazy');
 
   const srcSet = getImageSrcSet(imageUrl, {
     quality: priority ? 85 : DEFAULT_QUALITY
@@ -177,7 +179,8 @@ export function getResponsiveImageProps(
     srcSet: srcSet || undefined,
     sizes: srcSet ? sizes : undefined,
     alt,
-    loading,
+    loading: effectiveLoading,
     decoding: priority ? 'sync' as const : 'async' as const,
+    ...(priority ? { fetchPriority: 'high' as const } : {}),
   };
 }
