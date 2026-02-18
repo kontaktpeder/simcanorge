@@ -32,7 +32,7 @@ const navItems = [
   { href: "/admin/invite-email", label: "E-post", icon: Mail },
   { href: "/admin/biler", label: "Biler", icon: Car },
   { href: "/admin/markedsplass", label: "Markedsplass", icon: ShoppingBag },
-  { href: "/admin/eierprofiler", label: "Eiere", icon: User },
+  { href: "/admin/eierprofiler", label: "Profiler", icon: User },
   { href: "/admin/deler", label: "Deler", icon: Wrench },
   { href: "/admin/kategorier", label: "Kategorier", icon: FolderTree },
 ];

@@ -138,15 +138,15 @@ export const GUIDE_STEPS: GuideStep[] = [
   // Eierprofil-steg
   {
     target: '[data-guide="owner-profile-card"]',
-    title: 'Din eierprofil 👤',
-    content: 'Her kan du opprette eller redigere din offentlige eierprofil. Trykk for å åpne.',
+    title: 'Din profil 👤',
+    content: 'Her kan du opprette eller redigere din offentlige profil. Trykk for å åpne.',
     routeType: 'dashboard',
     placement: 'bottom',
   },
   {
     target: '[data-guide="owner-display-name"]',
     title: 'Ditt visningsnavn',
-    content: 'Velg hva du vil hete på nettsiden. Dette vises på bilene dine og eierprofilen.',
+    content: 'Velg hva du vil hete på nettsiden. Dette vises på bilene dine og profilsiden din.',
     routeType: 'owner-profile',
     placement: 'bottom',
   },
@@ -160,7 +160,7 @@ export const GUIDE_STEPS: GuideStep[] = [
   {
     target: '[data-guide="owner-visibility"]',
     title: 'Synlighet',
-    content: 'Skru på dette for å vise profilen din offentlig. Da får du en egen eierside folk kan besøke.',
+    content: 'Skru på dette for å vise profilen din offentlig. Da får du en egen profilside folk kan besøke.',
     routeType: 'owner-profile',
     placement: 'top',
   },
