@@ -5,7 +5,7 @@ import { GarageLayout } from '@/components/ui/garage/GarageLayout';
 import { EnamelCard } from '@/components/ui/garage/EnamelCard';
 import { BigActionButton } from '@/components/ui/garage/BigActionButton';
 import { SectionHeader } from '@/components/ui/garage/SectionHeader';
-import { Car, Clock, Settings, Bell, CheckCircle, Send, X, User, HelpCircle, Sparkles, ShoppingBag } from 'lucide-react';
+import { Car, Clock, Settings, Bell, CheckCircle, Send, X, User, HelpCircle, Sparkles, ShoppingBag, Plus, ExternalLink } from 'lucide-react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Loader2 } from 'lucide-react';
@@ -191,14 +191,27 @@ export default function Dashboard() {
                       })}
                     </p>
                   </div>
-                  <BigActionButton
-                    variant="ghost"
-                    size="lg"
-                    onClick={() => markAsRead(notif.id)}
-                    icon={<CheckCircle className="w-5 h-5" />}
-                  >
-                    Lest
-                  </BigActionButton>
+                  <div className="flex items-center gap-2">
+                    {notif.link && (
+                      <Link to={notif.link} onClick={() => markAsRead(notif.id)}>
+                        <BigActionButton
+                          variant="secondary"
+                          size="lg"
+                          icon={<ExternalLink className="w-4 h-4" />}
+                        >
+                          Gå til annonse
+                        </BigActionButton>
+                      </Link>
+                    )}
+                    <BigActionButton
+                      variant="ghost"
+                      size="lg"
+                      onClick={() => markAsRead(notif.id)}
+                      icon={<CheckCircle className="w-5 h-5" />}
+                    >
+                      Lest
+                    </BigActionButton>
+                  </div>
                 </div>
               ))}
             </div>
@@ -320,11 +333,26 @@ export default function Dashboard() {
               </h3>
               <p className="text-sm sm:text-base text-muted-foreground line-clamp-2">
                 {ownerProfile?.approved_at
-                  ? 'Se og rediger annonser du har lagt ut'
+                  ? (myListings?.length ?? 0) === 0
+                    ? 'Du er klar til å selge. Opprett din første annonse.'
+                    : 'Se og rediger annonser du har lagt ut'
                   : ownerProfile
                     ? 'Profil venter på godkjenning'
                     : 'Opprett profil for å legge ut annonser'}
               </p>
+              <p className="text-xs text-muted-foreground mt-1">
+                Alt som legges ut må godkjennes før publisering.
+              </p>
+              {ownerProfile?.approved_at && (
+                <Link
+                  to="/dashboard/opprett-annonse"
+                  onClick={(e) => e.stopPropagation()}
+                  className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline mt-2"
+                >
+                  <Plus className="h-3.5 w-3.5" />
+                  {(myListings?.length ?? 0) === 0 ? 'Opprett første annonse' : 'Opprett annonse'}
+                </Link>
+              )}
             </EnamelCard>
           </Link>
         </motion.div>

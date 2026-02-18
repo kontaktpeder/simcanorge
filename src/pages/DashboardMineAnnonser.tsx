@@ -147,9 +147,10 @@ export default function DashboardMineAnnonser() {
         <EnamelCard>
           <div className="text-center py-12">
             <ShoppingBag className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" />
-            <p className="text-muted-foreground mb-4">Du har ingen annonser ennå</p>
+            <p className="text-muted-foreground mb-2">Du er klar til å selge.</p>
+            <p className="text-xs text-muted-foreground mb-4">Alt som legges ut må godkjennes før publisering.</p>
             <Link to="/dashboard/opprett-annonse">
-              <BigActionButton icon={<Plus className="w-4 h-4" />}>Opprett din første annonse</BigActionButton>
+              <BigActionButton icon={<Plus className="w-4 h-4" />}>Opprett første annonse</BigActionButton>
             </Link>
           </div>
         </EnamelCard>
