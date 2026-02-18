@@ -83,7 +83,7 @@ export default function DashboardMineAnnonser() {
           <div className="p-5 text-center">
             <p className="text-muted-foreground mb-3">Du må opprette en Entusiastprofil før du kan legge ut annonser.</p>
             <Link to="/dashboard?showOwnerProfile=true">
-              <BigActionButton icon={<Plus className="w-4 h-4" />}>Opprett profil</BigActionButton>
+              <BigActionButton icon={<Plus className="w-4 h-4" />}>Opprett entusiastprofil</BigActionButton>
             </Link>
           </div>
         </EnamelCard>
@@ -95,7 +95,7 @@ export default function DashboardMineAnnonser() {
             <div className="flex items-start gap-3">
               <Clock className="h-5 w-5 text-amber-600 mt-0.5 shrink-0" />
               <div className="flex-1">
-                <p className="font-medium">Profil venter på godkjenning</p>
+                <p className="font-medium">Entusiastprofil venter på godkjenning</p>
                 <p className="text-sm text-muted-foreground mt-1">
                   Du kan opprette annonser når admin har godkjent Entusiastprofilen din.
                 </p>
