@@ -235,24 +235,17 @@ export default function Dashboard() {
         >
           <Link to="/dashboard/mine-biler" className="block h-full touch-manipulation" data-guide="my-cars-card">
             <div className="h-full p-6 sm:p-8 border-2 border-foreground/15 bg-card/90 backdrop-blur-sm group hover:bg-card hover:border-foreground/25 transition-all min-h-[180px]">
-              <div className="flex items-start justify-between mb-5">
-                <p className="font-display text-sm uppercase tracking-wider text-muted-foreground">
-                  Garasje
-                </p>
-                <div className="text-right">
-                  <p className="font-display text-4xl sm:text-5xl text-foreground leading-none">
-                    {carsLoading ? '—' : carCount || 0}
-                  </p>
-                  <p className="text-base text-muted-foreground mt-1">
-                    {carCount === 1 ? 'bil' : 'biler'}
-                  </p>
-                </div>
-              </div>
+              <p className="font-display text-sm uppercase tracking-wider text-muted-foreground mb-5">
+                Garasje
+              </p>
               <h3 className="font-display text-2xl sm:text-3xl uppercase tracking-wider mb-2 group-hover:text-primary transition-colors">
                 Mine biler
               </h3>
               <p className="text-base text-muted-foreground">
                 Se og rediger bilene dine
+              </p>
+              <p className="font-display text-4xl sm:text-5xl text-foreground leading-none mt-4">
+                {carsLoading ? '—' : carCount || 0}
               </p>
             </div>
           </Link>
@@ -274,12 +267,9 @@ export default function Dashboard() {
             <h3 className="font-display text-2xl sm:text-3xl uppercase tracking-wider mb-2 group-hover:text-primary transition-colors">
               Send inn bil
             </h3>
-            <p className="text-base text-muted-foreground mb-4">
+            <p className="text-base text-muted-foreground">
               Legg til en ny bil i garasjen din
             </p>
-            <div className="w-12 h-12 border-2 border-foreground/20 flex items-center justify-center group-hover:border-primary group-hover:text-primary transition-colors">
-              <Plus className="w-6 h-6" />
-            </div>
           </div>
         </motion.div>
 
@@ -301,20 +291,13 @@ export default function Dashboard() {
             {profileNeedsAttention && (
               <div className="absolute top-0 left-0 right-0 h-1.5" style={{ background: 'hsl(2, 85%, 40%)' }} />
             )}
-            <div className="flex items-start justify-between mb-5">
-              <p className="font-display text-sm uppercase tracking-wider text-muted-foreground">
-                Profil
-              </p>
-              {ownerProfile?.visible_public && (
-                <span className="font-display text-sm uppercase tracking-wider text-green-700 dark:text-green-400 border-2 border-green-300 dark:border-green-700 px-3 py-1">
-                  Offentlig
-                </span>
-              )}
-            </div>
+            <p className="font-display text-sm uppercase tracking-wider text-muted-foreground mb-5">
+              Profil
+            </p>
             <h3 className={`font-display text-2xl sm:text-3xl uppercase tracking-wider mb-2 transition-colors ${
               profileNeedsAttention ? 'text-primary' : 'group-hover:text-primary'
             }`}>
-              {profileNeedsAttention ? 'Entusiastprofil' : 'Min profil'}
+              Entusiastprofil
             </h3>
             <p className={`text-base ${profileNeedsAttention ? 'text-foreground font-medium' : 'text-muted-foreground'}`}>
               {ownerProfile 
@@ -337,51 +320,24 @@ export default function Dashboard() {
         >
           <Link to="/dashboard/mine-annonser" className="block h-full touch-manipulation">
             <div className="h-full p-6 sm:p-8 border-2 border-foreground/15 bg-card/90 backdrop-blur-sm group hover:bg-card hover:border-foreground/25 transition-all min-h-[180px]">
-              <div className="flex items-start justify-between mb-5">
-                <p className="font-display text-sm uppercase tracking-wider text-muted-foreground">
-                  Markedsplass
-                </p>
-                <div className="text-right">
-                  <p className="font-display text-4xl sm:text-5xl text-foreground leading-none">
-                    {myListings?.length || 0}
-                  </p>
-                  <p className="text-base text-muted-foreground mt-1">
-                    {(myListings?.length || 0) === 1 ? 'annonse' : 'annonser'}
-                  </p>
-                </div>
-              </div>
+              <p className="font-display text-sm uppercase tracking-wider text-muted-foreground mb-5">
+                Markedsplass
+              </p>
               <h3 className="font-display text-2xl sm:text-3xl uppercase tracking-wider mb-2 group-hover:text-primary transition-colors">
                 Dine annonser
               </h3>
               <p className="text-base text-muted-foreground">
                 {ownerProfile?.approved_at
                   ? (myListings?.length ?? 0) === 0
-                    ? 'Du er klar til å selge. Opprett din første annonse.'
+                    ? 'Opprett din første annonse'
                     : 'Se og rediger annonsene dine'
                   : ownerProfile
-                    ? 'Entusiastprofil venter på godkjenning'
+                    ? 'Venter på godkjenning'
                     : 'Opprett entusiastprofil for å selge'}
               </p>
-              {ownerProfile && !ownerProfile.approved_at && (
-                <Link
-                  to="/dashboard?showOwnerProfile=true"
-                  onClick={(e) => e.stopPropagation()}
-                  className="inline-flex items-center gap-2 text-base text-primary hover:underline mt-3 font-medium"
-                >
-                  <User className="h-4 w-4" />
-                  Se profil og be om godkjenning
-                </Link>
-              )}
-              {ownerProfile?.approved_at && (
-                <Link
-                  to="/dashboard/opprett-annonse"
-                  onClick={(e) => e.stopPropagation()}
-                  className="inline-flex items-center gap-2 text-base text-primary hover:underline mt-3 font-medium"
-                >
-                  <Plus className="h-4 w-4" />
-                  {(myListings?.length ?? 0) === 0 ? 'Opprett første annonse' : 'Opprett annonse'}
-                </Link>
-              )}
+              <p className="font-display text-4xl sm:text-5xl text-foreground leading-none mt-4">
+                {myListings?.length || 0}
+              </p>
             </div>
           </Link>
         </motion.div>
@@ -395,26 +351,19 @@ export default function Dashboard() {
           >
             <Link to="/dashboard/mine-foresporsler" className="block h-full touch-manipulation">
               <div className="h-full p-6 sm:p-8 border-2 border-foreground/15 bg-card/90 backdrop-blur-sm group hover:bg-card hover:border-foreground/25 transition-all min-h-[180px]">
-                <div className="flex items-start justify-between mb-5">
-                  <p className="font-display text-sm uppercase tracking-wider text-muted-foreground">
-                    Innboks
-                  </p>
-                  {(myInquiries?.pending ?? 0) > 0 && (
-                    <span className="font-display text-sm uppercase tracking-wider text-destructive border-2 border-destructive/30 px-3 py-1">
-                      {myInquiries!.pending} nye
-                    </span>
-                  )}
-                </div>
+                <p className="font-display text-sm uppercase tracking-wider text-muted-foreground mb-5">
+                  Innboks
+                </p>
                 <h3 className="font-display text-2xl sm:text-3xl uppercase tracking-wider mb-2 group-hover:text-primary transition-colors">
                   Forespørsler
-                  {(myInquiries?.total ?? 0) > 0 && (
-                    <span className="ml-2 text-lg font-normal text-muted-foreground">({myInquiries!.total})</span>
-                  )}
                 </h3>
                 <p className="text-base text-muted-foreground">
                   {(myInquiries?.pending ?? 0) > 0
                     ? `${myInquiries!.pending} venter på svar`
                     : 'Se forespørsler fra kjøpere'}
+                </p>
+                <p className="font-display text-4xl sm:text-5xl text-foreground leading-none mt-4">
+                  {myInquiries?.total || 0}
                 </p>
               </div>
             </Link>
