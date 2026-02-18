@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
 import { useOwnerProfile } from "@/hooks/useOwnerProfile";
@@ -13,10 +13,10 @@ import {
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Inbox, Loader2, Mail, Phone, User } from "lucide-react";
+import { Inbox, Loader2, Mail, Phone, User, Package, MapPin, ExternalLink, Car } from "lucide-react";
 import { format } from "date-fns";
 import { nb } from "date-fns/locale";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 
 type InquiryStatus = "pending" | "contacted" | "quote_sent" | "sold" | "not_available" | "cancelled";
@@ -65,6 +65,69 @@ export default function DashboardMineForesporsler() {
   });
 
   const selected = inquiries?.find((i: any) => i.id === selectedId);
+
+  // Collect all referenced item IDs from the selected inquiry for enrichment
+  const selectedPartIds = useMemo(() =>
+    selected?.inquiry_items?.filter((it: any) => it.part_id).map((it: any) => it.part_id) ?? [], [selected]);
+  const selectedListingIds = useMemo(() =>
+    selected?.inquiry_items?.filter((it: any) => it.marketplace_item_id).map((it: any) => it.marketplace_item_id) ?? [], [selected]);
+
+  // Fetch enriched part data
+  const { data: partsData } = useQuery({
+    queryKey: ["inquiry-parts", selectedPartIds],
+    queryFn: async () => {
+      if (selectedPartIds.length === 0) return [];
+      const { data } = await supabase
+        .from("parts")
+        .select(`id, title, description, price_min, price_max, price_note, condition, slug, part_images(image_url, sort_order)`)
+        .in("id", selectedPartIds)
+        .order("sort_order", { referencedTable: "part_images", ascending: true });
+      return data ?? [];
+    },
+    enabled: selectedPartIds.length > 0,
+  });
+
+  // Fetch enriched listing data
+  const { data: listingsData } = useQuery({
+    queryKey: ["inquiry-listings", selectedListingIds],
+    queryFn: async () => {
+      if (selectedListingIds.length === 0) return [];
+      const { data } = await supabase
+        .from("marketplace_items")
+        .select(`id, title, description, price, price_note, location, slug, marketplace_images(image_url, sort_order)`)
+        .in("id", selectedListingIds)
+        .order("sort_order", { referencedTable: "marketplace_images", ascending: true });
+      return data ?? [];
+    },
+    enabled: selectedListingIds.length > 0,
+  });
+
+  // Build enriched map
+  const enrichedMap = useMemo(() => {
+    const map = new Map<string, {
+      image?: string;
+      price?: string;
+      description?: string;
+      slug?: string;
+      type: "part" | "listing";
+      condition?: string;
+      location?: string;
+    }>();
+    partsData?.forEach((p: any) => {
+      const img = p.part_images?.[0]?.image_url;
+      let price = p.price_note || undefined;
+      if (p.price_min != null && p.price_max != null) price = `${p.price_min.toLocaleString("nb-NO")} – ${p.price_max.toLocaleString("nb-NO")} kr`;
+      else if (p.price_min != null) price = `fra ${p.price_min.toLocaleString("nb-NO")} kr`;
+      map.set(p.id, { image: img, price, description: p.description, slug: p.slug, type: "part", condition: p.condition });
+    });
+    listingsData?.forEach((l: any) => {
+      const img = l.marketplace_images?.[0]?.image_url;
+      let price = l.price_note || undefined;
+      if (l.price != null) price = `${Number(l.price).toLocaleString("nb-NO")} kr`;
+      map.set(l.id, { image: img, price, description: l.description, slug: l.slug, type: "listing", location: l.location });
+    });
+    return map;
+  }, [partsData, listingsData]);
 
   const updateStatus = useMutation({
     mutationFn: async ({ id, status }: { id: string; status: string }) => {
@@ -155,76 +218,208 @@ export default function DashboardMineForesporsler() {
       )}
 
       <Dialog open={!!selectedId} onOpenChange={() => setSelectedId(null)}>
-        <DialogContent className="sm:max-w-lg">
+        <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
           {selected && (
             <>
               <DialogHeader>
                 <DialogTitle className="font-display text-xl">
                   Forespørsel fra {selected.customer_name}
                 </DialogTitle>
-              </DialogHeader>
-              <div className="space-y-5 pt-2">
                 <p className="text-sm text-muted-foreground">
                   {format(new Date(selected.created_at), "d. MMMM yyyy 'kl.' HH:mm", { locale: nb })}
                 </p>
+              </DialogHeader>
 
-                <div className="flex flex-wrap gap-3">
-                  <a href={`mailto:${selected.email}`} className="text-sm text-primary hover:underline inline-flex items-center gap-1.5">
-                    <Mail className="h-3.5 w-3.5" />
-                    {selected.email}
-                  </a>
-                  {selected.phone && (
-                    <a href={`tel:${selected.phone}`} className="text-sm text-primary hover:underline inline-flex items-center gap-1.5">
-                      <Phone className="h-3.5 w-3.5" />
-                      {selected.phone}
-                    </a>
-                  )}
-                </div>
-
-                <div>
-                  <p className="font-display text-base mb-2">Etterspurte varer</p>
-                  <div className="space-y-1.5">
-                    {selected.inquiry_items?.map((it: any) => (
-                      <div key={it.id} className="text-sm bg-muted/50 rounded-lg px-3 py-2">
-                        {it.part_title}
+              <div className="space-y-6 pt-2">
+                {/* === KJØPERINFO === */}
+                <div className="border-2 border-border rounded-xl overflow-hidden">
+                  <div className="bg-muted/50 px-4 py-3 border-b border-border">
+                    <p className="font-display text-sm">KJØPER</p>
+                  </div>
+                  <div className="px-4 py-3 space-y-2">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
+                        <User className="w-5 h-5 text-muted-foreground" />
                       </div>
-                    ))}
+                      <div>
+                        <p className="font-medium">{selected.customer_name}</p>
+                        <a href={`mailto:${selected.email}`} className="text-sm text-primary hover:underline inline-flex items-center gap-1">
+                          <Mail className="h-3.5 w-3.5" />
+                          {selected.email}
+                        </a>
+                      </div>
+                    </div>
+                    {selected.phone && (
+                      <a href={`tel:${selected.phone}`} className="text-sm text-primary hover:underline inline-flex items-center gap-1.5 ml-[52px]">
+                        <Phone className="h-3.5 w-3.5" />
+                        {selected.phone}
+                      </a>
+                    )}
                   </div>
                 </div>
 
-                {selected.message && (
-                  <div>
-                    <p className="font-display text-base mb-2">Melding</p>
-                    <p className="text-sm text-muted-foreground whitespace-pre-wrap">{selected.message}</p>
-                  </div>
-                )}
-
+                {/* === BIL === */}
                 {selected.car_model && (
-                  <div>
-                    <p className="font-display text-base mb-1">Bil</p>
-                    <p className="text-sm text-muted-foreground">
-                      {selected.car_model}{selected.car_year ? ` (${selected.car_year})` : ""}
-                    </p>
+                  <div className="border-2 border-border rounded-xl overflow-hidden">
+                    <div className="bg-muted/50 px-4 py-3 border-b border-border">
+                      <p className="font-display text-sm">KJØPERS BIL</p>
+                    </div>
+                    <div className="px-4 py-3 flex items-center gap-3">
+                      <Car className="w-5 h-5 text-muted-foreground flex-shrink-0" />
+                      <p className="text-sm">
+                        {selected.car_model}{selected.car_year ? ` (${selected.car_year})` : ""}
+                      </p>
+                    </div>
                   </div>
                 )}
 
-                <div>
-                  <p className="font-display text-base mb-2">Status</p>
-                  <Select
-                    value={(selected.status as InquiryStatus) || "pending"}
-                    onValueChange={(v) => {
-                      updateStatus.mutate({ id: selected.id, status: v });
-                    }}
-                  >
-                    <SelectTrigger className="w-full">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {(Object.keys(statusLabels) as InquiryStatus[]).map((s) => (
-                        <SelectItem key={s} value={s}>{statusLabels[s]}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                {/* === MELDING === */}
+                {selected.message && (
+                  <div className="border-2 border-border rounded-xl overflow-hidden">
+                    <div className="bg-muted/50 px-4 py-3 border-b border-border">
+                      <p className="font-display text-sm">MELDING FRA KJØPER</p>
+                    </div>
+                    <div className="px-4 py-3">
+                      <p className="text-sm whitespace-pre-wrap">{selected.message}</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* === ETTERSPURTE VARER === */}
+                <div className="border-2 border-border rounded-xl overflow-hidden">
+                  <div className="bg-muted/50 px-4 py-3 border-b border-border">
+                    <p className="font-display text-sm">ETTERSPURTE VARER ({selected.inquiry_items?.length || 0})</p>
+                  </div>
+                  <div className="divide-y divide-border">
+                    {selected.inquiry_items?.map((it: any) => {
+                      const itemId = it.part_id || it.marketplace_item_id;
+                      const enriched = itemId ? enrichedMap.get(itemId) : null;
+                      const slug = enriched?.slug;
+                      const detailUrl = slug ? `/annonse/${slug}` : null;
+
+                      return (
+                        <div key={it.id} className="px-4 py-3">
+                          <div className="flex gap-3">
+                            {/* Thumbnail */}
+                            <div className="w-16 h-16 rounded-lg bg-muted flex-shrink-0 overflow-hidden">
+                              {enriched?.image ? (
+                                <img src={enriched.image} alt={it.part_title} className="w-full h-full object-cover" />
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center">
+                                  <Package className="w-6 h-6 text-muted-foreground" />
+                                </div>
+                              )}
+                            </div>
+
+                            {/* Item details */}
+                            <div className="flex-1 min-w-0 space-y-1">
+                              <div className="flex items-start justify-between gap-2">
+                                <div className="min-w-0">
+                                  <p className="font-medium text-sm truncate">{it.part_title}</p>
+                                  <div className="flex flex-wrap items-center gap-2 mt-0.5">
+                                    {enriched?.price && (
+                                      <span className="text-sm font-display text-primary">{enriched.price}</span>
+                                    )}
+                                    {enriched?.condition && (
+                                      <Badge variant="secondary" className="text-xs">{enriched.condition}</Badge>
+                                    )}
+                                    {enriched?.type && (
+                                      <span className="text-xs text-muted-foreground">
+                                        {enriched.type === "listing" ? "Annonse" : "Bildel"}
+                                      </span>
+                                    )}
+                                  </div>
+                                </div>
+                                {detailUrl && (
+                                  <Link to={detailUrl} className="text-primary hover:text-primary/80 flex-shrink-0 p-1" title="Se annonse">
+                                    <ExternalLink className="w-4 h-4" />
+                                  </Link>
+                                )}
+                              </div>
+
+                              {enriched?.description && (
+                                <p className="text-xs text-muted-foreground line-clamp-2">{enriched.description}</p>
+                              )}
+
+                              {enriched?.location && (
+                                <p className="text-xs text-muted-foreground inline-flex items-center gap-1">
+                                  <MapPin className="w-3 h-3" />
+                                  {enriched.location}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* === DIN PROFIL (selger) === */}
+                {ownerProfile && (
+                  <div className="border-2 border-border rounded-xl overflow-hidden">
+                    <div className="bg-muted/50 px-4 py-3 border-b border-border">
+                      <p className="font-display text-sm">DIN SELGERPROFIL</p>
+                    </div>
+                    <div className="px-4 py-3">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center overflow-hidden flex-shrink-0">
+                          {ownerProfile.avatar_url ? (
+                            <img src={ownerProfile.avatar_url} alt={ownerProfile.display_name} className="w-full h-full object-cover" />
+                          ) : (
+                            <User className="w-5 h-5 text-muted-foreground" />
+                          )}
+                        </div>
+                        <div className="min-w-0">
+                          <p className="font-medium text-sm">{ownerProfile.display_name}</p>
+                          {ownerProfile.location && (
+                            <p className="text-xs text-muted-foreground inline-flex items-center gap-1">
+                              <MapPin className="w-3 h-3" />
+                              {ownerProfile.location}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                      {ownerProfile.visible_public && ownerProfile.slug && (
+                        <Link
+                          to={`/profil/${ownerProfile.slug}`}
+                          className="mt-2 text-xs text-primary hover:underline inline-flex items-center gap-1 ml-[52px]"
+                        >
+                          <ExternalLink className="w-3 h-3" />
+                          Se offentlig profil
+                        </Link>
+                      )}
+                      {(ownerProfile as any).contact_email && (
+                        <p className="text-xs text-muted-foreground mt-1 ml-[52px]">
+                          Kontakt: {(ownerProfile as any).contact_email}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* === STATUS === */}
+                <div className="border-2 border-border rounded-xl overflow-hidden">
+                  <div className="bg-muted/50 px-4 py-3 border-b border-border">
+                    <p className="font-display text-sm">STATUS</p>
+                  </div>
+                  <div className="px-4 py-3">
+                    <Select
+                      value={(selected.status as InquiryStatus) || "pending"}
+                      onValueChange={(v) => {
+                        updateStatus.mutate({ id: selected.id, status: v });
+                      }}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {(Object.keys(statusLabels) as InquiryStatus[]).map((s) => (
+                          <SelectItem key={s} value={s}>{statusLabels[s]}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
               </div>
             </>
