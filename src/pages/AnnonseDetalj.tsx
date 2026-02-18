@@ -265,6 +265,13 @@ function MarketplaceDetailView({ item }: { item: any }) {
                   <div>
                     <div className="relative aspect-square overflow-hidden rounded-sm bg-muted cursor-pointer" style={{ border: "1px solid rgba(0,0,0,0.06)" }} onClick={() => setLightboxOpen(true)}>
                       <img src={getOptimizedImageUrl(allImages[activeImage], { width: 800 })} alt={`${item.title} – bilde ${activeImage + 1}`} className="w-full h-full object-contain" />
+                      {item.status === 'sold' && (
+                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+                          <span className="font-serif text-4xl md:text-5xl font-bold tracking-[0.3em] text-foreground/90 rotate-[-12deg] border-2 border-foreground/40 px-6 py-3 bg-background/80" style={{ textShadow: '0 2px 8px rgba(0,0,0,0.15)' }}>
+                            SOLGT
+                          </span>
+                        </div>
+                      )}
                       {allImages.length > 1 && (
                         <>
                           <button onClick={(e) => { e.stopPropagation(); setActiveImage((i) => (i - 1 + allImages.length) % allImages.length); }} className="absolute left-2 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center shadow-md" aria-label="Forrige">

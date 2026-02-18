@@ -30,6 +30,7 @@ const statusLabels: Record<string, { label: string; className: string }> = {
   draft: { label: "Kladd", className: "bg-muted text-muted-foreground" },
   published: { label: "Publisert", className: "bg-green-100 text-green-800" },
   archived: { label: "Arkivert", className: "bg-red-100 text-red-800" },
+  sold: { label: "Solgt", className: "font-serif tracking-wider bg-amber-100 text-amber-900" },
 };
 
 const AdminAnnonseProfil = () => {

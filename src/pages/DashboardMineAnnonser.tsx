@@ -49,6 +49,8 @@ export default function DashboardMineAnnonser() {
         return <Badge variant="secondary" className="bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400"><Clock className="h-3 w-3 mr-1" />Venter</Badge>;
       case 'archived':
         return <Badge variant="secondary"><Archive className="h-3 w-3 mr-1" />Arkivert</Badge>;
+      case 'sold':
+        return <Badge variant="secondary" className="font-serif tracking-wider bg-amber-100 text-amber-900 dark:bg-amber-900/40 dark:text-amber-200">SOLGT</Badge>;
       default:
         return <Badge variant="outline">Utkast</Badge>;
     }

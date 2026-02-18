@@ -305,6 +305,11 @@ function FeedGridItem({
               {item.condition}
             </span>
           )}
+          {item.type === 'listing' && item.status === 'sold' && (
+            <span className="absolute top-2 right-2 font-serif text-xs font-bold tracking-wider px-2 py-1 rounded-sm border border-foreground/50 bg-background/95 text-foreground shadow-sm">
+              SOLGT
+            </span>
+          )}
         </div>
 
         <div className="p-3 md:p-4 flex flex-col flex-1">
@@ -381,6 +386,11 @@ function FeedListItem({
         {item.condition && (
           <span className={`absolute top-2 left-2 text-[9px] uppercase tracking-wider font-semibold px-1.5 py-0.5 rounded-sm ${CONDITION_COLORS[item.condition] || "bg-muted text-foreground"}`}>
             {item.condition}
+          </span>
+        )}
+        {item.type === 'listing' && item.status === 'sold' && (
+          <span className="absolute top-2 right-2 font-serif text-[10px] font-bold tracking-wider px-2 py-0.5 rounded-sm border border-foreground/50 bg-background/95 text-foreground">
+            SOLGT
           </span>
         )}
       </div>

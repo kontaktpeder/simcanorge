@@ -41,6 +41,7 @@ const statusLabels: Record<string, { label: string; className: string }> = {
   draft: { label: "Kladd", className: "bg-muted text-muted-foreground" },
   published: { label: "Publisert", className: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400" },
   archived: { label: "Arkivert", className: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400" },
+  sold: { label: "Solgt", className: "font-serif tracking-wider bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400" },
 };
 
 const AdminMarkedsplass = () => {
@@ -54,6 +55,7 @@ const AdminMarkedsplass = () => {
     draft: items.filter((i) => i.status === "draft").length,
     published: items.filter((i) => i.status === "published").length,
     archived: items.filter((i) => i.status === "archived").length,
+    sold: items.filter((i) => i.status === "sold").length,
   }), [items]);
 
   const formatDate = (iso: string) =>
@@ -81,6 +83,7 @@ const AdminMarkedsplass = () => {
           { id: "submitted", label: "Innsendt" },
           { id: "draft", label: "Kladd" },
           { id: "published", label: "Publisert" },
+          { id: "sold", label: "Solgt" },
           { id: "archived", label: "Arkivert" },
         ].map(({ id, label }) => (
           <button
