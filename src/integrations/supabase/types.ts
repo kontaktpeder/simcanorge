@@ -832,6 +832,7 @@ export type Database = {
           slug: string | null
           updated_at: string
           user_id: string
+          username: string | null
           visible_public: boolean
         }
         Insert: {
@@ -847,6 +848,7 @@ export type Database = {
           slug?: string | null
           updated_at?: string
           user_id: string
+          username?: string | null
           visible_public?: boolean
         }
         Update: {
@@ -862,6 +864,7 @@ export type Database = {
           slug?: string | null
           updated_at?: string
           user_id?: string
+          username?: string | null
           visible_public?: boolean
         }
         Relationships: []

@@ -6,6 +6,7 @@ interface OwnerProfile {
   id: string;
   user_id: string;
   display_name: string;
+  username: string | null;
   bio: string | null;
   location: string | null;
   favorite_brands: string[] | null;
@@ -20,6 +21,7 @@ interface OwnerProfile {
 interface OwnerProfileInsert {
   user_id: string;
   display_name: string;
+  username?: string | null;
   bio?: string | null;
   location?: string | null;
   favorite_brands?: string[] | null;
@@ -28,6 +30,7 @@ interface OwnerProfileInsert {
 
 interface OwnerProfileUpdate {
   display_name?: string;
+  username?: string | null;
   bio?: string | null;
   location?: string | null;
   favorite_brands?: string[] | null;
