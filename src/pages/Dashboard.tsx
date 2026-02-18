@@ -343,6 +343,16 @@ export default function Dashboard() {
               <p className="text-xs text-muted-foreground mt-1">
                 Alt som legges ut må godkjennes før publisering.
               </p>
+              {ownerProfile && !ownerProfile.approved_at && (
+                <Link
+                  to="/dashboard?showOwnerProfile=true"
+                  onClick={(e) => e.stopPropagation()}
+                  className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline mt-2"
+                >
+                  <User className="h-3.5 w-3.5" />
+                  Se profil og be om godkjenning
+                </Link>
+              )}
               {ownerProfile?.approved_at && (
                 <Link
                   to="/dashboard/opprett-annonse"
