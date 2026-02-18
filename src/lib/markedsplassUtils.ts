@@ -14,6 +14,7 @@ export interface FeedItem {
   categoryName: string | null;
   location: string | null;
   ownerName: string | null;
+  ownerId: string | null;
   publishedAt: string;
 }
 
@@ -60,6 +61,7 @@ export function normalizePart(part: any, categories: any[]): FeedItem {
     categoryName: cat?.name || null,
     location: null,
     ownerName: null,
+    ownerId: null,
     publishedAt: part.created_at,
   };
 }
@@ -80,6 +82,7 @@ export function normalizeListing(item: any): FeedItem {
     categoryName: cat?.name || null,
     location: item.location,
     ownerName: owner?.display_name || null,
+    ownerId: owner?.id || null,
     publishedAt: item.published_at || item.created_at,
   };
 }

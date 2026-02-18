@@ -233,7 +233,13 @@ function MarketplaceDetailView({ item }: { item: any }) {
     if (inCart) {
       removeItem("listing", item.id);
     } else {
-      addItem({ type: "listing", id: item.id, slug: item.slug, title: item.title });
+      addItem({
+        type: "listing",
+        id: item.id,
+        slug: item.slug,
+        title: item.title,
+        ...(owner?.id ? { owner_id: owner.id, owner_name: owner.display_name || null } : {}),
+      });
     }
   };
 

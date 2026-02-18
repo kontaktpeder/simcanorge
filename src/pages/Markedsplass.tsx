@@ -35,7 +35,16 @@ export default function Markedsplass() {
       removeItem(item.type, item.id);
       toast.info(`${item.title} fjernet fra verktøykassen`);
     } else {
-      addItem({ type: item.type, id: item.id, slug: item.slug, title: item.title });
+      addItem({
+        type: item.type,
+        id: item.id,
+        slug: item.slug,
+        title: item.title,
+        ...(item.type === "listing" && item.ownerId ? {
+          owner_id: item.ownerId,
+          owner_name: item.ownerName || null,
+        } : {}),
+      });
       toast.success(`${item.title} lagt til i verktøykassen`);
     }
   };

@@ -17,10 +17,32 @@ const inquirySchema = z.object({
   phone: z.string().trim().max(20).optional(),
   car_model: z.string().trim().max(100).optional(),
   car_year: z.number().int().min(1900).max(new Date().getFullYear() + 1).optional(),
-  message: z.string().trim().max(1000).optional(),
 });
 
 const MIN_SUBMIT_INTERVAL = 2000;
+
+/** Group items by recipient: admin (parts) and per seller (listings) */
+function groupItemsByRecipient(items: { type: string; id: string; slug: string; title: string; owner_id?: string | null; owner_name?: string | null }[]) {
+  const adminItems: typeof items = [];
+  const byOwner = new Map<string, { ownerName: string; items: typeof items }>();
+
+  for (const item of items) {
+    if (item.type === "part") {
+      adminItems.push(item);
+    } else if (item.type === "listing" && item.owner_id) {
+      const existing = byOwner.get(item.owner_id);
+      const list = existing?.items ?? [];
+      list.push(item);
+      byOwner.set(item.owner_id, {
+        ownerName: item.owner_name || "Selger",
+        items: list,
+      });
+    } else {
+      adminItems.push(item);
+    }
+  }
+  return { adminItems, byOwner };
+}
 
 const Foresporsel = () => {
   const { items, removeItem, clearCart } = useCart();
@@ -32,7 +54,6 @@ const Foresporsel = () => {
     phone: "",
     car_model: "",
     car_year: "",
-    message: "",
   });
   const [carFields, setCarFields] = useState({
     brand: "",
@@ -41,8 +62,11 @@ const Foresporsel = () => {
     body_type: "",
     year: "",
   });
+  const [messagesByRecipient, setMessagesByRecipient] = useState<Record<string, string>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [lastSubmitTime, setLastSubmitTime] = useState<number>(0);
+
+  const { adminItems, byOwner } = useMemo(() => groupItemsByRecipient(items), [items]);
 
   // Fetch enriched data for cart items
   const listingIds = useMemo(() => items.filter(i => i.type === "listing").map(i => i.id), [items]);
@@ -128,6 +152,10 @@ const Foresporsel = () => {
     }
   };
 
+  const setMessageForRecipient = (key: string, value: string) => {
+    setMessagesByRecipient((prev) => ({ ...prev, [key]: value }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -144,9 +172,13 @@ const Foresporsel = () => {
 
     setLastSubmitTime(now);
 
+    const carModel = [carFields.brand, carFields.model, carFields.variant].filter(Boolean).join(" ") || formData.car_model || undefined;
+    const carYear = carFields.year ? parseInt(carFields.year) : (formData.car_year ? parseInt(formData.car_year) : undefined);
+
     const validationData = {
       ...formData,
-      car_year: formData.car_year ? parseInt(formData.car_year) : undefined,
+      car_model: carModel,
+      car_year: carYear,
     };
 
     const result = inquirySchema.safeParse(validationData);
@@ -165,16 +197,32 @@ const Foresporsel = () => {
     setIsSubmitting(true);
 
     try {
+      // Build items_by_recipient groups
+      const itemsByRecipient: { recipient_owner_id: string | null; message: string; items: { type: string; id: string; title: string }[] }[] = [];
+
+      if (adminItems.length > 0) {
+        itemsByRecipient.push({
+          recipient_owner_id: null,
+          message: messagesByRecipient["admin"] || "",
+          items: adminItems.map((i) => ({ type: i.type, id: i.id, title: i.title })),
+        });
+      }
+      for (const [ownerId, { items: ownerItems }] of byOwner) {
+        itemsByRecipient.push({
+          recipient_owner_id: ownerId,
+          message: messagesByRecipient[ownerId] || "",
+          items: ownerItems.map((i) => ({ type: i.type, id: i.id, title: i.title })),
+        });
+      }
+
       const { data, error } = await supabase.functions.invoke("send-inquiry", {
         body: {
-          ...result.data,
-          car_model: [carFields.brand, carFields.model, carFields.variant].filter(Boolean).join(" ") || result.data.car_model || null,
-          car_year: carFields.year ? parseInt(carFields.year) : result.data.car_year || null,
-          items: items.map((item) => ({
-            type: item.type,
-            id: item.id,
-            title: item.title,
-          })),
+          customer_name: result.data.customer_name,
+          email: result.data.email,
+          phone: result.data.phone || undefined,
+          car_model: result.data.car_model || undefined,
+          car_year: result.data.car_year || undefined,
+          items_by_recipient: itemsByRecipient,
         },
       });
 
@@ -280,6 +328,7 @@ const Foresporsel = () => {
                               <h3 className="font-display text-base sm:text-lg leading-tight truncate">{item.title}</h3>
                               <span className="text-xs text-muted-foreground">
                                 {item.type === "listing" ? "Annonse" : "Bildel"}
+                                {item.owner_name && ` · ${item.owner_name}`}
                               </span>
                             </div>
                             <button
@@ -346,10 +395,42 @@ const Foresporsel = () => {
                     />
                   </div>
 
-                  <div>
-                    <label className="block font-display text-base sm:text-lg mb-1.5 sm:mb-2">MELDING (valgfritt)</label>
-                    <textarea name="message" value={formData.message} onChange={handleChange} rows={4} placeholder="Eventuelle spørsmål eller tilleggsinformasjon..." className="w-full p-3 text-base border-2 border-border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary transition-all resize-none min-h-[100px]" />
-                  </div>
+                  {/* Per-recipient messages */}
+                  {adminItems.length > 0 && (
+                    <div>
+                      <label className="block font-display text-base sm:text-lg mb-1.5 sm:mb-2">
+                        MELDING TIL SIMCA NORGE
+                      </label>
+                      <p className="text-xs text-muted-foreground mb-1">
+                        {adminItems.map((i) => i.title).join(", ")}
+                      </p>
+                      <textarea
+                        value={messagesByRecipient["admin"] ?? ""}
+                        onChange={(e) => setMessageForRecipient("admin", e.target.value)}
+                        rows={3}
+                        placeholder="Spørsmål om bildelene..."
+                        className="w-full p-3 text-base border-2 border-border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary transition-all resize-none"
+                      />
+                    </div>
+                  )}
+
+                  {Array.from(byOwner.entries()).map(([ownerId, { ownerName, items: ownerItems }]) => (
+                    <div key={ownerId}>
+                      <label className="block font-display text-base sm:text-lg mb-1.5 sm:mb-2">
+                        MELDING TIL {ownerName.toUpperCase()}
+                      </label>
+                      <p className="text-xs text-muted-foreground mb-1">
+                        {ownerItems.map((i) => i.title).join(", ")}
+                      </p>
+                      <textarea
+                        value={messagesByRecipient[ownerId] ?? ""}
+                        onChange={(e) => setMessageForRecipient(ownerId, e.target.value)}
+                        rows={3}
+                        placeholder={`Spørsmål til ${ownerName}...`}
+                        className="w-full p-3 text-base border-2 border-border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary transition-all resize-none"
+                      />
+                    </div>
+                  ))}
 
                   <button type="submit" disabled={isSubmitting || items.length === 0} className="btn-enamel-red w-full h-12 sm:h-auto disabled:opacity-50 disabled:cursor-not-allowed text-base sm:text-lg">
                     {isSubmitting ? "Sender..." : <><Send className="w-5 h-5 mr-2" />Send forespørsel</>}
