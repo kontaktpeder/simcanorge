@@ -298,7 +298,7 @@ export function OwnerProfileSection({ userId }: OwnerProfileSectionProps) {
           {/* Contact Email */}
           <div className="space-y-3">
             <label htmlFor="contact-email" className="font-display text-base uppercase tracking-wider block">
-              E-post for kontakt <span className="text-destructive">*</span>
+              E-post for kontakt (valgfritt)
             </label>
             <Input
               id="contact-email"
@@ -307,10 +307,9 @@ export function OwnerProfileSection({ userId }: OwnerProfileSectionProps) {
               onChange={(e) => setContactEmail(e.target.value)}
               placeholder="din@epost.no"
               className="max-w-md text-base h-12"
-              required
             />
             <p className="text-sm text-muted-foreground">
-              Brukes slik at kjøpere kan ta kontakt med deg om annonser.
+              Interesserte kan alltid sende forespørsel via innboksen din. Legger du til e-post eller telefon, kan dere bli enige raskere.
             </p>
           </div>
 
@@ -384,7 +383,7 @@ export function OwnerProfileSection({ userId }: OwnerProfileSectionProps) {
           <div data-guide="owner-save">
             <button
               onClick={handleSave}
-              disabled={!displayName.trim() || !contactEmail.trim() || isSaving || !hasChanges}
+              disabled={!displayName.trim() || isSaving || !hasChanges}
               className="px-8 py-4 font-display text-base uppercase tracking-wider text-white transition-all min-h-[56px] flex items-center gap-3 disabled:opacity-40 disabled:cursor-not-allowed w-full sm:w-auto justify-center"
               style={{ background: 'hsl(2, 85%, 40%)' }}
             >
