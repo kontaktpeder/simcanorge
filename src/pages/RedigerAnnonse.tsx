@@ -8,19 +8,15 @@ import {
   useInsertMarketplaceImages,
   useDeleteMarketplaceImage,
   useDeleteMarketplaceItem,
-  useMarketplaceCategories,
 } from '@/hooks/useMarketplace';
+import { useUnifiedCategories, getRootCategories } from '@/hooks/useUnifiedCategories';
+import { DelerAnnonseForm } from '@/components/markedsplass/DelerAnnonseForm';
 import { compressImages, generateImageId, getMarketplaceImagePath } from '@/lib/imageCompression';
 import { supabase } from '@/integrations/supabase/client';
+import type { ItemFormValues } from '@/lib/itemSubmit';
 import { GarageLayout } from '@/components/ui/garage/GarageLayout';
-import { EnamelCard } from '@/components/ui/garage/EnamelCard';
-import { BigActionButton } from '@/components/ui/garage/BigActionButton';
-import { SectionHeader } from '@/components/ui/garage/SectionHeader';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ShoppingBag, ChevronLeft, Save, Loader2, ImagePlus, X, Trash2 } from 'lucide-react';
+import { ChevronLeft, Loader2, ImagePlus, X, Trash2 } from 'lucide-react';
 import { Layout } from '@/components/layout/Layout';
 
 export default function RedigerAnnonse() {
@@ -30,19 +26,14 @@ export default function RedigerAnnonse() {
   const { data: ownerProfile } = useOwnerProfile(user?.id);
   const { data: listings, isLoading: listingsLoading } = useMyListings(user?.id);
   const item = listings?.find((i: any) => i.id === itemId);
-  const { data: categories } = useMarketplaceCategories();
+  const { data: categories = [] } = useUnifiedCategories();
+  const roots = getRootCategories(categories);
 
   const updateItem = useUpdateMarketplaceItem();
   const insertImages = useInsertMarketplaceImages();
   const deleteImage = useDeleteMarketplaceImage();
   const deleteItem = useDeleteMarketplaceItem();
 
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [price, setPrice] = useState('');
-  const [priceNote, setPriceNote] = useState('');
-  const [categoryId, setCategoryId] = useState('');
-  const [location, setLocation] = useState('');
   const [images, setImages] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [existingImages, setExistingImages] = useState<{ id: string; image_url: string; sort_order: number }[]>([]);
@@ -50,14 +41,8 @@ export default function RedigerAnnonse() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (item) {
-      setTitle(item.title || '');
-      setDescription(item.description || '');
-      setPrice(item.price != null ? String(item.price) : '');
-      setPriceNote(item.price_note || '');
-      setCategoryId(item.category_id || '');
-      setLocation(item.location || '');
-      const imgs = [...(item.marketplace_images || [])].sort((a: any, b: any) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
+    if (item?.marketplace_images) {
+      const imgs = [...item.marketplace_images].sort((a: any, b: any) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
       setExistingImages(imgs.map((img: any) => ({ id: img.id, image_url: img.image_url, sort_order: img.sort_order ?? 0 })));
     }
   }, [item]);
@@ -87,6 +72,26 @@ export default function RedigerAnnonse() {
     navigate('/dashboard/mine-annonser');
     return null;
   }
+
+  const canEdit = item?.status === 'draft' || item?.status === 'submitted';
+
+  // Resolve root category from item
+  const samleobjekterRoot = roots.find((r) => r.slug === 'samleobjekter');
+  const delerRoot = roots.find((r) => r.slug === 'deler');
+
+  const initialValues: Partial<ItemFormValues> = item
+    ? {
+        title: item.title || '',
+        description: item.description || '',
+        rootCategoryId: samleobjekterRoot?.id ?? delerRoot?.id ?? roots[0]?.id ?? '',
+        categoryId: item.category_id || '',
+        priceMin: item.price != null ? String(item.price) : '',
+        priceMax: '',
+        priceNote: item.price_note || '',
+        condition: '',
+        location: item.location || '',
+      }
+    : {};
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []).filter((f) => f.type.startsWith('image/'));
@@ -127,28 +132,26 @@ export default function RedigerAnnonse() {
     return uploaded;
   };
 
-  const handleSubmit = async () => {
-    if (!title.trim() || !itemId || isSubmitting) return;
+  const handleSubmit = async (values: ItemFormValues) => {
+    if (!itemId || isSubmitting) return;
     setIsSubmitting(true);
-
     try {
+      const price = values.priceMin ? Number(values.priceMin) : values.priceMax ? Number(values.priceMax) : null;
       await updateItem.mutateAsync({
         id: itemId,
         updates: {
-          title: title.trim(),
-          description: description.trim() || null,
-          price: price ? parseFloat(price) : null,
-          price_note: priceNote.trim() || null,
-          category_id: categoryId || null,
-          location: location.trim() || null,
+          title: values.title.trim(),
+          description: values.description.trim() || null,
+          price,
+          price_note: values.priceNote.trim() || null,
+          category_id: values.categoryId || null,
+          location: values.location.trim() || null,
         },
       });
-
       const newUploaded = await uploadNewImages();
       if (newUploaded.length > 0) {
         await insertImages.mutateAsync({ itemId, images: newUploaded });
       }
-
       navigate('/dashboard/mine-annonser');
     } catch (err) {
       console.error('Update error:', err);
@@ -156,8 +159,6 @@ export default function RedigerAnnonse() {
       setIsSubmitting(false);
     }
   };
-
-  const canEdit = item?.status === 'draft' || item?.status === 'submitted';
 
   return (
     <GarageLayout
@@ -169,122 +170,73 @@ export default function RedigerAnnonse() {
         <ChevronLeft className="h-4 w-4" /> Tilbake til dine annonser
       </Link>
 
-      <SectionHeader title="Annonsedetaljer" icon={<ShoppingBag className="h-5 w-5" />} />
-
-      <EnamelCard className="mt-4">
-        <div className="p-4 sm:p-6 space-y-6">
-          <div className="space-y-2">
-            <Label htmlFor="title">Tittel *</Label>
-            <Input id="title" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Tittel" disabled={!canEdit} />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="description">Beskrivelse</Label>
-            <Textarea id="description" value={description} onChange={(e) => setDescription(e.target.value)} disabled={!canEdit} className="min-h-[100px]" />
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="price">Pris (kr)</Label>
-              <Input id="price" type="number" value={price} onChange={(e) => setPrice(e.target.value)} disabled={!canEdit} />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="price-note">Prisnotat</Label>
-              <Input id="price-note" value={priceNote} onChange={(e) => setPriceNote(e.target.value)} disabled={!canEdit} />
-            </div>
-          </div>
-
-          {categories && categories.length > 0 && (
-            <div className="space-y-2">
-              <Label>Kategori</Label>
-              <Select value={categoryId} onValueChange={setCategoryId} disabled={!canEdit}>
-                <SelectTrigger className="max-w-xs">
-                  <SelectValue placeholder="Velg kategori" />
-                </SelectTrigger>
-                <SelectContent>
-                  {categories.map((cat) => (
-                    <SelectItem key={cat.id} value={cat.id}>{cat.name}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          )}
-
-          <div className="space-y-2">
-            <Label htmlFor="location">Sted</Label>
-            <Input id="location" value={location} onChange={(e) => setLocation(e.target.value)} disabled={!canEdit} />
-          </div>
-
-          <div className="space-y-2">
-            <Label>Bilder</Label>
-            <div className="flex flex-wrap gap-2">
-              {existingImages.map((img) => (
-                <div key={img.id} className="relative w-20 h-20 rounded-lg overflow-hidden bg-muted">
-                  <img src={img.image_url} alt="" className="w-full h-full object-cover" />
-                  {canEdit && (
-                    <button
-                      type="button"
-                      onClick={() => removeExistingImage(img.id)}
-                      className="absolute top-1 right-1 p-0.5 bg-black/50 rounded-full text-white hover:bg-black/70"
-                    >
-                      <X className="w-3 h-3" />
-                    </button>
-                  )}
-                </div>
-              ))}
-              {imagePreviews.map((src, i) => (
-                <div key={`new-${i}`} className="relative w-20 h-20 rounded-lg overflow-hidden">
-                  <img src={src} alt="" className="w-full h-full object-cover" />
-                  {canEdit && (
-                    <button type="button" onClick={() => removeNewImage(i)} className="absolute top-1 right-1 p-0.5 bg-black/50 rounded-full text-white">
-                      <X className="w-3 h-3" />
-                    </button>
-                  )}
-                </div>
-              ))}
-              {canEdit && (
-                <>
-                  <input ref={fileInputRef} type="file" accept="image/*" multiple onChange={handleFileChange} className="hidden" />
+      <DelerAnnonseForm
+        initialValues={initialValues}
+        onSubmit={handleSubmit}
+        submitLabel="Lagre endringer"
+        isSubmitting={isSubmitting}
+        disabled={!canEdit}
+      >
+        {/* Bilder */}
+        <div className="space-y-2">
+          <Label>Bilder</Label>
+          <div className="flex flex-wrap gap-2">
+            {existingImages.map((img) => (
+              <div key={img.id} className="relative w-20 h-20 rounded-lg overflow-hidden bg-muted">
+                <img src={img.image_url} alt="" className="w-full h-full object-cover" />
+                {canEdit && (
                   <button
                     type="button"
-                    onClick={() => fileInputRef.current?.click()}
-                    className="w-20 h-20 rounded-lg border-2 border-dashed border-muted-foreground/30 flex items-center justify-center hover:border-primary/50"
+                    onClick={() => removeExistingImage(img.id)}
+                    className="absolute top-1 right-1 p-0.5 bg-black/50 rounded-full text-white hover:bg-black/70"
                   >
-                    <ImagePlus className="w-6 h-6 text-muted-foreground" />
+                    <X className="w-3 h-3" />
                   </button>
-                </>
-              )}
-            </div>
-            {!canEdit && <p className="text-xs text-muted-foreground">Publiserte eller arkiverte annonser kan ikke redigeres.</p>}
+                )}
+              </div>
+            ))}
+            {imagePreviews.map((src, i) => (
+              <div key={`new-${i}`} className="relative w-20 h-20 rounded-lg overflow-hidden">
+                <img src={src} alt="" className="w-full h-full object-cover" />
+                {canEdit && (
+                  <button type="button" onClick={() => removeNewImage(i)} className="absolute top-1 right-1 p-0.5 bg-black/50 rounded-full text-white">
+                    <X className="w-3 h-3" />
+                  </button>
+                )}
+              </div>
+            ))}
+            {canEdit && (
+              <>
+                <input ref={fileInputRef} type="file" accept="image/*" multiple onChange={handleFileChange} className="hidden" />
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="w-20 h-20 rounded-lg border-2 border-dashed border-muted-foreground/30 flex items-center justify-center hover:border-primary/50"
+                >
+                  <ImagePlus className="w-6 h-6 text-muted-foreground" />
+                </button>
+              </>
+            )}
           </div>
-
-          {canEdit && (
-            <div className="flex flex-col sm:flex-row gap-3">
-              <BigActionButton
-                onClick={handleSubmit}
-                disabled={!title.trim() || isSubmitting}
-                icon={isSubmitting ? <Loader2 className="h-5 w-5 animate-spin" /> : <Save className="h-5 w-5" />}
-                className="flex-1"
-              >
-                {isSubmitting ? 'Lagrer...' : 'Lagre endringer'}
-              </BigActionButton>
-              <button
-                type="button"
-                onClick={async () => {
-                  if (!confirm('Er du sikker på at du vil slette denne annonsen? Dette kan ikke angres.')) return;
-                  await deleteItem.mutateAsync(itemId!);
-                  navigate('/dashboard/mine-annonser');
-                }}
-                disabled={deleteItem.isPending}
-                className="text-sm text-destructive hover:underline py-2"
-              >
-                <Trash2 className="h-4 w-4 inline mr-1" />
-                Slett annonse
-              </button>
-            </div>
-          )}
+          {!canEdit && <p className="text-xs text-muted-foreground">Publiserte eller arkiverte annonser kan ikke redigeres.</p>}
         </div>
-      </EnamelCard>
+      </DelerAnnonseForm>
+
+      {canEdit && (
+        <button
+          type="button"
+          onClick={async () => {
+            if (!confirm('Er du sikker på at du vil slette denne annonsen? Dette kan ikke angres.')) return;
+            await deleteItem.mutateAsync(itemId!);
+            navigate('/dashboard/mine-annonser');
+          }}
+          disabled={deleteItem.isPending}
+          className="text-sm text-destructive hover:underline py-2 mt-4"
+        >
+          <Trash2 className="h-4 w-4 inline mr-1" />
+          Slett annonse
+        </button>
+      )}
     </GarageLayout>
   );
 }
