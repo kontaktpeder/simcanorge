@@ -1085,6 +1085,14 @@ export type Database = {
         Args: { _car_id: string; _car_title: string }
         Returns: undefined
       }
+      notify_admins_owner_pending: {
+        Args: { _display_name: string; _owner_id: string }
+        Returns: undefined
+      }
+      notify_owner_profile_pending: {
+        Args: { _display_name: string; _owner_id: string; _user_id: string }
+        Returns: undefined
+      }
     }
     Enums: {
       app_role: "admin"

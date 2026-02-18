@@ -40,7 +40,7 @@ export default function Dashboard() {
   const formRef = useRef<HTMLDivElement>(null);
   const profileRef = useRef<HTMLDivElement>(null);
   
-  // Hent eierprofil for å vise status
+  // Hent entusiastprofil for å vise status
   const { data: ownerProfile } = useOwnerProfile(user?.id);
   const { data: myListings } = useMyListings(user?.id);
 
@@ -110,7 +110,7 @@ export default function Dashboard() {
     }, 100);
   };
 
-  // Åpne eierprofil og scroll til det
+  // Åpne profil og scroll til det
   const handleOpenOwnerProfile = () => {
     setShowOwnerProfile(true);
     setShowCarForm(false);
@@ -119,7 +119,7 @@ export default function Dashboard() {
     }, 100);
   };
 
-  // Lukk eierprofil
+  // Lukk profil
   const handleCloseOwnerProfile = () => {
     setShowOwnerProfile(false);
   };
@@ -129,7 +129,7 @@ export default function Dashboard() {
     startGuide('my-cars');
   };
 
-  // Start eierprofil-guide
+  // Start profil-guide
   const handleStartOwnerProfileGuide = () => {
     startGuide('owner-profile');
   };
@@ -277,7 +277,7 @@ export default function Dashboard() {
           </EnamelCard>
         </motion.div>
 
-        {/* Eierprofil */}
+        {/* Min profil */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -299,10 +299,10 @@ export default function Dashboard() {
               )}
             </div>
             <h3 className="font-display text-lg sm:text-xl mb-1 sm:mb-2 group-hover:text-primary transition-colors">
-              Min eierprofil
+              Min profil
             </h3>
             <p className="text-sm sm:text-base text-muted-foreground line-clamp-2">
-              {ownerProfile ? 'Rediger din eierprofil' : 'Opprett din eierprofil'}
+              {ownerProfile ? 'Rediger profil' : 'Opprett profil'}
             </p>
           </EnamelCard>
         </motion.div>
@@ -424,7 +424,7 @@ export default function Dashboard() {
                   onClick={handleStartOwnerProfileGuide}
                   icon={<User className="w-4 h-4" />}
                 >
-                  Eierprofil
+                   Min profil
                 </BigActionButton>
               </div>
             </div>
@@ -468,7 +468,7 @@ export default function Dashboard() {
         )}
       </AnimatePresence>
 
-      {/* Eierprofil seksjon */}
+      {/* Profil seksjon */}
       <AnimatePresence>
         {showOwnerProfile && user && (
           <motion.div
@@ -481,7 +481,7 @@ export default function Dashboard() {
           >
             <div className="flex items-center justify-between mb-4">
               <SectionHeader 
-                title="Min eierprofil" 
+                title="Min profil" 
                 icon={<User className="w-6 h-6" />} 
               />
               <BigActionButton

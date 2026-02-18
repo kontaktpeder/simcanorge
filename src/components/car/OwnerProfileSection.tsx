@@ -144,7 +144,7 @@ export function OwnerProfileSection({ userId }: OwnerProfileSectionProps) {
       transition={{ duration: 0.3 }}
     >
       <SectionHeader 
-        title="Om meg som bileier" 
+        title="Om meg" 
         icon={<User className="h-5 w-5" />}
       />
       
@@ -164,7 +164,7 @@ export function OwnerProfileSection({ userId }: OwnerProfileSectionProps) {
           <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50 text-sm text-muted-foreground">
             <Info className="h-4 w-4 mt-0.5 shrink-0" />
             <p>
-              Eierprofilen din er redaksjonelt innhold som vises på bilene dine og på din offentlige profilside. 
+              Profilen din er redaksjonelt innhold som vises på bilene dine og på din offentlige profilside. 
               Dette er ikke kontoinnstillinger.
             </p>
           </div>
@@ -208,7 +208,7 @@ export function OwnerProfileSection({ userId }: OwnerProfileSectionProps) {
 
           {/* Bio */}
           <div className="space-y-2" data-guide="owner-bio">
-            <Label htmlFor="bio">Om meg som bileier</Label>
+            <Label htmlFor="bio">Om meg</Label>
             <Textarea
               id="bio"
               value={bio}
@@ -266,10 +266,10 @@ export function OwnerProfileSection({ userId }: OwnerProfileSectionProps) {
                 <EyeOff className="h-5 w-5 text-muted-foreground" />
               )}
               <div>
-                <p className="font-medium text-sm">Vis eierprofil offentlig</p>
+                <p className="font-medium text-sm">Vis profil offentlig</p>
                 <p className="text-xs text-muted-foreground">
                   {visiblePublic 
-                    ? 'Profilen din vises på bilene dine og på din offentlige eierside'
+                    ? 'Profilen din vises på bilene dine og på din offentlige profilside'
                     : 'Profilen din er skjult for andre'
                   }
                 </p>
@@ -297,7 +297,7 @@ export function OwnerProfileSection({ userId }: OwnerProfileSectionProps) {
               icon={isSaving ? <Loader2 className="h-5 w-5 animate-spin" /> : <Save className="h-5 w-5" />}
               className="w-full sm:w-auto"
             >
-              {isSaving ? 'Lagrer...' : profile ? 'Lagre endringer' : 'Opprett eierprofil'}
+              {isSaving ? 'Lagrer...' : profile ? 'Lagre endringer' : 'Opprett profil'}
             </BigActionButton>
           </div>
         </div>

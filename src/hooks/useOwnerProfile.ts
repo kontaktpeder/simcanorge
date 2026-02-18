@@ -169,8 +169,8 @@ export function useCreateOwnerProfile() {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['owner-profile', data.user_id] });
       toast({
-        title: 'Eierprofil opprettet',
-        description: 'Din eierprofil er nå opprettet.',
+        title: 'Profil opprettet',
+        description: 'Din profil er opprettet og venter på godkjenning.',
       });
     },
     onError: (error) => {
@@ -204,7 +204,7 @@ export function useUpdateOwnerProfile() {
       queryClient.invalidateQueries({ queryKey: ['owner-profile', data.user_id] });
       queryClient.invalidateQueries({ queryKey: ['owner-profile-slug', data.slug] });
       toast({
-        title: 'Eierprofil oppdatert',
+        title: 'Profil oppdatert',
         description: 'Endringene dine er lagret.',
       });
     },

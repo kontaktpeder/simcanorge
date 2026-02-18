@@ -30,7 +30,7 @@ export function OwnerCard({ carId }: OwnerCardProps) {
     >
       <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 flex items-center gap-2">
         <User className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
-        Om eieren
+        Lagt ut av
       </h2>
       
       <div className="bg-card rounded-xl border shadow-sm overflow-hidden">
@@ -61,7 +61,7 @@ export function OwnerCard({ carId }: OwnerCardProps) {
               to={`/profil/${owner.slug}`}
               className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:text-primary/80 transition-colors mt-4 group"
             >
-              Se alle biler fra denne eieren
+              Se profil
               <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </Link>
           )}

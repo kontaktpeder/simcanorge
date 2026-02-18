@@ -53,7 +53,7 @@ export default function AdminEierprofiler() {
   };
 
   return (
-    <AdminLayout title="Eierprofiler">
+    <AdminLayout title="Entusiastprofiler">
       <div className="space-y-6">
         {/* Search */}
         <div className="relative max-w-md">
@@ -69,7 +69,7 @@ export default function AdminEierprofiler() {
         {/* Profiles List */}
         {isLoading ? (
           <div className="text-center py-12 text-muted-foreground">
-            Laster eierprofiler...
+            Laster profiler...
           </div>
         ) : filteredProfiles && filteredProfiles.length > 0 ? (
           <div className="grid gap-4">
@@ -184,7 +184,7 @@ export default function AdminEierprofiler() {
           <div className="text-center py-12 bg-card border rounded-lg">
             <User className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" />
             <p className="text-muted-foreground">
-              {searchQuery ? 'Ingen eierprofiler funnet' : 'Ingen eierprofiler opprettet ennå'}
+              {searchQuery ? 'Ingen profiler funnet' : 'Ingen profiler opprettet ennå'}
             </p>
           </div>
         )}

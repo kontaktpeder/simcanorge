@@ -136,7 +136,7 @@ export function HeroSection() {
                     <p className="font-display text-lg font-bold text-white">{featuredCar.title}</p>
                     <p className="font-serif text-sm text-white/80 mt-0.5">
                       {ownerProfile 
-                        ? `Eier: ${ownerProfile.display_name}${ownerProfile.location ? `, ${ownerProfile.location}` : ''}` 
+                        ? `Lagt ut av ${ownerProfile.display_name}${ownerProfile.location ? `, ${ownerProfile.location}` : ''}` 
                         : `${featuredCar.year ? `${featuredCar.year} · ` : ''}${featuredCar.model}`}
                     </p>
                   </div>
@@ -265,7 +265,7 @@ export function HeroSection() {
                   <p className="font-display text-3xl font-bold text-white featured-title-glow">{featuredCar.title}</p>
                   <p className="font-serif text-lg text-white/90 mt-1 drop-shadow-md">
                     {ownerProfile 
-                      ? `Eier: ${ownerProfile.display_name}${ownerProfile.location ? `, ${ownerProfile.location}` : ''}` 
+                      ? `Lagt ut av ${ownerProfile.display_name}${ownerProfile.location ? `, ${ownerProfile.location}` : ''}` 
                       : `${featuredCar.year ? `${featuredCar.year} · ` : ''}${featuredCar.model}`}
                   </p>
                 </div>
