@@ -10,7 +10,7 @@ import { CONDITION_COLORS } from "@/lib/markedsplassUtils";
 import { getThumbnailUrl } from "@/lib/imageUtils";
 import { Input } from "@/components/ui/input";
 import {
-  Search, Plus, Info, Wrench, ShoppingBag, Check, Briefcase,
+  Search, Plus, Info, Wrench, Check, Briefcase,
   ChevronRight, ChevronDown, X, Filter, Grid3X3, List,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -212,7 +212,7 @@ export default function Markedsplass() {
                 className="rounded-sm text-center py-16"
                 style={{ background: "rgba(255,255,255,0.85)", border: "1px solid rgba(0,0,0,0.06)" }}
               >
-                <ShoppingBag className="w-10 h-10 mx-auto mb-3 text-muted-foreground" />
+                <Wrench className="w-10 h-10 mx-auto mb-3 text-muted-foreground" />
                 <p className="text-muted-foreground text-sm">
                   {searchQuery ? "Ingen treff" : "Ingen varer ennå"}
                 </p>
@@ -288,21 +288,12 @@ function FeedGridItem({
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center">
-              {item.type === "part" ? (
-                <Wrench className="w-8 h-8 text-muted-foreground/50" />
-              ) : (
-                <ShoppingBag className="w-8 h-8 text-muted-foreground/50" />
-              )}
+              <Wrench className="w-8 h-8 text-muted-foreground/50" />
             </div>
           )}
           {item.condition && (
             <span className={`absolute top-2 left-2 text-[9px] uppercase tracking-wider font-semibold px-1.5 py-0.5 rounded-sm ${CONDITION_COLORS[item.condition] || "bg-muted text-foreground"}`}>
               {item.condition}
-            </span>
-          )}
-          {item.type === "listing" && (
-            <span className="absolute top-2 right-2 text-[9px] uppercase tracking-wider font-semibold px-1.5 py-0.5 rounded-sm bg-primary/80 text-white">
-              Annonse
             </span>
           )}
         </div>
@@ -375,7 +366,7 @@ function FeedListItem({
           <img src={getThumbnailUrl(item.coverImage, 300)} alt={item.title} loading="lazy" className="w-full h-full object-cover" />
         ) : (
           <div className="w-full h-full bg-muted flex items-center justify-center">
-            {item.type === "part" ? <Wrench className="w-6 h-6 text-muted-foreground" /> : <ShoppingBag className="w-6 h-6 text-muted-foreground" />}
+            <Wrench className="w-6 h-6 text-muted-foreground" />
           </div>
         )}
         {item.condition && (
