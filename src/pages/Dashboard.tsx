@@ -301,7 +301,7 @@ export default function Dashboard() {
             </h3>
             <p className={`text-base ${profileNeedsAttention ? 'text-foreground font-medium' : 'text-muted-foreground'}`}>
               {ownerProfile 
-                ? (profileNeedsAttention ? 'Fullfør profilen din →' : 'Rediger entusiastprofil') 
+                ? (profileNeedsAttention ? 'Fullfør profilen din →' : 'Vises i eier- og selgerprofil') 
                 : 'Opprett entusiastprofil →'}
             </p>
             {profileNeedsAttention && (
