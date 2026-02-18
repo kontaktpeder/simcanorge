@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { forwardRef, useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X, LogIn, User, Bug } from "lucide-react";
 import { useCart } from "@/hooks/useCart";
@@ -33,15 +33,15 @@ const BOOST_MS = 1000; // boost duration
 const DRIVE_HOME_DURATION = 900; // ms
 
 // Component for JS-controlled drive-home animation - drives smoothly to garage
-function DriveHomeAnimation({ 
-  startX, 
-  simcaRallye, 
-  garageRef 
-}: { 
+const DriveHomeAnimation = forwardRef<HTMLDivElement, { 
   startX: number; 
   simcaRallye: string;
   garageRef: React.RefObject<HTMLDivElement>;
-}) {
+}>(function DriveHomeAnimation({ 
+  startX, 
+  simcaRallye, 
+  garageRef 
+}, _ref) {
   const carRef = useRef<HTMLDivElement | null>(null);
   const startRef = useRef<number | null>(null);
   const [showGarage, setShowGarage] = useState(false);
@@ -182,7 +182,7 @@ function DriveHomeAnimation({
       </div>
     </>
   );
-}
+});
 
 export function Header() {
   const location = useLocation();
