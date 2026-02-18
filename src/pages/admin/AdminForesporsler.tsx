@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { supabase } from "@/integrations/supabase/client";
@@ -20,7 +20,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Mail, Phone, Car, Calendar, Check, Eye, Wrench, Trash2 } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Mail, Phone, Car, Calendar, Check, Eye, Wrench, Trash2, User, Package, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { nb } from "date-fns/locale";
@@ -29,6 +30,7 @@ interface InquiryItem {
   id: string;
   part_title: string;
   part_id: string | null;
+  marketplace_item_id: string | null;
   parts: {
     id: string;
     title: string;
@@ -54,6 +56,7 @@ interface Inquiry {
   status: string | null;
   admin_notes: string | null;
   created_at: string;
+  recipient_owner_id: string | null;
   inquiry_items: InquiryItem[];
 }
 
@@ -91,7 +94,7 @@ const AdminForesporsler = () => {
         .from("inquiries")
         .select(`
           *,
-          inquiry_items(id, part_title, part_id, parts(id, title, description, condition, price_min, price_max, price_note, image_url, part_images(image_url, sort_order)))
+          inquiry_items(id, part_title, part_id, marketplace_item_id, parts(id, title, description, condition, price_min, price_max, price_note, image_url, part_images(image_url, sort_order)))
         `)
         .order("created_at", { ascending: false });
 
@@ -99,6 +102,63 @@ const AdminForesporsler = () => {
       return data as Inquiry[];
     },
   });
+
+  // Collect unique owner IDs and marketplace_item IDs for enrichment
+  const ownerIds = useMemo(() => {
+    if (!inquiries) return [];
+    return [...new Set(inquiries.map(i => i.recipient_owner_id).filter(Boolean))] as string[];
+  }, [inquiries]);
+
+  const marketplaceItemIds = useMemo(() => {
+    if (!inquiries) return [];
+    const ids: string[] = [];
+    inquiries.forEach(i => i.inquiry_items.forEach(item => {
+      if (item.marketplace_item_id) ids.push(item.marketplace_item_id);
+    }));
+    return [...new Set(ids)];
+  }, [inquiries]);
+
+  // Fetch owner profiles
+  const { data: ownersData } = useQuery({
+    queryKey: ["admin-inquiry-owners", ownerIds],
+    queryFn: async () => {
+      if (!ownerIds.length) return [];
+      const { data, error } = await supabase
+        .from("owners")
+        .select("id, display_name, avatar_url, slug, location, contact_email")
+        .in("id", ownerIds);
+      if (error) throw error;
+      return data;
+    },
+    enabled: ownerIds.length > 0,
+  });
+
+  // Fetch marketplace items with images
+  const { data: marketplaceData } = useQuery({
+    queryKey: ["admin-inquiry-marketplace", marketplaceItemIds],
+    queryFn: async () => {
+      if (!marketplaceItemIds.length) return [];
+      const { data, error } = await supabase
+        .from("marketplace_items")
+        .select("id, title, slug, price, price_note, description, owner_id, marketplace_images(image_url, sort_order)")
+        .in("id", marketplaceItemIds);
+      if (error) throw error;
+      return data;
+    },
+    enabled: marketplaceItemIds.length > 0,
+  });
+
+  const ownersMap = useMemo(() => {
+    const map = new Map<string, typeof ownersData extends (infer T)[] ? T : never>();
+    ownersData?.forEach(o => map.set(o.id, o));
+    return map;
+  }, [ownersData]);
+
+  const marketplaceMap = useMemo(() => {
+    const map = new Map<string, NonNullable<typeof marketplaceData>[number]>();
+    marketplaceData?.forEach(m => map.set(m.id, m));
+    return map;
+  }, [marketplaceData]);
 
   const markAsRead = useMutation({
     mutationFn: async (id: string) => {
@@ -162,7 +222,48 @@ const AdminForesporsler = () => {
     setIsSaving(false);
   };
 
+  const getRecipientLabel = (inquiry: Inquiry) => {
+    if (!inquiry.recipient_owner_id) return "Simca Norge";
+    const owner = ownersMap.get(inquiry.recipient_owner_id);
+    return owner?.display_name || "Ukjent selger";
+  };
+
   const unreadCount = inquiries?.filter((i) => !i.read).length || 0;
+
+  const getItemImage = (item: InquiryItem) => {
+    // Parts image
+    if (item.parts) {
+      return item.parts.part_images?.sort((a, b) => a.sort_order - b.sort_order)[0]?.image_url || item.parts.image_url;
+    }
+    // Marketplace item image
+    if (item.marketplace_item_id) {
+      const mi = marketplaceMap.get(item.marketplace_item_id);
+      if (mi?.marketplace_images?.length) {
+        return [...mi.marketplace_images].sort((a, b) => a.sort_order - b.sort_order)[0]?.image_url;
+      }
+    }
+    return null;
+  };
+
+  const getItemDetails = (item: InquiryItem) => {
+    if (item.parts) {
+      const part = item.parts;
+      const price = part.price_min
+        ? part.price_max && part.price_max !== part.price_min
+          ? `kr ${part.price_min} – ${part.price_max}`
+          : `kr ${part.price_min}`
+        : null;
+      return { price, priceNote: part.price_note, condition: part.condition, description: part.description, type: "part" as const, slug: null };
+    }
+    if (item.marketplace_item_id) {
+      const mi = marketplaceMap.get(item.marketplace_item_id);
+      if (mi) {
+        const price = mi.price ? `kr ${mi.price}` : null;
+        return { price, priceNote: mi.price_note, condition: null, description: mi.description, type: "listing" as const, slug: mi.slug };
+      }
+    }
+    return { price: null, priceNote: null, condition: null, description: null, type: "unknown" as const, slug: null };
+  };
 
   return (
     <AdminLayout title="FORESPØRSLER">
@@ -189,233 +290,290 @@ const AdminForesporsler = () => {
           </Card>
         ) : (
           <div className="grid gap-4">
-            {inquiries.map((inquiry) => (
-              <Card
-                key={inquiry.id}
-                className={`cursor-pointer hover:shadow-md transition-shadow ${
-                  !inquiry.read ? "border-accent border-2" : ""
-                }`}
-                onClick={() => openInquiry(inquiry)}
-              >
-                <CardContent className="p-4">
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1 flex-wrap">
-                        {!inquiry.read && (
-                          <span className="w-2 h-2 bg-accent rounded-full flex-shrink-0" />
-                        )}
-                        <h3 className="font-display text-lg truncate">
-                          {inquiry.customer_name}
-                        </h3>
-                        <Badge className="bg-primary">
-                          {inquiry.inquiry_items.length} del{inquiry.inquiry_items.length !== 1 ? "er" : ""}
-                        </Badge>
-                        {inquiry.status && (
-                          <Badge className={statusColors[inquiry.status as InquiryStatus] || "bg-gray-500"}>
-                            {statusLabels[inquiry.status as InquiryStatus] || inquiry.status}
+            {inquiries.map((inquiry) => {
+              const recipientLabel = getRecipientLabel(inquiry);
+              return (
+                <Card
+                  key={inquiry.id}
+                  className={`cursor-pointer hover:shadow-md transition-shadow ${
+                    !inquiry.read ? "border-accent border-2" : ""
+                  }`}
+                  onClick={() => openInquiry(inquiry)}
+                >
+                  <CardContent className="p-4">
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1 flex-wrap">
+                          {!inquiry.read && (
+                            <span className="w-2 h-2 bg-accent rounded-full flex-shrink-0" />
+                          )}
+                          <h3 className="font-display text-lg truncate">
+                            {inquiry.customer_name}
+                          </h3>
+                          <Badge variant="outline" className="text-xs">
+                            → {recipientLabel}
                           </Badge>
+                          <Badge className="bg-primary">
+                            {inquiry.inquiry_items.length} del{inquiry.inquiry_items.length !== 1 ? "er" : ""}
+                          </Badge>
+                          {inquiry.status && (
+                            <Badge className={statusColors[inquiry.status as InquiryStatus] || "bg-gray-500"}>
+                              {statusLabels[inquiry.status as InquiryStatus] || inquiry.status}
+                            </Badge>
+                          )}
+                        </div>
+                        <p className="text-sm text-muted-foreground">
+                          {format(new Date(inquiry.created_at), "d. MMM yyyy 'kl.' HH:mm", { locale: nb })}
+                        </p>
+                        {inquiry.car_model && (
+                          <p className="text-sm text-foreground/70 mt-1 flex items-center gap-1">
+                            <Car className="w-4 h-4" />
+                            {inquiry.car_model} {inquiry.car_year && `(${inquiry.car_year})`}
+                          </p>
+                        )}
+                        {inquiry.message && (
+                          <p className="text-sm text-foreground/70 mt-2 line-clamp-2">
+                            {inquiry.message}
+                          </p>
                         )}
                       </div>
-                      <p className="text-sm text-muted-foreground">
-                        {format(new Date(inquiry.created_at), "d. MMM yyyy 'kl.' HH:mm", { locale: nb })}
-                      </p>
-                      {inquiry.car_model && (
-                        <p className="text-sm text-foreground/70 mt-1 flex items-center gap-1">
-                          <Car className="w-4 h-4" />
-                          {inquiry.car_model} {inquiry.car_year && `(${inquiry.car_year})`}
-                        </p>
-                      )}
-                      {inquiry.message && (
-                        <p className="text-sm text-foreground/70 mt-2 line-clamp-2">
-                          {inquiry.message}
-                        </p>
-                      )}
+                      <Button variant="ghost" size="icon">
+                        <Eye className="w-4 h-4" />
+                      </Button>
                     </div>
-                    <Button variant="ghost" size="icon">
-                      <Eye className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
         )}
 
         {/* Detail Dialog */}
         <Dialog open={!!selectedInquiry} onOpenChange={() => setSelectedInquiry(null)}>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-            {selectedInquiry && (
-              <>
-                <DialogHeader>
-                  <DialogTitle className="font-display text-2xl">
-                    Forespørsel fra {selectedInquiry.customer_name}
-                  </DialogTitle>
-                </DialogHeader>
+            {selectedInquiry && (() => {
+              const recipientOwner = selectedInquiry.recipient_owner_id
+                ? ownersMap.get(selectedInquiry.recipient_owner_id)
+                : null;
+              const isSellerInquiry = !!selectedInquiry.recipient_owner_id;
 
-                <div className="space-y-6">
-                  {/* Contact info */}
-                  <div className="grid gap-3">
-                    <div className="flex items-center gap-2 text-muted-foreground">
-                      <Calendar className="w-4 h-4" />
-                      {format(new Date(selectedInquiry.created_at), "d. MMMM yyyy 'kl.' HH:mm", { locale: nb })}
+              return (
+                <>
+                  <DialogHeader>
+                    <DialogTitle className="font-display text-2xl">
+                      Forespørsel fra {selectedInquiry.customer_name}
+                    </DialogTitle>
+                  </DialogHeader>
+
+                  <div className="space-y-6">
+                    {/* Recipient / Seller info */}
+                    <div className="bg-muted/60 border border-border rounded-lg p-4">
+                      <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">
+                        Sendt til
+                      </p>
+                      {isSellerInquiry && recipientOwner ? (
+                        <div className="flex items-center gap-3">
+                          <Avatar className="h-10 w-10">
+                            <AvatarImage src={recipientOwner.avatar_url || undefined} />
+                            <AvatarFallback><User className="w-5 h-5" /></AvatarFallback>
+                          </Avatar>
+                          <div className="flex-1 min-w-0">
+                            <p className="font-display text-lg font-semibold">{recipientOwner.display_name}</p>
+                            {recipientOwner.location && (
+                              <p className="text-sm text-muted-foreground">{recipientOwner.location}</p>
+                            )}
+                            {recipientOwner.contact_email && (
+                              <p className="text-sm text-muted-foreground">{recipientOwner.contact_email}</p>
+                            )}
+                          </div>
+                          {recipientOwner.slug && (
+                            <Button variant="ghost" size="sm" asChild>
+                              <a href={`/profil/${recipientOwner.slug}`} target="_blank" rel="noopener noreferrer">
+                                <ExternalLink className="w-4 h-4" />
+                              </a>
+                            </Button>
+                          )}
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-3">
+                          <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                            <Package className="w-5 h-5 text-primary" />
+                          </div>
+                          <p className="font-display text-lg font-semibold">Simca Norge (admin)</p>
+                        </div>
+                      )}
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Mail className="w-4 h-4 text-muted-foreground" />
-                      <a href={`mailto:${selectedInquiry.email}`} className="text-primary hover:underline">
-                        {selectedInquiry.email}
-                      </a>
-                    </div>
-                    {selectedInquiry.phone && (
+
+                    {/* Contact info */}
+                    <div className="grid gap-3">
+                      <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Kjøper</p>
+                      <div className="flex items-center gap-2 text-muted-foreground">
+                        <Calendar className="w-4 h-4" />
+                        {format(new Date(selectedInquiry.created_at), "d. MMMM yyyy 'kl.' HH:mm", { locale: nb })}
+                      </div>
                       <div className="flex items-center gap-2">
-                        <Phone className="w-4 h-4 text-muted-foreground" />
-                        <a href={`tel:${selectedInquiry.phone}`} className="text-primary hover:underline">
-                          {selectedInquiry.phone}
+                        <Mail className="w-4 h-4 text-muted-foreground" />
+                        <a href={`mailto:${selectedInquiry.email}`} className="text-primary hover:underline">
+                          {selectedInquiry.email}
                         </a>
                       </div>
-                    )}
-                    {selectedInquiry.car_model && (
-                      <div className="flex items-center gap-2 text-muted-foreground">
-                        <Car className="w-4 h-4" />
-                        {selectedInquiry.car_model}
-                        {selectedInquiry.car_year && ` (${selectedInquiry.car_year})`}
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Parts requested – visual cards */}
-                  <div>
-                    <h4 className="font-display text-lg mb-3 flex items-center gap-2">
-                      <Wrench className="w-4 h-4" />
-                      Etterspurte deler ({selectedInquiry.inquiry_items.length})
-                    </h4>
-                    <div className="grid gap-4">
-                      {selectedInquiry.inquiry_items.map((item) => {
-                        const part = item.parts;
-                        const imgUrl = part?.part_images?.sort((a, b) => a.sort_order - b.sort_order)[0]?.image_url || part?.image_url;
-                        const price = part?.price_min
-                          ? part.price_max && part.price_max !== part.price_min
-                            ? `kr ${part.price_min} – ${part.price_max}`
-                            : `kr ${part.price_min}`
-                          : null;
-
-                        return (
-                          <div
-                            key={item.id}
-                            className="flex gap-5 bg-muted/40 border border-border/50 rounded-lg p-4 items-start"
-                          >
-                            {/* Thumbnail */}
-                            {imgUrl ? (
-                              <img
-                                src={imgUrl}
-                                alt={item.part_title}
-                                className="w-32 h-32 rounded-md object-cover flex-shrink-0 border border-border/30"
-                              />
-                            ) : (
-                              <div className="w-32 h-32 rounded-md bg-muted flex items-center justify-center flex-shrink-0 border border-border/30">
-                                <Wrench className="w-8 h-8 text-muted-foreground/40" />
-                              </div>
-                            )}
-
-                            {/* Details */}
-                            <div className="flex-1 min-w-0">
-                              <h5 className="font-display text-lg md:text-xl font-semibold leading-tight">
-                                {item.part_title}
-                              </h5>
-                              {price && (
-                                <p className="font-serif text-base md:text-lg font-bold mt-1">{price}
-                                  {part?.price_note && <span className="text-muted-foreground font-normal ml-2 text-sm">{part.price_note}</span>}
-                                </p>
-                              )}
-                              {part?.condition && (
-                                <Badge variant="outline" className="mt-1.5 text-sm">{part.condition}</Badge>
-                              )}
-                              {part?.description && (
-                                <p className="text-sm text-muted-foreground mt-1.5 line-clamp-3">{part.description}</p>
-                              )}
-                            </div>
-
-                            <Check className="w-6 h-6 text-green-600 flex-shrink-0 mt-1" />
-                          </div>
-                        );
-                      })}
+                      {selectedInquiry.phone && (
+                        <div className="flex items-center gap-2">
+                          <Phone className="w-4 h-4 text-muted-foreground" />
+                          <a href={`tel:${selectedInquiry.phone}`} className="text-primary hover:underline">
+                            {selectedInquiry.phone}
+                          </a>
+                        </div>
+                      )}
+                      {selectedInquiry.car_model && (
+                        <div className="flex items-center gap-2 text-muted-foreground">
+                          <Car className="w-4 h-4" />
+                          {selectedInquiry.car_model}
+                          {selectedInquiry.car_year && ` (${selectedInquiry.car_year})`}
+                        </div>
+                      )}
                     </div>
-                  </div>
 
-                  {/* Message */}
-                  {selectedInquiry.message && (
+                    {/* Parts requested – visual cards */}
                     <div>
-                      <h4 className="font-display text-lg mb-2">Melding</h4>
-                      <div className="bg-muted/50 rounded-lg p-4 whitespace-pre-wrap">
-                        {selectedInquiry.message}
+                      <h4 className="font-display text-lg mb-3 flex items-center gap-2">
+                        <Wrench className="w-4 h-4" />
+                        Etterspurte varer ({selectedInquiry.inquiry_items.length})
+                      </h4>
+                      <div className="grid gap-4">
+                        {selectedInquiry.inquiry_items.map((item) => {
+                          const imgUrl = getItemImage(item);
+                          const details = getItemDetails(item);
+
+                          return (
+                            <div
+                              key={item.id}
+                              className="flex gap-5 bg-muted/40 border border-border/50 rounded-lg p-4 items-start"
+                            >
+                              {/* Thumbnail */}
+                              {imgUrl ? (
+                                <img
+                                  src={imgUrl}
+                                  alt={item.part_title}
+                                  className="w-32 h-32 rounded-md object-cover flex-shrink-0 border border-border/30"
+                                />
+                              ) : (
+                                <div className="w-32 h-32 rounded-md bg-muted flex items-center justify-center flex-shrink-0 border border-border/30">
+                                  <Wrench className="w-8 h-8 text-muted-foreground/40" />
+                                </div>
+                              )}
+
+                              {/* Details */}
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-2 mb-1">
+                                  <h5 className="font-display text-lg md:text-xl font-semibold leading-tight">
+                                    {item.part_title}
+                                  </h5>
+                                  <Badge variant="secondary" className="text-[10px] uppercase">
+                                    {details.type === "part" ? "Bildel" : details.type === "listing" ? "Annonse" : "—"}
+                                  </Badge>
+                                </div>
+                                {details.price && (
+                                  <p className="font-serif text-base md:text-lg font-bold mt-1">{details.price}
+                                    {details.priceNote && <span className="text-muted-foreground font-normal ml-2 text-sm">{details.priceNote}</span>}
+                                  </p>
+                                )}
+                                {details.condition && (
+                                  <Badge variant="outline" className="mt-1.5 text-sm">{details.condition}</Badge>
+                                )}
+                                {details.description && (
+                                  <p className="text-sm text-muted-foreground mt-1.5 line-clamp-3">{details.description}</p>
+                                )}
+                                {details.slug && (
+                                  <a href={`/annonse/${details.slug}`} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline mt-1 inline-flex items-center gap-1">
+                                    <ExternalLink className="w-3 h-3" /> Se annonse
+                                  </a>
+                                )}
+                              </div>
+
+                              <Check className="w-6 h-6 text-green-600 flex-shrink-0 mt-1" />
+                            </div>
+                          );
+                        })}
                       </div>
                     </div>
-                  )}
 
-                  {/* Status & Notes */}
-                  <div className="space-y-4 pt-4 border-t">
-                    <div className="space-y-2">
-                      <Label>Status</Label>
-                      <Select value={status} onValueChange={(v) => setStatus(v as InquiryStatus)}>
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="pending">Venter</SelectItem>
-                          <SelectItem value="contacted">Kontaktet</SelectItem>
-                          <SelectItem value="quote_sent">Tilbud sendt</SelectItem>
-                          <SelectItem value="sold">Solgt</SelectItem>
-                          <SelectItem value="not_available">Ikke tilgjengelig</SelectItem>
-                          <SelectItem value="cancelled">Avbrutt</SelectItem>
-                        </SelectContent>
-                      </Select>
+                    {/* Message */}
+                    {selectedInquiry.message && (
+                      <div>
+                        <h4 className="font-display text-lg mb-2">Melding</h4>
+                        <div className="bg-muted/50 rounded-lg p-4 whitespace-pre-wrap">
+                          {selectedInquiry.message}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Status & Notes */}
+                    <div className="space-y-4 pt-4 border-t">
+                      <div className="space-y-2">
+                        <Label>Status</Label>
+                        <Select value={status} onValueChange={(v) => setStatus(v as InquiryStatus)}>
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="pending">Venter</SelectItem>
+                            <SelectItem value="contacted">Kontaktet</SelectItem>
+                            <SelectItem value="quote_sent">Tilbud sendt</SelectItem>
+                            <SelectItem value="sold">Solgt</SelectItem>
+                            <SelectItem value="not_available">Ikke tilgjengelig</SelectItem>
+                            <SelectItem value="cancelled">Avbrutt</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label>Admin notater</Label>
+                        <Textarea
+                          value={adminNotes}
+                          onChange={(e) => setAdminNotes(e.target.value)}
+                          rows={4}
+                          placeholder="Interne notater om denne forespørselen..."
+                        />
+                      </div>
+
+                      <Button onClick={handleSave} disabled={isSaving} className="w-full">
+                        {isSaving ? 'Lagrer...' : 'Lagre'}
+                      </Button>
                     </div>
 
-                    <div className="space-y-2">
-                      <Label>Admin notater</Label>
-                      <Textarea
-                        value={adminNotes}
-                        onChange={(e) => setAdminNotes(e.target.value)}
-                        rows={4}
-                        placeholder="Interne notater om denne forespørselen..."
-                      />
-                    </div>
-
-                    <Button onClick={handleSave} disabled={isSaving} className="w-full">
-                      {isSaving ? 'Lagrer...' : 'Lagre'}
-                    </Button>
-                  </div>
-
-                  {/* Actions */}
-                  <div className="pt-4 border-t flex flex-wrap gap-3">
-                    <Button asChild>
-                      <a href={`mailto:${selectedInquiry.email}?subject=Re: Din forespørsel hos Simca Norge`}>
-                        <Mail className="w-4 h-4 mr-2" />
-                        Svar på e-post
-                      </a>
-                    </Button>
-                    {selectedInquiry.phone && (
-                      <Button variant="outline" asChild>
-                        <a href={`tel:${selectedInquiry.phone}`}>
-                          <Phone className="w-4 h-4 mr-2" />
-                          Ring
+                    {/* Actions */}
+                    <div className="pt-4 border-t flex flex-wrap gap-3">
+                      <Button asChild>
+                        <a href={`mailto:${selectedInquiry.email}?subject=Re: Din forespørsel hos Simca Norge`}>
+                          <Mail className="w-4 h-4 mr-2" />
+                          Svar på e-post
                         </a>
                       </Button>
-                    )}
-                    <Button
-                      variant="destructive"
-                      onClick={() => {
-                        if (confirm("Er du sikker på at du vil slette denne forespørselen?")) {
-                          deleteInquiry.mutate(selectedInquiry.id);
-                        }
-                      }}
-                    >
-                      <Trash2 className="w-4 h-4 mr-2" />
-                      Slett forespørsel
-                    </Button>
+                      {selectedInquiry.phone && (
+                        <Button variant="outline" asChild>
+                          <a href={`tel:${selectedInquiry.phone}`}>
+                            <Phone className="w-4 h-4 mr-2" />
+                            Ring
+                          </a>
+                        </Button>
+                      )}
+                      <Button
+                        variant="destructive"
+                        onClick={() => {
+                          if (confirm("Er du sikker på at du vil slette denne forespørselen?")) {
+                            deleteInquiry.mutate(selectedInquiry.id);
+                          }
+                        }}
+                      >
+                        <Trash2 className="w-4 h-4 mr-2" />
+                        Slett forespørsel
+                      </Button>
+                    </div>
                   </div>
-                </div>
-              </>
-            )}
+                </>
+              );
+            })()}
           </DialogContent>
         </Dialog>
       </div>
