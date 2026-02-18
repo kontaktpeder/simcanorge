@@ -56,7 +56,7 @@ export default function Markedsplass() {
 
       <PageHeader
         title="MARKEDSPLASS"
-        subtitle="Bildeler, tilbehør og annonser fra Simca-entusiaster"
+        subtitle="Bildeler, tilbehør og annonser fra Simca, Talbot og Matra-entusiaster"
       />
 
       {/* Toolbox Banner */}
