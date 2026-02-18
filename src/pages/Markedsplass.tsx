@@ -334,7 +334,7 @@ function FeedGridItem({
               {inCart ? (
                 <><Check className="w-4 h-4" />Lagt til</>
               ) : (
-                <><img src={toolboxIcon} alt="" className="w-6 h-6 object-contain" />Verktøykassa</>
+                <><img src={toolboxIcon} alt="" className="w-6 h-6 object-contain" />Legg i verktøykassa</>
               )}
             </button>
           </div>
