@@ -13,7 +13,7 @@ export function useMarkedsplassFeed(filter: FeedFilter, search?: string) {
         .from("parts")
         .select("id, title, slug, description, image_url, category_id, price_min, price_max, price_note, condition, created_at, part_images(id, image_url, sort_order)")
         .eq("published", true)
-        .order("title");
+        .order("created_at", { ascending: false });
 
       if (search) {
         partsQuery = partsQuery.ilike("title", `%${search}%`);

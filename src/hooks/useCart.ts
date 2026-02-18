@@ -57,8 +57,8 @@ export function useCart() {
     });
   }, []);
 
-  const removeItem = useCallback((id: string) => {
-    setItems((prev) => prev.filter((i) => i.id !== id));
+  const removeItem = useCallback((type: "part" | "listing", id: string) => {
+    setItems((prev) => prev.filter((i) => !(i.type === type && i.id === id)));
   }, []);
 
   const clearCart = useCallback(() => {
@@ -66,8 +66,8 @@ export function useCart() {
   }, []);
 
   const isInCart = useCallback(
-    (id: string) => {
-      return items.some((i) => i.id === id);
+    (type: "part" | "listing", id: string) => {
+      return items.some((i) => i.type === type && i.id === id);
     },
     [items]
   );

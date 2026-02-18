@@ -31,8 +31,8 @@ export default function Markedsplass() {
   const { items: cartItems, addItem, removeItem, isInCart, itemCount } = useCart();
 
   const handleToggleCart = (item: FeedItem) => {
-    if (isInCart(item.id)) {
-      removeItem(item.id);
+    if (isInCart(item.type, item.id)) {
+      removeItem(item.type, item.id);
       toast.info(`${item.title} fjernet fra verktøykassen`);
     } else {
       addItem({ type: item.type, id: item.id, slug: item.slug, title: item.title });
@@ -221,14 +221,14 @@ export default function Markedsplass() {
               /* LIST VIEW */
               <div className="space-y-3">
                 {filteredItems.map((item) => (
-                  <FeedListItem key={`${item.type}-${item.id}`} item={item} inCart={isInCart(item.id)} onToggleCart={() => handleToggleCart(item)} />
+                  <FeedListItem key={`${item.type}-${item.id}`} item={item} inCart={isInCart(item.type, item.id)} onToggleCart={() => handleToggleCart(item)} />
                 ))}
               </div>
             ) : (
               /* GRID VIEW */
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-7">
                 {filteredItems.map((item, index) => (
-                  <FeedGridItem key={`${item.type}-${item.id}`} item={item} index={index} inCart={isInCart(item.id)} onToggleCart={() => handleToggleCart(item)} />
+                  <FeedGridItem key={`${item.type}-${item.id}`} item={item} index={index} inCart={isInCart(item.type, item.id)} onToggleCart={() => handleToggleCart(item)} />
                 ))}
               </div>
             )}
@@ -266,7 +266,7 @@ function FeedGridItem({
   inCart: boolean;
   onToggleCart: () => void;
 }) {
-  const detailUrl = `/markedsplass/${item.slug}`;
+  const detailUrl = `/annonse/${item.slug}`;
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -363,7 +363,7 @@ function FeedListItem({
   inCart: boolean;
   onToggleCart: () => void;
 }) {
-  const detailUrl = `/markedsplass/${item.slug}`;
+  const detailUrl = `/annonse/${item.slug}`;
   return (
     <Link
       to={detailUrl}

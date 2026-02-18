@@ -54,20 +54,9 @@ export default function AnnonseDetalj() {
         .select("id, title, slug, description, image_url, category_id, price_min, price_max, price_note, condition, part_images(id, image_url, sort_order)")
         .eq("published", true);
 
-      // Try matching by slug
+      // Match by slug only
       const { data: bySlug } = await query.eq("slug", slug).maybeSingle();
-      let result = bySlug;
-
-      // Fallback: try by ID (for old /deler/:partId URLs)
-      if (!result) {
-        const { data: byId } = await supabase
-          .from("parts")
-          .select("id, title, slug, description, image_url, category_id, price_min, price_max, price_note, condition, part_images(id, image_url, sort_order)")
-          .eq("published", true)
-          .eq("id", slug)
-          .maybeSingle();
-        result = byId;
-      }
+      const result = bySlug;
 
       if (result) {
         setPart(result);
@@ -133,12 +122,12 @@ function PartDetailView({ part, category }: { part: any; category: any }) {
   }
 
   const price = formatPrice(part.price_min, part.price_max);
-  const inCart = isInCart(part.id);
+  const inCart = isInCart("part", part.id);
   const conditionInfo = part.condition ? CONDITION_LABELS[part.condition] : null;
 
   const handleToggleCart = () => {
     if (inCart) {
-      removeItem(part.id);
+      removeItem("part", part.id);
     } else {
       addItem({ type: "part", id: part.id, slug: part.slug || part.id, title: part.title });
     }
@@ -237,11 +226,11 @@ function MarketplaceDetailView({ item }: { item: any }) {
   const images = [...(item.marketplace_images || [])].sort((a: any, b: any) => (a.sort_order || 0) - (b.sort_order || 0));
   const owner = item.owners as any;
   const category = item.marketplace_categories as any;
-  const inCart = isInCart(item.id);
+  const inCart = isInCart("listing", item.id);
 
   const handleToggleCart = () => {
     if (inCart) {
-      removeItem(item.id);
+      removeItem("listing", item.id);
     } else {
       addItem({ type: "listing", id: item.id, slug: item.slug, title: item.title });
     }
