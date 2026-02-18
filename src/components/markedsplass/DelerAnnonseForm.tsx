@@ -22,6 +22,7 @@ interface DelerAnnonseFormProps {
   published?: boolean;
   onPublishedChange?: (v: boolean) => void;
   children?: React.ReactNode;
+  disabled?: boolean;
 }
 
 export function DelerAnnonseForm({
@@ -34,6 +35,7 @@ export function DelerAnnonseForm({
   published = false,
   onPublishedChange,
   children,
+  disabled = false,
 }: DelerAnnonseFormProps) {
   const { data: categories = [] } = useUnifiedCategories();
   const roots = getRootCategories(categories);
@@ -126,6 +128,7 @@ export function DelerAnnonseForm({
           placeholder="f.eks. Bremsekloss fremre"
           required
           className="mt-1"
+          disabled={disabled}
         />
       </div>
 
@@ -139,11 +142,12 @@ export function DelerAnnonseForm({
                 key={r.id}
                 type="button"
                 onClick={() => handleRootChange(r.id)}
+                disabled={disabled}
                 className={`px-4 py-2 rounded-lg text-sm font-medium border transition-colors ${
                   values.rootCategoryId === r.id
                     ? 'bg-primary text-primary-foreground border-primary'
                     : 'bg-card text-foreground border-border hover:border-primary/30'
-                }`}
+                } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
                 {r.name}
               </button>
@@ -176,6 +180,7 @@ export function DelerAnnonseForm({
           onChange={(e) => setValues((v) => ({ ...v, description: e.target.value }))}
           placeholder="Beskriv varen..."
           className="mt-1 min-h-[100px]"
+          disabled={disabled}
         />
       </div>
 
@@ -183,15 +188,16 @@ export function DelerAnnonseForm({
       <div className="grid grid-cols-2 gap-4">
         <div>
           <Label htmlFor="priceMin">{isDeler ? 'Pris fra (kr)' : 'Pris (kr)'}</Label>
-          <Input
-            id="priceMin"
-            type="number"
-            min={0}
-            value={values.priceMin}
-            onChange={(e) => setValues((v) => ({ ...v, priceMin: e.target.value }))}
-            className="mt-1"
-            placeholder="f.eks. 500"
-          />
+            <Input
+              id="priceMin"
+              type="number"
+              min={0}
+              value={values.priceMin}
+              onChange={(e) => setValues((v) => ({ ...v, priceMin: e.target.value }))}
+              className="mt-1"
+              placeholder="f.eks. 500"
+              disabled={disabled}
+            />
         </div>
         {isDeler && (
           <div>
@@ -204,6 +210,7 @@ export function DelerAnnonseForm({
               onChange={(e) => setValues((v) => ({ ...v, priceMax: e.target.value }))}
               className="mt-1"
               placeholder="f.eks. 1000"
+              disabled={disabled}
             />
           </div>
         )}
@@ -217,6 +224,7 @@ export function DelerAnnonseForm({
           onChange={(e) => setValues((v) => ({ ...v, priceNote: e.target.value }))}
           placeholder="f.eks. Kan diskuteres"
           className="mt-1"
+          disabled={disabled}
         />
       </div>
 
@@ -227,6 +235,7 @@ export function DelerAnnonseForm({
           <select
             value={values.condition}
             onChange={(e) => setValues((v) => ({ ...v, condition: e.target.value }))}
+            disabled={disabled}
             className="w-full h-11 mt-1 rounded-md border border-input bg-background px-3 py-2 text-sm"
           >
             <option value="">Velg...</option>
@@ -243,13 +252,14 @@ export function DelerAnnonseForm({
       {!isDeler && (
         <div>
           <Label htmlFor="location">Sted</Label>
-          <Input
-            id="location"
-            value={values.location}
-            onChange={(e) => setValues((v) => ({ ...v, location: e.target.value }))}
-            placeholder="f.eks. Oslo"
-            className="mt-1"
-          />
+            <Input
+              id="location"
+              value={values.location}
+              onChange={(e) => setValues((v) => ({ ...v, location: e.target.value }))}
+              placeholder="f.eks. Oslo"
+              className="mt-1"
+              disabled={disabled}
+            />
         </div>
       )}
 
@@ -272,24 +282,26 @@ export function DelerAnnonseForm({
         </div>
       )}
 
-      <div className="flex flex-col sm:flex-row gap-3 pt-4">
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className="btn-retro flex-1 h-12 disabled:opacity-50 text-base"
-        >
-          {isSubmitting ? 'Lagrer...' : submitLabel}
-        </button>
-        {onCancel && (
+      {!disabled && (
+        <div className="flex flex-col sm:flex-row gap-3 pt-4">
           <button
-            type="button"
-            onClick={onCancel}
-            className="btn-retro bg-muted text-foreground h-12"
+            type="submit"
+            disabled={isSubmitting}
+            className="btn-retro flex-1 h-12 disabled:opacity-50 text-base"
           >
-            Avbryt
+            {isSubmitting ? 'Lagrer...' : submitLabel}
           </button>
-        )}
-      </div>
+          {onCancel && (
+            <button
+              type="button"
+              onClick={onCancel}
+              className="btn-retro bg-muted text-foreground h-12"
+            >
+              Avbryt
+            </button>
+          )}
+        </div>
+      )}
     </form>
   );
 }
