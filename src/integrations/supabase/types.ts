@@ -726,7 +726,7 @@ export type Database = {
             foreignKeyName: "marketplace_items_category_id_fkey"
             columns: ["category_id"]
             isOneToOne: false
-            referencedRelation: "marketplace_categories"
+            referencedRelation: "categories"
             referencedColumns: ["id"]
           },
           {
