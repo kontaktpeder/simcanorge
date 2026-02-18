@@ -137,7 +137,7 @@ export default function OpprettAnnonse() {
       toast.success('Annonsen er sendt inn', {
         description: 'Du kan se og redigere den under. Den vises på markedsplassen når admin har godkjent den.',
       });
-      queryClient.invalidateQueries({ queryKey: ['my-listings', user?.id] });
+      await queryClient.refetchQueries({ queryKey: ['my-listings', user?.id] });
       navigate('/dashboard/mine-annonser', { state: { justSubmitted: true } });
     } catch (err) {
       console.error('Submit error:', err);
