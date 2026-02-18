@@ -5,7 +5,7 @@ import { GarageLayout } from '@/components/ui/garage/GarageLayout';
 import { EnamelCard } from '@/components/ui/garage/EnamelCard';
 import { BigActionButton } from '@/components/ui/garage/BigActionButton';
 import { SectionHeader } from '@/components/ui/garage/SectionHeader';
-import { Car, Clock, Settings, Bell, CheckCircle, Send, X, User, HelpCircle, Sparkles, ShoppingBag, Plus, ExternalLink, Inbox } from 'lucide-react';
+import { Car, Clock, Settings, Bell, CheckCircle, Send, X, User, HelpCircle, Sparkles, ShoppingBag, Plus, ExternalLink, Inbox, ChevronRight } from 'lucide-react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Loader2 } from 'lucide-react';
@@ -25,12 +25,10 @@ export default function Dashboard() {
   const { startGuide } = useGuide();
   const [showCarForm, setShowCarForm] = useState(false);
   const [showOwnerProfile, setShowOwnerProfile] = useState(() => {
-    // Sjekk URL-parameter kun ved første render
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
       const shouldShow = params.get('showOwnerProfile') === 'true';
       if (shouldShow) {
-        // Fjern parameteren fra URL umiddelbart
         window.history.replaceState({}, '', '/dashboard');
       }
       return shouldShow;
@@ -40,18 +38,15 @@ export default function Dashboard() {
   const formRef = useRef<HTMLDivElement>(null);
   const profileRef = useRef<HTMLDivElement>(null);
   
-  // Hent entusiastprofil for å vise status
   const { data: ownerProfile } = useOwnerProfile(user?.id);
   const { data: myListings } = useMyListings(user?.id);
 
-  // Redirect hvis ikke innlogget
   useEffect(() => {
     if (!authLoading && !user) {
       navigate('/login?returnUrl=/dashboard');
     }
   }, [user, authLoading, navigate]);
 
-  // Scroll til eierprofil hvis åpnet via URL
   useEffect(() => {
     if (showOwnerProfile && profileRef.current) {
       setTimeout(() => {
@@ -60,7 +55,6 @@ export default function Dashboard() {
     }
   }, []);
 
-  // Hent antall biler
   const { data: carCount, isLoading: carsLoading } = useQuery({
     queryKey: ['my-cars-count', user?.id],
     queryFn: async () => {
@@ -75,7 +69,6 @@ export default function Dashboard() {
     enabled: !!user
   });
 
-  // Hent forespørsler for selger
   const { data: myInquiries } = useQuery({
     queryKey: ['my-inquiries-summary', ownerProfile?.id],
     queryFn: async () => {
@@ -92,7 +85,6 @@ export default function Dashboard() {
     enabled: !!ownerProfile?.id,
   });
 
-  // Hent uleste notifikasjoner
   const { data: notifications } = useQuery({
     queryKey: ['notifications', user?.id],
     queryFn: async () => {
@@ -109,7 +101,6 @@ export default function Dashboard() {
     enabled: !!user
   });
 
-  // Marker som lest
   const markAsRead = async (notificationId: string) => {
     await supabase
       .from('notifications')
@@ -118,7 +109,6 @@ export default function Dashboard() {
     queryClient.invalidateQueries({ queryKey: ['notifications', user?.id] });
   };
 
-  // Åpne skjema og scroll til det
   const handleOpenForm = () => {
     setShowCarForm(true);
     setShowOwnerProfile(false);
@@ -127,7 +117,6 @@ export default function Dashboard() {
     }, 100);
   };
 
-  // Åpne profil og scroll til det
   const handleOpenOwnerProfile = () => {
     setShowOwnerProfile(true);
     setShowCarForm(false);
@@ -136,22 +125,18 @@ export default function Dashboard() {
     }, 100);
   };
 
-  // Lukk profil
   const handleCloseOwnerProfile = () => {
     setShowOwnerProfile(false);
   };
 
-  // Start mine biler-guide
   const handleStartMyCarsGuide = () => {
     startGuide('my-cars');
   };
 
-  // Start profil-guide
   const handleStartOwnerProfileGuide = () => {
     startGuide('owner-profile');
   };
 
-  // Håndter suksess
   const handleFormSuccess = () => {
     setShowCarForm(false);
     queryClient.invalidateQueries({ queryKey: ['my-cars-count', user?.id] });
@@ -172,6 +157,15 @@ export default function Dashboard() {
     return null;
   }
 
+  // Entusiastprofil progress
+  const filledFields = ownerProfile ? [
+    ownerProfile.bio,
+    ownerProfile.location,
+    ownerProfile.avatar_url,
+    (ownerProfile.favorite_brands?.length ?? 0) > 0 ? true : null,
+  ].filter(Boolean).length : 0;
+  const profileNeedsAttention = !ownerProfile || filledFields < 2;
+
   return (
     <GarageLayout
       title="Min side"
@@ -184,22 +178,22 @@ export default function Dashboard() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
-          className="mb-6"
+          className="mb-8"
         >
-          <EnamelCard className="overflow-hidden p-0">
-            <div className="p-5 border-b border-border">
-              <h3 className="font-display text-xl flex items-center gap-2">
-                <Bell className="w-6 h-6 text-primary" />
-                Varsler ({notifications.length})
+          <div className="border-2 border-foreground/10 bg-card/80 backdrop-blur-sm">
+            <div className="px-5 py-4 border-b-2 border-foreground/10 flex items-center gap-3">
+              <Bell className="w-4 h-4 text-foreground" />
+              <h3 className="font-display text-xs uppercase tracking-[0.3em] text-foreground">
+                Varsler · {notifications.length}
               </h3>
             </div>
-            <div className="divide-y divide-border">
+            <div className="divide-y divide-foreground/5">
               {notifications.map((notif: any) => (
-                <div key={notif.id} className="p-5 flex items-start justify-between gap-4 bg-amber-50/50 dark:bg-amber-950/20">
+                <div key={notif.id} className="px-5 py-4 flex items-start justify-between gap-4">
                   <div className="flex-1">
-                    <p className="font-medium text-base">{notif.title}</p>
-                    <p className="text-base text-muted-foreground mt-1">{notif.body}</p>
-                    <p className="text-sm text-muted-foreground mt-2">
+                    <p className="font-display text-sm uppercase tracking-wide">{notif.title}</p>
+                    <p className="font-serif italic text-sm text-muted-foreground mt-1">{notif.body}</p>
+                    <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground mt-2">
                       {new Date(notif.created_at).toLocaleDateString('nb-NO', {
                         day: 'numeric',
                         month: 'long',
@@ -211,163 +205,156 @@ export default function Dashboard() {
                   <div className="flex items-center gap-2">
                     {notif.link && (
                       <Link to={notif.link} onClick={() => markAsRead(notif.id)}>
-                        <BigActionButton
-                          variant="secondary"
-                          size="lg"
-                          icon={<ExternalLink className="w-4 h-4" />}
-                        >
-                          Gå til annonse
-                        </BigActionButton>
+                        <button className="px-3 py-1.5 border border-foreground/20 font-display text-[10px] uppercase tracking-[0.15em] hover:bg-foreground/5 transition-colors">
+                          Vis
+                        </button>
                       </Link>
                     )}
-                    <BigActionButton
-                      variant="ghost"
-                      size="lg"
+                    <button
                       onClick={() => markAsRead(notif.id)}
-                      icon={<CheckCircle className="w-5 h-5" />}
+                      className="px-3 py-1.5 font-display text-[10px] uppercase tracking-[0.15em] text-muted-foreground hover:text-foreground transition-colors"
                     >
-                      Lest
-                    </BigActionButton>
+                      <CheckCircle className="w-4 h-4" />
+                    </button>
                   </div>
                 </div>
               ))}
             </div>
-          </EnamelCard>
+          </div>
         </motion.div>
       )}
 
-      {/* Dashboard Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+      {/* Dashboard Grid – editorial magazine layout */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-px bg-foreground/10 border-2 border-foreground/10">
         
-        {/* Mine biler - kort */}
+        {/* Mine biler */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, delay: 0.1 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.4, delay: 0.1 }}
         >
           <Link to="/dashboard/mine-biler" className="block h-full touch-manipulation" data-guide="my-cars-card">
-            <EnamelCard className="h-full min-h-[140px] sm:min-h-[160px] group">
-              <div className="flex items-start justify-between mb-3 sm:mb-4">
-                <div className="p-2.5 sm:p-3 bg-primary/10 rounded-xl flex-shrink-0">
-                  <Car className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
-                </div>
+            <div className="h-full p-6 sm:p-8 bg-card/80 backdrop-blur-sm group hover:bg-card transition-colors">
+              <div className="flex items-start justify-between mb-6">
+                <p className="font-display text-[10px] uppercase tracking-[0.4em] text-muted-foreground">
+                  Garasje
+                </p>
                 <div className="text-right">
-                  <p className="font-display text-2xl sm:text-3xl text-primary">
-                    {carsLoading ? '...' : carCount || 0}
+                  <p className="font-display text-3xl sm:text-4xl text-foreground leading-none">
+                    {carsLoading ? '—' : carCount || 0}
                   </p>
-                  <p className="text-sm sm:text-base text-muted-foreground">
+                  <p className="font-serif italic text-xs text-muted-foreground mt-1">
                     {carCount === 1 ? 'bil' : 'biler'}
                   </p>
                 </div>
               </div>
-              <h3 className="font-display text-lg sm:text-xl mb-1 sm:mb-2 group-hover:text-primary transition-colors">
+              <h3 className="font-display text-xl sm:text-2xl uppercase tracking-wider mb-2 group-hover:text-primary transition-colors">
                 Mine biler
               </h3>
-              <p className="text-sm sm:text-base text-muted-foreground line-clamp-2">
+              <p className="font-serif italic text-sm text-muted-foreground">
                 Se og rediger biler du eier
               </p>
-            </EnamelCard>
+              <ChevronRight className="w-4 h-4 text-muted-foreground mt-4 group-hover:translate-x-1 transition-transform" />
+            </div>
           </Link>
         </motion.div>
 
         {/* Send inn ny bil */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, delay: 0.2 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.4, delay: 0.15 }}
         >
-          <EnamelCard 
-            className="h-full min-h-[140px] sm:min-h-[160px] group cursor-pointer touch-manipulation" 
+          <div 
+            className="h-full p-6 sm:p-8 bg-card/80 backdrop-blur-sm group cursor-pointer hover:bg-card transition-colors touch-manipulation" 
             onClick={handleOpenForm}
           >
-            <div className="flex items-start justify-between mb-3 sm:mb-4">
-              <div className="p-2.5 sm:p-3 bg-primary/10 rounded-xl flex-shrink-0">
-                <Send className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
-              </div>
-            </div>
-            <h3 className="font-display text-lg sm:text-xl mb-1 sm:mb-2 group-hover:text-primary transition-colors">
-              Send inn ny bil
+            <p className="font-display text-[10px] uppercase tracking-[0.4em] text-muted-foreground mb-6">
+              Innsending
+            </p>
+            <h3 className="font-display text-xl sm:text-2xl uppercase tracking-wider mb-2 group-hover:text-primary transition-colors">
+              Send inn bil
             </h3>
-            <p className="text-sm sm:text-base text-muted-foreground line-clamp-2">
+            <p className="font-serif italic text-sm text-muted-foreground">
               Legg til en ny bil i din garasje
             </p>
-          </EnamelCard>
+            <div className="mt-4 w-8 h-8 border-2 border-foreground/15 flex items-center justify-center group-hover:border-primary group-hover:text-primary transition-colors">
+              <Plus className="w-4 h-4" />
+            </div>
+          </div>
         </motion.div>
 
-        {/* Min profil */}
+        {/* Entusiastprofil */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, delay: 0.3 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.4, delay: 0.2 }}
         >
-          {(() => {
-            const filledFields = ownerProfile ? [
-              ownerProfile.bio,
-              ownerProfile.location,
-              ownerProfile.avatar_url,
-              (ownerProfile.favorite_brands?.length ?? 0) > 0 ? true : null,
-            ].filter(Boolean).length : 0;
-            const needsAttention = !ownerProfile || filledFields < 2;
-            return (
-              <EnamelCard 
-                className={`h-full min-h-[140px] sm:min-h-[160px] group cursor-pointer touch-manipulation relative overflow-hidden ${needsAttention ? 'ring-2 ring-primary shadow-lg shadow-primary/10' : ''}`}
-                onClick={handleOpenOwnerProfile}
-                data-guide="owner-profile-card"
-              >
-                {needsAttention && (
-                  <div className="absolute top-0 left-0 right-0 h-1 bg-primary" />
-                )}
-                <div className="flex items-start justify-between mb-3 sm:mb-4">
-                  <div className={`p-2.5 sm:p-3 rounded-xl flex-shrink-0 ${needsAttention ? 'bg-primary text-primary-foreground animate-pulse' : 'bg-primary/10'}`}>
-                    <User className={`w-6 h-6 sm:w-8 sm:h-8 ${needsAttention ? '' : 'text-primary'}`} />
-                  </div>
-                  {ownerProfile?.visible_public && (
-                    <span className="text-[10px] sm:text-xs bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full whitespace-nowrap">
-                      Offentlig
-                    </span>
-                  )}
-                </div>
-                <h3 className="font-display text-lg sm:text-xl mb-1 sm:mb-2 group-hover:text-primary transition-colors">
-                  {needsAttention ? 'Entusiastprofil' : 'Min profil'}
-                </h3>
-                <p className={`text-sm sm:text-base line-clamp-2 ${needsAttention ? 'text-primary font-medium' : 'text-muted-foreground'}`}>
-                  {ownerProfile ? (needsAttention ? 'Fullfør entusiastprofilen din →' : 'Rediger entusiastprofil') : 'Opprett entusiastprofil →'}
-                </p>
-                {needsAttention && (
-                  <p className="text-xs text-muted-foreground mt-1.5">
-                    {ownerProfile ? `${filledFields}/2 felt fylt ut` : 'Kom i gang her'}
-                  </p>
-                )}
-              </EnamelCard>
-            );
-          })()}
+          <div 
+            className={`h-full p-6 sm:p-8 backdrop-blur-sm group cursor-pointer transition-colors touch-manipulation relative overflow-hidden ${
+              profileNeedsAttention 
+                ? 'bg-card' 
+                : 'bg-card/80 hover:bg-card'
+            }`}
+            onClick={handleOpenOwnerProfile}
+            data-guide="owner-profile-card"
+          >
+            {profileNeedsAttention && (
+              <div className="absolute top-0 left-0 right-0 h-1" style={{ background: 'hsl(2, 85%, 40%)' }} />
+            )}
+            <div className="flex items-start justify-between mb-6">
+              <p className="font-display text-[10px] uppercase tracking-[0.4em] text-muted-foreground">
+                Profil
+              </p>
+              {ownerProfile?.visible_public && (
+                <span className="font-display text-[10px] uppercase tracking-[0.2em] text-green-700 dark:text-green-400 border border-green-300 dark:border-green-700 px-2 py-0.5">
+                  Offentlig
+                </span>
+              )}
+            </div>
+            <h3 className={`font-display text-xl sm:text-2xl uppercase tracking-wider mb-2 transition-colors ${
+              profileNeedsAttention ? 'text-primary' : 'group-hover:text-primary'
+            }`}>
+              {profileNeedsAttention ? 'Entusiastprofil' : 'Min profil'}
+            </h3>
+            <p className={`font-serif italic text-sm ${profileNeedsAttention ? 'text-foreground' : 'text-muted-foreground'}`}>
+              {ownerProfile 
+                ? (profileNeedsAttention ? 'Fullfør entusiastprofilen din →' : 'Rediger entusiastprofil') 
+                : 'Opprett entusiastprofil →'}
+            </p>
+            {profileNeedsAttention && (
+              <p className="font-display text-[10px] uppercase tracking-[0.3em] text-muted-foreground mt-3">
+                {ownerProfile ? `${filledFields} av 2 felt fylt ut` : 'Kom i gang'}
+              </p>
+            )}
+          </div>
         </motion.div>
 
         {/* Dine annonser */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, delay: 0.35 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.4, delay: 0.25 }}
         >
           <Link to="/dashboard/mine-annonser" className="block h-full touch-manipulation">
-            <EnamelCard className="h-full min-h-[140px] sm:min-h-[160px] group">
-              <div className="flex items-start justify-between mb-3 sm:mb-4">
-                <div className="p-2.5 sm:p-3 bg-primary/10 rounded-xl flex-shrink-0">
-                  <ShoppingBag className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
-                </div>
+            <div className="h-full p-6 sm:p-8 bg-card/80 backdrop-blur-sm group hover:bg-card transition-colors">
+              <div className="flex items-start justify-between mb-6">
+                <p className="font-display text-[10px] uppercase tracking-[0.4em] text-muted-foreground">
+                  Markedsplass
+                </p>
                 <div className="text-right">
-                  <p className="font-display text-2xl sm:text-3xl text-primary">
+                  <p className="font-display text-3xl sm:text-4xl text-foreground leading-none">
                     {myListings?.length || 0}
                   </p>
-                  <p className="text-sm sm:text-base text-muted-foreground">
+                  <p className="font-serif italic text-xs text-muted-foreground mt-1">
                     {(myListings?.length || 0) === 1 ? 'annonse' : 'annonser'}
                   </p>
                 </div>
               </div>
-              <h3 className="font-display text-lg sm:text-xl mb-1 sm:mb-2 group-hover:text-primary transition-colors">
+              <h3 className="font-display text-xl sm:text-2xl uppercase tracking-wider mb-2 group-hover:text-primary transition-colors">
                 Dine annonser
               </h3>
-              <p className="text-sm sm:text-base text-muted-foreground line-clamp-2">
+              <p className="font-serif italic text-sm text-muted-foreground">
                 {ownerProfile?.approved_at
                   ? (myListings?.length ?? 0) === 0
                     ? 'Du er klar til å selge. Opprett din første annonse.'
@@ -376,16 +363,13 @@ export default function Dashboard() {
                     ? 'Entusiastprofil venter på godkjenning'
                     : 'Opprett entusiastprofil for å legge ut annonser'}
               </p>
-              <p className="text-xs text-muted-foreground mt-1">
-                Alt som legges ut må godkjennes før publisering.
-              </p>
               {ownerProfile && !ownerProfile.approved_at && (
                 <Link
                   to="/dashboard?showOwnerProfile=true"
                   onClick={(e) => e.stopPropagation()}
-                  className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline mt-2"
+                  className="inline-flex items-center gap-1.5 font-display text-[10px] uppercase tracking-[0.15em] text-primary hover:underline mt-3"
                 >
-                  <User className="h-3.5 w-3.5" />
+                  <User className="h-3 w-3" />
                   Se profil og be om godkjenning
                 </Link>
               )}
@@ -393,126 +377,123 @@ export default function Dashboard() {
                 <Link
                   to="/dashboard/opprett-annonse"
                   onClick={(e) => e.stopPropagation()}
-                  className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline mt-2"
+                  className="inline-flex items-center gap-1.5 font-display text-[10px] uppercase tracking-[0.15em] text-primary hover:underline mt-3"
                 >
-                  <Plus className="h-3.5 w-3.5" />
+                  <Plus className="h-3 w-3" />
                   {(myListings?.length ?? 0) === 0 ? 'Opprett første annonse' : 'Opprett annonse'}
                 </Link>
               )}
-            </EnamelCard>
+              <p className="font-serif italic text-[11px] text-muted-foreground/60 mt-2">
+                Alt som legges ut må godkjennes før publisering.
+              </p>
+            </div>
           </Link>
         </motion.div>
 
         {/* Mine forespørsler */}
         {ownerProfile && (
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: 0.37 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.4, delay: 0.3 }}
           >
             <Link to="/dashboard/mine-foresporsler" className="block h-full touch-manipulation">
-              <EnamelCard className="h-full min-h-[140px] sm:min-h-[160px] group">
-                <div className="flex items-start justify-between mb-3 sm:mb-4">
-                  <div className="p-2.5 sm:p-3 bg-primary/10 rounded-xl flex-shrink-0 relative">
-                    <Inbox className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
-                    {(myInquiries?.pending ?? 0) > 0 && (
-                      <span className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center">
-                        {myInquiries!.pending}
-                      </span>
-                    )}
-                  </div>
+              <div className="h-full p-6 sm:p-8 bg-card/80 backdrop-blur-sm group hover:bg-card transition-colors">
+                <div className="flex items-start justify-between mb-6">
+                  <p className="font-display text-[10px] uppercase tracking-[0.4em] text-muted-foreground">
+                    Innboks
+                  </p>
+                  {(myInquiries?.pending ?? 0) > 0 && (
+                    <span className="font-display text-[10px] uppercase tracking-[0.2em] text-destructive border border-destructive/30 px-2 py-0.5">
+                      {myInquiries!.pending} nye
+                    </span>
+                  )}
                 </div>
-                <h3 className="font-display text-lg sm:text-xl mb-1 sm:mb-2 group-hover:text-primary transition-colors">
-                  Mine forespørsler
+                <h3 className="font-display text-xl sm:text-2xl uppercase tracking-wider mb-2 group-hover:text-primary transition-colors">
+                  Forespørsler
                   {(myInquiries?.total ?? 0) > 0 && (
-                    <span className="ml-2 text-muted-foreground text-sm font-normal">({myInquiries!.total})</span>
+                    <span className="ml-2 font-serif italic text-sm font-normal text-muted-foreground">({myInquiries!.total})</span>
                   )}
                 </h3>
-                <p className="text-sm sm:text-base text-muted-foreground line-clamp-2">
+                <p className="font-serif italic text-sm text-muted-foreground">
                   {(myInquiries?.pending ?? 0) > 0
                     ? `${myInquiries!.pending} venter på svar`
                     : 'Se forespørsler fra kjøpere'}
                 </p>
-              </EnamelCard>
+              </div>
             </Link>
           </motion.div>
         )}
 
         {/* Konto */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, delay: 0.4 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.4, delay: 0.35 }}
         >
           <Link to="/konto" className="block h-full touch-manipulation">
-            <EnamelCard className="h-full min-h-[140px] sm:min-h-[160px] group">
-              <div className="flex items-start justify-between mb-3 sm:mb-4">
-                <div className="p-2.5 sm:p-3 bg-primary/10 rounded-xl flex-shrink-0">
-                  <Settings className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
-                </div>
-              </div>
-              <h3 className="font-display text-lg sm:text-xl mb-1 sm:mb-2 group-hover:text-primary transition-colors">
+            <div className="h-full p-6 sm:p-8 bg-card/80 backdrop-blur-sm group hover:bg-card transition-colors">
+              <p className="font-display text-[10px] uppercase tracking-[0.4em] text-muted-foreground mb-6">
+                Innstillinger
+              </p>
+              <h3 className="font-display text-xl sm:text-2xl uppercase tracking-wider mb-2 group-hover:text-primary transition-colors">
                 Konto
               </h3>
-              <p className="text-sm sm:text-base text-muted-foreground line-clamp-2">
+              <p className="font-serif italic text-sm text-muted-foreground">
                 Innlogging, personvern og innstillinger
               </p>
-            </EnamelCard>
+            </div>
           </Link>
         </motion.div>
-
-        {/* Hjelp og veiledning */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, delay: 0.5 }}
-          className="sm:col-span-2"
-        >
-          <EnamelCard>
-            <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-              <div className="flex items-center gap-4 flex-1">
-                <div className="p-2.5 sm:p-3 bg-primary/10 rounded-xl flex-shrink-0">
-                  <HelpCircle className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
-                </div>
-                <div>
-                  <h3 className="font-display text-lg sm:text-xl mb-0.5">
-                    Hjelp og veiledning
-                  </h3>
-                  <p className="text-sm text-muted-foreground">
-                    Start en interaktiv guide
-                  </p>
-                </div>
-              </div>
-              
-              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
-                <BigActionButton
-                  onClick={() => startGuide('full')}
-                  icon={<Sparkles className="w-4 h-4" />}
-                >
-                  Full guide
-                </BigActionButton>
-                
-                <BigActionButton
-                  variant="secondary"
-                  onClick={handleStartMyCarsGuide}
-                  icon={<Car className="w-4 h-4" />}
-                >
-                  Mine biler
-                </BigActionButton>
-                
-                <BigActionButton
-                  variant="secondary"
-                  onClick={handleStartOwnerProfileGuide}
-                  icon={<User className="w-4 h-4" />}
-                >
-                   Min profil
-                </BigActionButton>
-              </div>
-            </div>
-          </EnamelCard>
-        </motion.div>
-
       </div>
+
+      {/* Hjelp og veiledning – editorial strip */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.4, delay: 0.5 }}
+        className="mt-px"
+      >
+        <div className="border-2 border-foreground/10 border-t-0 bg-card/80 backdrop-blur-sm p-5 sm:p-6">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+            <div className="flex-1">
+              <p className="font-display text-[10px] uppercase tracking-[0.4em] text-muted-foreground mb-1">
+                Veiledning
+              </p>
+              <p className="font-serif italic text-sm text-muted-foreground">
+                Start en interaktiv guide for å bli kjent med garasjen
+              </p>
+            </div>
+            
+            <div className="flex flex-wrap gap-2">
+              <button
+                onClick={() => startGuide('full')}
+                className="px-4 py-2 font-display text-[10px] uppercase tracking-[0.2em] text-primary-foreground transition-colors flex items-center gap-2"
+                style={{ background: 'hsl(2, 85%, 40%)' }}
+              >
+                <Sparkles className="w-3 h-3" />
+                Full guide
+              </button>
+              
+              <button
+                onClick={handleStartMyCarsGuide}
+                className="px-4 py-2 border border-foreground/20 font-display text-[10px] uppercase tracking-[0.2em] text-foreground hover:bg-foreground/5 transition-colors flex items-center gap-2"
+              >
+                <Car className="w-3 h-3" />
+                Mine biler
+              </button>
+              
+              <button
+                onClick={handleStartOwnerProfileGuide}
+                className="px-4 py-2 border border-foreground/20 font-display text-[10px] uppercase tracking-[0.2em] text-foreground hover:bg-foreground/5 transition-colors flex items-center gap-2"
+              >
+                <User className="w-3 h-3" />
+                Entusiastprofil
+              </button>
+            </div>
+          </div>
+        </div>
+      </motion.div>
 
       {/* Send inn ny bil skjema */}
       <AnimatePresence>
@@ -530,14 +511,13 @@ export default function Dashboard() {
                 title="Send inn ny bil" 
                 icon={<Send className="w-6 h-6" />} 
               />
-              <BigActionButton
-                variant="ghost"
-                size="lg"
+              <button
                 onClick={() => setShowCarForm(false)}
-                icon={<X className="w-5 h-5" />}
+                className="px-4 py-2 border border-foreground/20 font-display text-[10px] uppercase tracking-[0.2em] text-foreground hover:bg-foreground/5 transition-colors flex items-center gap-2"
               >
+                <X className="w-3.5 h-3.5" />
                 Lukk
-              </BigActionButton>
+              </button>
             </div>
             
             <SendInnBilForm
@@ -562,17 +542,16 @@ export default function Dashboard() {
           >
             <div className="flex items-center justify-between mb-4">
               <SectionHeader 
-                title="Min profil" 
+                title="Entusiastprofil" 
                 icon={<User className="w-6 h-6" />} 
               />
-              <BigActionButton
-                variant="ghost"
-                size="lg"
+              <button
                 onClick={handleCloseOwnerProfile}
-                icon={<X className="w-5 h-5" />}
+                className="px-4 py-2 border border-foreground/20 font-display text-[10px] uppercase tracking-[0.2em] text-foreground hover:bg-foreground/5 transition-colors flex items-center gap-2"
               >
+                <X className="w-3.5 h-3.5" />
                 Lukk
-              </BigActionButton>
+              </button>
             </div>
             
             <OwnerProfileSection userId={user.id} />
