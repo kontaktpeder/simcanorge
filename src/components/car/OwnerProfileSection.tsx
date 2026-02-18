@@ -72,7 +72,7 @@ export function OwnerProfileSection({ userId }: OwnerProfileSectionProps) {
     } else {
       setHasChanges(displayName.length > 0);
     }
-  }, [displayName, username, bio, location, favoriteBrands, visiblePublic, profile]);
+  }, [displayName, username, bio, location, contactEmail, contactPhone, favoriteBrands, visiblePublic, profile]);
 
   const toggleBrand = (brand: string) => {
     setFavoriteBrands(prev => 
