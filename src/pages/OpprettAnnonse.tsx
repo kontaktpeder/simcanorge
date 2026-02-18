@@ -56,23 +56,19 @@ export default function OpprettAnnonse() {
 
   if (!user) return null;
 
-  if (!ownerProfile?.approved_at) {
+  if (!ownerProfile) {
     return (
       <GarageLayout title="Opprett annonse" subtitle="Markedsplass">
         <EnamelCard>
           <div className="p-6 text-center">
             <Clock className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" />
-            <p className="font-medium mb-2">
-              {ownerProfile ? 'Profil venter på godkjenning' : 'Du trenger en Entusiastprofil'}
-            </p>
+            <p className="font-medium mb-2">Du trenger en Entusiastprofil</p>
             <p className="text-sm text-muted-foreground mb-4">
-              {ownerProfile
-                ? 'Du kan opprette annonser når admin har godkjent profilen din.'
-                : 'Opprett en Entusiastprofil først for å legge ut annonser.'}
+              Opprett en Entusiastprofil først for å legge ut annonser.
             </p>
             <Link to="/dashboard">
               <BigActionButton variant="secondary" icon={<ChevronLeft className="w-4 h-4" />}>
-                Tilbake til Dashboard
+                Til Dashboard for å opprette profil
               </BigActionButton>
             </Link>
           </div>

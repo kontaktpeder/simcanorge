@@ -7,13 +7,9 @@ import { Layout } from '@/components/layout/Layout';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { Input } from '@/components/ui/input';
 import { useMarketplaceItems, useMarketplaceCategories } from '@/hooks/useMarketplace';
-import { useAuth } from '@/hooks/useAuth';
-import { useOwnerProfile } from '@/hooks/useOwnerProfile';
 
 export default function Markedsplass() {
   const navigate = useNavigate();
-  const { user } = useAuth();
-  const { data: ownerProfile } = useOwnerProfile(user?.id);
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryId, setCategoryId] = useState('');
   const { data: items, isLoading } = useMarketplaceItems({
@@ -23,15 +19,7 @@ export default function Markedsplass() {
   const { data: categories } = useMarketplaceCategories();
 
   const handleOpprettAnnonseClick = () => {
-    if (!user) {
-      navigate('/login?returnUrl=/dashboard/opprett-annonse');
-      return;
-    }
-    if (!ownerProfile?.approved_at) {
-      navigate('/dashboard');
-      return;
-    }
-    navigate('/dashboard/opprett-annonse');
+    navigate('/start-annonse');
   };
 
   return (
