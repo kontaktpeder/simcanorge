@@ -160,7 +160,7 @@ export const GUIDE_STEPS: GuideStep[] = [
   {
     target: '[data-guide="owner-visibility"]',
     title: 'Synlighet',
-    content: 'Skru på dette for å vise profilen din offentlig. Da får du en egen profilside folk kan besøke.',
+    content: 'Skru på dette for å vise entusiastprofilen din offentlig. Da får du en egen profilside folk kan besøke.',
     routeType: 'owner-profile',
     placement: 'top',
   },

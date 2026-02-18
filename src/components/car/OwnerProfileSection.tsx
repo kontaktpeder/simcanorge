@@ -179,7 +179,7 @@ export function OwnerProfileSection({ userId }: OwnerProfileSectionProps) {
       transition={{ duration: 0.3 }}
     >
       <SectionHeader 
-        title="Om meg" 
+        title="Entusiastprofil" 
         icon={<User className="h-5 w-5" />}
       />
       
@@ -191,7 +191,7 @@ export function OwnerProfileSection({ userId }: OwnerProfileSectionProps) {
               <div className="flex items-start gap-3">
                 <Clock className="h-4 w-4 mt-0.5 shrink-0 text-amber-600" />
                 <p className="text-amber-800 dark:text-amber-300">
-                  Profilen din er sendt til godkjenning. Du kan opprette annonser på markedsplassen når profilen er godkjent av admin.
+                  Entusiastprofilen din er sendt til godkjenning. Du kan opprette annonser på markedsplassen når profilen er godkjent av admin.
                 </p>
               </div>
             </div>
@@ -201,7 +201,7 @@ export function OwnerProfileSection({ userId }: OwnerProfileSectionProps) {
           <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50 text-sm text-muted-foreground">
             <Info className="h-4 w-4 mt-0.5 shrink-0" />
             <p>
-              Profilen din er redaksjonelt innhold som vises på bilene dine og på din offentlige profilside. 
+              Entusiastprofilen din er redaksjonelt innhold som vises på bilene dine og på din offentlige profilside. 
               Dette er ikke kontoinnstillinger.
             </p>
           </div>
@@ -358,11 +358,11 @@ export function OwnerProfileSection({ userId }: OwnerProfileSectionProps) {
                 <EyeOff className="h-5 w-5 text-muted-foreground" />
               )}
               <div>
-                <p className="font-medium text-sm">Vis profil offentlig</p>
+                <p className="font-medium text-sm">Vis entusiastprofil offentlig</p>
                 <p className="text-xs text-muted-foreground">
                   {visiblePublic 
-                    ? 'Profilen din vises på bilene dine og på din offentlige profilside'
-                    : 'Profilen din er skjult for andre'
+                    ? 'Entusiastprofilen din vises på bilene dine og på din offentlige profilside'
+                    : 'Entusiastprofilen din er skjult for andre'
                   }
                 </p>
               </div>
@@ -383,7 +383,7 @@ export function OwnerProfileSection({ userId }: OwnerProfileSectionProps) {
               icon={isSaving ? <Loader2 className="h-5 w-5 animate-spin" /> : <Save className="h-5 w-5" />}
               className="w-full sm:w-auto"
             >
-              {isSaving ? 'Lagrer...' : profile ? 'Lagre endringer' : 'Opprett profil'}
+              {isSaving ? 'Lagrer...' : profile ? 'Lagre endringer' : 'Opprett entusiastprofil'}
             </BigActionButton>
           </div>
         </div>

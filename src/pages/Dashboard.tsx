@@ -319,7 +319,7 @@ export default function Dashboard() {
               Min profil
             </h3>
             <p className="text-sm sm:text-base text-muted-foreground line-clamp-2">
-              {ownerProfile ? 'Rediger profil' : 'Opprett profil'}
+              {ownerProfile ? 'Rediger entusiastprofil' : 'Opprett entusiastprofil'}
             </p>
           </EnamelCard>
         </motion.div>
@@ -354,8 +354,8 @@ export default function Dashboard() {
                     ? 'Du er klar til å selge. Opprett din første annonse.'
                     : 'Se og rediger annonser du har lagt ut'
                   : ownerProfile
-                    ? 'Profil venter på godkjenning'
-                    : 'Opprett profil for å legge ut annonser'}
+                    ? 'Entusiastprofil venter på godkjenning'
+                    : 'Opprett entusiastprofil for å legge ut annonser'}
               </p>
               <p className="text-xs text-muted-foreground mt-1">
                 Alt som legges ut må godkjennes før publisering.
