@@ -134,3 +134,10 @@ export function getMarketplaceImagePath(itemId: string, imageId: string): string
 export function getOwnerAvatarPath(ownerId: string): string {
   return `owners/${ownerId}/avatar.webp`;
 }
+
+/**
+ * Convert Blob to File with WebP type
+ */
+export function blobToWebPFile(blob: Blob, filename: string = 'avatar.webp'): File {
+  return new File([blob], filename, { type: 'image/webp' });
+}

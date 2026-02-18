@@ -83,8 +83,12 @@ export default function AdminEierprofiler() {
               >
                 <div className="flex flex-col sm:flex-row sm:items-start gap-4">
                   {/* Avatar */}
-                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                    <User className="h-6 w-6 text-primary" />
+                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0 overflow-hidden">
+                    {(profile as any).avatar_url ? (
+                      <img src={(profile as any).avatar_url} alt={profile.display_name} className="w-full h-full object-cover" />
+                    ) : (
+                      <User className="h-6 w-6 text-primary" />
+                    )}
                   </div>
                   
                   {/* Content */}
