@@ -80,7 +80,7 @@ export default function RedigerAnnonse() {
     return null;
   }
 
-  const canEdit = item?.status === 'draft' || item?.status === 'submitted';
+  const canEdit = ['draft', 'submitted', 'published', 'sold'].includes(item?.status ?? '');
 
   const samleobjekterRoot = roots.find((r) => r.slug === 'samleobjekter');
   const delerRoot = roots.find((r) => r.slug === 'deler');
@@ -238,20 +238,49 @@ export default function RedigerAnnonse() {
                   </button>
                 )}
               </div>
-              {!canEdit && <p className="text-xs text-muted-foreground">Publiserte eller arkiverte annonser kan ikke redigeres.</p>}
+              {!canEdit && <p className="text-xs text-muted-foreground">Kun arkiverte annonser kan ikke redigeres.</p>}
             </div>
 
             {uploadProgress && <ImageUploadProgress progress={uploadProgress} />}
 
-            {/* Info banner */}
-            <div className="flex items-start gap-2 p-3 rounded-lg bg-muted text-sm text-muted-foreground">
-              <Clock className="h-4 w-4 mt-0.5 shrink-0" />
-              <p>Endringer må godkjennes på nytt av admin.</p>
-            </div>
+            {item?.status === 'submitted' && (
+              <div className="flex items-start gap-2 p-3 rounded-lg bg-muted text-sm text-muted-foreground">
+                <Clock className="h-4 w-4 mt-0.5 shrink-0" />
+                <p>Annonsen venter på godkjenning av admin.</p>
+              </div>
+            )}
           </DelerAnnonseForm>
         </div>
       </EnamelCard>
 
+      {canEdit && item?.status === 'published' && (
+        <button
+          type="button"
+          onClick={async () => {
+            await updateItem.mutateAsync({ id: itemId!, updates: { status: 'sold' } });
+            toast.success('Markert som solgt');
+            queryClient.invalidateQueries({ queryKey: ['my-listings'] });
+          }}
+          disabled={updateItem.isPending}
+          className="text-sm text-primary hover:underline py-2 mt-4 mr-4 inline-block"
+        >
+          Markér som solgt
+        </button>
+      )}
+      {canEdit && item?.status === 'sold' && (
+        <button
+          type="button"
+          onClick={async () => {
+            await updateItem.mutateAsync({ id: itemId!, updates: { status: 'published' } });
+            toast.success('Fjernet solgt-status');
+            queryClient.invalidateQueries({ queryKey: ['my-listings'] });
+          }}
+          disabled={updateItem.isPending}
+          className="text-sm text-muted-foreground hover:underline py-2 mt-4 mr-4 inline-block"
+        >
+          Fjern solgt-status
+        </button>
+      )}
       {canEdit && (
         <button
           type="button"

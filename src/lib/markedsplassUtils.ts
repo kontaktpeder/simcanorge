@@ -16,6 +16,7 @@ export interface FeedItem {
   ownerName: string | null;
   ownerId: string | null;
   publishedAt: string;
+  status?: string;
 }
 
 export function formatPartPrice(priceMin: number | null, priceMax: number | null): string | null {
@@ -63,6 +64,7 @@ export function normalizePart(part: any, categories: any[]): FeedItem {
     ownerName: null,
     ownerId: null,
     publishedAt: part.created_at,
+    status: undefined,
   };
 }
 
@@ -84,6 +86,7 @@ export function normalizeListing(item: any): FeedItem {
     ownerName: owner?.display_name || null,
     ownerId: owner?.id || null,
     publishedAt: item.published_at || item.created_at,
+    status: item.status ?? 'published',
   };
 }
 
