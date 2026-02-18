@@ -4,14 +4,13 @@ import { useEffect } from 'react';
 import { GarageLayout } from '@/components/ui/garage/GarageLayout';
 import { EnamelCard } from '@/components/ui/garage/EnamelCard';
 import { BigActionButton } from '@/components/ui/garage/BigActionButton';
-import { ShoppingBag, Plus, Clock, Eye, Archive, Loader2, User, Send, CheckCircle2, Pencil } from 'lucide-react';
+import { ShoppingBag, Plus, Clock, Eye, Archive, Loader2, User, CheckCircle2, Pencil } from 'lucide-react';
 import { Layout } from '@/components/layout/Layout';
 import { motion } from 'framer-motion';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useOwnerProfile } from '@/hooks/useOwnerProfile';
 import { useMyListings } from '@/hooks/useMarketplace';
-import { useRequestSellerApproval } from '@/hooks/useRequestSellerApproval';
 
 export default function DashboardMineAnnonser() {
   const { user, isLoading: authLoading } = useAuth();
@@ -20,7 +19,7 @@ export default function DashboardMineAnnonser() {
   const justSubmitted = (location.state as any)?.justSubmitted;
   const { data: ownerProfile, isLoading: profileLoading } = useOwnerProfile(user?.id);
   const { data: listings, isLoading: listingsLoading } = useMyListings(user?.id);
-  const requestApproval = useRequestSellerApproval();
+  
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -107,14 +106,6 @@ export default function DashboardMineAnnonser() {
                   Se min profil
                 </Button>
               </Link>
-              <Button
-                size="sm"
-                onClick={() => requestApproval.mutate()}
-                disabled={requestApproval.isPending}
-              >
-                <Send className="h-4 w-4 mr-1.5" />
-                {requestApproval.isPending ? 'Sender...' : 'Be om å bli godkjent selger'}
-              </Button>
             </div>
           </div>
         </EnamelCard>

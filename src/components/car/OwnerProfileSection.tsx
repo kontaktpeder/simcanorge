@@ -1,20 +1,18 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { User, MapPin, Heart, Eye, EyeOff, Save, Loader2, Info, Clock, Camera, Send } from 'lucide-react';
+import { User, MapPin, Heart, Eye, EyeOff, Save, Loader2, Info, Clock, Camera } from 'lucide-react';
 import { EnamelCard, SectionHeader, BigActionButton } from '@/components/ui/garage';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { useOwnerProfile, useCreateOwnerProfile, useUpdateOwnerProfile } from '@/hooks/useOwnerProfile';
 import { useAuth } from '@/hooks/useAuth';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { getOwnerAvatarPath, blobToWebPFile } from '@/lib/imageCompression';
 import { supabase } from '@/integrations/supabase/client';
 import { AvatarCropModal } from '@/components/avatar/AvatarCropModal';
-import { useRequestSellerApproval } from '@/hooks/useRequestSellerApproval';
 
 interface OwnerProfileSectionProps {
   userId: string;
@@ -27,7 +25,7 @@ export function OwnerProfileSection({ userId }: OwnerProfileSectionProps) {
   const { data: profile, isLoading } = useOwnerProfile(userId);
   const createProfile = useCreateOwnerProfile();
   const updateProfile = useUpdateOwnerProfile();
-  const requestApproval = useRequestSellerApproval();
+  
   
   const [displayName, setDisplayName] = useState('');
   const [username, setUsername] = useState('');
@@ -181,17 +179,6 @@ export function OwnerProfileSection({ userId }: OwnerProfileSectionProps) {
                 <p className="text-amber-800 dark:text-amber-300">
                   Profilen din er sendt til godkjenning. Du kan opprette annonser på markedsplassen når profilen er godkjent av admin.
                 </p>
-              </div>
-              <div className="flex justify-end">
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => requestApproval.mutate()}
-                  disabled={requestApproval.isPending}
-                >
-                  <Send className="h-3.5 w-3.5 mr-1.5" />
-                  {requestApproval.isPending ? 'Sender...' : 'Be om å bli godkjent selger'}
-                </Button>
               </div>
             </div>
           )}
