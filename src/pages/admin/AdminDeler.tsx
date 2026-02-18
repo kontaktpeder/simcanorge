@@ -317,7 +317,7 @@ const AdminDeler = () => {
                     priceMax: String(formData.price_max ?? ''),
                     priceNote: formData.price_note,
                     condition: '',
-                    location: '',
+                    showLocation: false,
                   }}
                   onSubmit={async (v) => {
                     setIsSubmitting(true);

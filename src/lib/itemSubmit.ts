@@ -12,7 +12,7 @@ export interface ItemFormValues {
   priceMax: string;
   priceNote: string;
   condition: string;
-  location: string;
+  showLocation: boolean;
 }
 
 export function getSubmitTarget(
@@ -60,7 +60,7 @@ export async function submitAsPart(
 
 export async function submitAsListing(
   values: ItemFormValues,
-  options: { ownerId: string; editingId?: string }
+  options: { ownerId: string; editingId?: string; profileLocation?: string | null }
 ) {
   const price = values.priceMin
     ? Number(values.priceMin)
@@ -68,13 +68,17 @@ export async function submitAsListing(
       ? Number(values.priceMax)
       : null;
 
+  const location = values.showLocation && options.profileLocation
+    ? options.profileLocation.trim()
+    : null;
+
   const payload = {
     title: values.title.trim(),
     description: values.description.trim() || null,
     category_id: values.categoryId || null,
     price,
     price_note: values.priceNote.trim() || null,
-    location: values.location.trim() || null,
+    location,
   };
 
   if (options.editingId) {

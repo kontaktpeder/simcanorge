@@ -125,7 +125,7 @@ export default function OpprettAnnonse() {
 
     try {
       // Regular users always submit as listing (parts table is admin-only)
-      const data = await submitAsListing(values, { ownerId: ownerProfile.id });
+      const data = await submitAsListing(values, { ownerId: ownerProfile.id, profileLocation: ownerProfile?.location ?? null });
 
       if (images.length > 0 && data?.id) {
         const uploaded = await uploadImages(data.id);
@@ -169,6 +169,7 @@ export default function OpprettAnnonse() {
             onSubmit={handleSubmit}
             submitLabel="Send inn annonse"
             isSubmitting={isSubmitting}
+            profileLocation={ownerProfile?.location ?? null}
           >
             {/* Images */}
             <div className="space-y-2">
