@@ -17,6 +17,7 @@ import { OwnerProfileSection } from '@/components/car/OwnerProfileSection';
 import { useOwnerProfile } from '@/hooks/useOwnerProfile';
 import { useGuide } from '@/hooks/useGuide';
 import { useMyListings } from '@/hooks/useMarketplace';
+import minSideBadge from '@/assets/min-side-badge.png';
 
 export default function Dashboard() {
   const { user, isLoading: authLoading } = useAuth();
@@ -251,26 +252,34 @@ export default function Dashboard() {
           </Link>
         </motion.div>
 
-        {/* Send inn ny bil */}
+        {/* Mine annonser */}
         <motion.div
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.15 }}
         >
-          <div 
-            className="h-full p-6 sm:p-8 border-2 border-foreground/15 bg-card/90 backdrop-blur-sm group cursor-pointer hover:bg-card hover:border-foreground/25 transition-all touch-manipulation min-h-[180px]" 
-            onClick={handleOpenForm}
-          >
-            <p className="font-display text-sm uppercase tracking-wider text-muted-foreground mb-5">
-              Innsending
-            </p>
-            <h3 className="font-display text-2xl sm:text-3xl uppercase tracking-wider mb-2 group-hover:text-primary transition-colors">
-              Send inn bil
-            </h3>
-            <p className="text-base text-muted-foreground">
-              Legg til en ny bil i garasjen din
-            </p>
-          </div>
+          <Link to="/dashboard/mine-annonser" className="block h-full touch-manipulation">
+            <div className="h-full p-6 sm:p-8 border-2 border-foreground/15 bg-card/90 backdrop-blur-sm group hover:bg-card hover:border-foreground/25 transition-all min-h-[180px]">
+              <p className="font-display text-sm uppercase tracking-wider text-muted-foreground mb-5">
+                Markedsplass
+              </p>
+              <h3 className="font-display text-2xl sm:text-3xl uppercase tracking-wider mb-2 group-hover:text-primary transition-colors">
+                Mine annonser
+              </h3>
+              <p className="text-base text-muted-foreground">
+                {ownerProfile?.approved_at
+                  ? (myListings?.length ?? 0) === 0
+                    ? 'Opprett din første annonse'
+                    : 'Se og rediger annonsene dine'
+                  : ownerProfile
+                    ? 'Venter på godkjenning'
+                    : 'Opprett entusiastprofil for å selge'}
+              </p>
+              <p className="font-display text-4xl sm:text-5xl text-foreground leading-none mt-4">
+                {myListings?.length || 0}
+              </p>
+            </div>
+          </Link>
         </motion.div>
 
         {/* Entusiastprofil */}
@@ -291,9 +300,12 @@ export default function Dashboard() {
             {profileNeedsAttention && (
               <div className="absolute top-0 left-0 right-0 h-1.5" style={{ background: 'hsl(2, 85%, 40%)' }} />
             )}
-            <p className="font-display text-sm uppercase tracking-wider text-muted-foreground mb-5">
-              Profil
-            </p>
+            <div className="flex items-center justify-between mb-5">
+              <p className="font-display text-sm uppercase tracking-wider text-muted-foreground">
+                Profil
+              </p>
+              <img src={minSideBadge} alt="" className="w-7 h-7 object-contain opacity-60" />
+            </div>
             <h3 className={`font-display text-2xl sm:text-3xl uppercase tracking-wider mb-2 transition-colors ${
               profileNeedsAttention ? 'text-primary' : 'group-hover:text-primary'
             }`}>
@@ -312,42 +324,12 @@ export default function Dashboard() {
           </div>
         </motion.div>
 
-        {/* Dine annonser */}
-        <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.25 }}
-        >
-          <Link to="/dashboard/mine-annonser" className="block h-full touch-manipulation">
-            <div className="h-full p-6 sm:p-8 border-2 border-foreground/15 bg-card/90 backdrop-blur-sm group hover:bg-card hover:border-foreground/25 transition-all min-h-[180px]">
-              <p className="font-display text-sm uppercase tracking-wider text-muted-foreground mb-5">
-                Markedsplass
-              </p>
-              <h3 className="font-display text-2xl sm:text-3xl uppercase tracking-wider mb-2 group-hover:text-primary transition-colors">
-                Dine annonser
-              </h3>
-              <p className="text-base text-muted-foreground">
-                {ownerProfile?.approved_at
-                  ? (myListings?.length ?? 0) === 0
-                    ? 'Opprett din første annonse'
-                    : 'Se og rediger annonsene dine'
-                  : ownerProfile
-                    ? 'Venter på godkjenning'
-                    : 'Opprett entusiastprofil for å selge'}
-              </p>
-              <p className="font-display text-4xl sm:text-5xl text-foreground leading-none mt-4">
-                {myListings?.length || 0}
-              </p>
-            </div>
-          </Link>
-        </motion.div>
-
-        {/* Mine forespørsler */}
+        {/* Forespørsler */}
         {ownerProfile && (
           <motion.div
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.3 }}
+            transition={{ duration: 0.4, delay: 0.25 }}
           >
             <Link to="/dashboard/mine-foresporsler" className="block h-full touch-manipulation">
               <div className="h-full p-6 sm:p-8 border-2 border-foreground/15 bg-card/90 backdrop-blur-sm group hover:bg-card hover:border-foreground/25 transition-all min-h-[180px]">
@@ -369,6 +351,28 @@ export default function Dashboard() {
             </Link>
           </motion.div>
         )}
+
+        {/* Send inn ny bil */}
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.3 }}
+        >
+          <div 
+            className="h-full p-6 sm:p-8 border-2 border-foreground/15 bg-card/90 backdrop-blur-sm group cursor-pointer hover:bg-card hover:border-foreground/25 transition-all touch-manipulation min-h-[180px]" 
+            onClick={handleOpenForm}
+          >
+            <p className="font-display text-sm uppercase tracking-wider text-muted-foreground mb-5">
+              Innsending
+            </p>
+            <h3 className="font-display text-2xl sm:text-3xl uppercase tracking-wider mb-2 group-hover:text-primary transition-colors">
+              Send inn bil
+            </h3>
+            <p className="text-base text-muted-foreground">
+              Legg til en ny bil i garasjen din
+            </p>
+          </div>
+        </motion.div>
 
         {/* Konto */}
         <motion.div
