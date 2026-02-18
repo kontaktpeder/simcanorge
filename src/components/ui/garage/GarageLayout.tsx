@@ -58,42 +58,38 @@ export function GarageLayout({
               </Link>
             )}
             
-            <div className="space-y-1 sm:space-y-2">
-              {subtitle && (
-                <p className="text-xs sm:text-sm font-medium text-primary uppercase tracking-wider">
-                  {subtitle}
-                </p>
-              )}
-              <div className="flex flex-wrap items-center gap-3 sm:gap-4">
-                <h1 className="font-display text-2xl sm:text-3xl md:text-4xl text-foreground leading-tight break-words hyphens-auto">
-                  {title}
+            <div className="space-y-3">
+              <div className="flex flex-wrap items-center justify-between gap-3 sm:gap-4">
+                <h1 className="font-display text-3xl sm:text-4xl md:text-5xl text-foreground leading-tight break-words hyphens-auto">
+                  {subtitle || title}
                 </h1>
                 
-                {/* Guide-knapp - tydelig i headeren */}
-                {isDashboardRoot && !guideLoading && shouldShowGuide && (
-                  <BigActionButton
-                    onClick={() => startGuide('full')}
-                    size="lg"
-                    icon={<Sparkles className="w-5 h-5" />}
-                    className="animate-pulse-subtle"
-                  >
-                    Start guide
-                  </BigActionButton>
-                )}
-                
-                {/* Hjelp-knapp for å starte guide manuelt (vises alltid på dashboard) */}
-                {isDashboardRoot && !guideLoading && !shouldShowGuide && (
-                  <button
-                    onClick={() => startGuide('full')}
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 border border-border hover:border-primary/30 transition-colors text-sm font-medium"
-                  >
-                    <HelpCircle className="w-4 h-4" />
-                    Skal vi vise deg rundt?
-                  </button>
-                )}
+                {/* Guide-knapper – høyrestilt */}
+                <div className="flex items-center gap-2">
+                  {isDashboardRoot && !guideLoading && shouldShowGuide && (
+                    <BigActionButton
+                      onClick={() => startGuide('full')}
+                      size="lg"
+                      icon={<Sparkles className="w-5 h-5" />}
+                      className="animate-pulse-subtle"
+                    >
+                      Start guide
+                    </BigActionButton>
+                  )}
+                  
+                  {isDashboardRoot && !guideLoading && !shouldShowGuide && (
+                    <button
+                      onClick={() => startGuide('full')}
+                      className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 border border-border hover:border-primary/30 transition-colors text-sm font-medium"
+                    >
+                      <HelpCircle className="w-4 h-4" />
+                      Skal vi vise deg rundt?
+                    </button>
+                  )}
+                </div>
               </div>
               {description && (
-                <p className="text-base sm:text-lg text-muted-foreground max-w-2xl">
+                <p className="text-base sm:text-lg text-muted-foreground/90 max-w-2xl font-medium">
                   {description}
                 </p>
               )}
