@@ -323,6 +323,20 @@ export function useDeleteMarketplaceItem() {
 
   return useMutation({
     mutationFn: async (id: string) => {
+      // Delete related marketplace_images first (foreign key constraint)
+      const { error: imgError } = await supabase
+        .from('marketplace_images')
+        .delete()
+        .eq('item_id', id);
+      if (imgError) throw imgError;
+
+      // Nullify references in inquiry_items
+      const { error: inqError } = await supabase
+        .from('inquiry_items')
+        .update({ marketplace_item_id: null })
+        .eq('marketplace_item_id', id);
+      // Ignore inquiry_items error (user may not have permission, and that's ok)
+
       const { error } = await supabase
         .from('marketplace_items')
         .delete()
