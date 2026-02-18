@@ -206,6 +206,7 @@ export function useUpdateOwnerProfile() {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['owner-profile', data.user_id] });
       queryClient.invalidateQueries({ queryKey: ['owner-profile-slug', data.slug] });
+      queryClient.invalidateQueries({ queryKey: ['all-owner-profiles'] });
       toast({
         title: 'Profil oppdatert',
         description: 'Endringene dine er lagret.',
