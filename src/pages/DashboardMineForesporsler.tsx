@@ -13,7 +13,9 @@ import {
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Inbox, Loader2, Mail, Phone, User, Package, MapPin, ExternalLink, Car } from "lucide-react";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { Inbox, Loader2, Mail, Phone, User, Package, MapPin, ExternalLink, Car, Trash2 } from "lucide-react";
+import { toast } from "sonner";
 import { format } from "date-fns";
 import { nb } from "date-fns/locale";
 import { useNavigate, Link } from "react-router-dom";
@@ -139,6 +141,30 @@ export default function DashboardMineForesporsler() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["my-inquiries"] });
+    },
+  });
+
+  const deleteInquiry = useMutation({
+    mutationFn: async (id: string) => {
+      // Delete inquiry items first
+      const { error: itemsError } = await supabase
+        .from("inquiry_items")
+        .delete()
+        .eq("inquiry_id", id);
+      if (itemsError) throw itemsError;
+      const { error } = await supabase
+        .from("inquiries")
+        .delete()
+        .eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      setSelectedId(null);
+      queryClient.invalidateQueries({ queryKey: ["my-inquiries"] });
+      toast.success("Forespørselen ble slettet");
+    },
+    onError: () => {
+      toast.error("Kunne ikke slette forespørselen");
     },
   });
 
@@ -421,6 +447,33 @@ export default function DashboardMineForesporsler() {
                     </Select>
                   </div>
                 </div>
+
+                {/* === SLETT === */}
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <button className="w-full min-h-[48px] flex items-center justify-center gap-2 text-destructive hover:bg-destructive/10 border-2 border-destructive/30 rounded-xl font-display text-sm uppercase tracking-wider transition-colors">
+                      <Trash2 className="w-4 h-4" />
+                      Slett forespørsel
+                    </button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Slett forespørsel?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Forespørselen fra {selected.customer_name} vil bli permanent slettet. Dette kan ikke angres.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Avbryt</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={() => deleteInquiry.mutate(selected.id)}
+                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                      >
+                        {deleteInquiry.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Slett"}
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </div>
             </>
           )}
