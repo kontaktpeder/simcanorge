@@ -13,6 +13,11 @@ export interface ItemFormValues {
   priceNote: string;
   condition: string;
   showLocation: boolean;
+  // Optional car context – which car does this part/listing relate to?
+  carBrand?: string;
+  carModel?: string;
+  carVariant?: string;
+  carYear?: string;
 }
 
 export function getSubmitTarget(

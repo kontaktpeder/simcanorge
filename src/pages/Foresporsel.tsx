@@ -9,6 +9,7 @@ import { X, Send, ArrowLeft, Check, User, Package } from "lucide-react";
 import { z } from "zod";
 import { toast } from "sonner";
 import toolboxIcon from "@/assets/toolbox-blue.png";
+import { CarFormFields } from "@/components/car/CarFormFields";
 
 const inquirySchema = z.object({
   customer_name: z.string().trim().min(1, "Navn er påkrevd").max(100),
@@ -32,6 +33,13 @@ const Foresporsel = () => {
     car_model: "",
     car_year: "",
     message: "",
+  });
+  const [carFields, setCarFields] = useState({
+    brand: "",
+    model: "",
+    variant: "",
+    body_type: "",
+    year: "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [lastSubmitTime, setLastSubmitTime] = useState<number>(0);
@@ -160,6 +168,8 @@ const Foresporsel = () => {
       const { data, error } = await supabase.functions.invoke("send-inquiry", {
         body: {
           ...result.data,
+          car_model: [carFields.brand, carFields.model, carFields.variant].filter(Boolean).join(" ") || result.data.car_model || null,
+          car_year: carFields.year ? parseInt(carFields.year) : result.data.car_year || null,
           items: items.map((item) => ({
             type: item.type,
             id: item.id,
@@ -326,15 +336,14 @@ const Foresporsel = () => {
                     <input type="tel" name="phone" value={formData.phone} onChange={handleChange} className="w-full h-12 sm:h-auto p-3 text-base border-2 border-border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary transition-all" />
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                    <div>
-                      <label className="block font-display text-base sm:text-lg mb-1.5 sm:mb-2">BILMODELL</label>
-                      <input type="text" name="car_model" value={formData.car_model} onChange={handleChange} placeholder="f.eks. 1000 Rallye" className="w-full h-12 sm:h-auto p-3 text-base border-2 border-border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary transition-all" />
-                    </div>
-                    <div>
-                      <label className="block font-display text-base sm:text-lg mb-1.5 sm:mb-2">ÅRSMODELL</label>
-                      <input type="number" name="car_year" value={formData.car_year} onChange={handleChange} placeholder="f.eks. 1972" min="1900" max={new Date().getFullYear() + 1} className="w-full h-12 sm:h-auto p-3 text-base border-2 border-border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary transition-all" />
-                    </div>
+                  <div>
+                    <label className="block font-display text-base sm:text-lg mb-1.5 sm:mb-2">HVILKEN BIL GJELDER DET?</label>
+                    <p className="text-sm text-muted-foreground mb-3">Velg merke og modell slik at selger vet hva delene skal passe til</p>
+                    <CarFormFields
+                      formData={carFields}
+                      onChange={(field, value) => setCarFields(prev => ({ ...prev, [field]: value }))}
+                      showTooltips={false}
+                    />
                   </div>
 
                   <div>
