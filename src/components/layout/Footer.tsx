@@ -32,7 +32,7 @@ export function Footer() {
                 <h3 className="font-display text-base md:text-xl mb-2 md:mb-3 text-metal">SNARVEIER</h3>
                 <nav className="flex flex-col gap-1 md:gap-1.5 text-xs md:text-base">
                   <Link to="/biler" className="hover:text-white/80 transition-colors text-white/90">Biler & Historier</Link>
-                  <Link to="/deler" className="hover:text-white/80 transition-colors text-white/90">Finn deler</Link>
+                  <Link to="/markedsplass" className="hover:text-white/80 transition-colors text-white/90">Markedsplass</Link>
                   <Link to="/send-inn" className="hover:text-white/80 transition-colors text-white/90">Send inn din bil</Link>
                   <Link to="/historie" className="hover:text-white/80 transition-colors text-white/90">Simcas historie</Link>
                   <Link to="/foresporsel" className="hover:text-white/80 transition-colors text-white/90">Min forespørsel</Link>

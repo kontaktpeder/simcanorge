@@ -181,7 +181,7 @@ export function HeroSection() {
               
               {/* Secondary CTA - Blue metallic, slightly smaller - min 48px touch target */}
               <Link 
-                to="/deler" 
+                to="/markedsplass" 
                 className="group relative inline-flex items-center justify-center min-h-[48px] px-5 py-3 md:px-6 md:py-3.5 font-display text-xs md:text-lg uppercase tracking-wide text-white overflow-hidden active:scale-[0.98] transition-transform"
                 style={{
                   background: 'linear-gradient(180deg, #3A8AE3 0%, #2B7BD4 25%, #1F66B5 50%, #0F3E7A 100%)',
@@ -201,7 +201,7 @@ export function HeroSection() {
                     background: 'linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 50%, rgba(0,0,0,0.1) 100%)',
                   }}
                 />
-                <span className="relative z-10 drop-shadow-md">FINN DELER</span>
+                <span className="relative z-10 drop-shadow-md">MARKEDSPLASS</span>
                 <Car className="relative z-10 w-3.5 h-3.5 md:w-5 md:h-5 ml-2 group-hover:scale-110 transition-transform drop-shadow-md" />
               </Link>
             </div>

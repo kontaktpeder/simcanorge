@@ -6,6 +6,12 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+interface InquiryItem {
+  type: "part" | "listing";
+  id: string;
+  title: string;
+}
+
 interface InquiryRequest {
   customer_name: string;
   email: string;
@@ -13,14 +19,10 @@ interface InquiryRequest {
   car_model?: string;
   car_year?: number;
   message?: string;
-  items: Array<{
-    part_id: string;
-    part_title: string;
-  }>;
+  items: InquiryItem[];
 }
 
 const handler = async (req: Request): Promise<Response> => {
-  // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
@@ -29,21 +31,17 @@ const handler = async (req: Request): Promise<Response> => {
     const data: InquiryRequest = await req.json();
     console.log("Received inquiry:", JSON.stringify(data, null, 2));
 
-    // Validate required fields
     if (!data.customer_name || !data.email || !data.items || data.items.length === 0) {
-      console.error("Missing required fields");
       return new Response(
-        JSON.stringify({ error: "Mangler påkrevde felt (navn, e-post, eller deler)" }),
+        JSON.stringify({ error: "Mangler påkrevde felt (navn, e-post, eller varer)" }),
         { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
       );
     }
 
-    // Create Supabase client
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Insert inquiry into database
     const { data: inquiry, error: inquiryError } = await supabase
       .from("inquiries")
       .insert({
@@ -68,11 +66,11 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log("Inquiry created:", inquiry.id);
 
-    // Insert inquiry items
     const inquiryItems = data.items.map((item) => ({
       inquiry_id: inquiry.id,
-      part_id: item.part_id,
-      part_title: item.part_title,
+      part_id: item.type === "part" ? item.id : null,
+      marketplace_item_id: item.type === "listing" ? item.id : null,
+      part_title: item.title,
     }));
 
     const { error: itemsError } = await supabase
@@ -86,10 +84,10 @@ const handler = async (req: Request): Promise<Response> => {
     console.log("Inquiry items created for inquiry:", inquiry.id);
 
     return new Response(
-      JSON.stringify({ 
-        success: true, 
+      JSON.stringify({
+        success: true,
         message: "Forespørsel mottatt! Vi tar kontakt så snart som mulig.",
-        inquiry_id: inquiry.id 
+        inquiry_id: inquiry.id,
       }),
       { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
     );
