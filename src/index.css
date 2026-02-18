@@ -124,6 +124,9 @@
     text-size-adjust: 100%;
     /* Hindre horisontal scroll i Chrome */
     overflow-x: hidden;
+    /* In-app browsers (Messenger, Facebook): bruk synlig høyde */
+    min-height: 100%;
+    min-height: -webkit-fill-available;
   }
 
   body {
@@ -132,11 +135,15 @@
     /* Safe area insets for iPhone X+ */
     padding-left: env(safe-area-inset-left);
     padding-right: env(safe-area-inset-right);
+    padding-bottom: env(safe-area-inset-bottom);
     /* Forbedret font rendering */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     /* Hindre layout shift på mobil */
     overflow-x: hidden;
+    /* In-app browsers: synlig høyde */
+    min-height: 100%;
+    min-height: -webkit-fill-available;
   }
 
   h1, h2, h3, h4, h5, h6 {
