@@ -5,7 +5,7 @@ import { Layout } from "@/components/layout/Layout";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { useCart } from "@/hooks/useCart";
 import { supabase } from "@/integrations/supabase/client";
-import { X, Send, ArrowLeft, Check, User, Package } from "lucide-react";
+import { X, Send, ArrowLeft, Check, User, Package, ChevronDown } from "lucide-react";
 import { z } from "zod";
 import { toast } from "sonner";
 import toolboxIcon from "@/assets/toolbox-blue.png";
@@ -396,106 +396,143 @@ const Foresporsel = () => {
                   </div>
 
                   {/* Per-recipient message cards */}
-                  <div className="space-y-5 pt-2">
-                    <h3 className="font-display text-base sm:text-lg">MELDINGER TIL SELGERE</h3>
+                  {(() => {
+                    // Build ordered list of recipient keys for next-CTA navigation
+                    const recipientKeys: { key: string; label: string }[] = [];
+                    if (adminItems.length > 0) recipientKeys.push({ key: "admin", label: "Simca Norge" });
+                    for (const [ownerId, { ownerName }] of byOwner) {
+                      recipientKeys.push({ key: ownerId, label: ownerName });
+                    }
 
-                    {adminItems.length > 0 && (
-                      <div className="border-2 border-border rounded-xl overflow-hidden">
-                        <div className="bg-muted/50 px-4 py-3 flex items-center gap-3 border-b border-border">
-                          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                            <Package className="w-4 h-4 text-primary" />
-                          </div>
-                          <div>
-                            <p className="font-display text-sm sm:text-base leading-tight">SIMCA NORGE</p>
-                            <p className="text-xs text-muted-foreground">{adminItems.length} {adminItems.length === 1 ? "vare" : "varer"}</p>
-                          </div>
-                        </div>
-                        <div className="px-4 py-3 space-y-2">
-                          {adminItems.map((item) => {
-                            const enriched = enrichedMap.get(item.id);
-                            return (
-                              <div key={item.id} className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-md bg-muted flex-shrink-0 overflow-hidden">
-                                  {enriched?.image ? (
-                                    <img src={enriched.image} alt={item.title} className="w-full h-full object-cover" />
-                                  ) : (
-                                    <div className="w-full h-full flex items-center justify-center">
-                                      <Package className="w-4 h-4 text-muted-foreground" />
-                                    </div>
-                                  )}
+                    return (
+                      <div className="space-y-5 pt-2">
+                        <h3 className="font-display text-base sm:text-lg">MELDINGER TIL SELGERE</h3>
+
+                        {adminItems.length > 0 && (() => {
+                          const currentIdx = recipientKeys.findIndex((r) => r.key === "admin");
+                          const next = recipientKeys[currentIdx + 1];
+                          return (
+                            <div id="recipient-admin" className="border-2 border-border rounded-xl overflow-hidden">
+                              <div className="bg-muted/50 px-4 py-3 flex items-center gap-3 border-b border-border">
+                                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                                  <Package className="w-4 h-4 text-primary" />
                                 </div>
-                                <div className="min-w-0 flex-1">
-                                  <p className="text-sm font-medium truncate">{item.title}</p>
-                                  {enriched?.price && <p className="text-xs text-primary">{enriched.price}</p>}
+                                <div>
+                                  <p className="font-display text-sm sm:text-base leading-tight">SIMCA NORGE</p>
+                                  <p className="text-xs text-muted-foreground">{adminItems.length} {adminItems.length === 1 ? "vare" : "varer"}</p>
                                 </div>
                               </div>
-                            );
-                          })}
-                        </div>
-                        <div className="px-4 pb-4">
-                          <textarea
-                            value={messagesByRecipient["admin"] ?? ""}
-                            onChange={(e) => setMessageForRecipient("admin", e.target.value)}
-                            rows={3}
-                            placeholder="Skriv en melding til Simca Norge..."
-                            className="w-full p-3 text-sm border-2 border-border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary transition-all resize-none"
-                          />
-                        </div>
-                      </div>
-                    )}
-
-                    {Array.from(byOwner.entries()).map(([ownerId, { ownerName, items: ownerItems }]) => {
-                      const firstEnriched = enrichedMap.get(ownerItems[0]?.id);
-                      return (
-                        <div key={ownerId} className="border-2 border-border rounded-xl overflow-hidden">
-                          <div className="bg-muted/50 px-4 py-3 flex items-center gap-3 border-b border-border">
-                            <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center overflow-hidden flex-shrink-0">
-                              {firstEnriched?.ownerAvatar ? (
-                                <img src={firstEnriched.ownerAvatar} alt={ownerName} className="w-full h-full object-cover" />
-                              ) : (
-                                <User className="w-4 h-4 text-muted-foreground" />
-                              )}
-                            </div>
-                            <div>
-                              <p className="font-display text-sm sm:text-base leading-tight">{ownerName.toUpperCase()}</p>
-                              <p className="text-xs text-muted-foreground">{ownerItems.length} {ownerItems.length === 1 ? "vare" : "varer"}</p>
-                            </div>
-                          </div>
-                          <div className="px-4 py-3 space-y-2">
-                            {ownerItems.map((item) => {
-                              const enriched = enrichedMap.get(item.id);
-                              return (
-                                <div key={item.id} className="flex items-center gap-3">
-                                  <div className="w-10 h-10 rounded-md bg-muted flex-shrink-0 overflow-hidden">
-                                    {enriched?.image ? (
-                                      <img src={enriched.image} alt={item.title} className="w-full h-full object-cover" />
-                                    ) : (
-                                      <div className="w-full h-full flex items-center justify-center">
-                                        <Package className="w-4 h-4 text-muted-foreground" />
+                              <div className="px-4 py-3 space-y-2">
+                                {adminItems.map((item) => {
+                                  const enriched = enrichedMap.get(item.id);
+                                  return (
+                                    <div key={item.id} className="flex items-center gap-3">
+                                      <div className="w-10 h-10 rounded-md bg-muted flex-shrink-0 overflow-hidden">
+                                        {enriched?.image ? (
+                                          <img src={enriched.image} alt={item.title} className="w-full h-full object-cover" />
+                                        ) : (
+                                          <div className="w-full h-full flex items-center justify-center">
+                                            <Package className="w-4 h-4 text-muted-foreground" />
+                                          </div>
+                                        )}
                                       </div>
-                                    )}
-                                  </div>
-                                  <div className="min-w-0 flex-1">
-                                    <p className="text-sm font-medium truncate">{item.title}</p>
-                                    {enriched?.price && <p className="text-xs text-primary">{enriched.price}</p>}
-                                  </div>
+                                      <div className="min-w-0 flex-1">
+                                        <p className="text-sm font-medium truncate">{item.title}</p>
+                                        {enriched?.price && <p className="text-xs text-primary">{enriched.price}</p>}
+                                      </div>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                              <div className="px-4 pb-4 space-y-3">
+                                <textarea
+                                  value={messagesByRecipient["admin"] ?? ""}
+                                  onChange={(e) => setMessageForRecipient("admin", e.target.value)}
+                                  rows={3}
+                                  placeholder="Skriv en melding til Simca Norge..."
+                                  className="w-full p-3 text-sm border-2 border-border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary transition-all resize-none"
+                                />
+                                {next && (
+                                  <button
+                                    type="button"
+                                    onClick={() => document.getElementById(`recipient-${next.key}`)?.scrollIntoView({ behavior: "smooth", block: "center" })}
+                                    className="w-full flex items-center justify-center gap-2 py-2.5 text-sm font-display text-primary hover:bg-primary/5 rounded-lg transition-colors"
+                                  >
+                                    <ChevronDown className="w-4 h-4" />
+                                    Skriv til {next.label}
+                                  </button>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })()}
+
+                        {Array.from(byOwner.entries()).map(([ownerId, { ownerName, items: ownerItems }]) => {
+                          const firstEnriched = enrichedMap.get(ownerItems[0]?.id);
+                          const currentIdx = recipientKeys.findIndex((r) => r.key === ownerId);
+                          const next = recipientKeys[currentIdx + 1];
+                          return (
+                            <div key={ownerId} id={`recipient-${ownerId}`} className="border-2 border-border rounded-xl overflow-hidden">
+                              <div className="bg-muted/50 px-4 py-3 flex items-center gap-3 border-b border-border">
+                                <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center overflow-hidden flex-shrink-0">
+                                  {firstEnriched?.ownerAvatar ? (
+                                    <img src={firstEnriched.ownerAvatar} alt={ownerName} className="w-full h-full object-cover" />
+                                  ) : (
+                                    <User className="w-4 h-4 text-muted-foreground" />
+                                  )}
                                 </div>
-                              );
-                            })}
-                          </div>
-                          <div className="px-4 pb-4">
-                            <textarea
-                              value={messagesByRecipient[ownerId] ?? ""}
-                              onChange={(e) => setMessageForRecipient(ownerId, e.target.value)}
-                              rows={3}
-                              placeholder={`Skriv en melding til ${ownerName}...`}
-                              className="w-full p-3 text-sm border-2 border-border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary transition-all resize-none"
-                            />
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
+                                <div>
+                                  <p className="font-display text-sm sm:text-base leading-tight">{ownerName.toUpperCase()}</p>
+                                  <p className="text-xs text-muted-foreground">{ownerItems.length} {ownerItems.length === 1 ? "vare" : "varer"}</p>
+                                </div>
+                              </div>
+                              <div className="px-4 py-3 space-y-2">
+                                {ownerItems.map((item) => {
+                                  const enriched = enrichedMap.get(item.id);
+                                  return (
+                                    <div key={item.id} className="flex items-center gap-3">
+                                      <div className="w-10 h-10 rounded-md bg-muted flex-shrink-0 overflow-hidden">
+                                        {enriched?.image ? (
+                                          <img src={enriched.image} alt={item.title} className="w-full h-full object-cover" />
+                                        ) : (
+                                          <div className="w-full h-full flex items-center justify-center">
+                                            <Package className="w-4 h-4 text-muted-foreground" />
+                                          </div>
+                                        )}
+                                      </div>
+                                      <div className="min-w-0 flex-1">
+                                        <p className="text-sm font-medium truncate">{item.title}</p>
+                                        {enriched?.price && <p className="text-xs text-primary">{enriched.price}</p>}
+                                      </div>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                              <div className="px-4 pb-4 space-y-3">
+                                <textarea
+                                  value={messagesByRecipient[ownerId] ?? ""}
+                                  onChange={(e) => setMessageForRecipient(ownerId, e.target.value)}
+                                  rows={3}
+                                  placeholder={`Skriv en melding til ${ownerName}...`}
+                                  className="w-full p-3 text-sm border-2 border-border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary transition-all resize-none"
+                                />
+                                {next && (
+                                  <button
+                                    type="button"
+                                    onClick={() => document.getElementById(`recipient-${next.key}`)?.scrollIntoView({ behavior: "smooth", block: "center" })}
+                                    className="w-full flex items-center justify-center gap-2 py-2.5 text-sm font-display text-primary hover:bg-primary/5 rounded-lg transition-colors"
+                                  >
+                                    <ChevronDown className="w-4 h-4" />
+                                    Skriv til {next.label}
+                                  </button>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    );
+                  })()}
 
                   <button type="submit" disabled={isSubmitting || items.length === 0} className="btn-enamel-red w-full h-12 sm:h-auto disabled:opacity-50 disabled:cursor-not-allowed text-base sm:text-lg">
                     {isSubmitting ? "Sender..." : <><Send className="w-5 h-5 mr-2" />Send forespørsel</>}
