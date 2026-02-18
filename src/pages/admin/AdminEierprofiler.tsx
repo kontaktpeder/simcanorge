@@ -44,10 +44,10 @@ export default function AdminEierprofiler() {
       profile.favorite_brands?.some(b => b.toLowerCase().includes(query))
     );
   })?.sort((a, b) => {
-    // Profiles requesting approval first, then unapproved, then approved
-    const aRequested = !a.approved_at && (a as any).requested_approval_at ? 0 : !a.approved_at ? 1 : 2;
-    const bRequested = !b.approved_at && (b as any).requested_approval_at ? 0 : !b.approved_at ? 1 : 2;
-    return aRequested - bRequested;
+    // Unapproved first, then approved
+    const aPending = !a.approved_at ? 0 : 1;
+    const bPending = !b.approved_at ? 0 : 1;
+    return aPending - bPending;
   });
 
   const handleToggleVisibility = async (profileId: string, currentValue: boolean) => {
@@ -85,7 +85,7 @@ export default function AdminEierprofiler() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.2, delay: index * 0.05 }}
                 className={`bg-card border rounded-lg p-4 sm:p-5 ${
-                  (profile as any).requested_approval_at && !profile.approved_at
+                  !profile.approved_at
                     ? 'border-amber-400 ring-1 ring-amber-200'
                     : ''
                 }`}
@@ -124,11 +124,9 @@ export default function AdminEierprofiler() {
                           </Badge>
                         ) : (
                           <div className="flex items-center gap-2">
-                            {(profile as any).requested_approval_at && (
-                              <Badge variant="secondary" className="bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400 text-xs animate-pulse">
-                                ⚡ Ber om godkjenning
-                              </Badge>
-                            )}
+                            <Badge variant="secondary" className="bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400 text-xs">
+                              Venter på godkjenning
+                            </Badge>
                             <Button
                               size="sm"
                               variant="outline"
