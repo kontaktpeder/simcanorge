@@ -304,7 +304,7 @@ export default function Dashboard() {
               <p className="font-display text-sm uppercase tracking-wider text-muted-foreground">
                 Profil
               </p>
-              <img src={minSideBadge} alt="" className="w-7 h-7 object-contain opacity-60" />
+              <img src={minSideBadge} alt="" className="w-14 h-14 object-contain opacity-60" />
             </div>
             <h3 className={`font-display text-2xl sm:text-3xl uppercase tracking-wider mb-2 transition-colors ${
               profileNeedsAttention ? 'text-primary' : 'group-hover:text-primary'
