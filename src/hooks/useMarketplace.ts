@@ -47,7 +47,7 @@ export function useMarketplaceItems(filters?: { categoryId?: string; search?: st
         .select(`
           *,
           marketplace_images(id, image_url, sort_order, alt_text),
-          marketplace_categories(id, name, slug),
+          categories(id, name, slug),
           owners!inner(id, display_name, slug, location, avatar_url)
         `)
         .not('published_at', 'is', null)
@@ -79,7 +79,7 @@ export function useMarketplaceItemBySlug(slug: string | undefined) {
         .select(`
           *,
           marketplace_images(id, image_url, sort_order, alt_text),
-          marketplace_categories(id, name, slug),
+          categories(id, name, slug),
           owners!inner(id, display_name, slug, location, avatar_url, bio)
         `)
         .eq('slug', slug)
@@ -138,7 +138,7 @@ export function useMyListings(userId: string | undefined) {
         .select(`
           *,
           marketplace_images(id, image_url, sort_order, alt_text),
-          marketplace_categories(id, name, slug)
+          categories(id, name, slug)
         `)
         .eq('owner_id', owner.id)
         .order('created_at', { ascending: false });
@@ -272,7 +272,7 @@ export function useAdminMarketplaceItems(statusFilter?: string) {
         .select(`
           *,
           marketplace_images(id, image_url, sort_order, alt_text),
-          marketplace_categories(id, name, slug),
+          categories(id, name, slug),
           owners(id, display_name, slug, user_id)
         `)
         .order('created_at', { ascending: false });

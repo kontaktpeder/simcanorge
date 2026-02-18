@@ -21,7 +21,7 @@ interface ItemDetail {
   created_at: string;
   updated_at: string;
   marketplace_images?: { id: string; image_url: string; sort_order: number }[];
-  marketplace_categories?: { id: string; name: string; slug: string } | null;
+  categories?: { id: string; name: string; slug: string } | null;
   owners?: { id: string; display_name: string | null; slug: string | null; user_id?: string } | null;
 }
 
@@ -46,7 +46,7 @@ const AdminAnnonseProfil = () => {
         .select(`
           *,
           marketplace_images(id, image_url, sort_order, alt_text),
-          marketplace_categories(id, name, slug),
+          categories(id, name, slug),
           owners(id, display_name, slug, user_id)
         `)
         .eq("id", itemId!)
@@ -212,10 +212,10 @@ const AdminAnnonseProfil = () => {
                 {item.price_note && <p className="text-xs text-muted-foreground">{item.price_note}</p>}
               </div>
             )}
-            {item.marketplace_categories?.name && (
+            {item.categories?.name && (
               <div>
                 <h3 className="font-display text-sm text-muted-foreground mb-1">Kategori</h3>
-                <p>{item.marketplace_categories.name}</p>
+                <p>{item.categories.name}</p>
               </div>
             )}
             {item.location && (
