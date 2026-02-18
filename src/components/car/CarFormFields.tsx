@@ -61,12 +61,12 @@ export function CarFormFields({
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
       {/* Brand */}
-      <FieldWrapper label="MERKE" tooltip="Bilprodusent. Eks: Simca" required>
+      <FieldWrapper label="MERKE" tooltip="Bilprodusent. Eks: Simca">
         <select
           value={formData.brand}
           onChange={(e) => handleBrandChange(e.target.value)}
           className={`w-full h-12 px-3 text-base border-2 border-foreground bg-card rounded ${errors.brand ? 'border-destructive' : ''}`}
-          required
+          
           disabled={disabled}
         >
           <option value="">Velg merke...</option>
@@ -77,12 +77,12 @@ export function CarFormFields({
       </FieldWrapper>
 
       {/* Model */}
-      <FieldWrapper label="MODELL" tooltip="Modellserie / plattform. Eks: 1100" required>
+      <FieldWrapper label="MODELL" tooltip="Modellserie / plattform. Eks: 1100">
         <select
           value={formData.model}
           onChange={(e) => handleModelChange(e.target.value)}
           className={`w-full h-12 px-3 text-base border-2 border-foreground bg-card rounded ${errors.model ? 'border-destructive' : ''}`}
-          required
+          
           disabled={disabled || !formData.brand}
         >
           <option value="">Velg modell...</option>
