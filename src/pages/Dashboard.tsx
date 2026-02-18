@@ -300,28 +300,47 @@ export default function Dashboard() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.3 }}
         >
-          <EnamelCard 
-            className="h-full min-h-[140px] sm:min-h-[160px] group cursor-pointer touch-manipulation" 
-            onClick={handleOpenOwnerProfile}
-            data-guide="owner-profile-card"
-          >
-            <div className="flex items-start justify-between mb-3 sm:mb-4">
-              <div className="p-2.5 sm:p-3 bg-primary/10 rounded-xl flex-shrink-0">
-                <User className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
-              </div>
-              {ownerProfile?.visible_public && (
-                <span className="text-[10px] sm:text-xs bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full whitespace-nowrap">
-                  Offentlig
-                </span>
-              )}
-            </div>
-            <h3 className="font-display text-lg sm:text-xl mb-1 sm:mb-2 group-hover:text-primary transition-colors">
-              Min profil
-            </h3>
-            <p className="text-sm sm:text-base text-muted-foreground line-clamp-2">
-              {ownerProfile ? 'Rediger entusiastprofil' : 'Opprett entusiastprofil'}
-            </p>
-          </EnamelCard>
+          {(() => {
+            const filledFields = ownerProfile ? [
+              ownerProfile.bio,
+              ownerProfile.location,
+              ownerProfile.avatar_url,
+              (ownerProfile.favorite_brands?.length ?? 0) > 0 ? true : null,
+            ].filter(Boolean).length : 0;
+            const needsAttention = !ownerProfile || filledFields < 2;
+            return (
+              <EnamelCard 
+                className={`h-full min-h-[140px] sm:min-h-[160px] group cursor-pointer touch-manipulation relative overflow-hidden ${needsAttention ? 'ring-2 ring-primary shadow-lg shadow-primary/10' : ''}`}
+                onClick={handleOpenOwnerProfile}
+                data-guide="owner-profile-card"
+              >
+                {needsAttention && (
+                  <div className="absolute top-0 left-0 right-0 h-1 bg-primary" />
+                )}
+                <div className="flex items-start justify-between mb-3 sm:mb-4">
+                  <div className={`p-2.5 sm:p-3 rounded-xl flex-shrink-0 ${needsAttention ? 'bg-primary text-primary-foreground animate-pulse' : 'bg-primary/10'}`}>
+                    <User className={`w-6 h-6 sm:w-8 sm:h-8 ${needsAttention ? '' : 'text-primary'}`} />
+                  </div>
+                  {ownerProfile?.visible_public && (
+                    <span className="text-[10px] sm:text-xs bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full whitespace-nowrap">
+                      Offentlig
+                    </span>
+                  )}
+                </div>
+                <h3 className="font-display text-lg sm:text-xl mb-1 sm:mb-2 group-hover:text-primary transition-colors">
+                  {needsAttention ? 'Entusiastprofil' : 'Min profil'}
+                </h3>
+                <p className={`text-sm sm:text-base line-clamp-2 ${needsAttention ? 'text-primary font-medium' : 'text-muted-foreground'}`}>
+                  {ownerProfile ? (needsAttention ? 'Fullfør entusiastprofilen din →' : 'Rediger entusiastprofil') : 'Opprett entusiastprofil →'}
+                </p>
+                {needsAttention && (
+                  <p className="text-xs text-muted-foreground mt-1.5">
+                    {ownerProfile ? `${filledFields}/2 felt fylt ut` : 'Kom i gang her'}
+                  </p>
+                )}
+              </EnamelCard>
+            );
+          })()}
         </motion.div>
 
         {/* Dine annonser */}
