@@ -1,10 +1,10 @@
 import { useAuth } from '@/hooks/useAuth';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 import { GarageLayout } from '@/components/ui/garage/GarageLayout';
 import { EnamelCard } from '@/components/ui/garage/EnamelCard';
 import { BigActionButton } from '@/components/ui/garage/BigActionButton';
-import { ShoppingBag, Plus, Clock, Eye, Archive, Loader2, User, Send } from 'lucide-react';
+import { ShoppingBag, Plus, Clock, Eye, Archive, Loader2, User, Send, CheckCircle2, Pencil } from 'lucide-react';
 import { Layout } from '@/components/layout/Layout';
 import { motion } from 'framer-motion';
 import { Badge } from '@/components/ui/badge';
@@ -16,6 +16,8 @@ import { useRequestSellerApproval } from '@/hooks/useRequestSellerApproval';
 export default function DashboardMineAnnonser() {
   const { user, isLoading: authLoading } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const justSubmitted = (location.state as any)?.justSubmitted;
   const { data: ownerProfile, isLoading: profileLoading } = useOwnerProfile(user?.id);
   const { data: listings, isLoading: listingsLoading } = useMyListings(user?.id);
   const requestApproval = useRequestSellerApproval();
@@ -59,6 +61,21 @@ export default function DashboardMineAnnonser() {
       subtitle="Markedsplass"
       description="Se og administrer annonser du har lagt ut på markedsplassen."
     >
+      {/* Success message after submission */}
+      {justSubmitted && (
+        <EnamelCard className="mb-6 border-green-200 dark:border-green-800">
+          <div className="p-4 flex items-start gap-3">
+            <CheckCircle2 className="h-5 w-5 text-green-600 mt-0.5 shrink-0" />
+            <div>
+              <p className="font-medium text-green-800 dark:text-green-300">Annonsen er sendt inn</p>
+              <p className="text-sm text-muted-foreground mt-1">
+                Du ser annonsen din under. Den må godkjennes av admin før den vises på markedsplassen.
+              </p>
+            </div>
+          </div>
+        </EnamelCard>
+      )}
+
       {/* Status messages */}
       {!ownerProfile && (
         <EnamelCard className="mb-6">
@@ -148,15 +165,35 @@ export default function DashboardMineAnnonser() {
                       {item.price && (
                         <p className="text-primary font-bold mt-1">{Number(item.price).toLocaleString('nb-NO')} kr</p>
                       )}
+                      {item.status === 'submitted' && (
+                        <p className="text-xs text-amber-600 dark:text-amber-400 mt-1">
+                          Venter på godkjenning fra admin
+                        </p>
+                      )}
                       <p className="text-xs text-muted-foreground mt-2">
                         Opprettet {new Date(item.created_at).toLocaleDateString('nb-NO')}
                       </p>
-                      <Link
-                        to={`/dashboard/annonse/${item.id}/rediger`}
-                        className="text-sm text-primary hover:underline mt-2 inline-block"
-                      >
-                        Rediger annonse
-                      </Link>
+                      <div className="flex items-center gap-2 mt-2">
+                        {item.slug && item.status === 'published' && (
+                          <Link
+                            to={`/annonse/${item.slug}`}
+                            className="text-sm text-primary hover:underline inline-flex items-center gap-1"
+                          >
+                            <Eye className="h-3 w-3" />
+                            Se annonse
+                          </Link>
+                        )}
+                        {item.slug && item.status === 'published' && (
+                          <span className="text-muted-foreground">·</span>
+                        )}
+                        <Link
+                          to={`/dashboard/annonse/${item.id}/rediger`}
+                          className="text-sm text-primary hover:underline inline-flex items-center gap-1"
+                        >
+                          <Pencil className="h-3 w-3" />
+                          Rediger
+                        </Link>
+                      </div>
                     </div>
                   </div>
                 </EnamelCard>
