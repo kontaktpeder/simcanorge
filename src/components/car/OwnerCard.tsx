@@ -40,7 +40,7 @@ export function OwnerCard({ carId, owner: ownerProp }: OwnerCardProps) {
     >
       <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 flex items-center gap-2">
         <User className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
-        Lagt ut av
+        Selges av
       </h2>
       
       <div className="bg-card rounded-xl border shadow-sm overflow-hidden">
