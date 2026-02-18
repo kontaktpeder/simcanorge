@@ -30,6 +30,7 @@ export function OwnerProfileSection({ userId }: OwnerProfileSectionProps) {
   const requestApproval = useRequestSellerApproval();
   
   const [displayName, setDisplayName] = useState('');
+  const [username, setUsername] = useState('');
   const [bio, setBio] = useState('');
   const [location, setLocation] = useState('');
   const [favoriteBrands, setFavoriteBrands] = useState<string[]>([]);
@@ -44,12 +45,12 @@ export function OwnerProfileSection({ userId }: OwnerProfileSectionProps) {
   useEffect(() => {
     if (profile) {
       setDisplayName(profile.display_name || '');
+      setUsername(profile.username ?? '');
       setBio(profile.bio || '');
       setLocation(profile.location || '');
       setFavoriteBrands(profile.favorite_brands || []);
       setVisiblePublic(profile.visible_public);
     } else if (user?.email && !isLoading) {
-      // Default name from email
       setDisplayName(user.email.split('@')[0] || 'Bileier');
     }
   }, [profile, user, isLoading]);
@@ -58,6 +59,7 @@ export function OwnerProfileSection({ userId }: OwnerProfileSectionProps) {
     if (profile) {
       const changed = 
         displayName !== (profile.display_name || '') ||
+        username !== (profile.username ?? '') ||
         bio !== (profile.bio || '') ||
         location !== (profile.location || '') ||
         JSON.stringify(favoriteBrands) !== JSON.stringify(profile.favorite_brands || []) ||
@@ -66,7 +68,7 @@ export function OwnerProfileSection({ userId }: OwnerProfileSectionProps) {
     } else {
       setHasChanges(displayName.length > 0);
     }
-  }, [displayName, bio, location, favoriteBrands, visiblePublic, profile]);
+  }, [displayName, username, bio, location, favoriteBrands, visiblePublic, profile]);
 
   const toggleBrand = (brand: string) => {
     setFavoriteBrands(prev => 
@@ -108,14 +110,24 @@ export function OwnerProfileSection({ userId }: OwnerProfileSectionProps) {
     }
   };
 
+  const isValidUsername = (val: string) => {
+    if (!val.trim()) return true;
+    return /^[a-z0-9][a-z0-9_-]*[a-z0-9]$|^[a-z0-9]$/.test(val.trim());
+  };
+
   const handleSave = async () => {
     if (!displayName.trim()) return;
+
+    if (username.trim() && !isValidUsername(username)) {
+      return; // Input already restricts characters
+    }
 
     if (profile) {
       await updateProfile.mutateAsync({
         id: profile.id,
         updates: {
           display_name: displayName.trim(),
+          username: username.trim() || null,
           bio: bio.trim() || null,
           location: location.trim() || null,
           favorite_brands: favoriteBrands.length > 0 ? favoriteBrands : null,
@@ -126,6 +138,7 @@ export function OwnerProfileSection({ userId }: OwnerProfileSectionProps) {
       await createProfile.mutateAsync({
         user_id: userId,
         display_name: displayName.trim(),
+        username: username.trim() || null,
         bio: bio.trim() || null,
         location: location.trim() || null,
         favorite_brands: favoriteBrands.length > 0 ? favoriteBrands : null,
@@ -229,6 +242,28 @@ export function OwnerProfileSection({ userId }: OwnerProfileSectionProps) {
             />
           </div>
 
+          {/* Username */}
+          <div className="space-y-2">
+            <Label htmlFor="username">Brukernavn (valgfritt)</Label>
+            <Input
+              id="username"
+              value={username}
+              onChange={(e) => {
+                const v = e.target.value.replace(/[^a-zA-Z0-9_-]/g, '').toLowerCase();
+                setUsername(v);
+              }}
+              placeholder="f.eks. peder-august"
+              className="max-w-md font-mono"
+              maxLength={30}
+            />
+            <p className="text-xs text-muted-foreground">
+              Brukes i profil-URL. Kun små bokstaver, tall, bindestrek og understrek.
+            </p>
+            {profile?.slug && visiblePublic && (
+              <p className="font-mono text-xs text-primary">/profil/{profile.slug}</p>
+            )}
+          </div>
+
           {/* Bio */}
           <div className="space-y-2" data-guide="owner-bio">
             <Label htmlFor="bio">Om meg</Label>
@@ -304,13 +339,7 @@ export function OwnerProfileSection({ userId }: OwnerProfileSectionProps) {
             />
           </div>
 
-          {/* Public URL preview */}
-          {profile?.slug && visiblePublic && (
-            <div className="p-3 rounded-lg bg-muted/30 text-sm">
-              <p className="text-muted-foreground">Din offentlige profilside:</p>
-              <p className="font-mono text-xs text-primary">/profil/{profile.slug}</p>
-            </div>
-          )}
+
 
           {/* Save Button */}
           <div data-guide="owner-save">
