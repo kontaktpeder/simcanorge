@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { User, MapPin, Heart, Eye, EyeOff, Save, Loader2, Info, Clock, Camera } from 'lucide-react';
+import { User, MapPin, Heart, Eye, EyeOff, Save, Loader2, Info, Clock, Camera, CheckCircle2 } from 'lucide-react';
 import { EnamelCard, SectionHeader, BigActionButton } from '@/components/ui/garage';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -188,6 +188,29 @@ export function OwnerProfileSection({ userId }: OwnerProfileSectionProps) {
                 <p className="text-base text-amber-800 dark:text-amber-300">
                   Entusiastprofilen din er sendt til godkjenning. Du kan opprette annonser på markedsplassen når profilen er godkjent av admin.
                 </p>
+              </div>
+            </div>
+          )}
+
+          {/* Approved – can create ads */}
+          {profile && profile.approved_at && (
+            <div className="p-5 border-2 border-green-300 dark:border-green-700 bg-green-50 dark:bg-green-950/30">
+              <div className="flex items-start gap-4">
+                <CheckCircle2 className="h-6 w-6 mt-0.5 shrink-0 text-green-600" />
+                <div className="space-y-1">
+                  <p className="text-base font-display uppercase tracking-wider text-green-800 dark:text-green-300">
+                    Profilen din er godkjent!
+                  </p>
+                  <p className="text-sm text-green-700 dark:text-green-400">
+                    Du kan nå opprette annonser på markedsplassen.
+                  </p>
+                  <a
+                    href="/opprett-annonse"
+                    className="inline-flex items-center gap-1.5 text-sm font-display uppercase tracking-wider text-green-800 dark:text-green-300 underline hover:no-underline mt-1"
+                  >
+                    Opprett din første annonse →
+                  </a>
+                </div>
               </div>
             </div>
           )}
