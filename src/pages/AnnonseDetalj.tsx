@@ -296,7 +296,6 @@ function MarketplaceDetailView({ item }: { item: any }) {
                 <h1 className="font-display text-3xl md:text-5xl leading-tight uppercase tracking-wide mb-4">{item.title}</h1>
                 {priceDisplay && <p className="font-serif text-2xl md:text-3xl text-foreground font-bold leading-none mb-1">{priceDisplay}</p>}
                 {item.price_note && <p className="text-xs text-muted-foreground italic mb-4">{item.price_note}</p>}
-                {owner && <OwnerCard owner={owner} />}
                 <div className="border-t border-foreground/10 my-4" />
                 {item.description && (
                   <div className="prose prose-sm max-w-none mb-6">
@@ -310,6 +309,7 @@ function MarketplaceDetailView({ item }: { item: any }) {
                 </div>
               </div>
             </div>
+            {owner && <OwnerCard owner={owner} />}
           </div>
         </div>
       </section>
