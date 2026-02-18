@@ -300,6 +300,7 @@ export default function Dashboard() {
             {profileNeedsAttention && (
               <div className="absolute top-0 left-0 right-0 h-1.5" style={{ background: 'hsl(2, 85%, 40%)' }} />
             )}
+            <img src={minSideBadge} alt="" className="w-14 h-14 object-contain opacity-60 absolute top-4 right-4" />
             <p className="font-display text-sm uppercase tracking-wider text-muted-foreground mb-5">
               Profil
             </p>
