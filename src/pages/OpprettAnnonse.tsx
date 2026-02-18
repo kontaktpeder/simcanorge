@@ -1,7 +1,8 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate, Link } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 import { GarageLayout } from '@/components/ui/garage/GarageLayout';
 import { EnamelCard } from '@/components/ui/garage/EnamelCard';
 import { BigActionButton } from '@/components/ui/garage/BigActionButton';
@@ -10,7 +11,7 @@ import { ShoppingBag, Save, Loader2, Clock, ChevronLeft, ImagePlus, X } from 'lu
 import { Layout } from '@/components/layout/Layout';
 import { Label } from '@/components/ui/label';
 import { useOwnerProfile } from '@/hooks/useOwnerProfile';
-import { useCreateMarketplaceItem, useInsertMarketplaceImages } from '@/hooks/useMarketplace';
+import { useInsertMarketplaceImages } from '@/hooks/useMarketplace';
 import { compressImages, generateImageId, getMarketplaceImagePath, type CompressionProgress } from '@/lib/imageCompression';
 import { ImageUploadProgress } from '@/components/ui/image-upload-progress';
 import { supabase } from '@/integrations/supabase/client';
@@ -22,6 +23,7 @@ import type { ItemFormValues } from '@/lib/itemSubmit';
 export default function OpprettAnnonse() {
   const { user, isLoading: authLoading } = useAuth();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { data: ownerProfile, isLoading: profileLoading } = useOwnerProfile(user?.id);
   const insertImages = useInsertMarketplaceImages();
   const { data: allCategories = [] } = useUnifiedCategories();
@@ -132,15 +134,21 @@ export default function OpprettAnnonse() {
           if (uploaded.length > 0) {
             await insertImages.mutateAsync({ itemId: data.id, images: uploaded });
           }
+
+          toast.success('Annonsen er sendt inn', {
+            description: 'Du kan se og redigere den under. Den vises på markedsplassen når admin har godkjent den.',
+          });
+          queryClient.invalidateQueries({ queryKey: ['my-listings', user?.id] });
+          navigate('/dashboard/mine-annonser', { state: { justSubmitted: true } });
         }
       } else {
-        // Parts submitted by users – saved as unpublished
         await submitAsPart(values, {});
+        toast.success('Varen er lagret');
+        navigate('/dashboard/mine-annonser');
       }
-
-      navigate('/dashboard/mine-annonser');
     } catch (err) {
       console.error('Submit error:', err);
+      toast.error('Kunne ikke sende inn annonsen');
     } finally {
       setIsSubmitting(false);
       setUploadProgress(null);
