@@ -3,14 +3,24 @@ import { motion } from 'framer-motion';
 import { User, MapPin, ChevronRight } from 'lucide-react';
 import { useCarOwnerProfile } from '@/hooks/useOwnerProfile';
 
-interface OwnerCardProps {
-  carId: string;
+interface OwnerData {
+  display_name: string;
+  bio?: string | null;
+  location?: string | null;
+  slug?: string | null;
 }
 
-export function OwnerCard({ carId }: OwnerCardProps) {
-  const { data: owner, isLoading } = useCarOwnerProfile(carId);
+interface OwnerCardProps {
+  carId?: string;
+  owner?: OwnerData | null;
+}
 
-  if (isLoading || !owner) {
+export function OwnerCard({ carId, owner: ownerProp }: OwnerCardProps) {
+  const { data: fetchedOwner, isLoading } = useCarOwnerProfile(carId);
+
+  const owner = ownerProp || fetchedOwner;
+
+  if ((!ownerProp && isLoading) || !owner) {
     return null;
   }
 

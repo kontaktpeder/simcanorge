@@ -10,8 +10,9 @@ import { useCart } from "@/hooks/useCart";
 import { ImageLightbox } from "@/components/ui/image-lightbox";
 import { getOptimizedImageUrl, getThumbnailUrl } from "@/lib/imageUtils";
 import {
-  ChevronRight, ChevronLeft, ArrowLeft, Check, Wrench,
+  ChevronRight, ChevronLeft, ArrowLeft, Check,
 } from "lucide-react";
+import { OwnerCard } from "@/components/car/OwnerCard";
 import toolboxIcon from "@/assets/toolbox-blue.png";
 
 const CONDITION_LABELS: Record<string, { label: string; className: string }> = {
@@ -295,18 +296,7 @@ function MarketplaceDetailView({ item }: { item: any }) {
                 <h1 className="font-display text-3xl md:text-5xl leading-tight uppercase tracking-wide mb-4">{item.title}</h1>
                 {priceDisplay && <p className="font-serif text-2xl md:text-3xl text-foreground font-bold leading-none mb-1">{priceDisplay}</p>}
                 {item.price_note && <p className="text-xs text-muted-foreground italic mb-4">{item.price_note}</p>}
-                {owner && (
-                  <p className="text-sm text-muted-foreground mb-2">
-                    {owner.slug ? (
-                      <Link to={`/profil/${owner.slug}`} className="text-primary hover:underline">
-                        {owner.display_name}
-                        {owner.location && ` · ${owner.location}`}
-                      </Link>
-                    ) : (
-                      `${owner.display_name}${owner.location ? ` · ${owner.location}` : ""}`
-                    )}
-                  </p>
-                )}
+                {owner && <OwnerCard owner={owner} />}
                 <div className="border-t border-foreground/10 my-4" />
                 {item.description && (
                   <div className="prose prose-sm max-w-none mb-6">
