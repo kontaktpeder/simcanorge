@@ -478,11 +478,11 @@ export function Header() {
                       onClick={() => markLeavingHome("/dashboard")}
                       className="relative p-1.5 hover:bg-muted/60 rounded-lg transition-colors ml-1"
                     >
-                      <img src={minSideBadge} alt="Min side" className="h-10 w-auto object-contain" />
+                      <img src={minSideBadge} alt="Gå til din garasje" className="h-10 w-auto object-contain" />
                     </Link>
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p>Gå til din Simca-portal</p>
+                    <p>Gå til din garasje</p>
                   </TooltipContent>
                 </Tooltip>
               ) : (
@@ -602,8 +602,8 @@ export function Header() {
                   }}
                   className="flex items-center gap-3 font-display text-base uppercase tracking-wide py-2.5 px-4 rounded-lg bg-primary text-primary-foreground mt-2"
                 >
-                  <img src={minSideBadge} alt="Min side" className="h-8 w-auto object-contain" />
-                  Min side
+                  <img src={minSideBadge} alt="Gå til din garasje" className="h-8 w-auto object-contain" />
+                  Gå til din garasje
                 </Link>
               ) : (
                 <Link
