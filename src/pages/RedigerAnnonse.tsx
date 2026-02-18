@@ -253,48 +253,53 @@ export default function RedigerAnnonse() {
         </div>
       </EnamelCard>
 
-      {canEdit && item?.status === 'published' && (
-        <button
-          type="button"
-          onClick={async () => {
-            await updateItem.mutateAsync({ id: itemId!, updates: { status: 'sold' } });
-            toast.success('Markert som solgt');
-            queryClient.invalidateQueries({ queryKey: ['my-listings'] });
-          }}
-          disabled={updateItem.isPending}
-          className="text-sm text-primary hover:underline py-2 mt-4 mr-4 inline-block"
-        >
-          Markér som solgt
-        </button>
-      )}
-      {canEdit && item?.status === 'sold' && (
-        <button
-          type="button"
-          onClick={async () => {
-            await updateItem.mutateAsync({ id: itemId!, updates: { status: 'published' } });
-            toast.success('Fjernet solgt-status');
-            queryClient.invalidateQueries({ queryKey: ['my-listings'] });
-          }}
-          disabled={updateItem.isPending}
-          className="text-sm text-muted-foreground hover:underline py-2 mt-4 mr-4 inline-block"
-        >
-          Fjern solgt-status
-        </button>
-      )}
-      {canEdit && (
-        <button
-          type="button"
-          onClick={async () => {
-            if (!confirm('Er du sikker på at du vil slette denne annonsen? Dette kan ikke angres.')) return;
-            await deleteItem.mutateAsync(itemId!);
-            navigate('/dashboard/mine-annonser');
-          }}
-          disabled={deleteItem.isPending}
-          className="text-sm text-destructive hover:underline py-2 mt-4"
-        >
-          <Trash2 className="h-4 w-4 inline mr-1" />
-          Slett annonse
-        </button>
+      {/* Action CTAs */}
+      {canEdit && (item?.status === 'published' || item?.status === 'sold' || true) && (
+        <EnamelCard className="mt-4">
+          <div className="p-4 sm:p-6 flex flex-col sm:flex-row gap-3">
+            {item?.status === 'published' && (
+              <button
+                type="button"
+                onClick={async () => {
+                  await updateItem.mutateAsync({ id: itemId!, updates: { status: 'sold' } });
+                  toast.success('Markert som solgt');
+                  queryClient.invalidateQueries({ queryKey: ['my-listings'] });
+                }}
+                disabled={updateItem.isPending}
+                className="flex-1 h-12 rounded-md font-semibold text-sm tracking-wide border-2 border-primary bg-primary/10 text-primary hover:bg-primary/20 transition-colors disabled:opacity-50"
+              >
+                Markér som solgt
+              </button>
+            )}
+            {item?.status === 'sold' && (
+              <button
+                type="button"
+                onClick={async () => {
+                  await updateItem.mutateAsync({ id: itemId!, updates: { status: 'published' } });
+                  toast.success('Fjernet solgt-status');
+                  queryClient.invalidateQueries({ queryKey: ['my-listings'] });
+                }}
+                disabled={updateItem.isPending}
+                className="flex-1 h-12 rounded-md font-semibold text-sm tracking-wide border-2 border-muted-foreground/30 bg-muted text-foreground hover:bg-muted/80 transition-colors disabled:opacity-50"
+              >
+                Fjern solgt-status
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={async () => {
+                if (!confirm('Er du sikker på at du vil slette denne annonsen? Dette kan ikke angres.')) return;
+                await deleteItem.mutateAsync(itemId!);
+                navigate('/dashboard/mine-annonser');
+              }}
+              disabled={deleteItem.isPending}
+              className="flex-1 h-12 rounded-md font-semibold text-sm tracking-wide border-2 border-destructive/30 bg-destructive/10 text-destructive hover:bg-destructive/20 transition-colors disabled:opacity-50 inline-flex items-center justify-center gap-2"
+            >
+              <Trash2 className="h-4 w-4" />
+              Slett annonse
+            </button>
+          </div>
+        </EnamelCard>
       )}
     </GarageLayout>
   );
