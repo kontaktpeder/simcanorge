@@ -6,7 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useInView } from "@/hooks/useInView";
 import { useCarOwnerProfile } from "@/hooks/useOwnerProfile";
 import { getResponsiveImageProps, IMAGE_SIZES } from "@/lib/imageUtils";
-import { FadeImage } from "@/components/ui/FadeImage";
+
 import simcaBadge from "@/assets/simca-badge.png";
 import simcaSwallow from "@/assets/simca-swallow.png";
 import checkeredFlag from "@/assets/checkered-flag.png";
@@ -79,14 +79,15 @@ export function HeroSection() {
           {/* Text Content */}
           <div className="text-center lg:text-left">
             <div className="flex items-center justify-center mb-3 md:mb-4">
-              <FadeImage 
+              <img 
                 src={simcaBadge} 
                 alt="Simca Norge" 
                 className="h-40 md:h-72 lg:h-96 xl:h-[28rem] w-auto" 
-                fadeDuration={500}
+                loading="eager"
+                fetchPriority="high"
                 style={{
                   filter: 'drop-shadow(0 8px 24px rgba(0,0,0,0.4)) drop-shadow(0 4px 8px rgba(0,0,0,0.3))'
-                }} 
+                }}
               />
             </div>
             <p className="text-base md:text-xl lg:text-3xl font-light mb-4 md:mb-6 max-w-lg mx-auto lg:mx-0 text-white/90 font-serif">
@@ -118,14 +119,13 @@ export function HeroSection() {
                 </div> : featuredCar ? <Link to={`/biler/${featuredCar.slug}`} className="block bg-white/10 backdrop-blur-sm rounded-xl p-3 transition-all duration-300 group overflow-hidden">
                   {/* Car image */}
                   {getMainImage(featuredCar) ? <div className="overflow-hidden rounded-lg relative">
-                      <FadeImage 
+                      <img 
                         {...getResponsiveImageProps(
                           getMainImage(featuredCar)!.image_url,
                           getMainImage(featuredCar)!.alt_text || featuredCar.title,
-                          { sizes: IMAGE_SIZES.featured, loading: 'lazy' }
+                          { sizes: IMAGE_SIZES.featured, priority: true }
                         )}
-                        fadeDuration={400}
-                        className="w-full aspect-[16/10] object-cover group-hover:scale-105 transition-transform duration-500" 
+                        className="w-full aspect-[16/10] object-cover group-hover:scale-105 transition-transform duration-500"
                       />
                     </div> : <div className="aspect-[16/10] bg-white/20 rounded-lg flex items-center justify-center">
                       <Car className="w-16 h-16 opacity-50" />
@@ -243,14 +243,13 @@ export function HeroSection() {
                 
                 {/* Car image with dark gradient for text readability */}
                 {getMainImage(featuredCar) ? <div className="overflow-hidden rounded-lg relative z-[2] car-finish-glow">
-                    <FadeImage 
+                    <img 
                       {...getResponsiveImageProps(
                         getMainImage(featuredCar)!.image_url,
                         getMainImage(featuredCar)!.alt_text || featuredCar.title,
                         { sizes: IMAGE_SIZES.featured, priority: true }
                       )}
-                      fadeDuration={500}
-                      className="w-full aspect-[16/10] object-cover shadow-lg group-hover:scale-105 transition-transform duration-500" 
+                      className="w-full aspect-[16/10] object-cover shadow-lg group-hover:scale-105 transition-transform duration-500"
                     />
                     {/* Dark gradient at bottom for text readability */}
                     <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
