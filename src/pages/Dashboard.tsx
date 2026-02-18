@@ -392,53 +392,7 @@ export default function Dashboard() {
         </motion.div>
       </div>
 
-      {/* Hjelp og veiledning */}
-      <motion.div
-        initial={{ opacity: 0, y: 15 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: 0.5 }}
-        className="mt-4"
-      >
-        <div className="border-2 border-foreground/15 bg-card/90 backdrop-blur-sm p-6 sm:p-8">
-          <div className="flex flex-col sm:flex-row sm:items-center gap-5">
-            <div className="flex-1">
-              <h3 className="font-display text-xl uppercase tracking-wider mb-1">
-                Veiledning
-              </h3>
-              <p className="text-base text-muted-foreground">
-                Start en interaktiv guide for å bli kjent med garasjen
-              </p>
-            </div>
-            
-            <div className="flex flex-wrap gap-3">
-              <button
-                onClick={() => startGuide('full')}
-                className="px-5 py-3 font-display text-sm uppercase tracking-wider text-white transition-colors flex items-center gap-2 min-h-[48px]"
-                style={{ background: 'hsl(2, 85%, 40%)' }}
-              >
-                <Sparkles className="w-4 h-4" />
-                Full guide
-              </button>
-              
-              <button
-                onClick={handleStartMyCarsGuide}
-                className="px-5 py-3 border-2 border-foreground/20 font-display text-sm uppercase tracking-wider text-foreground hover:bg-foreground/5 transition-colors flex items-center gap-2 min-h-[48px]"
-              >
-                <Car className="w-4 h-4" />
-                Mine biler
-              </button>
-              
-              <button
-                onClick={handleStartOwnerProfileGuide}
-                className="px-5 py-3 border-2 border-foreground/20 font-display text-sm uppercase tracking-wider text-foreground hover:bg-foreground/5 transition-colors flex items-center gap-2 min-h-[48px]"
-              >
-                <User className="w-4 h-4" />
-                Entusiastprofil
-              </button>
-            </div>
-          </div>
-        </div>
-      </motion.div>
+      {/* Hjelp og veiledning – midlertidig skjult */}
 
       {/* Send inn ny bil skjema */}
       <AnimatePresence>
