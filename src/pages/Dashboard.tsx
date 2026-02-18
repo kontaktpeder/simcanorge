@@ -75,6 +75,23 @@ export default function Dashboard() {
     enabled: !!user
   });
 
+  // Hent forespørsler for selger
+  const { data: myInquiries } = useQuery({
+    queryKey: ['my-inquiries-summary', ownerProfile?.id],
+    queryFn: async () => {
+      if (!ownerProfile?.id) return { total: 0, pending: 0 };
+      const { data, error } = await supabase
+        .from('inquiries')
+        .select('id, status')
+        .eq('recipient_owner_id', ownerProfile.id);
+      if (error) throw error;
+      const total = data?.length || 0;
+      const pending = data?.filter(i => i.status === 'pending').length || 0;
+      return { total, pending };
+    },
+    enabled: !!ownerProfile?.id,
+  });
+
   // Hent uleste notifikasjoner
   const { data: notifications } = useQuery({
     queryKey: ['notifications', user?.id],
@@ -377,15 +394,25 @@ export default function Dashboard() {
             <Link to="/dashboard/mine-foresporsler" className="block h-full touch-manipulation">
               <EnamelCard className="h-full min-h-[140px] sm:min-h-[160px] group">
                 <div className="flex items-start justify-between mb-3 sm:mb-4">
-                  <div className="p-2.5 sm:p-3 bg-primary/10 rounded-xl flex-shrink-0">
+                  <div className="p-2.5 sm:p-3 bg-primary/10 rounded-xl flex-shrink-0 relative">
                     <Inbox className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
+                    {(myInquiries?.pending ?? 0) > 0 && (
+                      <span className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                        {myInquiries!.pending}
+                      </span>
+                    )}
                   </div>
                 </div>
                 <h3 className="font-display text-lg sm:text-xl mb-1 sm:mb-2 group-hover:text-primary transition-colors">
                   Mine forespørsler
+                  {(myInquiries?.total ?? 0) > 0 && (
+                    <span className="ml-2 text-muted-foreground text-sm font-normal">({myInquiries!.total})</span>
+                  )}
                 </h3>
                 <p className="text-sm sm:text-base text-muted-foreground line-clamp-2">
-                  Se forespørsler fra kjøpere
+                  {(myInquiries?.pending ?? 0) > 0
+                    ? `${myInquiries!.pending} venter på svar`
+                    : 'Se forespørsler fra kjøpere'}
                 </p>
               </EnamelCard>
             </Link>
