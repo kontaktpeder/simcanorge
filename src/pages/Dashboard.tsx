@@ -300,12 +300,9 @@ export default function Dashboard() {
             {profileNeedsAttention && (
               <div className="absolute top-0 left-0 right-0 h-1.5" style={{ background: 'hsl(2, 85%, 40%)' }} />
             )}
-            <div className="flex items-center justify-between mb-5">
-              <p className="font-display text-sm uppercase tracking-wider text-muted-foreground">
-                Profil
-              </p>
-              <img src={minSideBadge} alt="" className="w-14 h-14 object-contain opacity-60" />
-            </div>
+            <p className="font-display text-sm uppercase tracking-wider text-muted-foreground mb-5">
+              Profil
+            </p>
             <h3 className={`font-display text-2xl sm:text-3xl uppercase tracking-wider mb-2 transition-colors ${
               profileNeedsAttention ? 'text-primary' : 'group-hover:text-primary'
             }`}>
