@@ -89,56 +89,69 @@ export default function Markedsplass() {
         </div>
       )}
 
-      {/* Filter bar */}
-      <div className="bg-muted/50 border-b border-border sticky top-16 z-30">
-        <div className="container mx-auto px-4 py-2 flex items-center gap-2">
-          <button
-            onClick={() => setShowCategorySheet(true)}
-            className="flex items-center gap-2 bg-card border border-border rounded-full px-3 py-1.5 text-sm font-medium hover:border-primary transition-colors"
-          >
-            <Filter className="w-4 h-4" />
-            <span className="max-w-[120px] truncate">{filterLabel}</span>
-            <ChevronDown className="w-4 h-4 text-muted-foreground" />
-          </button>
-          {filter !== "all" && (
-            <button
-              onClick={() => setFilter("all")}
-              className="flex items-center gap-1 bg-primary/10 text-primary rounded-full px-2 py-1.5 text-xs font-medium"
-            >
-              <X className="w-3 h-3" />
-              Nullstill
-            </button>
-          )}
-
-          {/* Search inline */}
-          <div className="relative flex-1 max-w-xs ml-auto">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Søk..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 h-8 text-sm"
-            />
+      {/* Filter bar — editorial strip */}
+      <div className="sticky top-16 z-30 border-b-2 border-foreground/10" style={{ background: "hsl(42, 30%, 93%)" }}>
+        <div className="container mx-auto px-4 py-3 md:py-4">
+          {/* Top row: headline + count */}
+          <div className="flex items-baseline justify-between mb-2">
+            <h2 className="font-display text-xs md:text-sm uppercase tracking-[0.25em] text-foreground/60">
+              Katalog
+            </h2>
+            <span className="font-serif text-xs text-muted-foreground italic">
+              {filteredItems.length} treff
+            </span>
           </div>
 
-          <div className="flex items-center bg-card border border-border rounded-full p-0.5">
+          {/* Controls row */}
+          <div className="flex items-center gap-2 md:gap-3">
+            {/* Filter chip */}
             <button
-              onClick={() => setViewMode("list")}
-              className={`p-1.5 rounded-full transition-colors ${viewMode === "list" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
+              onClick={() => setShowCategorySheet(true)}
+              className="flex items-center gap-2 font-display text-xs md:text-sm uppercase tracking-wider px-4 py-2 border-2 border-foreground/20 hover:border-primary hover:text-primary transition-all"
+              style={{ background: "hsl(0, 0%, 100%)" }}
             >
-              <List className="w-4 h-4" />
+              <Filter className="w-3.5 h-3.5" />
+              <span className="max-w-[120px] truncate">{filterLabel}</span>
+              <ChevronDown className="w-3.5 h-3.5 opacity-50" />
             </button>
-            <button
-              onClick={() => setViewMode("grid")}
-              className={`p-1.5 rounded-full transition-colors ${viewMode === "grid" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
-            >
-              <Grid3X3 className="w-4 h-4" />
-            </button>
-          </div>
+            {filter !== "all" && (
+              <button
+                onClick={() => setFilter("all")}
+                className="flex items-center gap-1 text-accent font-display text-[10px] uppercase tracking-wider px-2 py-1.5 border border-accent/30 hover:bg-accent hover:text-accent-foreground transition-all"
+              >
+                <X className="w-3 h-3" />
+                Nullstill
+              </button>
+            )}
 
-          <span className="text-xs text-muted-foreground hidden sm:block">
-            {filteredItems.length} treff
-          </span>
+            {/* Search — editorial underline style */}
+            <div className="relative flex-1 max-w-xs ml-auto">
+              <Search className="absolute left-0 bottom-2 h-4 w-4 text-foreground/40" />
+              <input
+                type="text"
+                placeholder="Søk i katalogen…"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full bg-transparent border-0 border-b-2 border-foreground/15 focus:border-primary pl-6 pr-2 py-1.5 text-sm font-serif italic placeholder:text-muted-foreground/50 outline-none transition-colors"
+              />
+            </div>
+
+            {/* View toggle — typographic */}
+            <div className="hidden sm:flex items-center border-2 border-foreground/10 divide-x-2 divide-foreground/10">
+              <button
+                onClick={() => setViewMode("list")}
+                className={`px-2.5 py-1.5 transition-colors ${viewMode === "list" ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground"}`}
+              >
+                <List className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => setViewMode("grid")}
+                className={`px-2.5 py-1.5 transition-colors ${viewMode === "grid" ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground"}`}
+              >
+                <Grid3X3 className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -182,19 +195,28 @@ export default function Markedsplass() {
         </div>
       )}
 
-      {/* Banner + CTA */}
-      <section className="container mx-auto px-4 pt-4">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-2">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Info className="h-4 w-4 shrink-0" />
-            Alt som legges ut av privatpersoner må godkjennes.
+      {/* Banner + CTA — full-width editorial strip */}
+      <section className="border-b-2 border-foreground/10" style={{ background: "hsl(212, 80%, 15%)" }}>
+        <div className="container mx-auto px-4 py-6 md:py-8 flex flex-col sm:flex-row items-center gap-4 md:gap-8">
+          <div className="flex-1 text-center sm:text-left">
+            <p className="font-display text-xs uppercase tracking-[0.3em] text-white/50 mb-1">
+              For entusiaster
+            </p>
+            <h3 className="font-display text-2xl md:text-3xl uppercase tracking-wider text-white leading-tight">
+              Selg deler &amp; tilbehør
+            </h3>
+            <p className="font-serif text-sm md:text-base italic text-white/60 mt-1">
+              Alt som legges ut av privatpersoner må godkjennes av redaksjonen.
+            </p>
           </div>
           <Link
             to="/start-annonse"
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground font-medium text-sm hover:bg-primary/90 transition-colors w-fit"
+            className="group relative inline-flex items-center gap-3 px-8 py-4 md:px-10 md:py-5 font-display text-sm md:text-base uppercase tracking-[0.2em] text-white border-2 border-white/30 hover:border-white transition-all shrink-0"
+            style={{ background: "hsl(2, 85%, 40%)" }}
           >
-            <Plus className="h-4 w-4" />
+            <Plus className="h-5 w-5" />
             Opprett annonse
+            <ChevronRight className="w-4 h-4 opacity-50 group-hover:translate-x-1 transition-transform" />
           </Link>
         </div>
       </section>
@@ -245,17 +267,26 @@ export default function Markedsplass() {
         </section>
       )}
 
-      {/* Bottom CTA */}
-      <section className="bg-primary text-primary-foreground py-6 md:py-8">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="font-display text-base md:text-xl mb-2">Fant du ikke det du lette etter?</h2>
-          <p className="text-sm opacity-90 mb-4">Ta kontakt så hjelper vi deg</p>
+      {/* Bottom CTA — grand editorial block */}
+      <section className="relative overflow-hidden" style={{ background: "hsl(212, 80%, 15%)" }}>
+        {/* Decorative rule */}
+        <div className="absolute top-0 left-0 right-0 h-1" style={{ background: "hsl(2, 85%, 40%)" }} />
+        <div className="container mx-auto px-4 py-12 md:py-20 text-center relative z-10">
+          <p className="font-display text-[10px] md:text-xs uppercase tracking-[0.4em] text-white/40 mb-3">
+            Simca · Talbot · Matra
+          </p>
+          <h2 className="font-display text-3xl md:text-5xl lg:text-6xl text-white uppercase tracking-wider leading-none mb-4">
+            Fant du ikke<br />det du lette etter?
+          </h2>
+          <p className="font-serif text-sm md:text-lg italic text-white/60 max-w-md mx-auto mb-8">
+            Ta kontakt med oss — vi hjelper deg gjerne med å finne riktige deler.
+          </p>
           <Link
             to="/kontakt"
-            className="inline-flex items-center gap-2 bg-card text-foreground px-4 py-2 rounded-full text-sm font-medium hover:bg-card/90 transition-colors"
+            className="group inline-flex items-center gap-3 px-10 py-4 md:px-14 md:py-5 font-display text-sm md:text-base uppercase tracking-[0.2em] border-2 border-white/30 text-white hover:border-white hover:bg-white/5 transition-all"
           >
             Kontakt oss
-            <ChevronRight className="w-4 h-4" />
+            <ChevronRight className="w-5 h-5 opacity-50 group-hover:translate-x-1 transition-transform" />
           </Link>
         </div>
       </section>
