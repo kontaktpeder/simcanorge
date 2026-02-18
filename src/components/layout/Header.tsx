@@ -1,6 +1,6 @@
 import { forwardRef, useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, LogIn, User, Bug } from "lucide-react";
+import { Menu, X, LogIn, User, AlertTriangle } from "lucide-react";
 import { useCart } from "@/hooks/useCart";
 import { useAuth } from "@/hooks/useAuth";
 import { SimcaLive } from "@/components/home/SimcaLive";
@@ -510,7 +510,7 @@ export function Header() {
                       onClick={() => setReportModalOpen(true)}
                       className="flex items-center gap-1 px-2 py-1.5 rounded-lg text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-all"
                     >
-                      <Bug className="w-3.5 h-3.5" />
+                      <AlertTriangle className="w-3.5 h-3.5" />
                       <span className="hidden xl:inline">Rapporter</span>
                     </button>
                   </TooltipTrigger>
@@ -627,7 +627,7 @@ export function Header() {
                 }}
                 className="flex items-center gap-3 font-display text-sm uppercase tracking-wide py-2.5 px-4 rounded-lg text-muted-foreground hover:bg-muted/30 mt-3 border-t border-border/50 pt-4"
               >
-                <Bug className="w-5 h-5" />
+                <AlertTriangle className="w-5 h-5" />
                 Rapporter et problem
               </button>
             </div>
