@@ -226,7 +226,7 @@ export default function Markedsplass() {
               </div>
             ) : (
               /* GRID VIEW */
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-7">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-7 auto-rows-fr">
                 {filteredItems.map((item, index) => (
                   <FeedGridItem key={`${item.type}-${item.id}`} item={item} index={index} inCart={isInCart(item.type, item.id)} onToggleCart={() => handleToggleCart(item)} />
                 ))}
@@ -275,7 +275,7 @@ function FeedGridItem({
     >
       <Link
         to={detailUrl}
-        className="rounded-sm overflow-hidden group flex flex-col cursor-pointer"
+        className="rounded-sm overflow-hidden group flex flex-col cursor-pointer h-full"
         style={{ background: "rgba(255,255,255,0.85)", border: "1px solid rgba(0,0,0,0.06)" }}
       >
         <div className="aspect-[4/3] relative overflow-hidden bg-muted">
