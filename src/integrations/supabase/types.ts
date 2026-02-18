@@ -828,6 +828,7 @@ export type Database = {
           favorite_brands: string[] | null
           id: string
           location: string | null
+          requested_approval_at: string | null
           slug: string | null
           updated_at: string
           user_id: string
@@ -842,6 +843,7 @@ export type Database = {
           favorite_brands?: string[] | null
           id?: string
           location?: string | null
+          requested_approval_at?: string | null
           slug?: string | null
           updated_at?: string
           user_id: string
@@ -856,6 +858,7 @@ export type Database = {
           favorite_brands?: string[] | null
           id?: string
           location?: string | null
+          requested_approval_at?: string | null
           slug?: string | null
           updated_at?: string
           user_id?: string
