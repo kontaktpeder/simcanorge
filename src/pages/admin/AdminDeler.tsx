@@ -6,6 +6,9 @@ import { toast } from "sonner";
 import { compressImage, generateImageId, getPartImagePath, formatFileSize, type CompressionProgress } from "@/lib/imageCompression";
 import { ImageUploadProgress } from "@/components/ui/image-upload-progress";
 import { ImageUploadWithOrder, type ImageItem } from "@/components/shared/ImageUploadWithOrder";
+import { DelerAnnonseForm } from "@/components/markedsplass/DelerAnnonseForm";
+import { useUnifiedCategories, getRootCategories, getSubcategories, getCategoryPath } from "@/hooks/useUnifiedCategories";
+import type { ItemFormValues } from "@/lib/itemSubmit";
 
 interface Category {
   id: string;
@@ -304,168 +307,122 @@ const AdminDeler = () => {
                 </button>
               </div>
 
-              <form onSubmit={handleSubmit} className="p-3 sm:p-6 space-y-3 sm:space-y-4">
-                {/* Title */}
-                <div>
-                  <label className="block font-display text-sm sm:text-base mb-1.5 sm:mb-2">TITTEL *</label>
-                  <input
-                    type="text"
-                    value={formData.title}
-                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                    className="w-full h-12 p-3 text-base border-2 border-foreground bg-card rounded"
-                    placeholder="f.eks. Bremsekloss fremre"
-                    required
-                  />
-                </div>
+              <div className="p-3 sm:p-6">
+                <DelerAnnonseForm
+                  initialValues={{
+                    title: formData.title,
+                    description: formData.description,
+                    categoryId: formData.category_id,
+                    priceMin: String(formData.price_min ?? ''),
+                    priceMax: String(formData.price_max ?? ''),
+                    priceNote: formData.price_note,
+                    condition: '',
+                    location: '',
+                  }}
+                  onSubmit={async (v) => {
+                    setIsSubmitting(true);
+                    try {
+                      let imageUrl: string | null = null;
+                      if (imageFile) {
+                        imageUrl = await uploadImage(imageFile);
+                      }
 
-                {/* Category */}
-                <div>
-                  <label className="block font-display text-sm sm:text-base mb-1.5 sm:mb-2">KATEGORI</label>
-                  <select
-                    value={formData.category_id}
-                    onChange={(e) => setFormData({ ...formData, category_id: e.target.value })}
-                    className="w-full h-12 p-3 text-base border-2 border-foreground bg-card rounded"
-                  >
-                    <option value="">Velg kategori...</option>
-                    {parentCategories.map((parent) => (
-                      <optgroup key={parent.id} label={parent.name}>
-                        <option value={parent.id}>{parent.name} (hovedkategori)</option>
-                        {getChildren(parent.id).map((child) => (
-                          <option key={child.id} value={child.id}>└ {child.name}</option>
-                        ))}
-                      </optgroup>
-                    ))}
-                  </select>
-                </div>
+                      const partData = {
+                        title: v.title.trim(),
+                        description: v.description.trim() || null,
+                        category_id: v.categoryId || null,
+                        published: formData.published,
+                        price_min: v.priceMin === "" ? null : Number(v.priceMin),
+                        price_max: v.priceMax === "" ? null : Number(v.priceMax),
+                        price_note: v.priceNote.trim() || null,
+                        condition: v.condition || null,
+                        ...(imageUrl && { image_url: imageUrl }),
+                      };
 
-                {/* Description */}
-                <div>
-                  <label className="block font-display text-sm sm:text-base mb-1.5 sm:mb-2">BESKRIVELSE</label>
-                  <textarea
-                    value={formData.description}
-                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    rows={3}
-                    className="w-full p-3 text-base border-2 border-foreground bg-card resize-none rounded min-h-[100px]"
-                    placeholder="Kort beskrivelse av delen..."
-                  />
-                </div>
+                      if (editingId) {
+                        const { error } = await supabase.from("parts").update(partData).eq("id", editingId);
+                        if (error) throw error;
+                        toast.success("Del oppdatert!");
+                      } else {
+                        const { error } = await supabase.from("parts").insert(partData);
+                        if (error) throw error;
+                        toast.success("Del opprettet!");
+                      }
 
-                {/* Price */}
-                <div className="grid grid-cols-2 gap-3">
+                      resetForm();
+                      fetchData();
+                    } catch (error: any) {
+                      console.error("Error saving part:", error);
+                      toast.error("Kunne ikke lagre del");
+                    } finally {
+                      setIsSubmitting(false);
+                    }
+                  }}
+                  onCancel={resetForm}
+                  submitLabel={editingId ? "Oppdater" : "Opprett"}
+                  isSubmitting={isSubmitting}
+                  canPublishDirectly
+                  published={formData.published}
+                  onPublishedChange={(p) => setFormData({ ...formData, published: p })}
+                >
+                  {/* Images */}
                   <div>
-                    <label className="block font-display text-sm sm:text-base mb-1.5 sm:mb-2">PRIS FRA (kr)</label>
-                    <input
-                      type="number"
-                      min="0"
-                      value={formData.price_min}
-                      onChange={(e) => setFormData({ ...formData, price_min: e.target.value === "" ? "" : e.target.value })}
-                      className="w-full h-12 p-3 text-base border-2 border-foreground bg-card rounded"
-                      placeholder="F.eks. 500"
-                    />
+                    <label className="block font-display text-sm sm:text-base mb-1.5 sm:mb-2">BILDER {editingId ? "(maks 5)" : ""}</label>
+                    {editingId ? (
+                      <ImageUploadWithOrder
+                        images={partImages.map((img) => ({
+                          id: img.id,
+                          image_url: img.image_url,
+                          sort_order: img.sort_order,
+                        }))}
+                        maxImages={5}
+                        mainLabel="Hovedbilde"
+                        isUploading={isUploadingPartImages}
+                        isReordering={isReorderingPartImages}
+                        onReorder={handlePartImageReorder}
+                        onSetMain={async (index) => {
+                          const sorted = [...partImages].sort((a, b) => a.sort_order - b.sort_order);
+                          const [picked] = sorted.splice(index, 1);
+                          sorted.unshift(picked);
+                          await handlePartImageReorder(sorted.map((img, i) => ({ ...img, sort_order: i })));
+                        }}
+                        onDelete={handlePartImageDelete}
+                        onUpload={handlePartImageUpload}
+                        altFallback={formData.title || "Del"}
+                      />
+                    ) : (
+                      <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-center sm:items-start">
+                        {imagePreview ? (
+                          <div className="relative w-24 h-24 sm:w-32 sm:h-32 border-2 border-foreground rounded overflow-hidden">
+                            <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
+                            <button
+                              type="button"
+                              onClick={() => { setImageFile(null); setImagePreview(null); }}
+                              className="absolute -top-1 -right-1 bg-accent text-accent-foreground p-1 rounded-full"
+                            >
+                              <X className="w-3 h-3" />
+                            </button>
+                          </div>
+                        ) : (
+                          <div className="w-24 h-24 sm:w-32 sm:h-32 border-2 border-dashed border-muted-foreground flex items-center justify-center rounded">
+                            <Wrench className="w-6 h-6 sm:w-8 sm:h-8 text-muted-foreground" />
+                          </div>
+                        )}
+                        <label className="flex-1 cursor-pointer w-full sm:w-auto">
+                          <div className="p-4 border-2 border-dashed border-muted-foreground hover:border-primary transition-colors text-center rounded">
+                            <Upload className="w-6 h-6 mx-auto mb-2 text-muted-foreground" />
+                            <span className="text-xs sm:text-sm text-muted-foreground">Klikk for å laste opp bilde</span>
+                          </div>
+                          <input type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
+                        </label>
+                      </div>
+                    )}
+                    {isSubmitting && uploadProgress && (
+                      <ImageUploadProgress progress={uploadProgress} compressionStats={compressionStats} />
+                    )}
                   </div>
-                  <div>
-                    <label className="block font-display text-sm sm:text-base mb-1.5 sm:mb-2">PRIS TIL (kr)</label>
-                    <input
-                      type="number"
-                      min="0"
-                      value={formData.price_max}
-                      onChange={(e) => setFormData({ ...formData, price_max: e.target.value === "" ? "" : e.target.value })}
-                      className="w-full h-12 p-3 text-base border-2 border-foreground bg-card rounded"
-                      placeholder="F.eks. 1000"
-                    />
-                  </div>
-                </div>
-
-                {/* Price note */}
-                <div>
-                  <label className="block font-display text-sm sm:text-base mb-1.5 sm:mb-2">PRISMERKNAD (valgfri)</label>
-                  <input
-                    type="text"
-                    value={formData.price_note}
-                    onChange={(e) => setFormData({ ...formData, price_note: e.target.value })}
-                    className="w-full h-10 p-2 text-sm border-2 border-foreground bg-card rounded"
-                    placeholder="F.eks. Kr 1000.- for komplett/uåpnet pakke"
-                    maxLength={200}
-                  />
-                </div>
-
-                {/* Images */}
-                <div>
-                  <label className="block font-display text-sm sm:text-base mb-1.5 sm:mb-2">BILDER {editingId ? "(maks 5)" : ""}</label>
-                  {editingId ? (
-                    <ImageUploadWithOrder
-                      images={partImages.map((img) => ({
-                        id: img.id,
-                        image_url: img.image_url,
-                        sort_order: img.sort_order,
-                      }))}
-                      maxImages={5}
-                      mainLabel="Hovedbilde"
-                      isUploading={isUploadingPartImages}
-                      isReordering={isReorderingPartImages}
-                      onReorder={handlePartImageReorder}
-                      onSetMain={async (index) => {
-                        const sorted = [...partImages].sort((a, b) => a.sort_order - b.sort_order);
-                        const [picked] = sorted.splice(index, 1);
-                        sorted.unshift(picked);
-                        await handlePartImageReorder(sorted.map((img, i) => ({ ...img, sort_order: i })));
-                      }}
-                      onDelete={handlePartImageDelete}
-                      onUpload={handlePartImageUpload}
-                      altFallback={formData.title || "Del"}
-                    />
-                  ) : (
-                    <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-center sm:items-start">
-                      {imagePreview ? (
-                        <div className="relative w-24 h-24 sm:w-32 sm:h-32 border-2 border-foreground rounded overflow-hidden">
-                          <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
-                          <button
-                            type="button"
-                            onClick={() => { setImageFile(null); setImagePreview(null); }}
-                            className="absolute -top-1 -right-1 bg-accent text-accent-foreground p-1 rounded-full"
-                          >
-                            <X className="w-3 h-3" />
-                          </button>
-                        </div>
-                      ) : (
-                        <div className="w-24 h-24 sm:w-32 sm:h-32 border-2 border-dashed border-muted-foreground flex items-center justify-center rounded">
-                          <Wrench className="w-6 h-6 sm:w-8 sm:h-8 text-muted-foreground" />
-                        </div>
-                      )}
-                      <label className="flex-1 cursor-pointer w-full sm:w-auto">
-                        <div className="p-4 border-2 border-dashed border-muted-foreground hover:border-primary transition-colors text-center rounded">
-                          <Upload className="w-6 h-6 mx-auto mb-2 text-muted-foreground" />
-                          <span className="text-xs sm:text-sm text-muted-foreground">Klikk for å laste opp bilde</span>
-                        </div>
-                        <input type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
-                      </label>
-                    </div>
-                  )}
-                  {isSubmitting && uploadProgress && (
-                    <ImageUploadProgress progress={uploadProgress} compressionStats={compressionStats} />
-                  )}
-                </div>
-
-                {/* Published toggle */}
-                <div className="flex items-center gap-3 p-2 sm:p-0 bg-muted/30 sm:bg-transparent rounded">
-                  <input
-                    type="checkbox"
-                    id="published"
-                    checked={formData.published}
-                    onChange={(e) => setFormData({ ...formData, published: e.target.checked })}
-                    className="w-5 h-5"
-                  />
-                  <label htmlFor="published" className="font-display text-sm sm:text-base">PUBLISER NÅ</label>
-                </div>
-
-                {/* Buttons */}
-                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-4 sticky bottom-0 bg-card pb-2">
-                  <button type="submit" disabled={isSubmitting} className="btn-retro flex-1 h-12 disabled:opacity-50 text-base">
-                    {isSubmitting ? "Lagrer..." : editingId ? "Oppdater" : "Opprett"}
-                  </button>
-                  <button type="button" onClick={resetForm} className="btn-retro bg-muted text-foreground h-12">Avbryt</button>
-                </div>
-              </form>
+                </DelerAnnonseForm>
+              </div>
             </div>
           </div>
         </div>
