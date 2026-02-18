@@ -245,7 +245,7 @@ export function DelerAnnonseForm({
         </select>
       </div>
 
-      {/* Vis adresse – sted fra profil */}
+      {/* Vis adresse og kontaktinfo fra profil */}
       <div className="space-y-2">
         <div className="flex items-center gap-3">
           <input
@@ -256,16 +256,21 @@ export function DelerAnnonseForm({
             disabled={disabled}
             className="w-5 h-5"
           />
-          <Label htmlFor="show-location">Vis adresse (forhåndsvisning)</Label>
+          <Label htmlFor="show-location">Vis sted og kontaktinfo fra profilen min</Label>
         </div>
         {values.showLocation && profileLocation && (
           <p className="text-sm text-muted-foreground pl-8">
-            Vil vises som: <strong>{profileLocation}</strong>
+            Sted: <strong>{profileLocation}</strong>
           </p>
         )}
         {values.showLocation && !profileLocation && (
           <p className="text-sm text-amber-600 pl-8">
             Legg inn bosted i din Entusiastprofil for å vise sted.
+          </p>
+        )}
+        {values.showLocation && (
+          <p className="text-xs text-muted-foreground pl-8">
+            E-post og eventuelt telefonnummer fra profilen din vises på annonsen slik at kjøpere kan ta kontakt.
           </p>
         )}
       </div>

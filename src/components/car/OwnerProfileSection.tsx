@@ -31,6 +31,8 @@ export function OwnerProfileSection({ userId }: OwnerProfileSectionProps) {
   const [username, setUsername] = useState('');
   const [bio, setBio] = useState('');
   const [location, setLocation] = useState('');
+  const [contactEmail, setContactEmail] = useState('');
+  const [contactPhone, setContactPhone] = useState('');
   const [favoriteBrands, setFavoriteBrands] = useState<string[]>([]);
   const [visiblePublic, setVisiblePublic] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -46,6 +48,8 @@ export function OwnerProfileSection({ userId }: OwnerProfileSectionProps) {
       setUsername(profile.username ?? '');
       setBio(profile.bio || '');
       setLocation(profile.location || '');
+      setContactEmail((profile as any).contact_email || '');
+      setContactPhone((profile as any).contact_phone || '');
       setFavoriteBrands(profile.favorite_brands || []);
       setVisiblePublic(profile.visible_public);
     } else if (user?.email && !isLoading) {
@@ -60,6 +64,8 @@ export function OwnerProfileSection({ userId }: OwnerProfileSectionProps) {
         username !== (profile.username ?? '') ||
         bio !== (profile.bio || '') ||
         location !== (profile.location || '') ||
+        contactEmail !== ((profile as any).contact_email || '') ||
+        contactPhone !== ((profile as any).contact_phone || '') ||
         JSON.stringify(favoriteBrands) !== JSON.stringify(profile.favorite_brands || []) ||
         visiblePublic !== profile.visible_public;
       setHasChanges(changed);
@@ -115,10 +121,16 @@ export function OwnerProfileSection({ userId }: OwnerProfileSectionProps) {
 
   const handleSave = async () => {
     if (!displayName.trim()) return;
+    if (!contactEmail.trim()) return;
 
     if (username.trim() && !isValidUsername(username)) {
-      return; // Input already restricts characters
+      return;
     }
+
+    const contactFields = {
+      contact_email: contactEmail.trim(),
+      contact_phone: contactPhone.trim() || null,
+    };
 
     if (profile) {
       await updateProfile.mutateAsync({
@@ -130,7 +142,8 @@ export function OwnerProfileSection({ userId }: OwnerProfileSectionProps) {
           location: location.trim() || null,
           favorite_brands: favoriteBrands.length > 0 ? favoriteBrands : null,
           visible_public: visiblePublic,
-        },
+          ...contactFields,
+        } as any,
       });
     } else {
       await createProfile.mutateAsync({
@@ -141,7 +154,8 @@ export function OwnerProfileSection({ userId }: OwnerProfileSectionProps) {
         location: location.trim() || null,
         favorite_brands: favoriteBrands.length > 0 ? favoriteBrands : null,
         visible_public: visiblePublic,
-      });
+        ...contactFields,
+      } as any);
     }
     setIsEditing(false);
   };
@@ -282,6 +296,39 @@ export function OwnerProfileSection({ userId }: OwnerProfileSectionProps) {
             />
           </div>
 
+          {/* Contact Email */}
+          <div className="space-y-2">
+            <Label htmlFor="contact-email">E-post for kontakt *</Label>
+            <Input
+              id="contact-email"
+              type="email"
+              value={contactEmail}
+              onChange={(e) => setContactEmail(e.target.value)}
+              placeholder="din@epost.no"
+              className="max-w-md"
+              required
+            />
+            <p className="text-xs text-muted-foreground">
+              Brukes slik at kjøpere kan ta kontakt med deg om annonser.
+            </p>
+          </div>
+
+          {/* Contact Phone */}
+          <div className="space-y-2">
+            <Label htmlFor="contact-phone">Telefon (valgfritt)</Label>
+            <Input
+              id="contact-phone"
+              type="tel"
+              value={contactPhone}
+              onChange={(e) => setContactPhone(e.target.value)}
+              placeholder="f.eks. 912 34 567"
+              className="max-w-md"
+            />
+            <p className="text-xs text-muted-foreground">
+              Valgfritt. Vises på annonsen slik at kjøpere kan ringe eller sende SMS.
+            </p>
+          </div>
+
           {/* Favorite Brands */}
           <div className="space-y-3">
             <Label className="flex items-center gap-2">
@@ -332,7 +379,7 @@ export function OwnerProfileSection({ userId }: OwnerProfileSectionProps) {
           <div data-guide="owner-save">
             <BigActionButton
               onClick={handleSave}
-              disabled={!displayName.trim() || isSaving || !hasChanges}
+              disabled={!displayName.trim() || !contactEmail.trim() || isSaving || !hasChanges}
               icon={isSaving ? <Loader2 className="h-5 w-5 animate-spin" /> : <Save className="h-5 w-5" />}
               className="w-full sm:w-auto"
             >

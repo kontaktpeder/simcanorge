@@ -48,7 +48,7 @@ export function useMarketplaceItems(filters?: { categoryId?: string; search?: st
           *,
           marketplace_images(id, image_url, sort_order, alt_text),
           categories(id, name, slug),
-          owners!inner(id, display_name, slug, location, avatar_url)
+          owners!inner(id, display_name, slug, location, avatar_url, contact_email, contact_phone)
         `)
         .not('published_at', 'is', null)
         .order('published_at', { ascending: false });
@@ -80,7 +80,7 @@ export function useMarketplaceItemBySlug(slug: string | undefined) {
           *,
           marketplace_images(id, image_url, sort_order, alt_text),
           categories(id, name, slug),
-          owners!inner(id, display_name, slug, location, avatar_url, bio)
+          owners!inner(id, display_name, slug, location, avatar_url, bio, contact_email, contact_phone)
         `)
         .eq('slug', slug)
         .maybeSingle();

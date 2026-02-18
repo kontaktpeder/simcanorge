@@ -823,6 +823,8 @@ export type Database = {
           approved_at: string | null
           avatar_url: string | null
           bio: string | null
+          contact_email: string | null
+          contact_phone: string | null
           created_at: string
           display_name: string
           favorite_brands: string[] | null
@@ -839,6 +841,8 @@ export type Database = {
           approved_at?: string | null
           avatar_url?: string | null
           bio?: string | null
+          contact_email?: string | null
+          contact_phone?: string | null
           created_at?: string
           display_name: string
           favorite_brands?: string[] | null
@@ -855,6 +859,8 @@ export type Database = {
           approved_at?: string | null
           avatar_url?: string | null
           bio?: string | null
+          contact_email?: string | null
+          contact_phone?: string | null
           created_at?: string
           display_name?: string
           favorite_brands?: string[] | null
