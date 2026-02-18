@@ -1,9 +1,7 @@
 import { ReactNode } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
-import { ArrowLeft, HelpCircle, Sparkles } from 'lucide-react';
-import { useGuide } from '@/hooks/useGuide';
-import { BigActionButton } from './BigActionButton';
+import { ArrowLeft } from 'lucide-react';
 import garageBackground from '@/assets/garage-background.jpg';
 
 interface GarageLayoutProps {
@@ -25,10 +23,6 @@ export function GarageLayout({
   backTo = '/dashboard',
   backLabel = 'Tilbake',
 }: GarageLayoutProps) {
-  const location = useLocation();
-  const { shouldShowGuide, startGuide, isLoading: guideLoading } = useGuide();
-  const isDashboardRoot = location.pathname === '/dashboard';
-
   return (
     <Layout>
       <div className="relative min-h-[calc(100vh-80px)] min-h-[calc(100dvh-80px)]">
@@ -63,41 +57,15 @@ export function GarageLayout({
               {/* Red accent rule */}
               <div className="w-16 h-1" style={{ background: 'hsl(2, 85%, 40%)' }} />
               
-              <div className="flex flex-wrap items-end justify-between gap-4">
-                <div className="space-y-2">
-                  {title !== (subtitle || title) && (
-                    <p className="font-display text-sm sm:text-base uppercase tracking-[0.3em] text-muted-foreground">
-                      {title}
-                    </p>
-                  )}
-                  <h1 className="font-display text-4xl sm:text-5xl md:text-6xl text-foreground uppercase tracking-wider leading-[0.9]">
-                    {subtitle || title}
-                  </h1>
-                </div>
-                
-                {/* Guide-knapper */}
-                <div className="flex items-center gap-2">
-                  {isDashboardRoot && !guideLoading && shouldShowGuide && (
-                    <BigActionButton
-                      onClick={() => startGuide('full')}
-                      size="lg"
-                      icon={<Sparkles className="w-5 h-5" />}
-                      className="animate-pulse-subtle text-base"
-                    >
-                      Start guide
-                    </BigActionButton>
-                  )}
-                  
-                  {isDashboardRoot && !guideLoading && !shouldShowGuide && (
-                    <button
-                      onClick={() => startGuide('full')}
-                      className="inline-flex items-center gap-2 px-5 py-3 border-2 border-foreground/20 text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-all font-display text-sm uppercase tracking-wider min-h-[48px]"
-                    >
-                      <HelpCircle className="w-5 h-5" />
-                      Veiledning
-                    </button>
-                  )}
-                </div>
+              <div className="space-y-2">
+                {title !== (subtitle || title) && (
+                  <p className="font-display text-sm sm:text-base uppercase tracking-[0.3em] text-muted-foreground">
+                    {title}
+                  </p>
+                )}
+                <h1 className="font-display text-4xl sm:text-5xl md:text-6xl text-foreground uppercase tracking-wider leading-[0.9]">
+                  {subtitle || title}
+                </h1>
               </div>
 
               {description && (
