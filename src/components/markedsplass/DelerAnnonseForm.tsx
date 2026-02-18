@@ -8,6 +8,7 @@ import {
   getSubcategories,
   getAllDescendants,
 } from '@/hooks/useUnifiedCategories';
+import { CarFormFields } from '@/components/car/CarFormFields';
 import type { ItemFormValues } from '@/lib/itemSubmit';
 
 const CONDITION_OPTIONS = ['Ny', 'NOS', 'Brukt', 'Original', 'Repro'];
@@ -52,7 +53,32 @@ export function DelerAnnonseForm({
     priceNote: initialValues?.priceNote ?? '',
     condition: initialValues?.condition ?? '',
     showLocation: initialValues?.showLocation ?? false,
+    carBrand: initialValues?.carBrand ?? '',
+    carModel: initialValues?.carModel ?? '',
+    carVariant: initialValues?.carVariant ?? '',
+    carYear: initialValues?.carYear ?? '',
   });
+
+  const carFields = {
+    brand: values.carBrand || '',
+    model: values.carModel || '',
+    variant: values.carVariant || '',
+    body_type: '',
+    year: values.carYear || '',
+  };
+
+  const handleCarChange = (field: string, value: string) => {
+    const fieldMap: Record<string, keyof ItemFormValues> = {
+      brand: 'carBrand',
+      model: 'carModel',
+      variant: 'carVariant',
+      year: 'carYear',
+    };
+    const key = fieldMap[field];
+    if (key) {
+      setValues((v) => ({ ...v, [key]: value }));
+    }
+  };
 
   // Auto-select first root when categories load
   useEffect(() => {
@@ -181,6 +207,18 @@ export function DelerAnnonseForm({
           onChange={(e) => setValues((v) => ({ ...v, description: e.target.value }))}
           placeholder="Beskriv varen..."
           className="mt-1 min-h-[100px]"
+          disabled={disabled}
+        />
+      </div>
+
+      {/* Passer til bil */}
+      <div>
+        <Label>Passer til bil (valgfritt)</Label>
+        <p className="text-xs text-muted-foreground mb-2">Angi hvilken bil delen passer til</p>
+        <CarFormFields
+          formData={carFields}
+          onChange={handleCarChange}
+          showTooltips={false}
           disabled={disabled}
         />
       </div>
