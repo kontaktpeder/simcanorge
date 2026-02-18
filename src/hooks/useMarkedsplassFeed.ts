@@ -18,6 +18,9 @@ export function useMarkedsplassFeed(filter: FeedFilter, search?: string) {
       if (search) {
         partsQuery = partsQuery.ilike("title", `%${search}%`);
       }
+      if (filter !== "all" && filter !== "parts" && filter !== "") {
+        partsQuery = partsQuery.eq("category_id", filter);
+      }
 
       // Fetch part categories
       const categoriesQuery = supabase.from("categories").select("id, name, slug");
@@ -56,8 +59,10 @@ export function useMarkedsplassFeed(filter: FeedFilter, search?: string) {
       // Apply filter
       if (filter === "parts") return parts;
       if (filter !== "all" && filter !== "") {
-        // Marketplace category filter – only return listings (already filtered in query)
-        return listings;
+        // Category filter – return both parts and listings in this category, sorted by date
+        const merged = [...parts, ...listings];
+        merged.sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
+        return merged;
       }
 
       // "all" – merge and sort by publishedAt desc
