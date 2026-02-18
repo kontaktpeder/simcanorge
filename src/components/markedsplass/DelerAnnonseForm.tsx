@@ -23,6 +23,7 @@ interface DelerAnnonseFormProps {
   onPublishedChange?: (v: boolean) => void;
   children?: React.ReactNode;
   disabled?: boolean;
+  profileLocation?: string | null;
 }
 
 export function DelerAnnonseForm({
@@ -36,6 +37,7 @@ export function DelerAnnonseForm({
   onPublishedChange,
   children,
   disabled = false,
+  profileLocation,
 }: DelerAnnonseFormProps) {
   const { data: categories = [] } = useUnifiedCategories();
   const roots = getRootCategories(categories);
@@ -49,7 +51,7 @@ export function DelerAnnonseForm({
     priceMax: initialValues?.priceMax ?? '',
     priceNote: initialValues?.priceNote ?? '',
     condition: initialValues?.condition ?? '',
-    location: initialValues?.location ?? '',
+    showLocation: initialValues?.showLocation ?? false,
   });
 
   // Auto-select first root when categories load
@@ -228,38 +230,48 @@ export function DelerAnnonseForm({
         />
       </div>
 
-      {/* Tilstand (for Deler) */}
-      {isDeler && (
-        <div>
-          <Label>Tilstand</Label>
-          <select
-            value={values.condition}
-            onChange={(e) => setValues((v) => ({ ...v, condition: e.target.value }))}
-            disabled={disabled}
-            className="w-full h-11 mt-1 rounded-md border border-input bg-background px-3 py-2 text-sm"
-          >
-            <option value="">Velg...</option>
-            {CONDITION_OPTIONS.map((o) => (
-              <option key={o} value={o}>
-                {o}
-              </option>
-            ))}
-          </select>
-        </div>
-      )}
+      {/* Tilstand – alltid synlig */}
+      <div>
+        <Label>Tilstand</Label>
+        <select
+          value={values.condition}
+          onChange={(e) => setValues((v) => ({ ...v, condition: e.target.value }))}
+          disabled={disabled}
+          className="w-full h-11 mt-1 rounded-md border border-input bg-background px-3 py-2 text-sm"
+        >
+          <option value="">Velg...</option>
+          {CONDITION_OPTIONS.map((o) => (
+            <option key={o} value={o}>
+              {o}
+            </option>
+          ))}
+        </select>
+      </div>
 
-      {/* Sted (for Samleobjekter / annonser) */}
+      {/* Vis adresse – kun Samleobjekter, sted fra profil */}
       {!isDeler && (
-        <div>
-          <Label htmlFor="location">Sted</Label>
-            <Input
-              id="location"
-              value={values.location}
-              onChange={(e) => setValues((v) => ({ ...v, location: e.target.value }))}
-              placeholder="f.eks. Oslo"
-              className="mt-1"
+        <div className="space-y-2">
+          <div className="flex items-center gap-3">
+            <input
+              type="checkbox"
+              id="show-location"
+              checked={values.showLocation}
+              onChange={(e) => setValues((v) => ({ ...v, showLocation: e.target.checked }))}
               disabled={disabled}
+              className="w-5 h-5"
             />
+            <Label htmlFor="show-location">Vis adresse (forhåndsvisning)</Label>
+          </div>
+          {values.showLocation && profileLocation && (
+            <p className="text-sm text-muted-foreground pl-8">
+              Vil vises som: <strong>{profileLocation}</strong>
+            </p>
+          )}
+          {values.showLocation && !profileLocation && (
+            <p className="text-sm text-amber-600 pl-8">
+              Legg inn bosted i din Entusiastprofil for å vise sted.
+            </p>
+          )}
         </div>
       )}
 

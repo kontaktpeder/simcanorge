@@ -89,7 +89,7 @@ export default function RedigerAnnonse() {
         priceMax: '',
         priceNote: item.price_note || '',
         condition: '',
-        location: item.location || '',
+        showLocation: !!item.location,
       }
     : {};
 
@@ -137,6 +137,9 @@ export default function RedigerAnnonse() {
     setIsSubmitting(true);
     try {
       const price = values.priceMin ? Number(values.priceMin) : values.priceMax ? Number(values.priceMax) : null;
+      const location = values.showLocation && ownerProfile?.location
+        ? ownerProfile.location.trim()
+        : null;
       await updateItem.mutateAsync({
         id: itemId,
         updates: {
@@ -145,7 +148,7 @@ export default function RedigerAnnonse() {
           price,
           price_note: values.priceNote.trim() || null,
           category_id: values.categoryId || null,
-          location: values.location.trim() || null,
+          location,
         },
       });
       const newUploaded = await uploadNewImages();
@@ -176,6 +179,7 @@ export default function RedigerAnnonse() {
         submitLabel="Lagre endringer"
         isSubmitting={isSubmitting}
         disabled={!canEdit}
+        profileLocation={ownerProfile?.location ?? null}
       >
         {/* Bilder */}
         <div className="space-y-2">
