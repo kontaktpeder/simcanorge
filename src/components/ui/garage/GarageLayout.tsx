@@ -45,7 +45,7 @@ export function GarageLayout({
             {showBackButton && (
               <Link
                 to={backTo}
-                className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-6 transition-colors font-display text-base uppercase tracking-wider min-h-[48px] active:scale-95 touch-manipulation"
+                className="inline-flex items-center gap-2 text-foreground/80 hover:text-foreground mb-6 transition-colors font-display text-base uppercase tracking-wider min-h-[48px] active:scale-95 touch-manipulation drop-shadow-md"
               >
                 <ArrowLeft className="w-5 h-5 flex-shrink-0" />
                 <span>{backLabel}</span>
@@ -53,29 +53,29 @@ export function GarageLayout({
             )}
             
             {/* Editorial header */}
-            <div className="space-y-4">
+            <div className="space-y-4" style={{ textShadow: '0 1px 4px hsla(0,0%,0%,0.5), 0 0 20px hsla(0,0%,0%,0.3)' }}>
               {/* Red accent rule */}
-              <div className="w-16 h-1" style={{ background: 'hsl(2, 85%, 40%)' }} />
+              <div className="w-16 h-1.5 shadow-md" style={{ background: 'hsl(2, 85%, 40%)' }} />
               
               <div className="space-y-2">
                 {title !== (subtitle || title) && (
-                  <p className="font-display text-sm sm:text-base uppercase tracking-[0.3em] text-muted-foreground">
+                  <p className="font-display text-sm sm:text-base uppercase tracking-[0.3em] text-foreground/80">
                     {title}
                   </p>
                 )}
-                <h1 className="font-display text-4xl sm:text-5xl md:text-6xl text-foreground uppercase tracking-wider leading-[0.9]">
+                <h1 className="font-display text-4xl sm:text-5xl md:text-6xl text-foreground uppercase tracking-wider leading-[0.9] drop-shadow-lg">
                   {subtitle || title}
                 </h1>
               </div>
 
               {description && (
-                <p className="font-serif italic text-lg sm:text-xl text-muted-foreground max-w-xl">
+                <p className="font-serif italic text-lg sm:text-xl text-foreground/75 max-w-xl">
                   {description}
                 </p>
               )}
 
               {/* Bottom rule */}
-              <div className="h-px bg-foreground/20" />
+              <div className="h-px bg-foreground/30 shadow-sm" />
             </div>
           </div>
           
