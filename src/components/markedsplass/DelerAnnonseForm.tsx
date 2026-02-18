@@ -116,7 +116,7 @@ export function DelerAnnonseForm({
     await onSubmit(values);
   };
 
-  const isDeler = selectedRoot?.slug === 'deler';
+  
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
@@ -159,19 +159,18 @@ export function DelerAnnonseForm({
       )}
 
       {/* Underkategori */}
-      {midLevel.length > 0 && (
-        <div>
-          <Label>Kategori</Label>
-          <select
-            value={values.categoryId}
-            onChange={(e) => setValues((v) => ({ ...v, categoryId: e.target.value }))}
-            className="w-full h-11 mt-1 rounded-md border border-input bg-background px-3 py-2 text-sm"
-          >
-            <option value="">Velg kategori...</option>
-            {buildCategoryOptions()}
-          </select>
-        </div>
-      )}
+      <div>
+        <Label>Kategori</Label>
+        <select
+          value={values.categoryId}
+          onChange={(e) => setValues((v) => ({ ...v, categoryId: e.target.value }))}
+          className="w-full h-11 mt-1 rounded-md border border-input bg-background px-3 py-2 text-sm"
+          disabled={disabled}
+        >
+          <option value="">Velg kategori...</option>
+          {buildCategoryOptions()}
+        </select>
+      </div>
 
       {/* Beskrivelse */}
       <div>
@@ -189,7 +188,7 @@ export function DelerAnnonseForm({
       {/* Pris */}
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <Label htmlFor="priceMin">{isDeler ? 'Pris fra (kr)' : 'Pris (kr)'}</Label>
+          <Label htmlFor="priceMin">Pris fra (kr)</Label>
             <Input
               id="priceMin"
               type="number"
@@ -201,21 +200,19 @@ export function DelerAnnonseForm({
               disabled={disabled}
             />
         </div>
-        {isDeler && (
-          <div>
-            <Label htmlFor="priceMax">Pris til (kr)</Label>
-            <Input
-              id="priceMax"
-              type="number"
-              min={0}
-              value={values.priceMax}
-              onChange={(e) => setValues((v) => ({ ...v, priceMax: e.target.value }))}
-              className="mt-1"
-              placeholder="f.eks. 1000"
-              disabled={disabled}
-            />
-          </div>
-        )}
+        <div>
+          <Label htmlFor="priceMax">Pris til (kr)</Label>
+          <Input
+            id="priceMax"
+            type="number"
+            min={0}
+            value={values.priceMax}
+            onChange={(e) => setValues((v) => ({ ...v, priceMax: e.target.value }))}
+            className="mt-1"
+            placeholder="f.eks. 1000"
+            disabled={disabled}
+          />
+        </div>
       </div>
 
       <div>
@@ -248,32 +245,30 @@ export function DelerAnnonseForm({
         </select>
       </div>
 
-      {/* Vis adresse – kun Samleobjekter, sted fra profil */}
-      {!isDeler && (
-        <div className="space-y-2">
-          <div className="flex items-center gap-3">
-            <input
-              type="checkbox"
-              id="show-location"
-              checked={values.showLocation}
-              onChange={(e) => setValues((v) => ({ ...v, showLocation: e.target.checked }))}
-              disabled={disabled}
-              className="w-5 h-5"
-            />
-            <Label htmlFor="show-location">Vis adresse (forhåndsvisning)</Label>
-          </div>
-          {values.showLocation && profileLocation && (
-            <p className="text-sm text-muted-foreground pl-8">
-              Vil vises som: <strong>{profileLocation}</strong>
-            </p>
-          )}
-          {values.showLocation && !profileLocation && (
-            <p className="text-sm text-amber-600 pl-8">
-              Legg inn bosted i din Entusiastprofil for å vise sted.
-            </p>
-          )}
+      {/* Vis adresse – sted fra profil */}
+      <div className="space-y-2">
+        <div className="flex items-center gap-3">
+          <input
+            type="checkbox"
+            id="show-location"
+            checked={values.showLocation}
+            onChange={(e) => setValues((v) => ({ ...v, showLocation: e.target.checked }))}
+            disabled={disabled}
+            className="w-5 h-5"
+          />
+          <Label htmlFor="show-location">Vis adresse (forhåndsvisning)</Label>
         </div>
-      )}
+        {values.showLocation && profileLocation && (
+          <p className="text-sm text-muted-foreground pl-8">
+            Vil vises som: <strong>{profileLocation}</strong>
+          </p>
+        )}
+        {values.showLocation && !profileLocation && (
+          <p className="text-sm text-amber-600 pl-8">
+            Legg inn bosted i din Entusiastprofil for å vise sted.
+          </p>
+        )}
+      </div>
 
       {/* Ekstra innhold (bilder osv.) */}
       {children}
