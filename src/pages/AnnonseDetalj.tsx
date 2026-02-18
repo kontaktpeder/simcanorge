@@ -140,7 +140,7 @@ function PartDetailView({ part, category }: { part: any; category: any }) {
       </Helmet>
       <PageHeader title="MARKEDSPLASS" subtitle={category?.name || "Bildel"} />
 
-      <section className="poster-section">
+      <section className="poster-section pb-[max(2rem,env(safe-area-inset-bottom))] sm:pb-[max(5rem,env(safe-area-inset-bottom))]">
         <div className="container mx-auto px-4 relative z-10">
           <Link to="/markedsplass" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6 font-display uppercase tracking-wider">
             <ArrowLeft className="w-4 h-4" /> Tilbake
@@ -251,7 +251,7 @@ function MarketplaceDetailView({ item }: { item: any }) {
       </Helmet>
       <PageHeader title="MARKEDSPLASS" subtitle={category?.name || "Annonse"} />
 
-      <section className="poster-section">
+      <section className="poster-section pb-[max(2rem,env(safe-area-inset-bottom))] sm:pb-[max(5rem,env(safe-area-inset-bottom))]">
         <div className="container mx-auto px-4 relative z-10">
           <Link to="/markedsplass" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6 font-display uppercase tracking-wider">
             <ArrowLeft className="w-4 h-4" /> Tilbake
