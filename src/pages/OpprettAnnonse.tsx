@@ -124,28 +124,21 @@ export default function OpprettAnnonse() {
     setIsSubmitting(true);
 
     try {
-      const target = getSubmitTarget(allCategories, values.rootCategoryId);
+      // Regular users always submit as listing (parts table is admin-only)
+      const data = await submitAsListing(values, { ownerId: ownerProfile.id });
 
-      if (target === 'listing') {
-        const data = await submitAsListing(values, { ownerId: ownerProfile.id });
-
-        if (images.length > 0 && data?.id) {
-          const uploaded = await uploadImages(data.id);
-          if (uploaded.length > 0) {
-            await insertImages.mutateAsync({ itemId: data.id, images: uploaded });
-          }
-
-          toast.success('Annonsen er sendt inn', {
-            description: 'Du kan se og redigere den under. Den vises på markedsplassen når admin har godkjent den.',
-          });
-          queryClient.invalidateQueries({ queryKey: ['my-listings', user?.id] });
-          navigate('/dashboard/mine-annonser', { state: { justSubmitted: true } });
+      if (images.length > 0 && data?.id) {
+        const uploaded = await uploadImages(data.id);
+        if (uploaded.length > 0) {
+          await insertImages.mutateAsync({ itemId: data.id, images: uploaded });
         }
-      } else {
-        await submitAsPart(values, {});
-        toast.success('Varen er lagret');
-        navigate('/dashboard/mine-annonser');
       }
+
+      toast.success('Annonsen er sendt inn', {
+        description: 'Du kan se og redigere den under. Den vises på markedsplassen når admin har godkjent den.',
+      });
+      queryClient.invalidateQueries({ queryKey: ['my-listings', user?.id] });
+      navigate('/dashboard/mine-annonser', { state: { justSubmitted: true } });
     } catch (err) {
       console.error('Submit error:', err);
       toast.error('Kunne ikke sende inn annonsen');
