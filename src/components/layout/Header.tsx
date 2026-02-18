@@ -464,10 +464,6 @@ export function Header() {
                 </TooltipContent>
               </Tooltip>
 
-              {/* Guide help button - only for logged in users */}
-              {user && location.pathname.startsWith('/dashboard') && (
-                <GuideHelpButton />
-              )}
 
               {/* User/Login button */}
               {user ? (
