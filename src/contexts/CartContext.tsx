@@ -6,6 +6,8 @@ export interface CartItem {
   id: string;
   slug: string;
   title: string;
+  owner_id?: string | null;
+  owner_name?: string | null;
 }
 
 const CART_KEY = "simca-inquiry-cart";

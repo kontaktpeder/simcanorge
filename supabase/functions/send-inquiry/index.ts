@@ -3,13 +3,20 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-interface InquiryItem {
+interface InquiryItemInput {
   type: "part" | "listing";
   id: string;
   title: string;
+}
+
+interface RecipientGroup {
+  recipient_owner_id: string | null;
+  message: string;
+  items: InquiryItemInput[];
 }
 
 interface InquiryRequest {
@@ -19,12 +26,16 @@ interface InquiryRequest {
   car_model?: string;
   car_year?: number;
   message?: string;
-  items: InquiryItem[];
+  /** New: pre-grouped items with per-recipient messages */
+  items_by_recipient?: RecipientGroup[];
+  /** @deprecated Legacy: flat items list (auto-grouped server-side) */
+  items?: InquiryItemInput[];
 }
 
-async function groupItemsByRecipient(supabase: any, items: InquiryItem[]) {
-  const adminItems: InquiryItem[] = [];
-  const byOwnerId = new Map<string, InquiryItem[]>();
+/** Legacy fallback: group flat items by recipient via DB lookup */
+async function groupItemsByRecipient(supabase: any, items: InquiryItemInput[]) {
+  const adminItems: InquiryItemInput[] = [];
+  const byOwnerId = new Map<string, InquiryItemInput[]>();
 
   for (const item of items) {
     if (item.type === "part") {
@@ -45,7 +56,6 @@ async function groupItemsByRecipient(supabase: any, items: InquiryItem[]) {
       }
     }
   }
-
   return { adminItems, byOwnerId };
 }
 
@@ -58,33 +68,60 @@ const handler = async (req: Request): Promise<Response> => {
     const data: InquiryRequest = await req.json();
     console.log("Received inquiry:", JSON.stringify(data, null, 2));
 
-    if (!data.customer_name || !data.email || !data.items || data.items.length === 0) {
+    if (!data.customer_name || !data.email) {
       return new Response(
-        JSON.stringify({ error: "Mangler påkrevde felt (navn, e-post, eller varer)" }),
+        JSON.stringify({ error: "Mangler navn eller e-post" }),
         { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
       );
     }
 
-    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const supabase = createClient(supabaseUrl, supabaseKey);
+    const supabase = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+    );
 
-    const { adminItems, byOwnerId } = await groupItemsByRecipient(supabase, data.items);
+    // Build recipient groups
+    let groups: RecipientGroup[];
 
-    const baseInquiry = {
+    if (data.items_by_recipient && data.items_by_recipient.length > 0) {
+      // New format: already grouped by recipient with per-recipient messages
+      groups = data.items_by_recipient.filter((g) => g.items.length > 0);
+    } else if (data.items && data.items.length > 0) {
+      // Legacy format: flat items list, group server-side
+      const { adminItems, byOwnerId } = await groupItemsByRecipient(supabase, data.items);
+      groups = [];
+      if (adminItems.length > 0) {
+        groups.push({ recipient_owner_id: null, message: data.message || "", items: adminItems });
+      }
+      for (const [ownerId, ownerItems] of byOwnerId) {
+        groups.push({ recipient_owner_id: ownerId, message: data.message || "", items: ownerItems });
+      }
+    } else {
+      return new Response(
+        JSON.stringify({ error: "Mangler varer" }),
+        { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
+    }
+
+    const base = {
       customer_name: data.customer_name,
       email: data.email,
       phone: data.phone || null,
       car_model: data.car_model || null,
       car_year: data.car_year || null,
-      message: data.message || null,
       read: false,
     };
 
-    const insertInquiry = async (recipientOwnerId: string | null, items: InquiryItem[]) => {
+    const ids: string[] = [];
+
+    for (const g of groups) {
       const { data: inquiry, error: inquiryError } = await supabase
         .from("inquiries")
-        .insert({ ...baseInquiry, recipient_owner_id: recipientOwnerId })
+        .insert({
+          ...base,
+          message: g.message || null,
+          recipient_owner_id: g.recipient_owner_id,
+        })
         .select()
         .single();
 
@@ -93,7 +130,7 @@ const handler = async (req: Request): Promise<Response> => {
         throw inquiryError;
       }
 
-      const inquiryItems = items.map((it) => ({
+      const inquiryItems = g.items.map((it) => ({
         inquiry_id: inquiry.id,
         part_id: it.type === "part" ? it.id : null,
         marketplace_item_id: it.type === "listing" ? it.id : null,
@@ -108,15 +145,7 @@ const handler = async (req: Request): Promise<Response> => {
         console.error("Error inserting inquiry items:", itemsError);
       }
 
-      return inquiry.id;
-    };
-
-    const ids: string[] = [];
-    if (adminItems.length > 0) {
-      ids.push(await insertInquiry(null, adminItems));
-    }
-    for (const [ownerId, ownerItems] of byOwnerId) {
-      ids.push(await insertInquiry(ownerId, ownerItems));
+      ids.push(inquiry.id);
     }
 
     console.log("Inquiries created:", ids);
