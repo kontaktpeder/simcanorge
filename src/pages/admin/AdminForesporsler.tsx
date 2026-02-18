@@ -21,10 +21,12 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Mail, Phone, Car, Calendar, Check, Eye, Wrench, Trash2, User, Package, ExternalLink } from "lucide-react";
+import { Mail, Phone, Car, Calendar, Check, Eye, Wrench, Trash2, User, Package, ExternalLink, ShieldAlert, UserX } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { nb } from "date-fns/locale";
+import { useAllAccountRequests, useUpdateAccountRequest, type AccountRequest, type AccountRequestStatus } from "@/hooks/useAccountRequests";
+import { useAuth } from "@/hooks/useAuth";
 
 interface InquiryItem {
   id: string;
@@ -80,11 +82,30 @@ const statusColors: Record<InquiryStatus, string> = {
   cancelled: "bg-red-500",
 };
 
+type ForesporselItem =
+  | { kind: "inquiry"; data: Inquiry }
+  | { kind: "account_request"; data: AccountRequest };
+
+const accountRequestTypeLabels: Record<string, string> = {
+  delete_account: "Slettingsforespørsel",
+  anonymize: "Anonymiseringsforespørsel",
+};
+
+const accountRequestStatusLabels: Record<string, string> = {
+  new: "Mottatt",
+  in_progress: "Under behandling",
+  done: "Fullført",
+};
+
 const AdminForesporsler = () => {
   const queryClient = useQueryClient();
+  const { user: authUser } = useAuth();
   const [selectedInquiry, setSelectedInquiry] = useState<Inquiry | null>(null);
+  const [selectedAccountRequest, setSelectedAccountRequest] = useState<AccountRequest | null>(null);
   const [status, setStatus] = useState<InquiryStatus>('pending');
   const [adminNotes, setAdminNotes] = useState('');
+  const [accountRequestStatus, setAccountRequestStatus] = useState<AccountRequestStatus>('new');
+  const [accountRequestAdminNote, setAccountRequestAdminNote] = useState('');
   const [isSaving, setIsSaving] = useState(false);
 
   const { data: inquiries, isLoading } = useQuery({
@@ -102,6 +123,9 @@ const AdminForesporsler = () => {
       return data as Inquiry[];
     },
   });
+
+  const { data: accountRequests = [], isLoading: accountRequestsLoading } = useAllAccountRequests();
+  const updateAccountRequest = useUpdateAccountRequest();
 
   // Collect unique owner IDs and marketplace_item IDs for enrichment
   const ownerIds = useMemo(() => {
@@ -265,23 +289,32 @@ const AdminForesporsler = () => {
     return { price: null, priceNote: null, condition: null, description: null, type: "unknown" as const, slug: null };
   };
 
+  // Combined list sorted by date
+  const allItems: ForesporselItem[] = useMemo(() => {
+    const inquiryItems: ForesporselItem[] = (inquiries || []).map((data) => ({ kind: "inquiry", data }));
+    const accountItems: ForesporselItem[] = (accountRequests || []).map((data) => ({ kind: "account_request", data }));
+    return [...inquiryItems, ...accountItems].sort(
+      (a, b) => new Date(b.data.created_at).getTime() - new Date(a.data.created_at).getTime()
+    );
+  }, [inquiries, accountRequests]);
+
   return (
     <AdminLayout title="FORESPØRSLER">
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <p className="text-muted-foreground">
-            {inquiries?.length || 0} forespørsel{inquiries?.length !== 1 ? "er" : ""} totalt
+            {allItems.length} forespørsel{allItems.length !== 1 ? "er" : ""} totalt
             {unreadCount > 0 && (
               <Badge variant="destructive" className="ml-3">
-                {unreadCount} ulest{unreadCount !== 1 ? "e" : ""}
+                {unreadCount} ulest{unreadCount !== 1 ? "e" : ""} henvendelser
               </Badge>
             )}
           </p>
         </div>
 
-        {isLoading ? (
+        {isLoading || accountRequestsLoading ? (
           <div className="text-center py-12 text-muted-foreground">Laster...</div>
-        ) : !inquiries?.length ? (
+        ) : !allItems.length ? (
           <Card>
             <CardContent className="py-12 text-center text-muted-foreground">
               <Mail className="w-12 h-12 mx-auto mb-4 opacity-50" />
@@ -290,11 +323,72 @@ const AdminForesporsler = () => {
           </Card>
         ) : (
           <div className="grid gap-4">
-            {inquiries.map((inquiry) => {
+            {allItems.map((item) => {
+              if (item.kind === "account_request") {
+                const ar = item.data;
+                const isDelete = ar.type === "delete_account";
+                return (
+                  <Card
+                    key={`ar-${ar.id}`}
+                    className={`cursor-pointer hover:shadow-md transition-shadow ${
+                      ar.status === "new" ? "border-destructive/50 border-2" : ""
+                    }`}
+                    onClick={() => {
+                      setSelectedAccountRequest(ar);
+                      setAccountRequestStatus(ar.status as AccountRequestStatus);
+                      setAccountRequestAdminNote(ar.admin_note || '');
+                    }}
+                  >
+                    <CardContent className="p-4">
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1 flex-wrap">
+                            {ar.status === "new" && (
+                              <span className="w-2 h-2 bg-destructive rounded-full flex-shrink-0" />
+                            )}
+                            <h3 className="font-display text-lg truncate flex items-center gap-2">
+                              {isDelete ? <Trash2 className="w-4 h-4 text-destructive" /> : <UserX className="w-4 h-4 text-amber-600" />}
+                              {isDelete ? "Slettingsforespørsel" : "Anonymiseringsforespørsel"}
+                            </h3>
+                            <Badge
+                              variant="outline"
+                              className={
+                                ar.status === "new"
+                                  ? "border-destructive/50 text-destructive"
+                                  : ar.status === "in_progress"
+                                  ? "border-amber-500/50 text-amber-700"
+                                  : "border-green-500/50 text-green-700"
+                              }
+                            >
+                              {accountRequestStatusLabels[ar.status]}
+                            </Badge>
+                          </div>
+                          <p className="text-sm text-muted-foreground">
+                            {format(new Date(ar.created_at), "d. MMM yyyy 'kl.' HH:mm", { locale: nb })}
+                          </p>
+                          <p className="text-xs text-muted-foreground mt-1 font-mono">
+                            Bruker-ID: {ar.user_id.slice(0, 8)}…
+                          </p>
+                          {ar.message && (
+                            <p className="text-sm text-foreground/70 mt-2 line-clamp-2">
+                              {ar.message}
+                            </p>
+                          )}
+                        </div>
+                        <Button variant="ghost" size="icon">
+                          <Eye className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              }
+
+              const inquiry = item.data;
               const recipientLabel = getRecipientLabel(inquiry);
               return (
                 <Card
-                  key={inquiry.id}
+                  key={`inq-${inquiry.id}`}
                   className={`cursor-pointer hover:shadow-md transition-shadow ${
                     !inquiry.read ? "border-accent border-2" : ""
                   }`}
@@ -348,7 +442,7 @@ const AdminForesporsler = () => {
           </div>
         )}
 
-        {/* Detail Dialog */}
+        {/* Detail Dialog for inquiries */}
         <Dialog open={!!selectedInquiry} onOpenChange={() => setSelectedInquiry(null)}>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             {selectedInquiry && (() => {
@@ -434,7 +528,7 @@ const AdminForesporsler = () => {
                       )}
                     </div>
 
-                    {/* Parts requested – visual cards */}
+                    {/* Parts requested */}
                     <div>
                       <h4 className="font-display text-lg mb-3 flex items-center gap-2">
                         <Wrench className="w-4 h-4" />
@@ -450,7 +544,6 @@ const AdminForesporsler = () => {
                               key={item.id}
                               className="flex gap-5 bg-muted/40 border border-border/50 rounded-lg p-4 items-start"
                             >
-                              {/* Thumbnail */}
                               {imgUrl ? (
                                 <img
                                   src={imgUrl}
@@ -463,7 +556,6 @@ const AdminForesporsler = () => {
                                 </div>
                               )}
 
-                              {/* Details */}
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-center gap-2 mb-1">
                                   <h5 className="font-display text-lg md:text-xl font-semibold leading-tight">
@@ -570,6 +662,83 @@ const AdminForesporsler = () => {
                         Slett forespørsel
                       </Button>
                     </div>
+                  </div>
+                </>
+              );
+            })()}
+          </DialogContent>
+        </Dialog>
+
+        {/* Dialog for account request (sletting / anonymisering) */}
+        <Dialog open={!!selectedAccountRequest} onOpenChange={() => setSelectedAccountRequest(null)}>
+          <DialogContent className="max-w-lg">
+            {selectedAccountRequest && (() => {
+              const ar = selectedAccountRequest;
+              const isDelete = ar.type === "delete_account";
+              return (
+                <>
+                  <DialogHeader>
+                    <DialogTitle className="font-display text-2xl flex items-center gap-2">
+                      {isDelete ? <Trash2 className="w-5 h-5 text-destructive" /> : <UserX className="w-5 h-5 text-amber-600" />}
+                      {accountRequestTypeLabels[ar.type]}
+                    </DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-5">
+                    <div className="text-sm text-muted-foreground">
+                      Bruker-ID: <span className="font-mono text-foreground">{ar.user_id}</span>
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      Innsendt: {format(new Date(ar.created_at), "d. MMMM yyyy 'kl.' HH:mm", { locale: nb })}
+                    </div>
+                    {ar.message && (
+                      <div>
+                        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">Melding fra bruker</p>
+                        <div className="bg-muted/50 rounded-lg p-4 whitespace-pre-wrap text-sm">
+                          {ar.message}
+                        </div>
+                      </div>
+                    )}
+                    <div className="space-y-2">
+                      <Label>Status</Label>
+                      <Select value={accountRequestStatus} onValueChange={(v) => setAccountRequestStatus(v as AccountRequestStatus)}>
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="new">Mottatt</SelectItem>
+                          <SelectItem value="in_progress">Under behandling</SelectItem>
+                          <SelectItem value="done">Fullført</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Admin notater</Label>
+                      <Textarea
+                        value={accountRequestAdminNote}
+                        onChange={(e) => setAccountRequestAdminNote(e.target.value)}
+                        rows={3}
+                        placeholder="Notater om behandlingen..."
+                      />
+                    </div>
+                    <Button
+                      className="w-full"
+                      disabled={updateAccountRequest.isPending}
+                      onClick={() => {
+                        updateAccountRequest.mutate(
+                          {
+                            id: ar.id,
+                            status: accountRequestStatus,
+                            admin_note: accountRequestAdminNote,
+                            resolved_by: accountRequestStatus === "done" ? authUser?.id : undefined,
+                          },
+                          {
+                            onSuccess: () => setSelectedAccountRequest(null),
+                          }
+                        );
+                      }}
+                    >
+                      {updateAccountRequest.isPending ? "Lagrer..." : "Lagre status"}
+                    </Button>
                   </div>
                 </>
               );
