@@ -146,10 +146,10 @@ function PartDetailView({ part, category }: { part: any; category: any }) {
             <ArrowLeft className="w-4 h-4" /> Tilbake
           </Link>
 
-          <div className="max-w-5xl mx-auto">
+          <div className="max-w-5xl mx-auto overflow-hidden">
             <div className="grid md:grid-cols-2 gap-8 md:gap-12">
               {/* Images */}
-              <div>
+              <div className="min-w-0">
                 {allImages.length > 0 ? (
                   <div>
                     <div className="relative aspect-square overflow-hidden rounded-sm bg-muted cursor-pointer" style={{ border: "1px solid rgba(0,0,0,0.06)" }} onClick={() => setLightboxOpen(true)}>
@@ -186,9 +186,9 @@ function PartDetailView({ part, category }: { part: any; category: any }) {
               </div>
 
               {/* Info */}
-              <div className="flex flex-col">
+              <div className="flex flex-col min-w-0">
                 {category && <span className="text-muted-foreground text-[11px] uppercase tracking-widest mb-2 font-medium">{category.name}</span>}
-                <h1 className="font-display text-3xl md:text-5xl leading-tight uppercase tracking-wide mb-4">{part.title}</h1>
+                <h1 className="font-display text-3xl md:text-5xl leading-tight uppercase tracking-wide mb-4 break-words">{part.title}</h1>
                 {conditionInfo && (
                   <span className={`inline-block self-start text-[10px] uppercase tracking-wider font-semibold px-2 py-1 rounded-sm mb-4 ${conditionInfo.className}`}>{conditionInfo.label}</span>
                 )}
@@ -196,8 +196,8 @@ function PartDetailView({ part, category }: { part: any; category: any }) {
                 {part.price_note && <p className="text-xs text-muted-foreground italic mb-4">{part.price_note}</p>}
                 <div className="border-t border-foreground/10 my-4" />
                 {part.description && (
-                  <div className="prose prose-sm max-w-none mb-6">
-                    <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">{part.description}</p>
+                  <div className="prose prose-sm max-w-none mb-6 overflow-hidden">
+                    <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line break-words overflow-wrap-anywhere">{part.description}</p>
                   </div>
                 )}
                 <div className="mt-auto pt-4">
@@ -257,10 +257,10 @@ function MarketplaceDetailView({ item }: { item: any }) {
             <ArrowLeft className="w-4 h-4" /> Tilbake
           </Link>
 
-          <div className="max-w-5xl mx-auto">
+          <div className="max-w-5xl mx-auto overflow-hidden">
             <div className="grid md:grid-cols-2 gap-8 md:gap-12">
               {/* Images */}
-              <div>
+              <div className="min-w-0">
                 {allImages.length > 0 ? (
                   <div>
                     <div className="relative aspect-square overflow-hidden rounded-sm bg-muted cursor-pointer" style={{ border: "1px solid rgba(0,0,0,0.06)" }} onClick={() => setLightboxOpen(true)}>
@@ -304,15 +304,15 @@ function MarketplaceDetailView({ item }: { item: any }) {
               </div>
 
               {/* Info */}
-              <div className="flex flex-col">
+              <div className="flex flex-col min-w-0">
                 {category && <span className="text-muted-foreground text-[11px] uppercase tracking-widest mb-2 font-medium">{category.name}</span>}
-                <h1 className="font-display text-3xl md:text-5xl leading-tight uppercase tracking-wide mb-4">{item.title}</h1>
+                <h1 className="font-display text-3xl md:text-5xl leading-tight uppercase tracking-wide mb-4 break-words">{item.title}</h1>
                 {priceDisplay && <p className="font-serif text-2xl md:text-3xl text-foreground font-bold leading-none mb-1">{priceDisplay}</p>}
                 {item.price_note && <p className="text-xs text-muted-foreground italic mb-4">{item.price_note}</p>}
                 <div className="border-t border-foreground/10 my-4" />
                 {item.description && (
-                  <div className="prose prose-sm max-w-none mb-6">
-                    <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">{item.description}</p>
+                  <div className="prose prose-sm max-w-none mb-6 overflow-hidden">
+                    <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line break-words overflow-wrap-anywhere">{item.description}</p>
                   </div>
                 )}
                 <div className="mt-auto pt-4">

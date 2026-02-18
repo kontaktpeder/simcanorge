@@ -442,6 +442,10 @@
 }
 
 @layer utilities {
+  .overflow-wrap-anywhere {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
   /* Text shadows for metallic effect */
   .text-shadow-retro {
     text-shadow: 
