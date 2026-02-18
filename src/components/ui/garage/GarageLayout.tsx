@@ -1,8 +1,15 @@
-import { ReactNode } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { ReactNode, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
 import { ArrowLeft } from 'lucide-react';
 import garageBackground from '@/assets/garage-background.jpg';
+
+// Preload immediately when module loads
+const preloadLink = document.createElement('link');
+preloadLink.rel = 'preload';
+preloadLink.as = 'image';
+preloadLink.href = garageBackground;
+document.head.appendChild(preloadLink);
 
 interface GarageLayoutProps {
   title: string;
