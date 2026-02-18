@@ -32,7 +32,7 @@ interface AdminMarketplaceItem {
   created_at: string;
   price: number | null;
   marketplace_images?: MarketplaceImage[];
-  marketplace_categories?: MarketplaceCategory | null;
+  categories?: MarketplaceCategory | null;
   owners?: Owner | null;
 }
 
@@ -112,7 +112,7 @@ const AdminMarkedsplass = () => {
             const images = [...(item.marketplace_images || [])].sort((a, b) => a.sort_order - b.sort_order);
             const mainImage = images[0];
             const owner = item.owners;
-            const category = item.marketplace_categories;
+            const category = item.categories;
             const status = statusLabels[item.status] || statusLabels.draft;
 
             return (

@@ -28,7 +28,7 @@ export function useMarkedsplassFeed(filter: FeedFilter, search?: string) {
         .select(`
           *,
           marketplace_images(id, image_url, sort_order, alt_text),
-          marketplace_categories(id, name, slug),
+          categories(id, name, slug),
           owners!inner(id, display_name, slug, location)
         `)
         .not("published_at", "is", null)
@@ -73,13 +73,10 @@ export function useMarkedsplassCategories() {
   return useQuery({
     queryKey: ["markedsplass-all-categories"],
     queryFn: async () => {
-      const [partCats, mpCats] = await Promise.all([
-        supabase.from("categories").select("id, name, slug").order("name"),
-        supabase.from("marketplace_categories").select("id, name, slug").order("name"),
-      ]);
+      const partCats = await supabase.from("categories").select("id, name, slug").order("name");
       return {
         partCategories: partCats.data || [],
-        marketplaceCategories: mpCats.data || [],
+        marketplaceCategories: partCats.data || [],
       };
     },
   });

@@ -65,7 +65,7 @@ export function normalizePart(part: any, categories: any[]): FeedItem {
 }
 
 export function normalizeListing(item: any): FeedItem {
-  const cat = item.marketplace_categories as any;
+  const cat = item.categories as any;
   const owner = item.owners as any;
   return {
     type: "listing",
