@@ -1,16 +1,38 @@
 import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ShoppingBag, Search, Car } from 'lucide-react';
+import { ShoppingBag, Search, Plus, Info } from 'lucide-react';
 import { Layout } from '@/components/layout/Layout';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { Input } from '@/components/ui/input';
-import { useMarketplaceItems } from '@/hooks/useMarketplace';
+import { useMarketplaceItems, useMarketplaceCategories } from '@/hooks/useMarketplace';
+import { useAuth } from '@/hooks/useAuth';
+import { useOwnerProfile } from '@/hooks/useOwnerProfile';
 
 export default function Markedsplass() {
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const { data: ownerProfile } = useOwnerProfile(user?.id);
   const [searchQuery, setSearchQuery] = useState('');
-  const { data: items, isLoading } = useMarketplaceItems({ search: searchQuery || undefined });
+  const [categoryId, setCategoryId] = useState('');
+  const { data: items, isLoading } = useMarketplaceItems({
+    search: searchQuery || undefined,
+    categoryId: categoryId || undefined,
+  });
+  const { data: categories } = useMarketplaceCategories();
+
+  const handleOpprettAnnonseClick = () => {
+    if (!user) {
+      navigate('/login?returnUrl=/dashboard/opprett-annonse');
+      return;
+    }
+    if (!ownerProfile?.approved_at) {
+      navigate('/dashboard');
+      return;
+    }
+    navigate('/dashboard/opprett-annonse');
+  };
 
   return (
     <Layout>
@@ -25,6 +47,46 @@ export default function Markedsplass() {
       />
 
       <section className="container py-8 sm:py-12">
+        {/* Banner + CTA */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <Info className="h-4 w-4 shrink-0" />
+            Alt som legges ut må godkjennes før publisering.
+          </div>
+          <button
+            onClick={handleOpprettAnnonseClick}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground font-medium text-sm hover:bg-primary/90 transition-colors w-fit"
+          >
+            <Plus className="h-4 w-4" />
+            Opprett annonse
+          </button>
+        </div>
+
+        {/* Category tabs */}
+        {categories && categories.length > 0 && (
+          <div className="flex flex-wrap gap-2 mb-6">
+            <button
+              onClick={() => setCategoryId('')}
+              className={`text-xs px-3 py-1.5 rounded-full transition-colors ${
+                !categoryId ? 'bg-primary text-primary-foreground' : 'bg-muted hover:bg-muted/80'
+              }`}
+            >
+              Alt
+            </button>
+            {categories.map((cat) => (
+              <button
+                key={cat.id}
+                onClick={() => setCategoryId(cat.id)}
+                className={`text-xs px-3 py-1.5 rounded-full transition-colors ${
+                  categoryId === cat.id ? 'bg-primary text-primary-foreground' : 'bg-muted hover:bg-muted/80'
+                }`}
+              >
+                {cat.name}
+              </button>
+            ))}
+          </div>
+        )}
+
         {/* Search */}
         <div className="relative max-w-md mb-8">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -36,6 +98,7 @@ export default function Markedsplass() {
           />
         </div>
 
+        {/* Listing grid */}
         {isLoading ? (
           <div className="text-center py-12 text-muted-foreground">Laster annonser...</div>
         ) : items && items.length > 0 ? (

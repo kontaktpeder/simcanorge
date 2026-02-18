@@ -283,6 +283,12 @@ export default function OpprettAnnonse() {
             <ImageUploadProgress progress={uploadProgress} />
           )}
 
+          {/* Godkjenningsbanner */}
+          <div className="flex items-start gap-2 p-3 rounded-lg bg-muted text-sm text-muted-foreground">
+            <Clock className="h-4 w-4 mt-0.5 shrink-0" />
+            <p>Alt som legges ut må godkjennes før publisering.</p>
+          </div>
+
           {/* Submit */}
           <BigActionButton
             onClick={handleSubmit}
