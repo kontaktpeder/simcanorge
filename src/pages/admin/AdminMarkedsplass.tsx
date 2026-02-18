@@ -46,17 +46,21 @@ const statusLabels: Record<string, { label: string; className: string }> = {
 
 const AdminMarkedsplass = () => {
   const [statusFilter, setStatusFilter] = useState("alle");
-  const { data: rawItems = [], isLoading } = useAdminMarketplaceItems(statusFilter);
-  const items = rawItems as unknown as AdminMarketplaceItem[];
+  const { data: rawAll = [], isLoading } = useAdminMarketplaceItems();
+  const allItems = rawAll as unknown as AdminMarketplaceItem[];
 
   const statusCounts = useMemo(() => ({
-    alle: items.length,
-    submitted: items.filter((i) => i.status === "submitted").length,
-    draft: items.filter((i) => i.status === "draft").length,
-    published: items.filter((i) => i.status === "published").length,
-    archived: items.filter((i) => i.status === "archived").length,
-    sold: items.filter((i) => i.status === "sold").length,
-  }), [items]);
+    alle: allItems.length,
+    submitted: allItems.filter((i) => i.status === "submitted").length,
+    draft: allItems.filter((i) => i.status === "draft").length,
+    published: allItems.filter((i) => i.status === "published").length,
+    archived: allItems.filter((i) => i.status === "archived").length,
+    sold: allItems.filter((i) => i.status === "sold").length,
+  }), [allItems]);
+
+  const items = useMemo(() =>
+    statusFilter === "alle" ? allItems : allItems.filter((i) => i.status === statusFilter),
+  [allItems, statusFilter]);
 
   const formatDate = (iso: string) =>
     new Date(iso).toLocaleDateString("nb-NO", { day: "numeric", month: "short", year: "numeric" });

@@ -2,8 +2,19 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { supabase } from "@/integrations/supabase/client";
-import { useUpdateMarketplaceItem } from "@/hooks/useMarketplace";
-import { ArrowLeft, ExternalLink, Eye, EyeOff, Loader2 } from "lucide-react";
+import { useUpdateMarketplaceItem, useDeleteMarketplaceItem } from "@/hooks/useMarketplace";
+import { ArrowLeft, ExternalLink, Eye, EyeOff, Loader2, Trash2 } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
@@ -38,6 +49,7 @@ const AdminAnnonseProfil = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const updateItem = useUpdateMarketplaceItem();
+  const deleteItem = useDeleteMarketplaceItem();
 
   const { data: item, isLoading } = useQuery({
     queryKey: ["admin-marketplace-item", itemId],
@@ -167,7 +179,7 @@ const AdminAnnonseProfil = () => {
               </Button>
             )}
             {canUnpublish && (
-              <Button variant="destructive" onClick={unpublishItem} disabled={updateItem.isPending}>
+              <Button variant="outline" onClick={unpublishItem} disabled={updateItem.isPending}>
                 <EyeOff className="w-4 h-4 mr-1.5" />
                 Avpubliser
               </Button>
@@ -180,6 +192,34 @@ const AdminAnnonseProfil = () => {
                 </Link>
               </Button>
             )}
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="destructive" size="sm">
+                  <Trash2 className="w-4 h-4 mr-1.5" />
+                  Slett
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Slett annonse?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Er du sikker på at du vil slette «{item.title}»? Dette kan ikke angres.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Avbryt</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={async () => {
+                      await deleteItem.mutateAsync(item.id);
+                      navigate("/admin/markedsplass");
+                    }}
+                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                  >
+                    Slett permanent
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </div>
         </div>
 
