@@ -17,7 +17,7 @@ import { OwnerProfileSection } from '@/components/car/OwnerProfileSection';
 import { useOwnerProfile } from '@/hooks/useOwnerProfile';
 import { useGuide } from '@/hooks/useGuide';
 import { useMyListings } from '@/hooks/useMarketplace';
-import minSideBadge from '@/assets/min-side-badge.png';
+import { GarageIcon } from '@/components/ui/GarageIcon';
 
 export default function Dashboard() {
   const { user, isLoading: authLoading } = useAuth();
@@ -303,7 +303,7 @@ export default function Dashboard() {
             {profileNeedsAttention && (
               <div className="absolute top-0 left-0 right-0 h-1.5" style={{ background: 'hsl(2, 85%, 40%)' }} />
             )}
-            <img src={minSideBadge} alt="" className="w-14 h-14 object-contain opacity-60 absolute top-4 right-4" />
+            <div className="absolute top-4 right-4 opacity-60"><GarageIcon size={40} /></div>
             <p className="font-display text-sm uppercase tracking-wider text-muted-foreground mb-5">
               Profil
             </p>
