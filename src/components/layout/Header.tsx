@@ -540,7 +540,7 @@ export function Header() {
       {(isHome || isDrivingToGarage) && (
         <div 
           className={`hidden sm:block relative w-full overflow-hidden transition-all duration-500 ease-out ${
-            roadFading ? 'h-0 opacity-0' : 'h-[40px] md:h-[55px] opacity-100'
+            roadFading ? 'h-0 opacity-0' : 'h-[52px] md:h-[65px] opacity-100'
           }`}
           style={{
             background: 'linear-gradient(to bottom, #3a3a3a, #2a2a2a 30%, #1f1f1f 70%, #151515)',
@@ -607,7 +607,7 @@ export function Header() {
                 <img 
                   src={simcaRallye} 
                   alt="Simca Rallye" 
-                  className="h-[32px] md:h-[42px] w-auto object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]"
+                  className="h-[42px] md:h-[52px] w-auto object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]"
                 />
                 {/* Wheel spin effect */}
                 <div className="absolute bottom-0.5 left-[18%] w-2 h-2 md:w-2.5 md:h-2.5 rounded-full border border-dashed border-gray-600/40 animate-wheel-spin" />
