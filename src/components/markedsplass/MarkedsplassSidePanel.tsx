@@ -211,7 +211,7 @@ export function MarkedsplassSidePanel({
                 }
                 className={selectClass}
               >
-                <option value="">Velg hovedkategori</option>
+                <option value="">Alt i katalogen</option>
                 {roots.map((r) => (
                   <option key={r.id} value={r.id}>
                     {r.label}
