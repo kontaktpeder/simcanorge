@@ -313,47 +313,35 @@ export function Header() {
   return (
     <>
     <header className="sticky top-0 z-50 will-change-transform overflow-hidden" style={{ background: 'linear-gradient(180deg, hsl(210 85% 55%) 0%, hsl(210 80% 48%) 60%, hsl(210 75% 40%) 100%)' }}>
-      {/* Animated cartoon clouds - soft, defined shapes */}
+      {/* Animated diffuse clouds */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        {/* Cloud 1 */}
-        <svg className="animate-cloud-1 absolute top-[3px] opacity-80" width="75" height="32" viewBox="0 0 75 32" fill="none" style={{ filter: 'drop-shadow(1px 2px 2px rgba(0,0,0,0.08))' }}>
-          <ellipse cx="37" cy="22" rx="32" ry="9" fill="#f0f4f8" />
-          <circle cx="18" cy="16" r="11" fill="#f0f4f8" />
-          <circle cx="30" cy="9" r="13" fill="#f5f8fb" />
-          <circle cx="45" cy="8" r="11" fill="#f5f8fb" />
-          <circle cx="56" cy="14" r="10" fill="#f0f4f8" />
-        </svg>
-        {/* Cloud 2 - large fluffy */}
-        <svg className="animate-cloud-2 absolute top-[6px] md:top-[1px] opacity-70" width="110" height="42" viewBox="0 0 110 42" fill="none" style={{ filter: 'drop-shadow(1px 2px 3px rgba(0,0,0,0.06))' }}>
-          <ellipse cx="55" cy="30" rx="46" ry="11" fill="#edf2f7" />
-          <circle cx="25" cy="22" r="13" fill="#edf2f7" />
-          <circle cx="42" cy="13" r="16" fill="#f2f6fa" />
-          <circle cx="62" cy="10" r="14" fill="#f5f8fb" />
-          <circle cx="78" cy="15" r="12" fill="#f2f6fa" />
-          <circle cx="88" cy="22" r="10" fill="#edf2f7" />
-        </svg>
-        {/* Cloud 3 - small wispy */}
-        <svg className="animate-cloud-3 absolute top-[1px] opacity-65" width="55" height="24" viewBox="0 0 55 24" fill="none" style={{ filter: 'drop-shadow(1px 1px 2px rgba(0,0,0,0.06))' }}>
-          <ellipse cx="27" cy="16" rx="24" ry="7" fill="#f0f4f8" />
-          <circle cx="14" cy="11" r="9" fill="#f2f6fa" />
-          <circle cx="27" cy="7" r="10" fill="#f5f8fb" />
-          <circle cx="40" cy="10" r="8" fill="#f2f6fa" />
-        </svg>
-        {/* Cloud 4 - medium defined */}
-        <svg className="animate-cloud-4 absolute top-[14px] md:top-[4px] opacity-60" width="90" height="36" viewBox="0 0 90 36" fill="none" style={{ filter: 'drop-shadow(1px 2px 2px rgba(0,0,0,0.07))' }}>
-          <ellipse cx="45" cy="26" rx="38" ry="9" fill="#edf2f7" />
-          <circle cx="20" cy="19" r="11" fill="#f0f4f8" />
-          <circle cx="35" cy="11" r="14" fill="#f2f6fa" />
-          <circle cx="55" cy="9" r="12" fill="#f5f8fb" />
-          <circle cx="70" cy="16" r="10" fill="#f0f4f8" />
-        </svg>
-        {/* Cloud 5 - small round */}
-        <svg className="animate-cloud-5 absolute top-[5px] opacity-55" width="65" height="26" viewBox="0 0 65 26" fill="none" style={{ filter: 'drop-shadow(1px 1px 2px rgba(0,0,0,0.06))' }}>
-          <ellipse cx="32" cy="18" rx="28" ry="7" fill="#f0f4f8" />
-          <circle cx="17" cy="12" r="10" fill="#f2f6fa" />
-          <circle cx="32" cy="7" r="12" fill="#f5f8fb" />
-          <circle cx="47" cy="11" r="9" fill="#f2f6fa" />
-        </svg>
+        <div className="animate-cloud-1 absolute top-[2px]" style={{ width: 90, height: 36 }}>
+          <div className="absolute inset-0 rounded-full bg-white/50" style={{ filter: 'blur(6px)' }} />
+          <div className="absolute top-[-4px] left-[15px] w-[40px] h-[28px] rounded-full bg-white/60" style={{ filter: 'blur(5px)' }} />
+          <div className="absolute top-[-2px] left-[35px] w-[35px] h-[24px] rounded-full bg-white/55" style={{ filter: 'blur(6px)' }} />
+        </div>
+        <div className="animate-cloud-2 absolute top-[4px] md:top-[0px]" style={{ width: 130, height: 46 }}>
+          <div className="absolute inset-0 rounded-full bg-white/40" style={{ filter: 'blur(8px)' }} />
+          <div className="absolute top-[-6px] left-[20px] w-[50px] h-[34px] rounded-full bg-white/50" style={{ filter: 'blur(7px)' }} />
+          <div className="absolute top-[-8px] left-[45px] w-[45px] h-[30px] rounded-full bg-white/55" style={{ filter: 'blur(6px)' }} />
+          <div className="absolute top-[-4px] left-[75px] w-[38px] h-[28px] rounded-full bg-white/45" style={{ filter: 'blur(7px)' }} />
+        </div>
+        <div className="animate-cloud-3 absolute top-[0px]" style={{ width: 65, height: 28 }}>
+          <div className="absolute inset-0 rounded-full bg-white/45" style={{ filter: 'blur(5px)' }} />
+          <div className="absolute top-[-3px] left-[12px] w-[30px] h-[20px] rounded-full bg-white/55" style={{ filter: 'blur(5px)' }} />
+          <div className="absolute top-[-1px] left-[28px] w-[25px] h-[18px] rounded-full bg-white/50" style={{ filter: 'blur(6px)' }} />
+        </div>
+        <div className="animate-cloud-4 absolute top-[10px] md:top-[3px]" style={{ width: 100, height: 38 }}>
+          <div className="absolute inset-0 rounded-full bg-white/35" style={{ filter: 'blur(7px)' }} />
+          <div className="absolute top-[-5px] left-[18px] w-[42px] h-[28px] rounded-full bg-white/45" style={{ filter: 'blur(6px)' }} />
+          <div className="absolute top-[-6px] left-[42px] w-[38px] h-[26px] rounded-full bg-white/50" style={{ filter: 'blur(7px)' }} />
+          <div className="absolute top-[-3px] left-[64px] w-[30px] h-[22px] rounded-full bg-white/40" style={{ filter: 'blur(6px)' }} />
+        </div>
+        <div className="animate-cloud-5 absolute top-[4px]" style={{ width: 75, height: 30 }}>
+          <div className="absolute inset-0 rounded-full bg-white/40" style={{ filter: 'blur(6px)' }} />
+          <div className="absolute top-[-4px] left-[14px] w-[32px] h-[22px] rounded-full bg-white/50" style={{ filter: 'blur(5px)' }} />
+          <div className="absolute top-[-2px] left-[32px] w-[30px] h-[20px] rounded-full bg-white/45" style={{ filter: 'blur(6px)' }} />
+        </div>
       </div>
       <div className="container mx-auto px-4 relative z-10">
         <div className="flex items-center justify-between h-14 md:h-16">
