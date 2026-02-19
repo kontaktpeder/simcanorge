@@ -422,7 +422,7 @@ export function Header() {
 
 
               {/* User/Login button */}
-              {user ? (
+              {user && !location.pathname.startsWith('/dashboard') ? (
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Link
@@ -437,7 +437,7 @@ export function Header() {
                     <p>Gå til din garasje</p>
                   </TooltipContent>
                 </Tooltip>
-              ) : (
+              ) : !user ? (
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Link
@@ -453,7 +453,7 @@ export function Header() {
                     <p>Logg inn i din bil</p>
                   </TooltipContent>
                 </Tooltip>
-              )}
+              ) : null}
               {/* Report Problem */}
             </TooltipProvider>
           </nav>
@@ -529,7 +529,7 @@ export function Header() {
               })}
               
               {/* User/Login button for mobile */}
-              {user ? (
+              {user && !location.pathname.startsWith('/dashboard') ? (
                 <Link
                   to="/dashboard"
                   onClick={() => {
@@ -541,7 +541,7 @@ export function Header() {
                   <GarageIcon size={48} hideCar={isHome} />
                   Gå til din garasje
                 </Link>
-              ) : (
+              ) : !user ? (
                 <Link
                   to="/login?returnUrl=/dashboard"
                   onClick={() => {
@@ -553,7 +553,7 @@ export function Header() {
                   <LogIn className="w-5 h-5" />
                   Logg inn i din bil
                 </Link>
-              )}
+              ) : null}
 
             </div>
           </nav>
