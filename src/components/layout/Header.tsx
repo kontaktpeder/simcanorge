@@ -330,12 +330,6 @@ export function Header() {
             </div>
           </Link>
 
-          {/* Garage with parked car - shows after animation or on non-home pages */}
-          {!isHome && (
-            <div className={`hidden lg:flex items-center mx-4 flex-shrink-0 ${isDrivingToGarage ? 'animate-fade-in' : ''}`}>
-              <GarageIcon size={48} animate={isDrivingToGarage} />
-            </div>
-          )}
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center gap-1 flex-shrink min-w-0">
@@ -408,7 +402,7 @@ export function Header() {
                       onClick={() => markLeavingHome("/dashboard")}
                       className="relative p-1.5 hover:bg-muted/60 rounded-lg transition-colors ml-1"
                     >
-                      <GarageIcon size={36} />
+                      <GarageIcon size={36} animate={isDrivingToGarage} />
                     </Link>
                   </TooltipTrigger>
                   <TooltipContent>
