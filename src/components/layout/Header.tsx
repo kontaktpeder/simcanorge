@@ -313,13 +313,45 @@ export function Header() {
   return (
     <>
     <header className="sticky top-0 z-50 will-change-transform overflow-hidden" style={{ background: 'linear-gradient(180deg, hsl(210 85% 55%) 0%, hsl(210 80% 48%) 60%, hsl(210 75% 40%) 100%)' }}>
-      {/* Animated clouds */}
+      {/* Animated cartoon clouds */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="animate-cloud-1 absolute top-[6px] w-[80px] h-[18px] opacity-60" style={{ background: 'radial-gradient(ellipse, rgba(255,255,255,0.7) 0%, transparent 70%)', borderRadius: '50%', filter: 'blur(2px)' }} />
-        <div className="animate-cloud-2 absolute top-[18px] w-[120px] h-[22px] opacity-40" style={{ background: 'radial-gradient(ellipse, rgba(255,255,255,0.6) 0%, transparent 70%)', borderRadius: '50%', filter: 'blur(3px)' }} />
-        <div className="animate-cloud-3 absolute top-[4px] w-[60px] h-[14px] opacity-50" style={{ background: 'radial-gradient(ellipse, rgba(255,255,255,0.8) 0%, transparent 70%)', borderRadius: '50%', filter: 'blur(2px)' }} />
-        <div className="animate-cloud-4 absolute top-[24px] w-[90px] h-[16px] opacity-35" style={{ background: 'radial-gradient(ellipse, rgba(255,255,255,0.5) 0%, transparent 70%)', borderRadius: '50%', filter: 'blur(3px)' }} />
-        <div className="animate-cloud-5 absolute top-[10px] w-[100px] h-[20px] opacity-45" style={{ background: 'radial-gradient(ellipse, rgba(255,255,255,0.65) 0%, transparent 70%)', borderRadius: '50%', filter: 'blur(2px)' }} />
+        {/* Cloud 1 - small puffy */}
+        <svg className="animate-cloud-1 absolute top-[4px]" width="70" height="30" viewBox="0 0 70 30" fill="none">
+          <ellipse cx="35" cy="20" rx="30" ry="10" fill="white" />
+          <circle cx="20" cy="15" r="12" fill="white" />
+          <circle cx="35" cy="10" r="14" fill="white" />
+          <circle cx="50" cy="14" r="11" fill="white" />
+          <ellipse cx="35" cy="20" rx="30" ry="10" stroke="#c0c0c0" strokeWidth="0.5" fill="none" />
+        </svg>
+        {/* Cloud 2 - bigger */}
+        <svg className="animate-cloud-2 absolute top-[8px] md:top-[2px]" width="100" height="40" viewBox="0 0 100 40" fill="none">
+          <ellipse cx="50" cy="28" rx="42" ry="12" fill="white" />
+          <circle cx="28" cy="20" r="14" fill="white" />
+          <circle cx="50" cy="12" r="18" fill="white" />
+          <circle cx="72" cy="18" r="13" fill="white" />
+          <ellipse cx="50" cy="28" rx="42" ry="12" stroke="#c0c0c0" strokeWidth="0.5" fill="none" />
+        </svg>
+        {/* Cloud 3 - tiny */}
+        <svg className="animate-cloud-3 absolute top-[2px]" width="50" height="22" viewBox="0 0 50 22" fill="none">
+          <ellipse cx="25" cy="15" rx="22" ry="7" fill="white" />
+          <circle cx="15" cy="11" r="9" fill="white" />
+          <circle cx="25" cy="7" r="10" fill="white" />
+          <circle cx="36" cy="10" r="8" fill="white" />
+        </svg>
+        {/* Cloud 4 - medium */}
+        <svg className="animate-cloud-4 absolute top-[16px] md:top-[6px]" width="85" height="34" viewBox="0 0 85 34" fill="none">
+          <ellipse cx="42" cy="24" rx="36" ry="10" fill="white" />
+          <circle cx="22" cy="18" r="12" fill="white" />
+          <circle cx="42" cy="10" r="15" fill="white" />
+          <circle cx="60" cy="16" r="11" fill="white" />
+        </svg>
+        {/* Cloud 5 - small flat */}
+        <svg className="animate-cloud-5 absolute top-[6px]" width="60" height="24" viewBox="0 0 60 24" fill="none">
+          <ellipse cx="30" cy="17" rx="26" ry="7" fill="white" />
+          <circle cx="18" cy="12" r="9" fill="white" />
+          <circle cx="30" cy="8" r="11" fill="white" />
+          <circle cx="42" cy="11" r="8" fill="white" />
+        </svg>
       </div>
       <div className="container mx-auto px-4 relative z-10">
         <div className="flex items-center justify-between h-14 md:h-16">
