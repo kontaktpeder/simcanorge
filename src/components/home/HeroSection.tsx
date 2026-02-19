@@ -82,7 +82,7 @@ export function HeroSection() {
               <img 
                 src={simcaBadge} 
                 alt="Simca Norge" 
-                className="h-28 md:h-72 lg:h-96 xl:h-[28rem] w-auto" 
+                className="h-44 md:h-72 lg:h-96 xl:h-[28rem] w-auto" 
                 loading="eager"
                 fetchPriority="high"
                 style={{
@@ -155,20 +155,25 @@ export function HeroSection() {
             <div className="flex flex-row gap-2 md:gap-4 justify-center lg:justify-start">
               <Link 
                 to="/biler" 
-                className="group inline-flex items-center justify-center min-h-[44px] px-5 py-2.5 md:min-h-[48px] md:px-8 md:py-4 font-display text-xs md:text-xl uppercase tracking-wide text-white rounded-full active:scale-[0.97] transition-all bg-primary hover:brightness-110"
+                className="group inline-flex items-center justify-center min-h-[44px] px-5 py-2.5 md:min-h-[48px] md:px-8 md:py-4 font-display text-xs md:text-xl uppercase tracking-wide text-white rounded-full active:scale-[0.97] transition-all hover:brightness-110"
                 style={{
-                  boxShadow: '0 3px 12px rgba(154,10,10,0.4)',
+                  background: 'linear-gradient(135deg, #E52020 0%, #B80C0C 100%)',
+                  boxShadow: '0 4px 20px rgba(229,32,32,0.5), inset 0 1px 0 rgba(255,255,255,0.2)',
                 }}
               >
-                <span className="drop-shadow-sm">Se alle biler</span>
+                <span className="drop-shadow-sm font-bold">Se alle biler</span>
                 <ArrowRight className="w-3.5 h-3.5 md:w-5 md:h-5 ml-1.5 group-hover:translate-x-0.5 transition-transform" />
               </Link>
               
               <Link 
                 to="/markedsplass" 
-                className="group inline-flex items-center justify-center min-h-[44px] px-5 py-2.5 md:min-h-[48px] md:px-6 md:py-3.5 font-display text-xs md:text-lg uppercase tracking-wide text-white rounded-full active:scale-[0.97] transition-all border border-white/30 bg-white/10 backdrop-blur-sm hover:bg-white/20"
+                className="group inline-flex items-center justify-center min-h-[44px] px-5 py-2.5 md:min-h-[48px] md:px-6 md:py-3.5 font-display text-xs md:text-lg uppercase tracking-wide text-white rounded-full active:scale-[0.97] transition-all hover:brightness-110"
+                style={{
+                  background: 'linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%)',
+                  boxShadow: '0 4px 20px rgba(37,99,235,0.45), inset 0 1px 0 rgba(255,255,255,0.2)',
+                }}
               >
-                <span className="drop-shadow-sm">Markedsplass</span>
+                <span className="drop-shadow-sm font-bold">Markedsplass</span>
                 <Car className="w-3.5 h-3.5 md:w-5 md:h-5 ml-1.5 group-hover:scale-110 transition-transform" />
               </Link>
             </div>
