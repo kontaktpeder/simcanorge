@@ -70,19 +70,19 @@ export function HeroSection() {
     const sorted = [...car.car_images].sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
     return sorted[0];
   };
-  return <section className="poster-section poster-section-blue hero-watermark relative overflow-hidden min-h-[70vh] md:min-h-[85vh] flex flex-col justify-start pt-4 md:pt-8">
+  return <section className="poster-section poster-section-blue hero-watermark relative overflow-hidden min-h-[60vh] md:min-h-[85vh] flex flex-col justify-start pt-2 md:pt-8">
       {/* Subtle stripes overlay */}
       <div className="absolute inset-0 stripes-diagonal" />
       
       <div className="container mx-auto relative z-10">
-        <div className="grid lg:grid-cols-2 gap-6 md:gap-8 items-start">
+        <div className="grid lg:grid-cols-2 gap-3 md:gap-8 items-start">
           {/* Text Content */}
           <div className="text-center lg:text-left">
-            <div className="flex items-center justify-center mb-3 md:mb-4">
+            <div className="flex items-center justify-center mb-1 md:mb-4">
               <img 
                 src={simcaBadge} 
                 alt="Simca Norge" 
-                className="h-40 md:h-72 lg:h-96 xl:h-[28rem] w-auto" 
+                className="h-28 md:h-72 lg:h-96 xl:h-[28rem] w-auto" 
                 loading="eager"
                 fetchPriority="high"
                 style={{
@@ -90,15 +90,15 @@ export function HeroSection() {
                 }}
               />
             </div>
-            <p className="text-base md:text-xl lg:text-3xl font-light mb-4 md:mb-6 max-w-lg mx-auto lg:mx-0 text-white/90 font-serif">
+            <p className="text-sm md:text-xl lg:text-3xl font-light mb-2 md:mb-6 max-w-lg mx-auto lg:mx-0 text-white/90 font-serif">
               Din kilde til Simca, Talbot og Matra klassikere. Bildeler og historier fra entusiaster i Norge.
             </p>
             
             {/* Featured Car - Månedens bil - MOBILE ONLY above CTA */}
-            <div ref={mobileCardRef} className={`lg:hidden mb-6 transition-all duration-700 ${isMobileInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+            <div ref={mobileCardRef} className={`lg:hidden mb-3 transition-all duration-700 ${isMobileInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
               {/* Section Header */}
-              <div className="text-center mb-3">
-                <h2 className="font-display text-xl text-white flex items-center justify-center gap-2">
+              <div className="text-center mb-1.5">
+                <h2 className="font-display text-base text-white flex items-center justify-center gap-2">
                   <Star className="w-5 h-5 text-yellow-400 fill-yellow-400 drop-shadow-[0_0_6px_rgba(250,204,21,0.8)]" />
                   Månedens bil
                 </h2>
@@ -116,7 +116,7 @@ export function HeroSection() {
                     <Skeleton className="h-5 w-3/4 mx-auto" />
                     <Skeleton className="h-4 w-1/2 mx-auto mt-1.5" />
                   </div>
-                </div> : featuredCar ? <Link to={`/biler/${featuredCar.slug}`} className="block bg-white/10 backdrop-blur-sm rounded-xl p-3 transition-all duration-300 group overflow-hidden">
+                </div> : featuredCar ? <Link to={`/biler/${featuredCar.slug}`} className="block bg-white/10 backdrop-blur-sm rounded-xl p-2 transition-all duration-300 group overflow-hidden">
                   {/* Car image */}
                   {getMainImage(featuredCar) ? <div className="overflow-hidden rounded-lg relative">
                       <img 
@@ -125,15 +125,15 @@ export function HeroSection() {
                           getMainImage(featuredCar)!.alt_text || featuredCar.title,
                           { sizes: IMAGE_SIZES.featured, priority: true }
                         )}
-                        className="w-full aspect-[16/10] object-cover group-hover:scale-105 transition-transform duration-500"
+                        className="w-full aspect-[2/1] object-cover group-hover:scale-105 transition-transform duration-500"
                       />
                     </div> : <div className="aspect-[16/10] bg-white/20 rounded-lg flex items-center justify-center">
                       <Car className="w-16 h-16 opacity-50" />
                     </div>}
                   
                   {/* Text content */}
-                  <div className="mt-3 text-center">
-                    <p className="font-display text-lg font-bold text-white">{featuredCar.title}</p>
+                  <div className="mt-1.5 text-center">
+                    <p className="font-display text-sm font-bold text-white">{featuredCar.title}</p>
                     <p className="font-serif text-sm text-white/80 mt-0.5">
                       {ownerProfile 
                         ? `Lagt ut av ${ownerProfile.display_name}${ownerProfile.location ? `, ${ownerProfile.location}` : ''}` 
