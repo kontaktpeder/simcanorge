@@ -148,11 +148,11 @@ export default function Markedsplass() {
         </div>
       )}
 
-      {/* Main content: sidebar + listings side by side */}
-      <div className="flex relative">
-        {/* Side Panel — sticky + independently scrollable */}
+      {/* Main content: sidebar + listings side by side, contained in viewport */}
+      <div className="flex relative lg:h-[calc(100vh-4rem)] lg:overflow-hidden">
+        {/* Side Panel — fixed height, own scroll */}
         <div className={`shrink-0 transition-all duration-300 ${sidePanelOpen ? 'lg:w-[300px]' : 'lg:w-0'}`}>
-          <div className="lg:sticky lg:top-16 lg:h-[calc(100vh-4rem)] lg:overflow-y-auto">
+          <div className="lg:h-[calc(100vh-4rem)] lg:overflow-y-auto">
             <MarkedsplassSidePanel
               open={sidePanelOpen}
               onOpenChange={setSidePanelOpen}
@@ -167,8 +167,8 @@ export default function Markedsplass() {
           </div>
         </div>
 
-        {/* Listing area */}
-        <div className="flex-1 min-w-0">
+        {/* Listing area — scrolls independently */}
+        <div className="flex-1 min-w-0 lg:overflow-y-auto">
           {isLoading ? (
             <div className="flex flex-col items-center justify-center py-32 gap-4">
               <img src={toolboxIcon} alt="" className="w-16 h-16 object-contain animate-pulse" />
