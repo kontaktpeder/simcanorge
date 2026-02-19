@@ -7,9 +7,9 @@ import { useInView } from "@/hooks/useInView";
 import { useCarOwnerProfile } from "@/hooks/useOwnerProfile";
 import { getResponsiveImageProps, IMAGE_SIZES } from "@/lib/imageUtils";
 
-import simcaBadge from "@/assets/simca-badge.png";
 import simcaSwallow from "@/assets/simca-swallow.png";
 import checkeredFlag from "@/assets/checkered-flag.png";
+
 interface FeaturedCar {
   id: string;
   slug: string;
@@ -62,7 +62,6 @@ export function HeroSection() {
     }
   });
 
-  // Fetch owner profile for the featured car
   const { data: ownerProfile } = useCarOwnerProfile(featuredCar?.id);
 
   const getMainImage = (car: FeaturedCar) => {
@@ -71,16 +70,14 @@ export function HeroSection() {
     return sorted[0];
   };
   return <section className="poster-section poster-section-blue hero-watermark relative overflow-hidden min-h-[60vh] md:min-h-[85vh] flex flex-col justify-start pt-2 md:pt-8">
-      {/* Subtle stripes overlay */}
       <div className="absolute inset-0 stripes-diagonal" />
       
       <div className="container mx-auto relative z-10">
         <div className="grid lg:grid-cols-2 gap-3 md:gap-8 items-start">
-          {/* Text Content */}
           <div className="text-center lg:text-left">
             <div className="flex items-center justify-center mb-1 md:mb-4">
               <img 
-                src={simcaBadge} 
+                src="/simca-badge.png" 
                 alt="Simca Norge" 
                 className="h-44 md:h-72 lg:h-96 xl:h-[28rem] w-auto" 
                 loading="eager"
@@ -101,7 +98,6 @@ export function HeroSection() {
             
             {/* Featured Car - Månedens bil - MOBILE ONLY above CTA */}
             <div ref={mobileCardRef} className={`lg:hidden mb-3 transition-all duration-700 ${isMobileInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-              {/* Section Header */}
               <div className="text-center mb-1.5">
                 <h2 className="font-display text-base text-white flex items-center justify-center gap-2">
                   <Star className="w-5 h-5 text-yellow-400 fill-yellow-400 drop-shadow-[0_0_6px_rgba(250,204,21,0.8)]" />
@@ -122,7 +118,6 @@ export function HeroSection() {
                     <Skeleton className="h-4 w-1/2 mx-auto mt-1.5" />
                   </div>
                 </div> : featuredCar ? <Link to={`/biler/${featuredCar.slug}`} className="block bg-white/10 backdrop-blur-sm rounded-xl p-2 transition-all duration-300 group overflow-hidden">
-                  {/* Car image */}
                   {getMainImage(featuredCar) ? <div className="overflow-hidden rounded-lg relative">
                       <img 
                         {...getResponsiveImageProps(
@@ -136,7 +131,6 @@ export function HeroSection() {
                       <Car className="w-16 h-16 opacity-50" />
                     </div>}
                   
-                  {/* Text content */}
                   <div className="mt-1.5 text-center">
                     <p className="font-display text-sm font-bold text-white">{featuredCar.title}</p>
                     <p className="font-serif text-sm text-white/80 mt-0.5">
@@ -156,7 +150,7 @@ export function HeroSection() {
                 </div>}
             </div>
             
-            {/* CTA buttons - clean pill style on mobile */}
+            {/* CTA buttons */}
             <div className="flex flex-row gap-2 md:gap-4 justify-center lg:justify-start">
               <Link 
                 to="/biler" 
@@ -184,9 +178,8 @@ export function HeroSection() {
             </div>
           </div>
 
-          {/* Featured Car - Månedens bil - DESKTOP ONLY */}
+          {/* Featured Car - DESKTOP ONLY */}
           <div ref={desktopCardRef} className={`hidden lg:block relative transition-all duration-700 ${isDesktopInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-            {/* Section Header */}
             <div className="text-center mb-4 relative z-10">
               <h2 className="font-display text-2xl md:text-3xl text-white flex items-center justify-center gap-2">
                 <Star className="w-6 h-6 text-yellow-400 fill-yellow-400 drop-shadow-[0_0_6px_rgba(250,204,21,0.8)]" />
@@ -200,7 +193,6 @@ export function HeroSection() {
               </p>
             </div>
 
-            {/* Spotlight/vignette background */}
             <div className="absolute inset-0 -inset-x-8 -inset-y-4 rounded-3xl bg-radial-spotlight pointer-events-none z-0" />
 
             {isLoading ? <div className="featured-card-premium p-6 relative z-10">
@@ -210,7 +202,6 @@ export function HeroSection() {
                   <Skeleton className="h-4 w-1/2 mx-auto mt-2" />
                 </div>
               </div> : featuredCar ? <Link to={`/biler/${featuredCar.slug}`} className="block featured-card-premium p-5 transition-all duration-300 group relative overflow-hidden z-10">
-                {/* Checkered flag background with wave animation */}
                 <div className={`absolute inset-0 pointer-events-none checkered-flag-wave z-[1] ${isDesktopInView ? 'animate-flag-fade-in' : 'opacity-0'}`} style={{
               backgroundImage: `url(${checkeredFlag})`,
               backgroundSize: '150%',
@@ -218,7 +209,6 @@ export function HeroSection() {
               backgroundRepeat: 'no-repeat'
             }} />
                 
-                {/* Car image with dark gradient for text readability */}
                 {getMainImage(featuredCar) ? <div className="overflow-hidden rounded-lg relative z-[2] car-finish-glow">
                     <img 
                       {...getResponsiveImageProps(
@@ -228,15 +218,12 @@ export function HeroSection() {
                       )}
                       className="w-full aspect-[16/10] object-cover shadow-lg group-hover:scale-105 transition-transform duration-500"
                     />
-                    {/* Dark gradient at bottom for text readability */}
                     <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
-                    {/* Subtle shine overlay on hover */}
                     <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   </div> : <div className="aspect-[16/10] bg-white/20 rounded-lg flex items-center justify-center relative z-[2]">
                     <Car className="w-24 h-24 opacity-50" />
                   </div>}
                 
-                {/* Text content with enhanced contrast */}
                 <div className="mt-5 text-center relative z-[2] bg-black/50 backdrop-blur-sm rounded-lg px-4 py-3">
                   <p className="font-display text-3xl font-bold text-white featured-title-glow">{featuredCar.title}</p>
                   <p className="font-serif text-lg text-white mt-1" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.8)' }}>
@@ -246,7 +233,6 @@ export function HeroSection() {
                   </p>
                 </div>
               </Link> : <div className="featured-card-premium p-8 relative overflow-hidden z-10">
-                {/* Checkered flag background for empty state */}
                 <div className="absolute inset-0 pointer-events-none checkered-flag-wave" style={{
               backgroundImage: `url(${checkeredFlag})`,
               backgroundSize: 'cover',

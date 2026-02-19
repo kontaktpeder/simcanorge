@@ -1,6 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import simcaRallye from "@/assets/simca-rallye-yellow.png";
-import { SafeAssetImage } from "@/components/ui/SafeAssetImage";
 
 interface GarageIconProps {
   className?: string;
@@ -20,7 +18,6 @@ export function GarageIcon({ className = "", size = 40, animate = false, hideCar
     const car = carRef.current;
     if (!car) return;
 
-    // Start off-screen left, drive smoothly into center
     const startX = -(size * 1.5);
     const endX = 0;
     const duration = 1400;
@@ -33,12 +30,10 @@ export function GarageIcon({ className = "", size = 40, animate = false, hideCar
       if (start === null) start = ts;
       const elapsed = ts - start;
       const progress = Math.min(elapsed / duration, 1);
-      // Smooth ease-in-out with gentle deceleration at the end
       const eased = progress < 0.5
         ? 4 * progress * progress * progress
         : 1 - Math.pow(-2 * progress + 2, 3) / 2;
       const x = startX + (endX - startX) * eased;
-      // Fade in during first 20%
       const opacity = Math.min(progress / 0.2, 1);
       car.style.transform = `translateX(${x}px)`;
       car.style.opacity = String(opacity);
@@ -50,7 +45,6 @@ export function GarageIcon({ className = "", size = 40, animate = false, hideCar
       }
     };
 
-    // Small delay before animation starts
     const timeout = setTimeout(() => requestAnimationFrame(step), 300);
     return () => clearTimeout(timeout);
   }, [animate, animDone, size]);
@@ -73,25 +67,22 @@ export function GarageIcon({ className = "", size = 40, animate = false, hideCar
             <stop offset="100%" stopColor="#EAB308" stopOpacity="0" />
           </radialGradient>
         </defs>
-        {/* Top lantern glow */}
         <circle cx="48" cy="15" r="4" fill="url(#lampGlow)" />
         <circle cx="48" cy="15" r="1.8" fill="#FDE68A" />
         <circle cx="48" cy="15" r="1" fill="#FFFBEB" />
         <line x1="12" y1="46" x2="84" y2="46" stroke="#EAB308" strokeWidth="2" strokeLinecap="round" />
-        {/* Left wall lamp */}
         <rect x="6" y="22" width="3" height="5" rx="0.5" fill="#1B3A5C" opacity="0.5" />
         <circle cx="7.5" cy="23" r="3.5" fill="url(#lampGlow)" />
         <circle cx="7.5" cy="23" r="1.3" fill="#FDE68A" />
         <circle cx="7.5" cy="23" r="0.6" fill="#FFFBEB" />
-        {/* Right wall lamp */}
         <rect x="87" y="22" width="3" height="5" rx="0.5" fill="#1B3A5C" opacity="0.5" />
         <circle cx="88.5" cy="23" r="3.5" fill="url(#lampGlow)" />
         <circle cx="88.5" cy="23" r="1.3" fill="#FDE68A" />
         <circle cx="88.5" cy="23" r="0.6" fill="#FFFBEB" />
       </svg>
-      <SafeAssetImage
+      <img
         ref={carRef}
-        src={simcaRallye}
+        src="/simca-rallye-yellow.png"
         alt=""
         className="object-contain relative z-10"
         style={{

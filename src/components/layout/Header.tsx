@@ -6,14 +6,9 @@ import { useAuth } from "@/hooks/useAuth";
 import { SimcaLive } from "@/components/home/SimcaLive";
 import { GuideHelpButton } from "@/components/guide";
 import { FadeImage } from "@/components/ui/FadeImage";
-import { SafeAssetImage } from "@/components/ui/SafeAssetImage";
 import { GarageIcon } from "@/components/ui/GarageIcon";
 import { ReportProblemButton, ReportProblemModal } from "@/components/support";
 import { getNavItems } from "@/routes/routes";
-import simcaBadge from "@/assets/simca-badge.png";
-import toolboxIcon from "@/assets/toolbox-blue.png";
-import simcaRallye from "@/assets/simca-rallye-yellow.png";
-import minSideBadge from "@/assets/min-side-badge.png";
 import {
   Tooltip,
   TooltipContent,
@@ -170,8 +165,8 @@ const DriveHomeAnimation = forwardRef<HTMLDivElement, {
         style={{ transform: `translateX(${startX}px) scaleX(-1)`, opacity: 1 }}
       >
         <div className="relative">
-          <SafeAssetImage 
-            src={simcaRallye} 
+          <img 
+            src="/simca-rallye-yellow.png" 
             alt="Simca Rallye" 
             className="h-[32px] md:h-[42px] w-auto object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]"
           />
@@ -347,7 +342,7 @@ export function Header() {
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 hover-lift flex-shrink-0">
             <FadeImage 
-              src={simcaBadge} 
+              src="/simca-badge.png" 
               alt="Simca Norge" 
               className="h-10 md:h-12 w-auto drop-shadow-md flex-shrink-0"
               fadeDuration={400}
@@ -412,7 +407,7 @@ export function Header() {
                     className="relative p-1.5 hover:bg-white/20 rounded-lg transition-colors ml-1"
                     aria-label="Min verktøykasse"
                   >
-                    <SafeAssetImage src={toolboxIcon} alt="Verktøykasse" className="h-10 w-auto object-contain" fallbackSrc="/toolbox-blue.png" />
+                    <img src="/toolbox-blue.png" alt="Verktøykasse" className="h-10 w-auto object-contain" />
                     {itemCount > 0 && (
                       <span className="absolute -top-0.5 -right-0.5 bg-accent text-accent-foreground w-4 h-4 rounded-full text-[10px] font-display flex items-center justify-center shadow-md">
                         {itemCount}
@@ -475,7 +470,7 @@ export function Header() {
               className="relative p-1.5 hover:bg-muted/50 rounded-lg transition-colors"
               aria-label="Min verktøykasse"
             >
-              <SafeAssetImage src={toolboxIcon} alt="Verktøykasse" className="h-10 w-auto object-contain" fallbackSrc="/toolbox-blue.png" />
+              <img src="/toolbox-blue.png" alt="Verktøykasse" className="h-10 w-auto object-contain" />
               {itemCount > 0 && (
                 <span className="absolute -top-0.5 -right-0.5 bg-accent text-accent-foreground w-4 h-4 rounded-full text-[10px] font-display flex items-center justify-center shadow-md">
                   {itemCount}
@@ -633,8 +628,8 @@ export function Header() {
               onClick={handleCarClick}
             >
               <div className="animate-car-bump-subtle relative">
-                <SafeAssetImage 
-                  src={simcaRallye} 
+                <img 
+                  src="/simca-rallye-yellow.png" 
                   alt="Simca Rallye" 
                   className="h-[42px] md:h-[52px] w-auto object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]"
                 />
@@ -667,7 +662,7 @@ export function Header() {
           {isDrivingToGarage && (
             <DriveHomeAnimation 
               startX={driveHomeStartXRef.current ?? window.innerWidth * 0.5} 
-              simcaRallye={simcaRallye}
+              simcaRallye="/simca-rallye-yellow.png"
               garageRef={garageAnimRef}
             />
           )}
