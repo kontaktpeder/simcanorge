@@ -5,9 +5,10 @@ interface GarageIconProps {
   className?: string;
   size?: number;
   animate?: boolean;
+  hideCar?: boolean;
 }
 
-export function GarageIcon({ className = "", size = 40, animate = false }: GarageIconProps) {
+export function GarageIcon({ className = "", size = 40, animate = false, hideCar = false }: GarageIconProps) {
   const aspectRatio = 72 / 48;
   const width = size * aspectRatio;
   const carRef = useRef<HTMLImageElement>(null);
@@ -75,7 +76,7 @@ export function GarageIcon({ className = "", size = 40, animate = false }: Garag
           height: `${size * 0.5}px`,
           marginBottom: `${size * 0.04}px`,
           filter: 'saturate(1.4) brightness(1.1)',
-          opacity: animate && !animDone ? '0' : '1',
+          opacity: hideCar ? '0' : (animate && !animDone ? '0' : '1'),
         }}
       />
     </div>
