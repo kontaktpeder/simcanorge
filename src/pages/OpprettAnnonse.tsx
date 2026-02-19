@@ -287,10 +287,8 @@ export default function OpprettAnnonse() {
                             {type.locked && type.lockedMessage && (
                               <p className="font-serif italic text-xs text-foreground/40 mt-2">{type.lockedMessage}</p>
                             )}
-                            {!type.locked && (
-                              <p className="font-serif italic text-xs text-foreground/40 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                Klikk for å opprette →
-                              </p>
+                            {!type.locked && type.description && (
+                              <p className="font-serif italic text-xs text-foreground/40 mt-2">{type.description}</p>
                             )}
                           </div>
                         </div>

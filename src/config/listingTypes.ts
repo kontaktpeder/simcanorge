@@ -6,12 +6,13 @@ export interface ListingTypeConfig {
   slug: string;
   locked: boolean;
   lockedMessage?: string;
+  description?: string;
   carModelRequired: boolean;
 }
 
 export const LISTING_TYPES: ListingTypeConfig[] = [
-  { id: 'deler', label: 'Bildeler', slug: 'deler', locked: false, carModelRequired: true },
-  { id: 'samleobjekter', label: 'Samleobjekter', slug: 'samleobjekter', locked: false, carModelRequired: false },
+  { id: 'deler', label: 'Bildeler', slug: 'deler', locked: false, carModelRequired: true, description: 'Motor, bremser, karosseri, interiør, elektrisk og annet' },
+  { id: 'samleobjekter', label: 'Samleobjekter', slug: 'samleobjekter', locked: false, carModelRequired: false, description: 'Brosjyrer, skilt, modellbiler, merker og memorabilia' },
   {
     id: 'biler',
     label: 'Biler',
