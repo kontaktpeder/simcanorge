@@ -940,11 +940,11 @@
   }
 
   /* Cloud drift animations */
-  .animate-cloud-1 { animation: cloudDrift1 50s linear infinite; animation-delay: -10s; }
-  .animate-cloud-2 { animation: cloudDrift2 65s linear infinite; animation-delay: -25s; }
-  .animate-cloud-3 { animation: cloudDrift3 42s linear infinite; animation-delay: -30s; }
-  .animate-cloud-4 { animation: cloudDrift4 58s linear infinite; animation-delay: -15s; }
-  .animate-cloud-5 { animation: cloudDrift5 48s linear infinite; animation-delay: -35s; }
+  .animate-cloud-1 { animation: cloudDrift1 70s linear infinite; animation-delay: -12s; }
+  .animate-cloud-2 { animation: cloudDrift2 110s linear infinite; animation-delay: -40s; }
+  .animate-cloud-3 { animation: cloudDrift3 55s linear infinite; animation-delay: -28s; }
+  .animate-cloud-4 { animation: cloudDrift4 90s linear infinite; animation-delay: -55s; }
+  .animate-cloud-5 { animation: cloudDrift5 80s linear infinite; animation-delay: -20s; }
 
   @keyframes cloudDrift1 {
     0% { left: -100px; }
