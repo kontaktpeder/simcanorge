@@ -211,7 +211,7 @@ export function MarkedsplassSidePanel({
                 }
                 className={selectClass}
               >
-                <option value="">Alle</option>
+                <option value="">Velg hovedkategori</option>
                 {roots.map((r) => (
                   <option key={r.id} value={r.id}>
                     {r.label}
@@ -231,7 +231,7 @@ export function MarkedsplassSidePanel({
                   onChange={(e) => onFilterChange({ ...filterState, categoryId: e.target.value })}
                   className={selectClass}
                 >
-                  <option value="">Alle</option>
+                  <option value="">Alle underkategorier</option>
                   {buildSubcategoryOptions()}
                 </select>
               </div>
