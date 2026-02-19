@@ -205,26 +205,6 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
         </div>
       </main>
 
-      {/* Mobile Bottom Navigation - improved touch targets */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-card border-t border-border z-40 safe-area-bottom">
-        <div className="grid grid-cols-5 h-16">
-          {navItems.slice(0, 5).map((item) => {
-            const isActive = location.pathname === item.href;
-            return (
-              <Link
-                key={item.href}
-                to={item.href}
-                className={`flex flex-col items-center justify-center gap-0.5 transition-colors active:bg-muted ${
-                  isActive ? "text-primary bg-primary/5" : "text-muted-foreground"
-                }`}
-              >
-                <item.icon className={`w-5 h-5 ${isActive ? "text-primary" : ""}`} />
-                <span className="text-[10px] font-medium truncate max-w-[56px]">{item.label}</span>
-              </Link>
-            );
-          })}
-        </div>
-      </nav>
     </div>
     </EmailGeneratorProvider>
   );
