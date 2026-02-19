@@ -939,6 +939,34 @@
     100% { transform: translateY(0) rotate(0deg); }
   }
 
+  /* Cloud drift animations */
+  .animate-cloud-1 { animation: cloudDrift1 25s linear infinite; }
+  .animate-cloud-2 { animation: cloudDrift2 35s linear infinite; }
+  .animate-cloud-3 { animation: cloudDrift3 20s linear infinite; }
+  .animate-cloud-4 { animation: cloudDrift4 30s linear infinite; }
+  .animate-cloud-5 { animation: cloudDrift5 22s linear infinite; }
+
+  @keyframes cloudDrift1 {
+    0% { left: -100px; }
+    100% { left: calc(100% + 100px); }
+  }
+  @keyframes cloudDrift2 {
+    0% { left: calc(100% + 120px); }
+    100% { left: -120px; }
+  }
+  @keyframes cloudDrift3 {
+    0% { left: -80px; }
+    100% { left: calc(100% + 80px); }
+  }
+  @keyframes cloudDrift4 {
+    0% { left: calc(100% + 90px); }
+    100% { left: -90px; }
+  }
+  @keyframes cloudDrift5 {
+    0% { left: -110px; }
+    100% { left: calc(100% + 110px); }
+  }
+
   /* Legacy hero car driving animation - left to right */
   .animate-drive {
     animation: drive 8s linear infinite;

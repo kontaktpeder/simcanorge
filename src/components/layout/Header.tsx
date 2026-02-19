@@ -312,8 +312,16 @@ export function Header() {
 
   return (
     <>
-    <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/50 shadow-sm will-change-transform">
-      <div className="container mx-auto px-4">
+    <header className="sticky top-0 z-50 will-change-transform overflow-hidden" style={{ background: 'linear-gradient(180deg, hsl(210 85% 55%) 0%, hsl(210 80% 48%) 60%, hsl(210 75% 40%) 100%)' }}>
+      {/* Animated clouds */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div className="animate-cloud-1 absolute top-[6px] w-[80px] h-[18px] opacity-60" style={{ background: 'radial-gradient(ellipse, rgba(255,255,255,0.7) 0%, transparent 70%)', borderRadius: '50%', filter: 'blur(2px)' }} />
+        <div className="animate-cloud-2 absolute top-[18px] w-[120px] h-[22px] opacity-40" style={{ background: 'radial-gradient(ellipse, rgba(255,255,255,0.6) 0%, transparent 70%)', borderRadius: '50%', filter: 'blur(3px)' }} />
+        <div className="animate-cloud-3 absolute top-[4px] w-[60px] h-[14px] opacity-50" style={{ background: 'radial-gradient(ellipse, rgba(255,255,255,0.8) 0%, transparent 70%)', borderRadius: '50%', filter: 'blur(2px)' }} />
+        <div className="animate-cloud-4 absolute top-[24px] w-[90px] h-[16px] opacity-35" style={{ background: 'radial-gradient(ellipse, rgba(255,255,255,0.5) 0%, transparent 70%)', borderRadius: '50%', filter: 'blur(3px)' }} />
+        <div className="animate-cloud-5 absolute top-[10px] w-[100px] h-[20px] opacity-45" style={{ background: 'radial-gradient(ellipse, rgba(255,255,255,0.65) 0%, transparent 70%)', borderRadius: '50%', filter: 'blur(2px)' }} />
+      </div>
+      <div className="container mx-auto px-4 relative z-10">
         <div className="flex items-center justify-between h-14 md:h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 hover-lift flex-shrink-0">
@@ -329,8 +337,8 @@ export function Header() {
               }}
             />
             <div className="hidden sm:flex items-baseline flex-shrink-0">
-              <span className="font-display text-lg md:text-xl text-primary whitespace-nowrap">SIMCA</span>
-              <span className="font-display text-lg md:text-xl text-accent ml-1 whitespace-nowrap">NORGE</span>
+              <span className="font-display text-lg md:text-xl text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.3)] whitespace-nowrap">SIMCA</span>
+              <span className="font-display text-lg md:text-xl text-yellow-300 drop-shadow-[0_1px_2px_rgba(0,0,0,0.3)] ml-1 whitespace-nowrap">NORGE</span>
             </div>
           </Link>
 
@@ -349,19 +357,19 @@ export function Header() {
                       <Link
                         to={item.href}
                         onClick={() => markLeavingHome(item.href)}
-                        className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg font-display text-sm uppercase tracking-wide transition-all hover:bg-muted/60 ${
+                        className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg font-display text-sm uppercase tracking-wide transition-all hover:bg-white/20 ${
                           isActive
-                            ? "text-accent bg-muted/40"
-                            : "text-foreground/80 hover:text-foreground"
+                            ? "text-white bg-white/25 shadow-sm"
+                            : "text-white/90 hover:text-white"
                         }`}
                       >
                         <IconComponent 
                           className={`w-4 h-4 ${
                             isGlow && isActive 
-                              ? "text-yellow-400 fill-yellow-400 drop-shadow-[0_0_6px_rgba(250,204,21,0.8)]" 
+                              ? "text-yellow-300 fill-yellow-300 drop-shadow-[0_0_6px_rgba(250,204,21,0.8)]" 
                               : isGlow 
-                                ? "text-yellow-500" 
-                                : ""
+                                ? "text-yellow-300" 
+                                : "text-white"
                           }`} 
                         />
                         <span className="hidden xl:inline">{item.label}</span>
@@ -380,7 +388,7 @@ export function Header() {
                   <Link
                     to="/foresporsel"
                     onClick={() => markLeavingHome("/foresporsel")}
-                    className="relative p-1.5 hover:bg-muted/60 rounded-lg transition-colors ml-1"
+                    className="relative p-1.5 hover:bg-white/20 rounded-lg transition-colors ml-1"
                     aria-label="Min verktøykasse"
                   >
                     <img src={toolboxIcon} alt="Verktøykasse" className="h-10 w-auto object-contain" onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = '/toolbox-blue.png'; }} />
@@ -404,7 +412,7 @@ export function Header() {
                     <Link
                       to="/dashboard"
                       onClick={() => markLeavingHome("/dashboard")}
-                      className="relative p-0 hover:bg-muted/60 rounded-lg transition-colors ml-4 flex items-end self-stretch"
+                      className="relative p-0 hover:bg-white/20 rounded-lg transition-colors ml-4 flex items-end self-stretch"
                     >
                       <GarageIcon size={52} animate={isDrivingToGarage} hideCar={isHome} />
                     </Link>
@@ -419,7 +427,7 @@ export function Header() {
                     <Link
                       to="/login?returnUrl=/dashboard"
                       onClick={() => markLeavingHome("/login")}
-                      className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg font-display text-sm uppercase tracking-wide bg-accent text-accent-foreground hover:bg-accent/90 transition-all ml-1"
+                      className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg font-display text-sm uppercase tracking-wide bg-white/25 text-white hover:bg-white/35 transition-all ml-1 border border-white/30"
                     >
                       <LogIn className="w-4 h-4" />
                       <span className="hidden xl:inline">Logg inn</span>
