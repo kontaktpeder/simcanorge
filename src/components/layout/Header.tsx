@@ -6,6 +6,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { SimcaLive } from "@/components/home/SimcaLive";
 import { GuideHelpButton } from "@/components/guide";
 import { FadeImage } from "@/components/ui/FadeImage";
+import { SafeAssetImage } from "@/components/ui/SafeAssetImage";
 import { GarageIcon } from "@/components/ui/GarageIcon";
 import { ReportProblemButton, ReportProblemModal } from "@/components/support";
 import { getNavItems } from "@/routes/routes";
@@ -169,7 +170,7 @@ const DriveHomeAnimation = forwardRef<HTMLDivElement, {
         style={{ transform: `translateX(${startX}px) scaleX(-1)`, opacity: 1 }}
       >
         <div className="relative">
-          <img 
+          <SafeAssetImage 
             src={simcaRallye} 
             alt="Simca Rallye" 
             className="h-[32px] md:h-[42px] w-auto object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]"
@@ -411,7 +412,7 @@ export function Header() {
                     className="relative p-1.5 hover:bg-white/20 rounded-lg transition-colors ml-1"
                     aria-label="Min verktøykasse"
                   >
-                    <img src={toolboxIcon} alt="Verktøykasse" className="h-10 w-auto object-contain" onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = '/toolbox-blue.png'; }} />
+                    <SafeAssetImage src={toolboxIcon} alt="Verktøykasse" className="h-10 w-auto object-contain" fallbackSrc="/toolbox-blue.png" />
                     {itemCount > 0 && (
                       <span className="absolute -top-0.5 -right-0.5 bg-accent text-accent-foreground w-4 h-4 rounded-full text-[10px] font-display flex items-center justify-center shadow-md">
                         {itemCount}
@@ -474,7 +475,7 @@ export function Header() {
               className="relative p-1.5 hover:bg-muted/50 rounded-lg transition-colors"
               aria-label="Min verktøykasse"
             >
-              <img src={toolboxIcon} alt="Verktøykasse" className="h-10 w-auto object-contain" onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = '/toolbox-blue.png'; }} />
+              <SafeAssetImage src={toolboxIcon} alt="Verktøykasse" className="h-10 w-auto object-contain" fallbackSrc="/toolbox-blue.png" />
               {itemCount > 0 && (
                 <span className="absolute -top-0.5 -right-0.5 bg-accent text-accent-foreground w-4 h-4 rounded-full text-[10px] font-display flex items-center justify-center shadow-md">
                   {itemCount}
@@ -632,7 +633,7 @@ export function Header() {
               onClick={handleCarClick}
             >
               <div className="animate-car-bump-subtle relative">
-                <img 
+                <SafeAssetImage 
                   src={simcaRallye} 
                   alt="Simca Rallye" 
                   className="h-[42px] md:h-[52px] w-auto object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]"

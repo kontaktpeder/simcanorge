@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import simcaRallye from "@/assets/simca-rallye-yellow.png";
+import { SafeAssetImage } from "@/components/ui/SafeAssetImage";
 
 interface GarageIconProps {
   className?: string;
@@ -88,7 +89,7 @@ export function GarageIcon({ className = "", size = 40, animate = false, hideCar
         <circle cx="88.5" cy="23" r="1.3" fill="#FDE68A" />
         <circle cx="88.5" cy="23" r="0.6" fill="#FFFBEB" />
       </svg>
-      <img
+      <SafeAssetImage
         ref={carRef}
         src={simcaRallye}
         alt=""

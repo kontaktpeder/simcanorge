@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { OwnerCard } from "@/components/car/OwnerCard";
 import toolboxIcon from "@/assets/toolbox-blue.png";
+import { SafeAssetImage } from "@/components/ui/SafeAssetImage";
 
 const CONDITION_LABELS: Record<string, { label: string; className: string }> = {
   "Ny": { label: "Ny", className: "bg-green-700/90 text-white" },
@@ -202,7 +203,7 @@ function PartDetailView({ part, category }: { part: any; category: any }) {
                 )}
                 <div className="mt-auto pt-4">
                   <button onClick={handleToggleCart} className={`w-full py-3 text-sm font-display uppercase tracking-wider rounded-sm flex items-center justify-center gap-2 transition-all ${inCart ? "bg-green-700 text-white" : "border border-foreground/20 text-foreground hover:bg-foreground hover:text-background"}`}>
-                    {inCart ? <><Check className="w-5 h-5" />Lagt til i verktøykassa</> : <><img src={toolboxIcon} alt="" className="w-7 h-7 object-contain" />Legg i verktøykassa</>}
+                    {inCart ? <><Check className="w-5 h-5" />Lagt til i verktøykassa</> : <><SafeAssetImage src={toolboxIcon} alt="" className="w-7 h-7 object-contain" />Legg i verktøykassa</>}
                   </button>
                 </div>
               </div>
@@ -317,7 +318,7 @@ function MarketplaceDetailView({ item }: { item: any }) {
                 )}
                 <div className="mt-auto pt-4">
                   <button onClick={handleToggleCart} className={`w-full py-3 text-sm font-display uppercase tracking-wider rounded-sm flex items-center justify-center gap-2 transition-all ${inCart ? "bg-green-700 text-white" : "border border-foreground/20 text-foreground hover:bg-foreground hover:text-background"}`}>
-                    {inCart ? <><Check className="w-5 h-5" />Lagt til i verktøykassa</> : <><img src={toolboxIcon} alt="" className="w-7 h-7 object-contain" />Legg i verktøykassa</>}
+                    {inCart ? <><Check className="w-5 h-5" />Lagt til i verktøykassa</> : <><SafeAssetImage src={toolboxIcon} alt="" className="w-7 h-7 object-contain" />Legg i verktøykassa</>}
                   </button>
                 </div>
               </div>
