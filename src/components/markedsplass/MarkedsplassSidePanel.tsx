@@ -8,6 +8,7 @@ import {
   getRootCategories,
   getSubcategories,
 } from '@/hooks/useUnifiedCategories';
+import { LISTING_TYPES } from '@/config/listingTypes';
 import { Plus, RotateCcw, ChevronRight } from 'lucide-react';
 
 const CONDITION_OPTIONS = ['Ny', 'NOS', 'Brukt', 'Original', 'Repro'];
@@ -45,9 +46,14 @@ interface Props {
 
 export function MarkedsplassSidePanel({ open, onOpenChange, filterState, onFilterChange }: Props) {
   const { data: categories = [] } = useUnifiedCategories();
-  const roots = getRootCategories(categories).filter(
-    (r) => r.slug === 'deler' || r.slug === 'samleobjekter'
-  );
+  const allRoots = getRootCategories(categories);
+  const roots = LISTING_TYPES.filter((t) => !t.locked)
+    .map((t) => ({
+      id: allRoots.find((r) => r.slug === t.slug)?.id ?? '',
+      label: t.label,
+      slug: t.slug,
+    }))
+    .filter((r) => r.id);
 
   const subcategories = filterState.rootCategoryId
     ? getSubcategories(categories, filterState.rootCategoryId)
@@ -118,7 +124,7 @@ export function MarkedsplassSidePanel({ open, onOpenChange, filterState, onFilte
               <option value="">Alle</option>
               {roots.map((r) => (
                 <option key={r.id} value={r.id}>
-                  {r.name}
+                  {r.label}
                 </option>
               ))}
             </select>
