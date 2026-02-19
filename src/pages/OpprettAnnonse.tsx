@@ -242,59 +242,65 @@ export default function OpprettAnnonse() {
             {/* Step 1: Choose type */}
             {!selectedType && (
               <>
-                {/* Section divider */}
-                <div className="flex items-center gap-4 mb-8">
-                  <div className="h-px flex-1 bg-foreground/10" />
-                  <span className="font-display text-[10px] uppercase tracking-[0.4em] text-foreground/30">Velg type</span>
-                  <div className="h-px flex-1 bg-foreground/10" />
+                {/* Section header */}
+                <div className="text-center mb-10">
+                  <p className="font-display text-xs md:text-sm uppercase tracking-[0.4em] text-foreground/40 mb-2">
+                    Simca · Talbot · Matra
+                  </p>
+                  <h2 className="font-display text-3xl md:text-5xl uppercase tracking-wider">
+                    Velg type
+                  </h2>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                  {LISTING_TYPES.map((type) => (
-                    <button
-                      key={type.id}
-                      type="button"
-                      onClick={() => !type.locked && setSelectedType(type.id)}
-                      disabled={type.locked}
-                      className={`group relative text-left transition-all duration-200 ${
-                        type.locked ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'
-                      }`}
-                    >
-                      {/* Card */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 md:gap-8 max-w-3xl mx-auto">
+                  {LISTING_TYPES.map((type, index) => {
+                    const isLocked = type.locked;
+                    return isLocked ? (
                       <div
-                        className={`relative border-2 p-6 sm:p-8 transition-all duration-200 ${
-                          type.locked
-                            ? 'border-foreground/5 bg-foreground/[0.02]'
-                            : 'border-foreground/10 bg-white/60 hover:border-foreground/30 hover:shadow-lg hover:-translate-y-0.5'
-                        }`}
+                        key={type.id}
+                        className="relative p-8 md:p-10 border-2 border-foreground/10 opacity-50 cursor-not-allowed"
+                        style={{ background: 'rgba(255,255,255,0.7)' }}
                       >
-                        {/* Top accent */}
-                        {!type.locked && (
-                          <div className="absolute top-0 left-0 right-0 h-0.5 opacity-0 group-hover:opacity-100 transition-opacity" style={{ background: 'hsl(2, 85%, 40%)' }} />
-                        )}
-
-                        <div className="flex items-start gap-4">
-                          <span className={`mt-0.5 ${type.locked ? 'text-foreground/20' : 'text-foreground/60 group-hover:text-foreground'} transition-colors`}>
-                            {TYPE_ICONS[type.id]}
-                          </span>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2">
-                              <span className="font-display text-lg sm:text-xl uppercase tracking-wider">
-                                {type.label}
-                              </span>
-                              {type.locked && <Lock className="w-4 h-4 text-foreground/30" />}
-                            </div>
-                            {type.locked && type.lockedMessage && (
-                              <p className="font-serif italic text-xs text-foreground/40 mt-2">{type.lockedMessage}</p>
-                            )}
-                            {!type.locked && type.description && (
-                              <p className="font-serif italic text-xs text-foreground/40 mt-2">{type.description}</p>
-                            )}
-                          </div>
+                        <Lock className="absolute top-4 right-4 w-4 h-4 text-muted-foreground" />
+                        <div className="text-foreground/30 mb-4">
+                          {TYPE_ICONS[type.id]}
                         </div>
+                        <h3 className="font-display text-2xl md:text-3xl uppercase tracking-wider text-foreground/40">
+                          {type.label}
+                        </h3>
+                        {type.lockedMessage && (
+                          <p className="font-serif italic text-sm md:text-base text-foreground/30 mt-3">
+                            {type.lockedMessage}
+                          </p>
+                        )}
                       </div>
-                    </button>
-                  ))}
+                    ) : (
+                      <button
+                        key={type.id}
+                        type="button"
+                        onClick={() => setSelectedType(type.id)}
+                        className="group relative block text-left p-8 md:p-10 border-2 border-foreground/15 hover:border-foreground/40 transition-all"
+                        style={{ background: 'rgba(255,255,255,0.85)' }}
+                      >
+                        <div
+                          className="absolute bottom-0 left-0 right-0 h-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                          style={{ background: 'hsl(2, 85%, 40%)' }}
+                        />
+                        <div className="text-foreground/60 group-hover:text-foreground transition-colors mb-4">
+                          {TYPE_ICONS[type.id]}
+                        </div>
+                        <h3 className="font-display text-2xl md:text-3xl uppercase tracking-wider group-hover:text-primary transition-colors">
+                          {type.label}
+                        </h3>
+                        {type.description && (
+                          <p className="font-serif italic text-sm md:text-base text-foreground/40 mt-3">
+                            {type.description}
+                          </p>
+                        )}
+                        <ChevronRight className="absolute top-1/2 right-6 -translate-y-1/2 w-5 h-5 text-foreground/20 group-hover:text-primary group-hover:translate-x-1 transition-all" />
+                      </button>
+                    );
+                  })}
                 </div>
 
                 {/* Editorial footer note */}
