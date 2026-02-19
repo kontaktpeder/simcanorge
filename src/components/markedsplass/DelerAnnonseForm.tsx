@@ -63,6 +63,9 @@ export function DelerAnnonseForm({
     carYear: initialValues?.carYear ?? '',
   });
 
+  // Local state for the mid-level "hovedkategori" selection
+  const [hovedkategoriId, setHovedkategoriId] = useState('');
+
   const carFields = {
     brand: values.carBrand || '',
     model: values.carModel || '',
@@ -95,53 +98,35 @@ export function DelerAnnonseForm({
     }
   }, [roots.length, forceRootId]);
 
-  // Resolve rootCategoryId from categoryId if initialValues provided a categoryId
+  // Resolve hovedkategoriId from categoryId if initialValues provided a categoryId
   useEffect(() => {
-    if (initialValues?.categoryId && categories.length > 0 && !values.rootCategoryId) {
-      // Walk up to find root
+    if (initialValues?.categoryId && categories.length > 0 && !hovedkategoriId) {
+      // Walk up to find the mid-level parent (child of root)
       let current = categories.find((c) => c.id === initialValues.categoryId);
-      while (current?.parent_id) {
+      // If current is a leaf, its parent is the hovedkategori
+      if (current?.parent_id) {
         const parent = categories.find((c) => c.id === current!.parent_id);
-        if (!parent) break;
-        current = parent;
-      }
-      if (current) {
-        setValues((v) => ({ ...v, rootCategoryId: current!.id }));
+        if (parent) {
+          // Check if parent is a root or mid-level
+          if (parent.parent_id) {
+            // parent is mid-level (hovedkategori), grandparent is root
+            setHovedkategoriId(parent.id);
+          } else {
+            // parent is root, current is hovedkategori level
+            setHovedkategoriId(current.id);
+          }
+        }
       }
     }
   }, [categories.length, initialValues?.categoryId]);
 
   const selectedRoot = roots.find((r) => r.id === values.rootCategoryId);
   const midLevel = selectedRoot ? getSubcategories(categories, selectedRoot.id) : [];
-
-  // Build optgroup-style subcategories (parent -> children)
-  const buildCategoryOptions = () => {
-    if (midLevel.length === 0) return null;
-
-    return midLevel.map((parent) => {
-      const children = getSubcategories(categories, parent.id);
-      if (children.length === 0) {
-        return (
-          <option key={parent.id} value={parent.id}>
-            {parent.name}
-          </option>
-        );
-      }
-      return (
-        <optgroup key={parent.id} label={parent.name}>
-          <option value={parent.id}>{parent.name} (hovedkategori)</option>
-          {children.map((child) => (
-            <option key={child.id} value={child.id}>
-              └ {child.name}
-            </option>
-          ))}
-        </optgroup>
-      );
-    });
-  };
+  const underkategorier = hovedkategoriId ? getSubcategories(categories, hovedkategoriId) : [];
 
   const handleRootChange = (rootId: string) => {
     setValues((v) => ({ ...v, rootCategoryId: rootId, categoryId: '' }));
+    setHovedkategoriId('');
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -150,7 +135,12 @@ export function DelerAnnonseForm({
     if (carModelRequired && !values.carBrand?.trim()) {
       return; // require at least brand
     }
-    await onSubmit(values);
+    // If no underkategori selected but hovedkategori is, use hovedkategori as categoryId
+    const submitValues = {
+      ...values,
+      categoryId: values.categoryId || hovedkategoriId || '',
+    };
+    await onSubmit(submitValues);
   };
 
   
@@ -195,19 +185,44 @@ export function DelerAnnonseForm({
         </div>
       )}
 
+      {/* Hovedkategori */}
+      {midLevel.length > 0 && (
+        <div>
+          <Label>Hovedkategori</Label>
+          <select
+            value={hovedkategoriId}
+            onChange={(e) => {
+              setHovedkategoriId(e.target.value);
+              setValues((v) => ({ ...v, categoryId: '' }));
+            }}
+            className="w-full h-11 mt-1 rounded-md border border-input bg-background px-3 py-2 text-sm"
+            disabled={disabled}
+          >
+            <option value="">Velg hovedkategori...</option>
+            {midLevel.map((m) => (
+              <option key={m.id} value={m.id}>{m.name}</option>
+            ))}
+          </select>
+        </div>
+      )}
+
       {/* Underkategori */}
-      <div>
-        <Label>Kategori</Label>
-        <select
-          value={values.categoryId}
-          onChange={(e) => setValues((v) => ({ ...v, categoryId: e.target.value }))}
-          className="w-full h-11 mt-1 rounded-md border border-input bg-background px-3 py-2 text-sm"
-          disabled={disabled}
-        >
-          <option value="">Velg kategori...</option>
-          {buildCategoryOptions()}
-        </select>
-      </div>
+      {hovedkategoriId && underkategorier.length > 0 && (
+        <div>
+          <Label>Underkategori</Label>
+          <select
+            value={values.categoryId}
+            onChange={(e) => setValues((v) => ({ ...v, categoryId: e.target.value }))}
+            className="w-full h-11 mt-1 rounded-md border border-input bg-background px-3 py-2 text-sm"
+            disabled={disabled}
+          >
+            <option value="">Velg underkategori...</option>
+            {underkategorier.map((u) => (
+              <option key={u.id} value={u.id}>{u.name}</option>
+            ))}
+          </select>
+        </div>
+      )}
 
       {/* Beskrivelse */}
       <div>

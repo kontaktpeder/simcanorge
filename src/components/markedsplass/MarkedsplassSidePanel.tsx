@@ -15,6 +15,7 @@ const CONDITION_OPTIONS = ['Ny', 'NOS', 'Brukt', 'Original', 'Repro'];
 
 export interface MarkedsplassFilterState {
   rootCategoryId: string;
+  hovedkategoriId: string;
   categoryId: string;
   priceMin: string;
   priceMax: string;
@@ -27,6 +28,7 @@ export interface MarkedsplassFilterState {
 
 export const EMPTY_FILTER: MarkedsplassFilterState = {
   rootCategoryId: '',
+  hovedkategoriId: '',
   categoryId: '',
   priceMin: '',
   priceMax: '',
@@ -69,31 +71,12 @@ export function MarkedsplassSidePanel({
     .filter((r) => r.id);
 
   const effectiveRootId = fixedRootCategoryId || filterState.rootCategoryId;
-  const subcategories = effectiveRootId
+  const hovedkategorier = effectiveRootId
     ? getSubcategories(categories, effectiveRootId)
     : [];
-
-  const buildSubcategoryOptions = () =>
-    subcategories.map((parent) => {
-      const children = getSubcategories(categories, parent.id);
-      if (children.length === 0) {
-        return (
-          <option key={parent.id} value={parent.id}>
-            {parent.name}
-          </option>
-        );
-      }
-      return (
-        <optgroup key={parent.id} label={parent.name}>
-          <option value={parent.id}>{parent.name}</option>
-          {children.map((child) => (
-            <option key={child.id} value={child.id}>
-              └ {child.name}
-            </option>
-          ))}
-        </optgroup>
-      );
-    });
+  const underkategorier = filterState.hovedkategoriId
+    ? getSubcategories(categories, filterState.hovedkategoriId)
+    : [];
 
   const carFields = {
     brand: filterState.carBrand,
@@ -220,12 +203,12 @@ export function MarkedsplassSidePanel({
             {!fixedRootCategoryId && (
               <div>
                 <Label className="font-display text-[11px] uppercase tracking-[0.15em] text-foreground/60">
-                  Hovedkategori
+                  Type
                 </Label>
                 <select
                   value={filterState.rootCategoryId}
                   onChange={(e) =>
-                    onFilterChange({ ...filterState, rootCategoryId: e.target.value, categoryId: '' })
+                    onFilterChange({ ...filterState, rootCategoryId: e.target.value, hovedkategoriId: '', categoryId: '' })
                   }
                   className={selectClass}
                 >
@@ -239,8 +222,31 @@ export function MarkedsplassSidePanel({
               </div>
             )}
 
-            {/* Underkategori */}
-            {effectiveRootId && subcategories.length > 0 && (
+            {/* Hovedkategori (de 12) */}
+            {effectiveRootId && hovedkategorier.length > 0 && (
+              <div>
+                <Label className="font-display text-[11px] uppercase tracking-[0.15em] text-foreground/60">
+                  Hovedkategori
+                </Label>
+                <select
+                  value={filterState.hovedkategoriId}
+                  onChange={(e) =>
+                    onFilterChange({ ...filterState, hovedkategoriId: e.target.value, categoryId: '' })
+                  }
+                  className={selectClass}
+                >
+                  <option value="">Alle</option>
+                  {hovedkategorier.map((h) => (
+                    <option key={h.id} value={h.id}>
+                      {h.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+
+            {/* Underkategori (barn av valgt hovedkategori) */}
+            {filterState.hovedkategoriId && underkategorier.length > 0 && (
               <div>
                 <Label className="font-display text-[11px] uppercase tracking-[0.15em] text-foreground/60">
                   Underkategori
@@ -251,7 +257,11 @@ export function MarkedsplassSidePanel({
                   className={selectClass}
                 >
                   <option value="">Alle underkategorier</option>
-                  {buildSubcategoryOptions()}
+                  {underkategorier.map((u) => (
+                    <option key={u.id} value={u.id}>
+                      {u.name}
+                    </option>
+                  ))}
                 </select>
               </div>
             )}
