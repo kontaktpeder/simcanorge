@@ -48,7 +48,6 @@ export function Footer() {
                     onClick={() => setReportModalOpen(true)}
                     className="flex items-center gap-1.5 text-white/90 hover:text-white transition-colors text-left"
                   >
-                    <Bug className="w-3.5 h-3.5 md:w-4 md:h-4" />
                     <span>Rapporter et problem</span>
                   </button>
                   <Link to="/kontakt" className="hover:text-white/80 transition-colors text-white/90">
