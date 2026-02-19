@@ -291,17 +291,17 @@ function FeedGridItem({
               {item.categoryName}
             </span>
           )}
+          <h3 className="font-display text-xl md:text-3xl leading-tight line-clamp-2 uppercase tracking-wide">
+            {item.title}
+          </h3>
           {item.price && (
-            <p className="font-serif text-sm md:text-lg text-foreground font-bold leading-none">
+            <p className="font-serif text-sm md:text-lg text-foreground font-bold leading-none mt-1">
               {item.price}
             </p>
           )}
           {item.priceNote && (
             <p className="text-[10px] md:text-[11px] text-muted-foreground mt-0.5 italic">{item.priceNote}</p>
           )}
-          <h3 className="font-display text-xl md:text-3xl leading-tight line-clamp-2 uppercase tracking-wide mt-1">
-            {item.title}
-          </h3>
           {item.ownerName && (
             <p className="text-xs text-muted-foreground mt-1">
               {item.ownerName}
