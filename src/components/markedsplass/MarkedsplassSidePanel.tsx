@@ -127,10 +127,10 @@ export function MarkedsplassSidePanel({
       <aside
         className={cn(
           'shrink-0 z-40 border-r-2 border-foreground/10 overflow-y-auto transition-all duration-300',
-          // Mobile: fixed overlay from left
-          'fixed top-0 left-0 h-full lg:relative',
-          // Desktop: sticky within flex parent, stays in view while scrolling
-          'lg:sticky lg:top-16 lg:h-[calc(100vh-4rem)] lg:z-auto',
+          // Mobile: fixed overlay
+          'fixed top-0 left-0 h-full',
+          // Desktop: override fixed → sticky, stays in view but bounded by flex parent
+          'lg:!sticky lg:!top-16 lg:self-start lg:!h-[calc(100vh-4rem)] lg:z-auto',
           open
             ? 'w-[300px] translate-x-0'
             : 'w-0 -translate-x-full lg:w-0 lg:-translate-x-full',
