@@ -2,12 +2,15 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { FeedItem, normalizePart, normalizeListing } from "@/lib/markedsplassUtils";
 
-export type FeedFilter = "all" | "parts" | string; // string = marketplace category id
+export type FeedFilter = "all" | "parts" | string | string[];
 
 export function useMarkedsplassFeed(filter: FeedFilter, search?: string) {
   return useQuery({
     queryKey: ["markedsplass-feed", filter, search],
     queryFn: async () => {
+      const isArrayFilter = Array.isArray(filter);
+      const isSingleCategoryFilter = !isArrayFilter && filter !== "all" && filter !== "parts" && filter !== "";
+
       // Fetch parts
       let partsQuery = supabase
         .from("parts")
@@ -18,7 +21,9 @@ export function useMarkedsplassFeed(filter: FeedFilter, search?: string) {
       if (search) {
         partsQuery = partsQuery.ilike("title", `%${search}%`);
       }
-      if (filter !== "all" && filter !== "parts" && filter !== "") {
+      if (isArrayFilter) {
+        partsQuery = partsQuery.in("category_id", filter);
+      } else if (isSingleCategoryFilter) {
         partsQuery = partsQuery.eq("category_id", filter);
       }
 
@@ -41,8 +46,9 @@ export function useMarkedsplassFeed(filter: FeedFilter, search?: string) {
         listingsQuery = listingsQuery.ilike("title", `%${search}%`);
       }
 
-      if (filter !== "all" && filter !== "parts" && filter !== "") {
-        // It's a marketplace category id – only fetch listings for that category
+      if (isArrayFilter) {
+        listingsQuery = listingsQuery.in("category_id", filter);
+      } else if (isSingleCategoryFilter) {
         listingsQuery = listingsQuery.eq("category_id", filter);
       }
 
@@ -59,7 +65,6 @@ export function useMarkedsplassFeed(filter: FeedFilter, search?: string) {
       // Apply filter
       if (filter === "parts") return parts;
       if (filter !== "all" && filter !== "") {
-        // Category filter – return both parts and listings in this category, sorted by date
         const merged = [...parts, ...listings];
         merged.sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
         return merged;
