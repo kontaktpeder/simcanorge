@@ -11,7 +11,7 @@ import { CONDITION_COLORS } from "@/lib/markedsplassUtils";
 import { getThumbnailUrl } from "@/lib/imageUtils";
 import {
   Wrench, Check, Briefcase,
-  ChevronRight, X
+  ChevronRight, X, SlidersHorizontal
 } from "lucide-react";
 import { toast } from "sonner";
 import toolboxIcon from "@/assets/toolbox-blue.png";
@@ -145,6 +145,32 @@ export default function Markedsplass() {
             title="MARKEDSPLASS"
             subtitle="Bildeler, tilbehør og annonser fra Simca, Talbot og Matra-entusiaster"
           />
+
+          {/* Mobile filter bar */}
+          <div className="lg:hidden flex items-center gap-3 px-4 py-3 border-b-2 border-foreground/10" style={{ background: "hsl(42, 30%, 93%)" }}>
+            <button
+              onClick={() => setSidePanelOpen(true)}
+              className="flex items-center gap-2 font-display text-xs uppercase tracking-wider px-3 py-2 border-2 border-foreground/20 hover:border-primary hover:text-primary transition-all bg-white"
+            >
+              <SlidersHorizontal className="w-4 h-4" />
+              Filter
+              {activeFilterCount > 0 && (
+                <span className="ml-1 px-1.5 py-0.5 text-[10px] bg-primary text-primary-foreground rounded-full">{activeFilterCount}</span>
+              )}
+            </button>
+            {activeFilterCount > 0 && (
+              <button
+                onClick={() => setFilterState(EMPTY_FILTER)}
+                className="flex items-center gap-1 text-accent font-display text-[10px] uppercase tracking-wider px-2 py-1.5 border border-accent/30 hover:bg-accent hover:text-accent-foreground transition-all"
+              >
+                <X className="w-3 h-3" />
+                Nullstill
+              </button>
+            )}
+            <span className="ml-auto font-serif text-xs text-muted-foreground italic">
+              {filteredItems.length} treff
+            </span>
+          </div>
 
           {isLoading ? (
             <div className="flex flex-col items-center justify-center py-32 gap-4">

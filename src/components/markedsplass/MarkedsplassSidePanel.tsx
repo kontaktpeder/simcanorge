@@ -127,13 +127,13 @@ export function MarkedsplassSidePanel({
       <aside
         className={cn(
           'shrink-0 z-40 border-r-2 border-foreground/10 overflow-y-auto transition-all duration-300',
-          // Mobile: fixed overlay
+          // Mobile: fixed overlay, togglable
           'fixed top-16 left-0 h-[calc(100%-4rem)]',
-          // Desktop: static, full height handled by parent sticky wrapper
-          'lg:static lg:h-full',
+          // Desktop: always visible, static
+          'lg:static lg:h-full lg:translate-x-0 lg:w-[300px]',
           open
             ? 'w-[300px] translate-x-0'
-            : 'w-0 -translate-x-full lg:w-0 lg:-translate-x-full',
+            : 'w-0 -translate-x-full',
         )}
         style={{ background: 'hsl(42, 30%, 95%)' }}
       >
@@ -151,6 +151,13 @@ export function MarkedsplassSidePanel({
                 Filter
               </h2>
             </div>
+            <button
+              onClick={() => onOpenChange(false)}
+              className="p-2 text-white/60 hover:text-white transition-colors lg:hidden"
+              aria-label="Lukk filter"
+            >
+              <PanelLeftClose className="w-5 h-5" />
+            </button>
           </div>
         
           {/* Red accent line */}
