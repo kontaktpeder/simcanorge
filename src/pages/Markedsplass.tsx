@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { cn } from "@/lib/utils";
+
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { motion } from "framer-motion";
@@ -10,8 +10,8 @@ import { useMarkedsplassFeed, useMarkedsplassCategories } from "@/hooks/useMarke
 import { CONDITION_COLORS } from "@/lib/markedsplassUtils";
 import { getThumbnailUrl } from "@/lib/imageUtils";
 import {
-  Search, Info, Wrench, Check, Briefcase,
-  ChevronRight, ChevronDown, X, Filter, Grid3X3, List, SlidersHorizontal, PanelLeftOpen
+  Wrench, Check, Briefcase,
+  ChevronRight, X
 } from "lucide-react";
 import { toast } from "sonner";
 import toolboxIcon from "@/assets/toolbox-blue.png";
@@ -127,26 +127,11 @@ export default function Markedsplass() {
         </div>
       )}
 
-      {/* Filter bar — editorial strip */}
-      <div className="sticky top-16 z-30 border-b-2 border-foreground/10" style={{ background: "hsl(42, 30%, 93%)" }}>
-        <div className="container mx-auto px-4 py-3 md:py-4">
-          {/* Top row: headline + count */}
-          <div className="flex items-baseline justify-between mb-2">
-            <h2 className="font-display text-xs md:text-sm uppercase tracking-[0.25em] text-foreground/60">
-              Katalog
-            </h2>
-            <span className="font-serif text-xs text-muted-foreground italic">
-              {filteredItems.length} treff
-            </span>
-          </div>
-
-          {/* Controls row */}
-          <div className="flex items-center gap-2 md:gap-3">
-            {/* Filter toggle — opens/closes side panel */}
-            {!sidePanelOpen && (
-              <SidePanelToggle onClick={() => setSidePanelOpen(true)} />
-            )}
-
+      {/* Minimal top bar — only shown when panel is closed */}
+      {!sidePanelOpen && (
+        <div className="sticky top-16 z-30 border-b-2 border-foreground/10" style={{ background: "hsl(42, 30%, 93%)" }}>
+          <div className="container mx-auto px-4 py-3 md:py-4 flex items-center gap-3">
+            <SidePanelToggle onClick={() => setSidePanelOpen(true)} />
             {activeFilterCount > 0 && (
               <button
                 onClick={() => setFilterState(EMPTY_FILTER)}
@@ -156,49 +141,29 @@ export default function Markedsplass() {
                 Nullstill
               </button>
             )}
-
-            {/* Search — editorial underline style */}
-            <div className="relative flex-1 max-w-xs ml-auto">
-              <Search className="absolute left-0 bottom-2 h-4 w-4 text-foreground/40" />
-              <input
-                type="text"
-                placeholder="Søk i katalogen…"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-transparent border-0 border-b-2 border-foreground/15 focus:border-primary pl-6 pr-2 py-1.5 text-sm font-serif italic placeholder:text-muted-foreground/50 outline-none transition-colors"
-              />
-            </div>
-
-            {/* View toggle — typographic */}
-            <div className="hidden sm:flex items-center border-2 border-foreground/10 divide-x-2 divide-foreground/10">
-              <button
-                onClick={() => setViewMode("list")}
-                className={`px-2.5 py-1.5 transition-colors ${viewMode === "list" ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground"}`}
-              >
-                <List className="w-4 h-4" />
-              </button>
-              <button
-                onClick={() => setViewMode("grid")}
-                className={`px-2.5 py-1.5 transition-colors ${viewMode === "grid" ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground"}`}
-              >
-                <Grid3X3 className="w-4 h-4" />
-              </button>
-            </div>
+            <span className="ml-auto font-serif text-xs text-muted-foreground italic">
+              {filteredItems.length} treff
+            </span>
           </div>
         </div>
-      </div>
+      )}
 
-      {/* Side Panel (fixed) */}
-      <MarkedsplassSidePanel
-        open={sidePanelOpen}
-        onOpenChange={setSidePanelOpen}
-        filterState={filterState}
-        onFilterChange={setFilterState}
-      />
+      {/* Main content area: sidebar + listings in flex */}
+      <div className="flex">
+        {/* Side Panel (sticky within flex) */}
+        <MarkedsplassSidePanel
+          open={sidePanelOpen}
+          onOpenChange={setSidePanelOpen}
+          filterState={filterState}
+          onFilterChange={setFilterState}
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+          viewMode={viewMode}
+          onViewModeChange={setViewMode}
+          resultCount={filteredItems.length}
+        />
 
-      {/* Main content area */}
-      <div className={cn("min-h-screen transition-all duration-300", sidePanelOpen ? "lg:ml-[300px]" : "")}>
-        {/* Listing */}
+        {/* Listing area */}
         <div className="flex-1 min-w-0">
           {isLoading ? (
             <div className="flex flex-col items-center justify-center py-32 gap-4">
@@ -207,14 +172,12 @@ export default function Markedsplass() {
             </div>
           ) : (
             <section className="min-h-screen relative" style={{ background: "hsl(42, 30%, 95%)" }}>
-              {/* Paper texture */}
               <div
                 className="absolute inset-0 opacity-[0.03] pointer-events-none"
                 style={{
                   backgroundImage: `url("data:image/svg+xml,%3Csvg width='200' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E")`
                 }}
               />
-
               <div className="px-4 py-6 md:py-10 relative z-10">
                 {filteredItems.length === 0 ? (
                   <div
@@ -243,30 +206,30 @@ export default function Markedsplass() {
             </section>
           )}
         </div>
-
-        {/* Bottom CTA — grand editorial block */}
-        <section className="relative overflow-hidden" style={{ background: "hsl(212, 80%, 15%)" }}>
-          <div className="absolute top-0 left-0 right-0 h-1" style={{ background: "hsl(2, 85%, 40%)" }} />
-          <div className="container mx-auto px-4 py-12 md:py-20 text-center relative z-10">
-            <p className="font-display text-[10px] md:text-xs uppercase tracking-[0.4em] text-white/40 mb-3">
-              Simca · Talbot · Matra
-            </p>
-            <h2 className="font-display text-3xl md:text-5xl lg:text-6xl text-white uppercase tracking-wider leading-none mb-4">
-              Fant du ikke<br />det du lette etter?
-            </h2>
-            <p className="font-serif text-sm md:text-lg italic text-white/60 max-w-md mx-auto mb-8">
-              Ta kontakt med oss — vi hjelper deg gjerne med å finne riktige deler.
-            </p>
-            <Link
-              to="/kontakt"
-              className="group inline-flex items-center gap-3 px-10 py-4 md:px-14 md:py-5 font-display text-sm md:text-base uppercase tracking-[0.2em] border-2 border-white/30 text-white hover:border-white hover:bg-white/5 transition-all"
-            >
-              Kontakt oss
-              <ChevronRight className="w-5 h-5 opacity-50 group-hover:translate-x-1 transition-transform" />
-            </Link>
-          </div>
-        </section>
       </div>
+
+      {/* Bottom CTA — grand editorial block */}
+      <section className="relative overflow-hidden" style={{ background: "hsl(212, 80%, 15%)" }}>
+        <div className="absolute top-0 left-0 right-0 h-1" style={{ background: "hsl(2, 85%, 40%)" }} />
+        <div className="container mx-auto px-4 py-12 md:py-20 text-center relative z-10">
+          <p className="font-display text-[10px] md:text-xs uppercase tracking-[0.4em] text-white/40 mb-3">
+            Simca · Talbot · Matra
+          </p>
+          <h2 className="font-display text-3xl md:text-5xl lg:text-6xl text-white uppercase tracking-wider leading-none mb-4">
+            Fant du ikke<br />det du lette etter?
+          </h2>
+          <p className="font-serif text-sm md:text-lg italic text-white/60 max-w-md mx-auto mb-8">
+            Ta kontakt med oss — vi hjelper deg gjerne med å finne riktige deler.
+          </p>
+          <Link
+            to="/kontakt"
+            className="group inline-flex items-center gap-3 px-10 py-4 md:px-14 md:py-5 font-display text-sm md:text-base uppercase tracking-[0.2em] border-2 border-white/30 text-white hover:border-white hover:bg-white/5 transition-all"
+          >
+            Kontakt oss
+            <ChevronRight className="w-5 h-5 opacity-50 group-hover:translate-x-1 transition-transform" />
+          </Link>
+        </div>
+      </section>
     </Layout>
   );
 }

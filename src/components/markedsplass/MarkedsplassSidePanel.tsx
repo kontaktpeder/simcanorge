@@ -8,7 +8,7 @@ import {
   getSubcategories,
 } from '@/hooks/useUnifiedCategories';
 import { LISTING_TYPES } from '@/config/listingTypes';
-import { Plus, RotateCcw, ChevronRight, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
+import { Plus, RotateCcw, ChevronRight, PanelLeftClose, PanelLeftOpen, Search, Grid3X3, List } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const CONDITION_OPTIONS = ['Ny', 'NOS', 'Brukt', 'Original', 'Repro'];
@@ -42,9 +42,17 @@ interface Props {
   onOpenChange: (open: boolean) => void;
   filterState: MarkedsplassFilterState;
   onFilterChange: (state: MarkedsplassFilterState) => void;
+  searchQuery: string;
+  onSearchChange: (query: string) => void;
+  viewMode: 'grid' | 'list';
+  onViewModeChange: (mode: 'grid' | 'list') => void;
+  resultCount: number;
 }
 
-export function MarkedsplassSidePanel({ open, onOpenChange, filterState, onFilterChange }: Props) {
+export function MarkedsplassSidePanel({
+  open, onOpenChange, filterState, onFilterChange,
+  searchQuery, onSearchChange, viewMode, onViewModeChange, resultCount,
+}: Props) {
   const { data: categories = [] } = useUnifiedCategories();
   const allRoots = getRootCategories(categories);
   const roots = LISTING_TYPES.filter((t) => !t.locked)
@@ -120,9 +128,9 @@ export function MarkedsplassSidePanel({ open, onOpenChange, filterState, onFilte
         className={cn(
           'shrink-0 z-40 border-r-2 border-foreground/10 overflow-y-auto transition-all duration-300',
           // Mobile: fixed overlay from left
-          'fixed top-0 left-0 h-full',
-          // Desktop: fixed to left, below header
-          'lg:fixed lg:top-16 lg:left-0 lg:h-[calc(100vh-4rem)] lg:z-auto',
+          'fixed top-0 left-0 h-full lg:relative',
+          // Desktop: sticky within flex parent, stays in view while scrolling
+          'lg:sticky lg:top-16 lg:h-[calc(100vh-4rem)] lg:z-auto',
           open
             ? 'w-[300px] translate-x-0'
             : 'w-0 -translate-x-full lg:w-0 lg:-translate-x-full',
@@ -154,6 +162,42 @@ export function MarkedsplassSidePanel({ open, onOpenChange, filterState, onFilte
 
           {/* Red accent line */}
           <div className="h-1 w-full" style={{ background: 'hsl(2, 85%, 40%)' }} />
+
+          {/* Search + view mode */}
+          <div className="px-5 pt-5 pb-3 space-y-3 border-b-2 border-foreground/8">
+            {/* Search */}
+            <div className="relative">
+              <Search className="absolute left-0 bottom-2 h-4 w-4 text-foreground/40" />
+              <input
+                type="text"
+                placeholder="Søk i katalogen…"
+                value={searchQuery}
+                onChange={(e) => onSearchChange(e.target.value)}
+                className="w-full bg-transparent border-0 border-b-2 border-foreground/15 focus:border-primary pl-6 pr-2 py-1.5 text-sm font-serif italic placeholder:text-muted-foreground/50 outline-none transition-colors"
+              />
+            </div>
+
+            {/* Result count + view toggle */}
+            <div className="flex items-center justify-between">
+              <span className="font-serif text-xs text-muted-foreground italic">
+                {resultCount} treff
+              </span>
+              <div className="flex items-center border-2 border-foreground/10 divide-x-2 divide-foreground/10">
+                <button
+                  onClick={() => onViewModeChange('list')}
+                  className={`px-2 py-1.5 transition-colors ${viewMode === 'list' ? 'bg-foreground text-background' : 'text-muted-foreground hover:text-foreground'}`}
+                >
+                  <List className="w-3.5 h-3.5" />
+                </button>
+                <button
+                  onClick={() => onViewModeChange('grid')}
+                  className={`px-2 py-1.5 transition-colors ${viewMode === 'grid' ? 'bg-foreground text-background' : 'text-muted-foreground hover:text-foreground'}`}
+                >
+                  <Grid3X3 className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            </div>
+          </div>
 
           {/* Filter content */}
           <div className="flex-1 px-5 py-5 space-y-5">
