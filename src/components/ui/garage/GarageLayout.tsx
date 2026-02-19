@@ -1,7 +1,8 @@
-import { ReactNode, useEffect } from 'react';
+import { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
 import { ArrowLeft } from 'lucide-react';
+import { GarageIcon } from '@/components/ui/GarageIcon';
 import garageBackground from '@/assets/garage-background.jpg';
 
 // Preload immediately when module loads
@@ -61,8 +62,11 @@ export function GarageLayout({
             
             {/* Editorial header */}
             <div className="space-y-4" style={{ textShadow: '0 1px 4px hsla(0,0%,0%,0.5), 0 0 20px hsla(0,0%,0%,0.3)' }}>
-              {/* Red accent rule */}
-              <div className="w-16 h-1.5 shadow-md" style={{ background: 'hsl(2, 85%, 40%)' }} />
+              {/* Garage icon + red accent rule */}
+              <div className="flex items-end gap-4">
+                <GarageIcon size={64} animate className="drop-shadow-lg" />
+                <div className="w-16 h-1.5 shadow-md mb-2" style={{ background: 'hsl(2, 85%, 40%)' }} />
+              </div>
               
               <div className="space-y-2">
                 {title !== (subtitle || title) && (
