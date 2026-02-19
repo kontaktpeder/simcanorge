@@ -125,7 +125,7 @@ export function HeroSection() {
                           getMainImage(featuredCar)!.alt_text || featuredCar.title,
                           { sizes: IMAGE_SIZES.featured, priority: true }
                         )}
-                        className="w-full aspect-[2/1] object-cover group-hover:scale-105 transition-transform duration-500"
+                        className="w-full aspect-[16/10] object-cover group-hover:scale-105 transition-transform duration-500"
                       />
                     </div> : <div className="aspect-[16/10] bg-white/20 rounded-lg flex items-center justify-center">
                       <Car className="w-16 h-16 opacity-50" />
@@ -151,58 +151,25 @@ export function HeroSection() {
                 </div>}
             </div>
             
-            {/* Enhanced CTA buttons with enamel effect */}
-            <div className="flex flex-row gap-3 md:gap-4 justify-center lg:justify-start">
-              {/* Primary CTA - Red enamel, larger - min 48px touch target */}
+            {/* CTA buttons - clean pill style on mobile */}
+            <div className="flex flex-row gap-2 md:gap-4 justify-center lg:justify-start">
               <Link 
                 to="/biler" 
-                className="group relative inline-flex items-center justify-center min-h-[48px] px-6 py-3 md:px-8 md:py-4 font-display text-sm md:text-xl uppercase tracking-wide text-white overflow-hidden active:scale-[0.98] transition-transform"
+                className="group inline-flex items-center justify-center min-h-[44px] px-5 py-2.5 md:min-h-[48px] md:px-8 md:py-4 font-display text-xs md:text-xl uppercase tracking-wide text-white rounded-full active:scale-[0.97] transition-all bg-primary hover:brightness-110"
                 style={{
-                  background: 'linear-gradient(180deg, #E52020 0%, #D41515 25%, #C10D0D 50%, #9A0A0A 100%)',
-                  borderRadius: '10px',
-                  boxShadow: `
-                    inset 0 1px 0 rgba(255,255,255,0.35),
-                    inset 0 -2px 6px rgba(0,0,0,0.25),
-                    0 4px 16px rgba(154,10,10,0.4),
-                    0 0 0 2px rgba(255,255,255,0.15)
-                  `,
+                  boxShadow: '0 3px 12px rgba(154,10,10,0.4)',
                 }}
               >
-                {/* Chrome border effect */}
-                <span 
-                  className="absolute inset-0 rounded-[10px] pointer-events-none"
-                  style={{
-                    background: 'linear-gradient(180deg, rgba(255,255,255,0.2) 0%, transparent 50%, rgba(0,0,0,0.1) 100%)',
-                  }}
-                />
-                <span className="relative z-10 drop-shadow-md">SE ALLE BILER</span>
-                <ArrowRight className="relative z-10 w-4 h-4 md:w-5 md:h-5 ml-2 group-hover:translate-x-1 transition-transform drop-shadow-md" />
+                <span className="drop-shadow-sm">Se alle biler</span>
+                <ArrowRight className="w-3.5 h-3.5 md:w-5 md:h-5 ml-1.5 group-hover:translate-x-0.5 transition-transform" />
               </Link>
               
-              {/* Secondary CTA - Blue metallic, slightly smaller - min 48px touch target */}
               <Link 
                 to="/markedsplass" 
-                className="group relative inline-flex items-center justify-center min-h-[48px] px-5 py-3 md:px-6 md:py-3.5 font-display text-xs md:text-lg uppercase tracking-wide text-white overflow-hidden active:scale-[0.98] transition-transform"
-                style={{
-                  background: 'linear-gradient(180deg, #3A8AE3 0%, #2B7BD4 25%, #1F66B5 50%, #0F3E7A 100%)',
-                  borderRadius: '10px',
-                  boxShadow: `
-                    inset 0 1px 0 rgba(255,255,255,0.3),
-                    inset 0 -2px 6px rgba(0,0,0,0.2),
-                    0 4px 12px rgba(15,62,122,0.35),
-                    0 0 0 2px rgba(255,255,255,0.1)
-                  `,
-                }}
+                className="group inline-flex items-center justify-center min-h-[44px] px-5 py-2.5 md:min-h-[48px] md:px-6 md:py-3.5 font-display text-xs md:text-lg uppercase tracking-wide text-white rounded-full active:scale-[0.97] transition-all border border-white/30 bg-white/10 backdrop-blur-sm hover:bg-white/20"
               >
-                {/* Chrome border effect */}
-                <span 
-                  className="absolute inset-0 rounded-[10px] pointer-events-none"
-                  style={{
-                    background: 'linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 50%, rgba(0,0,0,0.1) 100%)',
-                  }}
-                />
-                <span className="relative z-10 drop-shadow-md">MARKEDSPLASS</span>
-                <Car className="relative z-10 w-3.5 h-3.5 md:w-5 md:h-5 ml-2 group-hover:scale-110 transition-transform drop-shadow-md" />
+                <span className="drop-shadow-sm">Markedsplass</span>
+                <Car className="w-3.5 h-3.5 md:w-5 md:h-5 ml-1.5 group-hover:scale-110 transition-transform" />
               </Link>
             </div>
           </div>
