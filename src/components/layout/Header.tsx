@@ -333,7 +333,7 @@ export function Header() {
           {/* Garage with parked car - shows after animation or on non-home pages */}
           {!isHome && (
             <div className={`hidden lg:flex items-center mx-4 flex-shrink-0 ${isDrivingToGarage ? 'animate-fade-in' : ''}`}>
-              <GarageIcon size={48} />
+              <GarageIcon size={48} animate={isDrivingToGarage} />
             </div>
           )}
 

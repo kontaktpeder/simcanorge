@@ -1,18 +1,57 @@
+import { useEffect, useRef, useState } from "react";
 import simcaRallye from "@/assets/simca-rallye-yellow.png";
 
 interface GarageIconProps {
   className?: string;
   size?: number;
+  animate?: boolean;
 }
 
-export function GarageIcon({ className = "", size = 40 }: GarageIconProps) {
+export function GarageIcon({ className = "", size = 40, animate = false }: GarageIconProps) {
   const aspectRatio = 72 / 48;
   const width = size * aspectRatio;
+  const carRef = useRef<HTMLImageElement>(null);
+  const [animDone, setAnimDone] = useState(false);
+
+  useEffect(() => {
+    if (!animate || animDone) return;
+    const car = carRef.current;
+    if (!car) return;
+
+    // Start off-screen left, drive into center
+    const startX = -(size * 1.2);
+    const endX = 0;
+    const duration = 800;
+    let start: number | null = null;
+
+    car.style.transform = `translateX(${startX}px)`;
+    car.style.opacity = "1";
+
+    const step = (ts: number) => {
+      if (start === null) start = ts;
+      const elapsed = ts - start;
+      const progress = Math.min(elapsed / duration, 1);
+      // Ease out cubic
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const x = startX + (endX - startX) * eased;
+      car.style.transform = `translateX(${x}px)`;
+
+      if (progress < 1) {
+        requestAnimationFrame(step);
+      } else {
+        setAnimDone(true);
+      }
+    };
+
+    // Small delay before animation starts
+    const timeout = setTimeout(() => requestAnimationFrame(step), 300);
+    return () => clearTimeout(timeout);
+  }, [animate, animDone, size]);
 
   return (
     <div
       className={`relative flex items-end justify-center flex-shrink-0 ${className}`}
-      style={{ width: `${width}px`, height: `${size}px` }}
+      style={{ width: `${width}px`, height: `${size}px`, overflow: 'hidden' }}
     >
       <svg viewBox="0 0 72 48" fill="none" className="absolute inset-0 w-full h-full">
         <rect x="4" y="16" width="64" height="32" rx="2" fill="#F5F0E6" stroke="#1B3A5C" strokeWidth="2.5" />
@@ -28,6 +67,7 @@ export function GarageIcon({ className = "", size = 40 }: GarageIconProps) {
         <circle cx="62.5" cy="23" r="1" fill="#EAB308" opacity="0.7" />
       </svg>
       <img
+        ref={carRef}
         src={simcaRallye}
         alt=""
         className="object-contain relative z-10"
@@ -35,6 +75,7 @@ export function GarageIcon({ className = "", size = 40 }: GarageIconProps) {
           height: `${size * 0.5}px`,
           marginBottom: `${size * 0.04}px`,
           filter: 'saturate(1.4) brightness(1.1)',
+          opacity: animate && !animDone ? '0' : '1',
         }}
       />
     </div>
