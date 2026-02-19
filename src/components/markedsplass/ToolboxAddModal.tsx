@@ -8,6 +8,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Send, ShoppingBag } from "lucide-react";
 import toolboxIcon from "@/assets/toolbox-blue.png";
+import { SafeAssetImage } from "@/components/ui/SafeAssetImage";
 
 interface ToolboxAddModalProps {
   open: boolean;
@@ -29,7 +30,7 @@ export function ToolboxAddModal({
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-3 font-display text-xl">
-            <img src={toolboxIcon} alt="" className="h-10 w-auto" />
+            <SafeAssetImage src={toolboxIcon} alt="" className="h-10 w-auto" />
             Lagt til i verktøykassen
           </DialogTitle>
         </DialogHeader>
