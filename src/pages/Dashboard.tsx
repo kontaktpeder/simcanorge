@@ -303,7 +303,7 @@ export default function Dashboard() {
             {profileNeedsAttention && (
               <div className="absolute top-0 left-0 right-0 h-1.5" style={{ background: 'hsl(2, 85%, 40%)' }} />
             )}
-            <div className="absolute top-4 right-4 opacity-60"><GarageIcon size={40} /></div>
+            
             <p className="font-display text-sm uppercase tracking-wider text-muted-foreground mb-5">
               Profil
             </p>
