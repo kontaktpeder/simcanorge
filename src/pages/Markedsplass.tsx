@@ -299,10 +299,10 @@ export default function Markedsplass() {
             />
             <div className="container mx-auto px-4 py-12 md:py-20 relative z-10">
               <div className="text-center mb-10">
-                <p className="font-display text-[10px] md:text-xs uppercase tracking-[0.4em] text-foreground/40 mb-2">
+                <p className="font-display text-xs md:text-sm uppercase tracking-[0.4em] text-foreground/40 mb-2">
                   Simca · Talbot · Matra
                 </p>
-                <h2 className="font-display text-2xl md:text-4xl uppercase tracking-wider">
+                <h2 className="font-display text-3xl md:text-5xl uppercase tracking-wider">
                   Velg kategori
                 </h2>
               </div>
@@ -326,11 +326,11 @@ export default function Markedsplass() {
                           <div className="text-foreground/30 mb-4">
                             {TYPE_ICONS[type.id]}
                           </div>
-                          <h3 className="font-display text-xl md:text-2xl uppercase tracking-wider text-foreground/40">
+                          <h3 className="font-display text-2xl md:text-3xl uppercase tracking-wider text-foreground/40">
                             {type.label}
                           </h3>
                           {type.lockedMessage && (
-                            <p className="font-serif italic text-xs text-foreground/30 mt-2">
+                            <p className="font-serif italic text-sm md:text-base text-foreground/30 mt-3">
                               {type.lockedMessage}
                             </p>
                           )}
@@ -348,11 +348,11 @@ export default function Markedsplass() {
                           <div className="text-foreground/60 group-hover:text-foreground transition-colors mb-4">
                             {TYPE_ICONS[type.id]}
                           </div>
-                          <h3 className="font-display text-xl md:text-2xl uppercase tracking-wider group-hover:text-primary transition-colors">
+                          <h3 className="font-display text-2xl md:text-3xl uppercase tracking-wider group-hover:text-primary transition-colors">
                             {type.label}
                           </h3>
                           {type.description && (
-                            <p className="font-serif italic text-xs text-foreground/40 mt-2">
+                            <p className="font-serif italic text-sm md:text-base text-foreground/40 mt-3">
                               {type.description}
                             </p>
                           )}
