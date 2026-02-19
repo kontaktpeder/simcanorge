@@ -400,7 +400,7 @@ export function Header() {
                     <Link
                       to="/dashboard"
                       onClick={() => markLeavingHome("/dashboard")}
-                      className="relative p-0 hover:bg-muted/60 rounded-lg transition-colors ml-1 flex items-end self-stretch"
+                      className="relative p-0 hover:bg-muted/60 rounded-lg transition-colors ml-3 flex items-end self-stretch"
                     >
                       <GarageIcon size={52} animate={isDrivingToGarage} hideCar={isHome} />
                     </Link>
