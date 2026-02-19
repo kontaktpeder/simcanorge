@@ -161,29 +161,6 @@ export function DelerAnnonseForm({
         />
       </div>
 
-      {/* Hovedkategori (tabs) — hidden when forceRootId is set */}
-      {roots.length > 1 && !forceRootId && (
-        <div>
-          <Label>Type</Label>
-          <div className="flex gap-2 mt-1">
-            {roots.map((r) => (
-              <button
-                key={r.id}
-                type="button"
-                onClick={() => handleRootChange(r.id)}
-                disabled={disabled}
-                className={`px-4 py-2 rounded-lg text-sm font-medium border transition-colors ${
-                  values.rootCategoryId === r.id
-                    ? 'bg-primary text-primary-foreground border-primary'
-                    : 'bg-card text-foreground border-border hover:border-primary/30'
-                } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
-              >
-                {r.name}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
 
       {/* Hovedkategori */}
       {midLevel.length > 0 && (
