@@ -334,34 +334,33 @@ export function Header() {
             <div className={`hidden lg:flex items-center mx-4 flex-shrink-0 ${isDrivingToGarage ? 'animate-fade-in' : ''}`}>
               <div 
                 className="relative flex items-end justify-center flex-shrink-0"
-                style={{
-                  width: '52px',
-                  height: '36px',
-                }}
+                style={{ width: '72px', height: '48px' }}
               >
-                {/* Garage portal - flat arch shape */}
-                <svg viewBox="0 0 52 36" fill="none" className="absolute inset-0 w-full h-full">
-                  {/* Portal outline */}
-                  <path 
-                    d="M4 36 V10 Q4 4 10 4 H42 Q48 4 48 10 V36" 
-                    stroke="hsl(var(--foreground))" 
-                    strokeWidth="2" 
-                    fill="hsl(var(--muted) / 0.3)"
-                    strokeLinecap="round"
-                  />
-                  {/* Subtle vertical door lines */}
-                  <line x1="18" y1="8" x2="18" y2="36" stroke="hsl(var(--foreground) / 0.15)" strokeWidth="0.75" />
-                  <line x1="26" y1="6" x2="26" y2="36" stroke="hsl(var(--foreground) / 0.15)" strokeWidth="0.75" />
-                  <line x1="34" y1="8" x2="34" y2="36" stroke="hsl(var(--foreground) / 0.15)" strokeWidth="0.75" />
-                  {/* Floor line accent */}
-                  <line x1="8" y1="34" x2="44" y2="34" stroke="hsl(var(--primary))" strokeWidth="1.5" strokeLinecap="round" opacity="0.6" />
+                <svg viewBox="0 0 72 48" fill="none" className="absolute inset-0 w-full h-full">
+                  {/* Garage building - cream walls */}
+                  <rect x="4" y="16" width="64" height="32" rx="2" fill="#F5F0E6" stroke="#1B3A5C" strokeWidth="2.5" />
+                  {/* Peaked roof */}
+                  <path d="M2 18 L36 4 L70 18" stroke="#1B3A5C" strokeWidth="2.5" fill="#1B3A5C" strokeLinejoin="round" />
+                  {/* Garage opening */}
+                  <rect x="14" y="20" width="44" height="28" rx="2" fill="#D6DEE8" stroke="#1B3A5C" strokeWidth="2" />
+                  {/* Hanging lamp */}
+                  <line x1="36" y1="8" x2="36" y2="14" stroke="#1B3A5C" strokeWidth="1.5" />
+                  <path d="M32 14 Q36 17 40 14" stroke="#1B3A5C" strokeWidth="1.5" fill="none" />
+                  <circle cx="36" cy="15" r="1.5" fill="#EAB308" />
+                  {/* Yellow floor accent */}
+                  <line x1="16" y1="46" x2="56" y2="46" stroke="#EAB308" strokeWidth="2" strokeLinecap="round" />
+                  {/* Side lanterns */}
+                  <rect x="8" y="22" width="3" height="5" rx="0.5" fill="#1B3A5C" opacity="0.5" />
+                  <circle cx="9.5" cy="23" r="1" fill="#EAB308" opacity="0.7" />
+                  <rect x="61" y="22" width="3" height="5" rx="0.5" fill="#1B3A5C" opacity="0.5" />
+                  <circle cx="62.5" cy="23" r="1" fill="#EAB308" opacity="0.7" />
                 </svg>
-                {/* Car silhouette */}
+                {/* Yellow Simca Rallye car - large and prominent */}
                 <img 
                   src={simcaRallye} 
                   alt="Parkert Simca" 
-                  className="h-[18px] w-auto object-contain relative z-10 mb-[3px] opacity-80"
-                  style={{ filter: 'saturate(0.3) brightness(0.7)' }}
+                  className="h-[24px] w-auto object-contain relative z-10 mb-[2px]"
+                  style={{ filter: 'saturate(1.4) brightness(1.1)' }}
                 />
               </div>
             </div>
