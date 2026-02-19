@@ -53,6 +53,15 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
     setMobileMenuOpen(false);
   }, [location.pathname]);
 
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [mobileMenuOpen]);
+
   const handleSignOut = async () => {
     await signOut();
     navigate("/admin/login");
@@ -89,7 +98,7 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
 
       {/* Mobile Menu Overlay */}
       {mobileMenuOpen && (
-        <div className="md:hidden fixed inset-0 top-14 z-40 bg-metal-blue text-white animate-fade-in">
+        <div className="md:hidden fixed inset-0 top-14 z-40 bg-metal-blue text-white animate-fade-in overflow-hidden">
           <nav className="p-4">
             <ul className="space-y-1">
               {navItems.map((item) => {
