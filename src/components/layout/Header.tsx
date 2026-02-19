@@ -456,7 +456,7 @@ export function Header() {
                     className="relative p-1.5 hover:bg-muted/60 rounded-lg transition-colors ml-1"
                     aria-label="Min verktøykasse"
                   >
-                    <img src={toolboxIcon} alt="Verktøykasse" className="h-10 w-auto object-contain" />
+                    <img src={toolboxIcon} alt="Verktøykasse" className="h-10 w-auto object-contain" onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = '/toolbox-blue.png'; }} />
                     {itemCount > 0 && (
                       <span className="absolute -top-0.5 -right-0.5 bg-accent text-accent-foreground w-4 h-4 rounded-full text-[10px] font-display flex items-center justify-center shadow-md">
                         {itemCount}
@@ -535,7 +535,7 @@ export function Header() {
               className="relative p-1.5 hover:bg-muted/50 rounded-lg transition-colors"
               aria-label="Min verktøykasse"
             >
-              <img src={toolboxIcon} alt="Verktøykasse" className="h-10 w-auto object-contain" />
+              <img src={toolboxIcon} alt="Verktøykasse" className="h-10 w-auto object-contain" onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = '/toolbox-blue.png'; }} />
               {itemCount > 0 && (
                 <span className="absolute -top-0.5 -right-0.5 bg-accent text-accent-foreground w-4 h-4 rounded-full text-[10px] font-display flex items-center justify-center shadow-md">
                   {itemCount}
