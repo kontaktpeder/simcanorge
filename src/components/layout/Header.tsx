@@ -578,13 +578,16 @@ export function Header() {
             >
               <div className="relative">
                 <div className="absolute left-full ml-2 top-1 flex gap-1">
-                  <div className={`w-2 h-2 md:w-3 md:h-3 bg-gray-400/50 rounded-full animate-smoke-1 blur-[1px] ${isSpeedBoost ? 'scale-125' : ''}`} />
-                  <div className={`w-1.5 h-1.5 md:w-2 md:h-2 bg-gray-400/40 rounded-full animate-smoke-2 blur-[1px] ml-1 ${isSpeedBoost ? 'scale-125' : ''}`} />
-                  <div className={`w-2.5 h-2.5 md:w-3.5 md:h-3.5 bg-gray-400/30 rounded-full animate-smoke-3 blur-[2px] ml-1 ${isSpeedBoost ? 'scale-125' : ''}`} />
+                  <div className={`w-2.5 h-2.5 md:w-3.5 md:h-3.5 bg-gray-400/50 rounded-full animate-smoke-1 blur-[1px] ${isSpeedBoost ? 'scale-150' : ''}`} />
+                  <div className={`w-2 h-2 md:w-3 md:h-3 bg-gray-400/40 rounded-full animate-smoke-2 blur-[1px] ml-0.5 ${isSpeedBoost ? 'scale-150' : ''}`} />
+                  <div className={`w-3 h-3 md:w-4 md:h-4 bg-gray-400/30 rounded-full animate-smoke-3 blur-[2px] ml-0.5 ${isSpeedBoost ? 'scale-150' : ''}`} />
+                  <div className={`w-2 h-2 md:w-3 md:h-3 bg-gray-300/35 rounded-full animate-smoke-4 blur-[1px] ml-0.5 ${isSpeedBoost ? 'scale-150' : ''}`} />
+                  <div className={`w-1.5 h-1.5 md:w-2.5 md:h-2.5 bg-gray-300/25 rounded-full animate-smoke-1 blur-[2px] ml-1 ${isSpeedBoost ? 'scale-150' : ''}`} />
                   {isSpeedBoost && (
                     <>
-                      <div className="w-2 h-2 md:w-3 md:h-3 bg-gray-300/40 rounded-full animate-smoke-4 blur-[1px] ml-1" />
-                      <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-gray-300/30 rounded-full animate-smoke-1 blur-[1px] ml-0.5" />
+                      <div className="w-3 h-3 md:w-4 md:h-4 bg-gray-300/40 rounded-full animate-smoke-4 blur-[2px] ml-0.5" />
+                      <div className="w-2.5 h-2.5 md:w-3.5 md:h-3.5 bg-gray-300/30 rounded-full animate-smoke-2 blur-[2px] ml-0.5" />
+                      <div className="w-2 h-2 md:w-3 md:h-3 bg-gray-200/25 rounded-full animate-smoke-3 blur-[3px] ml-0.5" />
                     </>
                   )}
                 </div>
@@ -611,13 +614,21 @@ export function Header() {
                 <div className="absolute bottom-0.5 right-[22%] w-2 h-2 md:w-2.5 md:h-2.5 rounded-full border border-dashed border-gray-600/40 animate-wheel-spin" />
                 
                 {/* Dust clouds behind wheels */}
-                <div className="absolute -bottom-0.5 left-[10%] flex gap-0.5">
-                  <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-amber-200/40 rounded-full animate-dust-1 blur-[1px]" />
-                  <div className="w-1 h-1 md:w-1.5 md:h-1.5 bg-amber-200/30 rounded-full animate-dust-2 blur-[1px]" />
+                {/* Dust clouds behind wheels */}
+                <div className="absolute -bottom-0.5 left-[8%] flex gap-0.5">
+                  <div className="w-2 h-2 md:w-2.5 md:h-2.5 bg-amber-200/40 rounded-full animate-dust-1 blur-[1px]" />
+                  <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-amber-200/30 rounded-full animate-dust-2 blur-[1px]" />
+                  <div className="w-1 h-1 md:w-1.5 md:h-1.5 bg-amber-100/25 rounded-full animate-dust-3 blur-[2px]" />
                 </div>
-                <div className="absolute -bottom-0.5 right-[15%] flex gap-0.5">
-                  <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-amber-200/40 rounded-full animate-dust-3 blur-[1px]" />
-                  <div className="w-1 h-1 md:w-1.5 md:h-1.5 bg-amber-200/30 rounded-full animate-dust-1 blur-[1px]" />
+                <div className="absolute -bottom-0.5 right-[12%] flex gap-0.5">
+                  <div className="w-2 h-2 md:w-2.5 md:h-2.5 bg-amber-200/40 rounded-full animate-dust-3 blur-[1px]" />
+                  <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-amber-200/30 rounded-full animate-dust-1 blur-[1px]" />
+                  <div className="w-1 h-1 md:w-1.5 md:h-1.5 bg-amber-100/25 rounded-full animate-dust-2 blur-[2px]" />
+                </div>
+                {/* Extra ground dust */}
+                <div className="absolute -bottom-1 left-[25%] flex gap-1">
+                  <div className="w-1 h-1 md:w-1.5 md:h-1.5 bg-gray-400/20 rounded-full animate-dust-2 blur-[2px]" />
+                  <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-gray-400/15 rounded-full animate-dust-3 blur-[2px]" />
                 </div>
               </div>
             </div>
