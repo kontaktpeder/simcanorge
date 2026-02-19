@@ -25,6 +25,8 @@ interface DelerAnnonseFormProps {
   children?: React.ReactNode;
   disabled?: boolean;
   profileLocation?: string | null;
+  forceRootId?: string;
+  carModelRequired?: boolean;
 }
 
 export function DelerAnnonseForm({
@@ -39,6 +41,8 @@ export function DelerAnnonseForm({
   children,
   disabled = false,
   profileLocation,
+  forceRootId,
+  carModelRequired = false,
 }: DelerAnnonseFormProps) {
   const { data: categories = [] } = useUnifiedCategories();
   const roots = getRootCategories(categories);
@@ -80,12 +84,16 @@ export function DelerAnnonseForm({
     }
   };
 
-  // Auto-select first root when categories load
+  // Auto-select root: forceRootId takes priority, else first root
   useEffect(() => {
-    if (roots.length > 0 && !values.rootCategoryId) {
+    if (forceRootId) {
+      if (values.rootCategoryId !== forceRootId) {
+        setValues((v) => ({ ...v, rootCategoryId: forceRootId }));
+      }
+    } else if (roots.length > 0 && !values.rootCategoryId) {
       setValues((v) => ({ ...v, rootCategoryId: roots[0].id }));
     }
-  }, [roots.length]);
+  }, [roots.length, forceRootId]);
 
   // Resolve rootCategoryId from categoryId if initialValues provided a categoryId
   useEffect(() => {
@@ -139,6 +147,9 @@ export function DelerAnnonseForm({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!values.title.trim()) return;
+    if (carModelRequired && !values.carBrand?.trim()) {
+      return; // require at least brand
+    }
     await onSubmit(values);
   };
 
@@ -160,8 +171,8 @@ export function DelerAnnonseForm({
         />
       </div>
 
-      {/* Hovedkategori (tabs) */}
-      {roots.length > 1 && (
+      {/* Hovedkategori (tabs) — hidden when forceRootId is set */}
+      {roots.length > 1 && !forceRootId && (
         <div>
           <Label>Type</Label>
           <div className="flex gap-2 mt-1">
@@ -211,9 +222,8 @@ export function DelerAnnonseForm({
         />
       </div>
 
-      {/* Passer til bil */}
       <div>
-        <Label>Passer til bil (valgfritt)</Label>
+        <Label>Passer til bil {carModelRequired ? '*' : '(valgfritt)'}</Label>
         <p className="text-xs text-muted-foreground mb-2">Angi hvilken bil delen passer til</p>
         <CarFormFields
           formData={carFields}
