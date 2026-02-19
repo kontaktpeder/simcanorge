@@ -30,11 +30,9 @@ export default function Markedsplass() {
 
   const { data: allCategories = [] } = useUnifiedCategories();
 
-  // Determine feed filter from side panel state
   const feedFilter = useMemo(() => {
     if (filterState.categoryId) return filterState.categoryId;
     if (filterState.rootCategoryId) {
-      // Get all descendant category IDs under the root
       const descendants = getAllDescendants(allCategories, filterState.rootCategoryId);
       const ids = [filterState.rootCategoryId, ...descendants.map((d) => d.id)];
       return ids;
@@ -48,22 +46,21 @@ export default function Markedsplass() {
   );
   const { items: cartItems, addItem, removeItem, isInCart, itemCount } = useCart();
 
-  // Client-side filtering for price, condition
   const filteredItems = useMemo(() => {
     let items = feedItems || [];
     if (filterState.priceMin) {
       const min = Number(filterState.priceMin);
       items = items.filter((item) => {
         if (!item.price) return false;
-        const numericPrice = parseInt(item.price.replace(/[^\d]/g, ''), 10);
+        const numericPrice = parseInt(item.price.replace(/[^\\d]/g, ''), 10);
         return !isNaN(numericPrice) && numericPrice >= min;
       });
     }
     if (filterState.priceMax) {
       const max = Number(filterState.priceMax);
       items = items.filter((item) => {
-        if (!item.price) return true; // include items without price
-        const numericPrice = parseInt(item.price.replace(/[^\d]/g, ''), 10);
+        if (!item.price) return true;
+        const numericPrice = parseInt(item.price.replace(/[^\\d]/g, ''), 10);
         return !isNaN(numericPrice) && numericPrice <= max;
       });
     }
@@ -100,11 +97,6 @@ export default function Markedsplass() {
         <title>Markedsplass | Simca Norge</title>
         <meta name="description" content="Kjøp og selg deler, tilbehør og biler fra Simca-entusiaster i Norge." />
       </Helmet>
-
-      <PageHeader
-        title="MARKEDSPLASS"
-        subtitle="Bildeler, tilbehør og annonser fra Simca, Talbot og Matra-entusiaster"
-      />
 
       {/* Toolbox Banner */}
       {itemCount > 0 && (
@@ -148,7 +140,7 @@ export default function Markedsplass() {
         </div>
       )}
 
-      {/* Main content: sidebar + listings side by side, contained in viewport */}
+      {/* Main content: sidebar + feed in viewport-height container */}
       <div className="flex relative lg:h-[calc(100vh-4rem)] lg:overflow-hidden">
         {/* Side Panel — fixed height, own scroll */}
         <div className={`shrink-0 transition-all duration-300 ${sidePanelOpen ? 'lg:w-[300px]' : 'lg:w-0'}`}>
@@ -167,8 +159,13 @@ export default function Markedsplass() {
           </div>
         </div>
 
-        {/* Listing area — scrolls independently */}
+        {/* Feed area — scrolls independently, header + gallery + CTA all inside */}
         <div className="flex-1 min-w-0 lg:overflow-y-auto">
+          <PageHeader
+            title="MARKEDSPLASS"
+            subtitle="Bildeler, tilbehør og annonser fra Simca, Talbot og Matra-entusiaster"
+          />
+
           {isLoading ? (
             <div className="flex flex-col items-center justify-center py-32 gap-4">
               <img src={toolboxIcon} alt="" className="w-16 h-16 object-contain animate-pulse" />
@@ -209,31 +206,31 @@ export default function Markedsplass() {
               </div>
             </section>
           )}
+
+          {/* Bottom CTA — scrolls with feed */}
+          <section className="relative overflow-hidden" style={{ background: "hsl(212, 80%, 15%)" }}>
+            <div className="absolute top-0 left-0 right-0 h-1" style={{ background: "hsl(2, 85%, 40%)" }} />
+            <div className="container mx-auto px-4 py-12 md:py-20 text-center relative z-10">
+              <p className="font-display text-[10px] md:text-xs uppercase tracking-[0.4em] text-white/40 mb-3">
+                Simca · Talbot · Matra
+              </p>
+              <h2 className="font-display text-3xl md:text-5xl lg:text-6xl text-white uppercase tracking-wider leading-none mb-4">
+                Fant du ikke<br />det du lette etter?
+              </h2>
+              <p className="font-serif text-sm md:text-lg italic text-white/60 max-w-md mx-auto mb-8">
+                Ta kontakt med oss — vi hjelper deg gjerne med å finne riktige deler.
+              </p>
+              <Link
+                to="/kontakt"
+                className="group inline-flex items-center gap-3 px-10 py-4 md:px-14 md:py-5 font-display text-sm md:text-base uppercase tracking-[0.2em] border-2 border-white/30 text-white hover:border-white hover:bg-white/5 transition-all"
+              >
+                Kontakt oss
+                <ChevronRight className="w-5 h-5 opacity-50 group-hover:translate-x-1 transition-transform" />
+              </Link>
+            </div>
+          </section>
         </div>
       </div>
-
-      {/* Bottom CTA — grand editorial block */}
-      <section className="relative overflow-hidden" style={{ background: "hsl(212, 80%, 15%)" }}>
-        <div className="absolute top-0 left-0 right-0 h-1" style={{ background: "hsl(2, 85%, 40%)" }} />
-        <div className="container mx-auto px-4 py-12 md:py-20 text-center relative z-10">
-          <p className="font-display text-[10px] md:text-xs uppercase tracking-[0.4em] text-white/40 mb-3">
-            Simca · Talbot · Matra
-          </p>
-          <h2 className="font-display text-3xl md:text-5xl lg:text-6xl text-white uppercase tracking-wider leading-none mb-4">
-            Fant du ikke<br />det du lette etter?
-          </h2>
-          <p className="font-serif text-sm md:text-lg italic text-white/60 max-w-md mx-auto mb-8">
-            Ta kontakt med oss — vi hjelper deg gjerne med å finne riktige deler.
-          </p>
-          <Link
-            to="/kontakt"
-            className="group inline-flex items-center gap-3 px-10 py-4 md:px-14 md:py-5 font-display text-sm md:text-base uppercase tracking-[0.2em] border-2 border-white/30 text-white hover:border-white hover:bg-white/5 transition-all"
-          >
-            Kontakt oss
-            <ChevronRight className="w-5 h-5 opacity-50 group-hover:translate-x-1 transition-transform" />
-          </Link>
-        </div>
-      </section>
     </Layout>
   );
 }
