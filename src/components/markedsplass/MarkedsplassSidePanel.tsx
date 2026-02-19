@@ -127,13 +127,11 @@ export function MarkedsplassSidePanel({
       <aside
         className={cn(
           'shrink-0 z-40 border-r-2 border-foreground/10 overflow-y-auto transition-all duration-300',
-          // Both mobile and desktop: fixed to viewport
-          'fixed top-0 left-0 h-full',
-          // Desktop: start below header
-          'lg:top-16 lg:h-[calc(100vh-4rem)] lg:z-30',
+          // Mobile: fixed overlay
+          'fixed top-0 left-0 h-full lg:static lg:h-auto',
           open
             ? 'w-[300px] translate-x-0'
-            : 'w-0 -translate-x-full',
+            : 'w-0 -translate-x-full lg:w-0 lg:-translate-x-full',
         )}
         style={{ background: 'hsl(42, 30%, 95%)' }}
       >
