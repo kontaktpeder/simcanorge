@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
-import { Layout } from '@/components/layout/Layout';
+import { Header } from '@/components/layout/Header';
+import { Footer } from '@/components/layout/Footer';
 import { ArrowLeft } from 'lucide-react';
 import { GarageIcon } from '@/components/ui/GarageIcon';
 import garageBackground from '@/assets/garage-background.jpg';
@@ -32,8 +33,11 @@ export function GarageLayout({
   backLabel = 'Tilbake',
 }: GarageLayoutProps) {
   return (
-    <Layout>
-      <div className="relative min-h-[calc(100vh-80px)] min-h-[calc(100dvh-80px)]">
+    <div className="h-screen h-[100dvh] flex flex-col overflow-hidden">
+      <Header />
+      
+      {/* Scrollable content + footer */}
+      <div className="flex-1 overflow-y-auto overflow-x-hidden relative">
         {/* Bakgrunnsbilde */}
         <div
           className="fixed inset-0 bg-cover bg-center bg-no-repeat -z-10 will-change-transform"
@@ -47,7 +51,7 @@ export function GarageLayout({
         <div className="fixed inset-0 bg-background/70 -z-10 will-change-transform" />
         
         {/* Innhold */}
-        <div className="container px-4 sm:px-6 py-8 sm:py-12 animate-fade-in pb-safe">
+        <main className="container px-4 sm:px-6 py-8 sm:py-12 animate-fade-in pb-safe min-h-[calc(100dvh-140px)]">
           {/* Header */}
           <div className="max-w-4xl mx-auto mb-8 sm:mb-12">
             {showBackButton && (
@@ -94,8 +98,10 @@ export function GarageLayout({
           <div className="max-w-4xl mx-auto">
             {children}
           </div>
-        </div>
+        </main>
+        
+        <Footer />
       </div>
-    </Layout>
+    </div>
   );
 }
