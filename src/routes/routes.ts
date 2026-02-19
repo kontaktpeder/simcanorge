@@ -66,6 +66,7 @@ export const routes: RouteConfig[] = [
   { path: "/", element: Index, label: "Hjem", description: "Tilbake til forsiden", icon: Home, isPublic: true, showInNav: true },
   { path: "/manedens-bil", element: ManedensBil, label: "Månedens bil", description: "Se denne månedens utvalgte Simca", icon: Star, glow: true, isPublic: true, showInNav: true },
   { path: "/biler", element: Biler, label: "Biler", description: "Utforsk Simca-biler og historier", icon: Car, isPublic: true, showInNav: true },
+  { path: "/markedsplass/:branch", element: Markedsplass, isPublic: true },
   { path: "/markedsplass", element: Markedsplass, label: "Markedsplass", description: "Deler, tilbehør og annonser", icon: ShoppingBag, isPublic: true, showInNav: true },
   { path: "/send-inn", element: SendInnBil, label: "Del din bil", description: "Del din bil med oss", icon: Send, isPublic: true, showInNav: true },
   { path: "/historie", element: Historie, label: "Historie", description: "Lær om Simcas rike historie", icon: BookOpen, isPublic: true, showInNav: true },
