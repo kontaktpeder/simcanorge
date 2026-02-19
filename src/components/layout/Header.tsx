@@ -49,9 +49,9 @@ const DriveHomeAnimation = forwardRef<HTMLDivElement, {
   const trackPointsRef = useRef<number[]>([]);
   const [tracks, setTracks] = useState<number[]>([]);
 
-  const TOTAL_DURATION = 1600; // ms total
-  const PHASE1_DURATION = 700; // ms - drive left on road until off-screen
-  const PHASE2_DURATION = 900; // ms - appear under logo and drive into garage
+  const TOTAL_DURATION = 2200; // ms total
+  const PHASE1_DURATION = 1000; // ms - drive left on road until off-screen
+  const PHASE2_DURATION = 1200; // ms - appear under logo and drive into garage
   const GARAGE_LEFT_SM = 120;
   const GARAGE_LEFT_MD = 160;
 
@@ -80,7 +80,9 @@ const DriveHomeAnimation = forwardRef<HTMLDivElement, {
       if (elapsed < PHASE1_DURATION) {
         // Phase 1: Drive left on the road until off-screen
         const phase1Progress = elapsed / PHASE1_DURATION;
-        const eased = 1 - Math.pow(1 - phase1Progress, 2);
+        const eased = phase1Progress < 0.5
+          ? 2 * phase1Progress * phase1Progress
+          : 1 - Math.pow(-2 * phase1Progress + 2, 2) / 2;
         currentX = initialX + (offScreenX - initialX) * eased;
         currentY = 0;
         
@@ -107,7 +109,9 @@ const DriveHomeAnimation = forwardRef<HTMLDivElement, {
         // Show garage when phase 2 starts
         if (!showGarage) setShowGarage(true);
         
-        const eased = 1 - Math.pow(1 - phase2Progress, 3);
+        const eased = phase2Progress < 0.5
+          ? 4 * phase2Progress * phase2Progress * phase2Progress
+          : 1 - Math.pow(-2 * phase2Progress + 2, 3) / 2;
         
         currentX = startPhase2X + (garageX - startPhase2X) * eased;
         currentY = logoAreaY; // Stay at logo level
@@ -168,7 +172,7 @@ const DriveHomeAnimation = forwardRef<HTMLDivElement, {
           <img 
             src={simcaRallye} 
             alt="Simca Rallye" 
-            className="h-[22px] md:h-[34px] w-auto object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]"
+            className="h-[32px] md:h-[42px] w-auto object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]"
           />
           {/* Wheel spin effect */}
           <div className="absolute bottom-0.5 left-[18%] w-2 h-2 md:w-2.5 md:h-2.5 rounded-full border border-dashed border-gray-600/40 animate-wheel-spin" />
@@ -536,7 +540,7 @@ export function Header() {
       {(isHome || isDrivingToGarage) && (
         <div 
           className={`hidden sm:block relative w-full overflow-hidden transition-all duration-500 ease-out ${
-            roadFading ? 'h-0 opacity-0' : 'h-[30px] md:h-[45px] opacity-100'
+            roadFading ? 'h-0 opacity-0' : 'h-[40px] md:h-[55px] opacity-100'
           }`}
           style={{
             background: 'linear-gradient(to bottom, #3a3a3a, #2a2a2a 30%, #1f1f1f 70%, #151515)',
@@ -600,7 +604,7 @@ export function Header() {
                 <img 
                   src={simcaRallye} 
                   alt="Simca Rallye" 
-                  className="h-[22px] md:h-[34px] w-auto object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]"
+                  className="h-[32px] md:h-[42px] w-auto object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]"
                 />
                 {/* Wheel spin effect */}
                 <div className="absolute bottom-0.5 left-[18%] w-2 h-2 md:w-2.5 md:h-2.5 rounded-full border border-dashed border-gray-600/40 animate-wheel-spin" />
