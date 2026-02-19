@@ -510,7 +510,7 @@ export function Header() {
                   }}
                   className="flex items-center gap-3 font-display text-base uppercase tracking-wide py-2.5 px-4 rounded-lg bg-primary text-primary-foreground mt-2"
                 >
-                  <GarageIcon size={28} hideCar={isHome} />
+                  <GarageIcon size={48} hideCar={isHome} />
                   Gå til din garasje
                 </Link>
               ) : (
@@ -527,17 +527,6 @@ export function Header() {
                 </Link>
               )}
 
-              {/* Report problem button in mobile menu */}
-              <button
-                onClick={() => {
-                  setReportModalOpen(true);
-                  setMobileMenuOpen(false);
-                }}
-                className="flex items-center gap-3 font-display text-sm uppercase tracking-wide py-2.5 px-4 rounded-lg text-muted-foreground hover:bg-muted/30 mt-3 border-t border-border/50 pt-4"
-              >
-                <AlertTriangle className="w-5 h-5" />
-                Rapporter et problem
-              </button>
             </div>
           </nav>
         )}
