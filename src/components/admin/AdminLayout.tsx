@@ -53,14 +53,6 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
     setMobileMenuOpen(false);
   }, [location.pathname]);
 
-  useEffect(() => {
-    if (mobileMenuOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-    return () => { document.body.style.overflow = ''; };
-  }, [mobileMenuOpen]);
 
   const handleSignOut = async () => {
     await signOut();
@@ -96,9 +88,9 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
         </button>
       </header>
 
-      {/* Mobile Menu Overlay */}
-      {mobileMenuOpen && (
-        <div className="md:hidden fixed inset-0 top-14 z-40 bg-metal-blue text-white animate-fade-in overflow-hidden">
+      {/* Mobile: Full page menu OR content */}
+      {mobileMenuOpen ? (
+        <div className="md:hidden flex-1 bg-metal-blue text-white">
           <nav className="p-4">
             <ul className="space-y-1">
               {navItems.map((item) => {
@@ -145,6 +137,15 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
             </div>
           </nav>
         </div>
+      ) : (
+        <main className="md:hidden flex-1 overflow-auto bg-card">
+          <header className="bg-muted/50 border-b border-border px-4 py-4">
+            <h1 className="font-display text-xl text-foreground">{title}</h1>
+          </header>
+          <div className="p-4">
+            {children}
+          </div>
+        </main>
       )}
 
       {/* Desktop Sidebar */}
@@ -204,12 +205,12 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
         </div>
       </aside>
 
-      {/* Main Content */}
-      <main className="flex-1 overflow-auto bg-card pb-20 md:pb-0">
-        <header className="bg-muted/50 border-b border-border px-4 py-4 md:px-6 md:py-6">
-          <h1 className="font-display text-xl md:text-3xl text-foreground">{title}</h1>
+      {/* Desktop Main Content */}
+      <main className="hidden md:block flex-1 overflow-auto bg-card">
+        <header className="bg-muted/50 border-b border-border px-6 py-6">
+          <h1 className="font-display text-3xl text-foreground">{title}</h1>
         </header>
-        <div className="p-4 md:p-6">
+        <div className="p-6">
           {children}
         </div>
       </main>
