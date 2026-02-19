@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { motion } from "framer-motion";
@@ -187,16 +188,16 @@ export default function Markedsplass() {
         </div>
       </div>
 
-      {/* Main content area: sidebar + listings */}
-      <div className="flex min-h-screen">
-        {/* Side Panel */}
-        <MarkedsplassSidePanel
-          open={sidePanelOpen}
-          onOpenChange={setSidePanelOpen}
-          filterState={filterState}
-          onFilterChange={setFilterState}
-        />
+      {/* Side Panel (fixed) */}
+      <MarkedsplassSidePanel
+        open={sidePanelOpen}
+        onOpenChange={setSidePanelOpen}
+        filterState={filterState}
+        onFilterChange={setFilterState}
+      />
 
+      {/* Main content area */}
+      <div className={cn("min-h-screen transition-all duration-300", sidePanelOpen ? "lg:ml-[300px]" : "")}>
         {/* Listing */}
         <div className="flex-1 min-w-0">
           {isLoading ? (
@@ -242,29 +243,30 @@ export default function Markedsplass() {
             </section>
           )}
         </div>
+
+        {/* Bottom CTA — grand editorial block */}
+        <section className="relative overflow-hidden" style={{ background: "hsl(212, 80%, 15%)" }}>
+          <div className="absolute top-0 left-0 right-0 h-1" style={{ background: "hsl(2, 85%, 40%)" }} />
+          <div className="container mx-auto px-4 py-12 md:py-20 text-center relative z-10">
+            <p className="font-display text-[10px] md:text-xs uppercase tracking-[0.4em] text-white/40 mb-3">
+              Simca · Talbot · Matra
+            </p>
+            <h2 className="font-display text-3xl md:text-5xl lg:text-6xl text-white uppercase tracking-wider leading-none mb-4">
+              Fant du ikke<br />det du lette etter?
+            </h2>
+            <p className="font-serif text-sm md:text-lg italic text-white/60 max-w-md mx-auto mb-8">
+              Ta kontakt med oss — vi hjelper deg gjerne med å finne riktige deler.
+            </p>
+            <Link
+              to="/kontakt"
+              className="group inline-flex items-center gap-3 px-10 py-4 md:px-14 md:py-5 font-display text-sm md:text-base uppercase tracking-[0.2em] border-2 border-white/30 text-white hover:border-white hover:bg-white/5 transition-all"
+            >
+              Kontakt oss
+              <ChevronRight className="w-5 h-5 opacity-50 group-hover:translate-x-1 transition-transform" />
+            </Link>
+          </div>
+        </section>
       </div>
-      {/* Bottom CTA — grand editorial block */}
-      <section className="relative overflow-hidden" style={{ background: "hsl(212, 80%, 15%)" }}>
-        <div className="absolute top-0 left-0 right-0 h-1" style={{ background: "hsl(2, 85%, 40%)" }} />
-        <div className="container mx-auto px-4 py-12 md:py-20 text-center relative z-10">
-          <p className="font-display text-[10px] md:text-xs uppercase tracking-[0.4em] text-white/40 mb-3">
-            Simca · Talbot · Matra
-          </p>
-          <h2 className="font-display text-3xl md:text-5xl lg:text-6xl text-white uppercase tracking-wider leading-none mb-4">
-            Fant du ikke<br />det du lette etter?
-          </h2>
-          <p className="font-serif text-sm md:text-lg italic text-white/60 max-w-md mx-auto mb-8">
-            Ta kontakt med oss — vi hjelper deg gjerne med å finne riktige deler.
-          </p>
-          <Link
-            to="/kontakt"
-            className="group inline-flex items-center gap-3 px-10 py-4 md:px-14 md:py-5 font-display text-sm md:text-base uppercase tracking-[0.2em] border-2 border-white/30 text-white hover:border-white hover:bg-white/5 transition-all"
-          >
-            Kontakt oss
-            <ChevronRight className="w-5 h-5 opacity-50 group-hover:translate-x-1 transition-transform" />
-          </Link>
-        </div>
-      </section>
     </Layout>
   );
 }
