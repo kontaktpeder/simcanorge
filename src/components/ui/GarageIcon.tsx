@@ -65,12 +65,28 @@ export function GarageIcon({ className = "", size = 40, animate = false, hideCar
         <rect x="10" y="20" width="76" height="28" rx="2" fill="#D6DEE8" stroke="#1B3A5C" strokeWidth="2" />
         <line x1="48" y1="8" x2="48" y2="14" stroke="#1B3A5C" strokeWidth="1.5" />
         <path d="M44 14 Q48 17 52 14" stroke="#1B3A5C" strokeWidth="1.5" fill="none" />
-        <circle cx="48" cy="15" r="1.5" fill="#EAB308" />
+        <defs>
+          <radialGradient id="lampGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="#FBBF24" stopOpacity="1" />
+            <stop offset="50%" stopColor="#EAB308" stopOpacity="0.6" />
+            <stop offset="100%" stopColor="#EAB308" stopOpacity="0" />
+          </radialGradient>
+        </defs>
+        {/* Top lantern glow */}
+        <circle cx="48" cy="15" r="4" fill="url(#lampGlow)" />
+        <circle cx="48" cy="15" r="1.8" fill="#FDE68A" />
+        <circle cx="48" cy="15" r="1" fill="#FFFBEB" />
         <line x1="12" y1="46" x2="84" y2="46" stroke="#EAB308" strokeWidth="2" strokeLinecap="round" />
+        {/* Left wall lamp */}
         <rect x="6" y="22" width="3" height="5" rx="0.5" fill="#1B3A5C" opacity="0.5" />
-        <circle cx="7.5" cy="23" r="1" fill="#EAB308" opacity="0.7" />
+        <circle cx="7.5" cy="23" r="3.5" fill="url(#lampGlow)" />
+        <circle cx="7.5" cy="23" r="1.3" fill="#FDE68A" />
+        <circle cx="7.5" cy="23" r="0.6" fill="#FFFBEB" />
+        {/* Right wall lamp */}
         <rect x="87" y="22" width="3" height="5" rx="0.5" fill="#1B3A5C" opacity="0.5" />
-        <circle cx="88.5" cy="23" r="1" fill="#EAB308" opacity="0.7" />
+        <circle cx="88.5" cy="23" r="3.5" fill="url(#lampGlow)" />
+        <circle cx="88.5" cy="23" r="1.3" fill="#FDE68A" />
+        <circle cx="88.5" cy="23" r="0.6" fill="#FFFBEB" />
       </svg>
       <img
         ref={carRef}
