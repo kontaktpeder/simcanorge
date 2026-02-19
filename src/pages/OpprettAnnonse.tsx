@@ -3,11 +3,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { GarageLayout } from '@/components/ui/garage/GarageLayout';
-import { EnamelCard } from '@/components/ui/garage/EnamelCard';
-import { BigActionButton } from '@/components/ui/garage/BigActionButton';
-import { SectionHeader } from '@/components/ui/garage/SectionHeader';
-import { ShoppingBag, Save, Loader2, Clock, ChevronLeft, ImagePlus, X, Lock, Wrench, Package, Car, Warehouse } from 'lucide-react';
+import { ShoppingBag, Save, Loader2, Clock, ChevronLeft, ImagePlus, X, Lock, Wrench, Package, Car, Warehouse, ChevronRight } from 'lucide-react';
 import { Layout } from '@/components/layout/Layout';
 import { Label } from '@/components/ui/label';
 import { useOwnerProfile } from '@/hooks/useOwnerProfile';
@@ -22,10 +18,10 @@ import type { ItemFormValues } from '@/lib/itemSubmit';
 import { LISTING_TYPES, type ListingTypeId } from '@/config/listingTypes';
 
 const TYPE_ICONS: Record<ListingTypeId, React.ReactNode> = {
-  deler: <Wrench className="w-7 h-7" />,
-  samleobjekter: <Package className="w-7 h-7" />,
-  biler: <Car className="w-7 h-7" />,
-  lagerplass: <Warehouse className="w-7 h-7" />,
+  deler: <Wrench className="w-8 h-8" />,
+  samleobjekter: <Package className="w-8 h-8" />,
+  biler: <Car className="w-8 h-8" />,
+  lagerplass: <Warehouse className="w-8 h-8" />,
 };
 
 export default function OpprettAnnonse() {
@@ -66,22 +62,35 @@ export default function OpprettAnnonse() {
 
   if (!ownerProfile) {
     return (
-      <GarageLayout title="Opprett annonse" subtitle="Markedsplass">
-        <EnamelCard>
-          <div className="p-6 text-center">
-            <Clock className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" />
-            <p className="font-medium mb-2">Du trenger en Entusiastprofil</p>
-            <p className="text-sm text-muted-foreground mb-4">
-              Opprett en Entusiastprofil først for å legge ut annonser.
-            </p>
-            <Link to="/dashboard">
-              <BigActionButton variant="secondary" icon={<ChevronLeft className="w-4 h-4" />}>
-                Til Dashboard for å opprette profil
-              </BigActionButton>
-            </Link>
+      <Layout>
+        <section className="relative overflow-hidden" style={{ background: 'hsl(42, 30%, 95%)' }}>
+          <div className="absolute top-0 left-0 right-0 h-1" style={{ background: 'hsl(2, 85%, 40%)' }} />
+          <div className="container mx-auto px-4 py-16 md:py-24 relative z-10">
+            <div className="max-w-lg mx-auto text-center">
+              <p className="font-display text-[10px] uppercase tracking-[0.4em] text-foreground/40 mb-4">
+                Simca · Talbot · Matra
+              </p>
+              <Clock className="h-16 w-16 text-foreground/20 mx-auto mb-6" />
+              <h2 className="font-display text-3xl md:text-4xl uppercase tracking-wider leading-none mb-4 text-foreground">
+                Entusiastprofil påkrevd
+              </h2>
+              <div className="w-16 h-[2px] mx-auto mb-6" style={{ background: 'hsl(2, 85%, 40%)' }} />
+              <p className="font-serif italic text-base text-foreground/60 mb-8">
+                Opprett en Entusiastprofil først for å legge ut annonser på markedsplassen.
+              </p>
+              <Link
+                to="/dashboard"
+                className="group inline-flex items-center gap-3 px-10 py-4 font-display text-sm uppercase tracking-[0.2em] text-white border-2 border-white/30 hover:border-white transition-all"
+                style={{ background: 'hsl(2, 85%, 40%)' }}
+              >
+                <ChevronLeft className="h-4 w-4" />
+                Til Dashboard
+                <ChevronRight className="w-4 h-4 opacity-50 group-hover:translate-x-1 transition-transform" />
+              </Link>
+            </div>
           </div>
-        </EnamelCard>
-      </GarageLayout>
+        </section>
+      </Layout>
     );
   }
 
@@ -155,120 +164,234 @@ export default function OpprettAnnonse() {
     : null;
 
   return (
-    <GarageLayout title="Opprett annonse" subtitle="Markedsplass" description={selectedType ? undefined : "Velg hva du ønsker å legge ut."}>
-      <Link to="/dashboard/mine-annonser" className="text-sm text-muted-foreground hover:text-primary inline-flex items-center gap-1 mb-6">
-        <ChevronLeft className="h-4 w-4" /> Tilbake til dine annonser
-      </Link>
+    <Layout>
+      {/* Editorial hero header */}
+      <section className="relative overflow-hidden" style={{ background: 'hsl(42, 30%, 95%)' }}>
+        {/* Red accent rule */}
+        <div className="absolute top-0 left-0 right-0 h-1" style={{ background: 'hsl(2, 85%, 40%)' }} />
 
-      {/* Step 1: Choose type */}
-      {!selectedType && (
-        <>
-          <SectionHeader title="Velg type" icon={<ShoppingBag className="h-5 w-5" />} />
-          <div className="grid grid-cols-2 gap-4 mt-4">
-            {LISTING_TYPES.map((type) => (
-              <button
-                key={type.id}
-                type="button"
-                onClick={() => !type.locked && setSelectedType(type.id)}
-                disabled={type.locked}
-                className={`relative p-6 rounded-lg border-2 text-left transition-all ${
-                  type.locked
-                    ? 'border-border bg-muted/50 cursor-not-allowed opacity-70'
-                    : 'border-border bg-card hover:border-primary hover:shadow-md cursor-pointer'
-                }`}
-              >
-                <div className="flex items-center gap-3 mb-2">
-                  <span className={type.locked ? 'text-muted-foreground' : 'text-primary'}>
-                    {TYPE_ICONS[type.id]}
-                  </span>
-                  <span className="font-display text-lg uppercase tracking-wider">{type.label}</span>
-                  {type.locked && <Lock className="w-4 h-4 text-muted-foreground ml-auto" />}
-                </div>
-                {type.locked && type.lockedMessage && (
-                  <p className="text-xs text-muted-foreground mt-1">{type.lockedMessage}</p>
-                )}
-              </button>
-            ))}
-          </div>
-        </>
-      )}
+        {/* Newsprint texture */}
+        <div
+          className="absolute inset-0 opacity-[0.03] pointer-events-none"
+          style={{
+            backgroundImage: `repeating-linear-gradient(0deg, transparent, transparent 1px, currentColor 1px, currentColor 2px)`,
+            backgroundSize: '100% 4px',
+          }}
+        />
 
-      {/* Step 2: Form */}
-      {selectedType && selectedTypeConfig && !selectedTypeConfig.locked && (
-        <>
-          <div className="flex items-center gap-2 mb-4">
-            <button
-              type="button"
-              onClick={() => setSelectedType(null)}
-              className="text-sm text-muted-foreground hover:text-primary inline-flex items-center gap-1"
+        <div className="container mx-auto px-4 py-10 md:py-16 relative z-10">
+          <div className="max-w-3xl mx-auto">
+            {/* Back link */}
+            <Link
+              to="/dashboard/mine-annonser"
+              className="inline-flex items-center gap-1.5 font-display text-[10px] uppercase tracking-[0.3em] text-foreground/40 hover:text-foreground/70 transition-colors mb-8"
             >
-              <ChevronLeft className="h-4 w-4" /> Bytt type
-            </button>
-            <span className="font-display text-sm uppercase tracking-wider text-primary">
-              {selectedTypeConfig.label}
-            </span>
+              <ChevronLeft className="h-3.5 w-3.5" />
+              Tilbake til dine annonser
+            </Link>
+
+            <p className="font-display text-[10px] md:text-xs uppercase tracking-[0.4em] text-foreground/40 mb-3">
+              Simca · Talbot · Matra
+            </p>
+            <h1 className="font-display text-4xl sm:text-5xl md:text-6xl uppercase tracking-wider leading-[0.9] text-foreground mb-4">
+              Opprett annonse
+            </h1>
+            <div className="w-16 h-[2px] mb-4" style={{ background: 'hsl(2, 85%, 40%)' }} />
+            {!selectedType && (
+              <p className="font-serif italic text-base md:text-lg text-foreground/60 max-w-md">
+                Velg hva du ønsker å legge ut på markedsplassen.
+              </p>
+            )}
+            {selectedType && selectedTypeConfig && (
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => setSelectedType(null)}
+                  className="font-display text-[10px] uppercase tracking-[0.3em] text-foreground/40 hover:text-foreground/70 transition-colors inline-flex items-center gap-1"
+                >
+                  <ChevronLeft className="h-3.5 w-3.5" />
+                  Bytt type
+                </button>
+                <span className="text-foreground/20">·</span>
+                <span className="font-display text-sm uppercase tracking-[0.2em]" style={{ color: 'hsl(2, 85%, 40%)' }}>
+                  {selectedTypeConfig.label}
+                </span>
+              </div>
+            )}
           </div>
+        </div>
 
-          <SectionHeader title="Ny annonse" icon={<ShoppingBag className="h-5 w-5" />} />
+        {/* Bottom rule */}
+        <div className="h-px bg-foreground/10" />
+      </section>
 
-          <EnamelCard className="mt-4">
-            <div className="p-4 sm:p-6">
-              <DelerAnnonseForm
-                initialValues={{
-                  rootCategoryId: selectedRoot?.id ?? '',
-                }}
-                forceRootId={selectedRoot?.id}
-                carModelRequired={selectedTypeConfig.carModelRequired}
-                onSubmit={handleSubmit}
-                submitLabel="Send inn annonse"
-                isSubmitting={isSubmitting}
-                profileLocation={ownerProfile?.location ?? null}
-              >
-                {/* Images */}
-                <div className="space-y-2">
-                  <Label>Bilder (valgfritt)</Label>
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="image/*"
-                    multiple
-                    onChange={handleFileChange}
-                    className="hidden"
-                  />
-                  <div className="flex flex-wrap gap-2">
-                    {imagePreviews.map((src, i) => (
-                      <div key={i} className="relative w-20 h-20">
-                        <img src={src} alt={`Bilde ${i + 1}`} className="w-full h-full object-cover rounded-lg" />
-                        <button
-                          type="button"
-                          onClick={() => removeImage(i)}
-                          className="absolute top-1 right-1 p-0.5 bg-black/50 rounded-full text-white hover:bg-black/70"
-                        >
-                          <X className="w-3 h-3" />
-                        </button>
-                      </div>
-                    ))}
+      {/* Main content */}
+      <section className="relative" style={{ background: 'hsl(42, 30%, 95%)' }}>
+        {/* Newsprint texture */}
+        <div
+          className="absolute inset-0 opacity-[0.03] pointer-events-none"
+          style={{
+            backgroundImage: `repeating-linear-gradient(0deg, transparent, transparent 1px, currentColor 1px, currentColor 2px)`,
+            backgroundSize: '100% 4px',
+          }}
+        />
+
+        <div className="container mx-auto px-4 py-10 md:py-14 relative z-10">
+          <div className="max-w-3xl mx-auto">
+
+            {/* Step 1: Choose type */}
+            {!selectedType && (
+              <>
+                {/* Section divider */}
+                <div className="flex items-center gap-4 mb-8">
+                  <div className="h-px flex-1 bg-foreground/10" />
+                  <span className="font-display text-[10px] uppercase tracking-[0.4em] text-foreground/30">Velg type</span>
+                  <div className="h-px flex-1 bg-foreground/10" />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  {LISTING_TYPES.map((type) => (
                     <button
+                      key={type.id}
                       type="button"
-                      onClick={() => fileInputRef.current?.click()}
-                      className="w-20 h-20 rounded-lg border-2 border-dashed border-muted-foreground/30 flex items-center justify-center hover:border-primary/50 transition-colors"
+                      onClick={() => !type.locked && setSelectedType(type.id)}
+                      disabled={type.locked}
+                      className={`group relative text-left transition-all duration-200 ${
+                        type.locked ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'
+                      }`}
                     >
-                      <ImagePlus className="w-6 h-6 text-muted-foreground" />
+                      {/* Card */}
+                      <div
+                        className={`relative border-2 p-6 sm:p-8 transition-all duration-200 ${
+                          type.locked
+                            ? 'border-foreground/5 bg-foreground/[0.02]'
+                            : 'border-foreground/10 bg-white/60 hover:border-foreground/30 hover:shadow-lg hover:-translate-y-0.5'
+                        }`}
+                      >
+                        {/* Top accent */}
+                        {!type.locked && (
+                          <div className="absolute top-0 left-0 right-0 h-0.5 opacity-0 group-hover:opacity-100 transition-opacity" style={{ background: 'hsl(2, 85%, 40%)' }} />
+                        )}
+
+                        <div className="flex items-start gap-4">
+                          <span className={`mt-0.5 ${type.locked ? 'text-foreground/20' : 'text-foreground/60 group-hover:text-foreground'} transition-colors`}>
+                            {TYPE_ICONS[type.id]}
+                          </span>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2">
+                              <span className="font-display text-lg sm:text-xl uppercase tracking-wider">
+                                {type.label}
+                              </span>
+                              {type.locked && <Lock className="w-4 h-4 text-foreground/30" />}
+                            </div>
+                            {type.locked && type.lockedMessage && (
+                              <p className="font-serif italic text-xs text-foreground/40 mt-2">{type.lockedMessage}</p>
+                            )}
+                            {!type.locked && (
+                              <p className="font-serif italic text-xs text-foreground/40 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                Klikk for å opprette →
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      </div>
                     </button>
+                  ))}
+                </div>
+
+                {/* Editorial footer note */}
+                <div className="mt-10 text-center">
+                  <div className="h-px bg-foreground/10 mb-6" />
+                  <p className="font-serif italic text-xs text-foreground/30">
+                    Alt som legges ut må godkjennes av redaksjonen før publisering.
+                  </p>
+                </div>
+              </>
+            )}
+
+            {/* Step 2: Form */}
+            {selectedType && selectedTypeConfig && !selectedTypeConfig.locked && (
+              <>
+                {/* Section divider */}
+                <div className="flex items-center gap-4 mb-8">
+                  <div className="h-px flex-1 bg-foreground/10" />
+                  <span className="font-display text-[10px] uppercase tracking-[0.4em] text-foreground/30">Ny annonse</span>
+                  <div className="h-px flex-1 bg-foreground/10" />
+                </div>
+
+                {/* Form card */}
+                <div className="border-2 border-foreground/10 bg-white/70 backdrop-blur-sm">
+                  {/* Card header accent */}
+                  <div className="h-1" style={{ background: 'hsl(2, 85%, 40%)' }} />
+
+                  <div className="p-5 sm:p-8 md:p-10">
+                    <DelerAnnonseForm
+                      initialValues={{
+                        rootCategoryId: selectedRoot?.id ?? '',
+                      }}
+                      forceRootId={selectedRoot?.id}
+                      carModelRequired={selectedTypeConfig.carModelRequired}
+                      onSubmit={handleSubmit}
+                      submitLabel="Send inn annonse"
+                      isSubmitting={isSubmitting}
+                      profileLocation={ownerProfile?.location ?? null}
+                    >
+                      {/* Images */}
+                      <div className="space-y-2">
+                        <Label>Bilder (valgfritt)</Label>
+                        <input
+                          ref={fileInputRef}
+                          type="file"
+                          accept="image/*"
+                          multiple
+                          onChange={handleFileChange}
+                          className="hidden"
+                        />
+                        <div className="flex flex-wrap gap-2">
+                          {imagePreviews.map((src, i) => (
+                            <div key={i} className="relative w-20 h-20">
+                              <img src={src} alt={`Bilde ${i + 1}`} className="w-full h-full object-cover border border-foreground/10" />
+                              <button
+                                type="button"
+                                onClick={() => removeImage(i)}
+                                className="absolute top-1 right-1 p-0.5 bg-black/50 rounded-full text-white hover:bg-black/70"
+                              >
+                                <X className="w-3 h-3" />
+                              </button>
+                            </div>
+                          ))}
+                          <button
+                            type="button"
+                            onClick={() => fileInputRef.current?.click()}
+                            className="w-20 h-20 border-2 border-dashed border-foreground/15 flex items-center justify-center hover:border-foreground/30 transition-colors"
+                          >
+                            <ImagePlus className="w-6 h-6 text-foreground/30" />
+                          </button>
+                        </div>
+                      </div>
+
+                      {uploadProgress && <ImageUploadProgress progress={uploadProgress} />}
+
+                      <div className="flex items-start gap-3 p-4 bg-foreground/[0.03] border border-foreground/10 text-sm text-foreground/50">
+                        <Clock className="h-4 w-4 mt-0.5 shrink-0" />
+                        <p className="font-serif italic">Alt som legges ut må godkjennes før publisering.</p>
+                      </div>
+                    </DelerAnnonseForm>
                   </div>
                 </div>
 
-                {uploadProgress && <ImageUploadProgress progress={uploadProgress} />}
-
-                <div className="flex items-start gap-2 p-3 rounded-lg bg-muted text-sm text-muted-foreground">
-                  <Clock className="h-4 w-4 mt-0.5 shrink-0" />
-                  <p>Alt som legges ut må godkjennes før publisering.</p>
+                {/* Editorial footer */}
+                <div className="mt-10 text-center">
+                  <div className="h-px bg-foreground/10 mb-6" />
+                  <p className="font-display text-[10px] uppercase tracking-[0.4em] text-foreground/25">
+                    Markedsplass · Simca Norge
+                  </p>
                 </div>
-              </DelerAnnonseForm>
-            </div>
-          </EnamelCard>
-        </>
-      )}
-    </GarageLayout>
+              </>
+            )}
+          </div>
+        </div>
+      </section>
+    </Layout>
   );
 }
