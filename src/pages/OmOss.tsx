@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 
 export default function OmOss() {
   return (
-    <Layout>
+    <Layout contained>
       <PageHeader 
         title="OM OSS" 
         subtitle="Fordi disse bilene fortjente bedre" 

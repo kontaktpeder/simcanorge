@@ -27,7 +27,7 @@ function TimelineItem({
     </div>;
 }
 export default function Historie() {
-  return <Layout>
+  return <Layout contained>
       <PageHeader title="HISTORIE" subtitle="Fra 1934 til i dag – historien om et bilmerke med sjel" />
 
       {/* Intro */}

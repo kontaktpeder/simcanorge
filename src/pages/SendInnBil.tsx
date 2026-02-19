@@ -10,7 +10,7 @@ export default function SendInnBil() {
 
   if (submitted) {
     return (
-      <Layout>
+      <Layout contained>
         <section className="min-h-[80vh] flex items-center relative overflow-hidden">
           {/* Blue top */}
           <div className="absolute inset-0 top-0 h-1/2 bg-gradient-to-b from-[#1F66B5] to-[#0F3E7A]" />
@@ -35,7 +35,7 @@ export default function SendInnBil() {
   }
 
   return (
-    <Layout>
+    <Layout contained>
       <PageHeader 
         title="SEND INN DIN BIL" 
         subtitle={"Har du en Simca, Talbot eller Matra? Del bilen din med oss,\nså kan vi få lagt den ut på siden!"} 

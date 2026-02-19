@@ -116,7 +116,7 @@ export default function Kontakt() {
     }
   };
   if (submitted) {
-    return <Layout>
+    return <Layout contained>
         <section className="min-h-[80vh] flex items-center relative overflow-hidden">
           <div className="absolute inset-0 top-0 h-1/2 bg-gradient-to-b from-[#1F66B5] to-[#0F3E7A]" />
           <div className="absolute inset-0 top-1/2 bg-gradient-to-b from-[#C10D0D] to-[#9A0A0A]" />
@@ -134,7 +134,7 @@ export default function Kontakt() {
         </section>
       </Layout>;
   }
-  return <Layout>
+  return <Layout contained>
       <PageHeader title="KONTAKT OSS" subtitle="Har du spørsmål eller tilbakemeldinger? Send oss en melding!" />
 
       {/* Quick Contact Banner */}

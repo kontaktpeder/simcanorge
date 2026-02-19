@@ -216,7 +216,7 @@ const Biler = () => {
   const editorialFeed = interleaveEditorialFeed(groupedCars);
 
   return (
-    <Layout>
+    <Layout contained>
       {/* Newsprint background - only on /biler */}
       <NewsprintBackground />
 
