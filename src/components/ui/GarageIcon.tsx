@@ -9,7 +9,7 @@ interface GarageIconProps {
 }
 
 export function GarageIcon({ className = "", size = 40, animate = false, hideCar = false }: GarageIconProps) {
-  const aspectRatio = 72 / 48;
+  const aspectRatio = 96 / 48;
   const width = size * aspectRatio;
   const carRef = useRef<HTMLImageElement>(null);
   const [animDone, setAnimDone] = useState(false);
@@ -54,18 +54,18 @@ export function GarageIcon({ className = "", size = 40, animate = false, hideCar
       className={`relative flex items-end justify-center flex-shrink-0 ${className}`}
       style={{ width: `${width}px`, height: `${size}px`, overflow: 'hidden' }}
     >
-      <svg viewBox="0 0 72 48" fill="none" className="absolute inset-0 w-full h-full">
-        <rect x="4" y="16" width="64" height="32" rx="2" fill="#F5F0E6" stroke="#1B3A5C" strokeWidth="2.5" />
-        <path d="M2 18 L36 4 L70 18" stroke="#1B3A5C" strokeWidth="2.5" fill="#1B3A5C" strokeLinejoin="round" />
-        <rect x="14" y="20" width="44" height="28" rx="2" fill="#D6DEE8" stroke="#1B3A5C" strokeWidth="2" />
-        <line x1="36" y1="8" x2="36" y2="14" stroke="#1B3A5C" strokeWidth="1.5" />
-        <path d="M32 14 Q36 17 40 14" stroke="#1B3A5C" strokeWidth="1.5" fill="none" />
-        <circle cx="36" cy="15" r="1.5" fill="#EAB308" />
-        <line x1="16" y1="46" x2="56" y2="46" stroke="#EAB308" strokeWidth="2" strokeLinecap="round" />
-        <rect x="8" y="22" width="3" height="5" rx="0.5" fill="#1B3A5C" opacity="0.5" />
-        <circle cx="9.5" cy="23" r="1" fill="#EAB308" opacity="0.7" />
-        <rect x="61" y="22" width="3" height="5" rx="0.5" fill="#1B3A5C" opacity="0.5" />
-        <circle cx="62.5" cy="23" r="1" fill="#EAB308" opacity="0.7" />
+      <svg viewBox="0 0 96 48" fill="none" className="absolute inset-0 w-full h-full">
+        <rect x="4" y="16" width="88" height="32" rx="2" fill="#F5F0E6" stroke="#1B3A5C" strokeWidth="2.5" />
+        <path d="M2 18 L48 4 L94 18" stroke="#1B3A5C" strokeWidth="2.5" fill="#1B3A5C" strokeLinejoin="round" />
+        <rect x="10" y="20" width="76" height="28" rx="2" fill="#D6DEE8" stroke="#1B3A5C" strokeWidth="2" />
+        <line x1="48" y1="8" x2="48" y2="14" stroke="#1B3A5C" strokeWidth="1.5" />
+        <path d="M44 14 Q48 17 52 14" stroke="#1B3A5C" strokeWidth="1.5" fill="none" />
+        <circle cx="48" cy="15" r="1.5" fill="#EAB308" />
+        <line x1="12" y1="46" x2="84" y2="46" stroke="#EAB308" strokeWidth="2" strokeLinecap="round" />
+        <rect x="6" y="22" width="3" height="5" rx="0.5" fill="#1B3A5C" opacity="0.5" />
+        <circle cx="7.5" cy="23" r="1" fill="#EAB308" opacity="0.7" />
+        <rect x="87" y="22" width="3" height="5" rx="0.5" fill="#1B3A5C" opacity="0.5" />
+        <circle cx="88.5" cy="23" r="1" fill="#EAB308" opacity="0.7" />
       </svg>
       <img
         ref={carRef}
