@@ -10,8 +10,7 @@ import { ImageLightbox } from '@/components/ui/image-lightbox';
 import { getOptimizedImageUrl, getThumbnailUrl } from '@/lib/imageUtils';
 import { Badge } from '@/components/ui/badge';
 import { ChevronRight, ChevronLeft, ArrowLeft, Loader2, Eye } from 'lucide-react';
-import toolboxIcon from '@/assets/toolbox-blue.png';
-import { SafeAssetImage } from "@/components/ui/SafeAssetImage";
+// toolbox icon served from public/
 
 export default function ForhandsvisAnnonse() {
   const { itemId } = useParams<{ itemId: string }>();
@@ -167,7 +166,7 @@ export default function ForhandsvisAnnonse() {
                     disabled
                     className="w-full py-3 text-sm font-display uppercase tracking-wider rounded-sm flex items-center justify-center gap-2 border border-foreground/20 text-foreground/50 cursor-not-allowed"
                   >
-                    <SafeAssetImage src={toolboxIcon} alt="" className="w-7 h-7 object-contain opacity-50" />
+                    <img src="/toolbox-blue.png" alt="" className="w-7 h-7 object-contain opacity-50" />
                     Legg i verktøykassa
                   </button>
                   <p className="text-xs text-muted-foreground text-center mt-2">

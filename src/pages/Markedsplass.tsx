@@ -13,8 +13,7 @@ import {
   ChevronRight, X, SlidersHorizontal, Lock
 } from "lucide-react";
 import { toast } from "sonner";
-import toolboxIcon from "@/assets/toolbox-blue.png";
-import { SafeAssetImage } from "@/components/ui/SafeAssetImage";
+// toolbox icon served from public/
 import type { FeedItem } from "@/lib/markedsplassUtils";
 import { MarkedsplassSidePanel, EMPTY_FILTER, type MarkedsplassFilterState } from "@/components/markedsplass/MarkedsplassSidePanel";
 import {
@@ -222,7 +221,7 @@ export default function Markedsplass() {
 
             {isLoading ? (
               <div className="flex flex-col items-center justify-center py-32 gap-4">
-                <SafeAssetImage src={toolboxIcon} alt="" className="w-16 h-16 object-contain animate-pulse" />
+                <img src="/toolbox-blue.png" alt="" className="w-16 h-16 object-contain animate-pulse" />
                 <p className="text-muted-foreground font-display text-lg uppercase tracking-wider">Laster…</p>
               </div>
             ) : (
@@ -479,7 +478,7 @@ function FeedGridItem({
               {inCart ? (
                 <><Check className="w-4 h-4" />Lagt til</>
               ) : (
-                <><SafeAssetImage src={toolboxIcon} alt="" className="w-6 h-6 object-contain" />Legg i verktøykassa</>
+                <><img src="/toolbox-blue.png" alt="" className="w-6 h-6 object-contain" />Legg i verktøykassa</>
               )}
             </button>
           </div>
@@ -541,7 +540,7 @@ function FeedListItem({
               : "border border-foreground/20 text-foreground hover:bg-foreground hover:text-background"
           }`}
         >
-          {inCart ? <><Check className="w-3.5 h-3.5" />Lagt til</> : <><SafeAssetImage src={toolboxIcon} alt="" className="w-5 h-5 object-contain" />Verktøykassa</>}
+          {inCart ? <><Check className="w-3.5 h-3.5" />Lagt til</> : <><img src="/toolbox-blue.png" alt="" className="w-5 h-5 object-contain" />Verktøykassa</>}
         </button>
       </div>
     </Link>

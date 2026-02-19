@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Bug } from "lucide-react";
-import simcaNorgeBadge from "@/assets/simca-norge-badge.png";
-import { SafeAssetImage } from "@/components/ui/SafeAssetImage";
 import { ReportProblemModal } from "@/components/support";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -17,7 +15,7 @@ export function Footer() {
           <div className="flex flex-col md:flex-row gap-6 md:gap-10">
             {/* Logo & Tagline */}
             <div className="flex flex-col items-center md:items-start gap-2 md:gap-3 md:flex-1">
-              <SafeAssetImage src={simcaNorgeBadge} alt="Simca Norge" className="h-16 md:h-24 w-auto drop-shadow-lg" />
+              <img src="/simca-norge-badge.png" alt="Simca Norge" className="h-16 md:h-24 w-auto drop-shadow-lg" />
               <p className="font-serif italic text-sm md:text-base text-center md:text-left text-white/90">
                 "La petite voiture française"
               </p>

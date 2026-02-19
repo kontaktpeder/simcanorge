@@ -8,8 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { X, Send, ArrowLeft, Check, User, Package, ChevronDown } from "lucide-react";
 import { z } from "zod";
 import { toast } from "sonner";
-import toolboxIcon from "@/assets/toolbox-blue.png";
-import { SafeAssetImage } from "@/components/ui/SafeAssetImage";
+// toolbox icon served from public/
 import { CarFormFields } from "@/components/car/CarFormFields";
 
 const inquirySchema = z.object({
@@ -283,8 +282,8 @@ const Foresporsel = () => {
           {items.length === 0 ? (
             <div className="text-center py-6 animate-fade-in">
               <div className="pt-2 pb-2 md:pt-3 md:pb-3 flex justify-center">
-                <SafeAssetImage
-                  src={toolboxIcon}
+                <img
+                  src="/toolbox-blue.png"
                   alt="Verktøykasse"
                   className="w-28 h-auto md:w-36 object-contain drop-shadow-[0_8px_24px_rgba(0,0,0,0.25)] [filter:drop-shadow(0_0_8px_rgba(255,255,255,0.15))]"
                 />
