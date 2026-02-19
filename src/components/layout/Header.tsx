@@ -308,7 +308,7 @@ export function Header() {
 
   return (
     <>
-    <header className="sticky top-0 z-50 will-change-transform overflow-hidden" style={{ background: 'linear-gradient(180deg, hsl(210 85% 55%) 0%, hsl(210 80% 48%) 60%, hsl(210 75% 40%) 100%)' }}>
+    <header className="sticky top-0 z-50 will-change-transform" style={{ background: 'linear-gradient(180deg, hsl(210 85% 55%) 0%, hsl(210 80% 48%) 60%, hsl(210 75% 40%) 100%)' }}>
       {/* Animated diffuse clouds - slim & elegant */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="animate-cloud-1 absolute top-[6px]" style={{ width: 100, height: 14 }}>
