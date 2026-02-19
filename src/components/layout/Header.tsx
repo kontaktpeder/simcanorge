@@ -540,7 +540,7 @@ export function Header() {
                     markLeavingHome("/dashboard");
                     setMobileMenuOpen(false);
                   }}
-                  className="flex items-center gap-3 font-display text-base uppercase tracking-wide py-2 px-3 rounded-lg bg-white/10 text-white/90 mt-2"
+                  className="flex items-center gap-3 font-display text-base uppercase tracking-wide py-2 px-3 rounded-lg bg-primary/10 text-primary mt-2"
                 >
                   <GarageIcon size={48} hideCar={isHome} />
                   Gå til din garasje
