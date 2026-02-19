@@ -402,7 +402,7 @@ export function Header() {
                       onClick={() => markLeavingHome("/dashboard")}
                       className="relative p-1.5 hover:bg-muted/60 rounded-lg transition-colors ml-1"
                     >
-                      <GarageIcon size={36} animate={isDrivingToGarage} />
+                      <GarageIcon size={36} animate={isDrivingToGarage} hideCar={isHome} />
                     </Link>
                   </TooltipTrigger>
                   <TooltipContent>
@@ -526,7 +526,7 @@ export function Header() {
                   }}
                   className="flex items-center gap-3 font-display text-base uppercase tracking-wide py-2.5 px-4 rounded-lg bg-primary text-primary-foreground mt-2"
                 >
-                  <GarageIcon size={28} />
+                  <GarageIcon size={28} hideCar={isHome} />
                   Gå til din garasje
                 </Link>
               ) : (
