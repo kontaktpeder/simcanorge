@@ -232,9 +232,9 @@ export function HeroSection() {
                   </div>}
                 
                 {/* Text content with enhanced contrast */}
-                <div className="mt-5 text-center relative z-[2]">
+                <div className="mt-5 text-center relative z-[2] bg-black/50 backdrop-blur-sm rounded-lg px-4 py-3">
                   <p className="font-display text-3xl font-bold text-white featured-title-glow">{featuredCar.title}</p>
-                  <p className="font-serif text-lg text-white/90 mt-1 drop-shadow-md">
+                  <p className="font-serif text-lg text-white mt-1" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.8)' }}>
                     {ownerProfile 
                       ? `Lagt ut av ${ownerProfile.display_name}${ownerProfile.location ? `, ${ownerProfile.location}` : ''}` 
                       : `${featuredCar.year ? `${featuredCar.year} · ` : ''}${featuredCar.model}`}
