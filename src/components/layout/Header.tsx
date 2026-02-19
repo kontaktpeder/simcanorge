@@ -427,22 +427,6 @@ export function Header() {
                 </Tooltip>
               )}
               {/* Report Problem */}
-              <div className="flex items-center gap-1 ml-2 pl-2 border-l border-border/50">
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <button
-                      onClick={() => setReportModalOpen(true)}
-                      className="flex items-center gap-1 px-2 py-1.5 rounded-lg text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-all"
-                    >
-                      <AlertTriangle className="w-3.5 h-3.5" />
-                      <span className="hidden xl:inline">Rapporter</span>
-                    </button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Rapporter et problem</p>
-                  </TooltipContent>
-                </Tooltip>
-              </div>
             </TooltipProvider>
           </nav>
 
