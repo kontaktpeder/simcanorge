@@ -47,11 +47,16 @@ interface Props {
   viewMode: 'grid' | 'list';
   onViewModeChange: (mode: 'grid' | 'list') => void;
   resultCount: number;
+  /** When set, locks the root category and hides the Hovedkategori dropdown */
+  fixedRootCategoryId?: string;
+  /** When true, shows a link back to /markedsplass */
+  showExploreOtherLink?: boolean;
 }
 
 export function MarkedsplassSidePanel({
   open, onOpenChange, filterState, onFilterChange,
   searchQuery, onSearchChange, viewMode, onViewModeChange, resultCount,
+  fixedRootCategoryId, showExploreOtherLink,
 }: Props) {
   const { data: categories = [] } = useUnifiedCategories();
   const allRoots = getRootCategories(categories);
@@ -63,8 +68,9 @@ export function MarkedsplassSidePanel({
     }))
     .filter((r) => r.id);
 
-  const subcategories = filterState.rootCategoryId
-    ? getSubcategories(categories, filterState.rootCategoryId)
+  const effectiveRootId = fixedRootCategoryId || filterState.rootCategoryId;
+  const subcategories = effectiveRootId
+    ? getSubcategories(categories, effectiveRootId)
     : [];
 
   const buildSubcategoryOptions = () =>
@@ -201,29 +207,40 @@ export function MarkedsplassSidePanel({
 
           {/* Filter content */}
           <div className="flex-1 px-5 py-5 space-y-5">
-            {/* Hovedkategori */}
-            <div>
-              <Label className="font-display text-[11px] uppercase tracking-[0.15em] text-foreground/60">
-                Hovedkategori
-              </Label>
-              <select
-                value={filterState.rootCategoryId}
-                onChange={(e) =>
-                  onFilterChange({ ...filterState, rootCategoryId: e.target.value, categoryId: '' })
-                }
-                className={selectClass}
+            {/* Explore other link or Hovedkategori */}
+            {showExploreOtherLink && (
+              <Link
+                to="/markedsplass"
+                className="flex items-center gap-1.5 font-display text-[11px] uppercase tracking-[0.15em] text-muted-foreground hover:text-primary transition-colors"
               >
-                <option value="">Alt i katalogen</option>
-                {roots.map((r) => (
-                  <option key={r.id} value={r.id}>
-                    {r.label}
-                  </option>
-                ))}
-              </select>
-            </div>
+                ← Utforsk andre kataloger
+              </Link>
+            )}
+
+            {!fixedRootCategoryId && (
+              <div>
+                <Label className="font-display text-[11px] uppercase tracking-[0.15em] text-foreground/60">
+                  Hovedkategori
+                </Label>
+                <select
+                  value={filterState.rootCategoryId}
+                  onChange={(e) =>
+                    onFilterChange({ ...filterState, rootCategoryId: e.target.value, categoryId: '' })
+                  }
+                  className={selectClass}
+                >
+                  <option value="">Alt i katalogen</option>
+                  {roots.map((r) => (
+                    <option key={r.id} value={r.id}>
+                      {r.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
 
             {/* Underkategori */}
-            {filterState.rootCategoryId && subcategories.length > 0 && (
+            {effectiveRootId && subcategories.length > 0 && (
               <div>
                 <Label className="font-display text-[11px] uppercase tracking-[0.15em] text-foreground/60">
                   Underkategori
