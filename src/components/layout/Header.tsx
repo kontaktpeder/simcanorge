@@ -567,8 +567,8 @@ export function Header() {
       {/* Animated car lane - only on home page OR during drive-to-garage animation */}
       {(isHome || isDrivingToGarage) && (
         <div 
-          className={`hidden sm:block relative w-full transition-all duration-500 ease-out ${
-            roadFading ? 'h-0 opacity-0' : 'h-[36px] md:h-[42px] opacity-100'
+          className={`relative w-full transition-all duration-500 ease-out ${
+            roadFading ? 'h-0 opacity-0' : 'h-[30px] sm:h-[36px] md:h-[42px] opacity-100'
           }`}
           style={{
             background: 'linear-gradient(to bottom, #3a3a3a, #2a2a2a 30%, #1f1f1f 70%, #151515)',
