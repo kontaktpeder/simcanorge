@@ -317,6 +317,11 @@ export function Header() {
               alt="Simca Norge" 
               className="h-10 md:h-12 w-auto drop-shadow-md flex-shrink-0"
               fadeDuration={400}
+              onError={(e) => {
+                const el = e.currentTarget;
+                el.onerror = null;
+                el.src = '/favicon.png';
+              }}
             />
             <div className="hidden sm:flex items-baseline flex-shrink-0">
               <span className="font-display text-lg md:text-xl text-primary whitespace-nowrap">SIMCA</span>

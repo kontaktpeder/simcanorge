@@ -85,6 +85,11 @@ export function HeroSection() {
                 className="h-44 md:h-72 lg:h-96 xl:h-[28rem] w-auto" 
                 loading="eager"
                 fetchPriority="high"
+                onError={(e) => {
+                  const el = e.currentTarget;
+                  el.onerror = null;
+                  el.src = '/favicon.png';
+                }}
                 style={{
                   filter: 'drop-shadow(0 8px 24px rgba(0,0,0,0.4)) drop-shadow(0 4px 8px rgba(0,0,0,0.3))'
                 }}
