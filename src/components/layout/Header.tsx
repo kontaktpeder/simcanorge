@@ -333,76 +333,35 @@ export function Header() {
           {!isHome && (
             <div className={`hidden lg:flex items-center mx-4 flex-shrink-0 ${isDrivingToGarage ? 'animate-fade-in' : ''}`}>
               <div 
-                className="relative px-5 py-3 rounded-t-lg overflow-hidden flex-shrink-0"
+                className="relative flex items-end justify-center flex-shrink-0"
                 style={{
-                  background: 'linear-gradient(180deg, #c4d4e0 0%, #a8bccf 40%, #8fa5b8 100%)',
-                  boxShadow: 'inset 0 2px 6px rgba(255,255,255,0.3), inset 0 -2px 8px rgba(0,0,0,0.2), 0 4px 12px rgba(0,0,0,0.3)',
-                  border: '2px solid #d4a520',
-                  borderBottom: '3px solid #8b7355'
+                  width: '52px',
+                  height: '36px',
                 }}
               >
-                {/* Wooden beam roof */}
-                <div 
-                  className="absolute -top-1 left-0 right-0 h-3"
-                  style={{
-                    background: 'repeating-linear-gradient(90deg, #8b6914 0px, #a07818 3px, #6b5210 6px, #8b6914 9px)',
-                    boxShadow: '0 2px 4px rgba(0,0,0,0.4)'
-                  }}
-                />
-                {/* Yellow garage door frame (top) */}
-                <div 
-                  className="absolute top-2 left-1 right-1 h-1.5 rounded-sm"
-                  style={{
-                    background: 'linear-gradient(180deg, #f0c040 0%, #d4a520 50%, #b8901a 100%)',
-                    boxShadow: '0 1px 2px rgba(0,0,0,0.3)'
-                  }}
-                />
-                {/* Yellow door frame sides */}
-                <div 
-                  className="absolute top-2 left-1 bottom-0 w-1"
-                  style={{
-                    background: 'linear-gradient(90deg, #d4a520 0%, #f0c040 50%, #d4a520 100%)'
-                  }}
-                />
-                <div 
-                  className="absolute top-2 right-1 bottom-0 w-1"
-                  style={{
-                    background: 'linear-gradient(90deg, #d4a520 0%, #f0c040 50%, #d4a520 100%)'
-                  }}
-                />
-                {/* Fluorescent light effect */}
-                <div 
-                  className="absolute top-3 left-1/2 w-8 h-0.5 rounded-full"
-                  style={{
-                    background: 'rgba(255,255,255,0.9)',
-                    boxShadow: '0 0 6px 2px rgba(255,255,255,0.5), 0 2px 8px rgba(255,255,255,0.3)',
-                    transform: 'translateX(-50%)'
-                  }}
-                />
-                {/* Concrete floor with yellow line */}
-                <div 
-                  className="absolute bottom-0 left-0 right-0 h-2"
-                  style={{
-                    background: 'linear-gradient(180deg, #9ca3af 0%, #6b7280 100%)'
-                  }}
-                >
-                  <div 
-                    className="absolute left-2 right-2 h-0.5"
-                    style={{ 
-                      background: '#eab308',
-                      top: '50%',
-                      transform: 'translateY(-50%)'
-                    }}
+                {/* Garage portal - flat arch shape */}
+                <svg viewBox="0 0 52 36" fill="none" className="absolute inset-0 w-full h-full">
+                  {/* Portal outline */}
+                  <path 
+                    d="M4 36 V10 Q4 4 10 4 H42 Q48 4 48 10 V36" 
+                    stroke="hsl(var(--foreground))" 
+                    strokeWidth="2" 
+                    fill="hsl(var(--muted) / 0.3)"
+                    strokeLinecap="round"
                   />
-                </div>
-                {/* Tool shadows on wall (subtle) */}
-                <div className="absolute top-4 right-2 w-1 h-2 bg-gray-500/30 rounded-sm" />
-                <div className="absolute top-4 right-4 w-0.5 h-3 bg-gray-500/20 rounded-sm" />
-                {/* Parked car */}
+                  {/* Subtle vertical door lines */}
+                  <line x1="18" y1="8" x2="18" y2="36" stroke="hsl(var(--foreground) / 0.15)" strokeWidth="0.75" />
+                  <line x1="26" y1="6" x2="26" y2="36" stroke="hsl(var(--foreground) / 0.15)" strokeWidth="0.75" />
+                  <line x1="34" y1="8" x2="34" y2="36" stroke="hsl(var(--foreground) / 0.15)" strokeWidth="0.75" />
+                  {/* Floor line accent */}
+                  <line x1="8" y1="34" x2="44" y2="34" stroke="hsl(var(--primary))" strokeWidth="1.5" strokeLinecap="round" opacity="0.6" />
+                </svg>
+                {/* Car silhouette */}
                 <img 
                   src={simcaRallye} 
                   alt="Parkert Simca" 
-                  className="h-[26px] w-auto object-contain drop-shadow-lg relative z-10 mt-1 flex-shrink-0"
+                  className="h-[18px] w-auto object-contain relative z-10 mb-[3px] opacity-80"
+                  style={{ filter: 'saturate(0.3) brightness(0.7)' }}
                 />
               </div>
             </div>
