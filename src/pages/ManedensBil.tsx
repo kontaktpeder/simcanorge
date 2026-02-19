@@ -84,7 +84,7 @@ const ManedensBil = () => {
     const sorted = [...car.car_images].sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
     return sorted[0];
   };
-  return <Layout>
+  return <Layout contained>
       <PageHeader 
         title="MÅNEDENS BIL" 
         subtitle="Hver måned løfter vi frem én bil fra vårt fellesskap – en kilde til inspirasjon, glede og ekte kjøreglede" 
