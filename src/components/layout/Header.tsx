@@ -539,7 +539,7 @@ export function Header() {
       {/* Animated car lane - only on home page OR during drive-to-garage animation */}
       {(isHome || isDrivingToGarage) && (
         <div 
-          className={`hidden sm:block relative w-full overflow-x-hidden transition-all duration-500 ease-out ${
+          className={`hidden sm:block relative w-full transition-all duration-500 ease-out ${
             roadFading ? 'h-0 opacity-0' : 'h-[36px] md:h-[42px] opacity-100'
           }`}
           style={{
@@ -599,7 +599,7 @@ export function Header() {
           {isHome && !isDrivingToGarage && (
             <div
               ref={carWrapRef}
-              className="absolute bottom-[2px] md:bottom-[3px] cursor-pointer z-[60]"
+              className="absolute bottom-[2px] md:bottom-[3px] cursor-pointer z-[100]"
               style={{ transform: `translateX(${CAR_START_X}px)`, pointerEvents: 'auto' }}
               onClick={handleCarClick}
             >
