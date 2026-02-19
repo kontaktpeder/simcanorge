@@ -319,16 +319,27 @@ export default function OpprettAnnonse() {
                 {/* Section divider */}
                 <div className="flex items-center gap-4 mb-8">
                   <div className="h-px flex-1 bg-foreground/10" />
-                  <span className="font-display text-[10px] uppercase tracking-[0.4em] text-foreground/30">Ny annonse</span>
+                  <span className="font-display text-xs uppercase tracking-[0.4em] text-foreground/30">Ny annonse</span>
                   <div className="h-px flex-1 bg-foreground/10" />
                 </div>
 
                 {/* Form card */}
-                <div className="border-2 border-foreground/10 bg-white/70 backdrop-blur-sm">
+                <div className="border-2 border-foreground/10" style={{ background: 'rgba(255,255,255,0.75)' }}>
                   {/* Card header accent */}
                   <div className="h-1" style={{ background: 'hsl(2, 85%, 40%)' }} />
 
-                  <div className="p-5 sm:p-8 md:p-10">
+                  {/* Form header inside card */}
+                  <div className="px-5 sm:px-8 md:px-10 pt-6 md:pt-8 pb-2">
+                    <p className="font-display text-[10px] md:text-xs uppercase tracking-[0.4em] text-foreground/30 mb-1">
+                      {selectedTypeConfig.label}
+                    </p>
+                    <h3 className="font-display text-2xl md:text-3xl uppercase tracking-wider">
+                      Ny annonse
+                    </h3>
+                    <div className="h-px bg-foreground/10 mt-4" />
+                  </div>
+
+                  <div className="p-5 sm:p-8 md:p-10 pt-4 sm:pt-6">
                     <DelerAnnonseForm
                       initialValues={{
                         rootCategoryId: selectedRoot?.id ?? '',
@@ -342,7 +353,7 @@ export default function OpprettAnnonse() {
                     >
                       {/* Images */}
                       <div className="space-y-2">
-                        <Label>Bilder (valgfritt)</Label>
+                        <Label className="font-display text-xs md:text-sm uppercase tracking-[0.15em] text-foreground/70">Bilder (valgfritt)</Label>
                         <input
                           ref={fileInputRef}
                           type="file"
@@ -351,33 +362,33 @@ export default function OpprettAnnonse() {
                           onChange={handleFileChange}
                           className="hidden"
                         />
-                        <div className="flex flex-wrap gap-2">
+                        <div className="flex flex-wrap gap-3 mt-1.5">
                           {imagePreviews.map((src, i) => (
-                            <div key={i} className="relative w-20 h-20">
-                              <img src={src} alt={`Bilde ${i + 1}`} className="w-full h-full object-cover border border-foreground/10" />
+                            <div key={i} className="relative w-24 h-24">
+                              <img src={src} alt={`Bilde ${i + 1}`} className="w-full h-full object-cover border-2 border-foreground/10" />
                               <button
                                 type="button"
                                 onClick={() => removeImage(i)}
                                 className="absolute top-1 right-1 p-0.5 bg-black/50 rounded-full text-white hover:bg-black/70"
                               >
-                                <X className="w-3 h-3" />
+                                <X className="w-3.5 h-3.5" />
                               </button>
                             </div>
                           ))}
                           <button
                             type="button"
                             onClick={() => fileInputRef.current?.click()}
-                            className="w-20 h-20 border-2 border-dashed border-foreground/15 flex items-center justify-center hover:border-foreground/30 transition-colors"
+                            className="w-24 h-24 border-2 border-dashed border-foreground/15 flex items-center justify-center hover:border-foreground/30 transition-colors"
                           >
-                            <ImagePlus className="w-6 h-6 text-foreground/30" />
+                            <ImagePlus className="w-7 h-7 text-foreground/30" />
                           </button>
                         </div>
                       </div>
 
                       {uploadProgress && <ImageUploadProgress progress={uploadProgress} />}
 
-                      <div className="flex items-start gap-3 p-4 bg-foreground/[0.03] border border-foreground/10 text-sm text-foreground/50">
-                        <Clock className="h-4 w-4 mt-0.5 shrink-0" />
+                      <div className="flex items-start gap-3 p-4 border-2 border-foreground/8 bg-foreground/[0.02] text-base text-foreground/50">
+                        <Clock className="h-5 w-5 mt-0.5 shrink-0" />
                         <p className="font-serif italic">Alt som legges ut må godkjennes før publisering.</p>
                       </div>
                     </DelerAnnonseForm>
@@ -387,7 +398,7 @@ export default function OpprettAnnonse() {
                 {/* Editorial footer */}
                 <div className="mt-10 text-center">
                   <div className="h-px bg-foreground/10 mb-6" />
-                  <p className="font-display text-[10px] uppercase tracking-[0.4em] text-foreground/25">
+                  <p className="font-display text-[10px] md:text-xs uppercase tracking-[0.4em] text-foreground/25">
                     Markedsplass · Simca Norge
                   </p>
                 </div>
