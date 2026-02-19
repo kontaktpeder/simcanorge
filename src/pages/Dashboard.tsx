@@ -245,7 +245,7 @@ export default function Dashboard() {
               <p className="text-base text-muted-foreground">
                 Se og rediger bilene dine
               </p>
-              <p className="text-sm text-muted-foreground/70 mt-2">
+              <p className="text-base text-muted-foreground/70 mt-1 leading-snug">
                 Biler med flere bilder, tekst og historiske hendelser får større oppslag på Biler-siden
               </p>
               <p className="font-display text-4xl sm:text-5xl text-foreground leading-none mt-4">
