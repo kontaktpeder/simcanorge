@@ -910,24 +910,30 @@
 
   /* Subtle car bump for header - irregular road bumps */
   .animate-car-bump-subtle {
-    animation: carBumpIrregular 2.4s ease-in-out infinite;
+    animation: carBumpIrregular 3.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
   }
 
   @keyframes carBumpIrregular {
-    0%, 100% { transform: translateY(0) rotate(0deg); }
-    8% { transform: translateY(-6px) rotate(1.2deg); }
-    12% { transform: translateY(1px) rotate(-0.4deg); }
-    22% { transform: translateY(-3px) rotate(-0.8deg); }
-    26% { transform: translateY(0) rotate(0deg); }
-    42% { transform: translateY(-8px) rotate(1.5deg); }
-    46% { transform: translateY(1px) rotate(-0.3deg); }
-    55% { transform: translateY(-2px) rotate(-0.6deg); }
-    58% { transform: translateY(0) rotate(0deg); }
-    72% { transform: translateY(-5px) rotate(1deg); }
-    76% { transform: translateY(1px) rotate(-0.4deg); }
-    80% { transform: translateY(0) rotate(0deg); }
-    91% { transform: translateY(-7px) rotate(-1.3deg); }
-    95% { transform: translateY(0) rotate(0deg); }
+    0% { transform: translateY(0) rotate(0deg); }
+    5% { transform: translateY(-3px) rotate(0.8deg); }
+    9% { transform: translateY(-1px) rotate(-0.3deg); }
+    12% { transform: translateY(0) rotate(0.1deg); }
+    20% { transform: translateY(0) rotate(0deg); }
+    25% { transform: translateY(-5px) rotate(1.2deg); }
+    30% { transform: translateY(-2px) rotate(-0.5deg); }
+    34% { transform: translateY(0) rotate(-0.1deg); }
+    44% { transform: translateY(-1.5px) rotate(-0.6deg); }
+    48% { transform: translateY(0) rotate(0deg); }
+    58% { transform: translateY(-6px) rotate(-1.4deg); }
+    63% { transform: translateY(-2px) rotate(0.6deg); }
+    67% { transform: translateY(0) rotate(0.1deg); }
+    76% { transform: translateY(-2.5px) rotate(0.9deg); }
+    80% { transform: translateY(-1px) rotate(-0.3deg); }
+    83% { transform: translateY(0) rotate(0deg); }
+    90% { transform: translateY(-4px) rotate(-1deg); }
+    94% { transform: translateY(-1.5px) rotate(0.4deg); }
+    97% { transform: translateY(0) rotate(-0.1deg); }
+    100% { transform: translateY(0) rotate(0deg); }
   }
 
   /* Legacy hero car driving animation - left to right */
