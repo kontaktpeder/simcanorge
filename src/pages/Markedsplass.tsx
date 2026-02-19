@@ -260,7 +260,7 @@ function FeedGridItem({
         className="rounded-sm overflow-hidden group flex flex-col cursor-pointer h-full"
         style={{ background: "rgba(255,255,255,0.85)", border: "1px solid rgba(0,0,0,0.06)" }}
       >
-        <div className="aspect-[4/3] relative overflow-hidden bg-muted">
+        <div className="aspect-[3/4] md:aspect-[4/3] relative overflow-hidden bg-muted">
           {item.coverImage ? (
             <img
               src={getThumbnailUrl(item.coverImage, 400)}
@@ -291,19 +291,19 @@ function FeedGridItem({
               {item.categoryName}
             </span>
           )}
-          <h3 className="font-display text-xl md:text-3xl leading-tight line-clamp-2 uppercase tracking-wide">
-            {item.title}
-          </h3>
           {item.price && (
-            <p className="font-serif text-lg md:text-xl text-foreground font-bold mt-2 leading-none">
+            <p className="font-serif text-sm md:text-xl text-foreground font-bold leading-none md:order-2 md:mt-2">
               {item.price}
             </p>
           )}
           {item.priceNote && (
-            <p className="text-[10px] md:text-[11px] text-muted-foreground mt-0.5 italic">{item.priceNote}</p>
+            <p className="text-[10px] md:text-[11px] text-muted-foreground mt-0.5 italic md:order-3">{item.priceNote}</p>
           )}
+          <h3 className="font-display text-xl md:text-3xl leading-tight line-clamp-2 uppercase tracking-wide mt-1 md:mt-0 md:order-1">
+            {item.title}
+          </h3>
           {item.ownerName && (
-            <p className="text-xs text-muted-foreground mt-1">
+            <p className="text-xs text-muted-foreground mt-1 md:order-4">
               {item.ownerName}
               {item.location && ` · ${item.location}`}
             </p>
