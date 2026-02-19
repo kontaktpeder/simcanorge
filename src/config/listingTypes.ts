@@ -10,7 +10,7 @@ export interface ListingTypeConfig {
 }
 
 export const LISTING_TYPES: ListingTypeConfig[] = [
-  { id: 'deler', label: 'Deler', slug: 'deler', locked: false, carModelRequired: true },
+  { id: 'deler', label: 'Bildeler', slug: 'deler', locked: false, carModelRequired: true },
   { id: 'samleobjekter', label: 'Samleobjekter', slug: 'samleobjekter', locked: false, carModelRequired: false },
   {
     id: 'biler',
