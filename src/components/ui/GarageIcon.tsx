@@ -19,23 +19,28 @@ export function GarageIcon({ className = "", size = 40, animate = false, hideCar
     const car = carRef.current;
     if (!car) return;
 
-    // Start off-screen left, drive into center
-    const startX = -(size * 1.2);
+    // Start off-screen left, drive smoothly into center
+    const startX = -(size * 1.5);
     const endX = 0;
-    const duration = 800;
+    const duration = 1400;
     let start: number | null = null;
 
     car.style.transform = `translateX(${startX}px)`;
-    car.style.opacity = "1";
+    car.style.opacity = "0";
 
     const step = (ts: number) => {
       if (start === null) start = ts;
       const elapsed = ts - start;
       const progress = Math.min(elapsed / duration, 1);
-      // Ease out cubic
-      const eased = 1 - Math.pow(1 - progress, 3);
+      // Smooth ease-in-out with gentle deceleration at the end
+      const eased = progress < 0.5
+        ? 4 * progress * progress * progress
+        : 1 - Math.pow(-2 * progress + 2, 3) / 2;
       const x = startX + (endX - startX) * eased;
+      // Fade in during first 20%
+      const opacity = Math.min(progress / 0.2, 1);
       car.style.transform = `translateX(${x}px)`;
+      car.style.opacity = String(opacity);
 
       if (progress < 1) {
         requestAnimationFrame(step);
