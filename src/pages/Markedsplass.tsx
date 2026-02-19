@@ -10,12 +10,12 @@ import { CONDITION_COLORS } from "@/lib/markedsplassUtils";
 import { getThumbnailUrl } from "@/lib/imageUtils";
 import {
   Search, Info, Wrench, Check, Briefcase,
-  ChevronRight, ChevronDown, X, Filter, Grid3X3, List, SlidersHorizontal
+  ChevronRight, ChevronDown, X, Filter, Grid3X3, List, SlidersHorizontal, PanelLeftOpen
 } from "lucide-react";
 import { toast } from "sonner";
 import toolboxIcon from "@/assets/toolbox-blue.png";
 import type { FeedItem } from "@/lib/markedsplassUtils";
-import { MarkedsplassSidePanel, EMPTY_FILTER, type MarkedsplassFilterState } from "@/components/markedsplass/MarkedsplassSidePanel";
+import { MarkedsplassSidePanel, SidePanelToggle, EMPTY_FILTER, type MarkedsplassFilterState } from "@/components/markedsplass/MarkedsplassSidePanel";
 import {
   useUnifiedCategories,
   getAllDescendants,
@@ -24,7 +24,7 @@ import {
 export default function Markedsplass() {
   const [searchQuery, setSearchQuery] = useState("");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-  const [sidePanelOpen, setSidePanelOpen] = useState(false);
+  const [sidePanelOpen, setSidePanelOpen] = useState(true);
   const [filterState, setFilterState] = useState<MarkedsplassFilterState>(EMPTY_FILTER);
 
   const { data: allCategories = [] } = useUnifiedCategories();
@@ -141,20 +141,10 @@ export default function Markedsplass() {
 
           {/* Controls row */}
           <div className="flex items-center gap-2 md:gap-3">
-            {/* Filter button — opens side panel */}
-            <button
-              onClick={() => setSidePanelOpen(true)}
-              className="flex items-center gap-2 font-display text-xs md:text-sm uppercase tracking-wider px-4 py-2 border-2 border-foreground/20 hover:border-primary hover:text-primary transition-all"
-              style={{ background: "hsl(0, 0%, 100%)" }}
-            >
-              <SlidersHorizontal className="w-3.5 h-3.5" />
-              <span>Filter</span>
-              {activeFilterCount > 0 && (
-                <span className="bg-primary text-primary-foreground text-[10px] px-1.5 py-0.5 rounded-full font-bold">
-                  {activeFilterCount}
-                </span>
-              )}
-            </button>
+            {/* Filter toggle — opens/closes side panel */}
+            {!sidePanelOpen && (
+              <SidePanelToggle onClick={() => setSidePanelOpen(true)} />
+            )}
 
             {activeFilterCount > 0 && (
               <button
@@ -197,58 +187,62 @@ export default function Markedsplass() {
         </div>
       </div>
 
-      {/* Side Panel */}
-      <MarkedsplassSidePanel
-        open={sidePanelOpen}
-        onOpenChange={setSidePanelOpen}
-        filterState={filterState}
-        onFilterChange={setFilterState}
-      />
+      {/* Main content area: sidebar + listings */}
+      <div className="flex min-h-screen">
+        {/* Side Panel */}
+        <MarkedsplassSidePanel
+          open={sidePanelOpen}
+          onOpenChange={setSidePanelOpen}
+          filterState={filterState}
+          onFilterChange={setFilterState}
+        />
 
-      {/* Listing */}
-      {isLoading ? (
-        <div className="flex flex-col items-center justify-center py-32 gap-4">
-          <img src={toolboxIcon} alt="" className="w-16 h-16 object-contain animate-pulse" />
-          <p className="text-muted-foreground font-display text-lg uppercase tracking-wider">Laster…</p>
-        </div>
-      ) : (
-        <section className="min-h-screen relative" style={{ background: "hsl(42, 30%, 95%)" }}>
-          {/* Paper texture */}
-          <div
-            className="absolute inset-0 opacity-[0.03] pointer-events-none"
-            style={{
-              backgroundImage: `url("data:image/svg+xml,%3Csvg width='200' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E")`
-            }}
-          />
-
-          <div className="container mx-auto px-4 py-6 md:py-10 relative z-10">
-            {filteredItems.length === 0 ? (
+        {/* Listing */}
+        <div className="flex-1 min-w-0">
+          {isLoading ? (
+            <div className="flex flex-col items-center justify-center py-32 gap-4">
+              <img src={toolboxIcon} alt="" className="w-16 h-16 object-contain animate-pulse" />
+              <p className="text-muted-foreground font-display text-lg uppercase tracking-wider">Laster…</p>
+            </div>
+          ) : (
+            <section className="min-h-screen relative" style={{ background: "hsl(42, 30%, 95%)" }}>
+              {/* Paper texture */}
               <div
-                className="rounded-sm text-center py-16"
-                style={{ background: "rgba(255,255,255,0.85)", border: "1px solid rgba(0,0,0,0.06)" }}
-              >
-                <Wrench className="w-10 h-10 mx-auto mb-3 text-muted-foreground" />
-                <p className="text-muted-foreground text-sm">
-                  {searchQuery ? "Ingen treff" : "Ingen varer ennå"}
-                </p>
-              </div>
-            ) : viewMode === "list" ? (
-              <div className="space-y-3">
-                {filteredItems.map((item) => (
-                  <FeedListItem key={`${item.type}-${item.id}`} item={item} inCart={isInCart(item.type, item.id)} onToggleCart={() => handleToggleCart(item)} />
-                ))}
-              </div>
-            ) : (
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-7 auto-rows-fr">
-                {filteredItems.map((item, index) => (
-                  <FeedGridItem key={`${item.type}-${item.id}`} item={item} index={index} inCart={isInCart(item.type, item.id)} onToggleCart={() => handleToggleCart(item)} />
-                ))}
-              </div>
-            )}
-          </div>
-        </section>
-      )}
+                className="absolute inset-0 opacity-[0.03] pointer-events-none"
+                style={{
+                  backgroundImage: `url("data:image/svg+xml,%3Csvg width='200' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E")`
+                }}
+              />
 
+              <div className="px-4 py-6 md:py-10 relative z-10">
+                {filteredItems.length === 0 ? (
+                  <div
+                    className="rounded-sm text-center py-16"
+                    style={{ background: "rgba(255,255,255,0.85)", border: "1px solid rgba(0,0,0,0.06)" }}
+                  >
+                    <Wrench className="w-10 h-10 mx-auto mb-3 text-muted-foreground" />
+                    <p className="text-muted-foreground text-sm">
+                      {searchQuery ? "Ingen treff" : "Ingen varer ennå"}
+                    </p>
+                  </div>
+                ) : viewMode === "list" ? (
+                  <div className="space-y-3">
+                    {filteredItems.map((item) => (
+                      <FeedListItem key={`${item.type}-${item.id}`} item={item} inCart={isInCart(item.type, item.id)} onToggleCart={() => handleToggleCart(item)} />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-7 auto-rows-fr">
+                    {filteredItems.map((item, index) => (
+                      <FeedGridItem key={`${item.type}-${item.id}`} item={item} index={index} inCart={isInCart(item.type, item.id)} onToggleCart={() => handleToggleCart(item)} />
+                    ))}
+                  </div>
+                )}
+              </div>
+            </section>
+          )}
+        </div>
+      </div>
       {/* Bottom CTA — grand editorial block */}
       <section className="relative overflow-hidden" style={{ background: "hsl(212, 80%, 15%)" }}>
         <div className="absolute top-0 left-0 right-0 h-1" style={{ background: "hsl(2, 85%, 40%)" }} />
