@@ -74,7 +74,7 @@ export function GarageIcon({ className = "", size = 40, animate = false, hideCar
         className="object-contain relative z-10"
         style={{
           height: `${size * 0.8}px`,
-          marginBottom: `${size * 0.04}px`,
+          marginBottom: `0px`,
           filter: 'saturate(1.4) brightness(1.1)',
           opacity: hideCar ? '0' : (animate && !animDone ? '0' : '1'),
         }}
