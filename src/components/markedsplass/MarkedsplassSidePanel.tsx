@@ -151,15 +151,8 @@ export function MarkedsplassSidePanel({
                 Filter
               </h2>
             </div>
-            <button
-              onClick={() => onOpenChange(false)}
-              className="p-2 text-white/60 hover:text-white transition-colors"
-              aria-label="Lukk filter"
-            >
-              <PanelLeftClose className="w-5 h-5" />
-            </button>
           </div>
-
+        
           {/* Red accent line */}
           <div className="h-1 w-full" style={{ background: 'hsl(2, 85%, 40%)' }} />
 

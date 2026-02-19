@@ -119,31 +119,11 @@ export default function Markedsplass() {
         </div>
       )}
 
-      {/* Minimal top bar — only shown when panel is closed */}
-      {!sidePanelOpen && (
-        <div className="sticky top-16 z-30 border-b-2 border-foreground/10" style={{ background: "hsl(42, 30%, 93%)" }}>
-          <div className="container mx-auto px-4 py-3 md:py-4 flex items-center gap-3">
-            <SidePanelToggle onClick={() => setSidePanelOpen(true)} />
-            {activeFilterCount > 0 && (
-              <button
-                onClick={() => setFilterState(EMPTY_FILTER)}
-                className="flex items-center gap-1 text-accent font-display text-[10px] uppercase tracking-wider px-2 py-1.5 border border-accent/30 hover:bg-accent hover:text-accent-foreground transition-all"
-              >
-                <X className="w-3 h-3" />
-                Nullstill
-              </button>
-            )}
-            <span className="ml-auto font-serif text-xs text-muted-foreground italic">
-              {filteredItems.length} treff
-            </span>
-          </div>
-        </div>
-      )}
 
       {/* Main content: sidebar + feed in viewport-height container */}
       <div className="flex relative lg:h-[calc(100vh-4rem)] lg:overflow-hidden">
-        {/* Side Panel — fixed height, own scroll */}
-        <div className={`shrink-0 transition-all duration-300 ${sidePanelOpen ? 'lg:w-[300px]' : 'lg:w-0'}`}>
+        {/* Side Panel — always visible */}
+        <div className="shrink-0 lg:w-[300px]">
           <div className="lg:h-[calc(100vh-4rem)] lg:overflow-y-auto">
             <MarkedsplassSidePanel
               open={sidePanelOpen}
