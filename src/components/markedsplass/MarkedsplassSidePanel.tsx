@@ -121,8 +121,8 @@ export function MarkedsplassSidePanel({ open, onOpenChange, filterState, onFilte
           'shrink-0 z-40 border-r-2 border-foreground/10 overflow-y-auto transition-all duration-300',
           // Mobile: fixed overlay from left
           'fixed top-0 left-0 h-full',
-          // Desktop: sticky, fills viewport height and scrolls with page
-          'lg:sticky lg:top-16 lg:h-[calc(100vh-4rem)] lg:z-auto',
+          // Desktop: fixed to left, below header
+          'lg:fixed lg:top-16 lg:left-0 lg:h-[calc(100vh-4rem)] lg:z-auto',
           open
             ? 'w-[300px] translate-x-0'
             : 'w-0 -translate-x-full lg:w-0 lg:-translate-x-full',
