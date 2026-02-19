@@ -66,11 +66,8 @@ export function GarageLayout({
             
             {/* Editorial header */}
             <div className="space-y-4" style={{ textShadow: '0 1px 4px hsla(0,0%,0%,0.5), 0 0 20px hsla(0,0%,0%,0.3)' }}>
-              {/* Garage icon + red accent rule */}
-              <div className="flex items-end gap-4">
-                <GarageIcon size={64} animate className="drop-shadow-lg" />
-                <div className="w-16 h-1.5 shadow-md mb-2" style={{ background: 'hsl(2, 85%, 40%)' }} />
-              </div>
+              {/* Red accent rule */}
+              <div className="w-16 h-1.5 shadow-md" style={{ background: 'hsl(2, 85%, 40%)' }} />
               
               <div className="space-y-2">
                 {title !== (subtitle || title) && (
@@ -78,9 +75,12 @@ export function GarageLayout({
                     {title}
                   </p>
                 )}
-                <h1 className="font-display text-4xl sm:text-5xl md:text-6xl text-foreground uppercase tracking-wider leading-[0.9] drop-shadow-lg">
-                  {subtitle || title}
-                </h1>
+                <div className="flex items-center gap-4">
+                  <h1 className="font-display text-4xl sm:text-5xl md:text-6xl text-foreground uppercase tracking-wider leading-[0.9] drop-shadow-lg">
+                    {subtitle || title}
+                  </h1>
+                  <GarageIcon size={56} animate className="drop-shadow-lg flex-shrink-0" />
+                </div>
               </div>
 
               {description && (
