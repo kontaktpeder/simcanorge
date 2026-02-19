@@ -149,19 +149,23 @@ export default function Markedsplass() {
       )}
 
       {/* Main content: sidebar + listings side by side */}
-      <div className="flex">
-        {/* Side Panel */}
-        <MarkedsplassSidePanel
-          open={sidePanelOpen}
-          onOpenChange={setSidePanelOpen}
-          filterState={filterState}
-          onFilterChange={setFilterState}
-          searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
-          viewMode={viewMode}
-          onViewModeChange={setViewMode}
-          resultCount={filteredItems.length}
-        />
+      <div className="flex relative">
+        {/* Side Panel — sticky + independently scrollable */}
+        <div className={`shrink-0 transition-all duration-300 ${sidePanelOpen ? 'lg:w-[300px]' : 'lg:w-0'}`}>
+          <div className="lg:sticky lg:top-16 lg:h-[calc(100vh-4rem)] lg:overflow-y-auto">
+            <MarkedsplassSidePanel
+              open={sidePanelOpen}
+              onOpenChange={setSidePanelOpen}
+              filterState={filterState}
+              onFilterChange={setFilterState}
+              searchQuery={searchQuery}
+              onSearchChange={setSearchQuery}
+              viewMode={viewMode}
+              onViewModeChange={setViewMode}
+              resultCount={filteredItems.length}
+            />
+          </div>
+        </div>
 
         {/* Listing area */}
         <div className="flex-1 min-w-0">
