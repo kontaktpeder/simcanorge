@@ -148,23 +148,22 @@ export default function Markedsplass() {
         </div>
       )}
 
-      {/* Main content area: sidebar + listings in flex */}
-      <div className="flex">
-        {/* Side Panel (sticky within flex) */}
-        <MarkedsplassSidePanel
-          open={sidePanelOpen}
-          onOpenChange={setSidePanelOpen}
-          filterState={filterState}
-          onFilterChange={setFilterState}
-          searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
-          viewMode={viewMode}
-          onViewModeChange={setViewMode}
-          resultCount={filteredItems.length}
-        />
+      {/* Side Panel (fixed) */}
+      <MarkedsplassSidePanel
+        open={sidePanelOpen}
+        onOpenChange={setSidePanelOpen}
+        filterState={filterState}
+        onFilterChange={setFilterState}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        viewMode={viewMode}
+        onViewModeChange={setViewMode}
+        resultCount={filteredItems.length}
+      />
 
-        {/* Listing area */}
-        <div className="flex-1 min-w-0">
+      {/* Listing area — offset by sidebar width when open on desktop */}
+      <div className={`transition-all duration-300 ${sidePanelOpen ? 'lg:ml-[300px]' : ''}`}>
+        <div className="min-w-0">
           {isLoading ? (
             <div className="flex flex-col items-center justify-center py-32 gap-4">
               <img src={toolboxIcon} alt="" className="w-16 h-16 object-contain animate-pulse" />
@@ -206,9 +205,8 @@ export default function Markedsplass() {
             </section>
           )}
         </div>
-      </div>
 
-      {/* Bottom CTA — grand editorial block */}
+        {/* Bottom CTA — grand editorial block */}
       <section className="relative overflow-hidden" style={{ background: "hsl(212, 80%, 15%)" }}>
         <div className="absolute top-0 left-0 right-0 h-1" style={{ background: "hsl(2, 85%, 40%)" }} />
         <div className="container mx-auto px-4 py-12 md:py-20 text-center relative z-10">
@@ -230,6 +228,7 @@ export default function Markedsplass() {
           </Link>
         </div>
       </section>
+      </div>
     </Layout>
   );
 }
