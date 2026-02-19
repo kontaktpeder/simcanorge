@@ -65,6 +65,7 @@ export default function Markedsplass() {
       setFilterState((prev) => ({
         ...prev,
         rootCategoryId: branchRootCategoryId,
+        hovedkategoriId: '',
         categoryId: '',
       }));
     }
@@ -72,13 +73,16 @@ export default function Markedsplass() {
 
   const feedFilter = useMemo(() => {
     if (filterState.categoryId) return filterState.categoryId;
+    if (filterState.hovedkategoriId) {
+      const descendants = getAllDescendants(allCategories, filterState.hovedkategoriId);
+      return [filterState.hovedkategoriId, ...descendants.map((d) => d.id)];
+    }
     if (filterState.rootCategoryId) {
       const descendants = getAllDescendants(allCategories, filterState.rootCategoryId);
-      const ids = [filterState.rootCategoryId, ...descendants.map((d) => d.id)];
-      return ids;
+      return [filterState.rootCategoryId, ...descendants.map((d) => d.id)];
     }
     return "all";
-  }, [filterState.categoryId, filterState.rootCategoryId, allCategories]);
+  }, [filterState.categoryId, filterState.hovedkategoriId, filterState.rootCategoryId, allCategories]);
 
   const { data: feedItems, isLoading } = useMarkedsplassFeed(
     feedFilter as any,
@@ -203,7 +207,7 @@ export default function Markedsplass() {
               </button>
               {activeFilterCount > 0 && (
                 <button
-                  onClick={() => setFilterState({ ...EMPTY_FILTER, rootCategoryId: branchRootCategoryId || '' })}
+                  onClick={() => setFilterState({ ...EMPTY_FILTER, rootCategoryId: branchRootCategoryId || '', hovedkategoriId: '' })}
                   className="flex items-center gap-1 text-accent font-display text-[10px] uppercase tracking-wider px-2 py-1.5 border border-accent/30 hover:bg-accent hover:text-accent-foreground transition-all"
                 >
                   <X className="w-3 h-3" />
