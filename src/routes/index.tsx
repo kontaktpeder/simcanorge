@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { routes } from "./routes";
 import { useAuth } from "@/hooks/useAuth";
 import type { ComponentType } from "react";
+import simcaRallye from "@/assets/simca-rallye-yellow.png";
 
 // Loading fallback – looping "car driving into garage" animation
 function RouteLoadingFallback() {
@@ -30,7 +31,7 @@ function RouteLoadingFallback() {
         </svg>
         {/* Car driving in on loop */}
         <img
-          src="/simca-rallye-yellow.png"
+          src={simcaRallye}
           alt=""
           className="absolute z-10 animate-car-into-garage-loop"
           style={{
