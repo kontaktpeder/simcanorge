@@ -908,7 +908,28 @@
     }
   }
 
-  /* Smooth car suspension - nose up/down seesaw effect */
+  /* Looping car-into-garage for loading screens */
+  .animate-car-into-garage-loop {
+    animation: carIntoGarageLoop 1.8s ease-in-out infinite;
+  }
+
+  @keyframes carIntoGarageLoop {
+    0% {
+      transform: translateX(180px) scaleX(-1);
+      opacity: 0;
+    }
+    15% {
+      opacity: 1;
+    }
+    70% {
+      opacity: 1;
+    }
+    100% {
+      transform: translateX(40px) scaleX(-1);
+      opacity: 0;
+    }
+  }
+
   .animate-car-bump-subtle {
     animation: carBumpIrregular 6s ease-in-out infinite;
   }
