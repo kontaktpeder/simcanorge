@@ -48,7 +48,7 @@ const Biler = () => {
   const [cars, setCars] = useState<CarPost[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [categoryCounts, setCategoryCounts] = useState<Record<string, number>>({});
-  const [sidePanelOpen, setSidePanelOpen] = useState(true);
+  const [sidePanelOpen, setSidePanelOpen] = useState(false);
   
   // Pagination
   const [currentPage, setCurrentPage] = useState(0);

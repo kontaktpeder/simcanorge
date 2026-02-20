@@ -172,7 +172,9 @@ function MarkedsplassFilterContent({
     if (key) onFilterChange({ ...filterState, [key]: value });
   };
 
-  const hasActiveFilters = Object.values(filterState).some((v) => v !== '');
+  const hasActiveFilters = Object.entries(filterState)
+    .filter(([key]) => key !== 'rootCategoryId')
+    .some(([, v]) => v !== '');
 
   const selectClass =
     'w-full h-11 mt-1 border-2 border-foreground/20 bg-card px-3 py-2 text-sm font-sans focus:border-primary focus:outline-none transition-colors';

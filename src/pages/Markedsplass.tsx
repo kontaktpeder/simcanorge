@@ -36,7 +36,7 @@ export default function Markedsplass() {
 
   const [searchQuery, setSearchQuery] = useState("");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-  const [sidePanelOpen, setSidePanelOpen] = useState(true);
+  const [sidePanelOpen, setSidePanelOpen] = useState(false);
   const [filterState, setFilterState] = useState<MarkedsplassFilterState>(EMPTY_FILTER);
 
   const { data: allCategories = [] } = useUnifiedCategories();
@@ -133,7 +133,9 @@ export default function Markedsplass() {
     }
   };
 
-  const activeFilterCount = Object.values(filterState).filter((v) => v !== '' && v !== false).length;
+  const activeFilterCount = Object.entries(filterState)
+    .filter(([key, v]) => key !== 'rootCategoryId' && v !== '' && v !== false)
+    .length;
   const showFeed = !!branch && !!branchType && !branchType.locked;
 
   return (
