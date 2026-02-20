@@ -184,8 +184,8 @@ const Biler = () => {
   return (
     <Layout>
       <div className="flex relative lg:h-[calc(100vh-4rem)] lg:overflow-hidden">
-        {/* Side Panel */}
-        <div className="shrink-0 lg:w-[300px]">
+        {/* Side Panel — desktop only, mobile uses drawer */}
+        <div className="hidden lg:block shrink-0 lg:w-[300px]">
           <div className="lg:h-[calc(100vh-4rem)] lg:overflow-y-auto">
             <BilerSidePanel
               open={sidePanelOpen}
@@ -198,6 +198,20 @@ const Biler = () => {
               categoryCounts={categoryCounts}
             />
           </div>
+        </div>
+
+        {/* Mobile drawer instance */}
+        <div className="lg:hidden">
+          <BilerSidePanel
+            open={sidePanelOpen}
+            onOpenChange={setSidePanelOpen}
+            filterState={filterState}
+            onFilterChange={setFilterState}
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            resultCount={totalCount}
+            categoryCounts={categoryCounts}
+          />
         </div>
 
         {/* Main content area */}

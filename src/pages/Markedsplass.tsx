@@ -167,8 +167,8 @@ export default function Markedsplass() {
       {showFeed ? (
         /* ── BRANCH VIEW: sidebar + feed ── */
         <div className="flex relative lg:h-[calc(100vh-4rem)] lg:overflow-hidden">
-          {/* Side Panel — always visible on desktop */}
-          <div className="shrink-0 lg:w-[300px]">
+          {/* Side Panel — desktop only */}
+          <div className="hidden lg:block shrink-0 lg:w-[300px]">
             <div className="lg:h-[calc(100vh-4rem)] lg:overflow-y-auto">
               <MarkedsplassSidePanel
                 open={sidePanelOpen}
@@ -184,6 +184,23 @@ export default function Markedsplass() {
                 showExploreOtherLink
               />
             </div>
+          </div>
+
+          {/* Mobile drawer instance */}
+          <div className="lg:hidden">
+            <MarkedsplassSidePanel
+              open={sidePanelOpen}
+              onOpenChange={setSidePanelOpen}
+              filterState={filterState}
+              onFilterChange={setFilterState}
+              searchQuery={searchQuery}
+              onSearchChange={setSearchQuery}
+              viewMode={viewMode}
+              onViewModeChange={setViewMode}
+              resultCount={filteredItems.length}
+              fixedRootCategoryId={branchRootCategoryId}
+              showExploreOtherLink
+            />
           </div>
 
           {/* Feed area */}
