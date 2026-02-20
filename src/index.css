@@ -910,12 +910,12 @@
 
   /* Looping car-into-garage for loading screens */
   .animate-car-into-garage-loop {
-    animation: carIntoGarageLoop 2.5s ease-in-out infinite;
+    animation: carIntoGarageLoop 1.2s ease-in-out infinite;
   }
 
   @keyframes carIntoGarageLoop {
     0% {
-      transform: translateX(160px) scaleX(-1);
+      transform: translateX(140px) scaleX(-1);
       opacity: 1;
     }
     85% {
