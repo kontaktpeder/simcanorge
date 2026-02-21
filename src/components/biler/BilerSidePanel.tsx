@@ -26,6 +26,7 @@ export interface BilerFilterState {
   variant: string;
   body_type: string;
   year: string;
+  decade: string;
 }
 
 export const EMPTY_BILER_FILTER: BilerFilterState = {
@@ -35,6 +36,7 @@ export const EMPTY_BILER_FILTER: BilerFilterState = {
   variant: '',
   body_type: '',
   year: '',
+  decade: '',
 };
 
 interface Props {
@@ -121,7 +123,7 @@ function BilerFilterContent({
   filterState, onFilterChange, searchQuery, onSearchChange, resultCount, categoryCounts,
 }: Omit<Props, 'open' | 'onOpenChange'>) {
   const hasActiveFilters =
-    filterState.category !== 'alle' || filterState.brand !== '' || filterState.model !== '' || filterState.variant !== '' || filterState.body_type !== '' || filterState.year !== '' || searchQuery !== '';
+    filterState.category !== 'alle' || filterState.brand !== '' || filterState.model !== '' || filterState.variant !== '' || filterState.body_type !== '' || filterState.year !== '' || filterState.decade !== '' || searchQuery !== '';
 
   // Accumulate synchronous onChange calls from CarFormFields into a single update
   const pendingRef = React.useRef<Partial<BilerFilterState> | null>(null);

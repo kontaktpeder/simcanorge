@@ -293,6 +293,7 @@ const BilDetalj = () => {
       ? `${SITE_URL}${rawOgImage.startsWith("/") ? "" : "/"}${rawOgImage}`
       : `${SITE_URL}/favicon.png`;
   const canonicalUrl = `${SITE_URL}/biler/${car.slug}`;
+  const decade = car.year != null ? Math.floor(car.year / 10) * 10 : null;
 
   return (
     <Layout>
@@ -666,13 +667,13 @@ const BilDetalj = () => {
                     </Link>
                   </li>
                 )}
-                {car.year != null && (
+                {decade != null && (
                   <li>
                     <Link
-                      to={`/biler?year=${car.year}`}
+                      to={`/biler?decade=${decade}`}
                       className="text-primary hover:underline"
                     >
-                      Flere biler fra {Math.floor(car.year / 10) * 10}-tallet
+                      Flere biler fra {decade}-tallet
                     </Link>
                   </li>
                 )}
