@@ -57,7 +57,7 @@ const Biler = () => {
   const [totalCount, setTotalCount] = useState(0);
 
   // Filters — initialize from URL search params
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState("");
   const [filterState, setFilterState] = useState<BilerFilterState>(() => ({
     ...EMPTY_BILER_FILTER,
@@ -176,6 +176,20 @@ const Biler = () => {
   useEffect(() => {
     setCurrentPage(0);
   }, [filterState, searchQuery]);
+
+  // Sync URL to filter state (shareable links + clear params on Nullstill)
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (filterState.brand) params.set("brand", filterState.brand);
+    if (filterState.model) params.set("model", filterState.model);
+    if (filterState.year) params.set("year", filterState.year);
+    if (filterState.decade) params.set("decade", filterState.decade);
+    const next = params.toString();
+    const current = searchParams.toString();
+    if (next !== current) {
+      setSearchParams(params, { replace: true });
+    }
+  }, [filterState.brand, filterState.model, filterState.year, filterState.decade]);
 
   // Fetch cars when page or filters change
   useEffect(() => {
