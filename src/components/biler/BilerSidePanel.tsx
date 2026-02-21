@@ -1,12 +1,11 @@
-import { Link } from 'react-router-dom';
 import { Label } from '@/components/ui/label';
 import {
   Car, CheckCircle, Wrench, History, AlertTriangle,
   RotateCcw, Search,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { CAR_BRANDS } from '@/data/carBrands';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { CarFormFields } from '@/components/car/CarFormFields';
 import {
   Drawer, DrawerContent, DrawerHeader, DrawerTitle,
 } from '@/components/ui/drawer';
@@ -19,19 +18,22 @@ const CATEGORIES = [
   { id: 'vrak', label: 'Vrak', icon: AlertTriangle },
 ];
 
-const DECADES = ['1950', '1960', '1970', '1980'];
-const BRANDS = CAR_BRANDS.map((b) => b.name);
-
 export interface BilerFilterState {
   category: string;
   brand: string;
-  decade: string;
+  model: string;
+  variant: string;
+  body_type: string;
+  year: string;
 }
 
 export const EMPTY_BILER_FILTER: BilerFilterState = {
   category: 'alle',
   brand: '',
-  decade: '',
+  model: '',
+  variant: '',
+  body_type: '',
+  year: '',
 };
 
 interface Props {
@@ -118,10 +120,11 @@ function BilerFilterContent({
   filterState, onFilterChange, searchQuery, onSearchChange, resultCount, categoryCounts,
 }: Omit<Props, 'open' | 'onOpenChange'>) {
   const hasActiveFilters =
-    filterState.category !== 'alle' || filterState.brand !== '' || filterState.decade !== '' || searchQuery !== '';
+    filterState.category !== 'alle' || filterState.brand !== '' || filterState.model !== '' || filterState.variant !== '' || filterState.body_type !== '' || filterState.year !== '' || searchQuery !== '';
 
-  const selectClass =
-    'w-full h-11 mt-1 border-2 border-foreground/20 bg-card px-3 py-2 text-sm font-sans focus:border-primary focus:outline-none transition-colors';
+  const handleCarFieldChange = (field: string, value: string) => {
+    onFilterChange({ ...filterState, [field]: value });
+  };
 
   return (
     <>
@@ -184,38 +187,22 @@ function BilerFilterContent({
         {/* Divider */}
         <div className="border-t-2 border-foreground/8" />
 
-        {/* Brand */}
+        {/* Car fields filter */}
         <div>
-          <Label className="font-display text-[11px] uppercase tracking-[0.15em] text-foreground/60">
-            Merke
+          <Label className="font-display text-[11px] uppercase tracking-[0.15em] text-foreground/60 mb-3 block">
+            Bilmodell
           </Label>
-          <select
-            value={filterState.brand}
-            onChange={(e) => onFilterChange({ ...filterState, brand: e.target.value })}
-            className={selectClass}
-          >
-            <option value="">Alle merker</option>
-            {BRANDS.map((b) => (
-              <option key={b} value={b}>{b}</option>
-            ))}
-          </select>
-        </div>
-
-        {/* Decade */}
-        <div>
-          <Label className="font-display text-[11px] uppercase tracking-[0.15em] text-foreground/60">
-            Tiår
-          </Label>
-          <select
-            value={filterState.decade}
-            onChange={(e) => onFilterChange({ ...filterState, decade: e.target.value })}
-            className={selectClass}
-          >
-            <option value="">Alle tiår</option>
-            {DECADES.map((d) => (
-              <option key={d} value={d}>{d}-tallet</option>
-            ))}
-          </select>
+          <CarFormFields
+            formData={{
+              brand: filterState.brand,
+              model: filterState.model,
+              variant: filterState.variant,
+              body_type: filterState.body_type,
+              year: filterState.year,
+            }}
+            onChange={handleCarFieldChange}
+            showTooltips={false}
+          />
         </div>
 
         {/* Reset */}

@@ -87,10 +87,17 @@ const Biler = () => {
     if (filterState.brand) {
       query = query.eq("brand", filterState.brand);
     }
-    if (filterState.decade) {
-      const decadeStart = parseInt(filterState.decade);
-      const decadeEnd = decadeStart + 9;
-      query = query.gte("year", decadeStart).lte("year", decadeEnd);
+    if (filterState.model) {
+      query = query.eq("model", filterState.model);
+    }
+    if (filterState.variant) {
+      query = query.eq("variant", filterState.variant);
+    }
+    if (filterState.body_type) {
+      query = query.eq("body_type", filterState.body_type);
+    }
+    if (filterState.year) {
+      query = query.eq("year", parseInt(filterState.year));
     }
     if (searchQuery.trim()) {
       const q = `%${searchQuery.trim()}%`;
@@ -162,11 +169,14 @@ const Biler = () => {
     fetchCars(currentPage);
   }, [currentPage, filterState, searchQuery]);
 
-  const hasActiveFilters = filterState.category !== 'alle' || filterState.brand !== '' || filterState.decade !== '' || searchQuery !== '';
+  const hasActiveFilters = filterState.category !== 'alle' || filterState.brand !== '' || filterState.model !== '' || filterState.variant !== '' || filterState.body_type !== '' || filterState.year !== '' || searchQuery !== '';
   const activeFilterCount = [
     filterState.category !== 'alle',
     filterState.brand !== '',
-    filterState.decade !== '',
+    filterState.model !== '',
+    filterState.variant !== '',
+    filterState.body_type !== '',
+    filterState.year !== '',
     searchQuery !== '',
   ].filter(Boolean).length;
 
