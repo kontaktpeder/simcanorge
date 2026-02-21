@@ -37,6 +37,7 @@ interface CarPost {
   car_images: {
     image_url: string;
     alt_text: string | null;
+    sort_order?: number | null;
   }[];
   image_count?: number;
   event_count?: number;
@@ -72,7 +73,7 @@ const Biler = () => {
       .select(`
         id, title, slug, brand, model, year, story, tags, featured, 
         published_at, category, editorial_status,
-        car_images(image_url, alt_text)
+        car_images(image_url, alt_text, sort_order)
       `, { count: 'exact' })
       .not("published_at", "is", null)
       .lte("published_at", new Date().toISOString())
@@ -399,8 +400,9 @@ function EditorialBlock({ block, index }: EditorialBlockProps): React.ReactNode 
   const { car, module, size } = block;
   const gridClasses = getGridClasses(size);
   
-  const primaryImage = car.car_images?.[0]?.image_url;
-  const imageAlt = car.car_images?.[0]?.alt_text || car.title;
+  const sortedImages = [...(car.car_images ?? [])].sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
+  const primaryImage = sortedImages[0]?.image_url;
+  const imageAlt = sortedImages[0]?.alt_text || car.title;
   
   const excerpt = car.story 
     ? car.story.slice(0, module === 'hero' ? 200 : module === 'feature' ? 150 : 80) + (car.story.length > 80 ? '...' : '')

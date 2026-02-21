@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
-const SITE_URL = "https://simcanorge.lovable.app";
+const SITE_URL = import.meta.env.VITE_SITE_URL ?? "https://simcanorge.lovable.app";
 interface CarImage {
   id: string;
   image_url: string;
@@ -284,7 +284,12 @@ const BilDetalj = () => {
   const ogDescription = car.story 
     ? car.story.substring(0, 155).trim() + (car.story.length > 155 ? '...' : '')
     : `${car.brand || ''} ${car.model} ${car.variant || ''} ${car.year ? `(${car.year})` : ''} – Se historien og bildene.`.trim();
-  const ogImage = mainImage?.image_url || `${SITE_URL}/favicon.png`;
+  const rawOgImage = mainImage?.image_url ?? "";
+  const ogImage = rawOgImage.startsWith("http")
+    ? rawOgImage
+    : rawOgImage
+      ? `${SITE_URL}${rawOgImage.startsWith("/") ? "" : "/"}${rawOgImage}`
+      : `${SITE_URL}/favicon.png`;
   const canonicalUrl = `${SITE_URL}/biler/${car.slug}`;
 
   return (
@@ -298,6 +303,8 @@ const BilDetalj = () => {
         <meta property="og:title" content={ogTitle} />
         <meta property="og:description" content={ogDescription} />
         <meta property="og:image" content={ogImage} />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
         <meta property="og:url" content={canonicalUrl} />
         <meta property="og:type" content="article" />
         <meta property="og:site_name" content="Simca Norge" />
