@@ -277,7 +277,7 @@ const Foresporsel = () => {
         subtitle="Se over varene du har samlet og send inn forespørselen din"
       />
 
-      <section className="poster-section">
+      <section className="poster-section pb-[max(2rem,env(safe-area-inset-bottom))]">
         <div className="container mx-auto">
           {items.length === 0 ? (
             <div className="text-center py-6 animate-fade-in">

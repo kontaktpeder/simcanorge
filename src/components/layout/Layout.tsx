@@ -11,15 +11,15 @@ interface LayoutProps {
 export function Layout({ children, contained = false }: LayoutProps) {
   if (contained) {
     return (
-      <div className="h-screen h-[100dvh] flex flex-col overflow-hidden">
-        <Header />
-        <div className="flex-1 overflow-y-auto overflow-x-hidden">
-          <main className="flex-1">
-            {children}
-          </main>
-          <Footer />
-        </div>
+    <div className="h-screen min-h-[100dvh] flex flex-col overflow-hidden">
+      <Header />
+      <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden">
+        <main className="min-h-full">
+          {children}
+        </main>
+        <Footer />
       </div>
+    </div>
     );
   }
 
