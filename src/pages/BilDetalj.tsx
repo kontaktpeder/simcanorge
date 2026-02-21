@@ -6,6 +6,7 @@ import { PageHeader } from "@/components/layout/PageHeader";
 import { AnimatedSection } from "@/components/layout/AnimatedSection";
 import { TimelineSection } from "@/components/car/TimelineSection";
 import { OwnerCard } from "@/components/car/OwnerCard";
+import { useCarOwnerProfile } from "@/hooks/useOwnerProfile";
 import { supabase } from "@/integrations/supabase/client";
 import { getResponsiveImageProps, IMAGE_SIZES, getThumbnailUrl } from "@/lib/imageUtils";
 import { 
@@ -92,6 +93,7 @@ const BilDetalj = () => {
   const [copied, setCopied] = useState(false);
   const [showScrollIndicator, setShowScrollIndicator] = useState(true);
   const ctaSectionRef = useRef<HTMLElement>(null);
+  const { data: ownerProfile } = useCarOwnerProfile(car?.id ?? undefined);
 
   // Hide scroll indicator when CTA section is visible
   useEffect(() => {
@@ -314,6 +316,32 @@ const BilDetalj = () => {
         <meta name="twitter:title" content={ogTitle} />
         <meta name="twitter:description" content={ogDescription} />
         <meta name="twitter:image" content={ogImage} />
+
+        {/* JSON-LD Structured Data */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@graph": [
+              {
+                "@type": "Vehicle",
+                name: car.title,
+                description: ogDescription,
+                url: canonicalUrl,
+                image: ogImage,
+                brand: car.brand ? { "@type": "Brand", name: car.brand } : undefined,
+                model: car.model,
+                vehicleModelDate: car.year ?? undefined,
+              },
+              ...(ownerProfile?.display_name && ownerProfile?.slug
+                ? [{
+                    "@type": "Person",
+                    name: ownerProfile.display_name,
+                    url: `${SITE_URL}/profil/${ownerProfile.slug}`,
+                  }]
+                : []),
+            ].filter(Boolean),
+          })}
+        </script>
       </Helmet>
 
       <PageHeader 
@@ -616,6 +644,45 @@ const BilDetalj = () => {
               <ArrowLeft className="w-4 h-4" />
               Tilbake til galleriet
             </Link>
+
+            {/* Internal linking – SEO & discovery */}
+            <nav className="mt-6 pt-6 border-t border-border" aria-label="Relaterte sider">
+              <p className="text-xs font-display uppercase text-muted-foreground mb-3">Se mer</p>
+              <ul className="flex flex-wrap gap-3 text-sm">
+                {ownerProfile?.slug && (
+                  <li>
+                    <Link to={`/profil/${ownerProfile.slug}`} className="text-primary hover:underline">
+                      Flere biler fra {ownerProfile.display_name}
+                    </Link>
+                  </li>
+                )}
+                {car.brand && (
+                  <li>
+                    <Link
+                      to={`/biler?brand=${encodeURIComponent(car.brand)}`}
+                      className="text-primary hover:underline"
+                    >
+                      Flere {car.brand}
+                    </Link>
+                  </li>
+                )}
+                {car.year != null && (
+                  <li>
+                    <Link
+                      to={`/biler?year=${car.year}`}
+                      className="text-primary hover:underline"
+                    >
+                      Flere biler fra {Math.floor(car.year / 10) * 10}-tallet
+                    </Link>
+                  </li>
+                )}
+                <li>
+                  <Link to="/manedens-bil" className="text-primary hover:underline">
+                    Månedens bil
+                  </Link>
+                </li>
+              </ul>
+            </nav>
           </div>
         </div>
       </section>

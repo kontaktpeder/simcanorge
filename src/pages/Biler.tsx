@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { Footer } from "@/components/layout/Footer";
 import { PageHeader } from "@/components/layout/PageHeader";
@@ -56,9 +56,15 @@ const Biler = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [totalCount, setTotalCount] = useState(0);
 
-  // Filters
+  // Filters — initialize from URL search params
+  const [searchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState("");
-  const [filterState, setFilterState] = useState<BilerFilterState>(EMPTY_BILER_FILTER);
+  const [filterState, setFilterState] = useState<BilerFilterState>(() => ({
+    ...EMPTY_BILER_FILTER,
+    brand: searchParams.get("brand") ?? "",
+    model: searchParams.get("model") ?? "",
+    year: searchParams.get("year") ?? "",
+  }));
 
   const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
 
