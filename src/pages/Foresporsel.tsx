@@ -247,7 +247,7 @@ const Foresporsel = () => {
 
   if (isSuccess) {
     return (
-      <Layout contained>
+      <Layout>
         <section className="poster-section min-h-[60vh] flex items-center justify-center">
           <div className="container mx-auto text-center">
             <div className="border-chrome card-enamel bg-card max-w-lg mx-auto p-8 animate-scale-in">
@@ -271,7 +271,7 @@ const Foresporsel = () => {
   }
 
   return (
-    <Layout contained>
+    <Layout>
       <PageHeader
         title="MIN VERKTØYKASSE"
         subtitle="Se over varene du har samlet og send inn forespørselen din"
