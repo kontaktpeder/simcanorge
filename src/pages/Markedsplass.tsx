@@ -3,6 +3,7 @@ import { Link, useParams, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { motion } from "framer-motion";
 import { Layout } from "@/components/layout/Layout";
+import { Footer } from "@/components/layout/Footer";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { useCart } from "@/hooks/useCart";
 import { useMarkedsplassFeed } from "@/hooks/useMarkedsplassFeed";
@@ -139,7 +140,7 @@ export default function Markedsplass() {
   const showFeed = !!branch && !!branchType && !branchType.locked;
 
   return (
-    <Layout>
+    <Layout hideFooter>
       <Helmet>
         <title>{branchType ? `${branchType.label} | Markedsplass` : 'Markedsplass'} | Simca Norge</title>
         <meta name="description" content="Kjøp og selg deler, tilbehør og biler fra Simca-entusiaster i Norge." />
@@ -301,6 +302,8 @@ export default function Markedsplass() {
                 </Link>
               </div>
             </section>
+
+            <Footer />
           </div>
         </div>
       ) : (

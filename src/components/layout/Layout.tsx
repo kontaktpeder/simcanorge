@@ -6,9 +6,11 @@ interface LayoutProps {
   children: ReactNode;
   /** When true, header stays fixed and content+footer scroll in a container */
   contained?: boolean;
+  /** When true, Layout does not render its own Footer (useful when Footer is placed inside a custom scroll container) */
+  hideFooter?: boolean;
 }
 
-export function Layout({ children, contained = false }: LayoutProps) {
+export function Layout({ children, contained = false, hideFooter = false }: LayoutProps) {
   if (contained) {
     return (
     <div className="h-screen min-h-[100dvh] flex flex-col overflow-hidden">
@@ -17,7 +19,7 @@ export function Layout({ children, contained = false }: LayoutProps) {
         <main className="min-h-full">
           {children}
         </main>
-        <Footer />
+        {!hideFooter && <Footer />}
       </div>
     </div>
     );
@@ -29,7 +31,7 @@ export function Layout({ children, contained = false }: LayoutProps) {
       <main className="flex-1 overflow-x-hidden">
         {children}
       </main>
-      <Footer />
+      {!hideFooter && <Footer />}
     </div>
   );
 }
