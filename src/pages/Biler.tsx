@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
+import { Footer } from "@/components/layout/Footer";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { supabase } from "@/integrations/supabase/client";
 import { Car, ChevronLeft, ChevronRight, SlidersHorizontal, X } from "lucide-react";
@@ -193,7 +194,7 @@ const Biler = () => {
   const editorialFeed = interleaveEditorialFeed(groupedCars);
 
   return (
-    <Layout>
+    <Layout hideFooter>
       <div className="flex relative lg:h-[calc(100vh-4rem)] lg:overflow-hidden">
         {/* Side Panel — desktop only, mobile uses drawer */}
         <div className="hidden lg:block shrink-0 lg:w-[300px]">
@@ -395,6 +396,8 @@ const Biler = () => {
               </Link>
             </div>
           </section>
+
+          <Footer />
         </div>
       </div>
     </Layout>
