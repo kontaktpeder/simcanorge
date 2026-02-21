@@ -1,3 +1,4 @@
+import React from 'react';
 import { Label } from '@/components/ui/label';
 import {
   Car, CheckCircle, Wrench, History, AlertTriangle,
@@ -122,8 +123,19 @@ function BilerFilterContent({
   const hasActiveFilters =
     filterState.category !== 'alle' || filterState.brand !== '' || filterState.model !== '' || filterState.variant !== '' || filterState.body_type !== '' || filterState.year !== '' || searchQuery !== '';
 
+  // Accumulate synchronous onChange calls from CarFormFields into a single update
+  const pendingRef = React.useRef<Partial<BilerFilterState> | null>(null);
   const handleCarFieldChange = (field: string, value: string) => {
-    onFilterChange({ ...filterState, [field]: value });
+    if (!pendingRef.current) {
+      pendingRef.current = {};
+      queueMicrotask(() => {
+        if (pendingRef.current) {
+          onFilterChange({ ...filterState, ...pendingRef.current });
+          pendingRef.current = null;
+        }
+      });
+    }
+    pendingRef.current[field as keyof BilerFilterState] = value;
   };
 
   return (
