@@ -7,6 +7,26 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type",
 };
 
+const XML_HEADERS = {
+  "Content-Type": "application/xml; charset=utf-8",
+  "Cache-Control": "public, max-age=3600",
+  ...corsHeaders,
+};
+
+function escapeXml(s: string): string {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&apos;");
+}
+
+function formatLastmod(iso: string | null | undefined): string {
+  if (!iso) return new Date().toISOString().slice(0, 10);
+  return iso.slice(0, 10);
+}
+
 serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -21,77 +41,62 @@ serve(async (req: Request) => {
 
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    const { data: slugs, error } = await supabase
+    const { data: cars, error } = await supabase
       .from("cars")
-      .select("slug")
+      .select("slug, updated_at, published_at")
       .not("published_at", "is", null)
       .lte("published_at", new Date().toISOString());
 
     if (error) {
       console.error("Sitemap fetch error:", error);
-      return new Response(
-        `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>${siteUrl}</loc></url></urlset>`,
-        {
-          status: 200,
-          headers: {
-            "Content-Type": "application/xml",
-            "Cache-Control": "public, max-age=3600",
-            ...corsHeaders,
-          },
-        },
-      );
+      const fallback =
+        `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>${escapeXml(siteUrl)}</loc></url></urlset>`;
+      return new Response(fallback, { status: 200, headers: XML_HEADERS });
     }
 
-    const carSlugs = (slugs ?? []) as { slug: string }[];
-    const now = new Date().toISOString();
+    const carList = (cars ?? []) as {
+      slug: string;
+      updated_at?: string;
+      published_at?: string;
+    }[];
+    const nowIso = new Date().toISOString().slice(0, 10);
 
-    const urls = [
-      { loc: siteUrl, priority: "1.0", changefreq: "daily" },
-      { loc: `${siteUrl}/biler`, priority: "0.9", changefreq: "daily" },
-      { loc: `${siteUrl}/manedens-bil`, priority: "0.9", changefreq: "weekly" },
-      { loc: `${siteUrl}/markedsplass`, priority: "0.8", changefreq: "daily" },
-      { loc: `${siteUrl}/historie`, priority: "0.7", changefreq: "monthly" },
-      { loc: `${siteUrl}/om-oss`, priority: "0.5", changefreq: "monthly" },
-      { loc: `${siteUrl}/kontakt`, priority: "0.5", changefreq: "monthly" },
-      ...carSlugs.map(({ slug }) => ({
-        loc: `${siteUrl}/biler/${slug}`,
-        priority: "0.8",
-        changefreq: "weekly",
-      })),
+    const staticEntries = [
+      { loc: siteUrl, lastmod: nowIso, changefreq: "daily", priority: "1.0" },
+      { loc: `${siteUrl}/biler`, lastmod: nowIso, changefreq: "daily", priority: "0.9" },
+      { loc: `${siteUrl}/manedens-bil`, lastmod: nowIso, changefreq: "weekly", priority: "0.9" },
+      { loc: `${siteUrl}/markedsplass`, lastmod: nowIso, changefreq: "daily", priority: "0.8" },
+      { loc: `${siteUrl}/historie`, lastmod: nowIso, changefreq: "monthly", priority: "0.7" },
+      { loc: `${siteUrl}/om-oss`, lastmod: nowIso, changefreq: "monthly", priority: "0.5" },
+      { loc: `${siteUrl}/kontakt`, lastmod: nowIso, changefreq: "monthly", priority: "0.5" },
     ];
+
+    const carEntries = carList.map((c) => ({
+      loc: `${siteUrl}/biler/${c.slug}`,
+      lastmod: formatLastmod(c.updated_at ?? c.published_at),
+      changefreq: "weekly",
+      priority: "0.8",
+    }));
+
+    const urls = [...staticEntries, ...carEntries];
 
     const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${urls
   .map(
     (u) =>
-      `  <url><loc>${escapeXml(u.loc)}</loc><lastmod>${now}</lastmod><changefreq>${u.changefreq}</changefreq><priority>${u.priority}</priority></url>`,
+      `  <url><loc>${escapeXml(u.loc)}</loc><lastmod>${u.lastmod}</lastmod><changefreq>${u.changefreq}</changefreq><priority>${u.priority}</priority></url>`
   )
   .join("\n")}
 </urlset>`;
 
-    return new Response(xml, {
-      status: 200,
-      headers: {
-        "Content-Type": "application/xml",
-        "Cache-Control": "public, max-age=3600",
-        ...corsHeaders,
-      },
-    });
+    return new Response(xml, { status: 200, headers: XML_HEADERS });
   } catch (e) {
     console.error("Sitemap error:", e);
-    return new Response("Internal error", {
-      status: 500,
-      headers: corsHeaders,
-    });
+    const siteUrl = Deno.env.get("SITE_URL") ?? "https://simcanorge.lovable.app";
+    const nowIso = new Date().toISOString().slice(0, 10);
+    const fallback =
+      `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>${escapeXml(siteUrl)}</loc><lastmod>${nowIso}</lastmod></url></urlset>`;
+    return new Response(fallback, { status: 200, headers: XML_HEADERS });
   }
 });
-
-function escapeXml(s: string): string {
-  return s
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&apos;");
-}

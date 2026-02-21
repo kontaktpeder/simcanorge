@@ -64,6 +64,7 @@ const Biler = () => {
     brand: searchParams.get("brand") ?? "",
     model: searchParams.get("model") ?? "",
     year: searchParams.get("year") ?? "",
+    decade: searchParams.get("decade") ?? "",
   }));
 
   const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
@@ -104,7 +105,12 @@ const Biler = () => {
       query = query.eq("body_type", filterState.body_type);
     }
     if (filterState.year) {
-      query = query.eq("year", parseInt(filterState.year));
+      query = query.eq("year", parseInt(filterState.year, 10));
+    } else if (filterState.decade) {
+      const dec = parseInt(filterState.decade, 10);
+      if (Number.isFinite(dec)) {
+        query = query.gte("year", dec).lte("year", dec + 9);
+      }
     }
     if (searchQuery.trim()) {
       const q = `%${searchQuery.trim()}%`;
@@ -176,7 +182,7 @@ const Biler = () => {
     fetchCars(currentPage);
   }, [currentPage, filterState, searchQuery]);
 
-  const hasActiveFilters = filterState.category !== 'alle' || filterState.brand !== '' || filterState.model !== '' || filterState.variant !== '' || filterState.body_type !== '' || filterState.year !== '' || searchQuery !== '';
+  const hasActiveFilters = filterState.category !== 'alle' || filterState.brand !== '' || filterState.model !== '' || filterState.variant !== '' || filterState.body_type !== '' || filterState.year !== '' || filterState.decade !== '' || searchQuery !== '';
   const activeFilterCount = [
     filterState.category !== 'alle',
     filterState.brand !== '',
@@ -184,6 +190,7 @@ const Biler = () => {
     filterState.variant !== '',
     filterState.body_type !== '',
     filterState.year !== '',
+    filterState.decade !== '',
     searchQuery !== '',
   ].filter(Boolean).length;
 
