@@ -98,14 +98,17 @@ export const SimcaLive = ({ isHeaderMode = false }: SimcaLiveProps) => {
     };
   }, []);
 
-  // Track page view for every visit (each page load = one visit)
+  // Track one page view per browser session (tab close = new session next time)
   useEffect(() => {
+    if (sessionStorage.getItem("simca_visit_tracked")) return;
+
     const sessionId = getSessionId();
     const trackVisit = async () => {
       try {
         await supabase.from("page_views").insert({
           session_id: sessionId,
         });
+        sessionStorage.setItem("simca_visit_tracked", "true");
       } catch (error) {
         console.error("Error tracking visit:", error);
       }
