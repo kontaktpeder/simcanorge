@@ -98,52 +98,34 @@ export const SimcaLive = ({ isHeaderMode = false }: SimcaLiveProps) => {
     };
   }, []);
 
-  // Track page view for total visits (only once per session)
+  // Track page view for every visit (each page load = one visit)
   useEffect(() => {
     const sessionId = getSessionId();
-    const visitKey = `simca_visit_tracked_${new Date().toDateString()}`;
-    
-    // Only track once per day per session
-    if (localStorage.getItem(visitKey)) return;
-
     const trackVisit = async () => {
       try {
-        const { data: existing } = await supabase
-          .from("page_views")
-          .select("id")
-          .eq("session_id", sessionId)
-          .maybeSingle();
-
-        if (!existing) {
-          await supabase.from("page_views").insert({
-            session_id: sessionId,
-          });
-        }
-        
-        localStorage.setItem(visitKey, "true");
+        await supabase.from("page_views").insert({
+          session_id: sessionId,
+        });
       } catch (error) {
         console.error("Error tracking visit:", error);
       }
     };
-
     trackVisit();
   }, []);
 
-  // Fetch total visits (unique sessions in last 30 days)
+  // Fetch total visits (all visits in last 30 days)
   useEffect(() => {
     const fetchTotalVisits = async () => {
       try {
         const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
-        const { data, error } = await supabase
+        const { count, error } = await supabase
           .from("page_views")
-          .select("session_id")
+          .select("id", { count: "exact", head: true })
           .gte("created_at", thirtyDaysAgo);
 
         if (error) throw error;
 
-        // Count unique sessions
-        const uniqueSessions = new Set(data?.map(row => row.session_id) || []);
-        setTotalVisits(uniqueSessions.size);
+        setTotalVisits(count ?? 0);
         setHasError(false);
       } catch (error) {
         console.error("Error fetching total visits:", error);
