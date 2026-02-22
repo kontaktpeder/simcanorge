@@ -120,11 +120,11 @@ export const SimcaLive = ({ isHeaderMode = false }: SimcaLiveProps) => {
   useEffect(() => {
     const fetchTotalVisits = async () => {
       try {
-        const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+        const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
         const { count, error } = await supabase
           .from("page_views")
           .select("id", { count: "exact", head: true })
-          .gte("created_at", thirtyDaysAgo);
+          .gte("created_at", sevenDaysAgo);
 
         if (error) throw error;
 
@@ -155,7 +155,7 @@ export const SimcaLive = ({ isHeaderMode = false }: SimcaLiveProps) => {
   const getTotalVisitsText = () => {
     if (hasError) return "Oppdateres…";
     if (!isLoaded) return "Oppdateres…";
-    return `${displayTotalVisits} besøk siste 30 dager`;
+    return `${displayTotalVisits} besøk siste 7 dager`;
   };
 
   // Header mode: ultra compact for mobile header
@@ -355,7 +355,7 @@ export const SimcaLive = ({ isHeaderMode = false }: SimcaLiveProps) => {
                     {displayTotalVisits}
                   </span>
                 )}
-                {hasError || !isLoaded ? getTotalVisitsText() : "besøk siste 30 dager"}
+                {hasError || !isLoaded ? getTotalVisitsText() : "besøk siste 7 dager"}
               </p>
             </div>
           </div>
