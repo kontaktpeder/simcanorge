@@ -49,11 +49,37 @@ export default function EierProfil() {
     );
   }
 
+  const SITE_URL =
+    typeof window !== "undefined" && window.location.hostname.includes("simcanorge.no")
+      ? "https://simcanorge.no"
+      : "https://simcanorge.lovable.app";
+
+  const profileUrl = `${SITE_URL}/profil/${owner.slug}`;
+  const personDescription = owner.bio?.slice(0, 160) || `Simca-entusiast i Norge – profil for ${owner.display_name}`;
+
   return (
     <Layout>
       <Helmet>
-        <title>{owner.display_name} | Simca Norge</title>
-        <meta name="description" content={owner.bio?.slice(0, 160) || `Profil for ${owner.display_name} på Simca Norge`} />
+        <title>{owner.display_name} – Simca-entusiast i Norge | Simca Norge</title>
+        <meta name="description" content={personDescription} />
+        <link rel="canonical" href={profileUrl} />
+        <meta property="og:title" content={`${owner.display_name} – Simca-entusiast i Norge | Simca Norge`} />
+        <meta property="og:description" content={personDescription} />
+        <meta property="og:url" content={profileUrl} />
+        <meta property="og:type" content="profile" />
+        {owner.avatar_url && <meta property="og:image" content={owner.avatar_url} />}
+
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Person",
+            "name": owner.display_name,
+            "description": personDescription,
+            "url": profileUrl,
+            ...(owner.avatar_url ? { "image": owner.avatar_url } : {}),
+            ...(owner.location ? { "address": { "@type": "PostalAddress", "addressLocality": owner.location } } : {}),
+          })}
+        </script>
       </Helmet>
 
       {/* Hero Section */}

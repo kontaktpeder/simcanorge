@@ -44,6 +44,17 @@ async function main() {
     process.exit(1);
   }
 
+  const { data: owners, error: ownersError } = await supabase
+    .from("owners")
+    .select("slug, updated_at")
+    .eq("visible_public", true)
+    .not("approved_at", "is", null)
+    .not("slug", "is", null);
+
+  if (ownersError) {
+    console.error("Error fetching owners:", ownersError.message);
+  }
+
   const staticEntries = [
     { loc: siteUrl, lastmod: nowIso, changefreq: "daily", priority: "1.0" },
     { loc: `${siteUrl}/biler`, lastmod: nowIso, changefreq: "daily", priority: "0.9" },
@@ -61,7 +72,14 @@ async function main() {
     priority: "0.8",
   }));
 
-  const urls = [...staticEntries, ...carEntries];
+  const ownerEntries = (owners || []).map((o) => ({
+    loc: `${siteUrl}/profil/${o.slug}`,
+    lastmod: formatLastmod(o.updated_at),
+    changefreq: "monthly",
+    priority: "0.6",
+  }));
+
+  const urls = [...staticEntries, ...carEntries, ...ownerEntries];
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
