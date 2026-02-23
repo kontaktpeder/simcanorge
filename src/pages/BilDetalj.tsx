@@ -16,7 +16,10 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
-const SITE_URL = import.meta.env.VITE_SITE_URL ?? "https://simcanorge.lovable.app";
+const SITE_URL =
+  typeof window !== "undefined" && window.location.hostname.includes("simcanorge.no")
+    ? "https://simcanorge.no"
+    : "https://simcanorge.lovable.app";
 interface CarImage {
   id: string;
   image_url: string;
