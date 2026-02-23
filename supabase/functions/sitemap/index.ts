@@ -47,17 +47,28 @@ serve(async (req: Request) => {
       .not("published_at", "is", null)
       .lte("published_at", new Date().toISOString());
 
+    const { data: owners, error: ownersError } = await supabase
+      .from("owners")
+      .select("slug, updated_at")
+      .eq("visible_public", true)
+      .not("approved_at", "is", null)
+      .not("slug", "is", null);
+
     if (error) {
       console.error("Sitemap fetch error:", error);
-      const fallback =
-        `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>${escapeXml(siteUrl)}</loc></url></urlset>`;
-      return new Response(fallback, { status: 200, headers: XML_HEADERS });
+    }
+    if (ownersError) {
+      console.error("Sitemap owners fetch error:", ownersError);
     }
 
     const carList = (cars ?? []) as {
       slug: string;
       updated_at?: string;
       published_at?: string;
+    }[];
+    const ownerList = (owners ?? []) as {
+      slug: string;
+      updated_at?: string;
     }[];
     const nowIso = new Date().toISOString().slice(0, 10);
 
@@ -78,7 +89,14 @@ serve(async (req: Request) => {
       priority: "0.8",
     }));
 
-    const urls = [...staticEntries, ...carEntries];
+    const ownerEntries = ownerList.map((o) => ({
+      loc: `${siteUrl}/profil/${o.slug}`,
+      lastmod: formatLastmod(o.updated_at),
+      changefreq: "monthly",
+      priority: "0.6",
+    }));
+
+    const urls = [...staticEntries, ...carEntries, ...ownerEntries];
 
     const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">

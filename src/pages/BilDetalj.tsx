@@ -250,10 +250,10 @@ const BilDetalj = () => {
   const mainImage = sortedImages[0];
   const galleryImages = sortedImages.slice(1);
 
-  const storyExcerpt = car.story && car.story.length > 500 
-    ? `${car.story.substring(0, 500)}...` 
+  const storyExcerpt = car.story && car.story.length > 800 
+    ? `${car.story.substring(0, 800)}...` 
     : car.story;
-  const hasMoreStory = car.story && car.story.length > 500;
+  const hasMoreStory = car.story && car.story.length > 800;
 
   // Quick facts data
   const quickFacts = [
@@ -387,6 +387,8 @@ const BilDetalj = () => {
                       mainImage.alt_text || car.title,
                       { sizes: IMAGE_SIZES.hero, priority: true }
                     )}
+                    width={1200}
+                    height={900}
                     className="w-full aspect-[4/3] object-cover border-4 border-foreground shadow-brutal cursor-pointer hover:scale-[1.02] transition-transform duration-300" 
                     onClick={() => setSelectedImageIndex(0)}
                   />
@@ -413,7 +415,7 @@ const BilDetalj = () => {
             {/* Content */}
             <AnimatedSection delay={100}>
               <div>
-                <h2 className="headline-md mb-3">{car.title}</h2>
+                <h1 className="headline-md mb-3">{car.title}{car.year != null ? ` (${car.year})` : ""}</h1>
                 
                 {/* Subtitle line */}
                 <p className="font-display text-xl text-accent mb-4">
@@ -449,10 +451,10 @@ const BilDetalj = () => {
                 {/* Story excerpt */}
                 {car.story && (
                   <div className="mb-6">
-                    <h3 className="font-display text-sm uppercase text-muted-foreground mb-3 flex items-center gap-2">
+                    <h2 className="font-display text-sm uppercase text-muted-foreground mb-3 flex items-center gap-2">
                       <FileText className="w-4 h-4" />
                       Historien
-                    </h3>
+                    </h2>
                     <div className="prose prose-lg">
                       <p className="font-serif text-lg leading-relaxed whitespace-pre-wrap">
                         {isExpanded ? car.story : storyExcerpt}
@@ -510,7 +512,7 @@ const BilDetalj = () => {
       <section className="py-8 md:py-16">
         <div className="container mx-auto px-4">
           <AnimatedSection delay={400}>
-            <h3 className="headline-sm mb-8 text-center">Bilens reise</h3>
+            <h2 className="headline-sm mb-8 text-center">Bilens reise</h2>
             <div className="max-w-2xl mx-auto">
               <TimelineSection 
                 carId={car.id} 
@@ -536,7 +538,7 @@ const BilDetalj = () => {
         <section className="py-8 md:py-12 bg-muted/50">
           <div className="container mx-auto px-4">
             <AnimatedSection delay={500}>
-              <h3 className="headline-sm mb-6 text-center">Eksterne lenker</h3>
+              <h2 className="headline-sm mb-6 text-center">Eksterne lenker</h2>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto stagger-children">
                 {externalLinks.map((link, index) => {
                   const Icon = getLinkIcon(link.type);
@@ -687,6 +689,16 @@ const BilDetalj = () => {
                       className="text-primary hover:underline"
                     >
                       Flere {car.brand}
+                    </Link>
+                  </li>
+                )}
+                {car.model && (
+                  <li>
+                    <Link
+                      to={`/biler?model=${encodeURIComponent(car.model)}`}
+                      className="text-primary hover:underline"
+                    >
+                      Se også andre {car.model} i Norge
                     </Link>
                   </li>
                 )}
