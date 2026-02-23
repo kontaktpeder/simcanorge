@@ -56,6 +56,7 @@ interface CarDetail {
   featured: boolean;
   published_at: string | null;
   created_at?: string;
+  updated_at?: string | null;
   category: string | null;
   external_links: ExternalLinkData[] | null;
   timeline_events: TimelineEvent[] | null;
@@ -123,7 +124,7 @@ const BilDetalj = () => {
         .from("cars")
         .select(`
           id, title, slug, brand, model, variant, body_type, year, story, 
-          overhauled, tags, featured, published_at, created_at, category,
+          overhauled, tags, featured, published_at, created_at, updated_at, category,
           external_links, timeline_events,
           car_images(id, image_url, alt_text, sort_order)
         `)
@@ -285,10 +286,13 @@ const BilDetalj = () => {
       ];
 
   // Build OG meta data
-  const ogTitle = `${car.title} | Simca Norge`;
-  const ogDescription = car.story 
-    ? car.story.substring(0, 155).trim() + (car.story.length > 155 ? '...' : '')
-    : `${car.brand || ''} ${car.model} ${car.variant || ''} ${car.year ? `(${car.year})` : ''} – Se historien og bildene.`.trim();
+  const displayYear = car.year != null ? ` (${car.year})` : "";
+  const ogTitle = `${car.title}${displayYear} – Bilhistorie fra Norge | Simca Norge`;
+  const yearLabel = car.year != null ? ` fra ${car.year}` : "";
+  const storySnippet = car.story?.trim();
+  const ogDescription = storySnippet
+    ? `Les historien om ${car.title}${yearLabel}. ${storySnippet.slice(0, 150).trim()}${storySnippet.length > 150 ? "…" : ""}`
+    : `Les historien om ${car.title}${yearLabel} på Simca Norge.`;
   const rawOgImage = mainImage?.image_url ?? "";
   const ogImage = rawOgImage.startsWith("http")
     ? rawOgImage
@@ -321,29 +325,29 @@ const BilDetalj = () => {
         <meta name="twitter:description" content={ogDescription} />
         <meta name="twitter:image" content={ogImage} />
 
-        {/* JSON-LD Structured Data */}
+        {/* JSON-LD Structured Data – Article */}
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
-            "@graph": [
-              {
-                "@type": "Vehicle",
-                name: car.title,
-                description: ogDescription,
-                url: canonicalUrl,
-                image: ogImage,
-                brand: car.brand ? { "@type": "Brand", name: car.brand } : undefined,
-                model: car.model,
-                vehicleModelDate: car.year ?? undefined,
+            "@type": "Article",
+            "headline": car.year != null ? `${car.title} (${car.year})` : car.title,
+            "description": ogDescription,
+            "image": ogImage,
+            "mainEntityOfPage": canonicalUrl,
+            "author": {
+              "@type": "Organization",
+              "name": "Simca Norge",
+            },
+            "publisher": {
+              "@type": "Organization",
+              "name": "Simca Norge",
+              "logo": {
+                "@type": "ImageObject",
+                "url": `${SITE_URL}/simca-norge-badge.png`,
               },
-              ...(ownerProfile?.display_name && ownerProfile?.slug
-                ? [{
-                    "@type": "Person",
-                    name: ownerProfile.display_name,
-                    url: `${SITE_URL}/profil/${ownerProfile.slug}`,
-                  }]
-                : []),
-            ].filter(Boolean),
+            },
+            "datePublished": car.published_at ?? car.created_at ?? null,
+            "dateModified": car.updated_at ?? car.published_at ?? car.created_at ?? null,
           })}
         </script>
       </Helmet>
