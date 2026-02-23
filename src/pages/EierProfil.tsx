@@ -49,10 +49,7 @@ export default function EierProfil() {
     );
   }
 
-  const SITE_URL =
-    typeof window !== "undefined" && window.location.hostname.includes("simcanorge.no")
-      ? "https://simcanorge.no"
-      : "https://simcanorge.lovable.app";
+  const SITE_URL = (import.meta.env.VITE_SITE_URL ?? "https://simcanorge.no").replace(/\/$/, "");
 
   const profileUrl = `${SITE_URL}/profil/${owner.slug}`;
   const personDescription = owner.bio?.slice(0, 160) || `Simca-entusiast i Norge – profil for ${owner.display_name}`;
