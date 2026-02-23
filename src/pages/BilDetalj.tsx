@@ -302,6 +302,17 @@ const BilDetalj = () => {
   const canonicalUrl = `${SITE_URL}/biler/${car.slug}`;
   const decade = car.year != null ? Math.floor(car.year / 10) * 10 : null;
 
+  const breadcrumbItemName = car.title?.trim() || [car.brand, car.model, car.year].filter(Boolean).join(" ").trim() || "Bil";
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Forside", "item": `${SITE_URL}/` },
+      { "@type": "ListItem", "position": 2, "name": "Biler", "item": `${SITE_URL}/biler` },
+      { "@type": "ListItem", "position": 3, "name": breadcrumbItemName, "item": `${SITE_URL}/biler/${car.slug}` },
+    ],
+  };
+
   return (
     <Layout>
       <Helmet>
@@ -349,6 +360,11 @@ const BilDetalj = () => {
             "datePublished": car.published_at ?? car.created_at ?? null,
             "dateModified": car.updated_at ?? car.published_at ?? car.created_at ?? null,
           })}
+        </script>
+
+        {/* JSON-LD BreadcrumbList */}
+        <script type="application/ld+json">
+          {JSON.stringify(breadcrumbJsonLd)}
         </script>
       </Helmet>
 
