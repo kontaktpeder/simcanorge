@@ -133,7 +133,7 @@ export default function Login() {
     <Layout>
       <PageHeader 
         title={authMode === 'login' ? 'Logg inn' : 'Opprett konto'} 
-        subtitle="Få tilgang til din Simca-portal"
+        subtitle="Få tilgang til din garasje"
       />
       
       <div className="container py-8">
