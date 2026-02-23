@@ -14,4 +14,3 @@ User-agent: *
 Allow: /
 
 Sitemap: https://simcanorge.no/sitemap.xml
-Sitemap: https://xsmjjkbycrzberloywqm.supabase.co/functions/v1/sitemap
