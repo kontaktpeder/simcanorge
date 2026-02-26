@@ -7,10 +7,10 @@ import { Link } from "react-router-dom";
 export default function OmOss() {
   return (
     <Layout contained>
-      <PageHeader 
-        title="OM OSS" 
-        subtitle="Fordi disse bilene fortjente bedre" 
-      />
+      <PageHeader
+        title="OM OSS"
+        subtitle="Fordi disse bilene fortjente bedre" />
+
 
       {/* Main Content */}
       <section className="py-16 md:py-24 bg-background">
@@ -37,8 +37,8 @@ export default function OmOss() {
                 </div>
               </div>
               <div className="prose prose-xl max-w-none">
-                <p className="text-lg md:text-xl text-foreground/80 leading-relaxed mb-4">
-                  Allerede i 2007 ble Facebook-gruppen Simca Norge etablert av noen få entusiaster. Gruppen har siden vært levende og aktiv, og har gjennom årene samlet over 1000 medlemmer. Her deles minner, bilder, teknisk kunnskap og entusiasme for et bilmerke som for mange har hatt en helt spesiell plass.
+                <p className="text-lg md:text-xl text-foreground/80 leading-relaxed mb-4">Ikke før 2007 ble Facebook-gruppen Simca Norge etablert av noen få entusiaster. Gruppen har siden vært levende og aktiv, og har gjennom årene samlet over 1000 medlemmer. Her deles minner, bilder, teknisk kunnskap og entusiasme for et bilmerke som for mange har hatt en helt spesiell plass.
+
                 </p>
                 <p className="text-lg md:text-xl text-foreground/80 leading-relaxed">
                   Samtidig har det lenge vært savnet noe mer.
@@ -142,18 +142,18 @@ export default function OmOss() {
             <Link to="/markedsplass" className="btn-enamel-red">
               Markedsplass
             </Link>
-            <a 
-              href="https://www.facebook.com/groups/1569119639997670" 
-              target="_blank" 
+            <a
+              href="https://www.facebook.com/groups/1569119639997670"
+              target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 font-display text-lg uppercase tracking-wide text-foreground hover:text-accent transition-colors"
-            >
+              className="inline-flex items-center gap-2 font-display text-lg uppercase tracking-wide text-foreground hover:text-accent transition-colors">
+
               <Facebook className="w-5 h-5" />
               Besøk Facebook-gruppen
             </a>
           </div>
         </div>
       </section>
-    </Layout>
-  );
+    </Layout>);
+
 }
