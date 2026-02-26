@@ -50,8 +50,8 @@ export default function OmOss() {
             <AnimatedSection className="mb-12">
               <div className="badge-frame rounded-xl overflow-hidden shadow-xl border-4 border-[hsl(var(--chrome-border))]">
                 <div className="bg-metal-blue p-6 md:p-8">
-                  <p className="text-lg md:text-xl text-white/90 leading-relaxed">
-                    Facebook egner seg godt for dialog, men gir begrensede muligheter for å vise frem bilene slik de fortjener. Bilder forsvinner fort i strømmen, og det har manglet et sted der norske Simca-biler kan presenteres ordentlig, inspirere nye eiere – og vekke interessen hos dem som kanskje bare husker bilene fra barndommen.
+                  <p className="text-lg md:text-xl text-white/90 leading-relaxed">Facebook egner seg godt for dialog, men gir begrensede muligheter for å vise frem bilene slik de fortjener. Bilder forsvinner fort i strømmen, og det har manglet et sted der norske Simca, Talbot og Matra-biler kan presenteres ordentlig, inspirere nye eiere – og vekke interessen hos dem som kanskje bare husker bilene fra barndommen.
+
                   </p>
                 </div>
                 <div className="bg-metal-red p-6 md:p-8">
