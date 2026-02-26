@@ -13,6 +13,7 @@ import {
   ChevronRight, ChevronLeft, ArrowLeft, Check,
 } from "lucide-react";
 import { OwnerCard } from "@/components/car/OwnerCard";
+import { SimcaNorgeSellerCard } from "@/components/car/SimcaNorgeSellerCard";
 // toolbox icon served from public/
 
 const CONDITION_LABELS: Record<string, { label: string; className: string }> = {
@@ -207,6 +208,7 @@ function PartDetailView({ part, category }: { part: any; category: any }) {
                 </div>
               </div>
             </div>
+            <SimcaNorgeSellerCard />
           </div>
         </div>
       </section>
