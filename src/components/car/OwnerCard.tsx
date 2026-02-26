@@ -16,9 +16,10 @@ interface OwnerData {
 interface OwnerCardProps {
   carId?: string;
   owner?: OwnerData | null;
+  heading?: string;
 }
 
-export function OwnerCard({ carId, owner: ownerProp }: OwnerCardProps) {
+export function OwnerCard({ carId, owner: ownerProp, heading = 'Selges av' }: OwnerCardProps) {
   const { data: fetchedOwner, isLoading } = useCarOwnerProfile(carId);
 
   const owner: OwnerData | null = ownerProp || (fetchedOwner as OwnerData | null);
@@ -43,7 +44,7 @@ export function OwnerCard({ carId, owner: ownerProp }: OwnerCardProps) {
     >
       <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 flex items-center gap-2">
         <User className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
-        Selges av
+        {heading}
       </h2>
       
       <div className="bg-card rounded-xl border shadow-sm overflow-hidden">
