@@ -293,12 +293,17 @@ const BilDetalj = () => {
   const ogDescription = storySnippet
     ? `Les historien om ${car.title}${yearLabel}. ${storySnippet.slice(0, 150).trim()}${storySnippet.length > 150 ? "…" : ""}`
     : `Les historien om ${car.title}${yearLabel} på Simca Norge.`;
+  const functionsHost = (import.meta.env.VITE_SUPABASE_URL ?? "").replace(/\/$/, "");
+  const ogImageFromEdge = functionsHost
+    ? `${functionsHost}/functions/v1/og-bil?slug=${encodeURIComponent(car.slug)}${car.updated_at ? `&v=${encodeURIComponent(car.updated_at)}` : ""}`
+    : null;
   const rawOgImage = mainImage?.image_url ?? "";
-  const ogImage = rawOgImage.startsWith("http")
+  const fallbackOgImage = rawOgImage.startsWith("http")
     ? rawOgImage
     : rawOgImage
       ? `${SITE_URL}${rawOgImage.startsWith("/") ? "" : "/"}${rawOgImage}`
       : `${SITE_URL}/favicon.png`;
+  const ogImage = ogImageFromEdge ?? fallbackOgImage;
   const canonicalUrl = `${SITE_URL}/biler/${car.slug}`;
   const decade = car.year != null ? Math.floor(car.year / 10) * 10 : null;
 
