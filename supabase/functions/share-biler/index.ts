@@ -92,11 +92,8 @@ serve(async (req: Request) => {
   );
   const firstImage = sortedImages[0]?.image_url;
 
-  const ogImage = firstImage?.startsWith("http")
-    ? firstImage
-    : firstImage
-      ? `${siteUrl}${firstImage.startsWith("/") ? "" : "/"}${firstImage}`
-      : `${siteUrl}/favicon.png`;
+  const functionsHost = supabaseUrl.replace(/\/$/, "");
+  const ogImage = `${functionsHost}/functions/v1/og-bil?slug=${encodeURIComponent(car.slug)}`;
 
   const canonicalUrl = `${siteUrl}/biler/${car.slug}`;
 
@@ -119,6 +116,8 @@ serve(async (req: Request) => {
   <meta property="og:title" content="${escapeHtml(title)}">
   <meta property="og:description" content="${escapeHtml(description)}">
   <meta property="og:image" content="${escapeHtml(ogImage)}">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
   <meta property="og:site_name" content="Simca Norge">
   <meta property="og:locale" content="nb_NO">
 
