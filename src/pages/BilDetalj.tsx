@@ -149,9 +149,13 @@ const BilDetalj = () => {
     fetchCar();
   }, [slug]);
 
+  const shareUrl = car
+    ? `${(import.meta.env.VITE_SUPABASE_URL ?? "").replace(/\/$/, "")}/functions/v1/share-biler?slug=${encodeURIComponent(car.slug)}`
+    : currentUrl;
+
   const copyLink = async () => {
     try {
-      await navigator.clipboard.writeText(currentUrl);
+      await navigator.clipboard.writeText(shareUrl);
       setCopied(true);
       toast.success("Lenke kopiert!");
       setTimeout(() => setCopied(false), 2000);
@@ -168,7 +172,7 @@ const BilDetalj = () => {
       text: car.story 
         ? car.story.substring(0, 200) + (car.story.length > 200 ? '...' : '')
         : `${car.brand || ''} ${car.model} ${car.variant || ''} ${car.year ? `(${car.year})` : ''}`.trim(),
-      url: currentUrl,
+      url: shareUrl,
     };
 
     try {
@@ -187,12 +191,12 @@ const BilDetalj = () => {
   };
 
   const shareOnFacebook = () => {
-    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(currentUrl)}`, "_blank", "width=600,height=400");
+    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`, "_blank", "width=600,height=400");
   };
 
   const shareOnTwitter = () => {
     const text = car ? `Sjekk ut denne ${car.title}!` : "Sjekk ut denne bilen!";
-    window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(currentUrl)}&text=${encodeURIComponent(text)}`, "_blank", "width=600,height=400");
+    window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(text)}`, "_blank", "width=600,height=400");
   };
 
   const nextImage = () => {
