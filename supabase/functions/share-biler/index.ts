@@ -17,6 +17,8 @@ function escapeHtml(s: string): string {
 }
 
 serve(async (req: Request) => {
+  const userAgent = req.headers.get("user-agent") ?? "";
+  const isCrawler = /facebookexternalhit|facebot|twitterbot|linkedinbot|slackbot|whatsapp|telegrambot|discordbot|pinterest|googlebot|bingbot/i.test(userAgent);
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
@@ -93,7 +95,24 @@ serve(async (req: Request) => {
   const firstImage = sortedImages[0]?.image_url;
 
   const functionsHost = supabaseUrl.replace(/\/$/, "");
-  const ogImage = `${functionsHost}/functions/v1/og-bil?slug=${encodeURIComponent(car.slug)}`;
+  const generatedOgImage = `${functionsHost}/functions/v1/og-bil?slug=${encodeURIComponent(car.slug)}`;
+
+  const fallbackOgImage = firstImage?.startsWith("http")
+    ? firstImage
+    : firstImage
+      ? `${siteUrl}${firstImage.startsWith("/") ? "" : "/"}${firstImage}`
+      : `${siteUrl}/favicon.png`;
+
+  let ogImage = generatedOgImage;
+  try {
+    const probe = await fetch(generatedOgImage, { method: "HEAD" });
+    const contentType = probe.headers.get("content-type") ?? "";
+    if (!probe.ok || !contentType.startsWith("image/")) {
+      ogImage = fallbackOgImage;
+    }
+  } catch {
+    ogImage = fallbackOgImage;
+  }
 
   const canonicalUrl = `${siteUrl}/biler/${car.slug}`;
 
@@ -102,6 +121,16 @@ serve(async (req: Request) => {
   const description = car.story
     ? car.story.slice(0, 155).trim() + (car.story.length > 155 ? "…" : "")
     : `${[car.brand, car.model].filter(Boolean).join(" ")}${car.year != null ? ` (${car.year})` : ""} – Se historien på Simca Norge.`.trim();
+
+  if (!isCrawler) {
+    return new Response(null, {
+      status: 302,
+      headers: {
+        Location: canonicalUrl,
+        ...corsHeaders,
+      },
+    });
+  }
 
   const html = `<!DOCTYPE html>
 <html lang="no">
@@ -125,11 +154,10 @@ serve(async (req: Request) => {
   <meta name="twitter:title" content="${escapeHtml(title)}">
   <meta name="twitter:description" content="${escapeHtml(description)}">
   <meta name="twitter:image" content="${escapeHtml(ogImage)}">
-
-  <meta http-equiv="refresh" content="0;url=${canonicalUrl}">
 </head>
 <body>
-  <p>Videresender til bilen… <a href="${canonicalUrl}">Gå til ${escapeHtml(car.title)}</a>.</p>
+  <p>Delingsvisning for ${escapeHtml(car.title)}.</p>
+  <p><a href="${canonicalUrl}">Gå til bilen</a></p>
 </body>
 </html>`;
 
