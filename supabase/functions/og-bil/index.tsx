@@ -12,6 +12,7 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 function abs(url: string) {
   if (!url) return "";
   if (url.startsWith("http")) return url;
+  if (url.startsWith("/storage/")) return `${SUPABASE_URL}${url}`;
   return `${SITE_URL}${url.startsWith("/") ? "" : "/"}${url}`;
 }
 
