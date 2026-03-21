@@ -437,9 +437,9 @@
   .poster-section-blue {
     @apply text-white;
     background:
-      radial-gradient(1200px 600px at 70% 10%, rgba(255,255,255,0.18), rgba(255,255,255,0) 60%),
-      radial-gradient(900px 500px at 20% 80%, rgba(0,0,0,0.20), rgba(0,0,0,0) 55%),
-      linear-gradient(135deg, #0F3E7A 0%, #1F66B5 35%, #4FA0FF 55%, #1F66B5 75%, #0F3E7A 100%);
+      radial-gradient(1000px 500px at 65% 15%, rgba(255,255,255,0.06), rgba(255,255,255,0) 60%),
+      radial-gradient(800px 500px at 20% 85%, rgba(0,0,0,0.30), rgba(0,0,0,0) 55%),
+      linear-gradient(175deg, #0B2A55 0%, #0D3466 30%, #0F3E7A 55%, #0B2A55 80%, #071D3D 100%);
   }
 
   .poster-section-red {
