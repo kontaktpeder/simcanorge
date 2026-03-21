@@ -70,6 +70,8 @@ export function HeroSection() {
     return sorted[0];
   };
   return <section className="poster-section poster-section-blue hero-watermark relative overflow-hidden min-h-[60vh] md:min-h-[85vh] flex flex-col justify-start pt-2 md:pt-8">
+      {/* Gradient transition from sky header into deep navy hero */}
+      <div className="absolute inset-x-0 top-0 h-24 md:h-32 bg-gradient-to-b from-[#1a4a7a]/60 via-[#0B2A55]/80 to-transparent z-[1] pointer-events-none" />
       <div className="absolute inset-0 stripes-diagonal" />
       
       <div className="container mx-auto relative z-10">
@@ -193,7 +195,7 @@ export function HeroSection() {
               </p>
             </div>
 
-            <div className="absolute inset-0 -inset-x-8 -inset-y-4 rounded-3xl bg-radial-spotlight pointer-events-none z-0" />
+            <div className="absolute inset-0 -inset-x-8 -inset-y-4 rounded-3xl bg-gradient-to-b from-white/[0.03] to-transparent pointer-events-none z-0" />
 
             {isLoading ? <div className="featured-card-premium p-6 relative z-10">
                 <Skeleton className="aspect-[4/3] w-full rounded-lg" />
