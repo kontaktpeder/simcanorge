@@ -712,16 +712,13 @@
   /* Premium featured card with white inner + blue outer stroke */
   .featured-card-premium {
     position: relative;
-    border-radius: 16px;
-    background: linear-gradient(180deg, rgba(30,40,60,0.95) 0%, rgba(15,25,40,0.98) 100%);
-    border: 2px solid rgba(255,255,255,0.9);
+    border-radius: 12px;
+    background: linear-gradient(180deg, rgba(12,22,40,0.92) 0%, rgba(8,16,30,0.96) 100%);
+    border: 1.5px solid rgba(255,255,255,0.15);
     box-shadow: 
-      0 0 0 4px #1F66B5,
-      0 0 20px rgba(31, 102, 181, 0.4),
-      0 0 40px rgba(31, 102, 181, 0.2),
-      inset 0 1px 0 rgba(255,255,255,0.1),
-      0 20px 50px rgba(0,0,0,0.5),
-      0 8px 20px rgba(0,0,0,0.3);
+      inset 0 1px 0 rgba(255,255,255,0.06),
+      0 16px 40px rgba(0,0,0,0.5),
+      0 4px 12px rgba(0,0,0,0.3);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
   }
 
