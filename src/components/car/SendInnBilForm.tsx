@@ -581,8 +581,8 @@ export function SendInnBilForm({ onSuccess, onCancel, showCancelButton = false }
                     <ImagePlus className="w-6 h-6 sm:w-7 sm:h-7" />
                   </div>
                   <div className="text-center">
-                    <p className="font-display text-base sm:text-lg">LAST OPP BILDER</p>
-                    <p className="text-xs sm:text-sm">Maks 10 bilder, 10MB per bilde</p>
+                    <p className="font-display text-base sm:text-lg">Velg bilder</p>
+                    <p className="text-xs sm:text-sm">Maks 10 bilder, 10 MB per bilde. Bildene lastes opp når du trykker «Send inn».</p>
                   </div>
                 </div>
               </button>
