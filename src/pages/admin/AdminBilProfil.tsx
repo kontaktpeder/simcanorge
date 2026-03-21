@@ -448,6 +448,9 @@ const AdminBilProfil = () => {
 
     try {
       const compressedResults = await compressImages(files);
+      let nextSortOrder = car.car_images?.length || 0;
+      let successCount = 0;
+      let lastError: string | null = null;
 
       for (let i = 0; i < compressedResults.length; i++) {
         const { file } = compressedResults[i];
@@ -460,6 +463,7 @@ const AdminBilProfil = () => {
 
         if (uploadError) {
           console.error('Upload error:', uploadError);
+          lastError = uploadError.message;
           continue;
         }
 
@@ -467,17 +471,34 @@ const AdminBilProfil = () => {
           .from('simca-images')
           .getPublicUrl(filePath);
 
-        const sortOrder = (car.car_images?.length || 0) + i;
-
-        await supabase.from('car_images').insert({
+        const { error: insertError } = await supabase.from('car_images').insert({
           car_id: car.id,
           image_url: publicUrl,
-          sort_order: sortOrder,
+          sort_order: nextSortOrder,
         });
+
+        if (insertError) {
+          console.error('Insert error:', insertError);
+          lastError = insertError.message;
+          await supabase.storage.from('simca-images').remove([filePath]);
+          continue;
+        }
+
+        nextSortOrder += 1;
+        successCount += 1;
       }
 
-      toast.success(`${compressedResults.length} bilde(r) lastet opp!`);
-      queryClient.invalidateQueries({ queryKey: ['admin-car', carId] });
+      if (successCount > 0) {
+        toast.success(`${successCount} bilde(r) lastet opp!`);
+        queryClient.invalidateQueries({ queryKey: ['admin-car', carId] });
+      }
+      if (successCount < compressedResults.length) {
+        toast.error(
+          successCount === 0
+            ? `Kunne ikke lagre bildene${lastError ? `: ${lastError}` : ''}`
+            : `${compressedResults.length - successCount} bilde(r) feilet${lastError ? ` (${lastError})` : ''}`
+        );
+      }
     } catch (err) {
       toast.error('Feil ved opplasting');
     } finally {
