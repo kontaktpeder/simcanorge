@@ -151,8 +151,14 @@ export function SendInnBilForm({ onSuccess, onCancel, showCancelButton = false }
     setImagePreviews(prev => prev.filter((_, i) => i !== index));
   };
 
-  const uploadImages = async (carId: string): Promise<string[]> => {
-    const uploadedUrls: string[] = [];
+  type ImageUploadFailure = { fileName: string; message: string };
+  type UploadImagesResult = { urls: string[]; failures: ImageUploadFailure[] };
+
+  const uploadImages = async (carId: string): Promise<UploadImagesResult> => {
+    const urls: string[] = [];
+    const failures: ImageUploadFailure[] = [];
+
+    if (images.length === 0) return { urls: [], failures: [] };
 
     const compressedResults = await compressImages(images, progress => {
       setUploadProgress(progress);
@@ -169,7 +175,6 @@ export function SendInnBilForm({ onSuccess, onCancel, showCancelButton = false }
     for (let i = 0; i < compressedResults.length; i++) {
       const { file } = compressedResults[i];
       const imageId = generateImageId();
-      // Use submissions folder - this is allowed by storage RLS for anonymous users
       const filePath = getSubmissionImagePath(carId, imageId);
       setUploadProgress({
         stage: 'uploading',
@@ -180,18 +185,18 @@ export function SendInnBilForm({ onSuccess, onCancel, showCancelButton = false }
       const { error: uploadError } = await supabase.storage.from('simca-images').upload(filePath, file);
       if (uploadError) {
         console.error('Upload error:', uploadError);
+        failures.push({ fileName: file.name, message: uploadError.message });
         continue;
       }
       const { data: urlData } = supabase.storage.from('simca-images').getPublicUrl(filePath);
-      uploadedUrls.push(urlData.publicUrl);
+      urls.push(urlData.publicUrl);
     }
-    return uploadedUrls;
+    return { urls, failures };
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Hvis backend-variablene mangler vil alle kall få 401 "No API key found".
     if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY) {
       toast({
         title: "Feil konfigurasjon",
@@ -203,10 +208,7 @@ export function SendInnBilForm({ onSuccess, onCancel, showCancelButton = false }
 
     const now = Date.now();
     if (now - lastSubmitTime < MIN_SUBMIT_INTERVAL) {
-      toast({
-        description: "Vennligst vent før du sender inn igjen.",
-        variant: "destructive"
-      });
+      toast({ description: "Vennligst vent før du sender inn igjen.", variant: "destructive" });
       return;
     }
     setLastSubmitTime(now);
@@ -226,9 +228,7 @@ export function SendInnBilForm({ onSuccess, onCancel, showCancelButton = false }
     if (!result.success) {
       const fieldErrors: Record<string, string> = {};
       result.error.errors.forEach(err => {
-        if (err.path[0]) {
-          fieldErrors[err.path[0] as string] = err.message;
-        }
+        if (err.path[0]) fieldErrors[err.path[0] as string] = err.message;
       });
       setErrors(fieldErrors);
       return;
@@ -239,20 +239,38 @@ export function SendInnBilForm({ onSuccess, onCancel, showCancelButton = false }
     setCompressionStats(null);
     
     try {
-      // Innsending skal fungere både for innloggede og anonyme brukere.
-      // Vi bruker standard klienten slik at API-nøkkel alltid sendes med.
-
       const tagsArray = result.data.tags ? result.data.tags.split(",").map(t => t.trim()).filter(t => t.length > 0) : [];
       const generatedTitle = generateCarTitle(result.data.brand, result.data.car_model, result.data.car_year);
       const baseSlug = generateSlug(generatedTitle);
+
+      const createUuidV4 = () => {
+        const g = globalThis as any;
+        if (g.crypto?.randomUUID) return g.crypto.randomUUID() as string;
+        const bytes = new Uint8Array(16);
+        g.crypto.getRandomValues(bytes);
+        bytes[6] = (bytes[6] & 0x0f) | 0x40;
+        bytes[8] = (bytes[8] & 0x3f) | 0x80;
+        const hex = [...bytes].map(b => b.toString(16).padStart(2, "0")).join("");
+        return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
+      };
+
+      const carId = createUuidV4();
+      let carSlug = baseSlug;
+
+      // Upload images first so we know the actual count
+      const uploadResult = images.length > 0
+        ? await uploadImages(carId)
+        : { urls: [] as string[], failures: [] as ImageUploadFailure[] };
 
       console.info("[SendInnBilForm] submit context", {
         emailDomain: result.data.email.split("@")[1] ?? null,
         status: "submitted",
         source: "submission",
         allow_edits: allowEdits === true,
+        images_selected: images.length,
+        images_uploaded: uploadResult.urls.length,
       });
-      
+
       const submissionPayload = {
         submitted_at: new Date().toISOString(),
         owner_name: result.data.owner_name,
@@ -267,28 +285,9 @@ export function SendInnBilForm({ onSuccess, onCancel, showCancelButton = false }
         tags: tagsArray,
         car_story: result.data.car_story || null,
         allow_edits: allowEdits === true,
-        image_count: images.length,
+        image_count: uploadResult.urls.length,
+        images_selected: images.length,
       };
-
-      let newCar: { id: string } | null = null;
-
-      // Vi genererer id på klienten for å slippe å gjøre SELECT/returning etter INSERT.
-      // Dette er viktig fordi anonyme innsendinger ikke har SELECT-tilgang til "submitted"-rader,
-      // og .select('id') vil da feile selv om INSERT faktisk var ok.
-      const createUuidV4 = () => {
-        const g = globalThis as any;
-        if (g.crypto?.randomUUID) return g.crypto.randomUUID() as string;
-        const bytes = new Uint8Array(16);
-        g.crypto.getRandomValues(bytes);
-        // RFC4122 v4
-        bytes[6] = (bytes[6] & 0x0f) | 0x40;
-        bytes[8] = (bytes[8] & 0x3f) | 0x80;
-        const hex = [...bytes].map(b => b.toString(16).padStart(2, "0")).join("");
-        return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
-      };
-
-      const carId = createUuidV4();
-      let carSlug = baseSlug;
 
       const tryInsertCar = async (slug: string) => {
         return supabase.from("cars").insert({
@@ -318,7 +317,6 @@ export function SendInnBilForm({ onSuccess, onCancel, showCancelButton = false }
       };
 
       const { error: carError } = await tryInsertCar(carSlug);
-
       if (carError) {
         if (carError.code === "23505") {
           carSlug = `${baseSlug}-${Date.now()}`;
@@ -329,25 +327,54 @@ export function SendInnBilForm({ onSuccess, onCancel, showCancelButton = false }
         }
       }
 
-      newCar = { id: carId };
+      // Insert car_images rows
+      let imagesSaved = 0;
+      const insertErrors: string[] = [];
 
-      if (images.length > 0) {
-        const carImageUrls = await uploadImages(newCar.id);
-        
-        for (let i = 0; i < carImageUrls.length; i++) {
-          await supabase.from("car_images").insert({
-            car_id: newCar.id,
-            image_url: carImageUrls[i],
-            sort_order: i,
-          });
+      for (let i = 0; i < uploadResult.urls.length; i++) {
+        const { error: insertError } = await supabase.from("car_images").insert({
+          car_id: carId,
+          image_url: uploadResult.urls[i],
+          sort_order: i,
+        });
+        if (insertError) {
+          console.error("car_images insert error:", insertError);
+          insertErrors.push(insertError.message);
+        } else {
+          imagesSaved++;
         }
       }
 
-      toast({
-        title: "Takk for innsendingen!",
-        description: "Bilen vil bli vist i 'Mine biler' når admin har godkjent den."
-      });
-      
+      // Toast feedback
+      const uploadFailCount = uploadResult.failures.length;
+      const insertFailCount = insertErrors.length;
+      const wantedImages = images.length;
+
+      if (wantedImages > 0 && uploadFailCount === 0 && insertFailCount === 0 && imagesSaved === wantedImages) {
+        toast({
+          title: "Takk for innsendingen!",
+          description: `Vi har mottatt bilen og ${imagesSaved} bilde(r). Den blir synlig når admin har godkjent den.`,
+        });
+      } else if (wantedImages > 0 && (uploadFailCount > 0 || insertFailCount > 0)) {
+        toast({
+          title: "Innsending mottatt, men noe gikk galt med bildene",
+          description: [
+            uploadFailCount > 0 && `${uploadFailCount} bilde(r) kunne ikke lastes opp.`,
+            insertFailCount > 0 && `${insertFailCount} bilde(r) ble ikke knyttet til bilen.`,
+            imagesSaved > 0 && `${imagesSaved} av ${wantedImages} bilde(r) er lagret.`,
+            "Teksten din er lagret. Ta gjerne kontakt om du vil ettersende bilder.",
+          ].filter(Boolean).join(" "),
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Takk for innsendingen!",
+          description: "Bilen vil bli vist når admin har godkjent den.",
+        });
+      }
+
+      onSuccess?.();
+
       onSuccess?.();
     } catch (error: any) {
       const errMsg = error?.details || error?.message || "Prøv igjen senere.";
@@ -554,8 +581,8 @@ export function SendInnBilForm({ onSuccess, onCancel, showCancelButton = false }
                     <ImagePlus className="w-6 h-6 sm:w-7 sm:h-7" />
                   </div>
                   <div className="text-center">
-                    <p className="font-display text-base sm:text-lg">LAST OPP BILDER</p>
-                    <p className="text-xs sm:text-sm">Maks 10 bilder, 10MB per bilde</p>
+                    <p className="font-display text-base sm:text-lg">Velg bilder</p>
+                    <p className="text-xs sm:text-sm">Maks 10 bilder, 10 MB per bilde. Bildene lastes opp når du trykker «Send inn».</p>
                   </div>
                 </div>
               </button>
