@@ -157,6 +157,16 @@ export function interleaveEditorialFeed<T extends { id: string; story?: string |
       }
     }
 
+    // Fallback: hero-minimumavstand kan blokkere hero når bare hero-køen har igjen
+    if (!foundModule) {
+      for (const mod of ['standard', 'feature', 'archive', 'hero'] as const) {
+        if (remaining[mod].length > 0) {
+          foundModule = mod;
+          break;
+        }
+      }
+    }
+
     if (!foundModule) break;
 
     // Ta neste bil fra køen
