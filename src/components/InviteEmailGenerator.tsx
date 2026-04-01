@@ -94,6 +94,25 @@ export function InviteEmailGenerator({
   const isValid = validateEmail(recipientEmail) && validateLink(inviteLink);
 
   const generateEmailBody = (): string => {
+    if (mode === 'access') {
+      return `Hei ${recipientName.trim() || 'der'}!
+
+Dette er ${senderInfo.roleText}.
+
+Du har søkt om tilgang til din bilgarasje! Velkommen.
+
+Klikk på lenken nedenfor for å opprette din konto og sette opp profilen din:
+${inviteLink.trim()}
+
+Lenken er personlig og funker én gang – ikke del den med andre.
+
+Vi gleder oss til å se hva du har å dele med andre bilentusiaster!
+
+Mvh
+${senderInfo.name}
+${senderInfo.email}`;
+    }
+
     const carText = carName.trim() 
       ? `Utrolig kul ${carName.trim()}!` 
       : 'Utrolig kul bil!';
@@ -114,7 +133,9 @@ ${senderInfo.name}
 ${senderInfo.email}`;
   };
 
-  const emailSubject = 'Tilgang til bilen din på Simca Norge';
+  const emailSubject = mode === 'access'
+    ? 'Du har fått tilgang til Simca Norge'
+    : 'Tilgang til bilen din på Simca Norge';
 
   const copyToClipboard = async (text: string, section: string) => {
     try {
