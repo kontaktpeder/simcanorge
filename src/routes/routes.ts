@@ -1,5 +1,5 @@
 import { lazy, ComponentType } from "react";
-import { Home, Star, Car, Wrench, Send, BookOpen, Users, Mail, ShoppingBag } from "lucide-react";
+import { Home, Star, Car, Wrench, Send, BookOpen, Users, Mail, ShoppingBag, User, LayoutDashboard } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 // Lazy load all pages
