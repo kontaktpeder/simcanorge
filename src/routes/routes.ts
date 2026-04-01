@@ -55,6 +55,7 @@ const AdminInviteEmail = lazy(() => import("@/pages/admin/AdminInviteEmail"));
 const AdminInnsendinger = lazy(() => import("@/pages/admin/AdminInnsendinger"));
 const AdminMarkedsplass = lazy(() => import("@/pages/admin/AdminMarkedsplass"));
 const AdminAnnonseProfil = lazy(() => import("@/pages/admin/AdminAnnonseProfil"));
+const AdminPersonProfiles = lazy(() => import("@/pages/admin/AdminPersonProfiles"));
 
 export interface RouteConfig {
   path: string;
