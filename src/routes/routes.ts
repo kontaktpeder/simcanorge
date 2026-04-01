@@ -92,6 +92,7 @@ export const routes: RouteConfig[] = [
   { path: "/i/:token", element: AcceptInvitation, isPublic: true },
   { path: "/login", element: Login, isPublic: true },
   { path: "/start-annonse", element: StartAnnonse, isPublic: true },
+  { path: "/s/:slug", element: PublicPagePage, isPublic: true },
 
   // Auth required
   { path: "/konto", element: Konto, requiresAuth: true },
