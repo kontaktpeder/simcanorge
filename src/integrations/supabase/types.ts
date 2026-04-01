@@ -886,6 +886,44 @@ export type Database = {
         }
         Relationships: []
       }
+      page_access_requests: {
+        Row: {
+          created_at: string
+          id: string
+          message: string | null
+          profile_id: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message?: string | null
+          profile_id: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message?: string | null
+          profile_id?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "page_access_requests_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: true
+            referencedRelation: "person_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       page_memberships: {
         Row: {
           id: string
@@ -1264,6 +1302,18 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_search_profiles: {
+        Args: { search_term?: string }
+        Returns: {
+          can_create_pages: boolean
+          created_at: string
+          display_name: string
+          email: string
+          id: string
+          is_public: boolean
+          slug: string
+        }[]
+      }
       cleanup_old_page_views: { Args: never; Returns: undefined }
       create_page_with_owner: {
         Args: {
