@@ -123,15 +123,19 @@ const accountRequestStatusLabels: Record<string, string> = {
 const AdminForesporsler = () => {
   const queryClient = useQueryClient();
   const { user: authUser } = useAuth();
+  const { openEmailGenerator } = useEmailGenerator();
   const [selectedInquiry, setSelectedInquiry] = useState<Inquiry | null>(null);
   const [selectedAccountRequest, setSelectedAccountRequest] = useState<AccountRequest | null>(null);
+  const [selectedAccessRequest, setSelectedAccessRequest] = useState<AccessRequest | null>(null);
   const [status, setStatus] = useState<InquiryStatus>('pending');
   const [adminNotes, setAdminNotes] = useState('');
   const [accountRequestStatus, setAccountRequestStatus] = useState<AccountRequestStatus>('new');
   const [accountRequestAdminNote, setAccountRequestAdminNote] = useState('');
+  const [accessRequestAdminNote, setAccessRequestAdminNote] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [showDeleteUserConfirm, setShowDeleteUserConfirm] = useState(false);
   const [isDeletingUser, setIsDeletingUser] = useState(false);
+  const [isGeneratingLink, setIsGeneratingLink] = useState(false);
 
   const handleConfirmDeleteUser = async () => {
     if (!selectedAccountRequest || selectedAccountRequest.type !== "delete_account") return;
