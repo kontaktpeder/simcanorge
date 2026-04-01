@@ -18,6 +18,8 @@ import { useOwnerProfile } from '@/hooks/useOwnerProfile';
 import { useGuide } from '@/hooks/useGuide';
 import { useMyListings } from '@/hooks/useMarketplace';
 import { GarageIcon } from '@/components/ui/GarageIcon';
+import { useMyPersonProfile } from '@/hooks/useMyPersonProfile';
+import { UserPlus } from 'lucide-react';
 
 export default function Dashboard() {
   const { user, isLoading: authLoading } = useAuth();
