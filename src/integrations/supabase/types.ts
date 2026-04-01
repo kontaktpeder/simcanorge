@@ -1265,6 +1265,25 @@ export type Database = {
     }
     Functions: {
       cleanup_old_page_views: { Args: never; Returns: undefined }
+      create_page_with_owner: {
+        Args: {
+          p_about?: string
+          p_contact_email?: string
+          p_contact_phone?: string
+          p_cover_url?: string
+          p_founded_year?: number
+          p_is_public?: boolean
+          p_location?: string
+          p_logo_url?: string
+          p_page_type: string
+          p_slug: string
+          p_tagline?: string
+          p_theme_color?: string
+          p_title: string
+          p_website?: string
+        }
+        Returns: Json
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
