@@ -18,6 +18,8 @@ import { useOwnerProfile } from '@/hooks/useOwnerProfile';
 import { useGuide } from '@/hooks/useGuide';
 import { useMyListings } from '@/hooks/useMarketplace';
 import { GarageIcon } from '@/components/ui/GarageIcon';
+import { useMyPersonProfile } from '@/hooks/useMyPersonProfile';
+import { UserPlus } from 'lucide-react';
 
 export default function Dashboard() {
   const { user, isLoading: authLoading } = useAuth();
@@ -41,6 +43,7 @@ export default function Dashboard() {
   
   const { data: ownerProfile } = useOwnerProfile(user?.id);
   const { data: myListings } = useMyListings(user?.id);
+  const { data: personProfile } = useMyPersonProfile();
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -227,7 +230,37 @@ export default function Dashboard() {
 
       {/* Dashboard Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        
+
+        {/* Kom i gang – vis kun hvis person_profile mangler */}
+        {!personProfile && (
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.05 }}
+            className="sm:col-span-2"
+          >
+            <Link to="/kom-i-gang" className="block touch-manipulation">
+              <div className="p-6 sm:p-8 border-2 border-primary bg-card shadow-lg shadow-primary/10 group hover:border-primary/80 transition-all relative overflow-hidden">
+                <div className="absolute top-0 left-0 right-0 h-1.5 bg-primary" />
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                    <UserPlus className="w-6 h-6 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="font-display text-2xl uppercase tracking-wider text-primary mb-1">
+                      Kom i gang
+                    </h3>
+                    <p className="text-base text-muted-foreground">
+                      Sett opp profilen din for å få tilgang til alle funksjoner – det tar under ett minutt.
+                    </p>
+                  </div>
+                  <ChevronRight className="w-6 h-6 text-primary/50 ml-auto flex-shrink-0 group-hover:translate-x-1 transition-transform" />
+                </div>
+              </div>
+            </Link>
+          </motion.div>
+        )}
+
         {/* Mine biler */}
         <motion.div
           initial={{ opacity: 0, y: 15 }}
