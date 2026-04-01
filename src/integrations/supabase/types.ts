@@ -886,6 +886,55 @@ export type Database = {
         }
         Relationships: []
       }
+      page_memberships: {
+        Row: {
+          id: string
+          invited_by: string | null
+          joined_at: string
+          page_id: string
+          person_profile_id: string
+          role: string
+        }
+        Insert: {
+          id?: string
+          invited_by?: string | null
+          joined_at?: string
+          page_id: string
+          person_profile_id: string
+          role?: string
+        }
+        Update: {
+          id?: string
+          invited_by?: string | null
+          joined_at?: string
+          page_id?: string
+          person_profile_id?: string
+          role?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "page_memberships_invited_by_fkey"
+            columns: ["invited_by"]
+            isOneToOne: false
+            referencedRelation: "person_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "page_memberships_page_id_fkey"
+            columns: ["page_id"]
+            isOneToOne: false
+            referencedRelation: "pages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "page_memberships_person_profile_id_fkey"
+            columns: ["person_profile_id"]
+            isOneToOne: false
+            referencedRelation: "person_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       page_views: {
         Row: {
           created_at: string
@@ -906,6 +955,80 @@ export type Database = {
           session_id?: string
         }
         Relationships: []
+      }
+      pages: {
+        Row: {
+          about: string | null
+          contact_email: string | null
+          contact_phone: string | null
+          cover_url: string | null
+          created_at: string
+          created_by: string | null
+          founded_year: number | null
+          id: string
+          is_public: boolean
+          location: string | null
+          logo_url: string | null
+          page_type: string
+          slug: string
+          status: string
+          tagline: string | null
+          theme_color: string | null
+          title: string
+          updated_at: string
+          website: string | null
+        }
+        Insert: {
+          about?: string | null
+          contact_email?: string | null
+          contact_phone?: string | null
+          cover_url?: string | null
+          created_at?: string
+          created_by?: string | null
+          founded_year?: number | null
+          id?: string
+          is_public?: boolean
+          location?: string | null
+          logo_url?: string | null
+          page_type: string
+          slug: string
+          status?: string
+          tagline?: string | null
+          theme_color?: string | null
+          title: string
+          updated_at?: string
+          website?: string | null
+        }
+        Update: {
+          about?: string | null
+          contact_email?: string | null
+          contact_phone?: string | null
+          cover_url?: string | null
+          created_at?: string
+          created_by?: string | null
+          founded_year?: number | null
+          id?: string
+          is_public?: boolean
+          location?: string | null
+          logo_url?: string | null
+          page_type?: string
+          slug?: string
+          status?: string
+          tagline?: string | null
+          theme_color?: string | null
+          title?: string
+          updated_at?: string
+          website?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pages_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "person_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       part_images: {
         Row: {
@@ -994,6 +1117,51 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      person_profiles: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          can_create_pages: boolean
+          cover_url: string | null
+          created_at: string
+          display_name: string
+          id: string
+          is_public: boolean
+          location: string | null
+          slug: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          can_create_pages?: boolean
+          cover_url?: string | null
+          created_at?: string
+          display_name: string
+          id?: string
+          is_public?: boolean
+          location?: string | null
+          slug: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          can_create_pages?: boolean
+          cover_url?: string | null
+          created_at?: string
+          display_name?: string
+          id?: string
+          is_public?: boolean
+          location?: string | null
+          slug?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       support_tickets: {
         Row: {
@@ -1097,6 +1265,25 @@ export type Database = {
     }
     Functions: {
       cleanup_old_page_views: { Args: never; Returns: undefined }
+      create_page_with_owner: {
+        Args: {
+          p_about?: string
+          p_contact_email?: string
+          p_contact_phone?: string
+          p_cover_url?: string
+          p_founded_year?: number
+          p_is_public?: boolean
+          p_location?: string
+          p_logo_url?: string
+          p_page_type: string
+          p_slug: string
+          p_tagline?: string
+          p_theme_color?: string
+          p_title: string
+          p_website?: string
+        }
+        Returns: Json
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

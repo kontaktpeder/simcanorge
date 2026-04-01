@@ -1,5 +1,5 @@
 import { lazy, ComponentType } from "react";
-import { Home, Star, Car, Wrench, Send, BookOpen, Users, Mail, ShoppingBag } from "lucide-react";
+import { Home, Star, Car, Wrench, Send, BookOpen, Users, Mail, ShoppingBag, User, LayoutDashboard } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 // Lazy load all pages
@@ -31,6 +31,14 @@ const DashboardMineForesporsler = lazy(() => import("@/pages/DashboardMineForesp
 const OpprettAnnonse = lazy(() => import("@/pages/OpprettAnnonse"));
 const RedigerAnnonse = lazy(() => import("@/pages/RedigerAnnonse"));
 const ForhandsvisAnnonse = lazy(() => import("@/pages/ForhandsvisAnnonse"));
+
+// Person profile & pages
+const CompleteProfilePage = lazy(() => import("@/pages/CompleteProfilePage"));
+const DashboardMinProfilPage = lazy(() => import("@/pages/dashboard/DashboardMinProfilPage"));
+const DashboardPagesPage = lazy(() => import("@/pages/dashboard/DashboardPagesPage"));
+const CreatePagePage = lazy(() => import("@/pages/dashboard/CreatePagePage"));
+const EditPagePage = lazy(() => import("@/pages/dashboard/EditPagePage"));
+const PublicPagePage = lazy(() => import("@/pages/PublicPagePage"));
 
 // Admin pages
 const AdminLogin = lazy(() => import("@/pages/admin/AdminLogin"));
@@ -84,9 +92,11 @@ export const routes: RouteConfig[] = [
   { path: "/i/:token", element: AcceptInvitation, isPublic: true },
   { path: "/login", element: Login, isPublic: true },
   { path: "/start-annonse", element: StartAnnonse, isPublic: true },
+  { path: "/s/:slug", element: PublicPagePage, isPublic: true },
 
   // Auth required
   { path: "/konto", element: Konto, requiresAuth: true },
+  { path: "/kom-i-gang", element: CompleteProfilePage, requiresAuth: true },
   { path: "/dashboard", element: Dashboard, requiresAuth: true },
   { path: "/dashboard/mine-biler", element: DashboardMineBiler, requiresAuth: true },
   { path: "/dashboard/bil/:carId", element: DashboardBilDetalj, requiresAuth: true },
@@ -95,6 +105,10 @@ export const routes: RouteConfig[] = [
   { path: "/dashboard/opprett-annonse", element: OpprettAnnonse, requiresAuth: true },
   { path: "/dashboard/annonse/:itemId/rediger", element: RedigerAnnonse, requiresAuth: true },
   { path: "/dashboard/annonse/:itemId/forhandsvis", element: ForhandsvisAnnonse, requiresAuth: true },
+  { path: "/dashboard/min-profil", element: DashboardMinProfilPage, requiresAuth: true },
+  { path: "/dashboard/sider", element: DashboardPagesPage, requiresAuth: true },
+  { path: "/dashboard/sider/ny", element: CreatePagePage, requiresAuth: true },
+  { path: "/dashboard/sider/:pageId", element: EditPagePage, requiresAuth: true },
 
   // Admin
   { path: "/admin/login", element: AdminLogin, isPublic: true },
