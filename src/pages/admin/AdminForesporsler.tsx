@@ -177,6 +177,18 @@ const AdminForesporsler = () => {
   const { data: accountRequests = [], isLoading: accountRequestsLoading } = useAllAccountRequests();
   const updateAccountRequest = useUpdateAccountRequest();
 
+  const { data: accessRequests = [], isLoading: accessRequestsLoading } = useQuery({
+    queryKey: ['access-requests'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('access_requests' as any)
+        .select('*')
+        .order('created_at', { ascending: false });
+      if (error) throw error;
+      return (data ?? []) as AccessRequest[];
+    },
+  });
+
   // Collect unique owner IDs and marketplace_item IDs for enrichment
   const ownerIds = useMemo(() => {
     if (!inquiries) return [];
