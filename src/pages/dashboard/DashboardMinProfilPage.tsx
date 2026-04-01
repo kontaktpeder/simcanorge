@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CompleteProfileForm } from "@/components/profile/CompleteProfileForm";
 import { EditProfileForm } from "@/components/profile/EditProfileForm";
+import { RequestPageAccessButton } from "@/components/profile/RequestPageAccessButton";
 import { Layout } from "@/components/layout/Layout";
 import { ArrowLeft, FileText, Pencil, User } from "lucide-react";
 
@@ -50,7 +51,7 @@ export default function DashboardMinProfilPage() {
             )}
             <div className="flex-1">
               <h2 className="text-lg font-semibold">{profile.display_name}</h2>
-              <p className="text-sm text-muted-foreground">bilgarasje.no/p/{profile.slug}</p>
+              <p className="text-sm text-muted-foreground">simcanorge.lovable.app/p/{profile.slug}</p>
               <div className="mt-1">
                 <Badge variant={profile.is_public ? "default" : "secondary"}>
                   {profile.is_public ? "Offentlig" : "Privat"}
@@ -96,6 +97,8 @@ export default function DashboardMinProfilPage() {
             )}
           </>
         )}
+
+        <RequestPageAccessButton />
 
         <div className="flex gap-3 pt-2">
           <Link to="/dashboard">
