@@ -20,8 +20,7 @@ export default function Login() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { user, isLoading: authLoading } = useAuth();
-  
-  const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -50,7 +49,6 @@ export default function Login() {
     }
   }, [prefillEmail]);
 
-  // Redirect if already logged in
   useEffect(() => {
     if (!authLoading && user) {
       navigate(returnUrl);
@@ -60,8 +58,7 @@ export default function Login() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    
-    // Validate
+
     const result = loginSchema.safeParse({ email, password });
     if (!result.success) {
       setError(result.error.errors[0].message);
@@ -71,41 +68,19 @@ export default function Login() {
     setIsLoading(true);
 
     try {
-      if (authMode === 'signup') {
-        const { data, error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            emailRedirectTo: `${window.location.origin}${returnUrl}`
-          }
-        });
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-        if (error) {
-          if (error.message.includes('already registered')) {
-            setError('E-postadressen er allerede registrert. Prøv å logge inn.');
-            setAuthMode('login');
-          } else {
-            throw error;
-          }
-        } else if (data.user) {
-          toast.success('Konto opprettet!');
-          // User will be redirected by useEffect when user state updates
+      if (error) {
+        if (error.message.includes('Invalid login')) {
+          setError('Feil e-post eller passord');
+        } else {
+          throw error;
         }
       } else {
-        const { error } = await supabase.auth.signInWithPassword({
-          email,
-          password
-        });
-
-        if (error) {
-          if (error.message.includes('Invalid login')) {
-            setError('Feil e-post eller passord');
-          } else {
-            throw error;
-          }
-        } else {
-          toast.success('Logget inn!');
-        }
+        toast.success('Logget inn!');
       }
     } catch (error: any) {
       console.error('Auth error:', error);
@@ -131,11 +106,8 @@ export default function Login() {
 
   return (
     <Layout>
-      <PageHeader 
-        title={authMode === 'login' ? 'Logg inn' : 'Opprett konto'} 
-        subtitle="Få tilgang til din garasje"
-      />
-      
+      <PageHeader title="Logg inn" subtitle="Få tilgang til din garasje" />
+
       <div className="container py-8">
         <div className="max-w-md mx-auto">
           <div className="bg-card border border-border rounded-xl p-8">
@@ -143,14 +115,9 @@ export default function Login() {
               <div className="p-3 bg-primary/10 rounded-xl inline-block mb-4">
                 <Car className="w-8 h-8 text-primary" />
               </div>
-              <h2 className="font-display text-xl">
-                {authMode === 'login' ? 'Velkommen tilbake' : 'Bli med i Simca-familien'}
-              </h2>
+              <h2 className="font-display text-xl">Velkommen tilbake</h2>
               <p className="text-sm text-muted-foreground mt-1">
-                {authMode === 'login' 
-                  ? 'Logg inn for å se dine biler'
-                  : 'Opprett en konto for å komme i gang'
-                }
+                Logg inn for å se dine biler
               </p>
             </div>
 
@@ -184,7 +151,7 @@ export default function Login() {
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder={authMode === 'signup' ? 'Velg et passord (min. 6 tegn)' : 'Ditt passord'}
+                  placeholder="Ditt passord"
                   required
                   minLength={6}
                 />
@@ -194,39 +161,24 @@ export default function Login() {
                 {isLoading ? (
                   <>
                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    {authMode === 'signup' ? 'Oppretter konto...' : 'Logger inn...'}
+                    Logger inn...
                   </>
                 ) : (
                   <>
                     <LogIn className="w-4 h-4 mr-2" />
-                    {authMode === 'signup' ? 'Opprett konto' : 'Logg inn'}
+                    Logg inn
                   </>
                 )}
               </Button>
             </form>
 
             <div className="mt-6 text-center text-sm">
-              {authMode === 'login' ? (
-                <p>
-                  Ingen konto?{' '}
-                  <button 
-                    onClick={() => setAuthMode('signup')} 
-                    className="text-primary hover:underline font-medium"
-                  >
-                    Opprett konto
-                  </button>
-                </p>
-              ) : (
-                <p>
-                  Har du allerede konto?{' '}
-                  <button 
-                    onClick={() => setAuthMode('login')} 
-                    className="text-primary hover:underline font-medium"
-                  >
-                    Logg inn
-                  </button>
-                </p>
-              )}
+              <p>
+                Ikke medlem ennå?{' '}
+                <Link to="/sok-om-tilgang" className="text-primary hover:underline font-medium">
+                  Søk om tilgang
+                </Link>
+              </p>
             </div>
           </div>
 
