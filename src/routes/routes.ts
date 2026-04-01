@@ -32,6 +32,14 @@ const OpprettAnnonse = lazy(() => import("@/pages/OpprettAnnonse"));
 const RedigerAnnonse = lazy(() => import("@/pages/RedigerAnnonse"));
 const ForhandsvisAnnonse = lazy(() => import("@/pages/ForhandsvisAnnonse"));
 
+// Person profile & pages
+const CompleteProfilePage = lazy(() => import("@/pages/CompleteProfilePage"));
+const DashboardMinProfilPage = lazy(() => import("@/pages/dashboard/DashboardMinProfilPage"));
+const DashboardPagesPage = lazy(() => import("@/pages/dashboard/DashboardPagesPage"));
+const CreatePagePage = lazy(() => import("@/pages/dashboard/CreatePagePage"));
+const EditPagePage = lazy(() => import("@/pages/dashboard/EditPagePage"));
+const PublicPagePage = lazy(() => import("@/pages/PublicPagePage"));
+
 // Admin pages
 const AdminLogin = lazy(() => import("@/pages/admin/AdminLogin"));
 const AdminDashboard = lazy(() => import("@/pages/admin/AdminDashboard"));
