@@ -56,6 +56,7 @@ export function InviteEmailGenerator({
   recipientName: initialName = '',
   inviteLink: initialLink = '',
   carName: initialCarName = '',
+  mode = 'car',
   onEmailSent,
 }: InviteEmailGeneratorProps) {
   const { toast } = useToast();
