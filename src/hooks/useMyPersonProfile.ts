@@ -30,7 +30,7 @@ export function useUpsertPersonProfile() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (values: Omit<PersonProfileUpdate, "user_id"> & { display_name: string; slug: string }) => {
+    mutationFn: async (values: Partial<PersonProfileUpdate> & { display_name: string; slug: string }) => {
       if (!user) throw new Error("Ikke innlogget");
       const { data, error } = await supabase
         .from("person_profiles")
