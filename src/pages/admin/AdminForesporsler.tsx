@@ -37,6 +37,7 @@ import { format } from "date-fns";
 import { nb } from "date-fns/locale";
 import { useAllAccountRequests, useUpdateAccountRequest, type AccountRequest, type AccountRequestStatus } from "@/hooks/useAccountRequests";
 import { useAuth } from "@/hooks/useAuth";
+import { useEmailGenerator } from "@/contexts/EmailGeneratorContext";
 
 interface InquiryItem {
   id: string;
