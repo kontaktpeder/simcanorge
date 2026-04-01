@@ -65,7 +65,7 @@ export function CompleteProfileForm() {
 
   async function onSubmit(values: FormValues) {
     try {
-      await mutateAsync(values);
+      await mutateAsync({ display_name: values.display_name, slug: values.slug, bio: values.bio, location: values.location, is_public: values.is_public });
       toast.success("Profil opprettet!");
       navigate("/dashboard/min-profil");
     } catch (err: any) {
