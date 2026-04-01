@@ -68,6 +68,8 @@ export function CompleteProfileForm() {
   async function onSubmit(values: FormValues) {
     try {
       await mutateAsync({ display_name: values.display_name, slug: values.slug, bio: values.bio, location: values.location, is_public: values.is_public });
+      // Wait for cache to update before navigating so RequirePersonProfile sees the new profile
+      await queryClient.invalidateQueries({ queryKey: ["person_profile", "me"] });
       toast.success("Profil opprettet!");
       navigate("/dashboard/min-profil");
     } catch (err: any) {
