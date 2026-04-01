@@ -280,7 +280,8 @@ ${senderInfo.email}`;
             )}
           </div>
 
-          {/* Bilnavn */}
+          {/* Bilnavn - only show for car mode */}
+          {mode === 'car' && (
           <div className="space-y-2">
             <Label htmlFor="carName" className="text-sm font-medium">Bilnavn / modell</Label>
             <Input
@@ -290,6 +291,7 @@ ${senderInfo.email}`;
               placeholder="Simca 1000 Rallye"
             />
           </div>
+          )}
 
           {/* Forhåndsvisning */}
           <div className="border-t pt-4 space-y-3">

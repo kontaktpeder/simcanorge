@@ -56,6 +56,7 @@ export function EmailGeneratorProvider({ children }: { children: ReactNode }) {
         recipientName={emailData.recipientName || ''}
         inviteLink={emailData.inviteLink || ''}
         carName={emailData.carName || ''}
+        mode={emailData.mode || 'car'}
         onEmailSent={handleEmailSent}
       />
     </EmailGeneratorContext.Provider>
