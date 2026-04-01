@@ -7,8 +7,9 @@ interface EmailGeneratorData {
   recipientName?: string;
   inviteLink?: string;
   carName?: string;
-  invitationId?: string; // For updating sent_by/sender_note
-  onSaved?: () => void; // Callback to refresh data after saving
+  mode?: 'car' | 'access';
+  invitationId?: string;
+  onSaved?: () => void;
 }
 
 interface EmailGeneratorContextType {
