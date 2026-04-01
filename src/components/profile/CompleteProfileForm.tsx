@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
+import { useQueryClient } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useNavigate } from "react-router-dom";
@@ -35,6 +36,7 @@ function toSlug(value: string) {
 
 export function CompleteProfileForm() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { mutateAsync, isPending } = useUpsertPersonProfile();
   const slugManuallyEdited = useRef(false);
 
@@ -66,6 +68,8 @@ export function CompleteProfileForm() {
   async function onSubmit(values: FormValues) {
     try {
       await mutateAsync({ display_name: values.display_name, slug: values.slug, bio: values.bio, location: values.location, is_public: values.is_public });
+      // Wait for cache to update before navigating so RequirePersonProfile sees the new profile
+      await queryClient.invalidateQueries({ queryKey: ["person_profile", "me"] });
       toast.success("Profil opprettet!");
       navigate("/dashboard/min-profil");
     } catch (err: any) {
