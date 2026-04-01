@@ -105,6 +105,10 @@ export const routes: RouteConfig[] = [
   { path: "/dashboard/opprett-annonse", element: OpprettAnnonse, requiresAuth: true },
   { path: "/dashboard/annonse/:itemId/rediger", element: RedigerAnnonse, requiresAuth: true },
   { path: "/dashboard/annonse/:itemId/forhandsvis", element: ForhandsvisAnnonse, requiresAuth: true },
+  { path: "/dashboard/min-profil", element: DashboardMinProfilPage, requiresAuth: true },
+  { path: "/dashboard/sider", element: DashboardPagesPage, requiresAuth: true },
+  { path: "/dashboard/sider/ny", element: CreatePagePage, requiresAuth: true },
+  { path: "/dashboard/sider/:pageId", element: EditPagePage, requiresAuth: true },
 
   // Admin
   { path: "/admin/login", element: AdminLogin, isPublic: true },
