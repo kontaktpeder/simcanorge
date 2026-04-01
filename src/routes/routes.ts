@@ -126,6 +126,7 @@ export const routes: RouteConfig[] = [
   { path: "/admin/innsendinger", element: AdminInnsendinger, requiresAdmin: true },
   { path: "/admin/markedsplass", element: AdminMarkedsplass, requiresAdmin: true },
   { path: "/admin/markedsplass/:itemId", element: AdminAnnonseProfil, requiresAdmin: true },
+  { path: "/admin/brukerprofiler", element: AdminPersonProfiles, requiresAdmin: true },
 
   // 404
   { path: "*", element: NotFound, isPublic: true },
