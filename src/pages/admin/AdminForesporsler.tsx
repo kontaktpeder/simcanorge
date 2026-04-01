@@ -93,9 +93,21 @@ const statusColors: Record<InquiryStatus, string> = {
   cancelled: "bg-red-500",
 };
 
+interface AccessRequest {
+  id: string;
+  name: string;
+  email: string;
+  message: string | null;
+  status: string;
+  invite_sent_at: string | null;
+  admin_note: string | null;
+  created_at: string;
+}
+
 type ForesporselItem =
   | { kind: "inquiry"; data: Inquiry }
-  | { kind: "account_request"; data: AccountRequest };
+  | { kind: "account_request"; data: AccountRequest }
+  | { kind: "access_request"; data: AccessRequest };
 
 const accountRequestTypeLabels: Record<string, string> = {
   delete_account: "Slettingsforespørsel",
