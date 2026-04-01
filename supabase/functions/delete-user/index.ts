@@ -69,6 +69,15 @@ Deno.serve(async (req: Request): Promise<Response> => {
       );
     }
 
+    // Invalider alle aktive sesjoner før sletting
+    const { error: signOutError } = await supabaseAdmin.auth.admin.signOut(
+      targetUserId,
+      "global"
+    );
+    if (signOutError) {
+      console.warn("signOut warning (non-fatal):", signOutError.message);
+    }
+
     const { error: deleteError } = await supabaseAdmin.auth.admin.deleteUser(targetUserId);
     if (deleteError) {
       console.error("deleteUser error:", deleteError);
