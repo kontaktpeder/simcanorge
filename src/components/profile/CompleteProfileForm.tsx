@@ -36,6 +36,7 @@ function toSlug(value: string) {
 
 export function CompleteProfileForm() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { mutateAsync, isPending } = useUpsertPersonProfile();
   const slugManuallyEdited = useRef(false);
 
