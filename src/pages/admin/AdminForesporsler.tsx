@@ -906,6 +906,174 @@ const AdminForesporsler = () => {
             })()}
           </DialogContent>
         </Dialog>
+
+        {/* Dialog for access request (tilgangsforespørsel) */}
+        <Dialog open={!!selectedAccessRequest} onOpenChange={() => setSelectedAccessRequest(null)}>
+          <DialogContent className="max-w-lg">
+            {selectedAccessRequest && (() => {
+              const ar = selectedAccessRequest;
+              const isPending = ar.status === 'pending';
+
+              const handleGenerateInviteLink = async () => {
+                setIsGeneratingLink(true);
+                try {
+                  const { data, error } = await supabase.functions.invoke('generate-invite-link', {
+                    body: { access_request_id: ar.id, email: ar.email, name: ar.name },
+                  });
+                  if (error || data?.error) throw new Error(data?.error || error?.message);
+
+                  openEmailGenerator({
+                    recipientEmail: ar.email,
+                    recipientName: ar.name,
+                    inviteLink: data.invite_link,
+                    mode: 'access',
+                    onSaved: () => queryClient.invalidateQueries({ queryKey: ['access-requests'] }),
+                  });
+                  setSelectedAccessRequest(null);
+                  queryClient.invalidateQueries({ queryKey: ['access-requests'] });
+                  toast.success('Invitasjonslenke generert!');
+                } catch (e) {
+                  toast.error(e instanceof Error ? e.message : 'Kunne ikke generere lenke');
+                } finally {
+                  setIsGeneratingLink(false);
+                }
+              };
+
+              const handleReject = async () => {
+                try {
+                  const { error } = await supabase
+                    .from('access_requests' as any)
+                    .update({
+                      status: 'rejected',
+                      admin_note: accessRequestAdminNote || null,
+                      resolved_by: authUser?.id,
+                      resolved_at: new Date().toISOString(),
+                    } as any)
+                    .eq('id', ar.id);
+                  if (error) throw error;
+                  toast.success('Søknad avslått');
+                  queryClient.invalidateQueries({ queryKey: ['access-requests'] });
+                  setSelectedAccessRequest(null);
+                } catch (e) {
+                  toast.error('Kunne ikke oppdatere søknad');
+                }
+              };
+
+              const handleSaveNote = async () => {
+                try {
+                  const { error } = await supabase
+                    .from('access_requests' as any)
+                    .update({ admin_note: accessRequestAdminNote || null } as any)
+                    .eq('id', ar.id);
+                  if (error) throw error;
+                  toast.success('Notat lagret');
+                  queryClient.invalidateQueries({ queryKey: ['access-requests'] });
+                } catch (e) {
+                  toast.error('Kunne ikke lagre notat');
+                }
+              };
+
+              return (
+                <>
+                  <DialogHeader>
+                    <DialogTitle className="font-display text-2xl flex items-center gap-2">
+                      <UserPlus className="w-5 h-5 text-primary" />
+                      Tilgangsforespørsel
+                    </DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-5">
+                    <div className="grid gap-2">
+                      <div className="flex items-center gap-2">
+                        <User className="w-4 h-4 text-muted-foreground" />
+                        <span className="font-medium">{ar.name}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Mail className="w-4 h-4 text-muted-foreground" />
+                        <a href={`mailto:${ar.email}`} className="text-primary hover:underline">{ar.email}</a>
+                      </div>
+                      <div className="flex items-center gap-2 text-muted-foreground">
+                        <Calendar className="w-4 h-4" />
+                        {format(new Date(ar.created_at), "d. MMMM yyyy 'kl.' HH:mm", { locale: nb })}
+                      </div>
+                    </div>
+
+                    {ar.message && (
+                      <div>
+                        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">Melding</p>
+                        <div className="bg-muted/50 rounded-lg p-4 whitespace-pre-wrap text-sm">
+                          {ar.message}
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-muted-foreground">Status:</span>
+                      <Badge
+                        variant="outline"
+                        className={
+                          isPending
+                            ? "border-yellow-500/50 text-yellow-700"
+                            : ar.status === "approved"
+                            ? "border-green-500/50 text-green-700"
+                            : "border-muted-foreground/50 text-muted-foreground"
+                        }
+                      >
+                        {isPending ? "Venter" : ar.status === "approved" ? "Godkjent" : "Avslått"}
+                      </Badge>
+                      {ar.invite_sent_at && (
+                        <span className="text-xs text-muted-foreground">
+                          Invitasjon sendt {format(new Date(ar.invite_sent_at), "d. MMM yyyy", { locale: nb })}
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label>Admin notater</Label>
+                      <Textarea
+                        value={accessRequestAdminNote}
+                        onChange={(e) => setAccessRequestAdminNote(e.target.value)}
+                        rows={3}
+                        placeholder="Notater om denne søknaden..."
+                      />
+                      <Button variant="outline" size="sm" onClick={handleSaveNote}>
+                        Lagre notat
+                      </Button>
+                    </div>
+
+                    {isPending && (
+                      <div className="space-y-3 pt-4 border-t">
+                        <Button
+                          className="w-full"
+                          disabled={isGeneratingLink}
+                          onClick={handleGenerateInviteLink}
+                        >
+                          {isGeneratingLink ? (
+                            <>
+                              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                              Genererer lenke...
+                            </>
+                          ) : (
+                            <>
+                              <LinkIcon className="w-4 h-4 mr-2" />
+                              Godkjenn og generer invitasjonslenke
+                            </>
+                          )}
+                        </Button>
+                        <Button
+                          variant="outline"
+                          className="w-full"
+                          onClick={handleReject}
+                        >
+                          Avslå søknad
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                </>
+              );
+            })()}
+          </DialogContent>
+        </Dialog>
       </div>
     </AdminLayout>
   );
