@@ -45,6 +45,7 @@ interface InviteEmailGeneratorProps {
   recipientName?: string;
   inviteLink?: string;
   carName?: string;
+  mode?: 'car' | 'access';
   onEmailSent?: (sender: 'peder' | 'peter', senderNote: string) => void;
 }
 
