@@ -2,6 +2,7 @@ import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { Suspense } from "react";
 import { routes } from "./routes";
 import { useAuth } from "@/hooks/useAuth";
+import { RequirePersonProfile } from "@/components/auth/RequirePersonProfile";
 import type { ComponentType } from "react";
 import simcaRallye from "@/assets/simca-rallye-yellow.png";
 
