@@ -447,7 +447,65 @@ const AdminForesporsler = () => {
                 );
               }
 
-              const inquiry = item.data;
+              if (item.kind === "access_request") {
+                const ar = item.data;
+                const isPending = ar.status === 'pending';
+                return (
+                  <Card
+                    key={`acc-${ar.id}`}
+                    className={`cursor-pointer hover:shadow-md transition-shadow ${
+                      isPending ? "border-primary/50 border-2" : ""
+                    }`}
+                    onClick={() => {
+                      setSelectedAccessRequest(ar);
+                      setAccessRequestAdminNote(ar.admin_note || '');
+                    }}
+                  >
+                    <CardContent className="p-4">
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1 flex-wrap">
+                            {isPending && (
+                              <span className="w-2 h-2 bg-primary rounded-full flex-shrink-0" />
+                            )}
+                            <h3 className="font-display text-lg truncate flex items-center gap-2">
+                              <UserPlus className="w-4 h-4 text-primary" />
+                              Tilgangsforespørsel
+                            </h3>
+                            <Badge
+                              variant="outline"
+                              className={
+                                isPending
+                                  ? "border-yellow-500/50 text-yellow-700"
+                                  : ar.status === "approved"
+                                  ? "border-green-500/50 text-green-700"
+                                  : "border-muted-foreground/50 text-muted-foreground"
+                              }
+                            >
+                              {isPending ? "Venter" : ar.status === "approved" ? "Godkjent" : "Avslått"}
+                            </Badge>
+                          </div>
+                          <p className="text-sm font-medium">{ar.name}</p>
+                          <p className="text-xs text-muted-foreground">{ar.email}</p>
+                          <p className="text-sm text-muted-foreground mt-1">
+                            {format(new Date(ar.created_at), "d. MMM yyyy 'kl.' HH:mm", { locale: nb })}
+                          </p>
+                          {ar.message && (
+                            <p className="text-sm text-foreground/70 mt-2 line-clamp-2">
+                              {ar.message}
+                            </p>
+                          )}
+                        </div>
+                        <Button variant="ghost" size="icon">
+                          <Eye className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              }
+
+              const inquiry = item.data as Inquiry;
               const recipientLabel = getRecipientLabel(inquiry);
               return (
                 <Card
@@ -474,7 +532,7 @@ const AdminForesporsler = () => {
                             {inquiry.inquiry_items.length} del{inquiry.inquiry_items.length !== 1 ? "er" : ""}
                           </Badge>
                           {inquiry.status && (
-                            <Badge className={statusColors[inquiry.status as InquiryStatus] || "bg-gray-500"}>
+                            <Badge className={statusColors[inquiry.status as InquiryStatus] || "bg-muted"}>
                               {statusLabels[inquiry.status as InquiryStatus] || inquiry.status}
                             </Badge>
                           )}
