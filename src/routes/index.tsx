@@ -85,6 +85,16 @@ function ProtectedRoute({
   }
 
   // User has required permissions, render the route
+  // Dashboard routes (except /kom-i-gang and /konto) require a person profile
+  const isDashboardRoute = location.pathname.startsWith("/dashboard");
+  if (isDashboardRoute) {
+    return (
+      <RequirePersonProfile>
+        <LazyComponentWrapper Component={Component} />
+      </RequirePersonProfile>
+    );
+  }
+
   return <LazyComponentWrapper Component={Component} />;
 }
 

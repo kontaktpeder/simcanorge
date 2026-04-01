@@ -2,13 +2,14 @@ import { Helmet } from "react-helmet-async";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { PageForm, type PageFormValues } from "@/components/pages/PageForm";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { useMyPersonProfile } from "@/hooks/useMyPersonProfile";
 
 export default function CreatePagePage() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { data: profile } = useMyPersonProfile();
 
   const { mutateAsync, isPending } = useMutation({
@@ -26,18 +27,25 @@ export default function CreatePagePage() {
         p_contact_phone: values.contact_phone || null,
         p_website: values.website || null,
         p_location: values.location || null,
-        p_founded_year: values.founded_year ? Number(values.founded_year) : null,
+        p_founded_year: values.founded_year !== "" && values.founded_year !== undefined
+          ? Number(values.founded_year)
+          : null,
         p_is_public: values.is_public,
       } as any);
       if (error) throw error;
       return data;
     },
     onSuccess: (data: any) => {
+      queryClient.invalidateQueries({ queryKey: ["my_pages"] });
       toast.success("Siden er opprettet!");
       navigate(`/dashboard/sider/${data.id}`);
     },
     onError: (err: any) => {
-      toast.error(err.message ?? "Noe gikk galt");
+      if (err?.code === "23505" || err?.message?.includes("unique")) {
+        toast.error("Denne adressen er allerede i bruk. Velg en annen.");
+      } else {
+        toast.error(err.message ?? "Noe gikk galt");
+      }
     },
   });
 

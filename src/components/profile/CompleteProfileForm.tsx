@@ -1,10 +1,9 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
 import { useUpsertPersonProfile } from "@/hooks/useMyPersonProfile";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -37,6 +36,7 @@ function toSlug(value: string) {
 export function CompleteProfileForm() {
   const navigate = useNavigate();
   const { mutateAsync, isPending } = useUpsertPersonProfile();
+  const slugManuallyEdited = useRef(false);
 
   const {
     register,
@@ -52,29 +52,28 @@ export function CompleteProfileForm() {
   const displayName = watch("display_name");
 
   useEffect(() => {
-    if (displayName) {
+    if (!slugManuallyEdited.current && displayName) {
       setValue("slug", toSlug(displayName), { shouldValidate: false });
     }
   }, [displayName, setValue]);
 
+  const slugProps = register("slug", {
+    onChange: () => {
+      slugManuallyEdited.current = true;
+    },
+  });
+
   async function onSubmit(values: FormValues) {
-    const { data: existing } = await supabase
-      .from("person_profiles")
-      .select("id")
-      .eq("slug", values.slug)
-      .maybeSingle();
-
-    if (existing) {
-      toast.error("Dette brukernavnet er allerede i bruk");
-      return;
-    }
-
     try {
-      await mutateAsync({ display_name: values.display_name, slug: values.slug, bio: values.bio, location: values.location, is_public: values.is_public });
+      await mutateAsync(values);
       toast.success("Profil opprettet!");
       navigate("/dashboard/min-profil");
-    } catch {
-      toast.error("Noe gikk galt. Prøv igjen.");
+    } catch (err: any) {
+      if (err?.code === "23505" || err?.message?.includes("unique")) {
+        toast.error("Dette brukernavnet er allerede i bruk. Velg et annet.");
+      } else {
+        toast.error("Noe gikk galt. Prøv igjen.");
+      }
     }
   }
 
@@ -96,7 +95,7 @@ export function CompleteProfileForm() {
             <Label htmlFor="slug">Brukernavn *</Label>
             <div className="flex items-center gap-1">
               <span className="text-sm text-muted-foreground whitespace-nowrap">bilgarasje.no/p/</span>
-              <Input id="slug" {...register("slug")} placeholder="ditt-navn" />
+              <Input id="slug" {...slugProps} placeholder="ditt-navn" />
             </div>
             {errors.slug && <p className="text-sm text-destructive">{errors.slug.message}</p>}
           </div>

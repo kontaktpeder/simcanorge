@@ -1,13 +1,13 @@
 import { useParams } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { usePageBySlug } from "@/hooks/usePageBySlug";
+import { usePublicPageBySlug } from "@/hooks/usePageBySlug";
 import { PublicPageHero } from "@/components/pages/PublicPageHero";
 import { PublicPageAbout } from "@/components/pages/PublicPageAbout";
 import { PublicPageContact } from "@/components/pages/PublicPageContact";
 
 export default function PublicPagePage() {
   const { slug } = useParams<{ slug: string }>();
-  const { data: page, isLoading, isError } = usePageBySlug(slug);
+  const { data: page, isLoading, isError } = usePublicPageBySlug(slug);
 
   if (isLoading) {
     return (

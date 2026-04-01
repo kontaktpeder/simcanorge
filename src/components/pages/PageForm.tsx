@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -41,7 +41,11 @@ const schema = z.object({
   contact_phone: z.string().optional(),
   website: z.string().url("Ugyldig URL").optional().or(z.literal("")),
   location: z.string().optional(),
-  founded_year: z.coerce.number().int().min(1800).max(2100).optional().or(z.literal("")),
+  founded_year: z.union([
+    z.coerce.number().int().min(1800).max(new Date().getFullYear() + 1),
+    z.literal(""),
+    z.undefined(),
+  ]).optional(),
   is_public: z.boolean(),
 });
 
@@ -64,6 +68,8 @@ interface Props {
 }
 
 export function PageForm({ defaultValues, onSubmit, isPending, submitLabel = "Lagre", showSlug = true }: Props) {
+  const slugManuallyEdited = useRef(!!defaultValues?.slug);
+
   const {
     register,
     handleSubmit,
@@ -78,10 +84,16 @@ export function PageForm({ defaultValues, onSubmit, isPending, submitLabel = "La
   const title = watch("title");
 
   useEffect(() => {
-    if (title && showSlug) {
+    if (!slugManuallyEdited.current && title && showSlug) {
       setValue("slug", toSlug(title), { shouldValidate: false });
     }
   }, [title, setValue, showSlug]);
+
+  const slugProps = register("slug", {
+    onChange: () => {
+      slugManuallyEdited.current = true;
+    },
+  });
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
@@ -116,7 +128,7 @@ export function PageForm({ defaultValues, onSubmit, isPending, submitLabel = "La
           <Label htmlFor="slug">Adresse *</Label>
           <div className="flex items-center gap-1">
             <span className="text-sm text-muted-foreground whitespace-nowrap">bilgarasje.no/s/</span>
-            <Input id="slug" {...register("slug")} placeholder="simca-klubben" />
+            <Input id="slug" {...slugProps} placeholder="simca-klubben" />
           </div>
           {errors.slug && <p className="text-sm text-destructive">{errors.slug.message}</p>}
         </div>
