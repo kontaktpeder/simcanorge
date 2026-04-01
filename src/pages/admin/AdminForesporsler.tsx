@@ -355,7 +355,8 @@ const AdminForesporsler = () => {
   const allItems: ForesporselItem[] = useMemo(() => {
     const inquiryItems: ForesporselItem[] = (inquiries || []).map((data) => ({ kind: "inquiry", data }));
     const accountItems: ForesporselItem[] = (accountRequests || []).map((data) => ({ kind: "account_request", data }));
-    return [...inquiryItems, ...accountItems].sort(
+    const accessItems: ForesporselItem[] = (accessRequests || []).map((data) => ({ kind: "access_request", data }));
+    return [...inquiryItems, ...accountItems, ...accessItems].sort(
       (a, b) => new Date(b.data.created_at).getTime() - new Date(a.data.created_at).getTime()
     );
   }, [inquiries, accountRequests]);
