@@ -375,7 +375,7 @@ const AdminForesporsler = () => {
           </p>
         </div>
 
-        {isLoading || accountRequestsLoading ? (
+        {isLoading || accountRequestsLoading || accessRequestsLoading ? (
           <div className="text-center py-12 text-muted-foreground">Laster...</div>
         ) : !allItems.length ? (
           <Card>
