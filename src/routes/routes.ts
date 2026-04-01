@@ -96,6 +96,7 @@ export const routes: RouteConfig[] = [
 
   // Auth required
   { path: "/konto", element: Konto, requiresAuth: true },
+  { path: "/kom-i-gang", element: CompleteProfilePage, requiresAuth: true },
   { path: "/dashboard", element: Dashboard, requiresAuth: true },
   { path: "/dashboard/mine-biler", element: DashboardMineBiler, requiresAuth: true },
   { path: "/dashboard/bil/:carId", element: DashboardBilDetalj, requiresAuth: true },
