@@ -59,18 +59,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     );
 
     // THEN check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-
-      if (session?.user) {
-        checkAdminRole(session.user.id).then((admin) => {
-          setIsAdmin(admin);
-          setIsLoading(false);
-        });
-      } else {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      if (!session?.user) {
         setIsLoading(false);
+        return;
       }
+
+      const { data: { user: serverUser }, error: getUserError } = await supabase.auth.getUser();
+
+      if (getUserError || !serverUser) {
+        await supabase.auth.signOut();
+        setSession(null);
+        setUser(null);
+        setIsAdmin(false);
+        setIsLoading(false);
+        return;
+      }
+
+      setSession(session);
+      setUser(serverUser);
+      checkAdminRole(serverUser.id).then((admin) => {
+        setIsAdmin(admin);
+        setIsLoading(false);
+      });
     });
 
     return () => subscription.unsubscribe();
