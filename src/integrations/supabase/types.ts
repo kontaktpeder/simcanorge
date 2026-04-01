@@ -14,6 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      access_requests: {
+        Row: {
+          admin_note: string | null
+          created_at: string
+          email: string
+          id: string
+          invite_sent_at: string | null
+          message: string | null
+          name: string
+          resolved_at: string | null
+          resolved_by: string | null
+          status: string
+        }
+        Insert: {
+          admin_note?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          invite_sent_at?: string | null
+          message?: string | null
+          name: string
+          resolved_at?: string | null
+          resolved_by?: string | null
+          status?: string
+        }
+        Update: {
+          admin_note?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          invite_sent_at?: string | null
+          message?: string | null
+          name?: string
+          resolved_at?: string | null
+          resolved_by?: string | null
+          status?: string
+        }
+        Relationships: []
+      }
       account_requests: {
         Row: {
           admin_note: string | null

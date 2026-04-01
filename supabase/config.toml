@@ -11,3 +11,6 @@ verify_jwt = false
 
 [functions.og-bil]
 verify_jwt = false
+
+[functions.generate-invite-link]
+verify_jwt = false

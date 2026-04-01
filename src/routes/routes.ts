@@ -17,6 +17,7 @@ const Kontakt = lazy(() => import("@/pages/Kontakt"));
 const Personvern = lazy(() => import("@/pages/Personvern"));
 const AcceptInvitation = lazy(() => import("@/pages/AcceptInvitation"));
 const Login = lazy(() => import("@/pages/Login"));
+const SokOmTilgang = lazy(() => import("@/pages/SokOmTilgang"));
 const StartAnnonse = lazy(() => import("@/pages/StartAnnonse"));
 const Konto = lazy(() => import("@/pages/Konto"));
 const Foresporsel = lazy(() => import("@/pages/Foresporsel"));
@@ -92,6 +93,7 @@ export const routes: RouteConfig[] = [
   { path: "/accept-invitation", element: AcceptInvitation, isPublic: true },
   { path: "/i/:token", element: AcceptInvitation, isPublic: true },
   { path: "/login", element: Login, isPublic: true },
+  { path: "/sok-om-tilgang", element: SokOmTilgang, isPublic: true },
   { path: "/start-annonse", element: StartAnnonse, isPublic: true },
   { path: "/s/:slug", element: PublicPagePage, isPublic: true },
 

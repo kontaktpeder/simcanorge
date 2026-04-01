@@ -7,8 +7,9 @@ interface EmailGeneratorData {
   recipientName?: string;
   inviteLink?: string;
   carName?: string;
-  invitationId?: string; // For updating sent_by/sender_note
-  onSaved?: () => void; // Callback to refresh data after saving
+  mode?: 'car' | 'access';
+  invitationId?: string;
+  onSaved?: () => void;
 }
 
 interface EmailGeneratorContextType {
@@ -55,6 +56,7 @@ export function EmailGeneratorProvider({ children }: { children: ReactNode }) {
         recipientName={emailData.recipientName || ''}
         inviteLink={emailData.inviteLink || ''}
         carName={emailData.carName || ''}
+        mode={emailData.mode || 'car'}
         onEmailSent={handleEmailSent}
       />
     </EmailGeneratorContext.Provider>

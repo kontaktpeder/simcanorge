@@ -31,12 +31,13 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Mail, Phone, Car, Calendar, Check, Eye, Wrench, Trash2, User, Package, ExternalLink, ShieldAlert, UserX } from "lucide-react";
+import { Mail, Phone, Car, Calendar, Check, Eye, Wrench, Trash2, User, Package, ExternalLink, ShieldAlert, UserX, UserPlus, Link as LinkIcon, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { nb } from "date-fns/locale";
 import { useAllAccountRequests, useUpdateAccountRequest, type AccountRequest, type AccountRequestStatus } from "@/hooks/useAccountRequests";
 import { useAuth } from "@/hooks/useAuth";
+import { useEmailGenerator } from "@/contexts/EmailGeneratorContext";
 
 interface InquiryItem {
   id: string;
@@ -92,9 +93,21 @@ const statusColors: Record<InquiryStatus, string> = {
   cancelled: "bg-red-500",
 };
 
+interface AccessRequest {
+  id: string;
+  name: string;
+  email: string;
+  message: string | null;
+  status: string;
+  invite_sent_at: string | null;
+  admin_note: string | null;
+  created_at: string;
+}
+
 type ForesporselItem =
   | { kind: "inquiry"; data: Inquiry }
-  | { kind: "account_request"; data: AccountRequest };
+  | { kind: "account_request"; data: AccountRequest }
+  | { kind: "access_request"; data: AccessRequest };
 
 const accountRequestTypeLabels: Record<string, string> = {
   delete_account: "Slettingsforespørsel",
@@ -110,15 +123,19 @@ const accountRequestStatusLabels: Record<string, string> = {
 const AdminForesporsler = () => {
   const queryClient = useQueryClient();
   const { user: authUser } = useAuth();
+  const { openEmailGenerator } = useEmailGenerator();
   const [selectedInquiry, setSelectedInquiry] = useState<Inquiry | null>(null);
   const [selectedAccountRequest, setSelectedAccountRequest] = useState<AccountRequest | null>(null);
+  const [selectedAccessRequest, setSelectedAccessRequest] = useState<AccessRequest | null>(null);
   const [status, setStatus] = useState<InquiryStatus>('pending');
   const [adminNotes, setAdminNotes] = useState('');
   const [accountRequestStatus, setAccountRequestStatus] = useState<AccountRequestStatus>('new');
   const [accountRequestAdminNote, setAccountRequestAdminNote] = useState('');
+  const [accessRequestAdminNote, setAccessRequestAdminNote] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [showDeleteUserConfirm, setShowDeleteUserConfirm] = useState(false);
   const [isDeletingUser, setIsDeletingUser] = useState(false);
+  const [isGeneratingLink, setIsGeneratingLink] = useState(false);
 
   const handleConfirmDeleteUser = async () => {
     if (!selectedAccountRequest || selectedAccountRequest.type !== "delete_account") return;
@@ -159,6 +176,18 @@ const AdminForesporsler = () => {
 
   const { data: accountRequests = [], isLoading: accountRequestsLoading } = useAllAccountRequests();
   const updateAccountRequest = useUpdateAccountRequest();
+
+  const { data: accessRequests = [], isLoading: accessRequestsLoading } = useQuery({
+    queryKey: ['access-requests'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('access_requests' as any)
+        .select('*')
+        .order('created_at', { ascending: false });
+      if (error) throw error;
+      return (data ?? []) as unknown as AccessRequest[];
+    },
+  });
 
   // Collect unique owner IDs and marketplace_item IDs for enrichment
   const ownerIds = useMemo(() => {
@@ -326,7 +355,8 @@ const AdminForesporsler = () => {
   const allItems: ForesporselItem[] = useMemo(() => {
     const inquiryItems: ForesporselItem[] = (inquiries || []).map((data) => ({ kind: "inquiry", data }));
     const accountItems: ForesporselItem[] = (accountRequests || []).map((data) => ({ kind: "account_request", data }));
-    return [...inquiryItems, ...accountItems].sort(
+    const accessItems: ForesporselItem[] = (accessRequests || []).map((data) => ({ kind: "access_request", data }));
+    return [...inquiryItems, ...accountItems, ...accessItems].sort(
       (a, b) => new Date(b.data.created_at).getTime() - new Date(a.data.created_at).getTime()
     );
   }, [inquiries, accountRequests]);
@@ -345,7 +375,7 @@ const AdminForesporsler = () => {
           </p>
         </div>
 
-        {isLoading || accountRequestsLoading ? (
+        {isLoading || accountRequestsLoading || accessRequestsLoading ? (
           <div className="text-center py-12 text-muted-foreground">Laster...</div>
         ) : !allItems.length ? (
           <Card>
@@ -417,7 +447,65 @@ const AdminForesporsler = () => {
                 );
               }
 
-              const inquiry = item.data;
+              if (item.kind === "access_request") {
+                const ar = item.data;
+                const isPending = ar.status === 'pending';
+                return (
+                  <Card
+                    key={`acc-${ar.id}`}
+                    className={`cursor-pointer hover:shadow-md transition-shadow ${
+                      isPending ? "border-primary/50 border-2" : ""
+                    }`}
+                    onClick={() => {
+                      setSelectedAccessRequest(ar);
+                      setAccessRequestAdminNote(ar.admin_note || '');
+                    }}
+                  >
+                    <CardContent className="p-4">
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1 flex-wrap">
+                            {isPending && (
+                              <span className="w-2 h-2 bg-primary rounded-full flex-shrink-0" />
+                            )}
+                            <h3 className="font-display text-lg truncate flex items-center gap-2">
+                              <UserPlus className="w-4 h-4 text-primary" />
+                              Tilgangsforespørsel
+                            </h3>
+                            <Badge
+                              variant="outline"
+                              className={
+                                isPending
+                                  ? "border-yellow-500/50 text-yellow-700"
+                                  : ar.status === "approved"
+                                  ? "border-green-500/50 text-green-700"
+                                  : "border-muted-foreground/50 text-muted-foreground"
+                              }
+                            >
+                              {isPending ? "Venter" : ar.status === "approved" ? "Godkjent" : "Avslått"}
+                            </Badge>
+                          </div>
+                          <p className="text-sm font-medium">{ar.name}</p>
+                          <p className="text-xs text-muted-foreground">{ar.email}</p>
+                          <p className="text-sm text-muted-foreground mt-1">
+                            {format(new Date(ar.created_at), "d. MMM yyyy 'kl.' HH:mm", { locale: nb })}
+                          </p>
+                          {ar.message && (
+                            <p className="text-sm text-foreground/70 mt-2 line-clamp-2">
+                              {ar.message}
+                            </p>
+                          )}
+                        </div>
+                        <Button variant="ghost" size="icon">
+                          <Eye className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              }
+
+              const inquiry = item.data as Inquiry;
               const recipientLabel = getRecipientLabel(inquiry);
               return (
                 <Card
@@ -444,7 +532,7 @@ const AdminForesporsler = () => {
                             {inquiry.inquiry_items.length} del{inquiry.inquiry_items.length !== 1 ? "er" : ""}
                           </Badge>
                           {inquiry.status && (
-                            <Badge className={statusColors[inquiry.status as InquiryStatus] || "bg-gray-500"}>
+                            <Badge className={statusColors[inquiry.status as InquiryStatus] || "bg-muted"}>
                               {statusLabels[inquiry.status as InquiryStatus] || inquiry.status}
                             </Badge>
                           )}
@@ -811,6 +899,174 @@ const AdminForesporsler = () => {
                           </AlertDialogContent>
                         </AlertDialog>
                       </>
+                    )}
+                  </div>
+                </>
+              );
+            })()}
+          </DialogContent>
+        </Dialog>
+
+        {/* Dialog for access request (tilgangsforespørsel) */}
+        <Dialog open={!!selectedAccessRequest} onOpenChange={() => setSelectedAccessRequest(null)}>
+          <DialogContent className="max-w-lg">
+            {selectedAccessRequest && (() => {
+              const ar = selectedAccessRequest;
+              const isPending = ar.status === 'pending';
+
+              const handleGenerateInviteLink = async () => {
+                setIsGeneratingLink(true);
+                try {
+                  const { data, error } = await supabase.functions.invoke('generate-invite-link', {
+                    body: { access_request_id: ar.id, email: ar.email, name: ar.name },
+                  });
+                  if (error || data?.error) throw new Error(data?.error || error?.message);
+
+                  openEmailGenerator({
+                    recipientEmail: ar.email,
+                    recipientName: ar.name,
+                    inviteLink: data.invite_link,
+                    mode: 'access',
+                    onSaved: () => queryClient.invalidateQueries({ queryKey: ['access-requests'] }),
+                  });
+                  setSelectedAccessRequest(null);
+                  queryClient.invalidateQueries({ queryKey: ['access-requests'] });
+                  toast.success('Invitasjonslenke generert!');
+                } catch (e) {
+                  toast.error(e instanceof Error ? e.message : 'Kunne ikke generere lenke');
+                } finally {
+                  setIsGeneratingLink(false);
+                }
+              };
+
+              const handleReject = async () => {
+                try {
+                  const { error } = await supabase
+                    .from('access_requests' as any)
+                    .update({
+                      status: 'rejected',
+                      admin_note: accessRequestAdminNote || null,
+                      resolved_by: authUser?.id,
+                      resolved_at: new Date().toISOString(),
+                    } as any)
+                    .eq('id', ar.id);
+                  if (error) throw error;
+                  toast.success('Søknad avslått');
+                  queryClient.invalidateQueries({ queryKey: ['access-requests'] });
+                  setSelectedAccessRequest(null);
+                } catch (e) {
+                  toast.error('Kunne ikke oppdatere søknad');
+                }
+              };
+
+              const handleSaveNote = async () => {
+                try {
+                  const { error } = await supabase
+                    .from('access_requests' as any)
+                    .update({ admin_note: accessRequestAdminNote || null } as any)
+                    .eq('id', ar.id);
+                  if (error) throw error;
+                  toast.success('Notat lagret');
+                  queryClient.invalidateQueries({ queryKey: ['access-requests'] });
+                } catch (e) {
+                  toast.error('Kunne ikke lagre notat');
+                }
+              };
+
+              return (
+                <>
+                  <DialogHeader>
+                    <DialogTitle className="font-display text-2xl flex items-center gap-2">
+                      <UserPlus className="w-5 h-5 text-primary" />
+                      Tilgangsforespørsel
+                    </DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-5">
+                    <div className="grid gap-2">
+                      <div className="flex items-center gap-2">
+                        <User className="w-4 h-4 text-muted-foreground" />
+                        <span className="font-medium">{ar.name}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Mail className="w-4 h-4 text-muted-foreground" />
+                        <a href={`mailto:${ar.email}`} className="text-primary hover:underline">{ar.email}</a>
+                      </div>
+                      <div className="flex items-center gap-2 text-muted-foreground">
+                        <Calendar className="w-4 h-4" />
+                        {format(new Date(ar.created_at), "d. MMMM yyyy 'kl.' HH:mm", { locale: nb })}
+                      </div>
+                    </div>
+
+                    {ar.message && (
+                      <div>
+                        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">Melding</p>
+                        <div className="bg-muted/50 rounded-lg p-4 whitespace-pre-wrap text-sm">
+                          {ar.message}
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-muted-foreground">Status:</span>
+                      <Badge
+                        variant="outline"
+                        className={
+                          isPending
+                            ? "border-yellow-500/50 text-yellow-700"
+                            : ar.status === "approved"
+                            ? "border-green-500/50 text-green-700"
+                            : "border-muted-foreground/50 text-muted-foreground"
+                        }
+                      >
+                        {isPending ? "Venter" : ar.status === "approved" ? "Godkjent" : "Avslått"}
+                      </Badge>
+                      {ar.invite_sent_at && (
+                        <span className="text-xs text-muted-foreground">
+                          Invitasjon sendt {format(new Date(ar.invite_sent_at), "d. MMM yyyy", { locale: nb })}
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label>Admin notater</Label>
+                      <Textarea
+                        value={accessRequestAdminNote}
+                        onChange={(e) => setAccessRequestAdminNote(e.target.value)}
+                        rows={3}
+                        placeholder="Notater om denne søknaden..."
+                      />
+                      <Button variant="outline" size="sm" onClick={handleSaveNote}>
+                        Lagre notat
+                      </Button>
+                    </div>
+
+                    {isPending && (
+                      <div className="space-y-3 pt-4 border-t">
+                        <Button
+                          className="w-full"
+                          disabled={isGeneratingLink}
+                          onClick={handleGenerateInviteLink}
+                        >
+                          {isGeneratingLink ? (
+                            <>
+                              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                              Genererer lenke...
+                            </>
+                          ) : (
+                            <>
+                              <LinkIcon className="w-4 h-4 mr-2" />
+                              Godkjenn og generer invitasjonslenke
+                            </>
+                          )}
+                        </Button>
+                        <Button
+                          variant="outline"
+                          className="w-full"
+                          onClick={handleReject}
+                        >
+                          Avslå søknad
+                        </Button>
+                      </div>
                     )}
                   </div>
                 </>
