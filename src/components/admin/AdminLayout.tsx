@@ -35,6 +35,7 @@ const navItems = [
   { href: "/admin/eierprofiler", label: "Profiler", icon: User },
   { href: "/admin/deler", label: "Deler", icon: Wrench },
   { href: "/admin/kategorier", label: "Kategorier", icon: FolderTree },
+  { href: "/admin/brukerprofiler", label: "Brukerprofiler", icon: User },
 ];
 
 export function AdminLayout({ children, title }: AdminLayoutProps) {

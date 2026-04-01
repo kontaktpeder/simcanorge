@@ -1,15 +1,18 @@
+import { useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
 import { useMyPersonProfile } from "@/hooks/useMyPersonProfile";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CompleteProfileForm } from "@/components/profile/CompleteProfileForm";
+import { EditProfileForm } from "@/components/profile/EditProfileForm";
 import { Layout } from "@/components/layout/Layout";
-import { ArrowLeft, FileText, User } from "lucide-react";
+import { ArrowLeft, FileText, Pencil, User } from "lucide-react";
 
 export default function DashboardMinProfilPage() {
   const { data: profile, isLoading } = useMyPersonProfile();
+  const [editing, setEditing] = useState(false);
 
   if (isLoading) return <Layout><p className="p-8 text-muted-foreground">Laster…</p></Layout>;
   if (!profile) return <Layout><div className="max-w-lg mx-auto px-4 py-12"><CompleteProfileForm /></div></Layout>;
@@ -45,7 +48,7 @@ export default function DashboardMinProfilPage() {
                 </span>
               </div>
             )}
-            <div>
+            <div className="flex-1">
               <h2 className="text-lg font-semibold">{profile.display_name}</h2>
               <p className="text-sm text-muted-foreground">bilgarasje.no/p/{profile.slug}</p>
               <div className="mt-1">
@@ -54,25 +57,44 @@ export default function DashboardMinProfilPage() {
                 </Badge>
               </div>
             </div>
+            {!editing && (
+              <Button variant="outline" size="sm" onClick={() => setEditing(true)}>
+                <Pencil className="w-4 h-4 mr-1" />
+                Rediger
+              </Button>
+            )}
           </CardContent>
         </Card>
 
-        {profile.bio && (
+        {editing ? (
           <Card>
-            <CardContent className="p-6">
-              <h3 className="font-medium mb-1">Bio</h3>
-              <p className="text-sm text-muted-foreground whitespace-pre-wrap">{profile.bio}</p>
+            <CardHeader>
+              <CardTitle className="text-base">Rediger profil</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <EditProfileForm profile={profile} onSuccess={() => setEditing(false)} />
             </CardContent>
           </Card>
-        )}
+        ) : (
+          <>
+            {profile.bio && (
+              <Card>
+                <CardContent className="p-6">
+                  <h3 className="font-medium mb-1">Bio</h3>
+                  <p className="text-sm text-muted-foreground whitespace-pre-wrap">{profile.bio}</p>
+                </CardContent>
+              </Card>
+            )}
 
-        {profile.location && (
-          <Card>
-            <CardContent className="p-6">
-              <h3 className="font-medium mb-1">Sted</h3>
-              <p className="text-sm text-muted-foreground">{profile.location}</p>
-            </CardContent>
-          </Card>
+            {profile.location && (
+              <Card>
+                <CardContent className="p-6">
+                  <h3 className="font-medium mb-1">Sted</h3>
+                  <p className="text-sm text-muted-foreground">{profile.location}</p>
+                </CardContent>
+              </Card>
+            )}
+          </>
         )}
 
         <div className="flex gap-3 pt-2">
