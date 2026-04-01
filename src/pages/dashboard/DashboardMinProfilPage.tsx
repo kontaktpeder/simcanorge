@@ -1,21 +1,34 @@
 import { Helmet } from "react-helmet-async";
+import { Link } from "react-router-dom";
 import { useMyPersonProfile } from "@/hooks/useMyPersonProfile";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { CompleteProfileForm } from "@/components/profile/CompleteProfileForm";
+import { Layout } from "@/components/layout/Layout";
+import { ArrowLeft, FileText, User } from "lucide-react";
 
 export default function DashboardMinProfilPage() {
   const { data: profile, isLoading } = useMyPersonProfile();
 
-  if (isLoading) return <p className="p-8 text-muted-foreground">Laster…</p>;
-  if (!profile) return <CompleteProfileForm />;
+  if (isLoading) return <Layout><p className="p-8 text-muted-foreground">Laster…</p></Layout>;
+  if (!profile) return <Layout><div className="max-w-lg mx-auto px-4 py-12"><CompleteProfileForm /></div></Layout>;
 
   return (
-    <>
+    <Layout>
       <Helmet>
         <title>Min profil | Bilgarasjen</title>
       </Helmet>
       <div className="max-w-2xl mx-auto px-4 py-8 space-y-6">
+        <div className="flex items-center gap-3">
+          <Link to="/dashboard">
+            <Button variant="ghost" size="sm">
+              <ArrowLeft className="w-4 h-4 mr-1" />
+              Dashboard
+            </Button>
+          </Link>
+        </div>
+
         <div>
           <h1 className="text-2xl font-bold">Min profil</h1>
           <p className="text-muted-foreground">Din offentlige profil på Bilgarasjen</p>
@@ -52,7 +65,31 @@ export default function DashboardMinProfilPage() {
             </CardContent>
           </Card>
         )}
+
+        {profile.location && (
+          <Card>
+            <CardContent className="p-6">
+              <h3 className="font-medium mb-1">Sted</h3>
+              <p className="text-sm text-muted-foreground">{profile.location}</p>
+            </CardContent>
+          </Card>
+        )}
+
+        <div className="flex gap-3 pt-2">
+          <Link to="/dashboard">
+            <Button variant="outline">
+              <User className="w-4 h-4 mr-2" />
+              Til Dashboard
+            </Button>
+          </Link>
+          <Link to="/dashboard/sider">
+            <Button variant="outline">
+              <FileText className="w-4 h-4 mr-2" />
+              Mine sider
+            </Button>
+          </Link>
+        </div>
       </div>
-    </>
+    </Layout>
   );
 }
