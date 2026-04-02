@@ -12,12 +12,21 @@ import { Link } from 'react-router-dom';
 export default function SokOmTilgang() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [emailConfirm, setEmailConfirm] = useState('');
+  const [emailError, setEmailError] = useState('');
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setEmailError('');
+
+    if (email.trim().toLowerCase() !== emailConfirm.trim().toLowerCase()) {
+      setEmailError('E-postadressene stemmer ikke overens');
+      return;
+    }
+
     setIsLoading(true);
     try {
       const { error } = await supabase
