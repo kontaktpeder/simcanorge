@@ -19,9 +19,10 @@ interface Props {
   marketplaceItemId?: string;
   feedPostId?: string;
   isReply?: boolean;
+  variant?: "dark" | "light";
 }
 
-export function CommentCard({ comment, carId, eventId, marketplaceItemId, feedPostId, isReply = false }: Props) {
+export function CommentCard({ comment, carId, eventId, marketplaceItemId, feedPostId, isReply = false, variant = "dark" }: Props) {
   const { user } = useAuth();
   const { data: myProfile } = useMyPersonProfile();
   const [showReplyForm, setShowReplyForm] = useState(false);
@@ -32,6 +33,7 @@ export function CommentCard({ comment, carId, eventId, marketplaceItemId, feedPo
   const { mutateAsync: editComment, isPending: isEditPending } = useEditComment();
   const { mutate: deleteComment } = useDeleteComment();
 
+  const light = variant === "light";
   const author = comment.author as any;
   const likes = (comment as any).comment_likes ?? [];
   const likeCount = likes.length;
@@ -40,13 +42,13 @@ export function CommentCard({ comment, carId, eventId, marketplaceItemId, feedPo
 
   if (comment.is_deleted) {
     return (
-      <div className={`${isReply ? "ml-10 pl-4 border-l border-white/[0.04]" : ""}`}>
-        <p className="text-[12px] text-white/15 italic py-2">Kommentar slettet</p>
+      <div className={`${isReply ? `ml-10 pl-4 border-l ${light ? "border-neutral-200/60" : "border-white/[0.04]"}` : ""}`}>
+        <p className={`text-[12px] italic py-2 ${light ? "text-neutral-400" : "text-white/15"}`}>Kommentar slettet</p>
         {!isReply && (comment as any).replies?.length > 0 && (
           <div className="space-y-0">
             {(comment as any).replies.map((reply: any) => (
               <CommentCard key={reply.id} comment={reply} carId={carId} eventId={eventId}
-                marketplaceItemId={marketplaceItemId} feedPostId={feedPostId} isReply />
+                marketplaceItemId={marketplaceItemId} feedPostId={feedPostId} isReply variant={variant} />
             ))}
           </div>
         )}
@@ -74,38 +76,36 @@ export function CommentCard({ comment, carId, eventId, marketplaceItemId, feedPo
   }
 
   return (
-    <div className={`${isReply ? "ml-10 pl-4 border-l border-white/[0.04]" : ""}`}>
+    <div className={`${isReply ? `ml-10 pl-4 border-l ${light ? "border-neutral-200/60" : "border-white/[0.04]"}` : ""}`}>
       <div className="py-4">
         <div className="flex gap-3">
-          {/* Avatar */}
           {author?.avatar_url ? (
             <Link to={`/profil/${author.slug}`}>
-              <img src={author.avatar_url} alt="" className="w-7 h-7 rounded-full object-cover ring-1 ring-white/[0.08] flex-shrink-0" />
+              <img src={author.avatar_url} alt="" className={`w-7 h-7 rounded-full object-cover ring-1 flex-shrink-0 ${light ? "ring-neutral-200" : "ring-white/[0.08]"}`} />
             </Link>
           ) : (
-            <div className="w-7 h-7 rounded-full bg-white/[0.06] flex items-center justify-center flex-shrink-0">
-              <span className="text-[11px] text-white/40" style={{ fontFamily: "'Oswald', sans-serif" }}>
+            <div className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 ${light ? "bg-neutral-200" : "bg-white/[0.06]"}`}>
+              <span className={`text-[11px] ${light ? "text-neutral-500" : "text-white/40"}`} style={{ fontFamily: "'Oswald', sans-serif" }}>
                 {author?.display_name?.[0] ?? "?"}
               </span>
             </div>
           )}
 
           <div className="flex-1 min-w-0">
-            {/* Name + time */}
             <div className="flex items-center gap-2 mb-1">
-              <Link to={`/profil/${author?.slug}`} className="text-[12px] uppercase tracking-[0.1em] text-white/60 hover:text-white transition-colors font-medium"
+              <Link to={`/profil/${author?.slug}`}
+                className={`text-[12px] uppercase tracking-[0.1em] font-medium transition-colors ${light ? "text-neutral-600 hover:text-neutral-900" : "text-white/60 hover:text-white"}`}
                 style={{ fontFamily: "'Oswald', sans-serif" }}>
                 {author?.display_name}
               </Link>
-              <span className="text-[10px] text-white/20">
+              <span className={`text-[10px] ${light ? "text-neutral-400" : "text-white/20"}`}>
                 {formatDistanceToNow(new Date(comment.created_at), { locale: nb, addSuffix: true })}
               </span>
               {comment.updated_at && (
-                <span className="text-[10px] text-white/15 italic">redigert</span>
+                <span className={`text-[10px] italic ${light ? "text-neutral-300" : "text-white/15"}`}>redigert</span>
               )}
             </div>
 
-            {/* Body or edit */}
             {isEditing ? (
               <div>
                 <textarea
@@ -117,31 +117,32 @@ export function CommentCard({ comment, carId, eventId, marketplaceItemId, feedPo
                     if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleSaveEdit();
                     if (e.key === "Escape") { setIsEditing(false); setEditBody(comment.body); }
                   }}
-                  className="w-full bg-transparent border-b border-white/[0.10] focus:border-white/[0.25] text-white/70 text-[14px] px-0 py-2 resize-none focus:outline-none transition-colors leading-relaxed"
+                  className={`w-full bg-transparent border-b px-0 py-2 resize-none focus:outline-none transition-colors leading-relaxed text-[14px] ${
+                    light ? "border-neutral-300 focus:border-neutral-500 text-neutral-700" : "border-white/[0.10] focus:border-white/[0.25] text-white/70"
+                  }`}
                 />
                 <div className="flex items-center gap-3 mt-2">
                   <button onClick={handleSaveEdit} disabled={isEditPending}
-                    className="text-[11px] uppercase tracking-[0.12em] text-white/50 hover:text-white transition-colors font-semibold"
+                    className={`text-[11px] uppercase tracking-[0.12em] font-semibold transition-colors ${light ? "text-neutral-500 hover:text-neutral-800" : "text-white/50 hover:text-white"}`}
                     style={{ fontFamily: "'Oswald', sans-serif" }}>
                     {isEditPending ? "Lagrer…" : "Lagre"}
                   </button>
                   <button onClick={() => { setIsEditing(false); setEditBody(comment.body); }}
-                    className="text-[11px] text-white/20 hover:text-white/40 transition-colors">
+                    className={`text-[11px] transition-colors ${light ? "text-neutral-400 hover:text-neutral-600" : "text-white/20 hover:text-white/40"}`}>
                     Avbryt
                   </button>
                 </div>
               </div>
             ) : (
-              <p className="text-[14px] text-white/55 leading-[1.7] whitespace-pre-wrap">{comment.body}</p>
+              <p className={`text-[14px] leading-[1.7] whitespace-pre-wrap ${light ? "text-neutral-600" : "text-white/55"}`}>{comment.body}</p>
             )}
 
-            {/* Actions */}
             {!isEditing && (
               <div className="flex items-center gap-4 mt-2">
                 <button
                   onClick={() => user && toggleLike({ commentId: comment.id, liked })}
                   className={`flex items-center gap-1 transition-colors ${
-                    liked ? "text-[#c8102e]" : "text-white/15 hover:text-white/40"
+                    liked ? "text-[#c8102e]" : light ? "text-neutral-300 hover:text-neutral-500" : "text-white/15 hover:text-white/40"
                   } ${!user ? "cursor-default" : "cursor-pointer"}`}
                 >
                   <Heart className={`w-3 h-3 ${liked ? "fill-current" : ""}`} />
@@ -150,7 +151,7 @@ export function CommentCard({ comment, carId, eventId, marketplaceItemId, feedPo
 
                 {!isReply && user && (
                   <button onClick={() => setShowReplyForm(!showReplyForm)}
-                    className="flex items-center gap-1 text-white/15 hover:text-white/40 transition-colors">
+                    className={`flex items-center gap-1 transition-colors ${light ? "text-neutral-300 hover:text-neutral-500" : "text-white/15 hover:text-white/40"}`}>
                     <CornerDownRight className="w-3 h-3" />
                     <span className="text-[10px] uppercase tracking-[0.1em]" style={{ fontFamily: "'Oswald', sans-serif" }}>Svar</span>
                   </button>
@@ -159,11 +160,11 @@ export function CommentCard({ comment, carId, eventId, marketplaceItemId, feedPo
                 {isOwn && (
                   <>
                     <button onClick={() => setIsEditing(true)}
-                      className="flex items-center gap-1 text-white/10 hover:text-white/35 transition-colors">
+                      className={`flex items-center gap-1 transition-colors ${light ? "text-neutral-300 hover:text-neutral-500" : "text-white/10 hover:text-white/35"}`}>
                       <Pencil className="w-3 h-3" />
                     </button>
                     <button onClick={handleDelete}
-                      className="flex items-center gap-1 text-white/10 hover:text-[#c8102e]/60 transition-colors">
+                      className={`flex items-center gap-1 transition-colors ${light ? "text-neutral-300 hover:text-red-500" : "text-white/10 hover:text-[#c8102e]/60"}`}>
                       <Trash2 className="w-3 h-3" />
                     </button>
                   </>
@@ -174,19 +175,17 @@ export function CommentCard({ comment, carId, eventId, marketplaceItemId, feedPo
         </div>
       </div>
 
-      {/* Replies */}
       {!isReply && (comment as any).replies?.length > 0 && (
         <div>
           {(comment as any).replies.map((reply: any) => (
             <CommentCard key={reply.id} comment={reply} carId={carId} eventId={eventId}
-              marketplaceItemId={marketplaceItemId} feedPostId={feedPostId} isReply />
+              marketplaceItemId={marketplaceItemId} feedPostId={feedPostId} isReply variant={variant} />
           ))}
         </div>
       )}
 
-      {/* Reply form */}
       {showReplyForm && (
-        <div className="ml-10 pl-4 border-l border-white/[0.04]">
+        <div className={`ml-10 pl-4 border-l ${light ? "border-neutral-200/60" : "border-white/[0.04]"}`}>
           <CommentComposer
             carId={carId} eventId={eventId}
             marketplaceItemId={marketplaceItemId} feedPostId={feedPostId}
@@ -195,6 +194,7 @@ export function CommentCard({ comment, carId, eventId, marketplaceItemId, feedPo
             autoFocus
             onSuccess={() => setShowReplyForm(false)}
             onCancel={() => setShowReplyForm(false)}
+            variant={variant}
           />
         </div>
       )}
