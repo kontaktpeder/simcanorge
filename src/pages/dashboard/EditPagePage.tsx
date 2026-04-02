@@ -92,6 +92,15 @@ export default function EditPagePage() {
 
   const memberCount = members?.length ?? 0;
 
+  async function handleTogglePublic(value: boolean) {
+    try {
+      await mutateAsync({ is_public: value });
+      toast.success(value ? "Siden er nå offentlig" : "Siden er nå skjult");
+    } catch {
+      toast.error("Kunne ikke oppdatere synlighet");
+    }
+  }
+
   return (
     <>
       <Helmet>
@@ -113,6 +122,7 @@ export default function EditPagePage() {
               onSubmit={handleSubmit}
               isPending={isPending}
               showSlug={false}
+              onTogglePublic={handleTogglePublic}
             />
           </CardContent>
         </Card>
