@@ -142,26 +142,14 @@ export function FeedCard({ post }: { post: FeedPost }) {
         {/* ── Image ── */}
         {heroImage && (
           entityLink ? (
-            <Link to={entityLink} className="block relative overflow-hidden mb-4">
+            <Link to={entityLink} className="block overflow-hidden mb-4">
               <img src={heroImage} alt={entityTitle ?? ""}
                 className="w-full h-[340px] sm:h-[420px] md:h-[480px] object-cover transition-transform duration-700 group-hover:scale-[1.02]" />
-              {allImages.length > 1 && (
-                <div className="absolute bottom-4 right-4 text-[12px] text-white/80 tracking-[0.12em] font-bold uppercase bg-black/40 backdrop-blur-sm px-3 py-1"
-                  style={oswald}>
-                  1 / {allImages.length}
-                </div>
-              )}
             </Link>
           ) : (
-            <div className="relative overflow-hidden mb-4">
+            <div className="overflow-hidden mb-4">
               <img src={heroImage} alt={entityTitle ?? ""}
                 className="w-full h-[340px] sm:h-[420px] md:h-[480px] object-cover transition-transform duration-700 group-hover:scale-[1.02]" />
-              {allImages.length > 1 && (
-                <div className="absolute bottom-4 right-4 text-[12px] text-white/80 tracking-[0.12em] font-bold uppercase bg-black/40 backdrop-blur-sm px-3 py-1"
-                  style={oswald}>
-                  1 / {allImages.length}
-                </div>
-              )}
             </div>
           )
         )}
