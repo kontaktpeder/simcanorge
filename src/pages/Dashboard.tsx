@@ -353,6 +353,34 @@ export default function Dashboard() {
           </motion.div>
         )}
 
+        {/* Mine sider */}
+        {personProfile?.can_create_pages && (
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.27 }}
+          >
+            <Link to="/dashboard/sider" className="block h-full touch-manipulation">
+              <div className="h-full p-6 sm:p-8 border-2 border-foreground/15 bg-card/90 backdrop-blur-sm group hover:bg-card hover:border-foreground/25 transition-all min-h-[180px]">
+                <p className="font-display text-sm uppercase tracking-wider text-muted-foreground mb-5">
+                  Organisasjoner
+                </p>
+                <h3 className="font-display text-2xl sm:text-3xl uppercase tracking-wider mb-2 group-hover:text-primary transition-colors">
+                  Mine sider
+                </h3>
+                <p className="text-base text-muted-foreground">
+                  {(myPages?.length ?? 0) === 0
+                    ? 'Opprett din første side'
+                    : 'Se og rediger sidene dine'}
+                </p>
+                <p className="font-display text-4xl sm:text-5xl text-foreground leading-none mt-4">
+                  {myPages?.length || 0}
+                </p>
+              </div>
+            </Link>
+          </motion.div>
+        )}
+
         {/* Send inn ny bil */}
         <motion.div
           initial={{ opacity: 0, y: 15 }}
