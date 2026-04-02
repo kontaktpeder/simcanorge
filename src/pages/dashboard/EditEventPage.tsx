@@ -1,19 +1,23 @@
+import { useState } from "react";
 import { Helmet } from "react-helmet-async";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useEventByIdForDashboard } from "@/hooks/useEventBySlug";
-import { useUpdateEvent } from "@/hooks/useCreateEvent";
+import { useUpdateEvent, useDeleteEvent } from "@/hooks/useCreateEvent";
 import { EventForm, type EventFormValues } from "@/components/events/EventForm";
 import { EventImageUpload } from "@/components/events/EventImageUpload";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, Trash2, AlertTriangle } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 import { PostComposer } from "@/components/feed/PostComposer";
 
 export default function EditEventPage() {
   const { eventId } = useParams<{ eventId: string }>();
+  const navigate = useNavigate();
   const { data: event, isLoading } = useEventByIdForDashboard(eventId);
   const { mutateAsync, isPending } = useUpdateEvent(eventId!);
+  const { mutateAsync: deleteEvent, isPending: isDeleting } = useDeleteEvent();
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   if (isLoading)
     return (
@@ -64,6 +68,16 @@ export default function EditEventPage() {
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Noe gikk galt";
       toast.error(message);
+    }
+  }
+
+  async function handleDelete() {
+    try {
+      await deleteEvent(eventId!);
+      toast.success("Arrangement slettet");
+      navigate("/dashboard/events");
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : "Kunne ikke slette");
     }
   }
 
@@ -134,6 +148,7 @@ export default function EditEventPage() {
             <EventImageUpload eventId={eventId!} />
           </CardContent>
         </Card>
+
         <Card id="feed-composer">
           <CardHeader>
             <CardTitle>Del i feeden</CardTitle>
@@ -146,6 +161,53 @@ export default function EditEventPage() {
               snapshotTitle={event.title}
               snapshotEntityType="event"
             />
+          </CardContent>
+        </Card>
+
+        {/* Danger zone */}
+        <Card className="border-destructive/30">
+          <CardHeader>
+            <CardTitle className="text-base flex items-center gap-2 text-destructive">
+              <AlertTriangle className="w-4 h-4" />
+              Faresone
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p className="text-sm text-muted-foreground">
+              Sletting er permanent og kan ikke angres. Alle bilder, påmeldinger og feed-poster
+              knyttet til dette arrangementet slettes også.
+            </p>
+
+            {!showDeleteConfirm ? (
+              <button
+                onClick={() => setShowDeleteConfirm(true)}
+                className="flex items-center gap-2 px-4 py-2 text-sm border border-destructive/40 text-destructive hover:bg-destructive/5 transition-colors rounded-md"
+              >
+                <Trash2 className="w-4 h-4" />
+                Slett arrangement
+              </button>
+            ) : (
+              <div className="space-y-3 p-4 border border-destructive/30 rounded-md bg-destructive/5">
+                <p className="text-sm font-medium text-destructive">
+                  Er du sikker? Dette kan ikke angres.
+                </p>
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={handleDelete}
+                    disabled={isDeleting}
+                    className="px-4 py-2 text-sm bg-destructive text-destructive-foreground hover:bg-destructive/90 transition-colors rounded-md disabled:opacity-50"
+                  >
+                    {isDeleting ? "Sletter…" : "Ja, slett permanent"}
+                  </button>
+                  <button
+                    onClick={() => setShowDeleteConfirm(false)}
+                    className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    Avbryt
+                  </button>
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
