@@ -15,9 +15,9 @@ const TYPE_LABELS: Record<string, string> = {
   club_night: "Klubbkveld", exhibition: "Utstilling", open_day: "Åpen dag", other: "Arrangement",
 };
 
-// Font shortcuts
-const serif = { fontFamily: "'Playfair Display', serif" };
-const display = { fontFamily: "'Bebas Neue', sans-serif" };
+// Font shortcuts — rounder, warmer feel
+const serif = { fontFamily: "'DM Serif Display', 'Playfair Display', serif" };
+const display = { fontFamily: "'DM Serif Display', serif" };
 const body = { fontFamily: "'Source Sans 3', sans-serif" };
 
 export default function PublicEventPage() {
