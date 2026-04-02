@@ -9,13 +9,16 @@ export function EventHeroCTA({ eventId }: { eventId: string }) {
   const { mutate: upsert, isPending } = useUpsertAttendance(eventId);
   const isGoing = !!attendance;
 
+  const base =
+    "inline-flex items-center justify-center font-black text-sm uppercase tracking-[0.1em] transition-all duration-200 active:scale-[0.96] select-none";
+
   if (!user) {
     return (
       <Link
         to="/login"
-        className="px-6 py-3 rounded-lg bg-amber-400 text-black font-medium hover:bg-amber-300 transition inline-flex items-center justify-center"
+        className={`${base} px-8 py-4 bg-amber-400 text-black hover:bg-amber-300 rounded-sm`}
       >
-        Meld deg på
+        Bli med
       </Link>
     );
   }
@@ -29,9 +32,9 @@ export function EventHeroCTA({ eventId }: { eventId: string }) {
           onError: () => toast.error("Noe gikk galt"),
         })
       }
-      className={`px-6 py-3 rounded-lg font-medium transition inline-flex items-center justify-center ${
+      className={`${base} px-8 py-4 rounded-sm ${
         isGoing
-          ? "bg-white/10 text-white hover:bg-white/20"
+          ? "bg-white/10 text-white border border-white/20 hover:bg-white/15"
           : "bg-amber-400 text-black hover:bg-amber-300"
       }`}
     >
