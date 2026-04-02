@@ -12,9 +12,7 @@ export function EventImageUpload({ eventId }: { eventId: string }) {
   const { mutate: deleteImage } = useDeleteEventImage(eventId);
   const { mutate: reorder, isPending: isReordering } = useReorderEventImages(eventId);
 
-  const sorted = [...(images as any[])].sort(
-    (a: any, b: any) => a.sort_order - b.sort_order
-  );
+  const sorted = [...images].sort((a, b) => a.sort_order - b.sort_order);
 
   return (
     <ImageUploadWithOrder
@@ -25,7 +23,7 @@ export function EventImageUpload({ eventId }: { eventId: string }) {
       isReordering={isReordering}
       onUpload={(files) => upload(files)}
       onDelete={(id) => {
-        const img = sorted.find((i: any) => i.id === id);
+        const img = sorted.find((i) => i.id === id);
         deleteImage({ imageId: id, storagePath: img?.storage_path ?? null });
       }}
       onReorder={(imgs) =>
@@ -35,7 +33,7 @@ export function EventImageUpload({ eventId }: { eventId: string }) {
         const next = [...sorted];
         const [picked] = next.splice(index, 1);
         next.unshift(picked);
-        reorder(next.map((img: any, i: number) => ({ id: img.id, sort_order: i })));
+        reorder(next.map((img, i) => ({ id: img.id, sort_order: i })));
       }}
       emptyTitle="Ingen bilder ennå"
       emptyDescription="Last opp bilder fra eventet. Første bilde brukes som forsidebilde."

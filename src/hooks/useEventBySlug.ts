@@ -7,12 +7,12 @@ export function usePublicEventBySlug(slug: string | undefined) {
     queryFn: async () => {
       if (!slug) return null;
       const { data, error } = await supabase
-        .from("events" as any)
+        .from("events")
         .select(`
           *,
           event_images (id, image_url, alt_text, sort_order, storage_path),
-          owner_page:pages (id, title, slug, logo_url, tagline, contact_email, website),
-          owner_profile:person_profiles (id, display_name, slug, avatar_url)
+          owner_page:pages!events_owner_page_id_fkey (id, title, slug, logo_url, tagline, contact_email, website),
+          owner_profile:person_profiles!events_owner_profile_id_fkey (id, display_name, slug, avatar_url)
         `)
         .eq("slug", slug)
         .eq("status", "published")
@@ -30,12 +30,12 @@ export function useEventByIdForDashboard(id: string | undefined) {
     queryFn: async () => {
       if (!id) return null;
       const { data, error } = await supabase
-        .from("events" as any)
+        .from("events")
         .select(`
           *,
           event_images (id, image_url, alt_text, sort_order, storage_path),
-          owner_page:pages (id, title, slug, logo_url),
-          owner_profile:person_profiles (id, display_name, slug, avatar_url)
+          owner_page:pages!events_owner_page_id_fkey (id, title, slug, logo_url),
+          owner_profile:person_profiles!events_owner_profile_id_fkey (id, display_name, slug, avatar_url)
         `)
         .eq("id", id)
         .maybeSingle();

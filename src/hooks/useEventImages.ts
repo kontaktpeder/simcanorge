@@ -9,7 +9,7 @@ export function useEventImages(eventId: string | undefined) {
     queryFn: async () => {
       if (!eventId) return [];
       const { data, error } = await supabase
-        .from("event_images" as any)
+        .from("event_images")
         .select("*")
         .eq("event_id", eventId)
         .order("sort_order", { ascending: true });
@@ -26,9 +26,7 @@ export function useUploadEventImages(eventId: string) {
     mutationFn: async (files: File[]) => {
       const results = await compressImages(files);
       const { data: existing } = await supabase
-        .from("event_images" as any)
-        .select("id")
-        .eq("event_id", eventId);
+        .from("event_images").select("id").eq("event_id", eventId);
       let nextOrder = existing?.length ?? 0;
       let successCount = 0;
 
@@ -49,7 +47,7 @@ export function useUploadEventImages(eventId: string) {
           .getPublicUrl(storagePath);
 
         const { error: dbError } = await supabase
-          .from("event_images" as any)
+          .from("event_images")
           .insert({
             event_id: eventId,
             image_url: urlData.publicUrl,
@@ -85,7 +83,7 @@ export function useDeleteEventImage(eventId: string) {
         }
       }
       const { error } = await supabase
-        .from("event_images" as any)
+        .from("event_images")
         .delete()
         .eq("id", imageId);
       if (error) throw error;
@@ -103,7 +101,7 @@ export function useReorderEventImages(eventId: string) {
       const results = await Promise.all(
         images.map((img) =>
           supabase
-            .from("event_images" as any)
+            .from("event_images")
             .update({ sort_order: img.sort_order })
             .eq("id", img.id)
         )
@@ -115,6 +113,6 @@ export function useReorderEventImages(eventId: string) {
     },
     onSuccess: () =>
       queryClient.invalidateQueries({ queryKey: ["event_images", eventId] }),
-    onError: (err: any) => toast.error(err.message ?? "Feil ved sortering"),
+    onError: (err: Error) => toast.error(err.message ?? "Feil ved sortering"),
   });
 }

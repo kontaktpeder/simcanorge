@@ -1,39 +1,10 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useMyPersonProfile } from "@/hooks/useMyPersonProfile";
+import type { TablesInsert, TablesUpdate } from "@/integrations/supabase/types";
 
-export interface EventInsert {
-  title: string;
-  slug: string;
-  event_type: string;
-  location: string;
-  starts_at: string;
-  ends_at?: string | null;
-  short_description?: string | null;
-  description?: string | null;
-  program?: string | null;
-  practical_info?: string | null;
-  registration_url?: string | null;
-  max_attendees?: number | null;
-  status?: string;
-  owner_profile_id?: string;
-  owner_page_id?: string | null;
-}
-
-export interface EventUpdate {
-  title?: string;
-  event_type?: string;
-  location?: string;
-  starts_at?: string;
-  ends_at?: string | null;
-  short_description?: string | null;
-  description?: string | null;
-  program?: string | null;
-  practical_info?: string | null;
-  registration_url?: string | null;
-  max_attendees?: number | null;
-  status?: string;
-}
+type EventInsert = TablesInsert<"events">;
+type EventUpdate = TablesUpdate<"events">;
 
 function toSlug(v: string) {
   return v.toLowerCase()
@@ -46,7 +17,7 @@ async function ensureUniqueSlug(baseSlug: string): Promise<string> {
   let attempt = 0;
   while (true) {
     const { data } = await supabase
-      .from("events" as any)
+      .from("events")
       .select("id")
       .eq("slug", slug)
       .maybeSingle();
@@ -65,7 +36,7 @@ export function useCreateEvent() {
       if (!profile) throw new Error("Ingen profil");
       const uniqueSlug = await ensureUniqueSlug(values.slug ?? toSlug(values.title));
       const { data, error } = await supabase
-        .from("events" as any)
+        .from("events")
         .insert({ ...values, slug: uniqueSlug, owner_profile_id: profile.id })
         .select()
         .single();
@@ -83,7 +54,7 @@ export function useUpdateEvent(id: string) {
   return useMutation({
     mutationFn: async (values: EventUpdate) => {
       const { data, error } = await supabase
-        .from("events" as any)
+        .from("events")
         .update(values)
         .eq("id", id)
         .select()
@@ -91,7 +62,7 @@ export function useUpdateEvent(id: string) {
       if (error) throw error;
       return data;
     },
-    onSuccess: (data: any) => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["event", "dashboard", id] });
       queryClient.invalidateQueries({ queryKey: ["event", "public", data.slug] });
       queryClient.invalidateQueries({ queryKey: ["my_events"] });

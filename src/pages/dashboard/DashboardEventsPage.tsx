@@ -51,7 +51,7 @@ export default function DashboardEventsPage() {
         )}
 
         <div className="space-y-3">
-          {(events as any[])?.map((e: any) => (
+          {events?.map((e: any) => (
             <EventCard key={e.id} event={e} />
           ))}
         </div>
