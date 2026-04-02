@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { useAuth } from "@/hooks/useAuth";
 import { useUpsertPersonProfile } from "@/hooks/useMyPersonProfile";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -37,8 +38,11 @@ function toSlug(value: string) {
 export function CompleteProfileForm() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { user } = useAuth();
   const { mutateAsync, isPending } = useUpsertPersonProfile();
   const slugManuallyEdited = useRef(false);
+
+  const metaName = user?.user_metadata?.display_name ?? "";
 
   const {
     register,
@@ -48,7 +52,11 @@ export function CompleteProfileForm() {
     formState: { errors },
   } = useForm<FormValues>({
     resolver: zodResolver(schema),
-    defaultValues: { is_public: false },
+    defaultValues: {
+      is_public: false,
+      display_name: metaName,
+      slug: metaName ? toSlug(metaName) : "",
+    },
   });
 
   const displayName = watch("display_name");
