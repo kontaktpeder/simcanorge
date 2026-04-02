@@ -1,4 +1,5 @@
 import { Helmet } from "react-helmet-async";
+import { Layout } from "@/components/layout/Layout";
 import { useParams, Link } from "react-router-dom";
 import { usePublicEventBySlug } from "@/hooks/useEventBySlug";
 import { useEventAttendeeCount } from "@/hooks/useEventAttendees";
