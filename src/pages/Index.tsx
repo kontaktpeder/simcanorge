@@ -96,19 +96,23 @@ export default function Index() {
           <div className="absolute top-0 left-0 right-0 h-12 bg-gradient-to-b from-[#0a0a0a]/50 to-transparent" />
 
           <div className="relative z-10 h-full flex flex-col justify-center max-w-[1200px] mx-auto px-5 md:px-8">
+            <p className="text-[11px] sm:text-xs text-[#c4a882]/50 tracking-[0.3em] uppercase mb-2"
+              style={{ fontFamily: "'Oswald', sans-serif", fontWeight: 400 }}>
+              bilgarasje.no
+            </p>
             <h1
-              className="text-[2.4rem] sm:text-[3.2rem] md:text-[4.2rem] leading-[1] uppercase tracking-[0.12em] text-white/95 font-bold"
+              className="text-[2.4rem] sm:text-[3.2rem] md:text-[4.2rem] leading-[1] uppercase tracking-[0.12em] text-white font-bold"
               style={{ fontFamily: "'Oswald', 'Bebas Neue', sans-serif" }}
             >
               Hele Norges bilsamfunn
             </h1>
             <p
-              className="text-[1.1rem] sm:text-[1.5rem] md:text-[1.8rem] uppercase tracking-[0.25em] text-[#c4a882]/40 mt-1"
+              className="text-[1.1rem] sm:text-[1.5rem] md:text-[1.8rem] uppercase tracking-[0.25em] text-[#c4a882]/50 mt-1"
               style={{ fontFamily: "'Oswald', 'Bebas Neue', sans-serif", fontWeight: 400 }}
             >
               — på nett
             </p>
-            <p className="text-[11px] sm:text-xs text-[#a89880]/50 mt-3 tracking-[0.1em]">
+            <p className="text-[11px] sm:text-xs text-white/40 mt-3 tracking-[0.1em]">
               Se oppdateringer fra norske bilentusiaster
             </p>
           </div>
