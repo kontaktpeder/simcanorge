@@ -167,22 +167,22 @@ export default function Index() {
         <section className="py-8 md:py-12" style={{ background: '#151210' }}>
           <div className="max-w-[860px] mx-auto px-5 md:px-8">
 
-            {/* Post update bar */}
-            <div className="flex items-center gap-3 mb-8">
-              <div className="flex-1 flex items-center gap-3 px-5 py-3.5 bg-[#1c1916] border border-[#a89880]/8 rounded-sm">
-                <div className="w-8 h-8 rounded-full bg-[#a89880]/10 flex items-center justify-center flex-shrink-0">
-                  <span className="text-xs text-[#a89880]/40">👤</span>
+            {/* Post update bar — subtle */}
+            <div className="flex items-center gap-3 mb-6">
+              <div className="flex-1 flex items-center gap-3 px-4 py-2.5 border border-white/[0.06] rounded-sm">
+                <div className="w-6 h-6 rounded-full bg-white/5 flex items-center justify-center flex-shrink-0">
+                  <span className="text-[10px] text-white/25">👤</span>
                 </div>
-                <p className="text-sm text-white/30">
-                  Hva tenker du på i dag? Del et bilde eller en oppdatering...
+                <p className="text-xs text-white/20">
+                  Del en oppdatering...
                 </p>
               </div>
               <Link
                 to={user ? "/dashboard" : "/login?returnUrl=/dashboard"}
-                className="flex items-center gap-2 px-5 py-3.5 bg-white text-[#0f0d0b] text-sm font-semibold tracking-wide hover:bg-white/90 transition-colors flex-shrink-0"
+                className="flex items-center gap-1.5 px-4 py-2.5 text-[11px] tracking-[0.08em] uppercase text-white/50 border border-white/[0.08] hover:text-white/80 hover:border-white/15 transition-colors flex-shrink-0"
               >
-                <PlusCircle className="w-4 h-4" />
-                Legg ut oppdatering
+                <PlusCircle className="w-3.5 h-3.5" />
+                Legg ut
               </Link>
             </div>
 
