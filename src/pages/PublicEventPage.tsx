@@ -194,7 +194,7 @@ export default function PublicEventPage() {
                   <span className="text-[28px] text-neutral-300 shrink-0 w-16 text-right italic" style={display}>
                     {timeMatch?.[0] || ""}
                   </span>
-                  <span className="text-[16px] text-neutral-600 leading-relaxed" style={body}>
+                  <span className="text-[17px] text-neutral-600 leading-relaxed" style={body}>
                     {line.replace(/^\d{1,2}[:.]\d{2}\s*[-–—]?\s*/, "")}
                   </span>
                 </div>
