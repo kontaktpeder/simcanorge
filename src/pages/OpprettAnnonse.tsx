@@ -30,6 +30,7 @@ export default function OpprettAnnonse() {
   const queryClient = useQueryClient();
   const [searchParams] = useSearchParams();
   const { data: ownerProfile, isLoading: profileLoading } = useOwnerProfile(user?.id);
+  const { data: legacyOwnerId } = useLegacyOwnerId(user?.id);
   const insertImages = useInsertMarketplaceImages();
   const { data: allCategories = [] } = useUnifiedCategories();
 
