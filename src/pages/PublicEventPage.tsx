@@ -223,7 +223,7 @@ export default function PublicEventPage() {
           <section>
             <SectionLabel>Praktisk info</SectionLabel>
             <div className="h-px bg-neutral-300/60 mb-8" />
-            <p className="text-[17px] sm:text-[18px] text-neutral-600 leading-[1.95] whitespace-pre-wrap" style={body}>
+            <p className="text-[19px] sm:text-[20px] text-neutral-600 leading-[1.9] whitespace-pre-wrap" style={body}>
               {event.practical_info}
             </p>
           </section>
