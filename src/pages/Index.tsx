@@ -79,13 +79,13 @@ export default function Index() {
   return (
     <Layout>
       <Helmet>
-        <title>Bilgarasje.no — Norges bilsamfunn på nett</title>
+        <title>Bilgarasje.no — Hele Norges bilsamfunn — på nett</title>
         <meta name="description" content="Utforsk norske biler og deres historie. Biler, markedsplass, arrangementer og mer." />
       </Helmet>
 
       <div className="min-h-[calc(100vh-4rem)]">
 
-        {/* ─── SEARCH BAR ─── */}
+        {/* ─── SEARCH BAR — centered ─── */}
         <section className="bg-[#0a0a0a] pt-6 pb-2">
           <div className="max-w-[420px] mx-auto px-5">
             <GlobalSearch />
@@ -94,48 +94,48 @@ export default function Index() {
 
         {/* ─── HERO: Full-width image with title overlay ─── */}
         <section className="relative bg-[#0a0a0a] overflow-hidden">
-          {/* Full-width image */}
-          <div className="relative w-full h-[260px] sm:h-[340px] md:h-[420px]">
+          <div className="relative w-full h-[220px] sm:h-[280px] md:h-[360px]">
+            {/* Image — slightly right-shifted, contained */}
             <img
               src={heroCar}
               alt="Klassisk Porsche 911 i garasje"
-              className="w-full h-full object-cover object-center"
+              className="absolute inset-0 w-full h-full object-cover object-[60%_center]"
             />
             {/* Left fade */}
-            <div className="absolute inset-0 bg-gradient-to-r from-[#0a0a0a] via-transparent to-transparent w-1/3" />
+            <div className="absolute inset-y-0 left-0 w-2/5 bg-gradient-to-r from-[#0a0a0a] to-transparent" />
             {/* Right fade */}
-            <div className="absolute inset-0 bg-gradient-to-l from-[#0a0a0a] via-transparent to-transparent left-auto w-1/3" />
+            <div className="absolute inset-y-0 right-0 w-1/4 bg-gradient-to-l from-[#0a0a0a] to-transparent" />
             {/* Bottom fade */}
             <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-[#0a0a0a] to-transparent" />
-            {/* Top fade */}
-            <div className="absolute top-0 left-0 right-0 h-1/4 bg-gradient-to-b from-[#0a0a0a] to-transparent" />
+            {/* Top subtle fade */}
+            <div className="absolute top-0 left-0 right-0 h-1/5 bg-gradient-to-b from-[#0a0a0a]/80 to-transparent" />
 
-            {/* Title overlay — bottom left */}
+            {/* Title overlay — bottom left, wider */}
             <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10">
-              <div className="max-w-[860px] mx-auto">
-                <p className="text-[9px] md:text-[10px] tracking-[0.4em] uppercase text-white/25 mb-2">
+              <div className="max-w-[1100px] mx-auto">
+                <p className="text-[9px] md:text-[10px] tracking-[0.4em] uppercase text-white/20 mb-2">
                   bilgarasje.no
                 </p>
-                <h1 className="font-display text-[2.2rem] sm:text-[2.8rem] md:text-[3.6rem] leading-[1] uppercase tracking-wider text-white/90">
-                  Norges
+                <h1 className="font-display text-[2rem] sm:text-[2.6rem] md:text-[3.4rem] leading-[1.05] uppercase tracking-wider text-white/90">
+                  Hele Norges
                   <br />
-                  bilsamfunn
+                  bilsamfunn — <span className="text-white/40">på nett</span>
                 </h1>
               </div>
             </div>
           </div>
         </section>
 
-        {/* ─── MODULE GRID ─── */}
-        <section className="bg-[#0a0a0a] pb-10 md:pb-14">
-          <div className="max-w-[860px] mx-auto px-5 md:px-8">
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-[1px] bg-white/[0.06]">
+        {/* ─── MODULE GRID — wider, with gaps ─── */}
+        <section className="bg-[#0a0a0a] pt-4 pb-10 md:pb-14">
+          <div className="max-w-[1100px] mx-auto px-5 md:px-8">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-px">
               {modules.map((mod) => {
                 const inner = (
                   <div
-                    className={`relative flex flex-col items-center text-center p-5 md:p-6 bg-[#0a0a0a] transition-all duration-300 group ${
+                    className={`relative flex flex-col items-center text-center p-5 md:p-6 bg-[#0a0a0a] border border-white/[0.06] transition-all duration-300 group ${
                       mod.active
-                        ? "hover:bg-white/[0.04] cursor-pointer"
+                        ? "hover:border-white/[0.12] hover:bg-white/[0.02] cursor-pointer"
                         : "opacity-30 cursor-default"
                     }`}
                   >
@@ -144,15 +144,15 @@ export default function Index() {
                         Snart
                       </span>
                     )}
-                    <div className={`text-white/50 mb-3 transition-colors duration-300 ${mod.active ? "group-hover:text-white/80" : ""}`}>
+                    <div className={`text-white/45 mb-3 transition-colors duration-300 ${mod.active ? "group-hover:text-white/80" : ""}`}>
                       {mod.icon}
                     </div>
-                    <p className={`text-[13px] md:text-sm tracking-[0.08em] uppercase font-semibold mb-1 transition-colors duration-300 ${
+                    <p className={`text-[13px] md:text-sm tracking-[0.06em] uppercase font-semibold mb-1 transition-colors duration-300 ${
                       mod.active ? "text-white/80 group-hover:text-white" : "text-white/30"
                     }`}>
                       {mod.title}
                     </p>
-                    <p className="text-[10px] md:text-[11px] tracking-[0.03em] text-white/30 leading-relaxed">
+                    <p className="text-[10px] md:text-[11px] text-white/25 leading-relaxed">
                       {mod.desc}
                     </p>
                   </div>
