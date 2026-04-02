@@ -425,10 +425,10 @@ function InfoBlock({
 }
 
 function SideRow({
-  label, value, display, body,
+  label, value, body,
 }: {
   label: string; value: string;
-  display: React.CSSProperties; body: React.CSSProperties;
+  display?: React.CSSProperties; body: React.CSSProperties;
 }) {
   return (
     <div className="flex justify-between items-baseline py-3 border-b border-neutral-200">
