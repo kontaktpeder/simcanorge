@@ -24,7 +24,10 @@ export function EventImageUpload({ eventId }: { eventId: string }) {
       isUploading={isUploading}
       isReordering={isReordering}
       onUpload={(files) => upload(files)}
-      onDelete={(id) => deleteImage(id)}
+      onDelete={(id) => {
+        const img = sorted.find((i: any) => i.id === id);
+        deleteImage({ imageId: id, storagePath: img?.storage_path ?? null });
+      }}
       onReorder={(imgs) =>
         reorder(imgs.map((img, i) => ({ id: img.id, sort_order: i })))
       }

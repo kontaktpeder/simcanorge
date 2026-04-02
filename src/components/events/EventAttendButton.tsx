@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import {
   useMyAttendance,
-  useToggleAttendance,
+  useUpsertAttendance,
   useEventAttendeeCount,
 } from "@/hooks/useEventAttendees";
 import { toast } from "sonner";
@@ -12,7 +12,7 @@ export function EventAttendButton({ eventId }: { eventId: string }) {
   const { user } = useAuth();
   const { data: attendance } = useMyAttendance(eventId);
   const { data: count } = useEventAttendeeCount(eventId);
-  const { mutate: toggle, isPending } = useToggleAttendance(eventId);
+  const { mutate: upsert, isPending } = useUpsertAttendance(eventId);
 
   const isGoing = !!attendance;
 
@@ -28,7 +28,7 @@ export function EventAttendButton({ eventId }: { eventId: string }) {
           variant={isGoing ? "secondary" : "default"}
           disabled={isPending}
           onClick={() =>
-            toggle((attendance as any)?.id ?? null, {
+            upsert((attendance as any)?.id ?? null, {
               onSuccess: () =>
                 toast.success(isGoing ? "Påmelding fjernet" : "Du er påmeldt!"),
               onError: () => toast.error("Noe gikk galt"),
