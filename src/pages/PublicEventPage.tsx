@@ -133,9 +133,17 @@ export default function PublicEventPage() {
           </div>
 
           {/* Right: hero image */}
-          <div className="relative aspect-[4/3] md:aspect-[3/4] lg:aspect-[4/3] overflow-hidden rounded-sm">
+          <div className="relative aspect-[4/3] md:aspect-[16/9] overflow-hidden rounded-sm">
             {heroImage ? (
-              <img src={heroImage} alt="" className="absolute inset-0 w-full h-full object-cover" />
+              <img
+                src={getOptimizedImageUrl(heroImage, { width: 1200, quality: 85 })}
+                srcSet={`${getOptimizedImageUrl(heroImage, { width: 800, quality: 85 })} 800w, ${getOptimizedImageUrl(heroImage, { width: 1200, quality: 85 })} 1200w, ${getOptimizedImageUrl(heroImage, { width: 1600, quality: 80 })} 1600w`}
+                sizes="(max-width: 768px) 100vw, 50vw"
+                alt=""
+                loading="eager"
+                fetchPriority="high"
+                className="absolute inset-0 w-full h-full object-cover"
+              />
             ) : (
               <div className="absolute inset-0 bg-neutral-200" />
             )}
