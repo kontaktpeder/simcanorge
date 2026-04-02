@@ -68,7 +68,7 @@ interface Props {
   onTogglePublic?: (value: boolean) => void;
 }
 
-export function PageForm({ defaultValues, onSubmit, isPending, submitLabel = "Lagre", showSlug = true }: Props) {
+export function PageForm({ defaultValues, onSubmit, isPending, submitLabel = "Lagre", showSlug = true, onTogglePublic }: Props) {
   const slugManuallyEdited = useRef(!!defaultValues?.slug);
 
   const {
