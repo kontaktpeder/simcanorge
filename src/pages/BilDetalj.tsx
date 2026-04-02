@@ -877,6 +877,15 @@ const BilDetalj = () => {
           </AnimatedSection>
         </div>
       </section>
+
+      {/* Comments */}
+      <section className="bg-[#f5f4f0] py-8">
+        <div className="container mx-auto px-4">
+          <div className="max-w-2xl mx-auto">
+            <CommentSection carId={car.id} />
+          </div>
+        </div>
+      </section>
     </Layout>
   );
 };
