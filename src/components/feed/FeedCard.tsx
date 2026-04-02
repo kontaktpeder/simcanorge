@@ -47,6 +47,7 @@ export function FeedCard({ post }: { post: FeedPost }) {
   const [isEditing, setIsEditing] = useState(false);
   const [editBody, setEditBody] = useState(post.body ?? "");
   const [showComments, setShowComments] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const likes = (post as any).feed_post_likes ?? [];
   const likeCount = likes.length;
@@ -78,13 +79,24 @@ export function FeedCard({ post }: { post: FeedPost }) {
   }
 
   function handleDelete() {
-    if (!window.confirm("Slette dette innlegget?")) return;
-    deletePost(post.id, {
-      onSuccess: () => toast.success("Innlegg slettet"),
-      onError: () => toast.error("Noe gikk galt"),
-    });
+    setShowMenu(false);
+    setShowDeleteConfirm(true);
   }
 
+  async function confirmDelete() {
+    try {
+      await new Promise<void>((resolve, reject) => {
+        deletePost(post.id, {
+          onSuccess: () => resolve(),
+          onError: (err) => reject(err),
+        });
+      });
+      toast.success("Innlegg slettet");
+    } catch {
+      toast.error("Noe gikk galt");
+      setShowDeleteConfirm(false);
+    }
+  }
   return (
     <>
       <article className="group">
@@ -118,7 +130,7 @@ export function FeedCard({ post }: { post: FeedPost }) {
             )}
           </div>
 
-          {isOwn && !isEditing && (
+          {isOwn && !isEditing && !showDeleteConfirm && (
             <div className="relative">
               <button onClick={() => setShowMenu(!showMenu)} className="p-2 text-white/15 hover:text-white/50 transition-colors">
                 <MoreHorizontal className="w-5 h-5" />
@@ -129,12 +141,25 @@ export function FeedCard({ post }: { post: FeedPost }) {
                     className="flex items-center gap-2 w-full px-4 py-2.5 text-[12px] uppercase tracking-[0.1em] text-white/50 hover:text-white hover:bg-white/[0.04] transition-colors font-bold" style={oswald}>
                     <Pencil className="w-3 h-3" /> Rediger
                   </button>
-                  <button onClick={() => { handleDelete(); setShowMenu(false); }}
+                  <button onClick={handleDelete}
                     className="flex items-center gap-2 w-full px-4 py-2.5 text-[12px] uppercase tracking-[0.1em] text-[#c8102e]/60 hover:text-[#c8102e] hover:bg-white/[0.04] transition-colors font-bold" style={oswald}>
                     <Trash2 className="w-3 h-3" /> Slett
                   </button>
                 </div>
               )}
+            </div>
+          )}
+
+          {showDeleteConfirm && (
+            <div className="flex items-center gap-3">
+              <span className="text-[11px] uppercase tracking-[0.12em] text-[#c8102e] font-bold" style={oswald}>Slett?</span>
+              <button onClick={confirmDelete}
+                className="text-[11px] uppercase tracking-[0.12em] text-white bg-[#c8102e] hover:bg-[#a00d24] px-3 py-1 font-bold transition-colors" style={oswald}>
+                Ja, slett
+              </button>
+              <button onClick={() => setShowDeleteConfirm(false)} className="text-white/25 hover:text-white/60 transition-colors">
+                <X className="w-4 h-4" />
+              </button>
             </div>
           )}
         </div>
