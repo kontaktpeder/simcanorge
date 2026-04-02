@@ -165,28 +165,27 @@ export default function Index() {
           </div>
         </section>
 
-        {/* ─── TRANSITION ─── */}
-        <div className="relative h-12 overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-b from-[#111315] to-[#0e1012]" />
-          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-24 h-px bg-gradient-to-r from-transparent via-[#d4af37]/30 to-transparent" />
-        </div>
-
-        {/* ─── POST UPDATE + FEED ─── */}
-        <section className="py-10 md:py-16 bg-[#0e1012]">
-          <div className="max-w-[680px] mx-auto px-5 md:px-8">
+        {/* ─── FEED ─── */}
+        <section className="pt-14 md:pt-20 pb-16 md:pb-24 bg-[#141618]">
+          <div className="max-w-[960px] mx-auto px-5 md:px-8">
 
             {/* Composer */}
-            <div className="mb-10">
+            <div className="mb-14">
               <HomeFeedComposer />
             </div>
 
-            {/* Feed header */}
-            <div className="flex items-center justify-between mb-8">
-              <div className="flex items-center gap-3">
-                <div className="w-1 h-6 bg-[#d4af37] rounded-full" />
+            {/* Section title */}
+            <div className="flex items-end justify-between mb-10">
+              <div>
+                <p
+                  className="text-[10px] uppercase tracking-[0.25em] text-[#c8102e] font-semibold mb-2"
+                  style={{ fontFamily: "'Oswald', sans-serif" }}
+                >
+                  Feed
+                </p>
                 <h2
-                  className="text-[1.4rem] md:text-[1.6rem] text-white font-bold tracking-[0.04em]"
-                  style={{ fontFamily: "'DM Serif Display', 'Oswald', serif" }}
+                  className="text-[1.8rem] md:text-[2.2rem] text-white/95 font-bold leading-[1.1]"
+                  style={{ fontFamily: "'DM Serif Display', Georgia, serif" }}
                 >
                   Siste oppdateringer
                 </h2>
@@ -194,40 +193,51 @@ export default function Index() {
               {!user && (
                 <Link
                   to="/login"
-                  className="flex items-center gap-1.5 text-[11px] tracking-[0.15em] uppercase text-[#d4af37]/60 hover:text-[#d4af37] transition-colors font-semibold"
+                  className="text-[10px] uppercase tracking-[0.2em] text-white/30 hover:text-white/60 transition-colors font-semibold border-b border-white/10 hover:border-white/30 pb-0.5"
+                  style={{ fontFamily: "'Oswald', sans-serif" }}
                 >
                   Logg inn
-                  <ArrowRight className="w-3 h-3" />
                 </Link>
               )}
             </div>
 
-            {/* Feed — single column, large images */}
+            {/* Thin top rule */}
+            <div className="h-px bg-white/[0.08] mb-10" />
+
+            {/* Feed posts */}
             {feedLoading && (
-              <div className="space-y-6">
+              <div className="space-y-10">
                 {[...Array(3)].map((_, i) => (
-                  <div key={i} className="h-80 bg-[#161819] border border-white/[0.04] rounded-lg animate-pulse" />
+                  <div key={i}>
+                    <div className="h-[400px] bg-white/[0.03] animate-pulse" />
+                    <div className="h-px bg-white/[0.06] mt-10" />
+                  </div>
                 ))}
               </div>
             )}
 
             {!feedLoading && feedPosts && feedPosts.length > 0 && (
-              <div className="space-y-6">
-                {feedPosts.map((post) => (
-                  <FeedCard key={post.id} post={post} />
+              <div>
+                {feedPosts.map((post, i) => (
+                  <div key={post.id}>
+                    <FeedCard post={post} />
+                    {i < feedPosts.length - 1 && (
+                      <div className="h-px bg-white/[0.06] my-10" />
+                    )}
+                  </div>
                 ))}
               </div>
             )}
 
             {!feedLoading && (!feedPosts || feedPosts.length === 0) && (
-              <div className="flex flex-col items-center justify-center py-20 border border-dashed border-white/[0.06] rounded-lg">
+              <div className="py-20 text-center">
                 <p
-                  className="text-lg font-semibold text-white/50 mb-1"
+                  className="text-[1.3rem] text-white/40 mb-2"
                   style={{ fontFamily: "'DM Serif Display', serif" }}
                 >
                   Ingen oppdateringer enda
                 </p>
-                <p className="text-[13px] text-white/30 text-center max-w-xs">
+                <p className="text-[13px] text-white/20">
                   Bli den første til å dele noe med bilsamfunnet
                 </p>
               </div>
