@@ -12,11 +12,10 @@ const modules = [
     desc: "Se og del bilhistorier",
     active: true,
     icon: (
-      <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.2" className="w-8 h-8">
-        <path d="M4 20l3-8h18l3 8" strokeLinecap="round" strokeLinejoin="round"/>
-        <rect x="2" y="20" width="28" height="6" rx="1"/>
-        <circle cx="8" cy="26" r="2.5"/><circle cx="24" cy="26" r="2.5"/>
-        <line x1="12" y1="16" x2="20" y2="16" strokeOpacity="0.4"/>
+      <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.3" className="w-7 h-7">
+        <path d="M5 21l3-7h16l3 7" strokeLinecap="round" strokeLinejoin="round"/>
+        <rect x="3" y="21" width="26" height="5" rx="1"/>
+        <circle cx="9" cy="26" r="2"/><circle cx="23" cy="26" r="2"/>
       </svg>
     ),
   },
@@ -26,11 +25,10 @@ const modules = [
     desc: "Deler og biler til salgs",
     active: true,
     icon: (
-      <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.2" className="w-8 h-8">
-        <path d="M6 8h20l-2 14H8L6 8z" strokeLinejoin="round"/>
-        <path d="M6 8L4 4" strokeLinecap="round"/>
-        <circle cx="11" cy="26" r="2"/><circle cx="21" cy="26" r="2"/>
-        <line x1="12" y1="14" x2="20" y2="14" strokeOpacity="0.4"/>
+      <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.3" className="w-7 h-7">
+        <path d="M7 9h18l-2 13H9L7 9z" strokeLinejoin="round"/>
+        <path d="M7 9L5 5" strokeLinecap="round"/>
+        <circle cx="12" cy="26" r="1.5"/><circle cx="20" cy="26" r="1.5"/>
       </svg>
     ),
   },
@@ -40,13 +38,11 @@ const modules = [
     desc: "Treff og arrangementer",
     active: true,
     icon: (
-      <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.2" className="w-8 h-8">
-        <rect x="4" y="6" width="24" height="22" rx="2"/>
-        <line x1="4" y1="12" x2="28" y2="12"/>
-        <line x1="10" y1="4" x2="10" y2="8" strokeLinecap="round"/>
-        <line x1="22" y1="4" x2="22" y2="8" strokeLinecap="round"/>
-        <rect x="9" y="16" width="4" height="4" rx="0.5" strokeOpacity="0.5"/>
-        <rect x="19" y="16" width="4" height="4" rx="0.5" strokeOpacity="0.5"/>
+      <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.3" className="w-7 h-7">
+        <rect x="5" y="7" width="22" height="20" rx="2"/>
+        <line x1="5" y1="13" x2="27" y2="13"/>
+        <line x1="11" y1="5" x2="11" y2="9" strokeLinecap="round"/>
+        <line x1="21" y1="5" x2="21" y2="9" strokeLinecap="round"/>
       </svg>
     ),
   },
@@ -56,10 +52,9 @@ const modules = [
     desc: "Bli med i en bilklubb",
     active: false,
     icon: (
-      <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.2" className="w-8 h-8">
-        <circle cx="12" cy="10" r="4"/><circle cx="22" cy="12" r="3"/>
-        <path d="M4 26c0-5 4-8 8-8s8 3 8 8" strokeLinecap="round"/>
-        <path d="M20 26c0-3.5 2-6 5-6s5 2.5 5 6" strokeLinecap="round" strokeOpacity="0.5"/>
+      <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.3" className="w-7 h-7">
+        <circle cx="12" cy="11" r="4"/><circle cx="22" cy="13" r="3"/>
+        <path d="M4 27c0-5 4-8 8-8s8 3 8 8" strokeLinecap="round"/>
       </svg>
     ),
   },
@@ -69,11 +64,9 @@ const modules = [
     desc: "Verksteder og forhandlere",
     active: false,
     icon: (
-      <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.2" className="w-8 h-8">
-        <path d="M4 28V12l12-8 12 8v16" strokeLinejoin="round"/>
-        <rect x="12" y="18" width="8" height="10"/>
-        <rect x="8" y="14" width="4" height="4" rx="0.5" strokeOpacity="0.5"/>
-        <rect x="20" y="14" width="4" height="4" rx="0.5" strokeOpacity="0.5"/>
+      <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.3" className="w-7 h-7">
+        <path d="M5 28V13l11-8 11 8v15" strokeLinejoin="round"/>
+        <rect x="13" y="19" width="6" height="9"/>
       </svg>
     ),
   },
