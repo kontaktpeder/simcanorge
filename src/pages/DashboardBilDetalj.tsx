@@ -25,6 +25,7 @@ import { compressImages, generateImageId, getCarImagePath } from '@/lib/imageCom
 import { CAR_BRANDS, getModelsForBrand } from '@/data/carBrands';
 import { CAR_BODY_TYPES } from '@/data/carBodyTypes';
 import { motion } from 'framer-motion';
+import { PostComposer } from '@/components/feed/PostComposer';
 
 const CATEGORIES = [
   { value: 'registrert', label: 'Registrert' },
