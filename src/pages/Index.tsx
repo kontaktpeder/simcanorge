@@ -1,8 +1,11 @@
 import { Link } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { Helmet } from "react-helmet-async";
-import { ArrowRight, PlusCircle } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { useFeedPosts } from "@/hooks/useFeedPosts";
+import { FeedCard } from "@/components/feed/FeedCard";
+import { HomeFeedComposer } from "@/components/feed/HomeFeedComposer";
 import heroCar from "@/assets/hero-car.jpg";
 
 const modules = [
@@ -74,6 +77,7 @@ const modules = [
 
 export default function Index() {
   const { user } = useAuth();
+  const { data: feedPosts, isLoading: feedLoading } = useFeedPosts();
 
   return (
     <Layout>
@@ -167,23 +171,9 @@ export default function Index() {
         <section className="py-8 md:py-12" style={{ background: '#151210' }}>
           <div className="max-w-[860px] mx-auto px-5 md:px-8">
 
-            {/* Post update bar — subtle */}
-            <div className="flex items-center gap-3 mb-6">
-              <div className="flex-1 flex items-center gap-3 px-4 py-2.5 border border-white/[0.06] rounded-sm">
-                <div className="w-6 h-6 rounded-full bg-white/5 flex items-center justify-center flex-shrink-0">
-                  <span className="text-[10px] text-white/25">👤</span>
-                </div>
-                <p className="text-xs text-white/20">
-                  Del en oppdatering...
-                </p>
-              </div>
-              <Link
-                to={user ? "/dashboard" : "/login?returnUrl=/dashboard"}
-                className="flex items-center gap-1.5 px-4 py-2.5 text-[11px] tracking-[0.08em] uppercase text-white/50 border border-white/[0.08] hover:text-white/80 hover:border-white/15 transition-colors flex-shrink-0"
-              >
-                <PlusCircle className="w-3.5 h-3.5" />
-                Legg ut
-              </Link>
+            {/* Composer */}
+            <div className="mb-6">
+              <HomeFeedComposer />
             </div>
 
             {/* Feed header */}
@@ -202,15 +192,33 @@ export default function Index() {
               )}
             </div>
 
-            {/* Feed placeholder */}
-            <div className="flex flex-col items-center justify-center py-16 border border-dashed border-white/10">
-              <p className="text-sm font-medium text-white/50 mb-1">
-                Feed kommer snart
-              </p>
-              <p className="text-xs text-white/30 text-center max-w-xs">
-                Oppdateringer fra bileiere, treff og markedsplass
-              </p>
-            </div>
+            {/* Feed */}
+            {feedLoading && (
+              <div className="space-y-4">
+                {[...Array(3)].map((_, i) => (
+                  <div key={i} className="h-32 bg-white/[0.02] border border-white/[0.04] rounded-sm animate-pulse" />
+                ))}
+              </div>
+            )}
+
+            {!feedLoading && feedPosts && feedPosts.length > 0 && (
+              <div className="space-y-4">
+                {feedPosts.map((post) => (
+                  <FeedCard key={post.id} post={post} />
+                ))}
+              </div>
+            )}
+
+            {!feedLoading && (!feedPosts || feedPosts.length === 0) && (
+              <div className="flex flex-col items-center justify-center py-16 border border-dashed border-white/10">
+                <p className="text-sm font-medium text-white/50 mb-1">
+                  Ingen oppdateringer enda
+                </p>
+                <p className="text-xs text-white/30 text-center max-w-xs">
+                  Bli den første til å dele noe
+                </p>
+              </div>
+            )}
           </div>
         </section>
       </div>

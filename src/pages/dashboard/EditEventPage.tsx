@@ -8,6 +8,7 @@ import { EventImageUpload } from "@/components/events/EventImageUpload";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ExternalLink } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
+import { PostComposer } from "@/components/feed/PostComposer";
 
 export default function EditEventPage() {
   const { eventId } = useParams<{ eventId: string }>();
@@ -122,6 +123,20 @@ export default function EditEventPage() {
           </CardHeader>
           <CardContent>
             <EventImageUpload eventId={eventId!} />
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Del i feeden</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <PostComposer
+              compact
+              postType="event_published"
+              eventId={eventId!}
+              snapshotTitle={event.title}
+              snapshotEntityType="event"
+            />
           </CardContent>
         </Card>
       </div>

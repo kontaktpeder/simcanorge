@@ -705,6 +705,109 @@ export type Database = {
           },
         ]
       }
+      feed_post_likes: {
+        Row: {
+          created_at: string
+          id: string
+          post_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          post_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          post_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "feed_post_likes_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "feed_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      feed_posts: {
+        Row: {
+          author_profile_id: string
+          body: string | null
+          car_id: string | null
+          created_at: string
+          event_id: string | null
+          id: string
+          is_visible: boolean
+          marketplace_item_id: string | null
+          post_type: string
+          snapshot_entity_type: string | null
+          snapshot_image_url: string | null
+          snapshot_title: string | null
+        }
+        Insert: {
+          author_profile_id: string
+          body?: string | null
+          car_id?: string | null
+          created_at?: string
+          event_id?: string | null
+          id?: string
+          is_visible?: boolean
+          marketplace_item_id?: string | null
+          post_type?: string
+          snapshot_entity_type?: string | null
+          snapshot_image_url?: string | null
+          snapshot_title?: string | null
+        }
+        Update: {
+          author_profile_id?: string
+          body?: string | null
+          car_id?: string | null
+          created_at?: string
+          event_id?: string | null
+          id?: string
+          is_visible?: boolean
+          marketplace_item_id?: string | null
+          post_type?: string
+          snapshot_entity_type?: string | null
+          snapshot_image_url?: string | null
+          snapshot_title?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "feed_posts_author_profile_id_fkey"
+            columns: ["author_profile_id"]
+            isOneToOne: false
+            referencedRelation: "person_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "feed_posts_car_id_fkey"
+            columns: ["car_id"]
+            isOneToOne: false
+            referencedRelation: "cars"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "feed_posts_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "feed_posts_marketplace_item_id_fkey"
+            columns: ["marketplace_item_id"]
+            isOneToOne: false
+            referencedRelation: "marketplace_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       inquiries: {
         Row: {
           admin_notes: string | null
