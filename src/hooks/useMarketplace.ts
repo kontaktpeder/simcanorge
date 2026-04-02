@@ -273,7 +273,7 @@ export function useAdminMarketplaceItems(statusFilter?: string) {
           *,
           marketplace_images(id, image_url, sort_order, alt_text),
           categories(id, name, slug),
-          owners(id, display_name, slug, user_id)
+          person_profiles!marketplace_items_person_profile_id_fkey(id, display_name, slug, user_id)
         `)
         .order('created_at', { ascending: false });
 
