@@ -106,6 +106,7 @@ export const routes: RouteConfig[] = [
   { path: "/start-annonse", element: StartAnnonse, isPublic: true },
   { path: "/s/:slug", element: PublicPagePage, isPublic: true },
   { path: "/e/:slug", element: PublicEventPage, isPublic: true },
+  { path: "/aktoerer", element: AktoererPage, label: "Aktører", description: "Verksteder, forhandlere og andre aktører", isPublic: true, showInNav: false },
 
   // Auth required
   { path: "/konto", element: Konto, requiresAuth: true },
