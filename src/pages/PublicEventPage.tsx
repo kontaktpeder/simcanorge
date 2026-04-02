@@ -90,7 +90,7 @@ export default function PublicEventPage() {
 
             {/* Title */}
             <h1
-              className="text-[2.2rem] sm:text-[2.8rem] md:text-[3.4rem] leading-[1.05] tracking-[-0.015em]"
+              className="text-[2.6rem] sm:text-[3.4rem] md:text-[4.2rem] leading-[1.08] tracking-[-0.02em]"
               style={serif}
             >
               {event.title}
