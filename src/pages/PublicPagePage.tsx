@@ -5,6 +5,7 @@ import { PublicPageHero } from "@/components/pages/PublicPageHero";
 import { PublicPageAbout } from "@/components/pages/PublicPageAbout";
 import { PublicPageContact } from "@/components/pages/PublicPageContact";
 import { PublicPageEvents } from "@/components/pages/PublicPageEvents";
+import { Layout } from "@/components/layout/Layout";
 
 export default function PublicPagePage() {
   const { slug } = useParams<{ slug: string }>();
@@ -12,23 +13,27 @@ export default function PublicPagePage() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <p className="text-muted-foreground">Laster…</p>
-      </div>
+      <Layout>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <p className="text-muted-foreground">Laster…</p>
+        </div>
+      </Layout>
     );
   }
 
   if (isError || !page) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-4">
-        <h1 className="text-2xl font-bold mb-2">Siden ble ikke funnet</h1>
-        <p className="text-muted-foreground">Adressen finnes ikke eller er ikke offentlig.</p>
-      </div>
+      <Layout>
+        <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-4">
+          <h1 className="text-2xl font-bold mb-2">Siden ble ikke funnet</h1>
+          <p className="text-muted-foreground">Adressen finnes ikke eller er ikke offentlig.</p>
+        </div>
+      </Layout>
     );
   }
 
   return (
-    <>
+    <Layout>
       <Helmet>
         <title>{page.title} | Bilgarasjen</title>
         {page.tagline && <meta name="description" content={page.tagline} />}
@@ -43,6 +48,6 @@ export default function PublicPagePage() {
 
         <PublicPageEvents pageId={page.id} />
       </div>
-    </>
+    </Layout>
   );
 }
