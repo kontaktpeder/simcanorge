@@ -102,7 +102,7 @@ export default function DashboardMineAnnonser() {
               </div>
             </div>
             <div className="flex flex-wrap gap-3 mt-4 ml-8">
-              <Link to="/dashboard?showOwnerProfile=true">
+              <Link to="/dashboard/min-profil">
                 <Button variant="outline" size="sm">
                   <User className="h-4 w-4 mr-1.5" />
                   Se min profil
