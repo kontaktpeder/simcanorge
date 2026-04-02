@@ -157,6 +157,12 @@ export default function Login() {
                 />
               </div>
 
+              <div className="text-right">
+                <Link to="/glemt-passord" className="text-xs text-muted-foreground hover:text-primary hover:underline">
+                  Glemt passord?
+                </Link>
+              </div>
+
               <Button type="submit" className="w-full" disabled={isLoading}>
                 {isLoading ? (
                   <>
