@@ -1,4 +1,5 @@
 import { Helmet } from "react-helmet-async";
+import { Layout } from "@/components/layout/Layout";
 import { useParams, Link } from "react-router-dom";
 import { usePublicEventBySlug } from "@/hooks/useEventBySlug";
 import { useEventAttendeeCount } from "@/hooks/useEventAttendees";
@@ -71,6 +72,7 @@ export default function PublicEventPage() {
   const organizerLink = event.owner_page ? `/s/${event.owner_page.slug}` : null;
 
   return (
+    <Layout>
     <div className="min-h-screen text-neutral-900" style={{ ...body, backgroundColor: '#f5f3ee', backgroundImage: TEXTURE_BG }}>
       {isEventOwner && (
         <div className="bg-[#111315] border-b border-white/[0.08]">
@@ -404,6 +406,7 @@ export default function PublicEventPage() {
         <CommentSection eventId={event.id} />
       </div>
     </div>
+    </Layout>
   );
 }
 
