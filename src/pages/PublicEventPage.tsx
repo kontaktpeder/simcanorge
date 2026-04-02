@@ -273,28 +273,8 @@ export default function PublicEventPage() {
             )}
           </div>
 
-          {/* Sidebar — details + organizer */}
+          {/* Sidebar — organizer only */}
           <aside className="hidden md:block space-y-6 pt-1">
-            <div>
-              <SectionLabel>Detaljer</SectionLabel>
-              <div className="space-y-3 text-[16px] text-neutral-700" style={body}>
-                <SideRow icon={<span className="text-[28px] leading-none italic text-neutral-800" style={display}>{dayNum}</span>}>
-                  <span className="capitalize">{monthStr} {yearStr}</span>
-                  <span className="block text-[14px] text-neutral-500 capitalize">{dayName}</span>
-                </SideRow>
-                <div className="h-px bg-neutral-200/60" />
-                <SideRow icon={<Clock className="w-5 h-5 text-neutral-400" />}>
-                  {timeStr}{endTimeStr ? ` – ${endTimeStr}` : ""}
-                </SideRow>
-                <div className="h-px bg-neutral-200/60" />
-                <SideRow icon={<MapPin className="w-5 h-5 text-neutral-400" />}>
-                  {event.location}
-                </SideRow>
-                <div className="h-px bg-neutral-200/60" />
-                <AttendeeCount eventId={event.id} maxAttendees={event.max_attendees} />
-              </div>
-            </div>
-
             {organizerName && (
               <div>
                 <SectionLabel>Arrangør</SectionLabel>
@@ -311,19 +291,6 @@ export default function PublicEventPage() {
                   )}
                 </div>
               </div>
-            )}
-
-            {event.registration_url && (
-              <a
-                href={event.registration_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-[15px] text-neutral-500 hover:text-neutral-800 transition"
-                style={body}
-              >
-                <ExternalLink className="w-4 h-4" />
-                Mer info / kjøp billetter
-              </a>
             )}
           </aside>
         </div>
