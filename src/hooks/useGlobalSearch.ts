@@ -131,6 +131,21 @@ export function useGlobalSearch(debouncedQuery: string) {
       });
     }
 
+    for (const part of data.parts) {
+      const imgs = [...((part as any).part_images ?? [])].sort(
+        (a: any, b: any) => (a.sort_order ?? 0) - (b.sort_order ?? 0)
+      );
+      all.push({
+        id: part.id,
+        title: part.title,
+        subtitle: part.price_note ?? undefined,
+        thumbnail: imgs[0]?.image_url ?? null,
+        href: `/markedsplass/bildeler?del=${part.slug}`,
+        section: "deler",
+        sectionLabel: "Deler",
+      });
+    }
+
     return all;
   }, [data]);
 
