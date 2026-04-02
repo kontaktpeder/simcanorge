@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Send, X } from "lucide-react";
+import { Send, X, Share2, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 import { useCreateFeedPost, type CreateFeedPostInput } from "@/hooks/useCreateFeedPost";
 import { useMyPersonProfile } from "@/hooks/useMyPersonProfile";
