@@ -69,7 +69,7 @@ export default function PublicEventPage() {
 
   const organizerName = event.owner_page?.title || event.owner_profile?.display_name || null;
   const organizerLogo = event.owner_page?.logo_url || event.owner_profile?.avatar_url;
-  const organizerLink = event.owner_page ? `/s/${event.owner_page.slug}` : null;
+  const organizerLink = event.owner_page ? `/s/${event.owner_page.slug}` : event.owner_profile?.slug ? `/profil/${event.owner_profile.slug}` : null;
 
   return (
     <Layout>
