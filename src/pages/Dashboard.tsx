@@ -354,13 +354,13 @@ export default function Dashboard() {
         )}
 
         {/* Mine sider */}
-        {personProfile?.can_create_pages && (
+        {personProfile && (
           <motion.div
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.27 }}
           >
-            <Link to="/dashboard/sider" className="block h-full touch-manipulation">
+            <Link to={personProfile.can_create_pages ? "/dashboard/sider" : "/dashboard/min-profil"} className="block h-full touch-manipulation">
               <div className="h-full p-6 sm:p-8 border-2 border-foreground/15 bg-card/90 backdrop-blur-sm group hover:bg-card hover:border-foreground/25 transition-all min-h-[180px]">
                 <p className="font-display text-sm uppercase tracking-wider text-muted-foreground mb-5">
                   Organisasjoner
@@ -369,13 +369,17 @@ export default function Dashboard() {
                   Mine sider
                 </h3>
                 <p className="text-base text-muted-foreground">
-                  {(myPages?.length ?? 0) === 0
-                    ? 'Opprett din første side'
-                    : 'Se og rediger sidene dine'}
+                  {personProfile.can_create_pages
+                    ? (myPages?.length ?? 0) === 0
+                      ? 'Opprett din første side →'
+                      : 'Se og rediger sidene dine'
+                    : 'Søk om tilgang til å opprette sider →'}
                 </p>
-                <p className="font-display text-4xl sm:text-5xl text-foreground leading-none mt-4">
-                  {myPages?.length || 0}
-                </p>
+                {personProfile.can_create_pages && (
+                  <p className="font-display text-4xl sm:text-5xl text-foreground leading-none mt-4">
+                    {myPages?.length || 0}
+                  </p>
+                )}
               </div>
             </Link>
           </motion.div>
