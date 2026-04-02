@@ -141,7 +141,7 @@ export function useGlobalSearch(debouncedQuery: string) {
         title: part.title,
         subtitle: part.price_note ?? undefined,
         thumbnail: thumb,
-        href: `/markedsplass/bildeler?del=${(part as any).slug ?? part.id}`,
+        href: `/annonse/${(part as any).slug ?? part.id}`,
         section: "deler",
         sectionLabel: "Deler",
       });
