@@ -39,14 +39,13 @@ export default function PublicPagePage() {
         {page.tagline && <meta name="description" content={page.tagline} />}
       </Helmet>
 
-      <div className="min-h-screen">
+      <div className="min-h-screen bg-[hsl(var(--page-bg))]">
         <PublicPageHero page={page} />
         <div className="max-w-4xl mx-auto px-4 py-8 grid gap-6 md:grid-cols-[2fr_1fr]">
           <PublicPageAbout page={page} />
           <PublicPageContact page={page} />
+          <PublicPageEvents pageId={page.id} />
         </div>
-
-        <PublicPageEvents pageId={page.id} />
       </div>
     </Layout>
   );

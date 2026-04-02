@@ -69,6 +69,15 @@
     --simca-red: 2 85% 40%;
     --simca-cream: 42 30% 97%;
     --simca-gray: 216 10% 60%;
+
+    /* Dark page theme (business/org pages) */
+    --page-bg: 240 6% 5%;
+    --page-card: 240 5% 8%;
+    --page-card-border: 240 4% 16%;
+    --page-accent: 37 90% 55%;
+    --page-accent-light: 45 100% 70%;
+    --page-text: 0 0% 100%;
+    --page-text-muted: 220 9% 60%;
   }
 
   .dark {
