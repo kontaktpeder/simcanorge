@@ -31,6 +31,7 @@ export default function Dashboard() {
   const formRef = useRef<HTMLDivElement>(null);
   
   const { data: ownerProfile } = useOwnerProfile(user?.id);
+  const { data: legacyOwnerId } = useLegacyOwnerId(user?.id);
   const { data: myListings } = useMyListings(user?.id);
   const { data: personProfile } = useMyPersonProfile();
   const { data: myPages } = useMyPages();
