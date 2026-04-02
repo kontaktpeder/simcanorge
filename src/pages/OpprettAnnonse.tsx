@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 import { ShoppingBag, Save, Loader2, Clock, ChevronLeft, ImagePlus, X, Lock, Wrench, Package, Car, Warehouse, ChevronRight } from 'lucide-react';
 import { Layout } from '@/components/layout/Layout';
 import { Label } from '@/components/ui/label';
-import { useOwnerProfile } from '@/hooks/useOwnerProfile';
+import { useOwnerProfile, useLegacyOwnerId } from '@/hooks/useOwnerProfile';
 import { useInsertMarketplaceImages } from '@/hooks/useMarketplace';
 import { compressImages, generateImageId, getMarketplaceImagePath, type CompressionProgress } from '@/lib/imageCompression';
 import { ImageUploadProgress } from '@/components/ui/image-upload-progress';
@@ -30,6 +30,7 @@ export default function OpprettAnnonse() {
   const queryClient = useQueryClient();
   const [searchParams] = useSearchParams();
   const { data: ownerProfile, isLoading: profileLoading } = useOwnerProfile(user?.id);
+  const { data: legacyOwnerId } = useLegacyOwnerId(user?.id);
   const insertImages = useInsertMarketplaceImages();
   const { data: allCategories = [] } = useUnifiedCategories();
 
@@ -161,7 +162,11 @@ export default function OpprettAnnonse() {
     if (!ownerProfile || isSubmitting) return;
     setIsSubmitting(true);
     try {
-      const data = await submitAsListing(values, { ownerId: ownerProfile.id, profileLocation: ownerProfile?.location ?? null });
+      const data = await submitAsListing(values, {
+        ownerId: legacyOwnerId || ownerProfile.id,
+        personProfileId: ownerProfile.id,
+        profileLocation: ownerProfile?.location ?? null,
+      });
       if (images.length > 0 && data?.id) {
         const uploaded = await uploadImages(data.id);
         if (uploaded.length > 0) {
@@ -446,7 +451,7 @@ function ContactEmailGate({ ownerProfileId, onSuccess }: { ownerProfileId: strin
     if (!email.includes("@")) return;
     setSaving(true);
     await supabase
-      .from("owners")
+      .from("person_profiles")
       .update({ contact_email: email, contact_phone: phone || null } as any)
       .eq("id", ownerProfileId);
     setSaving(false);

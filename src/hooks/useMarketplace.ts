@@ -48,7 +48,7 @@ export function useMarketplaceItems(filters?: { categoryId?: string; search?: st
           *,
           marketplace_images(id, image_url, sort_order, alt_text),
           categories(id, name, slug),
-          owners!inner(id, display_name, slug, location, avatar_url, contact_email, contact_phone)
+          person_profiles!marketplace_items_person_profile_id_fkey(id, display_name, slug, location, avatar_url, contact_email, contact_phone)
         `)
         .not('published_at', 'is', null)
         .order('published_at', { ascending: false });
@@ -80,7 +80,7 @@ export function useMarketplaceItemBySlug(slug: string | undefined) {
           *,
           marketplace_images(id, image_url, sort_order, alt_text),
           categories(id, name, slug),
-          owners!inner(id, display_name, slug, location, avatar_url, bio, contact_email, contact_phone)
+          person_profiles!marketplace_items_person_profile_id_fkey(id, display_name, slug, location, avatar_url, bio, contact_email, contact_phone)
         `)
         .eq('slug', slug)
         .maybeSingle();
@@ -92,12 +92,12 @@ export function useMarketplaceItemBySlug(slug: string | undefined) {
   });
 }
 
-// Fetch marketplace items for a specific owner (for profile page)
-export function useOwnerListings(ownerId: string | undefined) {
+// Fetch marketplace items for a specific profile (for profile page)
+export function useOwnerListings(personProfileId: string | undefined) {
   return useQuery({
-    queryKey: ['owner-listings', ownerId],
+    queryKey: ['owner-listings', personProfileId],
     queryFn: async () => {
-      if (!ownerId) return [];
+      if (!personProfileId) return [];
 
       const { data, error } = await supabase
         .from('marketplace_items')
@@ -105,14 +105,14 @@ export function useOwnerListings(ownerId: string | undefined) {
           *,
           marketplace_images(id, image_url, sort_order, alt_text)
         `)
-        .eq('owner_id', ownerId)
+        .eq('person_profile_id', personProfileId as any)
         .not('published_at', 'is', null)
         .order('published_at', { ascending: false });
 
       if (error) throw error;
       return data || [];
     },
-    enabled: !!ownerId,
+    enabled: !!personProfileId,
   });
 }
 
@@ -123,15 +123,15 @@ export function useMyListings(userId: string | undefined) {
     queryFn: async () => {
       if (!userId) return [];
 
-      // First get the owner profile
-      const { data: owner, error: ownerError } = await supabase
-        .from('owners')
+      // Get person_profile for this user
+      const { data: profile, error: profileError } = await supabase
+        .from('person_profiles')
         .select('id')
         .eq('user_id', userId)
         .maybeSingle();
 
-      if (ownerError) throw ownerError;
-      if (!owner) return [];
+      if (profileError) throw profileError;
+      if (!profile) return [];
 
       const { data, error } = await supabase
         .from('marketplace_items')
@@ -140,7 +140,7 @@ export function useMyListings(userId: string | undefined) {
           marketplace_images(id, image_url, sort_order, alt_text),
           categories(id, name, slug)
         `)
-        .eq('owner_id', owner.id)
+        .eq('person_profile_id', profile.id as any)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -273,7 +273,7 @@ export function useAdminMarketplaceItems(statusFilter?: string) {
           *,
           marketplace_images(id, image_url, sort_order, alt_text),
           categories(id, name, slug),
-          owners(id, display_name, slug, user_id)
+          person_profiles!marketplace_items_person_profile_id_fkey(id, display_name, slug, user_id)
         `)
         .order('created_at', { ascending: false });
 

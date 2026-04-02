@@ -14,7 +14,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { SendInnBilForm } from '@/components/car/SendInnBilForm';
 
-import { useOwnerProfile } from '@/hooks/useOwnerProfile';
+import { useOwnerProfile, useLegacyOwnerId } from '@/hooks/useOwnerProfile';
 import { useGuide } from '@/hooks/useGuide';
 import { useMyListings } from '@/hooks/useMarketplace';
 import { GarageIcon } from '@/components/ui/GarageIcon';
@@ -31,6 +31,7 @@ export default function Dashboard() {
   const formRef = useRef<HTMLDivElement>(null);
   
   const { data: ownerProfile } = useOwnerProfile(user?.id);
+  const { data: legacyOwnerId } = useLegacyOwnerId(user?.id);
   const { data: myListings } = useMyListings(user?.id);
   const { data: personProfile } = useMyPersonProfile();
   const { data: myPages } = useMyPages();
@@ -56,19 +57,19 @@ export default function Dashboard() {
   });
 
   const { data: myInquiries } = useQuery({
-    queryKey: ['my-inquiries-summary', ownerProfile?.id],
+    queryKey: ['my-inquiries-summary', legacyOwnerId],
     queryFn: async () => {
-      if (!ownerProfile?.id) return { total: 0, pending: 0 };
+      if (!legacyOwnerId) return { total: 0, pending: 0 };
       const { data, error } = await supabase
         .from('inquiries')
         .select('id, status')
-        .eq('recipient_owner_id', ownerProfile.id);
+        .eq('recipient_owner_id', legacyOwnerId);
       if (error) throw error;
       const total = data?.length || 0;
       const pending = data?.filter(i => i.status === 'pending').length || 0;
       return { total, pending };
     },
-    enabled: !!ownerProfile?.id,
+    enabled: !!legacyOwnerId,
   });
 
   const { data: notifications } = useQuery({

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useQueryClient } from '@tanstack/react-query';
-import { useOwnerProfile } from '@/hooks/useOwnerProfile';
+import { useOwnerProfile, useLegacyOwnerId } from '@/hooks/useOwnerProfile';
 import {
   useMyListings,
   useUpdateMarketplaceItem,
@@ -32,6 +32,7 @@ export default function RedigerAnnonse() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { data: ownerProfile } = useOwnerProfile(user?.id);
+  const { data: legacyOwnerId } = useLegacyOwnerId(user?.id);
   const { data: listings, isLoading: listingsLoading } = useMyListings(user?.id);
   const item = listings?.find((i: any) => i.id === itemId);
   const { data: categories = [] } = useUnifiedCategories();
@@ -79,7 +80,7 @@ export default function RedigerAnnonse() {
     return null;
   }
 
-  if (item && ownerProfile && item.owner_id !== ownerProfile.id) {
+  if (item && legacyOwnerId && item.owner_id !== legacyOwnerId) {
     navigate('/dashboard/mine-annonser');
     return null;
   }

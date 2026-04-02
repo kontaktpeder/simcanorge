@@ -33,7 +33,7 @@ interface ItemDetail {
   updated_at: string;
   marketplace_images?: { id: string; image_url: string; sort_order: number }[];
   categories?: { id: string; name: string; slug: string } | null;
-  owners?: { id: string; display_name: string | null; slug: string | null; user_id?: string } | null;
+  person_profiles?: { id: string; display_name: string | null; slug: string | null; user_id?: string } | null;
 }
 
 const statusLabels: Record<string, { label: string; className: string }> = {
@@ -60,7 +60,7 @@ const AdminAnnonseProfil = () => {
           *,
           marketplace_images(id, image_url, sort_order, alt_text),
           categories(id, name, slug),
-          owners(id, display_name, slug, user_id)
+          person_profiles!marketplace_items_person_profile_id_fkey(id, display_name, slug, user_id)
         `)
         .eq("id", itemId!)
         .single();
@@ -78,7 +78,7 @@ const AdminAnnonseProfil = () => {
     });
 
     // Notify owner
-    const owner = item.owners;
+    const owner = item.person_profiles;
     if (owner?.user_id) {
       await supabase.from('notifications').insert({
         user_id: owner.user_id,
@@ -127,7 +127,7 @@ const AdminAnnonseProfil = () => {
   const images = [...(item.marketplace_images || [])].sort((a, b) => a.sort_order - b.sort_order);
   const canPublish = item.status === "submitted" || item.status === "draft";
   const canUnpublish = item.status === "published";
-  const owner = item.owners;
+  const owner = item.person_profiles;
   const status = statusLabels[item.status] || statusLabels.draft;
 
   return (

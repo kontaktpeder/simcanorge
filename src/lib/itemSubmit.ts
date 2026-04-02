@@ -65,7 +65,7 @@ export async function submitAsPart(
 
 export async function submitAsListing(
   values: ItemFormValues,
-  options: { ownerId: string; editingId?: string; profileLocation?: string | null }
+  options: { ownerId: string; personProfileId?: string; editingId?: string; profileLocation?: string | null }
 ) {
   const price = values.priceMin
     ? Number(values.priceMin)
@@ -99,7 +99,13 @@ export async function submitAsListing(
 
   const { data, error } = await supabase
     .from('marketplace_items')
-    .insert({ ...payload, owner_id: options.ownerId, slug: '', status: 'submitted' })
+    .insert({
+      ...payload,
+      owner_id: options.ownerId,
+      person_profile_id: (options.personProfileId || options.ownerId) as any,
+      slug: '',
+      status: 'submitted',
+    })
     .select()
     .single();
   if (error) throw error;

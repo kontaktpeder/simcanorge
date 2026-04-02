@@ -33,7 +33,7 @@ interface AdminMarketplaceItem {
   price: number | null;
   marketplace_images?: MarketplaceImage[];
   categories?: MarketplaceCategory | null;
-  owners?: Owner | null;
+  person_profiles?: Owner | null;
 }
 
 const statusLabels: Record<string, { label: string; className: string }> = {
@@ -118,7 +118,7 @@ const AdminMarkedsplass = () => {
           {items.map((item) => {
             const images = [...(item.marketplace_images || [])].sort((a, b) => a.sort_order - b.sort_order);
             const mainImage = images[0];
-            const owner = item.owners;
+            const owner = (item as any).person_profiles;
             const category = item.categories;
             const status = statusLabels[item.status] || statusLabels.draft;
 
