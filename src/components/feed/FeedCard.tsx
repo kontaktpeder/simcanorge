@@ -171,6 +171,23 @@ export function FeedCard({ post }: { post: FeedPost }) {
           )
         )}
 
+        {/* ── Event meta (location + organizer) ── */}
+        {event && (
+          <div className="flex items-center gap-4 mt-2 text-[13px] text-white/40" style={oswald}>
+            {event.location && (
+              <span className="flex items-center gap-1.5 uppercase tracking-[0.1em]">
+                <MapPin className="w-3.5 h-3.5" />
+                {event.location}
+              </span>
+            )}
+            {(event.owner_page?.title || event.owner_profile?.display_name) && (
+              <span className="uppercase tracking-[0.1em]">
+                Av {event.owner_page?.title || event.owner_profile?.display_name}
+              </span>
+            )}
+          </div>
+        )}
+
         {/* ── Body ── */}
         {isEditing ? (
           <div className="mt-3">
