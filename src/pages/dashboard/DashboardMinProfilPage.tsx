@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
 import { useMyPersonProfile } from "@/hooks/useMyPersonProfile";
+import { useOwnerProfile } from "@/hooks/useOwnerProfile";
+import { useAuth } from "@/hooks/useAuth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -12,7 +14,9 @@ import { Layout } from "@/components/layout/Layout";
 import { ArrowLeft, FileText, Pencil, User } from "lucide-react";
 
 export default function DashboardMinProfilPage() {
+  const { user } = useAuth();
   const { data: profile, isLoading } = useMyPersonProfile();
+  const { data: ownerProfile } = useOwnerProfile(user?.id);
   const [editing, setEditing] = useState(false);
 
   if (isLoading) return <Layout><p className="p-8 text-muted-foreground">Laster…</p></Layout>;
@@ -73,7 +77,7 @@ export default function DashboardMinProfilPage() {
               <CardTitle className="text-base">Rediger profil</CardTitle>
             </CardHeader>
             <CardContent>
-              <EditProfileForm profile={profile} onSuccess={() => setEditing(false)} />
+              <EditProfileForm profile={profile} ownerProfile={ownerProfile} onSuccess={() => setEditing(false)} />
             </CardContent>
           </Card>
         ) : (

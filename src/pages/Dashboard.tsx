@@ -13,7 +13,7 @@ import { Layout } from '@/components/layout/Layout';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { SendInnBilForm } from '@/components/car/SendInnBilForm';
-import { OwnerProfileSection } from '@/components/car/OwnerProfileSection';
+
 import { useOwnerProfile } from '@/hooks/useOwnerProfile';
 import { useGuide } from '@/hooks/useGuide';
 import { useMyListings } from '@/hooks/useMarketplace';
@@ -27,19 +27,7 @@ export default function Dashboard() {
   const queryClient = useQueryClient();
   const { startGuide } = useGuide();
   const [showCarForm, setShowCarForm] = useState(false);
-  const [showOwnerProfile, setShowOwnerProfile] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const params = new URLSearchParams(window.location.search);
-      const shouldShow = params.get('showOwnerProfile') === 'true';
-      if (shouldShow) {
-        window.history.replaceState({}, '', '/dashboard');
-      }
-      return shouldShow;
-    }
-    return false;
-  });
   const formRef = useRef<HTMLDivElement>(null);
-  const profileRef = useRef<HTMLDivElement>(null);
   
   const { data: ownerProfile } = useOwnerProfile(user?.id);
   const { data: myListings } = useMyListings(user?.id);
@@ -50,14 +38,6 @@ export default function Dashboard() {
       navigate('/login?returnUrl=/dashboard');
     }
   }, [user, authLoading, navigate]);
-
-  useEffect(() => {
-    if (showOwnerProfile && profileRef.current) {
-      setTimeout(() => {
-        profileRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 200);
-    }
-  }, []);
 
   const { data: carCount, isLoading: carsLoading } = useQuery({
     queryKey: ['my-cars-count', user?.id],
@@ -115,31 +95,15 @@ export default function Dashboard() {
 
   const handleOpenForm = () => {
     setShowCarForm(true);
-    setShowOwnerProfile(false);
     setTimeout(() => {
       formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 100);
-  };
-
-  const handleOpenOwnerProfile = () => {
-    setShowOwnerProfile(true);
-    setShowCarForm(false);
-    setTimeout(() => {
-      profileRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 100);
-  };
-
-  const handleCloseOwnerProfile = () => {
-    setShowOwnerProfile(false);
   };
 
   const handleStartMyCarsGuide = () => {
     startGuide('my-cars');
   };
 
-  const handleStartOwnerProfileGuide = () => {
-    startGuide('owner-profile');
-  };
 
   const handleFormSuccess = () => {
     setShowCarForm(false);
@@ -324,38 +288,39 @@ export default function Dashboard() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.2 }}
         >
-          <div 
-            className={`h-full p-6 sm:p-8 border-2 backdrop-blur-sm group cursor-pointer transition-all touch-manipulation relative overflow-hidden min-h-[180px] ${
-              profileNeedsAttention 
-                ? 'border-primary bg-card shadow-lg shadow-primary/10' 
-                : 'border-foreground/15 bg-card/90 hover:bg-card hover:border-foreground/25'
-            }`}
-            onClick={handleOpenOwnerProfile}
-            data-guide="owner-profile-card"
-          >
-            {profileNeedsAttention && (
-              <div className="absolute top-0 left-0 right-0 h-1.5" style={{ background: 'hsl(2, 85%, 40%)' }} />
-            )}
-            
-            <p className="font-display text-sm uppercase tracking-wider text-muted-foreground mb-5">
-              Profil
-            </p>
-            <h3 className={`font-display text-2xl sm:text-3xl uppercase tracking-wider mb-2 transition-colors ${
-              profileNeedsAttention ? 'text-primary' : 'group-hover:text-primary'
-            }`}>
-              Entusiastprofil
-            </h3>
-            <p className={`text-base ${profileNeedsAttention ? 'text-foreground font-medium' : 'text-muted-foreground'}`}>
-              {ownerProfile 
-                ? (profileNeedsAttention ? 'Fullfør profilen din →' : 'Vises i eier- og selgerprofil') 
-                : 'Opprett entusiastprofil →'}
-            </p>
-            {profileNeedsAttention && (
-              <p className="text-sm text-muted-foreground mt-2">
-                {ownerProfile ? `${filledFields} av 2 felt fylt ut` : 'Kom i gang her'}
+          <Link to="/dashboard/min-profil" className="block h-full touch-manipulation">
+            <div 
+              className={`h-full p-6 sm:p-8 border-2 backdrop-blur-sm group transition-all relative overflow-hidden min-h-[180px] ${
+                profileNeedsAttention 
+                  ? 'border-primary bg-card shadow-lg shadow-primary/10' 
+                  : 'border-foreground/15 bg-card/90 hover:bg-card hover:border-foreground/25'
+              }`}
+              data-guide="owner-profile-card"
+            >
+              {profileNeedsAttention && (
+                <div className="absolute top-0 left-0 right-0 h-1.5" style={{ background: 'hsl(2, 85%, 40%)' }} />
+              )}
+              
+              <p className="font-display text-sm uppercase tracking-wider text-muted-foreground mb-5">
+                Profil
               </p>
-            )}
-          </div>
+              <h3 className={`font-display text-2xl sm:text-3xl uppercase tracking-wider mb-2 transition-colors ${
+                profileNeedsAttention ? 'text-primary' : 'group-hover:text-primary'
+              }`}>
+                Entusiastprofil
+              </h3>
+              <p className={`text-base ${profileNeedsAttention ? 'text-foreground font-medium' : 'text-muted-foreground'}`}>
+                {ownerProfile 
+                  ? (profileNeedsAttention ? 'Fullfør profilen din →' : 'Vises i eier- og selgerprofil') 
+                  : 'Opprett entusiastprofil →'}
+              </p>
+              {profileNeedsAttention && (
+                <p className="text-sm text-muted-foreground mt-2">
+                  {ownerProfile ? `${filledFields} av 2 felt fylt ut` : 'Kom i gang her'}
+                </p>
+              )}
+            </div>
+          </Link>
         </motion.div>
 
         {/* Forespørsler */}
@@ -466,35 +431,6 @@ export default function Dashboard() {
         )}
       </AnimatePresence>
 
-      {/* Profil seksjon */}
-      <AnimatePresence>
-        {showOwnerProfile && user && (
-          <motion.div
-            ref={profileRef}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3 }}
-            className="mt-8"
-          >
-            <div className="flex items-center justify-between mb-4">
-              <SectionHeader 
-                title="Entusiastprofil" 
-                icon={<User className="w-6 h-6" />} 
-              />
-              <button
-                onClick={handleCloseOwnerProfile}
-                className="px-5 py-3 border-2 border-foreground/20 font-display text-sm uppercase tracking-wider text-foreground hover:bg-foreground/5 transition-colors flex items-center gap-2 min-h-[48px]"
-              >
-                <X className="w-4 h-4" />
-                Lukk
-              </button>
-            </div>
-            
-            <OwnerProfileSection userId={user.id} />
-          </motion.div>
-        )}
-      </AnimatePresence>
     </GarageLayout>
   );
 }
