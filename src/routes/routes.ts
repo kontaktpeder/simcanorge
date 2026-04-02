@@ -102,6 +102,7 @@ export const routes: RouteConfig[] = [
   { path: "/sok-om-tilgang", element: SokOmTilgang, isPublic: true },
   { path: "/start-annonse", element: StartAnnonse, isPublic: true },
   { path: "/s/:slug", element: PublicPagePage, isPublic: true },
+  { path: "/e/:slug", element: PublicEventPage, isPublic: true },
 
   // Auth required
   { path: "/konto", element: Konto, requiresAuth: true },
