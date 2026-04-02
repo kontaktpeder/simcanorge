@@ -17,123 +17,126 @@ const navLinks = [
 export function Header() {
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
   const { user } = useAuth();
 
   return (
-    <header className="sticky top-0 z-50 bg-[#0a0a0a] border-b border-white/10">
-      <div className="max-w-[1400px] mx-auto px-5 md:px-8">
-        <div className="flex items-center justify-between h-16 md:h-[72px]">
+    <header className="sticky top-0 z-50" style={{
+      background: 'linear-gradient(180deg, #0d0d0d 0%, #141414 100%)',
+      borderBottom: '1px solid rgba(255,255,255,0.06)',
+    }}>
+      {/* Subtle noise texture */}
+      <div className="absolute inset-0 opacity-[0.03] pointer-events-none"
+        style={{
+          backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'n\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23n)\'/%3E%3C/svg%3E")',
+        }}
+      />
 
-          {/* Logo */}
-          <Link to="/" className="flex items-center gap-3 flex-shrink-0 group">
+      <div className="max-w-[1400px] mx-auto px-5 md:px-8 relative z-10">
+        {/* Top row: logo centered + search */}
+        <div className="flex items-center justify-between py-3 md:py-4">
+
+          {/* Logo — large, proud */}
+          <Link to="/" className="flex-shrink-0 group">
             <img
               src={bilgarasjeLogo}
               alt="Bilgarasje.no"
-              className="h-10 md:h-12 w-auto invert opacity-90 group-hover:opacity-100 transition-opacity"
+              className="h-14 md:h-20 w-auto invert opacity-90 group-hover:opacity-100 transition-opacity duration-300"
             />
           </Link>
 
-          {/* Search bar - desktop */}
-          <div className="hidden md:flex flex-1 max-w-md mx-8">
+          {/* Search bar — integrated, no separate icon */}
+          <div className="hidden md:flex flex-1 max-w-lg mx-10">
             <div className="relative w-full">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20" />
               <input
                 type="text"
                 placeholder="Søk etter biler, deler, historier..."
-                className="w-full bg-white/5 border border-white/10 rounded-full pl-10 pr-4 py-2 text-sm text-white/80 placeholder:text-white/30 focus:outline-none focus:border-white/25 focus:bg-white/8 transition-all"
+                className="w-full bg-white/[0.04] border border-white/[0.08] rounded-none pl-11 pr-4 py-2.5 text-sm text-white/70 placeholder:text-white/25 focus:outline-none focus:border-white/20 focus:bg-white/[0.06] transition-all tracking-wide"
               />
             </div>
           </div>
 
-          {/* Desktop nav */}
-          <nav className="hidden lg:flex items-center gap-1">
-            {navLinks.map((link) => {
-              const isActive = location.pathname === link.href;
-              return (
-                <Link
-                  key={link.href}
-                  to={link.href}
-                  className={`px-3 py-1.5 text-[13px] tracking-[0.08em] uppercase transition-all ${
-                    isActive
-                      ? "text-white border-b border-white"
-                      : "text-white/50 hover:text-white/80"
-                  }`}
-                >
-                  {link.label}
-                </Link>
-              );
-            })}
-
-            {/* Separator */}
-            <div className="w-px h-5 bg-white/15 mx-2" />
-
-            {/* Min garasje / Login */}
+          {/* Right side: auth + CTA */}
+          <div className="hidden lg:flex items-center gap-3">
             {user ? (
               <Link
                 to="/dashboard"
-                className="flex items-center gap-2 px-4 py-1.5 text-[13px] tracking-[0.08em] uppercase text-white/70 hover:text-white border border-white/20 rounded-full transition-all hover:border-white/40"
+                className="px-5 py-2 text-[12px] tracking-[0.15em] uppercase text-white/50 hover:text-white border border-white/15 hover:border-white/30 transition-all duration-300"
               >
                 Min garasje
               </Link>
             ) : (
               <Link
                 to="/login?returnUrl=/dashboard"
-                className="flex items-center gap-2 px-4 py-1.5 text-[13px] tracking-[0.08em] uppercase text-white/70 hover:text-white border border-white/20 rounded-full transition-all hover:border-white/40"
+                className="flex items-center gap-2 px-5 py-2 text-[12px] tracking-[0.15em] uppercase text-white/50 hover:text-white border border-white/15 hover:border-white/30 transition-all duration-300"
               >
                 <LogIn className="w-3.5 h-3.5" />
                 Logg inn
               </Link>
             )}
-
-            {/* Send inn bil - accent */}
             <Link
               to="/send-inn"
-              className="ml-1 px-4 py-1.5 text-[13px] tracking-[0.08em] uppercase text-black bg-white rounded-full hover:bg-white/90 transition-all font-medium"
+              className="px-5 py-2 text-[12px] tracking-[0.15em] uppercase text-[#0d0d0d] bg-white/90 hover:bg-white transition-all duration-300 font-semibold"
             >
               Send inn bil
             </Link>
-          </nav>
-
-          {/* Mobile controls */}
-          <div className="lg:hidden flex items-center gap-2">
-            <button
-              onClick={() => setSearchOpen(!searchOpen)}
-              className="p-2 text-white/50 hover:text-white transition-colors"
-              aria-label="Søk"
-            >
-              <Search className="w-5 h-5" />
-            </button>
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 text-white/50 hover:text-white transition-colors"
-              aria-label="Meny"
-            >
-              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-            </button>
           </div>
+
+          {/* Mobile: menu toggle */}
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="lg:hidden p-2 text-white/40 hover:text-white transition-colors"
+            aria-label="Meny"
+          >
+            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
         </div>
 
-        {/* Mobile search */}
-        {searchOpen && (
-          <div className="lg:hidden pb-3">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
-              <input
-                type="text"
-                placeholder="Søk etter biler, deler, historier..."
-                autoFocus
-                className="w-full bg-white/5 border border-white/10 rounded-full pl-10 pr-4 py-2.5 text-sm text-white/80 placeholder:text-white/30 focus:outline-none focus:border-white/25 transition-all"
-              />
-            </div>
-          </div>
-        )}
+        {/* Nav row — separated by thin line */}
+        <div className="hidden lg:block border-t border-white/[0.06]">
+          <nav className="flex items-center gap-0 py-0">
+            {navLinks.map((link, i) => {
+              const isActive = location.pathname === link.href;
+              return (
+                <Link
+                  key={link.href}
+                  to={link.href}
+                  className={`relative px-4 py-3 text-[11px] tracking-[0.2em] uppercase transition-all duration-300 ${
+                    isActive
+                      ? "text-white"
+                      : "text-white/35 hover:text-white/70"
+                  }`}
+                >
+                  {link.label}
+                  {isActive && (
+                    <span className="absolute bottom-0 left-4 right-4 h-px bg-white" />
+                  )}
+                  {i < navLinks.length - 1 && (
+                    <span className="absolute right-0 top-1/2 -translate-y-1/2 w-px h-3 bg-white/[0.08]" />
+                  )}
+                </Link>
+              );
+            })}
+          </nav>
+        </div>
       </div>
 
       {/* Mobile menu */}
       {mobileMenuOpen && (
-        <nav className="lg:hidden border-t border-white/10 bg-[#0a0a0a]">
-          <div className="max-w-[1400px] mx-auto px-5 py-4 flex flex-col gap-1">
+        <nav className="lg:hidden border-t border-white/[0.06]" style={{ background: '#0d0d0d' }}>
+          {/* Mobile search */}
+          <div className="px-5 pt-4 pb-2">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20" />
+              <input
+                type="text"
+                placeholder="Søk..."
+                className="w-full bg-white/[0.04] border border-white/[0.08] rounded-none pl-10 pr-4 py-2.5 text-sm text-white/70 placeholder:text-white/25 focus:outline-none focus:border-white/20 transition-all tracking-wide"
+              />
+            </div>
+          </div>
+
+          <div className="px-5 py-3 flex flex-col">
             {navLinks.map((link) => {
               const isActive = location.pathname === link.href;
               return (
@@ -141,10 +144,8 @@ export function Header() {
                   key={link.href}
                   to={link.href}
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`py-2.5 px-3 text-[13px] tracking-[0.08em] uppercase rounded transition-all ${
-                    isActive
-                      ? "text-white bg-white/5"
-                      : "text-white/40 hover:text-white/70"
+                  className={`py-3 text-[12px] tracking-[0.15em] uppercase border-b border-white/[0.04] transition-all ${
+                    isActive ? "text-white" : "text-white/30 hover:text-white/60"
                   }`}
                 >
                   {link.label}
@@ -152,34 +153,33 @@ export function Header() {
               );
             })}
 
-            <div className="h-px bg-white/10 my-2" />
-
-            {user ? (
+            <div className="flex flex-col gap-3 mt-4 pb-2">
+              {user ? (
+                <Link
+                  to="/dashboard"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="py-2.5 text-center text-[12px] tracking-[0.15em] uppercase text-white/50 border border-white/15"
+                >
+                  Min garasje
+                </Link>
+              ) : (
+                <Link
+                  to="/login?returnUrl=/dashboard"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="py-2.5 text-center text-[12px] tracking-[0.15em] uppercase text-white/50 border border-white/15 flex items-center justify-center gap-2"
+                >
+                  <LogIn className="w-4 h-4" />
+                  Logg inn
+                </Link>
+              )}
               <Link
-                to="/dashboard"
+                to="/send-inn"
                 onClick={() => setMobileMenuOpen(false)}
-                className="py-2.5 px-3 text-[13px] tracking-[0.08em] uppercase text-white/60 hover:text-white transition-all"
+                className="py-2.5 text-center text-[12px] tracking-[0.15em] uppercase text-[#0d0d0d] bg-white/90 font-semibold"
               >
-                Min garasje
+                Send inn bil
               </Link>
-            ) : (
-              <Link
-                to="/login?returnUrl=/dashboard"
-                onClick={() => setMobileMenuOpen(false)}
-                className="py-2.5 px-3 text-[13px] tracking-[0.08em] uppercase text-white/60 hover:text-white flex items-center gap-2 transition-all"
-              >
-                <LogIn className="w-4 h-4" />
-                Logg inn
-              </Link>
-            )}
-
-            <Link
-              to="/send-inn"
-              onClick={() => setMobileMenuOpen(false)}
-              className="mt-2 py-2.5 px-4 text-[13px] tracking-[0.08em] uppercase text-black bg-white rounded-full text-center font-medium"
-            >
-              Send inn bil
-            </Link>
+            </div>
           </div>
         </nav>
       )}
