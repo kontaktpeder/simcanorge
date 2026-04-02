@@ -324,10 +324,10 @@ export default function PublicEventPage() {
               Bilder fra arrangementet
             </p>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
-              {galleryImages.slice(1).map((img, idx) => (
+              {galleryImages.map((img, idx) => (
                 <button
                   key={img.id}
-                  onClick={() => setLightboxIndex(idx + 1)}
+                  onClick={() => setLightboxIndex(idx)}
                   className="relative aspect-[4/3] overflow-hidden rounded-sm group cursor-pointer"
                 >
                   <img
