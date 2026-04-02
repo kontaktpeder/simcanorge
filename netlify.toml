@@ -1,3 +1,7 @@
+[[edge_functions]]
+  path = "/biler/:slug"
+  function = "og-redirect"
+
 [[redirects]]
   from = "/*"
   to = "/index.html"
