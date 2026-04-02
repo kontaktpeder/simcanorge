@@ -113,7 +113,7 @@ export default function PublicEventPage() {
                   <span className="block text-[14px] text-neutral-400 capitalize" style={body}>{dayName}</span>
                 </div>
                 <div className="ml-5 pl-5 border-l border-neutral-300/70 space-y-0.5">
-                  <span className="block text-[20px] leading-tight" style={display}>
+                  <span className="block text-[24px] leading-tight italic" style={display}>
                     {timeStr}{endTimeStr ? ` – ${endTimeStr}` : ""}
                   </span>
                   <span className="flex items-center gap-1.5 text-[13px] text-neutral-500" style={body}>
