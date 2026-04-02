@@ -24,8 +24,8 @@ export function useFeedPosts() {
           event:events!feed_posts_event_id_fkey(
             id, title, slug, starts_at, location,
             event_images(image_url, sort_order),
-            owner_profile:person_profiles!events_owner_profile_id_fkey(display_name, slug),
-            owner_page:pages!events_owner_page_id_fkey(title, slug)
+            owner_profile:person_profiles!events_owner_profile_id_fkey(display_name, slug, avatar_url),
+            owner_page:pages!events_owner_page_id_fkey(title, slug, logo_url)
           ),
           feed_post_likes(id, user_id)
         `)

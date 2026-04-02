@@ -141,17 +141,39 @@ export function FeedCard({ post }: { post: FeedPost }) {
 
         {/* ── Image ── */}
         {heroImage && (
-          entityLink ? (
-            <Link to={entityLink} className="block overflow-hidden mb-4">
+          <div className="relative overflow-hidden mb-4">
+            {entityLink ? (
+              <Link to={entityLink} className="block">
+                <img src={heroImage} alt={entityTitle ?? ""}
+                  className="w-full h-[340px] sm:h-[420px] md:h-[480px] object-cover transition-transform duration-700 group-hover:scale-[1.02]" />
+              </Link>
+            ) : (
               <img src={heroImage} alt={entityTitle ?? ""}
                 className="w-full h-[340px] sm:h-[420px] md:h-[480px] object-cover transition-transform duration-700 group-hover:scale-[1.02]" />
-            </Link>
-          ) : (
-            <div className="overflow-hidden mb-4">
-              <img src={heroImage} alt={entityTitle ?? ""}
-                className="w-full h-[340px] sm:h-[420px] md:h-[480px] object-cover transition-transform duration-700 group-hover:scale-[1.02]" />
-            </div>
-          )
+            )}
+
+            {/* Event date & location overlay — bottom right */}
+            {event && (event.starts_at || event.location) && (
+              <div className="absolute bottom-0 right-0 p-4 text-right" style={{ background: 'linear-gradient(to top left, rgba(0,0,0,0.75), transparent)' }}>
+                {event.starts_at && (
+                  <p className="text-[1.1rem] md:text-[1.4rem] uppercase font-bold text-white leading-tight tracking-[0.06em]" style={oswald}>
+                    {format(new Date(event.starts_at), "d. MMMM yyyy", { locale: nb })}
+                  </p>
+                )}
+                {event.starts_at && (
+                  <p className="text-[1rem] md:text-[1.2rem] uppercase font-bold text-white/70 tracking-[0.08em]" style={oswald}>
+                    {format(new Date(event.starts_at), "HH:mm", { locale: nb })}
+                  </p>
+                )}
+                {event.location && (
+                  <p className="text-[1rem] md:text-[1.2rem] uppercase font-bold text-[#c4a882] tracking-[0.08em] flex items-center gap-1.5 justify-end mt-0.5" style={oswald}>
+                    <MapPin className="w-4 h-4" />
+                    {event.location}
+                  </p>
+                )}
+              </div>
+            )}
+          </div>
         )}
 
         {/* ── Title ── */}
@@ -171,28 +193,29 @@ export function FeedCard({ post }: { post: FeedPost }) {
           )
         )}
 
-        {/* ── Event meta (date, location, organizer) ── */}
-        {event && (
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2 text-[13px] text-white/40" style={oswald}>
-            {event.starts_at && (
-              <span className="uppercase tracking-[0.1em] flex items-center gap-1.5">
-                <CalendarDays className="w-3.5 h-3.5" />
-                {format(new Date(event.starts_at), "d. MMM yyyy · HH:mm", { locale: nb })}
-              </span>
-            )}
-            {event.location && (
-              <span className="flex items-center gap-1.5 uppercase tracking-[0.1em]">
-                <MapPin className="w-3.5 h-3.5" />
-                {event.location}
-              </span>
-            )}
-            {(event.owner_page?.title || event.owner_profile?.display_name) && (
-              <span className="uppercase tracking-[0.1em]">
-                Av {event.owner_page?.title || event.owner_profile?.display_name}
-              </span>
-            )}
-          </div>
-        )}
+        {/* ── Event organizer under title ── */}
+        {event && (() => {
+          const orgName = event.owner_page?.title || event.owner_profile?.display_name;
+          const orgSlug = event.owner_page?.slug ? `/s/${event.owner_page.slug}` : event.owner_profile?.slug ? `/profil/${event.owner_profile.slug}` : null;
+          const orgAvatar = event.owner_page?.logo_url || event.owner_profile?.avatar_url || null;
+          if (!orgName) return null;
+          const inner = (
+            <span className="flex items-center gap-2">
+              {orgAvatar ? (
+                <img src={orgAvatar} alt="" className="w-6 h-6 rounded-full object-cover ring-1 ring-white/10" />
+              ) : (
+                <span className="w-6 h-6 rounded-full bg-white/10 flex items-center justify-center text-[11px] font-bold text-white/50" style={oswald}>{orgName[0]}</span>
+              )}
+              <span className="text-white/50 group-hover/org:text-white transition-colors">{orgName}</span>
+            </span>
+          );
+          return (
+            <div className="mt-2 text-[13px] uppercase tracking-[0.1em]" style={oswald}>
+              <span className="text-white/25 mr-1.5">Arrangert av</span>
+              {orgSlug ? <Link to={orgSlug} className="group/org inline-flex">{inner}</Link> : inner}
+            </div>
+          );
+        })()}
 
         {/* ── Body ── */}
         {isEditing ? (
