@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { Link, useSearchParams } from "react-router-dom";
 import { useMyPersonProfile } from "@/hooks/useMyPersonProfile";
-import { useOwnerProfile } from "@/hooks/useOwnerProfile";
 import { useAuth } from "@/hooks/useAuth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -17,11 +16,9 @@ const MIN_BIO_LENGTH = 30;
 
 function ProfileCompletionCard({
   profile,
-  ownerProfile,
   onEdit,
 }: {
   profile: any;
-  ownerProfile: any;
   onEdit: () => void;
 }) {
   const checks = [
@@ -29,7 +26,7 @@ function ProfileCompletionCard({
     { label: "Bio (minst 30 tegn)", done: !!profile.bio && profile.bio.trim().length >= MIN_BIO_LENGTH },
     { label: "Sted", done: !!profile.location },
     { label: "Offentlig profil", done: !!profile.is_public },
-    { label: "Kontakt e-post", done: !!ownerProfile?.contact_email },
+    { label: "Kontakt e-post", done: !!(profile as any).contact_email },
   ];
 
   const doneCount = checks.filter((c) => c.done).length;
@@ -76,19 +73,16 @@ function ProfileCompletionCard({
 export default function DashboardMinProfilPage() {
   const { user } = useAuth();
   const { data: profile, isLoading } = useMyPersonProfile();
-  const { data: ownerProfile } = useOwnerProfile(user?.id);
   const [searchParams] = useSearchParams();
   const shouldEdit = searchParams.get("rediger") === "1";
   const [editing, setEditing] = useState(false);
 
-  // Auto-open edit mode if ?rediger=1 or profile is incomplete
   useEffect(() => {
     if (!profile) return;
     if (shouldEdit) {
       setEditing(true);
       return;
     }
-    // Auto-open if profile is clearly incomplete
     const incomplete =
       !profile.bio || profile.bio.trim().length < MIN_BIO_LENGTH || !profile.is_public;
     if (incomplete) {
@@ -119,11 +113,9 @@ export default function DashboardMinProfilPage() {
           <p className="text-muted-foreground">Din offentlige profil på Bilgarasjen</p>
         </div>
 
-        {/* Completion checklist — only shown when not editing */}
         {!editing && (
           <ProfileCompletionCard
             profile={profile}
-            ownerProfile={ownerProfile}
             onEdit={() => setEditing(true)}
           />
         )}
@@ -163,7 +155,7 @@ export default function DashboardMinProfilPage() {
               <CardTitle className="text-base">Rediger profil</CardTitle>
             </CardHeader>
             <CardContent>
-              <EditProfileForm profile={profile} ownerProfile={ownerProfile} onSuccess={() => setEditing(false)} />
+              <EditProfileForm profile={profile as any} onSuccess={() => setEditing(false)} />
             </CardContent>
           </Card>
         ) : (

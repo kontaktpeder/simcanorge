@@ -4,24 +4,20 @@ import { z } from "zod";
 import { toast } from "sonner";
 import { useUpsertPersonProfile } from "@/hooks/useMyPersonProfile";
 import { useAuth } from "@/hooks/useAuth";
-import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Heart } from "lucide-react";
-import type { Database } from "@/integrations/supabase/types";
 
-type PersonProfile = Database["public"]["Tables"]["person_profiles"]["Row"];
-
-interface OwnerProfile {
-  id: string;
-  user_id: string;
+interface ProfileData {
   display_name: string;
+  slug: string;
   bio: string | null;
   location: string | null;
   avatar_url: string | null;
+  is_public: boolean;
   contact_email?: string | null;
   contact_phone?: string | null;
   favorite_brands?: string[] | null;
@@ -45,12 +41,12 @@ const schema = z.object({
 type FormValues = z.infer<typeof schema>;
 
 interface Props {
-  profile: PersonProfile;
-  ownerProfile?: OwnerProfile | null;
+  profile: ProfileData;
+  ownerProfile?: any; // kept for backwards compat but ignored
   onSuccess?: () => void;
 }
 
-export function EditProfileForm({ profile, ownerProfile, onSuccess }: Props) {
+export function EditProfileForm({ profile, onSuccess }: Props) {
   const { user } = useAuth();
   const { mutateAsync: upsertPerson, isPending } = useUpsertPersonProfile();
 
@@ -62,10 +58,10 @@ export function EditProfileForm({ profile, ownerProfile, onSuccess }: Props) {
       location: profile.location ?? "",
       avatar_url: profile.avatar_url ?? "",
       is_public: profile.is_public,
-      contact_email: (ownerProfile as any)?.contact_email ?? "",
-      contact_phone: (ownerProfile as any)?.contact_phone ?? "",
-      favorite_brands: ownerProfile?.favorite_brands ?? [],
-      visible_public: ownerProfile?.visible_public ?? false,
+      contact_email: profile.contact_email ?? "",
+      contact_phone: profile.contact_phone ?? "",
+      favorite_brands: profile.favorite_brands ?? [],
+      visible_public: profile.visible_public ?? false,
     },
   });
 
@@ -82,33 +78,18 @@ export function EditProfileForm({ profile, ownerProfile, onSuccess }: Props) {
   async function onSubmit(values: FormValues) {
     if (!user) return;
     try {
-      const sharedFields = {
+      await upsertPerson({
         display_name: values.display_name,
         bio: values.bio || null,
         location: values.location || null,
         avatar_url: values.avatar_url || null,
-      };
-
-      const personPromise = upsertPerson({
-        ...sharedFields,
         is_public: values.is_public,
         slug: profile.slug,
-      });
-
-      const ownerFields = {
-        ...sharedFields,
         contact_email: values.contact_email || null,
         contact_phone: values.contact_phone || null,
         favorite_brands: (values.favorite_brands?.length ?? 0) > 0 ? values.favorite_brands : null,
         visible_public: values.visible_public ?? false,
-      };
-
-      const ownerPromise = ownerProfile
-        ? supabase.from("owners").update(ownerFields).eq("id", ownerProfile.id)
-        : supabase.from("owners").insert({ ...ownerFields, user_id: user.id });
-
-      const [, ownerResult] = await Promise.all([personPromise, ownerPromise]);
-      if (ownerResult.error) throw ownerResult.error;
+      } as any);
 
       toast.success("Profil lagret");
       onSuccess?.();

@@ -2,20 +2,24 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
-interface OwnerProfile {
+// Unified profile interface — all data now lives in person_profiles
+export interface OwnerProfile {
   id: string;
   user_id: string;
   display_name: string;
-  username: string | null;
+  slug: string;
   bio: string | null;
   location: string | null;
-  favorite_brands: string[] | null;
-  visible_public: boolean;
-  slug: string | null;
   avatar_url: string | null;
-  approved_at: string | null;
+  cover_url: string | null;
+  is_public: boolean;
+  can_create_pages: boolean;
   contact_email: string | null;
   contact_phone: string | null;
+  favorite_brands: string[] | null;
+  visible_public: boolean;
+  approved_at: string | null;
+  requested_approval_at: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -46,13 +50,13 @@ export function useOwnerProfile(userId: string | undefined) {
     queryKey: ['owner-profile', userId],
     queryFn: async () => {
       if (!userId) return null;
-      
+
       const { data, error } = await supabase
-        .from('owners')
+        .from('person_profiles')
         .select('*')
         .eq('user_id', userId)
         .maybeSingle();
-      
+
       if (error) throw error;
       return data as OwnerProfile | null;
     },
@@ -65,14 +69,14 @@ export function useOwnerProfileBySlug(slug: string | undefined) {
     queryKey: ['owner-profile-slug', slug],
     queryFn: async () => {
       if (!slug) return null;
-      
+
       const { data, error } = await supabase
-        .from('owners')
+        .from('person_profiles')
         .select('*')
         .eq('slug', slug)
-        .eq('visible_public', true)
+        .eq('is_public', true)
         .maybeSingle();
-      
+
       if (error) throw error;
       return data as OwnerProfile | null;
     },
@@ -85,36 +89,27 @@ export function useOwnerCars(userId: string | undefined) {
     queryKey: ['owner-cars', userId],
     queryFn: async () => {
       if (!userId) return [];
-      
-      // First get the car IDs for this owner
+
       const { data: ownerData, error: ownerError } = await supabase
         .from('car_owners')
         .select('car_id')
         .eq('user_id', userId)
         .eq('role', 'owner');
-      
+
       if (ownerError) throw ownerError;
       if (!ownerData || ownerData.length === 0) return [];
-      
+
       const carIds = ownerData.map(d => d.car_id);
-      
-      // Then get the cars with their images
+
       const { data: cars, error: carsError } = await supabase
         .from('cars')
         .select(`
-          id,
-          title,
-          slug,
-          brand,
-          model,
-          year,
-          category,
-          published_at,
+          id, title, slug, brand, model, year, category, published_at,
           car_images(id, image_url, sort_order)
         `)
         .in('id', carIds)
         .not('published_at', 'is', null);
-      
+
       if (carsError) throw carsError;
       return cars || [];
     },
@@ -127,88 +122,54 @@ export function useCarOwnerProfile(carId: string | undefined) {
     queryKey: ['car-owner-profile', carId],
     queryFn: async () => {
       if (!carId) return null;
-      
-      // Get all owners for this car
+
       const { data: carOwners, error } = await supabase
         .from('car_owners')
         .select('user_id')
         .eq('car_id', carId)
         .eq('role', 'owner');
-      
+
       if (error) throw error;
       if (!carOwners || carOwners.length === 0) return null;
-      
+
       const userIds = carOwners.map(co => co.user_id);
-      
-      // Find the first owner with a public profile
-      const { data: owner, error: ownerError } = await supabase
-        .from('owners')
+
+      const { data: profile, error: profileError } = await supabase
+        .from('person_profiles')
         .select('*')
         .in('user_id', userIds)
-        .eq('visible_public', true)
+        .eq('is_public', true)
         .limit(1)
         .maybeSingle();
-      
-      if (ownerError) throw ownerError;
-      return owner as OwnerProfile | null;
+
+      if (profileError) throw profileError;
+      return profile as OwnerProfile | null;
     },
     enabled: !!carId,
-  });
-}
-
-export function useCreateOwnerProfile() {
-  const queryClient = useQueryClient();
-  const { toast } = useToast();
-  
-  return useMutation({
-    mutationFn: async (profile: OwnerProfileInsert) => {
-      const { data, error } = await supabase
-        .from('owners')
-        .insert(profile)
-        .select()
-        .single();
-      
-      if (error) throw error;
-      return data as OwnerProfile;
-    },
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['owner-profile', data.user_id] });
-      toast({
-        title: 'Profil opprettet',
-        description: 'Din profil er opprettet og venter på godkjenning.',
-      });
-    },
-    onError: (error) => {
-      toast({
-        title: 'Feil',
-        description: 'Kunne ikke opprette eierprofil.',
-        variant: 'destructive',
-      });
-      console.error('Create owner profile error:', error);
-    },
   });
 }
 
 export function useUpdateOwnerProfile() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
-  
+
   return useMutation({
-    mutationFn: async ({ id, updates }: { id: string; updates: OwnerProfileUpdate }) => {
+    mutationFn: async ({ id, updates }: { id: string; updates: Partial<OwnerProfile> }) => {
       const { data, error } = await supabase
-        .from('owners')
-        .update(updates)
+        .from('person_profiles')
+        .update(updates as any)
         .eq('id', id)
         .select()
         .single();
-      
+
       if (error) throw error;
-      return data as OwnerProfile;
+      return data as unknown as OwnerProfile;
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['owner-profile', data.user_id] });
       queryClient.invalidateQueries({ queryKey: ['owner-profile-slug', data.slug] });
       queryClient.invalidateQueries({ queryKey: ['all-owner-profiles'] });
+      queryClient.invalidateQueries({ queryKey: ['person_profile'] });
       toast({
         title: 'Profil oppdatert',
         description: 'Endringene dine er lagret.',
@@ -217,10 +178,52 @@ export function useUpdateOwnerProfile() {
     onError: (error) => {
       toast({
         title: 'Feil',
-        description: 'Kunne ikke oppdatere eierprofil.',
+        description: 'Kunne ikke oppdatere profil.',
         variant: 'destructive',
       });
-      console.error('Update owner profile error:', error);
+      console.error('Update profile error:', error);
+    },
+  });
+}
+
+export function useCreateOwnerProfile() {
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  return useMutation({
+    mutationFn: async (profile: { user_id: string; display_name: string; bio?: string | null; location?: string | null; favorite_brands?: string[] | null; visible_public?: boolean }) => {
+      // person_profiles should already exist, so upsert
+      const { data, error } = await supabase
+        .from('person_profiles')
+        .update({
+          display_name: profile.display_name,
+          bio: profile.bio ?? null,
+          location: profile.location ?? null,
+          favorite_brands: profile.favorite_brands ?? null,
+          visible_public: profile.visible_public ?? false,
+        } as any)
+        .eq('user_id', profile.user_id)
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data as unknown as OwnerProfile;
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['owner-profile', data.user_id] });
+      queryClient.invalidateQueries({ queryKey: ['person_profile'] });
+      toast({
+        title: 'Profil opprettet',
+        description: 'Din profil er opprettet og venter på godkjenning.',
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: 'Feil',
+        description: 'Kunne ikke opprette profil.',
+        variant: 'destructive',
+      });
+      console.error('Create profile error:', error);
     },
   });
 }
@@ -230,12 +233,12 @@ export function useAllOwnerProfiles() {
     queryKey: ['all-owner-profiles'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('owners')
+        .from('person_profiles')
         .select('*')
         .order('created_at', { ascending: false });
-      
+
       if (error) throw error;
-      return data as OwnerProfile[];
+      return (data as unknown as OwnerProfile[]) || [];
     },
   });
 }
