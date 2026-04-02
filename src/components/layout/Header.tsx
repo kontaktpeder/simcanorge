@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, Search, LogIn } from "lucide-react";
+import { Menu, X, LogIn } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { GlobalSearch } from "@/components/layout/GlobalSearch";
 import bilgarasjeLogo from "@/assets/bilgarasje-logo.png";
 
 const navLinks = [
@@ -21,11 +22,9 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 bg-[#0a0a0a]">
-      {/* Single compact row */}
       <div className="max-w-[1400px] mx-auto px-5 md:px-8">
         <div className="flex items-center h-14 md:h-16 gap-6">
 
-          {/* Logo — still large via negative margin trick */}
           <Link to="/" className="flex-shrink-0 group -my-2">
             <img
               src={bilgarasjeLogo}
@@ -34,7 +33,6 @@ export function Header() {
             />
           </Link>
 
-          {/* Nav links — inline with logo */}
           <nav className="hidden lg:flex items-center gap-0 flex-shrink-0">
             {navLinks.map((link, i) => {
               const isActive = location.pathname === link.href;
@@ -60,19 +58,10 @@ export function Header() {
             })}
           </nav>
 
-          {/* Search — fills middle */}
           <div className="hidden md:flex flex-1 max-w-sm ml-auto">
-            <div className="relative w-full">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-white/15" />
-              <input
-                type="text"
-                placeholder="Søk etter biler, deler, historier..."
-                className="w-full bg-transparent border-b border-white/[0.08] pl-9 pr-3 py-1.5 text-[12px] text-white/50 placeholder:text-white/20 focus:outline-none focus:border-white/20 transition-all tracking-wide"
-              />
-            </div>
+            <GlobalSearch />
           </div>
 
-          {/* Right: auth + CTA */}
           <div className="hidden lg:flex items-center gap-2 flex-shrink-0">
             {user ? (
               <Link
@@ -98,7 +87,6 @@ export function Header() {
             </Link>
           </div>
 
-          {/* Mobile toggle */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="lg:hidden ml-auto p-2 text-white/35 hover:text-white transition-colors"
@@ -109,21 +97,12 @@ export function Header() {
         </div>
       </div>
 
-      {/* Bottom hairline */}
       <div className="h-px bg-white/[0.06]" />
 
-      {/* Mobile menu */}
       {mobileMenuOpen && (
         <nav className="lg:hidden bg-[#0a0a0a] border-t border-white/[0.04]">
           <div className="px-5 pt-3 pb-2">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-white/15" />
-              <input
-                type="text"
-                placeholder="Søk..."
-                className="w-full bg-transparent border-b border-white/[0.08] pl-9 pr-3 py-2 text-[12px] text-white/50 placeholder:text-white/20 focus:outline-none focus:border-white/20 transition-all tracking-wide"
-              />
-            </div>
+            <GlobalSearch />
           </div>
           <div className="px-5 py-2 flex flex-col">
             {navLinks.map((link) => {
