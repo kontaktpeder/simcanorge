@@ -306,6 +306,11 @@ export default function PublicEventPage() {
         </div>
       </div>
 
+      {/* Comments */}
+      <div className="max-w-6xl mx-auto px-6 sm:px-10">
+        <CommentSection eventId={event.id} variant="light" />
+      </div>
+
       {/* ── BOTTOM CTA ── */}
       <Divider />
       <div className="max-w-3xl mx-auto px-6 sm:px-10 py-10 md:py-14 text-center">
@@ -313,7 +318,7 @@ export default function PublicEventPage() {
           {dayNum}. {monthStr} {yearStr} · {event.location}
         </p>
         <h2 className="text-3xl sm:text-4xl md:text-[3.2rem] leading-[1.1] mb-6 italic" style={serif}>
-          Vi sees der.
+          Vi sees der!
         </h2>
         <div className="flex items-center justify-center gap-4 flex-wrap">
           <EventHeroCTA eventId={event.id} />
@@ -356,11 +361,6 @@ export default function PublicEventPage() {
           </div>
         </div>
       )}
-
-      {/* Comments */}
-      <div className="max-w-6xl mx-auto px-6 sm:px-10 pb-10">
-        <CommentSection eventId={event.id} variant="light" />
-      </div>
     </div>
     </Layout>
   );
