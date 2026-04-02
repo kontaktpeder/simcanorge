@@ -133,9 +133,17 @@ export default function PublicEventPage() {
           </div>
 
           {/* Right: hero image */}
-          <div className="relative aspect-[4/3] md:aspect-[3/4] lg:aspect-[4/3] overflow-hidden rounded-sm">
+          <div className="relative aspect-[4/3] md:aspect-[16/9] overflow-hidden rounded-sm">
             {heroImage ? (
-              <img src={heroImage} alt="" className="absolute inset-0 w-full h-full object-cover" />
+              <img
+                src={getOptimizedImageUrl(heroImage, { width: 1200, quality: 85 })}
+                srcSet={`${getOptimizedImageUrl(heroImage, { width: 800, quality: 85 })} 800w, ${getOptimizedImageUrl(heroImage, { width: 1200, quality: 85 })} 1200w, ${getOptimizedImageUrl(heroImage, { width: 1600, quality: 80 })} 1600w`}
+                sizes="(max-width: 768px) 100vw, 50vw"
+                alt=""
+                loading="eager"
+                fetchPriority="high"
+                className="absolute inset-0 w-full h-full object-cover"
+              />
             ) : (
               <div className="absolute inset-0 bg-neutral-200" />
             )}
@@ -316,10 +324,10 @@ export default function PublicEventPage() {
               Bilder fra arrangementet
             </p>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
-              {galleryImages.slice(1).map((img, idx) => (
+              {galleryImages.map((img, idx) => (
                 <button
                   key={img.id}
-                  onClick={() => setLightboxIndex(idx + 1)}
+                  onClick={() => setLightboxIndex(idx)}
                   className="relative aspect-[4/3] overflow-hidden rounded-sm group cursor-pointer"
                 >
                   <img
@@ -403,10 +411,10 @@ function EditorialSection({
 }
 
 function InfoBlock({
-  label, value, display, body,
+  label, value, body,
 }: {
   label: string; value: string;
-  display: React.CSSProperties; body: React.CSSProperties;
+  display?: React.CSSProperties; body: React.CSSProperties;
 }) {
   return (
     <div>
@@ -417,10 +425,10 @@ function InfoBlock({
 }
 
 function SideRow({
-  label, value, display, body,
+  label, value, body,
 }: {
   label: string; value: string;
-  display: React.CSSProperties; body: React.CSSProperties;
+  display?: React.CSSProperties; body: React.CSSProperties;
 }) {
   return (
     <div className="flex justify-between items-baseline py-3 border-b border-neutral-200">
