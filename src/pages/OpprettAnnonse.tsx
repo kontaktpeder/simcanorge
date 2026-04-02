@@ -61,7 +61,6 @@ export default function OpprettAnnonse() {
   if (!user) return null;
 
   if (!ownerProfile) {
-    // No owner profile at all
     return (
       <Layout>
         <section className="relative overflow-hidden" style={{ background: 'hsl(42, 30%, 95%)' }}>
@@ -88,6 +87,31 @@ export default function OpprettAnnonse() {
                 Til Dashboard
                 <ChevronRight className="w-4 h-4 opacity-50 group-hover:translate-x-1 transition-transform" />
               </Link>
+            </div>
+          </div>
+        </section>
+      </Layout>
+    );
+  }
+
+  if (!ownerProfile.contact_email) {
+    return (
+      <Layout>
+        <section className="relative overflow-hidden" style={{ background: 'hsl(42, 30%, 95%)' }}>
+          <div className="absolute top-0 left-0 right-0 h-1" style={{ background: 'hsl(2, 85%, 40%)' }} />
+          <div className="container mx-auto px-4 py-16 md:py-24 relative z-10">
+            <div className="max-w-md mx-auto text-center">
+              <h2 className="font-display text-2xl md:text-3xl uppercase tracking-wider leading-none mb-4 text-foreground">
+                Legg til kontakt-e-post
+              </h2>
+              <div className="w-16 h-[2px] mx-auto mb-4" style={{ background: 'hsl(2, 85%, 40%)' }} />
+              <p className="font-serif italic text-sm text-foreground/60 mb-8">
+                Kjøpere trenger en måte å nå deg. E-posten lagres på profilen din og gjenbrukes automatisk.
+              </p>
+              <ContactEmailGate
+                ownerProfileId={ownerProfile.id}
+                onSuccess={() => queryClient.invalidateQueries({ queryKey: ["owner-profile", user?.id] })}
+              />
             </div>
           </div>
         </section>

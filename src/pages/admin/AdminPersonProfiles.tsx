@@ -140,6 +140,21 @@ export default function AdminPersonProfiles() {
                     <p className="text-xs text-muted-foreground">
                       bilgarasje.no/p/{r.profile?.slug}
                     </p>
+                    <div className="flex items-center gap-2 mt-1">
+                      <span className={`text-xs ${r.profile?.is_public ? "text-green-600" : "text-amber-600"}`}>
+                        {r.profile?.is_public ? "✓ Offentlig profil" : "⚠ Privat profil"}
+                      </span>
+                      {(r as any).page_type && (
+                        <Badge variant="secondary" className="text-[10px]">
+                          {(r as any).page_type}
+                        </Badge>
+                      )}
+                    </div>
+                    {r.profile?.bio && (
+                      <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
+                        {r.profile.bio.slice(0, 100)}
+                      </p>
+                    )}
                     {r.message && (
                       <p className="text-xs text-muted-foreground mt-1 italic">"{r.message}"</p>
                     )}
