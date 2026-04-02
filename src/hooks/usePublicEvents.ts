@@ -5,7 +5,10 @@ export function usePublicEvents(filters?: { type?: string }) {
   return useQuery({
     queryKey: ["public_events", filters],
     queryFn: async () => {
-      const now = new Date().toISOString();
+      // Show events that haven't ended yet (or started today if no end date)
+      const todayStart = new Date();
+      todayStart.setHours(0, 0, 0, 0);
+      const cutoff = todayStart.toISOString();
       let query = supabase
         .from("events")
         .select(
@@ -15,7 +18,7 @@ export function usePublicEvents(filters?: { type?: string }) {
            owner_profile:person_profiles!events_owner_profile_id_fkey(id, display_name, slug)`
         )
         .eq("status", "published")
-        .gte("starts_at", now)
+        .gte("starts_at", cutoff)
         .order("starts_at", { ascending: true })
         .limit(30);
 

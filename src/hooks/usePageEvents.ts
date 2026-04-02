@@ -6,7 +6,9 @@ export function usePageEvents(pageId: string | undefined) {
     queryKey: ["page_events", pageId],
     queryFn: async () => {
       if (!pageId) return [];
-      const now = new Date().toISOString();
+      const todayStart = new Date();
+      todayStart.setHours(0, 0, 0, 0);
+      const now = todayStart.toISOString();
       const { data, error } = await supabase
         .from("events")
         .select(
