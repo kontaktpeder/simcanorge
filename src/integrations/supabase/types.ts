@@ -550,6 +550,117 @@ export type Database = {
           },
         ]
       }
+      comment_likes: {
+        Row: {
+          comment_id: string
+          created_at: string
+          user_id: string
+        }
+        Insert: {
+          comment_id: string
+          created_at?: string
+          user_id: string
+        }
+        Update: {
+          comment_id?: string
+          created_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "comment_likes_comment_id_fkey"
+            columns: ["comment_id"]
+            isOneToOne: false
+            referencedRelation: "comments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      comments: {
+        Row: {
+          author_profile_id: string
+          body: string
+          car_id: string | null
+          created_at: string
+          event_id: string | null
+          feed_post_id: string | null
+          id: string
+          is_deleted: boolean
+          marketplace_item_id: string | null
+          parent_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          author_profile_id: string
+          body: string
+          car_id?: string | null
+          created_at?: string
+          event_id?: string | null
+          feed_post_id?: string | null
+          id?: string
+          is_deleted?: boolean
+          marketplace_item_id?: string | null
+          parent_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          author_profile_id?: string
+          body?: string
+          car_id?: string | null
+          created_at?: string
+          event_id?: string | null
+          feed_post_id?: string | null
+          id?: string
+          is_deleted?: boolean
+          marketplace_item_id?: string | null
+          parent_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "comments_author_profile_id_fkey"
+            columns: ["author_profile_id"]
+            isOneToOne: false
+            referencedRelation: "person_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comments_car_id_fkey"
+            columns: ["car_id"]
+            isOneToOne: false
+            referencedRelation: "cars"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comments_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comments_feed_post_id_fkey"
+            columns: ["feed_post_id"]
+            isOneToOne: false
+            referencedRelation: "feed_posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comments_marketplace_item_id_fkey"
+            columns: ["marketplace_item_id"]
+            isOneToOne: false
+            referencedRelation: "marketplace_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comments_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "comments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       event_attendees: {
         Row: {
           created_at: string
@@ -748,6 +859,7 @@ export type Database = {
           snapshot_entity_type: string | null
           snapshot_image_url: string | null
           snapshot_title: string | null
+          updated_at: string | null
         }
         Insert: {
           author_profile_id: string
@@ -762,6 +874,7 @@ export type Database = {
           snapshot_entity_type?: string | null
           snapshot_image_url?: string | null
           snapshot_title?: string | null
+          updated_at?: string | null
         }
         Update: {
           author_profile_id?: string
@@ -776,6 +889,7 @@ export type Database = {
           snapshot_entity_type?: string | null
           snapshot_image_url?: string | null
           snapshot_title?: string | null
+          updated_at?: string | null
         }
         Relationships: [
           {
