@@ -5,7 +5,7 @@ import { GarageLayout } from '@/components/ui/garage/GarageLayout';
 import { EnamelCard } from '@/components/ui/garage/EnamelCard';
 import { BigActionButton } from '@/components/ui/garage/BigActionButton';
 import { SectionHeader } from '@/components/ui/garage/SectionHeader';
-import { Car, Clock, Settings, Bell, CheckCircle, Send, X, User, HelpCircle, Sparkles, ShoppingBag, Plus, ExternalLink, Inbox, ChevronRight } from 'lucide-react';
+import { Car, Clock, Settings, Bell, CheckCircle, Send, X, User, HelpCircle, Sparkles, ShoppingBag, Plus, ExternalLink, Inbox, ChevronRight, FileText } from 'lucide-react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Loader2 } from 'lucide-react';
@@ -19,6 +19,7 @@ import { useGuide } from '@/hooks/useGuide';
 import { useMyListings } from '@/hooks/useMarketplace';
 import { GarageIcon } from '@/components/ui/GarageIcon';
 import { useMyPersonProfile } from '@/hooks/useMyPersonProfile';
+import { useMyPages } from '@/hooks/useMyPages';
 import { UserPlus } from 'lucide-react';
 
 export default function Dashboard() {
@@ -32,6 +33,7 @@ export default function Dashboard() {
   const { data: ownerProfile } = useOwnerProfile(user?.id);
   const { data: myListings } = useMyListings(user?.id);
   const { data: personProfile } = useMyPersonProfile();
+  const { data: myPages } = useMyPages();
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -345,6 +347,34 @@ export default function Dashboard() {
                 </p>
                 <p className="font-display text-4xl sm:text-5xl text-foreground leading-none mt-4">
                   {myInquiries?.total || 0}
+                </p>
+              </div>
+            </Link>
+          </motion.div>
+        )}
+
+        {/* Mine sider */}
+        {personProfile?.can_create_pages && (
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.27 }}
+          >
+            <Link to="/dashboard/sider" className="block h-full touch-manipulation">
+              <div className="h-full p-6 sm:p-8 border-2 border-foreground/15 bg-card/90 backdrop-blur-sm group hover:bg-card hover:border-foreground/25 transition-all min-h-[180px]">
+                <p className="font-display text-sm uppercase tracking-wider text-muted-foreground mb-5">
+                  Organisasjoner
+                </p>
+                <h3 className="font-display text-2xl sm:text-3xl uppercase tracking-wider mb-2 group-hover:text-primary transition-colors">
+                  Mine sider
+                </h3>
+                <p className="text-base text-muted-foreground">
+                  {(myPages?.length ?? 0) === 0
+                    ? 'Opprett din første side'
+                    : 'Se og rediger sidene dine'}
+                </p>
+                <p className="font-display text-4xl sm:text-5xl text-foreground leading-none mt-4">
+                  {myPages?.length || 0}
                 </p>
               </div>
             </Link>
