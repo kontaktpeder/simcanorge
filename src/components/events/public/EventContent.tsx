@@ -12,10 +12,10 @@ export function EventContent({ description, program, practicalInfo }: EventConte
     <div className="space-y-10">
       {description && (
         <section>
-          <h2 className="text-2xl font-bold text-foreground mb-4">
+          <h2 className="text-xl font-bold text-white mb-3">
             Om arrangementet
           </h2>
-          <div className="text-base sm:text-lg text-muted-foreground leading-[1.85] whitespace-pre-wrap max-w-prose">
+          <div className="text-[15px] text-white/50 leading-[1.9] whitespace-pre-wrap">
             {description}
           </div>
         </section>
@@ -23,10 +23,10 @@ export function EventContent({ description, program, practicalInfo }: EventConte
 
       {program && (
         <section>
-          <h2 className="text-2xl font-bold text-foreground mb-4">
+          <h2 className="text-xl font-bold text-white mb-3">
             Program
           </h2>
-          <div className="text-base sm:text-lg text-muted-foreground leading-[2] whitespace-pre-wrap max-w-prose">
+          <div className="text-[15px] text-white/50 leading-[2] whitespace-pre-wrap font-mono">
             {program}
           </div>
         </section>
@@ -34,10 +34,10 @@ export function EventContent({ description, program, practicalInfo }: EventConte
 
       {practicalInfo && (
         <section>
-          <h2 className="text-2xl font-bold text-foreground mb-4">
-            Praktisk informasjon
+          <h2 className="text-xl font-bold text-white mb-3">
+            Praktisk info
           </h2>
-          <div className="text-base sm:text-lg text-muted-foreground leading-[1.85] whitespace-pre-wrap max-w-prose">
+          <div className="text-[15px] text-white/50 leading-[1.9] whitespace-pre-wrap">
             {practicalInfo}
           </div>
         </section>

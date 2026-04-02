@@ -65,56 +65,52 @@ export function EventSidebar({
   const organizerLink = ownerPage ? `/s/${ownerPage.slug}` : null;
 
   return (
-    <div className="rounded-2xl bg-card border border-border shadow-sm p-5 space-y-4">
-      {/* Date */}
+    <div className="rounded-2xl bg-white/[0.03] border border-white/[0.06] p-5 space-y-4">
       <div className="flex items-start gap-3">
-        <Calendar className="w-5 h-5 text-amber-500 mt-0.5 shrink-0" />
+        <Calendar className="w-4 h-4 text-white/30 mt-0.5 shrink-0" />
         <div>
-          <p className="text-sm font-semibold text-card-foreground capitalize">{dateDisplay}</p>
-          <p className="text-sm text-muted-foreground">kl. {timeDisplay}</p>
+          <p className="text-sm font-medium text-white/80 capitalize">{dateDisplay}</p>
+          <p className="text-sm text-white/30">kl. {timeDisplay}</p>
         </div>
       </div>
 
-      {/* Location */}
       <div className="flex items-start gap-3">
-        <MapPin className="w-5 h-5 text-amber-500 mt-0.5 shrink-0" />
-        <p className="text-sm font-medium text-card-foreground">{location}</p>
+        <MapPin className="w-4 h-4 text-white/30 mt-0.5 shrink-0" />
+        <p className="text-sm text-white/80">{location}</p>
       </div>
 
-      {/* Attendees */}
       <div className="flex items-start gap-3">
-        <Users className="w-5 h-5 text-amber-500 mt-0.5 shrink-0" />
-        <p className="text-sm font-medium text-card-foreground">
+        <Users className="w-4 h-4 text-white/30 mt-0.5 shrink-0" />
+        <p className="text-sm text-white/80">
           {count ?? 0} deltar
-          {maxAttendees && <span className="text-muted-foreground"> / {maxAttendees} plasser</span>}
+          {maxAttendees && <span className="text-white/30"> / {maxAttendees}</span>}
         </p>
       </div>
 
-      <div className="border-t border-border" />
+      <div className="border-t border-white/[0.06]" />
 
       {/* Organizer */}
       <div className="flex items-center gap-3">
-        <Avatar className="h-9 w-9">
+        <Avatar className="h-8 w-8">
           {organizerLogo && <AvatarImage src={organizerLogo} alt={organizerName} />}
-          <AvatarFallback className="bg-secondary text-muted-foreground text-xs font-bold">
+          <AvatarFallback className="bg-white/10 text-white/50 text-xs font-semibold">
             {organizerName[0]}
           </AvatarFallback>
         </Avatar>
         <div className="text-sm">
-          <p className="text-muted-foreground text-xs">Arrangert av</p>
+          <p className="text-white/25 text-xs">Arrangert av</p>
           {organizerLink ? (
-            <Link to={organizerLink} className="text-card-foreground font-medium hover:text-amber-600 transition-colors">
+            <Link to={organizerLink} className="text-white/80 font-medium hover:text-white transition-colors">
               {organizerName}
             </Link>
           ) : (
-            <span className="text-card-foreground font-medium">{organizerName}</span>
+            <span className="text-white/80 font-medium">{organizerName}</span>
           )}
         </div>
       </div>
 
-      <div className="border-t border-border" />
+      <div className="border-t border-white/[0.06]" />
 
-      {/* CTA */}
       <EventHeroCTA eventId={eventId} />
 
       {registrationUrl && (
@@ -122,7 +118,7 @@ export function EventSidebar({
           href={registrationUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-1.5 text-sm font-medium text-amber-600 hover:text-amber-700 transition-colors"
+          className="inline-flex items-center gap-1.5 text-sm text-white/40 hover:text-white/70 transition-colors"
         >
           <ExternalLink className="w-3.5 h-3.5" />
           Ekstern påmelding
@@ -134,10 +130,10 @@ export function EventSidebar({
           href={ownerPage.website}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+          className="inline-flex items-center gap-1.5 text-sm text-white/25 hover:text-white/50 transition-colors"
         >
           <Globe className="w-3.5 h-3.5" />
-          Besøk nettside
+          Nettside
         </a>
       )}
     </div>

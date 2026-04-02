@@ -15,22 +15,22 @@ export function EventStickyBar({ startsAt, location, eventId }: EventStickyBarPr
   const { data: count } = useEventAttendeeCount(eventId);
 
   return (
-    <div className="flex flex-wrap items-center justify-between gap-4 py-4 border-y border-border">
-      <div className="flex flex-wrap items-center gap-5 text-sm text-muted-foreground font-medium">
+    <div className="flex flex-wrap items-center justify-between gap-4 py-4 border-t border-b border-white/[0.06]">
+      <div className="flex flex-wrap items-center gap-5 text-sm text-white/35 font-medium">
         <span className="inline-flex items-center gap-1.5">
-          <Calendar className="w-4 h-4 text-amber-500" />
+          <Calendar className="w-3.5 h-3.5" />
           {format(startDate, "d. MMM yyyy", { locale: nb })}
         </span>
         <span className="inline-flex items-center gap-1.5">
-          <Clock className="w-4 h-4 text-amber-500" />
+          <Clock className="w-3.5 h-3.5" />
           {format(startDate, "HH:mm")}
         </span>
         <span className="inline-flex items-center gap-1.5">
-          <MapPin className="w-4 h-4 text-amber-500" />
+          <MapPin className="w-3.5 h-3.5" />
           {location}
         </span>
         <span className="inline-flex items-center gap-1.5">
-          <Users className="w-4 h-4 text-amber-500" />
+          <Users className="w-3.5 h-3.5" />
           {count ?? 0} deltar
         </span>
       </div>
