@@ -77,7 +77,7 @@ export default function DashboardMinProfilPage() {
               <CardTitle className="text-base">Rediger profil</CardTitle>
             </CardHeader>
             <CardContent>
-              <EditProfileForm profile={profile} onSuccess={() => setEditing(false)} />
+              <EditProfileForm profile={profile} ownerProfile={ownerProfile} onSuccess={() => setEditing(false)} />
             </CardContent>
           </Card>
         ) : (
