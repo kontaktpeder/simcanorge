@@ -7,10 +7,13 @@ import { PageHeader } from "@/components/layout/PageHeader";
 import { supabase } from "@/integrations/supabase/client";
 import { useMarketplaceItemBySlug } from "@/hooks/useMarketplace";
 import { useCart } from "@/hooks/useCart";
+import { useAuth } from "@/hooks/useAuth";
+import { useMyPersonProfile } from "@/hooks/useMyPersonProfile";
+import { PostComposer } from "@/components/feed/PostComposer";
 import { ImageLightbox } from "@/components/ui/image-lightbox";
 import { getOptimizedImageUrl, getThumbnailUrl } from "@/lib/imageUtils";
 import {
-  ChevronRight, ChevronLeft, ArrowLeft, Check,
+  ChevronRight, ChevronLeft, ArrowLeft, Check, Share2, Pencil,
 } from "lucide-react";
 import { OwnerCard } from "@/components/car/OwnerCard";
 import { SimcaNorgeSellerCard } from "@/components/car/SimcaNorgeSellerCard";
