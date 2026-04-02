@@ -204,7 +204,7 @@ export default function Index() {
             )}
 
             {!feedLoading && feedPosts && feedPosts.length > 0 && (
-              <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 {feedPosts.map((post) => (
                   <FeedCard key={post.id} post={post} />
                 ))}
