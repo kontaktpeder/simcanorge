@@ -191,7 +191,7 @@ export default function PublicEventPage() {
                   key={i}
                   className="flex items-baseline gap-6 py-4 border-b border-neutral-200/60 last:border-0"
                 >
-                  <span className="text-[24px] text-neutral-300 shrink-0 w-16 text-right" style={display}>
+                  <span className="text-[28px] text-neutral-300 shrink-0 w-16 text-right italic" style={display}>
                     {timeMatch?.[0] || ""}
                   </span>
                   <span className="text-[16px] text-neutral-600 leading-relaxed" style={body}>
