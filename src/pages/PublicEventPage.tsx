@@ -8,7 +8,10 @@ import { useState } from "react";
 import { EventHeroCTA } from "@/components/events/public/EventHeroCTA";
 import { ImageLightbox } from "@/components/ui/image-lightbox";
 import { getOptimizedImageUrl } from "@/lib/imageUtils";
-import { MapPin, Users, ExternalLink, Clock } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { useMyPersonProfile } from "@/hooks/useMyPersonProfile";
+import { PostComposer } from "@/components/feed/PostComposer";
+import { MapPin, Users, ExternalLink, Clock, Share2, Pencil } from "lucide-react";
 
 const TYPE_LABELS: Record<string, string> = {
   meet: "Biltreff", show: "Show", market: "Delemarked", drive: "Kjøretur",
