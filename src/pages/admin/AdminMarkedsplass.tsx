@@ -33,7 +33,7 @@ interface AdminMarketplaceItem {
   price: number | null;
   marketplace_images?: MarketplaceImage[];
   categories?: MarketplaceCategory | null;
-  owners?: Owner | null;
+  person_profiles?: Owner | null;
 }
 
 const statusLabels: Record<string, { label: string; className: string }> = {
