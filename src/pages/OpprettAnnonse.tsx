@@ -161,7 +161,11 @@ export default function OpprettAnnonse() {
     if (!ownerProfile || isSubmitting) return;
     setIsSubmitting(true);
     try {
-      const data = await submitAsListing(values, { ownerId: ownerProfile.id, profileLocation: ownerProfile?.location ?? null });
+      const data = await submitAsListing(values, {
+        ownerId: ownerProfile.id,
+        personProfileId: ownerProfile.id,
+        profileLocation: ownerProfile?.location ?? null,
+      });
       if (images.length > 0 && data?.id) {
         const uploaded = await uploadImages(data.id);
         if (uploaded.length > 0) {
