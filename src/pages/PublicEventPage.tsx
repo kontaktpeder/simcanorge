@@ -15,9 +15,9 @@ const TYPE_LABELS: Record<string, string> = {
   club_night: "Klubbkveld", exhibition: "Utstilling", open_day: "Åpen dag", other: "Arrangement",
 };
 
-// Font shortcuts
-const serif = { fontFamily: "'Playfair Display', serif" };
-const display = { fontFamily: "'Bebas Neue', sans-serif" };
+// Font shortcuts — rounder, warmer feel
+const serif = { fontFamily: "'DM Serif Display', 'Playfair Display', serif" };
+const display = { fontFamily: "'DM Serif Display', serif" };
 const body = { fontFamily: "'Source Sans 3', sans-serif" };
 
 export default function PublicEventPage() {
@@ -90,14 +90,14 @@ export default function PublicEventPage() {
 
             {/* Title */}
             <h1
-              className="text-[2.2rem] sm:text-[2.8rem] md:text-[3.4rem] leading-[1.05] tracking-[-0.015em]"
+              className="text-[2.6rem] sm:text-[3.4rem] md:text-[4.2rem] leading-[1.08] tracking-[-0.02em]"
               style={serif}
             >
               {event.title}
             </h1>
 
             {event.short_description && (
-              <p className="text-[17px] text-neutral-500 leading-relaxed max-w-md" style={body}>
+              <p className="text-[19px] sm:text-[21px] text-neutral-500 leading-[1.6] max-w-md" style={body}>
                 {event.short_description}
               </p>
             )}
@@ -105,18 +105,18 @@ export default function PublicEventPage() {
             {/* Date + time + place — stacked, quiet */}
             <div className="pt-3 space-y-2.5">
               <div className="flex items-baseline gap-3">
-                <span className="text-[3rem] md:text-[3.8rem] leading-none" style={display}>
+                <span className="text-[3.5rem] md:text-[4.5rem] leading-none italic" style={display}>
                   {dayNum}
                 </span>
                 <div className="space-y-0.5">
-                  <span className="block text-[15px] text-neutral-600 capitalize" style={body}>{monthStr} {yearStr}</span>
-                  <span className="block text-[13px] text-neutral-400 capitalize" style={body}>{dayName}</span>
+                  <span className="block text-[16px] text-neutral-600 capitalize" style={body}>{monthStr} {yearStr}</span>
+                  <span className="block text-[14px] text-neutral-400 capitalize" style={body}>{dayName}</span>
                 </div>
                 <div className="ml-5 pl-5 border-l border-neutral-300/70 space-y-0.5">
-                  <span className="block text-[20px] leading-tight" style={display}>
+                  <span className="block text-[24px] leading-tight italic" style={display}>
                     {timeStr}{endTimeStr ? ` – ${endTimeStr}` : ""}
                   </span>
-                  <span className="flex items-center gap-1.5 text-[13px] text-neutral-500" style={body}>
+                  <span className="flex items-center gap-1.5 text-[14px] text-neutral-500" style={body}>
                     <MapPin className="w-3 h-3 text-neutral-400" />
                     {event.location}
                   </span>
@@ -159,7 +159,7 @@ export default function PublicEventPage() {
           <section>
             <SectionLabel>Om arrangementet</SectionLabel>
             <div className="h-px bg-neutral-300/60 mb-8" />
-            <p className="text-[17px] sm:text-[18px] text-neutral-600 leading-[1.95] whitespace-pre-wrap" style={body}>
+            <p className="text-[19px] sm:text-[20px] text-neutral-600 leading-[1.9] whitespace-pre-wrap" style={body}>
               {event.description}
             </p>
           </section>
@@ -191,10 +191,10 @@ export default function PublicEventPage() {
                   key={i}
                   className="flex items-baseline gap-6 py-4 border-b border-neutral-200/60 last:border-0"
                 >
-                  <span className="text-[24px] text-neutral-300 shrink-0 w-16 text-right" style={display}>
+                  <span className="text-[28px] text-neutral-300 shrink-0 w-16 text-right italic" style={display}>
                     {timeMatch?.[0] || ""}
                   </span>
-                  <span className="text-[16px] text-neutral-600 leading-relaxed" style={body}>
+                  <span className="text-[17px] text-neutral-600 leading-relaxed" style={body}>
                     {line.replace(/^\d{1,2}[:.]\d{2}\s*[-–—]?\s*/, "")}
                   </span>
                 </div>
@@ -223,7 +223,7 @@ export default function PublicEventPage() {
           <section>
             <SectionLabel>Praktisk info</SectionLabel>
             <div className="h-px bg-neutral-300/60 mb-8" />
-            <p className="text-[17px] sm:text-[18px] text-neutral-600 leading-[1.95] whitespace-pre-wrap" style={body}>
+            <p className="text-[19px] sm:text-[20px] text-neutral-600 leading-[1.9] whitespace-pre-wrap" style={body}>
               {event.practical_info}
             </p>
           </section>
@@ -312,7 +312,7 @@ export default function PublicEventPage() {
         <p className="text-[10px] uppercase tracking-[0.3em] text-neutral-400 mb-5" style={body}>
           {dayNum}. {monthStr} {yearStr} · {event.location}
         </p>
-        <h2 className="text-3xl sm:text-4xl md:text-[3.2rem] leading-[1.1] mb-10" style={serif}>
+        <h2 className="text-4xl sm:text-5xl md:text-[4rem] leading-[1.1] mb-10 italic" style={serif}>
           Vi sees der.
         </h2>
         <EventHeroCTA eventId={event.id} />
