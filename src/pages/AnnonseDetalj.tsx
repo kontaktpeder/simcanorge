@@ -379,6 +379,13 @@ function MarketplaceDetailView({ item }: { item: any }) {
         </div>
       </section>
 
+      {/* Comments */}
+      <section className="bg-[#f5f4f0] py-8">
+        <div className="container mx-auto px-4 max-w-3xl">
+          <CommentSection marketplaceItemId={item.id} />
+        </div>
+      </section>
+
       <ImageLightbox images={allImages.map((url: string, i: number) => ({ url, alt: `${item.title} – bilde ${i + 1}` }))} initialIndex={activeImage} isOpen={lightboxOpen} onClose={() => setLightboxOpen(false)} />
     </Layout>
   );
