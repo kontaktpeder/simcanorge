@@ -8,6 +8,7 @@ import { EventImageUpload } from "@/components/events/EventImageUpload";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ExternalLink } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
+import { PostComposer } from "@/components/feed/PostComposer";
 
 export default function EditEventPage() {
   const { eventId } = useParams<{ eventId: string }>();
