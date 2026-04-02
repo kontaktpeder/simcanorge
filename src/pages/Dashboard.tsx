@@ -95,22 +95,9 @@ export default function Dashboard() {
 
   const handleOpenForm = () => {
     setShowCarForm(true);
-    setShowOwnerProfile(false);
     setTimeout(() => {
       formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 100);
-  };
-
-  const handleOpenOwnerProfile = () => {
-    setShowOwnerProfile(true);
-    setShowCarForm(false);
-    setTimeout(() => {
-      profileRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 100);
-  };
-
-  const handleCloseOwnerProfile = () => {
-    setShowOwnerProfile(false);
   };
 
   const handleStartMyCarsGuide = () => {
