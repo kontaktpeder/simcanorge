@@ -109,8 +109,8 @@ export default function PublicEventPage() {
                   {dayNum}
                 </span>
                 <div className="space-y-0.5">
-                  <span className="block text-[15px] text-neutral-600 capitalize" style={body}>{monthStr} {yearStr}</span>
-                  <span className="block text-[13px] text-neutral-400 capitalize" style={body}>{dayName}</span>
+                  <span className="block text-[16px] text-neutral-600 capitalize" style={body}>{monthStr} {yearStr}</span>
+                  <span className="block text-[14px] text-neutral-400 capitalize" style={body}>{dayName}</span>
                 </div>
                 <div className="ml-5 pl-5 border-l border-neutral-300/70 space-y-0.5">
                   <span className="block text-[20px] leading-tight" style={display}>
