@@ -28,25 +28,25 @@ export function Header() {
             />
           </Link>
 
-          <nav className="hidden lg:flex items-center gap-0 flex-shrink-0">
+          <nav className="hidden lg:flex items-center gap-1 flex-shrink-0">
             {navLinks.map((link, i) => {
               const isActive = location.pathname === link.href;
               return (
                 <Link
                   key={link.href}
                   to={link.href}
-                  className={`relative px-3 py-1 text-[10.5px] tracking-[0.18em] uppercase transition-all duration-300 ${
+                  className={`relative px-4 py-1.5 text-[13px] tracking-[0.12em] uppercase font-medium transition-all duration-300 ${
                     isActive
                       ? "text-white"
-                      : "text-[#a89880]/60 hover:text-white/80"
+                      : "text-white/50 hover:text-white/90"
                   }`}
                 >
                   {link.label}
                   {isActive && (
-                    <span className="absolute -bottom-[7px] left-3 right-3 h-px bg-[#c4a882]" />
+                    <span className="absolute -bottom-[7px] left-4 right-4 h-px bg-[#c4a882]" />
                   )}
                   {i < navLinks.length - 1 && (
-                    <span className="absolute right-0 top-1/2 -translate-y-1/2 w-px h-2.5 bg-[#a89880]/10" />
+                    <span className="absolute right-0 top-1/2 -translate-y-1/2 w-px h-2.5 bg-white/10" />
                   )}
                 </Link>
               );
