@@ -312,7 +312,7 @@ export default function PublicEventPage() {
         <p className="text-[10px] uppercase tracking-[0.3em] text-neutral-400 mb-5" style={body}>
           {dayNum}. {monthStr} {yearStr} · {event.location}
         </p>
-        <h2 className="text-3xl sm:text-4xl md:text-[3.2rem] leading-[1.1] mb-10" style={serif}>
+        <h2 className="text-4xl sm:text-5xl md:text-[4rem] leading-[1.1] mb-10 italic" style={serif}>
           Vi sees der.
         </h2>
         <EventHeroCTA eventId={event.id} />
