@@ -2,6 +2,24 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
+// Legacy: get owners.id for FK-dependent queries (inquiries, marketplace_items.owner_id)
+export function useLegacyOwnerId(userId: string | undefined) {
+  return useQuery({
+    queryKey: ['legacy-owner-id', userId],
+    queryFn: async () => {
+      if (!userId) return null;
+      const { data, error } = await supabase
+        .from('owners')
+        .select('id')
+        .eq('user_id', userId)
+        .maybeSingle();
+      if (error) throw error;
+      return data?.id ?? null;
+    },
+    enabled: !!userId,
+  });
+}
+
 // Unified profile interface — all data now lives in person_profiles
 export interface OwnerProfile {
   id: string;
