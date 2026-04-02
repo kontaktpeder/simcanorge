@@ -24,14 +24,14 @@ export function EventGallery({ images }: EventGalleryProps) {
 
   return (
     <section>
-      <h2 className="text-2xl font-bold text-stone-900 mb-4">Bilder</h2>
+      <h2 className="text-2xl font-bold text-foreground mb-4">Bilder</h2>
 
       <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
         {images.map((img, idx) => (
           <button
             key={img.id}
             onClick={() => setLightboxIndex(idx)}
-            className="relative aspect-[4/3] overflow-hidden rounded-xl group cursor-pointer shadow-sm hover:shadow-md transition-shadow"
+            className="relative aspect-[4/3] overflow-hidden rounded-xl group cursor-pointer ring-1 ring-border hover:ring-amber-400 transition-all"
           >
             <img
               src={getOptimizedImageUrl(img.image_url, { width: 600 })}

@@ -65,61 +65,58 @@ export function EventSidebar({
   const organizerLink = ownerPage ? `/s/${ownerPage.slug}` : null;
 
   return (
-    <div className="rounded-2xl bg-white shadow-lg border border-stone-100 p-6 space-y-5">
+    <div className="rounded-2xl bg-card border border-border shadow-sm p-5 space-y-4">
       {/* Date */}
       <div className="flex items-start gap-3">
         <Calendar className="w-5 h-5 text-amber-500 mt-0.5 shrink-0" />
         <div>
-          <p className="text-sm font-semibold text-stone-800 capitalize">{dateDisplay}</p>
-          <p className="text-sm text-stone-500">kl. {timeDisplay}</p>
+          <p className="text-sm font-semibold text-card-foreground capitalize">{dateDisplay}</p>
+          <p className="text-sm text-muted-foreground">kl. {timeDisplay}</p>
         </div>
       </div>
 
       {/* Location */}
       <div className="flex items-start gap-3">
         <MapPin className="w-5 h-5 text-amber-500 mt-0.5 shrink-0" />
-        <p className="text-sm font-medium text-stone-700">{location}</p>
+        <p className="text-sm font-medium text-card-foreground">{location}</p>
       </div>
 
       {/* Attendees */}
       <div className="flex items-start gap-3">
         <Users className="w-5 h-5 text-amber-500 mt-0.5 shrink-0" />
-        <p className="text-sm font-medium text-stone-700">
-          {count ?? 0} påmeldt
-          {maxAttendees && <span className="text-stone-400"> / {maxAttendees} plasser</span>}
+        <p className="text-sm font-medium text-card-foreground">
+          {count ?? 0} deltar
+          {maxAttendees && <span className="text-muted-foreground"> / {maxAttendees} plasser</span>}
         </p>
       </div>
 
-      {/* Divider */}
-      <div className="border-t border-stone-100" />
+      <div className="border-t border-border" />
 
       {/* Organizer */}
       <div className="flex items-center gap-3">
         <Avatar className="h-9 w-9">
           {organizerLogo && <AvatarImage src={organizerLogo} alt={organizerName} />}
-          <AvatarFallback className="bg-amber-100 text-amber-700 text-xs font-bold">
+          <AvatarFallback className="bg-secondary text-muted-foreground text-xs font-bold">
             {organizerName[0]}
           </AvatarFallback>
         </Avatar>
         <div className="text-sm">
-          <p className="text-stone-400 text-xs">Arrangert av</p>
+          <p className="text-muted-foreground text-xs">Arrangert av</p>
           {organizerLink ? (
-            <Link to={organizerLink} className="text-stone-800 font-medium hover:text-amber-600 transition-colors">
+            <Link to={organizerLink} className="text-card-foreground font-medium hover:text-amber-600 transition-colors">
               {organizerName}
             </Link>
           ) : (
-            <span className="text-stone-800 font-medium">{organizerName}</span>
+            <span className="text-card-foreground font-medium">{organizerName}</span>
           )}
         </div>
       </div>
 
-      {/* Divider */}
-      <div className="border-t border-stone-100" />
+      <div className="border-t border-border" />
 
       {/* CTA */}
       <EventHeroCTA eventId={eventId} />
 
-      {/* External registration */}
       {registrationUrl && (
         <a
           href={registrationUrl}
@@ -132,13 +129,12 @@ export function EventSidebar({
         </a>
       )}
 
-      {/* Website */}
       {ownerPage?.website && (
         <a
           href={ownerPage.website}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-1.5 text-sm text-stone-400 hover:text-stone-600 transition-colors"
+          className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
         >
           <Globe className="w-3.5 h-3.5" />
           Besøk nettside
