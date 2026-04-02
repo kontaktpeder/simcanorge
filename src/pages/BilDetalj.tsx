@@ -145,7 +145,19 @@ const BilDetalj = () => {
           ...data,
           external_links: (data.external_links as unknown) as ExternalLinkData[] | null,
           timeline_events: (data.timeline_events as unknown) as TimelineEvent[] | null,
+          owner_profile_id: null as string | null,
         } : null;
+        // Resolve owner_profile_id from car_owners join
+        if (parsed && (data as any).car_owners?.length > 0) {
+          // Look up person_profile by user_id
+          const ownerUserId = (data as any).car_owners[0].user_id;
+          const { data: pp } = await supabase
+            .from("person_profiles")
+            .select("id")
+            .eq("user_id", ownerUserId)
+            .maybeSingle();
+          if (pp) parsed.owner_profile_id = pp.id;
+        }
         setCar(parsed);
       }
       setIsLoading(false);
