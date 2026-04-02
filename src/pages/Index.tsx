@@ -77,6 +77,7 @@ const modules = [
 
 export default function Index() {
   const { user } = useAuth();
+  const { data: feedPosts, isLoading: feedLoading } = useFeedPosts();
 
   return (
     <Layout>
