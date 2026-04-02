@@ -39,15 +39,6 @@ export default function Dashboard() {
     }
   }, [user, authLoading, navigate]);
 
-  useEffect(() => {
-    if (showOwnerProfile && profileRef.current) {
-      setTimeout(() => {
-        profileRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 200);
-    }
-  }, []);
-
-  const { data: carCount, isLoading: carsLoading } = useQuery({
     queryKey: ['my-cars-count', user?.id],
     queryFn: async () => {
       if (!user) return 0;
