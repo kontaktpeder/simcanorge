@@ -265,8 +265,46 @@ function MarketplaceDetailView({ item }: { item: any }) {
 
       <section className="poster-section pb-[max(2rem,env(safe-area-inset-bottom))] sm:pb-[max(5rem,env(safe-area-inset-bottom))]">
         <div className="container mx-auto px-4 relative z-10">
-          <Link to="/markedsplass" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6 font-display uppercase tracking-wider">
-            <ArrowLeft className="w-4 h-4" /> Tilbake
+          {isOwner && (
+            <div className="bg-[#111315] border border-white/[0.08] mb-6 -mx-4 sm:mx-0">
+              <div className="px-4 py-3 flex items-center justify-between">
+                <span className="text-[12px] uppercase tracking-[0.12em] text-white/40 font-sans font-medium">
+                  Din annonse
+                </span>
+                <div className="flex items-center gap-2">
+                  <Link
+                    to={`/dashboard/annonse/${item.id}/rediger`}
+                    className="flex items-center gap-1.5 text-[11px] uppercase tracking-[0.12em] text-white/60 hover:text-white bg-white/[0.06] hover:bg-white/[0.10] border border-white/[0.10] px-3 py-1.5 transition-all font-sans"
+                  >
+                    <Pencil className="w-3 h-3" />
+                    Rediger
+                  </Link>
+                  {!showFeedComposer && (
+                    <button
+                      onClick={() => setShowFeedComposer(true)}
+                      className="flex items-center gap-1.5 text-[11px] uppercase tracking-[0.12em] text-white/60 hover:text-white bg-white/[0.06] hover:bg-white/[0.10] border border-white/[0.10] px-3 py-1.5 transition-all font-sans"
+                    >
+                      <Share2 className="w-3 h-3" />
+                      Del til feed
+                    </button>
+                  )}
+                </div>
+              </div>
+              {showFeedComposer && (
+                <div className="px-4 pb-4">
+                  <PostComposer
+                    compact
+                    postType="marketplace_published"
+                    marketplaceItemId={item.id}
+                    snapshotTitle={item.title}
+                    snapshotImageUrl={firstImage}
+                    snapshotEntityType="marketplace"
+                    onClose={() => setShowFeedComposer(false)}
+                  />
+                </div>
+              )}
+            </div>
+          )}
           </Link>
 
           <div className="max-w-5xl mx-auto overflow-hidden">
