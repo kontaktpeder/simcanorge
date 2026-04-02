@@ -92,7 +92,7 @@ export default function Index() {
       <div className="min-h-[calc(100vh-4rem)]">
 
         {/* ─── HERO ─── */}
-        <section className="relative bg-[#0a0a0a] pt-14 pb-20 md:pt-20 md:pb-28 overflow-hidden">
+        <section className="relative bg-[#0a0a0a] pt-10 pb-14 md:pt-12 md:pb-16 overflow-hidden">
           {/* Car silhouette watermark */}
           <img
             src={carSilhouette}
@@ -101,11 +101,11 @@ export default function Index() {
             className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-[15%] w-[700px] md:w-[900px] opacity-[0.04] invert pointer-events-none select-none"
           />
           <div className="relative max-w-[1100px] mx-auto px-5 md:px-8 text-center">
-            <p className="text-[9px] md:text-[10px] tracking-[0.4em] uppercase text-white/20 mb-5 md:mb-7">
+            <p className="text-[9px] md:text-[10px] tracking-[0.4em] uppercase text-white/20 mb-4 md:mb-5">
               bilgarasje.no
             </p>
-            <h1 className="font-display text-[3rem] sm:text-[4.2rem] md:text-[5.5rem] leading-[0.92] uppercase tracking-wider text-white/90">
-              Norges<br />bilsamfunn<br />på nett
+            <h1 className="font-display text-[2.2rem] sm:text-[3rem] md:text-[3.8rem] leading-[1] uppercase tracking-wider text-white/90">
+              Norges bilsamfunn på nett
             </h1>
           </div>
         </section>
