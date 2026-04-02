@@ -17,6 +17,8 @@ const Kontakt = lazy(() => import("@/pages/Kontakt"));
 const Personvern = lazy(() => import("@/pages/Personvern"));
 const AcceptInvitation = lazy(() => import("@/pages/AcceptInvitation"));
 const Login = lazy(() => import("@/pages/Login"));
+const GlemtPassord = lazy(() => import("@/pages/GlemtPassord"));
+const NyttPassord = lazy(() => import("@/pages/NyttPassord"));
 const SokOmTilgang = lazy(() => import("@/pages/SokOmTilgang"));
 const StartAnnonse = lazy(() => import("@/pages/StartAnnonse"));
 const Konto = lazy(() => import("@/pages/Konto"));
