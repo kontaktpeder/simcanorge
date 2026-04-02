@@ -50,33 +50,11 @@ export default function DashboardEventsPage() {
           </div>
         )}
 
-        {(() => {
-          const active = events?.filter((e: any) => e.status !== 'draft') ?? [];
-          const drafts = events?.filter((e: any) => e.status === 'draft') ?? [];
-          return (
-            <>
-              {active.length > 0 && (
-                <div className="space-y-3">
-                  {active.map((e: any) => (
-                    <EventCard key={e.id} event={e} />
-                  ))}
-                </div>
-              )}
-              {drafts.length > 0 && (
-                <div className="space-y-3 mt-8">
-                  <h2 className="text-sm uppercase tracking-widest text-muted-foreground font-display">
-                    Utkast / avpubliserte
-                  </h2>
-                  {drafts.map((e: any) => (
-                    <div key={e.id} className="opacity-50">
-                      <EventCard event={e} />
-                    </div>
-                  ))}
-                </div>
-              )}
-            </>
-          );
-        })()}
+        <div className="space-y-3">
+          {events?.map((e: any) => (
+            <EventCard key={e.id} event={e} />
+          ))}
+        </div>
       </div>
     </Layout>
   );
