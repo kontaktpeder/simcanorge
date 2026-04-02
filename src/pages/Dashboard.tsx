@@ -14,7 +14,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { SendInnBilForm } from '@/components/car/SendInnBilForm';
 
-import { useOwnerProfile } from '@/hooks/useOwnerProfile';
+import { useOwnerProfile, useLegacyOwnerId } from '@/hooks/useOwnerProfile';
 import { useGuide } from '@/hooks/useGuide';
 import { useMyListings } from '@/hooks/useMarketplace';
 import { GarageIcon } from '@/components/ui/GarageIcon';

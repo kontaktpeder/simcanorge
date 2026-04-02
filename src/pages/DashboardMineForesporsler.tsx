@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
-import { useOwnerProfile } from "@/hooks/useOwnerProfile";
+import { useOwnerProfile, useLegacyOwnerId } from "@/hooks/useOwnerProfile";
 import { supabase } from "@/integrations/supabase/client";
 import { GarageLayout } from "@/components/ui/garage/GarageLayout";
 import { EnamelCard } from "@/components/ui/garage/EnamelCard";
