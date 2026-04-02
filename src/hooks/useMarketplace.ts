@@ -123,15 +123,15 @@ export function useMyListings(userId: string | undefined) {
     queryFn: async () => {
       if (!userId) return [];
 
-      // First get the owner profile
-      const { data: owner, error: ownerError } = await supabase
-        .from('owners')
+      // Get person_profile for this user
+      const { data: profile, error: profileError } = await supabase
+        .from('person_profiles')
         .select('id')
         .eq('user_id', userId)
         .maybeSingle();
 
-      if (ownerError) throw ownerError;
-      if (!owner) return [];
+      if (profileError) throw profileError;
+      if (!profile) return [];
 
       const { data, error } = await supabase
         .from('marketplace_items')
@@ -140,7 +140,7 @@ export function useMyListings(userId: string | undefined) {
           marketplace_images(id, image_url, sort_order, alt_text),
           categories(id, name, slug)
         `)
-        .eq('owner_id', owner.id)
+        .eq('person_profile_id', profile.id as any)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
