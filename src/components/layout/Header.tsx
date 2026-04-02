@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X, LogIn } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
-import { GlobalSearch } from "@/components/layout/GlobalSearch";
 import bilgarasjeLogo from "@/assets/bilgarasje-logo.png";
 
 const navLinks = [
@@ -53,9 +52,7 @@ export function Header() {
             })}
           </nav>
 
-          <div className="hidden md:flex flex-1 max-w-sm ml-auto">
-            <GlobalSearch />
-          </div>
+          <div className="flex-1" />
 
           <div className="hidden lg:flex items-center gap-2 flex-shrink-0">
             {user ? (
@@ -96,9 +93,6 @@ export function Header() {
 
       {mobileMenuOpen && (
         <nav className="lg:hidden bg-[#0a0a0a] border-t border-white/[0.04]">
-          <div className="px-5 pt-3 pb-2">
-            <GlobalSearch />
-          </div>
           <div className="px-5 py-2 flex flex-col">
             {navLinks.map((link) => {
               const isActive = location.pathname === link.href;
