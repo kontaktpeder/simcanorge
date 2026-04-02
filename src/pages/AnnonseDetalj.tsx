@@ -226,6 +226,13 @@ function MarketplaceDetailView({ item }: { item: any }) {
   const { addItem, removeItem, isInCart } = useCart();
   const [activeImage, setActiveImage] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
+  const { user } = useAuth();
+  const { data: myProfile } = useMyPersonProfile();
+  const [showFeedComposer, setShowFeedComposer] = useState(false);
+  const isOwner = !!(myProfile && (item as any).person_profile_id === myProfile.id);
+  const firstImage = (item as any).marketplace_images
+    ?.slice()
+    .sort((a: any, b: any) => (a.sort_order ?? 0) - (b.sort_order ?? 0))[0]?.image_url ?? null;
 
   const images = [...(item.marketplace_images || [])].sort((a: any, b: any) => (a.sort_order || 0) - (b.sort_order || 0));
   const allImages = images.map((img: any) => img.image_url);
