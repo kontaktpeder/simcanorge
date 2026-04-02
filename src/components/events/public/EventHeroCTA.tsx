@@ -9,14 +9,11 @@ export function EventHeroCTA({ eventId }: { eventId: string }) {
   const { mutate: upsert, isPending } = useUpsertAttendance(eventId);
   const isGoing = !!attendance;
 
-  const base =
-    "inline-flex items-center justify-center font-bold text-[15px] rounded-full transition-all duration-200 active:scale-[0.97] select-none";
-
   if (!user) {
     return (
       <Link
         to="/login"
-        className={`${base} px-8 py-3.5 bg-gradient-to-r from-amber-400 to-orange-500 text-black shadow-lg shadow-orange-500/20 hover:shadow-orange-500/30 hover:brightness-110`}
+        className="inline-flex items-center justify-center font-bold text-[14px] rounded-full px-7 py-3 bg-gradient-to-r from-amber-400 to-amber-500 text-black shadow-lg shadow-amber-500/20 hover:shadow-amber-500/30 hover:brightness-110 transition-all duration-200 active:scale-[0.97] select-none"
       >
         Bli med
       </Link>
@@ -32,13 +29,13 @@ export function EventHeroCTA({ eventId }: { eventId: string }) {
           onError: () => toast.error("Noe gikk galt"),
         })
       }
-      className={`${base} px-8 py-3.5 ${
+      className={`inline-flex items-center justify-center font-bold text-[14px] rounded-full px-7 py-3 transition-all duration-200 active:scale-[0.97] select-none ${
         isGoing
-          ? "bg-white/10 text-white border border-white/10 hover:bg-white/15"
-          : "bg-gradient-to-r from-amber-400 to-orange-500 text-black shadow-lg shadow-orange-500/20 hover:shadow-orange-500/30 hover:brightness-110"
+          ? "bg-white/10 text-white/80 border border-white/10 hover:bg-white/15 backdrop-blur-sm"
+          : "bg-gradient-to-r from-amber-400 to-amber-500 text-black shadow-lg shadow-amber-500/20 hover:shadow-amber-500/30 hover:brightness-110"
       }`}
     >
-      {isGoing ? "Påmeldt" : "Meld meg på"}
+      {isGoing ? "Påmeldt ✓" : "Meld meg på"}
     </button>
   );
 }
