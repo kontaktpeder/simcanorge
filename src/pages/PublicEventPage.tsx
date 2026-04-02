@@ -155,14 +155,24 @@ export default function PublicEventPage() {
 
             {/* Meta details */}
             <div className="space-y-1.5 text-[15px] text-neutral-600 mb-4" style={body}>
-              <div className="flex items-center gap-2">
+              <a
+                href={`https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(event.title)}&dates=${format(startDate, "yyyyMMdd'T'HHmmss")}/${endDate ? format(endDate, "yyyyMMdd'T'HHmmss") : format(startDate, "yyyyMMdd'T'HHmmss")}&location=${encodeURIComponent(event.location)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 hover:text-neutral-900 transition-colors"
+              >
                 <Clock className="w-4 h-4 text-neutral-400 shrink-0" />
-                <span className="capitalize">{dayName} {dayNum}. {monthStr} {yearStr} · {timeStr}{endTimeStr ? ` – ${endTimeStr}` : ""}</span>
-              </div>
-              <div className="flex items-center gap-2">
+                <span className="capitalize underline underline-offset-2 decoration-neutral-300">{dayName} {dayNum}. {monthStr} {yearStr} · {timeStr}{endTimeStr ? ` – ${endTimeStr}` : ""}</span>
+              </a>
+              <a
+                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(event.location)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 hover:text-neutral-900 transition-colors"
+              >
                 <MapPin className="w-4 h-4 text-neutral-400 shrink-0" />
-                <span>{event.location}</span>
-              </div>
+                <span className="underline underline-offset-2 decoration-neutral-300">{event.location}</span>
+              </a>
               <div className="flex items-center gap-2">
                 <Users className="w-4 h-4 text-neutral-400 shrink-0" />
                 <AttendeeCount eventId={event.id} maxAttendees={event.max_attendees} />
