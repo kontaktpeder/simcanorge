@@ -69,7 +69,7 @@ export default function PublicEventPage() {
 
   const organizerName = event.owner_page?.title || event.owner_profile?.display_name || null;
   const organizerLogo = event.owner_page?.logo_url || event.owner_profile?.avatar_url;
-  const organizerLink = event.owner_page ? `/s/${event.owner_page.slug}` : null;
+  const organizerLink = event.owner_page ? `/s/${event.owner_page.slug}` : event.owner_profile?.slug ? `/profil/${event.owner_profile.slug}` : null;
 
   return (
     <Layout>
@@ -141,28 +141,38 @@ export default function PublicEventPage() {
 
             {/* Title */}
             <h1
-              className="text-[2rem] sm:text-[2.4rem] md:text-[2.8rem] leading-[1.08] tracking-[-0.015em] mb-2"
+              className="text-[2rem] sm:text-[2.4rem] md:text-[2.8rem] leading-[1.08] tracking-[-0.015em] mb-2 text-neutral-900"
               style={serif}
             >
               {event.title}
             </h1>
 
             {event.short_description && (
-              <p className="text-[17px] sm:text-[19px] text-neutral-600 leading-[1.5] max-w-xl mb-4" style={body}>
+              <p className="text-[15px] sm:text-[16px] text-neutral-500 leading-[1.5] max-w-xl mb-4" style={body}>
                 {event.short_description}
               </p>
             )}
 
             {/* Meta details */}
             <div className="space-y-1.5 text-[15px] text-neutral-600 mb-4" style={body}>
-              <div className="flex items-center gap-2">
+              <a
+                href={`https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(event.title)}&dates=${format(startDate, "yyyyMMdd'T'HHmmss")}/${endDate ? format(endDate, "yyyyMMdd'T'HHmmss") : format(startDate, "yyyyMMdd'T'HHmmss")}&location=${encodeURIComponent(event.location)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 hover:text-neutral-900 transition-colors"
+              >
                 <Clock className="w-4 h-4 text-neutral-400 shrink-0" />
-                <span className="capitalize">{dayName} {dayNum}. {monthStr} {yearStr} · {timeStr}{endTimeStr ? ` – ${endTimeStr}` : ""}</span>
-              </div>
-              <div className="flex items-center gap-2">
+                <span className="capitalize underline underline-offset-2 decoration-neutral-300">{dayName} {dayNum}. {monthStr} {yearStr} · {timeStr}{endTimeStr ? ` – ${endTimeStr}` : ""}</span>
+              </a>
+              <a
+                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(event.location)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 hover:text-neutral-900 transition-colors"
+              >
                 <MapPin className="w-4 h-4 text-neutral-400 shrink-0" />
-                <span>{event.location}</span>
-              </div>
+                <span className="underline underline-offset-2 decoration-neutral-300">{event.location}</span>
+              </a>
               <div className="flex items-center gap-2">
                 <Users className="w-4 h-4 text-neutral-400 shrink-0" />
                 <AttendeeCount eventId={event.id} maxAttendees={event.max_attendees} />
@@ -252,19 +262,19 @@ export default function PublicEventPage() {
               </section>
             )}
 
-            {/* Gallery images — stacked, clickable */}
+            {/* Gallery images — compact grid */}
             {extraImages.length > 0 && (
-              <section className="space-y-3">
+              <section className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                 {extraImages.map((img, idx) => (
                   <button
                     key={img.id}
                     onClick={() => setLightboxIndex(idx + 1)}
-                    className="block w-full overflow-hidden cursor-pointer group"
+                    className="block overflow-hidden cursor-pointer group aspect-square"
                   >
                     <img
-                      src={getOptimizedImageUrl(img.image_url, { width: 1200 })}
+                      src={getOptimizedImageUrl(img.image_url, { width: 400 })}
                       alt={img.alt_text ?? ""}
-                      className="w-full h-auto object-contain group-hover:opacity-95 transition-opacity duration-300"
+                      className="w-full h-full object-cover group-hover:opacity-90 transition-opacity duration-300"
                       loading="lazy"
                     />
                   </button>
