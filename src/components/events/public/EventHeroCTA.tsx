@@ -1,8 +1,8 @@
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 import {
   useMyAttendance,
   useUpsertAttendance,
-  useEventAttendeeCount,
 } from "@/hooks/useEventAttendees";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
@@ -15,9 +15,13 @@ export function EventHeroCTA({ eventId }: { eventId: string }) {
 
   if (!user) {
     return (
-      <p className="text-sm text-[#8B98A5]">
-        Logg inn for å melde deg på
-      </p>
+      <Button
+        asChild
+        size="lg"
+        className="bg-gradient-to-r from-amber-500 to-amber-600 text-black font-semibold hover:from-amber-400 hover:to-amber-500 shadow-lg shadow-amber-500/20 border-0"
+      >
+        <Link to="/login">Logg inn for å melde deg på</Link>
+      </Button>
     );
   }
 
@@ -34,8 +38,8 @@ export function EventHeroCTA({ eventId }: { eventId: string }) {
       }
       className={
         isGoing
-          ? "bg-[#11161D] text-[#E6EDF3] border border-[#1F2730] hover:bg-[#1a2130]"
-          : "bg-amber-500 text-black hover:bg-amber-400 font-medium"
+          ? "bg-white/10 text-white border border-white/20 hover:bg-white/15 backdrop-blur-sm"
+          : "bg-gradient-to-r from-amber-500 to-amber-600 text-black font-semibold hover:from-amber-400 hover:to-amber-500 shadow-lg shadow-amber-500/20 border-0"
       }
     >
       {isGoing ? "✓ Påmeldt" : "Meld deg på"}

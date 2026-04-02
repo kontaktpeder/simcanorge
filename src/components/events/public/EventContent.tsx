@@ -9,32 +9,38 @@ export function EventContent({ description, program, practicalInfo }: EventConte
   if (!hasContent) return null;
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-12">
       {description && (
-        <div>
-          <h2 className="text-lg font-semibold text-[#E6EDF3] mb-3">Om arrangementet</h2>
-          <div className="text-sm text-[#8B98A5] leading-relaxed whitespace-pre-wrap">
+        <section>
+          <h2 className="text-xl font-semibold text-white mb-4 tracking-tight">
+            Om arrangementet
+          </h2>
+          <div className="text-[15px] text-white/60 leading-[1.8] whitespace-pre-wrap">
             {description}
           </div>
-        </div>
+        </section>
       )}
 
       {program && (
-        <div>
-          <h2 className="text-lg font-semibold text-[#E6EDF3] mb-3">Program</h2>
-          <div className="text-sm text-[#8B98A5] leading-relaxed whitespace-pre-wrap">
+        <section>
+          <h2 className="text-xl font-semibold text-white mb-4 tracking-tight">
+            Program
+          </h2>
+          <div className="text-[15px] text-white/60 leading-[1.8] whitespace-pre-wrap font-mono">
             {program}
           </div>
-        </div>
+        </section>
       )}
 
       {practicalInfo && (
-        <div>
-          <h2 className="text-lg font-semibold text-[#E6EDF3] mb-3">Praktisk informasjon</h2>
-          <div className="text-sm text-[#8B98A5] leading-relaxed whitespace-pre-wrap">
+        <section>
+          <h2 className="text-xl font-semibold text-white mb-4 tracking-tight">
+            Praktisk informasjon
+          </h2>
+          <div className="text-[15px] text-white/60 leading-[1.8] whitespace-pre-wrap">
             {practicalInfo}
           </div>
-        </div>
+        </section>
       )}
     </div>
   );
