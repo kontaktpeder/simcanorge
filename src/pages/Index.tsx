@@ -170,7 +170,7 @@ export default function Index() {
 
         {/* ─── POST UPDATE + FEED ─── */}
         <section className="py-8 md:py-12 bg-[#171a1d]">
-          <div className="max-w-[860px] mx-auto px-5 md:px-8">
+          <div className="max-w-[1000px] mx-auto px-5 md:px-8">
 
             {/* Composer */}
             <div className="mb-8">
@@ -204,7 +204,7 @@ export default function Index() {
             )}
 
             {!feedLoading && feedPosts && feedPosts.length > 0 && (
-              <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 {feedPosts.map((post) => (
                   <FeedCard key={post.id} post={post} />
                 ))}
