@@ -78,7 +78,7 @@ const AdminAnnonseProfil = () => {
     });
 
     // Notify owner
-    const owner = item.owners;
+    const owner = item.person_profiles;
     if (owner?.user_id) {
       await supabase.from('notifications').insert({
         user_id: owner.user_id,
