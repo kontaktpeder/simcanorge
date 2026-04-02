@@ -11,6 +11,7 @@ import { getOptimizedImageUrl } from "@/lib/imageUtils";
 import { useAuth } from "@/hooks/useAuth";
 import { useMyPersonProfile } from "@/hooks/useMyPersonProfile";
 import { PostComposer } from "@/components/feed/PostComposer";
+import { CommentSection } from "@/components/comments/CommentSection";
 import { MapPin, Users, ExternalLink, Clock, Share2, Pencil } from "lucide-react";
 
 const TYPE_LABELS: Record<string, string> = {
