@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import {
   useMyAttendance,
@@ -13,36 +12,37 @@ export function EventHeroCTA({ eventId }: { eventId: string }) {
   const { mutate: upsert, isPending } = useUpsertAttendance(eventId);
   const isGoing = !!attendance;
 
+  const baseClasses =
+    "inline-flex items-center justify-center font-bold text-base px-8 py-3.5 rounded-full transition-all duration-200 shadow-md hover:shadow-lg active:scale-[0.97]";
+
   if (!user) {
     return (
-      <Button
-        asChild
-        size="lg"
-        className="bg-gradient-to-r from-amber-500 to-amber-600 text-black font-semibold hover:from-amber-400 hover:to-amber-500 shadow-lg shadow-amber-500/20 border-0"
+      <Link
+        to="/login"
+        className={`${baseClasses} bg-gradient-to-r from-amber-400 to-orange-500 text-white hover:from-amber-500 hover:to-orange-600`}
       >
-        <Link to="/login">Logg inn for å melde deg på</Link>
-      </Button>
+        Logg inn for å bli med 🚗
+      </Link>
     );
   }
 
   return (
-    <Button
-      size="lg"
+    <button
       disabled={isPending}
       onClick={() =>
         upsert(attendance?.id ?? null, {
           onSuccess: () =>
-            toast.success(isGoing ? "Påmelding fjernet" : "Du er påmeldt!"),
+            toast.success(isGoing ? "Påmelding fjernet" : "Du er påmeldt! 🎉"),
           onError: () => toast.error("Noe gikk galt"),
         })
       }
-      className={
+      className={`${baseClasses} ${
         isGoing
-          ? "bg-white/10 text-white border border-white/20 hover:bg-white/15 backdrop-blur-sm"
-          : "bg-gradient-to-r from-amber-500 to-amber-600 text-black font-semibold hover:from-amber-400 hover:to-amber-500 shadow-lg shadow-amber-500/20 border-0"
-      }
+          ? "bg-white text-stone-700 border-2 border-stone-200 hover:bg-stone-50"
+          : "bg-gradient-to-r from-amber-400 to-orange-500 text-white hover:from-amber-500 hover:to-orange-600"
+      }`}
     >
-      {isGoing ? "✓ Påmeldt" : "Meld deg på"}
-    </Button>
+      {isGoing ? "✓ Påmeldt" : "Meld deg på 🙌"}
+    </button>
   );
 }

@@ -13,16 +13,16 @@ export default function PublicEventPage() {
 
   if (isLoading)
     return (
-      <div className="min-h-screen bg-[#0d0a06] flex items-center justify-center">
-        <p className="text-white/40 text-sm">Laster arrangement…</p>
+      <div className="min-h-screen bg-stone-50 flex items-center justify-center">
+        <p className="text-stone-400 text-sm">Laster arrangement…</p>
       </div>
     );
 
   if (!event)
     return (
-      <div className="min-h-screen bg-[#0d0a06] flex flex-col items-center justify-center gap-2">
-        <h1 className="text-xl font-semibold text-white">Arrangement ikke funnet</h1>
-        <p className="text-sm text-white/40">
+      <div className="min-h-screen bg-stone-50 flex flex-col items-center justify-center gap-2">
+        <h1 className="text-xl font-bold text-stone-800">Arrangement ikke funnet</h1>
+        <p className="text-sm text-stone-400">
           Det finnes ingen publisert arrangement med denne adressen.
         </p>
       </div>
@@ -32,11 +32,10 @@ export default function PublicEventPage() {
     (a, b) => a.sort_order - b.sort_order
   );
   const heroImage = images.length > 0 ? images[0].image_url : null;
-  // Gallery shows all images except the hero
   const galleryImages = images.slice(1);
 
   return (
-    <div className="min-h-screen bg-[#0d0a06]">
+    <div className="min-h-screen bg-stone-50">
       <Helmet>
         <title>{event.title} | Bilgarasje</title>
         <meta
@@ -66,17 +65,16 @@ export default function PublicEventPage() {
       />
 
       {/* Main content */}
-      <div className="max-w-6xl mx-auto px-5 sm:px-8 py-14 md:py-20">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-14">
+      <div className="max-w-6xl mx-auto px-5 sm:px-8 py-12 md:py-16">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-14">
           {/* Left – content */}
-          <div className="md:col-span-2 space-y-12">
+          <div className="md:col-span-2 space-y-10">
             <EventContent
               description={event.description}
               program={event.program}
               practicalInfo={event.practical_info}
             />
 
-            {/* Gallery */}
             {galleryImages.length > 0 && (
               <EventGallery images={galleryImages} />
             )}

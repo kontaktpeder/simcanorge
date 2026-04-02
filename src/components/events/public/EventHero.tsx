@@ -31,58 +31,54 @@ export function EventHero({
   const timeStr = format(startDate, "HH:mm", { locale: nb });
 
   return (
-    <section className="relative w-full min-h-[65vh] md:min-h-[75vh] flex items-end overflow-hidden">
-      {/* Background image */}
+    <section className="relative w-full min-h-[55vh] md:min-h-[65vh] flex items-end overflow-hidden">
+      {/* Background image — bright, no dark overlay */}
       {heroImage ? (
         <img
           src={heroImage}
           alt=""
-          className="absolute inset-0 w-full h-full object-cover scale-105"
+          className="absolute inset-0 w-full h-full object-cover"
         />
       ) : (
-        <div className="absolute inset-0 bg-gradient-to-br from-[#1a1209] to-[#0d0a06]" />
+        <div className="absolute inset-0 bg-gradient-to-br from-amber-100 to-orange-50" />
       )}
 
-      {/* Cinematic gradient — left-heavy + bottom */}
-      <div className="absolute inset-0 bg-gradient-to-r from-[#0d0a06]/95 via-[#0d0a06]/60 to-transparent" />
-      <div className="absolute inset-0 bg-gradient-to-t from-[#0d0a06] via-[#0d0a06]/40 to-transparent" />
+      {/* Subtle bottom gradient so text is readable */}
+      <div className="absolute inset-0 bg-gradient-to-t from-white/80 via-white/30 to-transparent" />
 
-      {/* Warm ambient glow */}
-      <div className="absolute bottom-0 left-0 w-[60%] h-[40%] bg-gradient-to-tr from-amber-900/20 to-transparent pointer-events-none" />
-
-      {/* Content */}
-      <div className="relative z-10 w-full max-w-6xl mx-auto px-5 sm:px-8 pb-14 md:pb-20">
-        <div className="max-w-2xl space-y-5">
+      {/* Content card */}
+      <div className="relative z-10 w-full max-w-6xl mx-auto px-5 sm:px-8 pb-8 md:pb-14">
+        <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-xl border border-stone-200/60 p-6 sm:p-8 max-w-xl space-y-4">
           <div className="flex items-center gap-3">
             <EventTypeBadge type={eventType} />
             {status === "cancelled" && (
-              <span className="text-sm font-medium text-red-400 tracking-wide">Avlyst</span>
+              <span className="text-sm font-semibold text-red-500">Avlyst</span>
             )}
           </div>
 
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-white leading-[1.1]">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-stone-900 leading-[1.1]">
             {title}
           </h1>
 
           {shortDescription && (
-            <p className="text-base sm:text-lg text-white/70 max-w-xl leading-relaxed">
+            <p className="text-base sm:text-lg text-stone-600 leading-relaxed">
               {shortDescription}
             </p>
           )}
 
-          <div className="flex flex-col sm:flex-row sm:items-center gap-3 text-sm text-white/60">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2.5 text-sm text-stone-500">
             <span className="inline-flex items-center gap-1.5">
-              <Calendar className="w-4 h-4 text-amber-400" />
+              <Calendar className="w-4 h-4 text-amber-500" />
               {dateStr} kl. {timeStr}
             </span>
-            <span className="hidden sm:block text-white/20">·</span>
+            <span className="hidden sm:block text-stone-300">·</span>
             <span className="inline-flex items-center gap-1.5">
-              <MapPin className="w-4 h-4 text-amber-400" />
+              <MapPin className="w-4 h-4 text-amber-500" />
               {location}
             </span>
           </div>
 
-          <div className="pt-3">
+          <div className="pt-2">
             <EventHeroCTA eventId={eventId} />
           </div>
         </div>
