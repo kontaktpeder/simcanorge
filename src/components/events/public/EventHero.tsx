@@ -1,7 +1,6 @@
 import { format } from "date-fns";
 import { nb } from "date-fns/locale";
 import { Calendar, MapPin } from "lucide-react";
-import { EventTypeBadge } from "@/components/events/EventTypeBadge";
 import { EventHeroCTA } from "./EventHeroCTA";
 
 interface EventHeroProps {
@@ -30,56 +29,68 @@ export function EventHero({
   const dateStr = format(startDate, "d. MMMM yyyy", { locale: nb });
   const timeStr = format(startDate, "HH:mm", { locale: nb });
 
+  const typeLabels: Record<string, string> = {
+    meet: "Biltreff",
+    show: "Show",
+    market: "Delemarked",
+    drive: "Kjøretur",
+    club_night: "Klubbkveld",
+    exhibition: "Utstilling",
+    open_day: "Åpen dag",
+    other: "Arrangement",
+  };
+
   return (
-    <div className="relative w-full aspect-[16/7] sm:aspect-[16/6] rounded-2xl overflow-hidden">
-      {/* Background */}
-      {heroImage ? (
-        <img
-          src={heroImage}
-          alt=""
-          className="absolute inset-0 w-full h-full object-cover"
-        />
-      ) : (
-        <div className="absolute inset-0 bg-gradient-to-br from-amber-200 via-orange-100 to-amber-50" />
-      )}
+    <div className="space-y-5">
+      {/* Image */}
+      <div className="relative w-full aspect-[2/1] sm:aspect-[2.4/1] rounded-2xl overflow-hidden bg-white/5">
+        {heroImage ? (
+          <img
+            src={heroImage}
+            alt=""
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+        ) : (
+          <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-white/5" />
+        )}
+      </div>
 
-      {/* Bottom-left gradient for readability */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-
-      {/* Content pinned bottom-left */}
-      <div className="absolute inset-0 flex items-end">
-        <div className="p-5 sm:p-8 max-w-xl space-y-3">
-          <div className="flex items-center gap-2.5">
-            <EventTypeBadge type={eventType} />
-            {status === "cancelled" && (
-              <span className="text-sm font-semibold text-red-400">Avlyst</span>
-            )}
-          </div>
-
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-white leading-[1.08] drop-shadow-sm">
-            {title}
-          </h1>
-
-          {shortDescription && (
-            <p className="text-base sm:text-lg text-white/80 leading-relaxed">
-              {shortDescription}
-            </p>
+      {/* Info below image */}
+      <div className="space-y-4">
+        <div className="flex items-center gap-3">
+          <span className="text-xs font-semibold tracking-wider uppercase text-white/40 bg-white/5 px-3 py-1.5 rounded-full">
+            {typeLabels[eventType] || eventType}
+          </span>
+          {status === "cancelled" && (
+            <span className="text-xs font-semibold tracking-wider uppercase text-red-400 bg-red-400/10 px-3 py-1.5 rounded-full">
+              Avlyst
+            </span>
           )}
+        </div>
 
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm text-white/70 font-medium">
-            <span className="inline-flex items-center gap-1.5">
-              <Calendar className="w-4 h-4 text-amber-400" />
-              {dateStr} kl. {timeStr}
-            </span>
-            <span className="inline-flex items-center gap-1.5">
-              <MapPin className="w-4 h-4 text-amber-400" />
-              {location}
-            </span>
-          </div>
+        <h1 className="text-4xl sm:text-5xl md:text-[3.5rem] font-extrabold text-white leading-[1.05] tracking-tight">
+          {title}
+        </h1>
 
-          <div className="pt-1">
-            <EventHeroCTA eventId={eventId} />
-          </div>
+        {shortDescription && (
+          <p className="text-lg sm:text-xl text-white/50 leading-relaxed max-w-2xl">
+            {shortDescription}
+          </p>
+        )}
+
+        <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-[15px] text-white/40">
+          <span className="inline-flex items-center gap-2">
+            <Calendar className="w-4 h-4" />
+            {dateStr} kl. {timeStr}
+          </span>
+          <span className="inline-flex items-center gap-2">
+            <MapPin className="w-4 h-4" />
+            {location}
+          </span>
+        </div>
+
+        <div className="pt-2">
+          <EventHeroCTA eventId={eventId} />
         </div>
       </div>
     </div>

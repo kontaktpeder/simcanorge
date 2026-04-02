@@ -1,7 +1,6 @@
 import { Helmet } from "react-helmet-async";
 import { useParams } from "react-router-dom";
 import { usePublicEventBySlug } from "@/hooks/useEventBySlug";
-import { Layout } from "@/components/layout/Layout";
 import { EventHero } from "@/components/events/public/EventHero";
 import { EventStickyBar } from "@/components/events/public/EventStickyBar";
 import { EventContent } from "@/components/events/public/EventContent";
@@ -14,23 +13,17 @@ export default function PublicEventPage() {
 
   if (isLoading)
     return (
-      <Layout>
-        <div className="min-h-[60vh] flex items-center justify-center">
-          <p className="text-muted-foreground text-sm">Laster arrangement…</p>
-        </div>
-      </Layout>
+      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-white/10 border-t-white/60 rounded-full animate-spin" />
+      </div>
     );
 
   if (!event)
     return (
-      <Layout>
-        <div className="min-h-[60vh] flex flex-col items-center justify-center gap-2">
-          <h1 className="text-xl font-bold text-foreground">Arrangement ikke funnet</h1>
-          <p className="text-sm text-muted-foreground">
-            Det finnes ingen publisert arrangement med denne adressen.
-          </p>
-        </div>
-      </Layout>
+      <div className="min-h-screen bg-[#0a0a0a] flex flex-col items-center justify-center gap-3">
+        <h1 className="text-2xl font-bold text-white">Fant ikke arrangementet</h1>
+        <p className="text-white/40">Denne lenken er ugyldig eller arrangementet er fjernet.</p>
+      </div>
     );
 
   const images = [...(event.event_images ?? [])].sort(
@@ -40,7 +33,7 @@ export default function PublicEventPage() {
   const galleryImages = images.slice(1);
 
   return (
-    <Layout>
+    <div className="min-h-screen bg-[#0a0a0a]">
       <Helmet>
         <title>{event.title} | Bilgarasje</title>
         <meta
@@ -49,7 +42,7 @@ export default function PublicEventPage() {
         />
       </Helmet>
 
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 pt-6 pb-16 space-y-8">
+      <div className="max-w-[980px] mx-auto px-4 sm:px-6 pt-8 pb-20 space-y-6">
         {/* Hero */}
         <EventHero
           title={event.title}
@@ -70,22 +63,19 @@ export default function PublicEventPage() {
           eventId={event.id}
         />
 
-        {/* Main content */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10">
-          <div className="md:col-span-2 space-y-10">
+        {/* Main grid */}
+        <div className="grid grid-cols-1 md:grid-cols-[1fr_320px] gap-8">
+          <div className="space-y-8">
             <EventContent
               description={event.description}
               program={event.program}
               practicalInfo={event.practical_info}
             />
-
-            {galleryImages.length > 0 && (
-              <EventGallery images={galleryImages} />
-            )}
+            {galleryImages.length > 0 && <EventGallery images={galleryImages} />}
           </div>
 
-          <div className="md:col-span-1">
-            <div className="md:sticky md:top-24">
+          <div>
+            <div className="md:sticky md:top-8">
               <EventSidebar
                 startsAt={event.starts_at}
                 endsAt={event.ends_at}
@@ -100,6 +90,6 @@ export default function PublicEventPage() {
           </div>
         </div>
       </div>
-    </Layout>
+    </div>
   );
 }

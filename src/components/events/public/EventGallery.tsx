@@ -24,19 +24,19 @@ export function EventGallery({ images }: EventGalleryProps) {
 
   return (
     <section>
-      <h2 className="text-2xl font-bold text-foreground mb-4">Bilder</h2>
+      <h2 className="text-xl font-bold text-white mb-3">Bilder</h2>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-1.5 rounded-2xl overflow-hidden">
         {images.map((img, idx) => (
           <button
             key={img.id}
             onClick={() => setLightboxIndex(idx)}
-            className="relative aspect-[4/3] overflow-hidden rounded-xl group cursor-pointer ring-1 ring-border hover:ring-amber-400 transition-all"
+            className="relative aspect-square overflow-hidden group cursor-pointer bg-white/5"
           >
             <img
-              src={getOptimizedImageUrl(img.image_url, { width: 600 })}
+              src={getOptimizedImageUrl(img.image_url, { width: 500 })}
               alt={img.alt_text ?? ""}
-              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+              className="w-full h-full object-cover transition-all duration-500 group-hover:scale-105 group-hover:brightness-110"
               loading="lazy"
             />
           </button>

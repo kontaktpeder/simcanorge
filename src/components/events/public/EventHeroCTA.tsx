@@ -12,14 +12,11 @@ export function EventHeroCTA({ eventId }: { eventId: string }) {
   const { mutate: upsert, isPending } = useUpsertAttendance(eventId);
   const isGoing = !!attendance;
 
-  const baseClasses =
-    "inline-flex items-center justify-center font-bold text-base px-7 py-3 rounded-full transition-all duration-200 shadow-sm hover:shadow-md active:scale-[0.97]";
-
   if (!user) {
     return (
       <Link
         to="/login"
-        className={`${baseClasses} bg-gradient-to-r from-amber-400 to-orange-500 text-white hover:from-amber-500 hover:to-orange-600`}
+        className="inline-flex items-center justify-center font-semibold text-[15px] px-6 py-3 rounded-xl bg-white text-black hover:bg-white/90 transition-all active:scale-[0.97]"
       >
         Bli med
       </Link>
@@ -36,10 +33,10 @@ export function EventHeroCTA({ eventId }: { eventId: string }) {
           onError: () => toast.error("Noe gikk galt"),
         })
       }
-      className={`${baseClasses} ${
+      className={`inline-flex items-center justify-center font-semibold text-[15px] px-6 py-3 rounded-xl transition-all active:scale-[0.97] ${
         isGoing
-          ? "bg-white/90 backdrop-blur text-foreground border border-border hover:bg-white"
-          : "bg-gradient-to-r from-amber-400 to-orange-500 text-white hover:from-amber-500 hover:to-orange-600"
+          ? "bg-white/10 text-white border border-white/10 hover:bg-white/15"
+          : "bg-white text-black hover:bg-white/90"
       }`}
     >
       {isGoing ? "✓ Påmeldt" : "Meld meg på"}
