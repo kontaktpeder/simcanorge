@@ -47,6 +47,7 @@ export function FeedCard({ post }: { post: FeedPost }) {
   const [isEditing, setIsEditing] = useState(false);
   const [editBody, setEditBody] = useState(post.body ?? "");
   const [showComments, setShowComments] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const likes = (post as any).feed_post_likes ?? [];
   const likeCount = likes.length;
@@ -78,13 +79,24 @@ export function FeedCard({ post }: { post: FeedPost }) {
   }
 
   function handleDelete() {
-    if (!window.confirm("Slette dette innlegget?")) return;
-    deletePost(post.id, {
-      onSuccess: () => toast.success("Innlegg slettet"),
-      onError: () => toast.error("Noe gikk galt"),
-    });
+    setShowMenu(false);
+    setShowDeleteConfirm(true);
   }
 
+  async function confirmDelete() {
+    try {
+      await new Promise<void>((resolve, reject) => {
+        deletePost(post.id, {
+          onSuccess: () => resolve(),
+          onError: (err) => reject(err),
+        });
+      });
+      toast.success("Innlegg slettet");
+    } catch {
+      toast.error("Noe gikk galt");
+      setShowDeleteConfirm(false);
+    }
+  }
   return (
     <>
       <article className="group">
