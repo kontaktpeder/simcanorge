@@ -42,9 +42,7 @@ export default function DashboardPagesPage() {
               </Button>
             )}
             {!profile?.can_create_pages && (
-              <p className="text-sm text-muted-foreground">
-                Ta kontakt med admin for å få tilgang til å opprette sider.
-              </p>
+              <RequestPageAccessButton />
             )}
           </div>
         )}
