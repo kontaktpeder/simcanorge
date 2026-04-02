@@ -104,6 +104,8 @@ export const routes: RouteConfig[] = [
   { path: "/accept-invitation", element: AcceptInvitation, isPublic: true },
   { path: "/i/:token", element: AcceptInvitation, isPublic: true },
   { path: "/login", element: Login, isPublic: true },
+  { path: "/glemt-passord", element: GlemtPassord, isPublic: true },
+  { path: "/nytt-passord", element: NyttPassord, isPublic: true },
   { path: "/sok-om-tilgang", element: SokOmTilgang, isPublic: true },
   { path: "/start-annonse", element: StartAnnonse, isPublic: true },
   { path: "/s/:slug", element: PublicPagePage, isPublic: true },
