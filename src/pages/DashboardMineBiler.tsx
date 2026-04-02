@@ -107,7 +107,7 @@ export default function DashboardMineBiler() {
           description="Ta kontakt med admin for å få tilgang, eller send inn din bil."
           action={{
             label: 'Send inn din bil',
-            href: '/send-inn-bil',
+            href: '/send-inn',
             icon: <Send className="w-5 h-5" />,
           }}
         />
