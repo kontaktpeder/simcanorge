@@ -291,38 +291,39 @@ export default function Dashboard() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.2 }}
         >
-          <div 
-            className={`h-full p-6 sm:p-8 border-2 backdrop-blur-sm group cursor-pointer transition-all touch-manipulation relative overflow-hidden min-h-[180px] ${
-              profileNeedsAttention 
-                ? 'border-primary bg-card shadow-lg shadow-primary/10' 
-                : 'border-foreground/15 bg-card/90 hover:bg-card hover:border-foreground/25'
-            }`}
-            onClick={handleOpenOwnerProfile}
-            data-guide="owner-profile-card"
-          >
-            {profileNeedsAttention && (
-              <div className="absolute top-0 left-0 right-0 h-1.5" style={{ background: 'hsl(2, 85%, 40%)' }} />
-            )}
-            
-            <p className="font-display text-sm uppercase tracking-wider text-muted-foreground mb-5">
-              Profil
-            </p>
-            <h3 className={`font-display text-2xl sm:text-3xl uppercase tracking-wider mb-2 transition-colors ${
-              profileNeedsAttention ? 'text-primary' : 'group-hover:text-primary'
-            }`}>
-              Entusiastprofil
-            </h3>
-            <p className={`text-base ${profileNeedsAttention ? 'text-foreground font-medium' : 'text-muted-foreground'}`}>
-              {ownerProfile 
-                ? (profileNeedsAttention ? 'Fullfør profilen din →' : 'Vises i eier- og selgerprofil') 
-                : 'Opprett entusiastprofil →'}
-            </p>
-            {profileNeedsAttention && (
-              <p className="text-sm text-muted-foreground mt-2">
-                {ownerProfile ? `${filledFields} av 2 felt fylt ut` : 'Kom i gang her'}
+          <Link to="/dashboard/min-profil" className="block h-full touch-manipulation">
+            <div 
+              className={`h-full p-6 sm:p-8 border-2 backdrop-blur-sm group transition-all relative overflow-hidden min-h-[180px] ${
+                profileNeedsAttention 
+                  ? 'border-primary bg-card shadow-lg shadow-primary/10' 
+                  : 'border-foreground/15 bg-card/90 hover:bg-card hover:border-foreground/25'
+              }`}
+              data-guide="owner-profile-card"
+            >
+              {profileNeedsAttention && (
+                <div className="absolute top-0 left-0 right-0 h-1.5" style={{ background: 'hsl(2, 85%, 40%)' }} />
+              )}
+              
+              <p className="font-display text-sm uppercase tracking-wider text-muted-foreground mb-5">
+                Profil
               </p>
-            )}
-          </div>
+              <h3 className={`font-display text-2xl sm:text-3xl uppercase tracking-wider mb-2 transition-colors ${
+                profileNeedsAttention ? 'text-primary' : 'group-hover:text-primary'
+              }`}>
+                Entusiastprofil
+              </h3>
+              <p className={`text-base ${profileNeedsAttention ? 'text-foreground font-medium' : 'text-muted-foreground'}`}>
+                {ownerProfile 
+                  ? (profileNeedsAttention ? 'Fullfør profilen din →' : 'Vises i eier- og selgerprofil') 
+                  : 'Opprett entusiastprofil →'}
+              </p>
+              {profileNeedsAttention && (
+                <p className="text-sm text-muted-foreground mt-2">
+                  {ownerProfile ? `${filledFields} av 2 felt fylt ut` : 'Kom i gang her'}
+                </p>
+              )}
+            </div>
+          </Link>
         </motion.div>
 
         {/* Forespørsler */}
