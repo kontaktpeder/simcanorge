@@ -39,12 +39,11 @@ export default function DashboardPagesPage() {
         {!isLoading && (!pages || pages.length === 0) && (
           <div className="text-center py-12 space-y-3">
             <p className="text-muted-foreground">Du er ikke tilknyttet noen sider ennå.</p>
-            {profile?.can_create_pages && (
+            {profile?.can_create_pages ? (
               <Button asChild variant="outline">
                 <Link to="/dashboard/sider/ny">Opprett din første side</Link>
               </Button>
-            )}
-            {!profile?.can_create_pages && (
+            ) : (
               <RequestPageAccessButton />
             )}
           </div>
