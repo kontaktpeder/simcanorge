@@ -22,9 +22,10 @@ import { GarageLayout } from '@/components/ui/garage/GarageLayout';
 import { EnamelCard } from '@/components/ui/garage/EnamelCard';
 import { SectionHeader } from '@/components/ui/garage/SectionHeader';
 import { Label } from '@/components/ui/label';
-import { ChevronLeft, Loader2, Trash2, Pencil, Clock } from 'lucide-react';
+import { ChevronLeft, Loader2, Trash2, Pencil, Clock, Send } from 'lucide-react';
 import { Layout } from '@/components/layout/Layout';
 import { toast } from 'sonner';
+import { PostComposer } from '@/components/feed/PostComposer';
 
 export default function RedigerAnnonse() {
   const { itemId } = useParams<{ itemId: string }>();
