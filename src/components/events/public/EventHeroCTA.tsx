@@ -10,7 +10,7 @@ export function EventHeroCTA({ eventId }: { eventId: string }) {
   const isGoing = !!attendance;
 
   const base =
-    "inline-flex items-center justify-center font-medium text-[15px] rounded-lg transition-all duration-150 active:scale-[0.97] select-none px-7 py-3.5";
+    "inline-flex items-center justify-center font-semibold text-[15px] rounded-xl transition-all duration-150 active:scale-[0.97] select-none px-7 py-3.5 min-w-[160px]";
 
   if (!user) {
     return (
@@ -31,7 +31,7 @@ export function EventHeroCTA({ eventId }: { eventId: string }) {
       }
       className={`${base} ${
         isGoing
-          ? "bg-neutral-100 text-neutral-700 border border-neutral-200 hover:bg-neutral-200"
+          ? "bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100"
           : "bg-neutral-900 text-white hover:bg-neutral-800"
       }`}
     >
