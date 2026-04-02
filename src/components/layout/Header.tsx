@@ -82,7 +82,8 @@ export function Header() {
             )}
             <Link
               to="/send-inn"
-              className="px-5 py-2 text-[13px] tracking-[0.1em] uppercase text-white bg-[#c4a882]/90 hover:bg-[#c4a882] transition-all duration-300 font-bold"
+              className="px-5 py-2 text-[13px] tracking-[0.1em] uppercase text-[#0f0d0b] font-bold transition-all duration-300"
+              style={{ background: 'linear-gradient(135deg, #d4a017, #e8c547, #c4962c)' }}
             >
               Send inn bil
             </Link>

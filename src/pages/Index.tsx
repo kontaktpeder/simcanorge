@@ -112,8 +112,8 @@ export default function Index() {
               Hele Norges bilsamfunn
             </h1>
             <p
-              className="text-[1.1rem] sm:text-[1.5rem] md:text-[1.8rem] uppercase tracking-[0.25em] text-[#c4a882]/60 mt-1"
-              style={{ fontFamily: "'Oswald', 'Bebas Neue', sans-serif", fontWeight: 400 }}
+              className="text-[1.1rem] sm:text-[1.5rem] md:text-[1.8rem] uppercase tracking-[0.25em] text-white font-bold mt-1"
+              style={{ fontFamily: "'Oswald', 'Bebas Neue', sans-serif" }}
             >
               — på nett
             </p>
