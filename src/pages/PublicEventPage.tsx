@@ -105,7 +105,7 @@ export default function PublicEventPage() {
             {/* Date + time + place — stacked, quiet */}
             <div className="pt-3 space-y-2.5">
               <div className="flex items-baseline gap-3">
-                <span className="text-[3rem] md:text-[3.8rem] leading-none" style={display}>
+                <span className="text-[3.5rem] md:text-[4.5rem] leading-none italic" style={display}>
                   {dayNum}
                 </span>
                 <div className="space-y-0.5">
