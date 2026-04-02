@@ -18,23 +18,27 @@ const variants: Record<string, string> = {
   garage: "bg-zinc-100 text-zinc-800",
 };
 
+/**
+ * Dark variants use the page-accent CSS variable so they automatically
+ * adapt to the page-type theme (purple for samling, orange for business, etc.).
+ */
 const darkVariants: Record<string, string> = {
-  club: "bg-blue-900/40 text-blue-300 border border-blue-700/30",
-  dealer: "bg-green-900/40 text-green-300 border border-green-700/30",
-  museum: "bg-amber-900/40 text-amber-300 border border-amber-700/30",
-  collection: "bg-purple-900/40 text-purple-300 border border-purple-700/30",
-  workshop: "bg-orange-900/40 text-orange-300 border border-orange-700/30",
-  business: "bg-[hsl(var(--page-accent)/0.15)] text-[hsl(var(--page-accent))] border border-[hsl(var(--page-accent)/0.3)]",
-  garage: "bg-zinc-800/50 text-zinc-300 border border-zinc-700/30",
+  club: "bg-blue-500/10 text-blue-400 border border-blue-500/20",
+  dealer: "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20",
+  museum: "bg-amber-500/10 text-amber-400 border border-amber-500/20",
+  collection: "bg-[hsl(var(--page-accent)/0.12)] text-[hsl(var(--page-accent-light))] border border-[hsl(var(--page-accent)/0.25)]",
+  workshop: "bg-orange-500/10 text-orange-400 border border-orange-500/20",
+  business: "bg-[hsl(var(--page-accent)/0.12)] text-[hsl(var(--page-accent-light))] border border-[hsl(var(--page-accent)/0.25)]",
+  garage: "bg-zinc-500/10 text-zinc-400 border border-zinc-500/20",
 };
 
 export function PageTypeBadge({ type, dark = false }: { type: string; dark?: boolean }) {
   const style = dark
-    ? (darkVariants[type] ?? "bg-white/10 text-white/70 border border-white/10")
+    ? (darkVariants[type] ?? "bg-white/8 text-white/60 border border-white/10")
     : (variants[type] ?? "bg-muted text-muted-foreground");
 
   return (
-    <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold tracking-wide uppercase ${style}`}>
+    <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] font-semibold tracking-[0.15em] uppercase ${style}`}>
       {labels[type] ?? type}
     </span>
   );
