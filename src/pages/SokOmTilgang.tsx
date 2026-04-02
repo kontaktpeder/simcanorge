@@ -99,6 +99,21 @@ export default function SokOmTilgang() {
               </div>
 
               <div>
+                <label className="text-sm font-medium mb-1.5 block">Bekreft e-post *</label>
+                <Input
+                  type="email"
+                  value={emailConfirm}
+                  onChange={(e) => setEmailConfirm(e.target.value)}
+                  placeholder="ola@eksempel.no"
+                  required
+                  autoComplete="off"
+                />
+                {emailError && (
+                  <p className="text-sm text-destructive mt-1">{emailError}</p>
+                )}
+              </div>
+
+              <div>
                 <label className="text-sm font-medium mb-1.5 block">
                   Fortell oss litt om deg <span className="text-muted-foreground">(valgfritt)</span>
                 </label>
