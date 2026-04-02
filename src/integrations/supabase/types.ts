@@ -731,6 +731,7 @@ export type Database = {
           id: string
           location: string | null
           owner_id: string
+          person_profile_id: string | null
           price: number | null
           price_note: string | null
           published_at: string | null
@@ -747,6 +748,7 @@ export type Database = {
           id?: string
           location?: string | null
           owner_id: string
+          person_profile_id?: string | null
           price?: number | null
           price_note?: string | null
           published_at?: string | null
@@ -763,6 +765,7 @@ export type Database = {
           id?: string
           location?: string | null
           owner_id?: string
+          person_profile_id?: string | null
           price?: number | null
           price_note?: string | null
           published_at?: string | null
@@ -784,6 +787,13 @@ export type Database = {
             columns: ["owner_id"]
             isOneToOne: false
             referencedRelation: "owners"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "marketplace_items_person_profile_id_fkey"
+            columns: ["person_profile_id"]
+            isOneToOne: false
+            referencedRelation: "person_profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -1200,46 +1210,64 @@ export type Database = {
       }
       person_profiles: {
         Row: {
+          approved_at: string | null
           avatar_url: string | null
           bio: string | null
           can_create_pages: boolean
+          contact_email: string | null
+          contact_phone: string | null
           cover_url: string | null
           created_at: string
           display_name: string
+          favorite_brands: string[] | null
           id: string
           is_public: boolean
           location: string | null
+          requested_approval_at: string | null
           slug: string
           updated_at: string
           user_id: string
+          visible_public: boolean
         }
         Insert: {
+          approved_at?: string | null
           avatar_url?: string | null
           bio?: string | null
           can_create_pages?: boolean
+          contact_email?: string | null
+          contact_phone?: string | null
           cover_url?: string | null
           created_at?: string
           display_name: string
+          favorite_brands?: string[] | null
           id?: string
           is_public?: boolean
           location?: string | null
+          requested_approval_at?: string | null
           slug: string
           updated_at?: string
           user_id: string
+          visible_public?: boolean
         }
         Update: {
+          approved_at?: string | null
           avatar_url?: string | null
           bio?: string | null
           can_create_pages?: boolean
+          contact_email?: string | null
+          contact_phone?: string | null
           cover_url?: string | null
           created_at?: string
           display_name?: string
+          favorite_brands?: string[] | null
           id?: string
           is_public?: boolean
           location?: string | null
+          requested_approval_at?: string | null
           slug?: string
           updated_at?: string
           user_id?: string
+          visible_public?: boolean
         }
         Relationships: []
       }
