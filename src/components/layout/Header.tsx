@@ -28,13 +28,6 @@ export function Header() {
             />
           </Link>
 
-          {/* Search field */}
-          <div className="hidden md:block flex-1 max-w-md mx-4">
-            <GlobalSearch />
-          </div>
-
-          <div className="flex-1 md:hidden" />
-
           <nav className="hidden lg:flex items-center gap-0 flex-shrink-0">
             {navLinks.map((link, i) => {
               const isActive = location.pathname === link.href;
@@ -59,6 +52,13 @@ export function Header() {
               );
             })}
           </nav>
+
+          {/* Search field — centered */}
+          <div className="hidden md:block flex-1 max-w-md mx-4">
+            <GlobalSearch />
+          </div>
+
+          <div className="flex-1 md:hidden" />
 
           {/* Spacer to push CTAs right */}
           <div className="hidden lg:block flex-1" />
