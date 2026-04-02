@@ -14,7 +14,9 @@ import { Layout } from "@/components/layout/Layout";
 import { ArrowLeft, FileText, Pencil, User } from "lucide-react";
 
 export default function DashboardMinProfilPage() {
+  const { user } = useAuth();
   const { data: profile, isLoading } = useMyPersonProfile();
+  const { data: ownerProfile } = useOwnerProfile(user?.id);
   const [editing, setEditing] = useState(false);
 
   if (isLoading) return <Layout><p className="p-8 text-muted-foreground">Laster…</p></Layout>;
