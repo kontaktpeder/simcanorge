@@ -117,7 +117,7 @@ export function RequestPageAccessButton() {
             </div>
           </div>
           <Button asChild variant="outline" size="sm">
-            <Link to="/dashboard/min-profil">Fullfør profil</Link>
+            <Link to="/dashboard/min-profil?rediger=1">Rediger profil</Link>
           </Button>
         </CardContent>
       </Card>
