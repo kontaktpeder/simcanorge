@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { format } from "date-fns";
-import { nb } from "date-fns/locale";
+import { format, formatDistanceToNow } from "date-fns";
 import { nb } from "date-fns/locale";
 import { Heart, Car, ShoppingBag, CalendarDays, Pencil, MoreHorizontal, Trash2, Check, X, MessageSquare, MapPin } from "lucide-react";
 import { toast } from "sonner";
