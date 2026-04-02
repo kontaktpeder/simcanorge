@@ -930,6 +930,7 @@ export type Database = {
           created_at: string
           id: string
           message: string | null
+          page_type: string | null
           profile_id: string
           reviewed_at: string | null
           reviewed_by: string | null
@@ -939,6 +940,7 @@ export type Database = {
           created_at?: string
           id?: string
           message?: string | null
+          page_type?: string | null
           profile_id: string
           reviewed_at?: string | null
           reviewed_by?: string | null
@@ -948,6 +950,7 @@ export type Database = {
           created_at?: string
           id?: string
           message?: string | null
+          page_type?: string | null
           profile_id?: string
           reviewed_at?: string | null
           reviewed_by?: string | null

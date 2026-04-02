@@ -1,0 +1,1 @@
+ALTER TABLE public.page_access_requests ADD COLUMN page_type text;
