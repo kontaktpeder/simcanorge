@@ -13,7 +13,7 @@ export function EventHeroCTA({ eventId }: { eventId: string }) {
   const isGoing = !!attendance;
 
   const baseClasses =
-    "inline-flex items-center justify-center font-bold text-lg px-10 py-4 rounded-full transition-all duration-200 shadow-md hover:shadow-lg active:scale-[0.97]";
+    "inline-flex items-center justify-center font-bold text-base px-7 py-3 rounded-full transition-all duration-200 shadow-sm hover:shadow-md active:scale-[0.97]";
 
   if (!user) {
     return (
@@ -21,7 +21,7 @@ export function EventHeroCTA({ eventId }: { eventId: string }) {
         to="/login"
         className={`${baseClasses} bg-gradient-to-r from-amber-400 to-orange-500 text-white hover:from-amber-500 hover:to-orange-600`}
       >
-        Logg inn for å bli med
+        Bli med
       </Link>
     );
   }
@@ -38,11 +38,11 @@ export function EventHeroCTA({ eventId }: { eventId: string }) {
       }
       className={`${baseClasses} ${
         isGoing
-          ? "bg-white text-stone-700 border-2 border-stone-200 hover:bg-stone-50"
+          ? "bg-white/90 backdrop-blur text-foreground border border-border hover:bg-white"
           : "bg-gradient-to-r from-amber-400 to-orange-500 text-white hover:from-amber-500 hover:to-orange-600"
       }`}
     >
-      {isGoing ? "✓ Påmeldt" : "Meld deg på"}
+      {isGoing ? "✓ Påmeldt" : "Meld meg på"}
     </button>
   );
 }

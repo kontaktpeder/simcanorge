@@ -31,7 +31,8 @@ export function EventHero({
   const timeStr = format(startDate, "HH:mm", { locale: nb });
 
   return (
-    <section className="relative w-full min-h-[55vh] md:min-h-[65vh] flex items-end overflow-hidden">
+    <div className="relative w-full aspect-[16/7] sm:aspect-[16/6] rounded-2xl overflow-hidden">
+      {/* Background */}
       {heroImage ? (
         <img
           src={heroImage}
@@ -39,47 +40,48 @@ export function EventHero({
           className="absolute inset-0 w-full h-full object-cover"
         />
       ) : (
-        <div className="absolute inset-0 bg-gradient-to-br from-amber-100 to-orange-50" />
+        <div className="absolute inset-0 bg-gradient-to-br from-amber-200 via-orange-100 to-amber-50" />
       )}
 
-      <div className="absolute inset-0 bg-gradient-to-t from-white/80 via-white/30 to-transparent" />
+      {/* Bottom-left gradient for readability */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
 
-      <div className="relative z-10 w-full max-w-6xl mx-auto px-5 sm:px-8 pb-8 md:pb-14">
-        <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-xl border border-stone-200/60 p-7 sm:p-10 max-w-2xl space-y-5">
-          <div className="flex items-center gap-3">
+      {/* Content pinned bottom-left */}
+      <div className="absolute inset-0 flex items-end">
+        <div className="p-5 sm:p-8 max-w-xl space-y-3">
+          <div className="flex items-center gap-2.5">
             <EventTypeBadge type={eventType} />
             {status === "cancelled" && (
-              <span className="text-base font-semibold text-red-500">Avlyst</span>
+              <span className="text-sm font-semibold text-red-400">Avlyst</span>
             )}
           </div>
 
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-stone-900 leading-[1.05]">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-white leading-[1.08] drop-shadow-sm">
             {title}
           </h1>
 
           {shortDescription && (
-            <p className="text-lg sm:text-xl text-stone-600 leading-relaxed">
+            <p className="text-base sm:text-lg text-white/80 leading-relaxed">
               {shortDescription}
             </p>
           )}
 
-          <div className="flex flex-col sm:flex-row sm:items-center gap-3 text-base text-stone-500 font-medium">
-            <span className="inline-flex items-center gap-2">
-              <Calendar className="w-5 h-5 text-amber-500" />
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm text-white/70 font-medium">
+            <span className="inline-flex items-center gap-1.5">
+              <Calendar className="w-4 h-4 text-amber-400" />
               {dateStr} kl. {timeStr}
             </span>
-            <span className="hidden sm:block text-stone-300">·</span>
-            <span className="inline-flex items-center gap-2">
-              <MapPin className="w-5 h-5 text-amber-500" />
+            <span className="inline-flex items-center gap-1.5">
+              <MapPin className="w-4 h-4 text-amber-400" />
               {location}
             </span>
           </div>
 
-          <div className="pt-3">
+          <div className="pt-1">
             <EventHeroCTA eventId={eventId} />
           </div>
         </div>
       </div>
-    </section>
+    </div>
   );
 }
