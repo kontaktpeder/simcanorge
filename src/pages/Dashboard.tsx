@@ -27,19 +27,7 @@ export default function Dashboard() {
   const queryClient = useQueryClient();
   const { startGuide } = useGuide();
   const [showCarForm, setShowCarForm] = useState(false);
-  const [showOwnerProfile, setShowOwnerProfile] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const params = new URLSearchParams(window.location.search);
-      const shouldShow = params.get('showOwnerProfile') === 'true';
-      if (shouldShow) {
-        window.history.replaceState({}, '', '/dashboard');
-      }
-      return shouldShow;
-    }
-    return false;
-  });
   const formRef = useRef<HTMLDivElement>(null);
-  const profileRef = useRef<HTMLDivElement>(null);
   
   const { data: ownerProfile } = useOwnerProfile(user?.id);
   const { data: myListings } = useMyListings(user?.id);
