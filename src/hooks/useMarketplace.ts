@@ -92,12 +92,12 @@ export function useMarketplaceItemBySlug(slug: string | undefined) {
   });
 }
 
-// Fetch marketplace items for a specific owner (for profile page)
-export function useOwnerListings(ownerId: string | undefined) {
+// Fetch marketplace items for a specific profile (for profile page)
+export function useOwnerListings(personProfileId: string | undefined) {
   return useQuery({
-    queryKey: ['owner-listings', ownerId],
+    queryKey: ['owner-listings', personProfileId],
     queryFn: async () => {
-      if (!ownerId) return [];
+      if (!personProfileId) return [];
 
       const { data, error } = await supabase
         .from('marketplace_items')
@@ -105,14 +105,14 @@ export function useOwnerListings(ownerId: string | undefined) {
           *,
           marketplace_images(id, image_url, sort_order, alt_text)
         `)
-        .eq('owner_id', ownerId)
+        .eq('person_profile_id', personProfileId as any)
         .not('published_at', 'is', null)
         .order('published_at', { ascending: false });
 
       if (error) throw error;
       return data || [];
     },
-    enabled: !!ownerId,
+    enabled: !!personProfileId,
   });
 }
 
