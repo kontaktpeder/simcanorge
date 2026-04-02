@@ -3,7 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { Menu, X, LogIn } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { GlobalSearch } from "@/components/layout/GlobalSearch";
-import bilgarasjeLogo from "@/assets/bilgarasje-logo-sketch.png";
+import bilgarasjeLogo from "@/assets/bilgarasje-logo.png";
 
 const navLinks = [
   { href: "/", label: "Hjem" },
