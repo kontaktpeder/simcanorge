@@ -51,7 +51,7 @@ export function useGlobalSearch(debouncedQuery: string) {
           .limit(3),
         supabase
           .from("parts")
-          .select("id, title, slug, price_note, part_images(image_url, sort_order)")
+          .select("id, title, slug, price_note, image_url, part_images(image_url, sort_order)")
           .eq("published", true)
           .or(`title.ilike.%${safe}%,description.ilike.%${safe}%`)
           .limit(5),
