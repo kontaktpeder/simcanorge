@@ -8,10 +8,14 @@ export function usePublicEventBySlug(slug: string | undefined) {
       if (!slug) return null;
       const { data, error } = await supabase
         .from("events" as any)
-        .select(`*, event_images(*)`)
+        .select(`
+          *,
+          event_images (id, image_url, alt_text, sort_order, storage_path),
+          owner_page:pages (id, title, slug, logo_url, tagline, contact_email, website),
+          owner_profile:person_profiles (id, display_name, slug, avatar_url)
+        `)
         .eq("slug", slug)
         .eq("status", "published")
-        .order("sort_order", { referencedTable: "event_images", ascending: true })
         .maybeSingle();
       if (error) throw error;
       return data;
@@ -27,9 +31,13 @@ export function useEventByIdForDashboard(id: string | undefined) {
       if (!id) return null;
       const { data, error } = await supabase
         .from("events" as any)
-        .select(`*, event_images(*)`)
+        .select(`
+          *,
+          event_images (id, image_url, alt_text, sort_order, storage_path),
+          owner_page:pages (id, title, slug, logo_url),
+          owner_profile:person_profiles (id, display_name, slug, avatar_url)
+        `)
         .eq("id", id)
-        .order("sort_order", { referencedTable: "event_images", ascending: true })
         .maybeSingle();
       if (error) throw error;
       return data;

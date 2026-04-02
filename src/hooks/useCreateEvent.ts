@@ -35,6 +35,27 @@ export interface EventUpdate {
   status?: string;
 }
 
+function toSlug(v: string) {
+  return v.toLowerCase()
+    .replace(/æ/g, "ae").replace(/ø/g, "oe").replace(/å/g, "aa")
+    .replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+}
+
+async function ensureUniqueSlug(baseSlug: string): Promise<string> {
+  let slug = baseSlug;
+  let attempt = 0;
+  while (true) {
+    const { data } = await supabase
+      .from("events" as any)
+      .select("id")
+      .eq("slug", slug)
+      .maybeSingle();
+    if (!data) return slug;
+    attempt++;
+    slug = `${baseSlug}-${attempt}`;
+  }
+}
+
 export function useCreateEvent() {
   const { data: profile } = useMyPersonProfile();
   const queryClient = useQueryClient();
@@ -42,9 +63,10 @@ export function useCreateEvent() {
   return useMutation({
     mutationFn: async (values: Omit<EventInsert, "owner_profile_id">) => {
       if (!profile) throw new Error("Ingen profil");
+      const uniqueSlug = await ensureUniqueSlug(values.slug ?? toSlug(values.title));
       const { data, error } = await supabase
         .from("events" as any)
-        .insert({ ...values, owner_profile_id: profile.id })
+        .insert({ ...values, slug: uniqueSlug, owner_profile_id: profile.id })
         .select()
         .single();
       if (error) throw error;

@@ -34,30 +34,31 @@ export function useUploadEventImages(eventId: string) {
 
       for (const result of results) {
         const imageId = generateImageId();
-        const filePath = getEventImagePath(eventId, imageId);
+        const storagePath = getEventImagePath(eventId, imageId);
 
         const { error: uploadError } = await supabase.storage
           .from("simca-images")
-          .upload(filePath, result.file, { contentType: "image/webp" });
+          .upload(storagePath, result.file, { contentType: "image/webp" });
         if (uploadError) {
-          toast.error(`Feil: ${result.file.name}`);
+          toast.error(`Feil ved opplasting: ${result.file.name}`);
           continue;
         }
 
         const { data: urlData } = supabase.storage
           .from("simca-images")
-          .getPublicUrl(filePath);
+          .getPublicUrl(storagePath);
 
         const { error: dbError } = await supabase
           .from("event_images" as any)
           .insert({
             event_id: eventId,
             image_url: urlData.publicUrl,
+            storage_path: storagePath,
             sort_order: nextOrder,
           });
 
         if (dbError) {
-          await supabase.storage.from("simca-images").remove([filePath]);
+          await supabase.storage.from("simca-images").remove([storagePath]);
           toast.error("Kunne ikke lagre bildereferanse");
           continue;
         }
@@ -74,7 +75,15 @@ export function useUploadEventImages(eventId: string) {
 export function useDeleteEventImage(eventId: string) {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (imageId: string) => {
+    mutationFn: async ({ imageId, storagePath }: { imageId: string; storagePath: string | null }) => {
+      if (storagePath) {
+        const { error: storageError } = await supabase.storage
+          .from("simca-images")
+          .remove([storagePath]);
+        if (storageError) {
+          console.warn("Storage deletion failed:", storageError.message);
+        }
+      }
       const { error } = await supabase
         .from("event_images" as any)
         .delete()
@@ -91,7 +100,7 @@ export function useReorderEventImages(eventId: string) {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (images: { id: string; sort_order: number }[]) => {
-      await Promise.all(
+      const results = await Promise.all(
         images.map((img) =>
           supabase
             .from("event_images" as any)
@@ -99,8 +108,13 @@ export function useReorderEventImages(eventId: string) {
             .eq("id", img.id)
         )
       );
+      const failed = results.filter((r) => r.error);
+      if (failed.length > 0) {
+        throw new Error(`${failed.length} bilder kunne ikke oppdateres`);
+      }
     },
     onSuccess: () =>
       queryClient.invalidateQueries({ queryKey: ["event_images", eventId] }),
+    onError: (err: any) => toast.error(err.message ?? "Feil ved sortering"),
   });
 }

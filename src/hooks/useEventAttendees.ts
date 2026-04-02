@@ -35,7 +35,7 @@ export function useMyAttendance(eventId: string | undefined) {
   });
 }
 
-export function useToggleAttendance(eventId: string) {
+export function useUpsertAttendance(eventId: string) {
   const { data: profile } = useMyPersonProfile();
   const queryClient = useQueryClient();
 

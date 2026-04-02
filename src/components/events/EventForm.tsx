@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -99,15 +99,12 @@ export function EventForm({
   });
 
   const title = watch("title");
-  const prevTitle = useRef("");
-  if (
-    title !== prevTitle.current &&
-    !slugManuallyEdited.current &&
-    mode === "create"
-  ) {
-    prevTitle.current = title;
-    setValue("slug", toSlug(title ?? ""), { shouldValidate: false });
-  }
+
+  useEffect(() => {
+    if (!slugManuallyEdited.current && title && mode === "create") {
+      setValue("slug", toSlug(title), { shouldValidate: false });
+    }
+  }, [title, setValue, mode]);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
@@ -181,11 +178,7 @@ export function EventForm({
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="space-y-1">
           <Label htmlFor="starts_at">Startdato *</Label>
-          <Input
-            id="starts_at"
-            type="datetime-local"
-            {...register("starts_at")}
-          />
+          <Input id="starts_at" type="datetime-local" {...register("starts_at")} />
           {errors.starts_at && (
             <p className="text-sm text-destructive">{errors.starts_at.message}</p>
           )}
