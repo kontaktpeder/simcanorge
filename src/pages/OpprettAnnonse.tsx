@@ -450,7 +450,7 @@ function ContactEmailGate({ ownerProfileId, onSuccess }: { ownerProfileId: strin
     if (!email.includes("@")) return;
     setSaving(true);
     await supabase
-      .from("owners")
+      .from("person_profiles")
       .update({ contact_email: email, contact_phone: phone || null } as any)
       .eq("id", ownerProfileId);
     setSaving(false);
