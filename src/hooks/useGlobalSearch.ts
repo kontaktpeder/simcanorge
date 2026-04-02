@@ -135,12 +135,13 @@ export function useGlobalSearch(debouncedQuery: string) {
       const imgs = [...((part as any).part_images ?? [])].sort(
         (a: any, b: any) => (a.sort_order ?? 0) - (b.sort_order ?? 0)
       );
+      const thumb = imgs[0]?.image_url ?? (part as any).image_url ?? null;
       all.push({
         id: part.id,
         title: part.title,
         subtitle: part.price_note ?? undefined,
-        thumbnail: imgs[0]?.image_url ?? null,
-        href: `/markedsplass/bildeler?del=${part.slug}`,
+        thumbnail: thumb,
+        href: `/markedsplass/bildeler?del=${(part as any).slug ?? part.id}`,
         section: "deler",
         sectionLabel: "Deler",
       });
