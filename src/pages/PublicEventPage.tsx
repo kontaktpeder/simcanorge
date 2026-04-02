@@ -29,6 +29,10 @@ export default function PublicEventPage() {
   const { slug } = useParams<{ slug: string }>();
   const { data: event, isLoading } = usePublicEventBySlug(slug);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const { user } = useAuth();
+  const { data: myProfile } = useMyPersonProfile();
+  const [showFeedComposer, setShowFeedComposer] = useState(false);
+  const isEventOwner = !!(myProfile && (event as any)?.owner_profile_id === myProfile.id);
 
   if (isLoading)
     return (
