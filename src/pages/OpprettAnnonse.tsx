@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 import { ShoppingBag, Save, Loader2, Clock, ChevronLeft, ImagePlus, X, Lock, Wrench, Package, Car, Warehouse, ChevronRight } from 'lucide-react';
 import { Layout } from '@/components/layout/Layout';
 import { Label } from '@/components/ui/label';
-import { useOwnerProfile } from '@/hooks/useOwnerProfile';
+import { useOwnerProfile, useLegacyOwnerId } from '@/hooks/useOwnerProfile';
 import { useInsertMarketplaceImages } from '@/hooks/useMarketplace';
 import { compressImages, generateImageId, getMarketplaceImagePath, type CompressionProgress } from '@/lib/imageCompression';
 import { ImageUploadProgress } from '@/components/ui/image-upload-progress';
