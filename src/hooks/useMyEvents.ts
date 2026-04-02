@@ -10,7 +10,7 @@ export function useMyEvents() {
     queryFn: async () => {
       if (!profile) return [];
       const { data, error } = await supabase
-        .from("events" as any)
+        .from("events")
         .select("*")
         .eq("owner_profile_id", profile.id)
         .order("starts_at", { ascending: true });

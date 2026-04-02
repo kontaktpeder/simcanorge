@@ -93,7 +93,7 @@ export default function EditEventPage() {
           <CardContent className="pt-6">
             <EventForm
               defaultValues={{
-                event_type: event.event_type,
+                event_type: event.event_type as any,
                 title: event.title,
                 slug: event.slug,
                 location: event.location,
@@ -105,7 +105,7 @@ export default function EditEventPage() {
                 practical_info: event.practical_info ?? "",
                 registration_url: event.registration_url ?? "",
                 max_attendees: event.max_attendees ?? undefined,
-                status: event.status,
+                status: event.status as any,
               }}
               onSubmit={onSubmit}
               isPending={isPending}
