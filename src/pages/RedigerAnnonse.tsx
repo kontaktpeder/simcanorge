@@ -32,6 +32,7 @@ export default function RedigerAnnonse() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { data: ownerProfile } = useOwnerProfile(user?.id);
+  const { data: legacyOwnerId } = useLegacyOwnerId(user?.id);
   const { data: listings, isLoading: listingsLoading } = useMyListings(user?.id);
   const item = listings?.find((i: any) => i.id === itemId);
   const { data: categories = [] } = useUnifiedCategories();
