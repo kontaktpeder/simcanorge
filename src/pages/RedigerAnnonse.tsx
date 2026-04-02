@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useQueryClient } from '@tanstack/react-query';
-import { useOwnerProfile } from '@/hooks/useOwnerProfile';
+import { useOwnerProfile, useLegacyOwnerId } from '@/hooks/useOwnerProfile';
 import {
   useMyListings,
   useUpdateMarketplaceItem,
