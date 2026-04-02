@@ -433,35 +433,6 @@ export default function Dashboard() {
         )}
       </AnimatePresence>
 
-      {/* Profil seksjon */}
-      <AnimatePresence>
-        {showOwnerProfile && user && (
-          <motion.div
-            ref={profileRef}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3 }}
-            className="mt-8"
-          >
-            <div className="flex items-center justify-between mb-4">
-              <SectionHeader 
-                title="Entusiastprofil" 
-                icon={<User className="w-6 h-6" />} 
-              />
-              <button
-                onClick={handleCloseOwnerProfile}
-                className="px-5 py-3 border-2 border-foreground/20 font-display text-sm uppercase tracking-wider text-foreground hover:bg-foreground/5 transition-colors flex items-center gap-2 min-h-[48px]"
-              >
-                <X className="w-4 h-4" />
-                Lukk
-              </button>
-            </div>
-            
-            <OwnerProfileSection userId={user.id} />
-          </motion.div>
-        )}
-      </AnimatePresence>
     </GarageLayout>
   );
 }
