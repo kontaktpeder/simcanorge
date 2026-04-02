@@ -82,7 +82,7 @@ export default function DashboardMineAnnonser() {
         <EnamelCard className="mb-6">
           <div className="p-5 text-center">
             <p className="text-muted-foreground mb-3">Du må opprette en Entusiastprofil før du kan legge ut annonser.</p>
-            <Link to="/dashboard?showOwnerProfile=true">
+            <Link to="/dashboard/min-profil">
               <BigActionButton icon={<Plus className="w-4 h-4" />}>Opprett entusiastprofil</BigActionButton>
             </Link>
           </div>
@@ -102,7 +102,7 @@ export default function DashboardMineAnnonser() {
               </div>
             </div>
             <div className="flex flex-wrap gap-3 mt-4 ml-8">
-              <Link to="/dashboard?showOwnerProfile=true">
+              <Link to="/dashboard/min-profil">
                 <Button variant="outline" size="sm">
                   <User className="h-4 w-4 mr-1.5" />
                   Se min profil
