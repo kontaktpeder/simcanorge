@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { ReportProblemModal } from "@/components/support";
 import { useAuth } from "@/hooks/useAuth";
+import carSilhouette from "@/assets/car-silhouette.png";
 
 export function Footer() {
   const [reportModalOpen, setReportModalOpen] = useState(false);
@@ -9,9 +10,17 @@ export function Footer() {
 
   return (
     <>
-      <footer className="bg-[#0a0a0a] text-white/60">
+      <footer className="relative bg-[#0a0a0a] text-white/60 overflow-hidden">
+        {/* Car silhouette watermark — bottom right */}
+        <img
+          src={carSilhouette}
+          alt=""
+          aria-hidden="true"
+          className="absolute bottom-0 right-0 translate-x-[20%] translate-y-[15%] w-[500px] md:w-[600px] opacity-[0.03] invert pointer-events-none select-none"
+        />
+
         <div className="h-px bg-white/[0.06]" />
-        <div className="max-w-[860px] mx-auto px-5 md:px-8 py-10 md:py-14">
+        <div className="relative max-w-[860px] mx-auto px-5 md:px-8 py-10 md:py-14">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-10">
             {/* Brand */}
             <div className="col-span-2 md:col-span-1">
