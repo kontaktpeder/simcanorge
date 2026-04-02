@@ -411,10 +411,10 @@ function EditorialSection({
 }
 
 function InfoBlock({
-  label, value, display, body,
+  label, value, body,
 }: {
   label: string; value: string;
-  display: React.CSSProperties; body: React.CSSProperties;
+  display?: React.CSSProperties; body: React.CSSProperties;
 }) {
   return (
     <div>
