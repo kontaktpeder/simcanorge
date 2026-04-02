@@ -116,7 +116,7 @@ export default function PublicEventPage() {
                   <span className="block text-[24px] leading-tight italic" style={display}>
                     {timeStr}{endTimeStr ? ` – ${endTimeStr}` : ""}
                   </span>
-                  <span className="flex items-center gap-1.5 text-[13px] text-neutral-500" style={body}>
+                  <span className="flex items-center gap-1.5 text-[14px] text-neutral-500" style={body}>
                     <MapPin className="w-3 h-3 text-neutral-400" />
                     {event.location}
                   </span>
