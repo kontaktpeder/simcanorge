@@ -10,14 +10,11 @@ export function EventHeroCTA({ eventId }: { eventId: string }) {
   const isGoing = !!attendance;
 
   const base =
-    "inline-flex items-center justify-center font-black text-sm uppercase tracking-[0.1em] transition-all duration-200 active:scale-[0.96] select-none";
+    "inline-flex items-center justify-center font-medium text-[15px] rounded-lg transition-all duration-150 active:scale-[0.97] select-none px-7 py-3.5";
 
   if (!user) {
     return (
-      <Link
-        to="/login"
-        className={`${base} px-8 py-4 bg-amber-400 text-black hover:bg-amber-300 rounded-sm`}
-      >
+      <Link to="/login" className={`${base} bg-neutral-900 text-white hover:bg-neutral-800`}>
         Bli med
       </Link>
     );
@@ -32,10 +29,10 @@ export function EventHeroCTA({ eventId }: { eventId: string }) {
           onError: () => toast.error("Noe gikk galt"),
         })
       }
-      className={`${base} px-8 py-4 rounded-sm ${
+      className={`${base} ${
         isGoing
-          ? "bg-white/10 text-white border border-white/20 hover:bg-white/15"
-          : "bg-amber-400 text-black hover:bg-amber-300"
+          ? "bg-neutral-100 text-neutral-700 border border-neutral-200 hover:bg-neutral-200"
+          : "bg-neutral-900 text-white hover:bg-neutral-800"
       }`}
     >
       {isGoing ? "Påmeldt ✓" : "Meld meg på"}
