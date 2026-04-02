@@ -16,14 +16,15 @@ export function useMyPages() {
     queryFn: async () => {
       if (!user) return [];
 
-      // First get the person profile id
+      // Steg 1: hent profil-id separat
       const { data: profile, error: profileError } = await supabase
         .from("person_profiles")
         .select("id")
         .eq("user_id", user.id)
-        .single();
+        .maybeSingle();
 
-      if (profileError || !profile) return [];
+      if (profileError) throw profileError;
+      if (!profile) return [];
 
       const { data, error } = await supabase
         .from("page_memberships")
