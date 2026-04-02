@@ -50,21 +50,21 @@ export default function DashboardMineForesporsler() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const { data: inquiries, isLoading } = useQuery({
-    queryKey: ["my-inquiries", ownerProfile?.id],
+    queryKey: ["my-inquiries", legacyOwnerId],
     queryFn: async () => {
-      if (!ownerProfile?.id) return [];
+      if (!legacyOwnerId) return [];
       const { data, error } = await supabase
         .from("inquiries")
         .select(`
           *,
           inquiry_items(id, part_title, part_id, marketplace_item_id)
         `)
-        .eq("recipient_owner_id", ownerProfile.id)
+        .eq("recipient_owner_id", legacyOwnerId)
         .order("created_at", { ascending: false });
       if (error) throw error;
       return data ?? [];
     },
-    enabled: !!ownerProfile?.id,
+    enabled: !!legacyOwnerId,
   });
 
   const selected = inquiries?.find((i: any) => i.id === selectedId);

@@ -57,19 +57,19 @@ export default function Dashboard() {
   });
 
   const { data: myInquiries } = useQuery({
-    queryKey: ['my-inquiries-summary', ownerProfile?.id],
+    queryKey: ['my-inquiries-summary', legacyOwnerId],
     queryFn: async () => {
-      if (!ownerProfile?.id) return { total: 0, pending: 0 };
+      if (!legacyOwnerId) return { total: 0, pending: 0 };
       const { data, error } = await supabase
         .from('inquiries')
         .select('id, status')
-        .eq('recipient_owner_id', ownerProfile.id);
+        .eq('recipient_owner_id', legacyOwnerId);
       if (error) throw error;
       const total = data?.length || 0;
       const pending = data?.filter(i => i.status === 'pending').length || 0;
       return { total, pending };
     },
-    enabled: !!ownerProfile?.id,
+    enabled: !!legacyOwnerId,
   });
 
   const { data: notifications } = useQuery({
