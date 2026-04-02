@@ -96,19 +96,23 @@ export default function Index() {
           <div className="absolute top-0 left-0 right-0 h-12 bg-gradient-to-b from-[#0a0a0a]/50 to-transparent" />
 
           <div className="relative z-10 h-full flex flex-col justify-center max-w-[1200px] mx-auto px-5 md:px-8">
+            <p className="text-[11px] sm:text-xs text-[#c4a882]/50 tracking-[0.3em] uppercase mb-2"
+              style={{ fontFamily: "'Oswald', sans-serif", fontWeight: 400 }}>
+              bilgarasje.no
+            </p>
             <h1
-              className="text-[2.4rem] sm:text-[3.2rem] md:text-[4.2rem] leading-[1] uppercase tracking-[0.12em] text-white/95 font-bold"
+              className="text-[2.4rem] sm:text-[3.2rem] md:text-[4.2rem] leading-[1] uppercase tracking-[0.12em] text-white font-bold"
               style={{ fontFamily: "'Oswald', 'Bebas Neue', sans-serif" }}
             >
               Hele Norges bilsamfunn
             </h1>
             <p
-              className="text-[1.1rem] sm:text-[1.5rem] md:text-[1.8rem] uppercase tracking-[0.25em] text-[#c4a882]/40 mt-1"
+              className="text-[1.1rem] sm:text-[1.5rem] md:text-[1.8rem] uppercase tracking-[0.25em] text-[#c4a882]/50 mt-1"
               style={{ fontFamily: "'Oswald', 'Bebas Neue', sans-serif", fontWeight: 400 }}
             >
               — på nett
             </p>
-            <p className="text-[11px] sm:text-xs text-[#a89880]/50 mt-3 tracking-[0.1em]">
+            <p className="text-[11px] sm:text-xs text-white/40 mt-3 tracking-[0.1em]">
               Se oppdateringer fra norske bilentusiaster
             </p>
           </div>
@@ -130,15 +134,15 @@ export default function Index() {
                     </div>
                     <div className="text-left">
                       <p
-                        className={`text-[13px] md:text-[15px] tracking-[0.1em] uppercase font-semibold leading-tight transition-colors duration-300 ${
-                          mod.active ? "text-white/80 group-hover:text-white" : "text-white/20"
+                        className={`text-[14px] md:text-[16px] tracking-[0.08em] uppercase font-semibold leading-tight transition-colors duration-300 ${
+                          mod.active ? "text-white/90 group-hover:text-white" : "text-white/25"
                         }`}
                         style={{ fontFamily: "'Oswald', 'Bebas Neue', sans-serif" }}
                       >
                         {mod.title}
                       </p>
-                      <p className={`text-[10px] md:text-[11px] leading-tight mt-0.5 transition-colors duration-300 ${
-                        mod.active ? "text-[#a89880]/40 group-hover:text-[#a89880]/60" : "text-white/10"
+                      <p className={`text-[11px] md:text-[12px] leading-tight mt-1 transition-colors duration-300 ${
+                        mod.active ? "text-[#a89880]/50 group-hover:text-[#a89880]/70" : "text-white/15"
                       }`}>
                         {mod.desc}
                       </p>
@@ -160,22 +164,22 @@ export default function Index() {
         <div className="h-px bg-gradient-to-r from-transparent via-[#a89880]/15 to-transparent" />
 
         {/* ─── POST UPDATE + FEED ─── */}
-        <section className="bg-background py-8 md:py-12">
+        <section className="py-8 md:py-12" style={{ background: '#151210' }}>
           <div className="max-w-[860px] mx-auto px-5 md:px-8">
 
             {/* Post update bar */}
             <div className="flex items-center gap-3 mb-8">
-              <div className="flex-1 flex items-center gap-3 px-5 py-3.5 bg-[#1a1714]/60 border border-[#a89880]/10 rounded-sm">
-                <div className="w-8 h-8 rounded-full bg-[#a89880]/8 flex items-center justify-center flex-shrink-0">
+              <div className="flex-1 flex items-center gap-3 px-5 py-3.5 bg-[#1c1916] border border-[#a89880]/8 rounded-sm">
+                <div className="w-8 h-8 rounded-full bg-[#a89880]/10 flex items-center justify-center flex-shrink-0">
                   <span className="text-xs text-[#a89880]/40">👤</span>
                 </div>
-                <p className="text-sm text-[#a89880]/35">
+                <p className="text-sm text-white/30">
                   Hva tenker du på i dag? Del et bilde eller en oppdatering...
                 </p>
               </div>
               <Link
                 to={user ? "/dashboard" : "/login?returnUrl=/dashboard"}
-                className="flex items-center gap-2 px-5 py-3.5 bg-[#c4a882] text-[#0f0d0b] text-sm font-semibold tracking-wide hover:bg-[#d4b892] transition-colors flex-shrink-0"
+                className="flex items-center gap-2 px-5 py-3.5 bg-white text-[#0f0d0b] text-sm font-semibold tracking-wide hover:bg-white/90 transition-colors flex-shrink-0"
               >
                 <PlusCircle className="w-4 h-4" />
                 Legg ut oppdatering
@@ -184,13 +188,13 @@ export default function Index() {
 
             {/* Feed header */}
             <div className="flex items-center justify-between mb-6">
-              <p className="text-base font-semibold text-foreground/80">
+              <p className="text-base font-semibold text-white/70">
                 Siste oppdateringer
               </p>
               {!user && (
                 <Link
                   to="/login"
-                  className="flex items-center gap-1.5 text-[10px] tracking-[0.15em] uppercase text-muted-foreground/50 hover:text-foreground transition-colors"
+                  className="flex items-center gap-1.5 text-[10px] tracking-[0.15em] uppercase text-white/30 hover:text-white/60 transition-colors"
                 >
                   Logg inn
                   <ArrowRight className="w-3 h-3" />
@@ -199,11 +203,11 @@ export default function Index() {
             </div>
 
             {/* Feed placeholder */}
-            <div className="flex flex-col items-center justify-center py-16 border border-dashed border-border/30">
-              <p className="text-sm font-medium text-foreground/60 mb-1">
+            <div className="flex flex-col items-center justify-center py-16 border border-dashed border-white/10">
+              <p className="text-sm font-medium text-white/50 mb-1">
                 Feed kommer snart
               </p>
-              <p className="text-xs text-muted-foreground/60 text-center max-w-xs">
+              <p className="text-xs text-white/30 text-center max-w-xs">
                 Oppdateringer fra bileiere, treff og markedsplass
               </p>
             </div>

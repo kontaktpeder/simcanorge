@@ -3,7 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { Menu, X, LogIn } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { GlobalSearch } from "@/components/layout/GlobalSearch";
-import bilgarasjeLogo from "@/assets/bilgarasje-logo.png";
+import bilgarasjeLogo from "@/assets/bilgarasje-logo-sketch.png";
 
 const navLinks = [
   { href: "/", label: "Hjem" },
@@ -20,11 +20,11 @@ export function Header() {
       <div className="max-w-[1400px] mx-auto px-5 md:px-8">
         <div className="flex items-center h-14 md:h-16 gap-4">
 
-          <Link to="/" className="flex-shrink-0 group -my-2">
+          <Link to="/" className="flex-shrink-0 group -my-4">
             <img
               src={bilgarasjeLogo}
               alt="Bilgarasje.no"
-              className="h-16 md:h-[76px] w-auto invert opacity-90 group-hover:opacity-100 transition-opacity duration-300"
+              className="h-20 md:h-[90px] w-auto invert opacity-80 group-hover:opacity-100 transition-opacity duration-300"
             />
           </Link>
 
