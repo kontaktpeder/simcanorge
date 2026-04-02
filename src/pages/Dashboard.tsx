@@ -39,6 +39,7 @@ export default function Dashboard() {
     }
   }, [user, authLoading, navigate]);
 
+  const { data: carCount, isLoading: carsLoading } = useQuery({
     queryKey: ['my-cars-count', user?.id],
     queryFn: async () => {
       if (!user) return 0;
