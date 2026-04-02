@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { format } from "date-fns";
 import { nb } from "date-fns/locale";
-import { Calendar, MapPin } from "lucide-react";
+import { MapPin } from "lucide-react";
 import { usePageEvents } from "@/hooks/usePageEvents";
 import { EventTypeBadge } from "@/components/events/EventTypeBadge";
 
@@ -11,8 +11,10 @@ export function PublicPageEvents({ pageId }: { pageId: string }) {
   if (isLoading || !events || events.length === 0) return null;
 
   return (
-    <section className="col-span-full mt-4">
-      <h2 className="text-lg font-semibold mb-4">Kommende arrangement</h2>
+    <section className="col-span-full mt-6">
+      <h2 className="text-sm font-semibold uppercase tracking-wider text-[hsl(var(--page-accent))] mb-4">
+        Kommende arrangement
+      </h2>
       <div className="space-y-3">
         {events.map((event) => {
           const imgs = [...((event as any).event_images ?? [])].sort(
@@ -25,14 +27,14 @@ export function PublicPageEvents({ pageId }: { pageId: string }) {
             <Link
               key={event.id}
               to={`/e/${event.slug}`}
-              className="flex items-center gap-4 p-3 rounded-lg border border-border/50 hover:border-border transition-colors group"
+              className="flex items-center gap-4 p-3 rounded-xl border border-[hsl(var(--page-card-border))] bg-[hsl(var(--page-card))] hover:border-[hsl(var(--page-accent)/0.3)] transition-colors group"
             >
               {/* Date badge */}
               <div className="flex-shrink-0 text-center w-12">
-                <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                <div className="text-[10px] uppercase tracking-wider text-[hsl(var(--page-text-muted))]">
                   {format(startDate, "MMM", { locale: nb })}
                 </div>
-                <div className="text-xl font-bold leading-tight">
+                <div className="text-xl font-bold leading-tight text-[hsl(var(--page-accent))]">
                   {format(startDate, "d")}
                 </div>
               </div>
@@ -42,10 +44,10 @@ export function PublicPageEvents({ pageId }: { pageId: string }) {
                 <div className="mb-0.5">
                   <EventTypeBadge type={event.event_type} />
                 </div>
-                <p className="font-medium text-sm truncate group-hover:text-primary transition-colors">
+                <p className="font-medium text-sm truncate text-[hsl(var(--page-text)/0.9)] group-hover:text-[hsl(var(--page-accent))] transition-colors">
                   {event.title}
                 </p>
-                <p className="text-xs text-muted-foreground flex items-center gap-1">
+                <p className="text-xs text-[hsl(var(--page-text-muted))] flex items-center gap-1">
                   <MapPin className="w-3 h-3" />
                   {event.location}
                 </p>
@@ -53,7 +55,7 @@ export function PublicPageEvents({ pageId }: { pageId: string }) {
 
               {/* Thumbnail */}
               {heroImage && (
-                <div className="hidden sm:block flex-shrink-0 w-20 h-14 rounded overflow-hidden">
+                <div className="hidden sm:block flex-shrink-0 w-20 h-14 rounded-lg overflow-hidden">
                   <img src={heroImage} alt="" className="w-full h-full object-cover" />
                 </div>
               )}
@@ -63,7 +65,7 @@ export function PublicPageEvents({ pageId }: { pageId: string }) {
       </div>
 
       {events.length === 6 && (
-        <p className="text-xs text-muted-foreground mt-3 text-center">
+        <p className="text-xs text-[hsl(var(--page-text-muted))] mt-3 text-center">
           Viser de 6 neste arrangementene
         </p>
       )}
