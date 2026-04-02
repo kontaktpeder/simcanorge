@@ -13,9 +13,9 @@ export function EventHeroCTA({ eventId }: { eventId: string }) {
     return (
       <Link
         to="/login"
-        className="inline-flex items-center justify-center font-bold text-[14px] rounded-full px-7 py-3 bg-gradient-to-r from-amber-400 to-amber-500 text-black shadow-lg shadow-amber-500/20 hover:shadow-amber-500/30 hover:brightness-110 transition-all duration-200 active:scale-[0.97] select-none"
+        className="px-6 py-3 rounded-lg bg-amber-400 text-black font-medium hover:bg-amber-300 transition inline-flex items-center justify-center"
       >
-        Bli med
+        Meld deg på
       </Link>
     );
   }
@@ -29,10 +29,10 @@ export function EventHeroCTA({ eventId }: { eventId: string }) {
           onError: () => toast.error("Noe gikk galt"),
         })
       }
-      className={`inline-flex items-center justify-center font-bold text-[14px] rounded-full px-7 py-3 transition-all duration-200 active:scale-[0.97] select-none ${
+      className={`px-6 py-3 rounded-lg font-medium transition inline-flex items-center justify-center ${
         isGoing
-          ? "bg-white/10 text-white/80 border border-white/10 hover:bg-white/15 backdrop-blur-sm"
-          : "bg-gradient-to-r from-amber-400 to-amber-500 text-black shadow-lg shadow-amber-500/20 hover:shadow-amber-500/30 hover:brightness-110"
+          ? "bg-white/10 text-white hover:bg-white/20"
+          : "bg-amber-400 text-black hover:bg-amber-300"
       }`}
     >
       {isGoing ? "Påmeldt ✓" : "Meld meg på"}
