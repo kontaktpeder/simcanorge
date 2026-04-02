@@ -101,7 +101,7 @@ export function Header() {
       <div className="h-px bg-[#a89880]/10" />
 
       {mobileMenuOpen && (
-        <nav className="lg:hidden bg-[#0a0a0a] border-t border-white/[0.04]">
+        <nav className="lg:hidden bg-[#0f0d0b] border-t border-[#a89880]/10">
           <div className="px-5 py-2 flex flex-col">
             <div className="py-3">
               <GlobalSearch />
