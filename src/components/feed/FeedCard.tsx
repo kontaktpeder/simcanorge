@@ -70,7 +70,7 @@ export function FeedCard({ post }: { post: FeedPost }) {
 
   return (
     <>
-      <article className="group relative overflow-hidden rounded bg-[#1a1d21] border border-white/[0.05] hover:border-white/[0.12] transition-all duration-300 hover:shadow-[0_8px_32px_-8px_rgba(212,175,55,0.08)]">
+    <article className="group relative overflow-hidden rounded-lg bg-[#131517] border border-white/[0.04] hover:border-white/[0.10] transition-all duration-400 hover:shadow-[0_12px_48px_-12px_rgba(212,175,55,0.10)]">
 
         {/* Image with click-to-lightbox */}
         {heroImage && (
