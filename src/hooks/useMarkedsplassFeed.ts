@@ -37,7 +37,7 @@ export function useMarkedsplassFeed(filter: FeedFilter, search?: string) {
           *,
           marketplace_images(id, image_url, sort_order, alt_text),
           categories(id, name, slug),
-          owners!inner(id, display_name, slug, location)
+          person_profiles!marketplace_items_person_profile_id_fkey(id, display_name, slug, location)
         `)
         .not("published_at", "is", null)
         .order("published_at", { ascending: false });
