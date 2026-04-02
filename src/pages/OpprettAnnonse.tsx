@@ -163,7 +163,7 @@ export default function OpprettAnnonse() {
     setIsSubmitting(true);
     try {
       const data = await submitAsListing(values, {
-        ownerId: ownerProfile.id,
+        ownerId: legacyOwnerId || ownerProfile.id,
         personProfileId: ownerProfile.id,
         profileLocation: ownerProfile?.location ?? null,
       });
