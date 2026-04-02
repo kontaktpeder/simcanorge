@@ -104,9 +104,6 @@ export default function Dashboard() {
     startGuide('my-cars');
   };
 
-  const handleStartOwnerProfileGuide = () => {
-    startGuide('owner-profile');
-  };
 
   const handleFormSuccess = () => {
     setShowCarForm(false);
