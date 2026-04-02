@@ -134,7 +134,7 @@ export default function EditEventPage() {
             <EventImageUpload eventId={eventId!} />
           </CardContent>
         </Card>
-        <Card>
+        <Card id="feed-composer">
           <CardHeader>
             <CardTitle>Del i feeden</CardTitle>
           </CardHeader>

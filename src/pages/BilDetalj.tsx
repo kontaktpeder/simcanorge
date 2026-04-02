@@ -130,7 +130,8 @@ const BilDetalj = () => {
           id, title, slug, brand, model, variant, body_type, year, story, 
           overhauled, tags, featured, published_at, created_at, updated_at, category,
           external_links, timeline_events,
-          car_images(id, image_url, alt_text, sort_order)
+          car_images(id, image_url, alt_text, sort_order),
+          car_owners!car_owners_car_id_fkey(user_id)
         `)
         .eq("slug", slug)
         .not("published_at", "is", null)
