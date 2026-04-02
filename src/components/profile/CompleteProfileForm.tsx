@@ -79,7 +79,7 @@ export function CompleteProfileForm() {
       // Wait for cache to update before navigating so RequirePersonProfile sees the new profile
       await queryClient.invalidateQueries({ queryKey: ["person_profile", "me"] });
       toast.success("Profil opprettet!");
-      navigate("/dashboard/min-profil");
+      navigate("/dashboard");
     } catch (err: any) {
       if (err?.code === "23505" || err?.message?.includes("unique")) {
         toast.error("Dette brukernavnet er allerede i bruk. Velg et annet.");
