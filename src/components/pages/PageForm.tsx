@@ -37,7 +37,7 @@ const schema = z.object({
   logo_url: z.string().url("Ugyldig URL").optional().or(z.literal("")),
   cover_url: z.string().url("Ugyldig URL").optional().or(z.literal("")),
   theme_color: z.string().optional(),
-  contact_email: z.string().email("Ugyldig e-post").optional().or(z.literal("")),
+  contact_email: z.string().email("Ugyldig e-post").min(1, "E-post er påkrevd"),
   contact_phone: z.string().optional(),
   website: z.string().url("Ugyldig URL").optional().or(z.literal("")),
   location: z.string().optional(),
