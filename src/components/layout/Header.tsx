@@ -63,26 +63,26 @@ export function Header() {
           {/* Spacer to push CTAs right */}
           <div className="hidden lg:block flex-1" />
 
-          <div className="hidden lg:flex items-center gap-2 flex-shrink-0">
+          <div className="hidden lg:flex items-center gap-3 flex-shrink-0">
             {user ? (
               <Link
                 to="/dashboard"
-                className="px-4 py-1.5 text-[10.5px] tracking-[0.15em] uppercase text-[#a89880]/70 hover:text-white border border-[#a89880]/15 hover:border-[#a89880]/30 transition-all duration-300"
+                className="px-5 py-2 text-[13px] tracking-[0.1em] uppercase font-medium text-white/70 hover:text-white border border-white/20 hover:border-white/40 transition-all duration-300"
               >
                 Min garasje
               </Link>
             ) : (
               <Link
                 to="/login?returnUrl=/dashboard"
-                className="flex items-center gap-1.5 px-4 py-1.5 text-[10.5px] tracking-[0.15em] uppercase text-[#a89880]/70 hover:text-white border border-[#a89880]/15 hover:border-[#a89880]/30 transition-all duration-300"
+                className="flex items-center gap-2 px-5 py-2 text-[13px] tracking-[0.1em] uppercase font-medium text-white/70 hover:text-white border border-white/20 hover:border-white/40 transition-all duration-300"
               >
-                <LogIn className="w-3 h-3" />
+                <LogIn className="w-3.5 h-3.5" />
                 Logg inn
               </Link>
             )}
             <Link
               to="/send-inn"
-              className="px-4 py-1.5 text-[10.5px] tracking-[0.15em] uppercase text-[#0f0d0b] bg-[#c4a882] hover:bg-[#d4b892] transition-all duration-300 font-semibold"
+              className="px-5 py-2 text-[13px] tracking-[0.1em] uppercase text-white bg-[#c4a882]/90 hover:bg-[#c4a882] transition-all duration-300 font-bold"
             >
               Send inn bil
             </Link>
