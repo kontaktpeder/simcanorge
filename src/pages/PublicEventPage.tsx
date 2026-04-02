@@ -97,7 +97,7 @@ export default function PublicEventPage() {
             </h1>
 
             {event.short_description && (
-              <p className="text-[17px] text-neutral-500 leading-relaxed max-w-md" style={body}>
+              <p className="text-[19px] sm:text-[21px] text-neutral-500 leading-[1.6] max-w-md" style={body}>
                 {event.short_description}
               </p>
             )}
