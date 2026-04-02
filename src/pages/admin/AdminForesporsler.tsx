@@ -120,7 +120,7 @@ const accountRequestStatusLabels: Record<string, string> = {
   done: "Fullført",
 };
 
-const AdminForesporsler = () => {
+function AdminForesporslerContent() {
   const queryClient = useQueryClient();
   const { user: authUser } = useAuth();
   const { openEmailGenerator } = useEmailGenerator();
@@ -362,8 +362,7 @@ const AdminForesporsler = () => {
   }, [inquiries, accountRequests]);
 
   return (
-    <AdminLayout title="FORESPØRSLER">
-      <div className="space-y-6">
+    <div className="space-y-6">
         <div className="flex items-center justify-between">
           <p className="text-muted-foreground">
             {allItems.length} forespørsel{allItems.length !== 1 ? "er" : ""} totalt
@@ -1075,8 +1074,15 @@ const AdminForesporsler = () => {
           </DialogContent>
         </Dialog>
       </div>
+  );
+}
+
+function AdminForesporsler() {
+  return (
+    <AdminLayout title="FORESPØRSLER">
+      <AdminForesporslerContent />
     </AdminLayout>
   );
-};
+}
 
 export default AdminForesporsler;
