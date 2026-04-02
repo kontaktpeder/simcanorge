@@ -7,12 +7,15 @@ import { AnimatedSection } from "@/components/layout/AnimatedSection";
 import { TimelineSection } from "@/components/car/TimelineSection";
 import { OwnerCard } from "@/components/car/OwnerCard";
 import { useCarOwnerProfile } from "@/hooks/useOwnerProfile";
+import { useAuth } from "@/hooks/useAuth";
+import { useMyPersonProfile } from "@/hooks/useMyPersonProfile";
+import { PostComposer } from "@/components/feed/PostComposer";
 import { supabase } from "@/integrations/supabase/client";
 import { getResponsiveImageProps, IMAGE_SIZES, getThumbnailUrl } from "@/lib/imageUtils";
 import { 
   ArrowLeft, Calendar, Wrench, ArrowRight, ChevronLeft, ChevronRight, Car, 
   Facebook, Twitter, Link as LinkIcon, Check, Instagram, X, Youtube, ExternalLink,
-  Tag, Gauge, FileText, Share2, ChevronDown
+  Tag, Gauge, FileText, Share2, ChevronDown, Pencil
 } from "lucide-react";
 import { toast } from "sonner";
 
