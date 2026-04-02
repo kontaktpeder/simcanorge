@@ -6,7 +6,6 @@ import { useUpdateEvent } from "@/hooks/useCreateEvent";
 import { EventForm, type EventFormValues } from "@/components/events/EventForm";
 import { EventImageUpload } from "@/components/events/EventImageUpload";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { ExternalLink } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 
@@ -32,8 +31,6 @@ export default function EditEventPage() {
       </Layout>
     );
 
-  const ev = event as any;
-
   async function onSubmit(values: EventFormValues) {
     try {
       await mutateAsync({
@@ -53,12 +50,12 @@ export default function EditEventPage() {
         status: values.status,
       });
       toast.success("Arrangement oppdatert");
-    } catch (err: any) {
-      toast.error(err.message ?? "Noe gikk galt");
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Noe gikk galt";
+      toast.error(message);
     }
   }
 
-  // Format datetime-local value
   const toLocal = (iso: string) => {
     if (!iso) return "";
     const d = new Date(iso);
@@ -68,23 +65,26 @@ export default function EditEventPage() {
   return (
     <Layout>
       <Helmet>
-        <title>{ev.title} – Rediger | Bilgarasje</title>
+        <title>{event.title} – Rediger | Bilgarasje</title>
       </Helmet>
 
       <div className="container max-w-2xl py-8 space-y-6">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="font-display text-2xl sm:text-3xl uppercase tracking-wider">
-              {ev.title}
+              {event.title}
             </h1>
-            <p className="text-sm text-muted-foreground mt-1">/e/{ev.slug}</p>
+            <p className="text-xs font-mono bg-muted px-1.5 py-0.5 rounded w-fit mt-1">
+              bilgarasje.no/e/{event.slug}
+            </p>
           </div>
-          {ev.status === "published" && (
+          {event.status === "published" && (
             <Link
-              to={`/e/${ev.slug}`}
+              to={`/e/${event.slug}`}
+              target="_blank"
               className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline"
             >
-              Se side <ExternalLink className="w-3.5 h-3.5" />
+              Se siden <ExternalLink className="w-3.5 h-3.5" />
             </Link>
           )}
         </div>
@@ -93,19 +93,19 @@ export default function EditEventPage() {
           <CardContent className="pt-6">
             <EventForm
               defaultValues={{
-                event_type: ev.event_type,
-                title: ev.title,
-                slug: ev.slug,
-                location: ev.location,
-                starts_at: toLocal(ev.starts_at),
-                ends_at: ev.ends_at ? toLocal(ev.ends_at) : "",
-                short_description: ev.short_description ?? "",
-                description: ev.description ?? "",
-                program: ev.program ?? "",
-                practical_info: ev.practical_info ?? "",
-                registration_url: ev.registration_url ?? "",
-                max_attendees: ev.max_attendees ?? undefined,
-                status: ev.status,
+                event_type: event.event_type,
+                title: event.title,
+                slug: event.slug,
+                location: event.location,
+                starts_at: toLocal(event.starts_at),
+                ends_at: event.ends_at ? toLocal(event.ends_at) : "",
+                short_description: event.short_description ?? "",
+                description: event.description ?? "",
+                program: event.program ?? "",
+                practical_info: event.practical_info ?? "",
+                registration_url: event.registration_url ?? "",
+                max_attendees: event.max_attendees ?? undefined,
+                status: event.status,
               }}
               onSubmit={onSubmit}
               isPending={isPending}

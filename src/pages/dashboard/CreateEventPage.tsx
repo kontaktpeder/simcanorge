@@ -22,11 +22,14 @@ export default function CreateEventPage() {
         status: values.status,
       });
       toast.success("Arrangement opprettet!");
-      navigate(`/dashboard/events/${(event as any).id}`);
-    } catch (err: any) {
-      if (err?.code === "23505")
+      navigate(`/dashboard/events/${event.id}`);
+    } catch (err: unknown) {
+      if (err && typeof err === "object" && "code" in err && err.code === "23505")
         toast.error("En adresse med dette navnet finnes allerede.");
-      else toast.error(err.message ?? "Noe gikk galt");
+      else {
+        const message = err instanceof Error ? err.message : "Noe gikk galt";
+        toast.error(message);
+      }
     }
   }
 

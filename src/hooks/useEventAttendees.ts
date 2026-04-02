@@ -23,7 +23,7 @@ export function useMyAttendance(eventId: string | undefined) {
     queryFn: async () => {
       if (!eventId || !profile) return null;
       const { data, error } = await supabase
-        .from("event_attendees" as any)
+        .from("event_attendees")
         .select("id, status")
         .eq("event_id", eventId)
         .eq("profile_id", profile.id)
@@ -44,13 +44,13 @@ export function useUpsertAttendance(eventId: string) {
       if (!profile) throw new Error("Ingen profil");
       if (currentAttendanceId) {
         const { error } = await supabase
-          .from("event_attendees" as any)
+          .from("event_attendees")
           .delete()
           .eq("id", currentAttendanceId);
         if (error) throw error;
       } else {
         const { error } = await supabase
-          .from("event_attendees" as any)
+          .from("event_attendees")
           .insert({ event_id: eventId, profile_id: profile.id });
         if (error) throw error;
       }

@@ -4,7 +4,7 @@ import { usePublicEventBySlug } from "@/hooks/useEventBySlug";
 import { EventAttendButton } from "@/components/events/EventAttendButton";
 import { EventTypeBadge } from "@/components/events/EventTypeBadge";
 import { Layout } from "@/components/layout/Layout";
-import { format } from "date-fns";
+import { format, isSameDay } from "date-fns";
 import { nb } from "date-fns/locale";
 import { Calendar, MapPin, Users, ExternalLink, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -37,88 +37,100 @@ export default function PublicEventPage() {
       </Layout>
     );
 
-  const ev = event as any;
-  const images = (ev.event_images ?? []).sort((a: any, b: any) => a.sort_order - b.sort_order);
+  const images = [...(event.event_images ?? [])].sort(
+    (a, b) => a.sort_order - b.sort_order
+  );
   const heroImage = images.length > 0 ? images[0].image_url : null;
-  const ownerPage = ev.owner_page;
-  const ownerProfile = ev.owner_profile;
+  const ownerPage = event.owner_page;
+  const ownerProfile = event.owner_profile;
 
-  const formatDate = (dateStr: string) =>
-    format(new Date(dateStr), "EEEE d. MMMM yyyy 'kl.' HH:mm", { locale: nb });
+  const startDate = new Date(event.starts_at);
+  const endDate = event.ends_at ? new Date(event.ends_at) : null;
+
+  const dateDisplay = (() => {
+    const start = format(startDate, "EEEE d. MMMM yyyy 'kl.' HH:mm", { locale: nb });
+    if (!endDate) return start;
+    if (isSameDay(startDate, endDate)) {
+      return `${start} – ${format(endDate, "HH:mm")}`;
+    }
+    return `${start} – ${format(endDate, "EEEE d. MMMM yyyy 'kl.' HH:mm", { locale: nb })}`;
+  })();
 
   return (
     <Layout>
       <Helmet>
-        <title>{ev.title} | Bilgarasje</title>
+        <title>{event.title} | Bilgarasje</title>
         <meta
           name="description"
-          content={ev.short_description || `${ev.title} – ${ev.location}`}
+          content={event.short_description || `${event.title} – ${event.location}`}
         />
       </Helmet>
 
-      {/* Hero image */}
-      {heroImage && (
+      {/* Hero image or colored fallback */}
+      {heroImage ? (
         <div className="w-full h-64 sm:h-80 md:h-96 overflow-hidden bg-muted">
           <img
             src={heroImage}
-            alt={ev.title}
+            alt={event.title}
             className="w-full h-full object-cover"
           />
         </div>
+      ) : (
+        <div className="w-full h-40 sm:h-52 bg-gradient-to-br from-primary/20 to-primary/5" />
       )}
 
       <div className="container max-w-6xl py-8">
         {/* Title section */}
         <div className="mb-8">
           <div className="flex items-center gap-2 mb-3">
-            <EventTypeBadge type={ev.event_type} />
-            {ev.status === "cancelled" && (
+            <EventTypeBadge type={event.event_type} />
+            {event.status === "cancelled" && (
               <span className="text-sm font-medium text-destructive">Avlyst</span>
             )}
           </div>
           <h1 className="font-display text-3xl sm:text-4xl uppercase tracking-wider">
-            {ev.title}
+            {event.title}
           </h1>
-          {ev.short_description && (
+          {event.short_description && (
             <p className="text-lg text-muted-foreground mt-3">
-              {ev.short_description}
+              {event.short_description}
             </p>
           )}
         </div>
 
         {/* Two-column layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Left column – content */}
-          <div className="space-y-8">
-            {ev.description && (
+          <div className="md:col-span-2 space-y-8">
+            {event.description && (
               <div>
                 <h2 className="font-display text-xl uppercase tracking-wider mb-3">
                   Om arrangementet
                 </h2>
                 <div className="prose prose-sm dark:prose-invert max-w-none whitespace-pre-wrap">
-                  {ev.description}
+                  {event.description}
                 </div>
               </div>
             )}
 
-            {ev.program && (
+            {event.program && (
               <div>
                 <h2 className="font-display text-xl uppercase tracking-wider mb-3">
                   Program
                 </h2>
                 <div className="prose prose-sm dark:prose-invert max-w-none whitespace-pre-wrap">
-                  {ev.program}
+                  {event.program}
                 </div>
               </div>
             )}
 
-            {ev.practical_info && (
+            {event.practical_info && (
               <div>
                 <h2 className="font-display text-xl uppercase tracking-wider mb-3">
                   Praktisk informasjon
                 </h2>
                 <div className="prose prose-sm dark:prose-invert max-w-none whitespace-pre-wrap">
-                  {ev.practical_info}
+                  {event.practical_info}
                 </div>
               </div>
             )}
@@ -130,14 +142,14 @@ export default function PublicEventPage() {
                   Bilder
                 </h2>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                  {images.slice(1).map((img: any) => (
+                  {images.slice(1).map((img) => (
                     <div
                       key={img.id}
                       className="aspect-square overflow-hidden rounded bg-muted"
                     >
                       <img
                         src={img.image_url}
-                        alt={img.alt_text || ev.title}
+                        alt={img.alt_text || event.title}
                         className="w-full h-full object-cover"
                       />
                     </div>
@@ -187,32 +199,25 @@ export default function PublicEventPage() {
           </div>
 
           {/* Right column – sticky info card */}
-          <div className="lg:sticky lg:top-24 self-start">
+          <div className="md:col-span-1 md:sticky md:top-8 md:self-start">
             <div className="border-2 border-foreground/15 bg-card p-6 space-y-5">
               {/* Date */}
               <div className="flex items-start gap-3">
                 <Calendar className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
-                <div className="text-sm">
-                  <p className="font-medium capitalize">{formatDate(ev.starts_at)}</p>
-                  {ev.ends_at && (
-                    <p className="text-muted-foreground mt-0.5">
-                      til {formatDate(ev.ends_at)}
-                    </p>
-                  )}
-                </div>
+                <p className="text-sm font-medium capitalize">{dateDisplay}</p>
               </div>
 
               {/* Location */}
               <div className="flex items-start gap-3">
                 <MapPin className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
-                <span className="text-sm">{ev.location}</span>
+                <span className="text-sm">{event.location}</span>
               </div>
 
               {/* Max attendees */}
-              {ev.max_attendees && (
+              {event.max_attendees && (
                 <div className="flex items-start gap-3">
                   <Users className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
-                  <span className="text-sm">Maks {ev.max_attendees} deltakere</span>
+                  <span className="text-sm">Maks {event.max_attendees} deltakere</span>
                 </div>
               )}
 
@@ -225,12 +230,12 @@ export default function PublicEventPage() {
               </div>
 
               <div className="border-t border-foreground/10 pt-4">
-                <EventAttendButton eventId={ev.id} />
+                <EventAttendButton eventId={event.id} />
               </div>
 
-              {ev.registration_url && (
+              {event.registration_url && (
                 <Button asChild variant="outline" className="w-full">
-                  <a href={ev.registration_url} target="_blank" rel="noopener noreferrer">
+                  <a href={event.registration_url} target="_blank" rel="noopener noreferrer">
                     Påmelding <ExternalLink className="w-3.5 h-3.5 ml-1.5" />
                   </a>
                 </Button>
