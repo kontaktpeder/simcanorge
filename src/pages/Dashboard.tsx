@@ -33,6 +33,7 @@ export default function Dashboard() {
   const { data: ownerProfile } = useOwnerProfile(user?.id);
   const { data: myListings } = useMyListings(user?.id);
   const { data: personProfile } = useMyPersonProfile();
+  const { data: myPages } = useMyPages();
 
   useEffect(() => {
     if (!authLoading && !user) {
