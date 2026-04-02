@@ -24,6 +24,18 @@ export default function CreateEventPage() {
       });
       toast.success("Arrangement opprettet!");
       navigate(`/dashboard/events/${event.id}`);
+      setTimeout(() => {
+        toast("Del arrangementet med bilsamfunnet?", {
+          description: event.title,
+          action: {
+            label: "Del til feed",
+            onClick: () => {
+              document.getElementById("feed-composer")?.scrollIntoView({ behavior: "smooth" });
+            },
+          },
+          duration: 10000,
+        });
+      }, 800);
     } catch (err: unknown) {
       if (err && typeof err === "object" && "code" in err && err.code === "23505")
         toast.error("En adresse med dette navnet finnes allerede.");

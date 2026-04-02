@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Send, X } from "lucide-react";
+import { Send, X, Share2, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 import { useCreateFeedPost, type CreateFeedPostInput } from "@/hooks/useCreateFeedPost";
 import { useMyPersonProfile } from "@/hooks/useMyPersonProfile";
@@ -64,9 +64,20 @@ export function PostComposer({
     return (
       <button
         onClick={() => setOpen(true)}
-        className="text-[11px] uppercase tracking-[0.15em] text-white/30 hover:text-white/60 border border-white/[0.07] hover:border-white/20 px-4 py-2 transition-all duration-200 font-sans"
+        className="w-full flex items-center gap-3.5 px-4 py-3.5 border border-white/[0.10] hover:border-white/25 bg-[#161616] hover:bg-[#1b1b1b] transition-all group"
       >
-        Del oppdatering
+        <div className="w-9 h-9 rounded-full bg-white/[0.06] flex items-center justify-center flex-shrink-0">
+          <Share2 className="w-4 h-4 text-white/40 group-hover:text-white/70 transition-colors" />
+        </div>
+        <div className="flex-1 text-left">
+          <p className="text-[13px] text-white/50 group-hover:text-white/70 font-medium font-sans transition-colors">
+            Del oppdatering til feed
+          </p>
+          <p className="text-[11px] text-white/25 font-sans">
+            Vis dette til resten av bilsamfunnet
+          </p>
+        </div>
+        <ArrowRight className="w-4 h-4 text-white/20 group-hover:text-white/50 transition-colors flex-shrink-0" />
       </button>
     );
   }

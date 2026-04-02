@@ -8,7 +8,10 @@ import { useState } from "react";
 import { EventHeroCTA } from "@/components/events/public/EventHeroCTA";
 import { ImageLightbox } from "@/components/ui/image-lightbox";
 import { getOptimizedImageUrl } from "@/lib/imageUtils";
-import { MapPin, Users, ExternalLink, Clock } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { useMyPersonProfile } from "@/hooks/useMyPersonProfile";
+import { PostComposer } from "@/components/feed/PostComposer";
+import { MapPin, Users, ExternalLink, Clock, Share2, Pencil } from "lucide-react";
 
 const TYPE_LABELS: Record<string, string> = {
   meet: "Biltreff", show: "Show", market: "Delemarked", drive: "Kjøretur",
@@ -26,6 +29,10 @@ export default function PublicEventPage() {
   const { slug } = useParams<{ slug: string }>();
   const { data: event, isLoading } = usePublicEventBySlug(slug);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const { user } = useAuth();
+  const { data: myProfile } = useMyPersonProfile();
+  const [showFeedComposer, setShowFeedComposer] = useState(false);
+  const isEventOwner = !!(myProfile && (event as any)?.owner_profile_id === myProfile.id);
 
   if (isLoading)
     return (
@@ -64,6 +71,46 @@ export default function PublicEventPage() {
 
   return (
     <div className="min-h-screen text-neutral-900" style={{ ...body, backgroundColor: '#f5f3ee', backgroundImage: TEXTURE_BG }}>
+      {isEventOwner && (
+        <div className="bg-[#111315] border-b border-white/[0.08]">
+          <div className="max-w-6xl mx-auto px-6 sm:px-10 py-3 flex items-center justify-between">
+            <span className="text-[12px] uppercase tracking-[0.12em] text-white/40 font-sans font-medium">
+              Ditt arrangement
+            </span>
+            <div className="flex items-center gap-2">
+              <Link
+                to={`/dashboard/events/${event.id}`}
+                className="flex items-center gap-1.5 text-[11px] uppercase tracking-[0.12em] text-white/60 hover:text-white bg-white/[0.06] hover:bg-white/[0.10] border border-white/[0.10] px-3 py-1.5 transition-all font-sans"
+              >
+                <Pencil className="w-3 h-3" />
+                Rediger
+              </Link>
+              {!showFeedComposer && (
+                <button
+                  onClick={() => setShowFeedComposer(true)}
+                  className="flex items-center gap-1.5 text-[11px] uppercase tracking-[0.12em] text-white/60 hover:text-white bg-white/[0.06] hover:bg-white/[0.10] border border-white/[0.10] px-3 py-1.5 transition-all font-sans"
+                >
+                  <Share2 className="w-3 h-3" />
+                  Del til feed
+                </button>
+              )}
+            </div>
+          </div>
+          {showFeedComposer && (
+            <div className="max-w-6xl mx-auto px-6 sm:px-10 pb-4">
+              <PostComposer
+                compact
+                postType="event_published"
+                eventId={event.id}
+                snapshotTitle={event.title}
+                snapshotImageUrl={heroImage}
+                snapshotEntityType="event"
+                onClose={() => setShowFeedComposer(false)}
+              />
+            </div>
+          )}
+        </div>
+      )}
       <Helmet>
         <title>{event.title} | Bilgarasje</title>
         <meta name="description" content={event.short_description || `${event.title} – ${event.location}`} />

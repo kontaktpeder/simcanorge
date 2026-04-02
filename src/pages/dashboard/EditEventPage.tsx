@@ -51,7 +51,16 @@ export default function EditEventPage() {
         status: values.status,
         owner_page_id: values.owner_page_id ?? null,
       });
-      toast.success("Arrangement oppdatert");
+      toast.success("Arrangement oppdatert", {
+        description: "Vil du dele oppdateringen?",
+        action: {
+          label: "Del til feed",
+          onClick: () => {
+            document.getElementById("feed-composer")?.scrollIntoView({ behavior: "smooth" });
+          },
+        },
+        duration: 8000,
+      });
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Noe gikk galt";
       toast.error(message);
@@ -125,7 +134,7 @@ export default function EditEventPage() {
             <EventImageUpload eventId={eventId!} />
           </CardContent>
         </Card>
-        <Card>
+        <Card id="feed-composer">
           <CardHeader>
             <CardTitle>Del i feeden</CardTitle>
           </CardHeader>

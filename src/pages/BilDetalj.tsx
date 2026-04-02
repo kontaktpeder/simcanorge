@@ -7,12 +7,15 @@ import { AnimatedSection } from "@/components/layout/AnimatedSection";
 import { TimelineSection } from "@/components/car/TimelineSection";
 import { OwnerCard } from "@/components/car/OwnerCard";
 import { useCarOwnerProfile } from "@/hooks/useOwnerProfile";
+import { useAuth } from "@/hooks/useAuth";
+import { useMyPersonProfile } from "@/hooks/useMyPersonProfile";
+import { PostComposer } from "@/components/feed/PostComposer";
 import { supabase } from "@/integrations/supabase/client";
 import { getResponsiveImageProps, IMAGE_SIZES, getThumbnailUrl } from "@/lib/imageUtils";
 import { 
   ArrowLeft, Calendar, Wrench, ArrowRight, ChevronLeft, ChevronRight, Car, 
   Facebook, Twitter, Link as LinkIcon, Check, Instagram, X, Youtube, ExternalLink,
-  Tag, Gauge, FileText, Share2, ChevronDown
+  Tag, Gauge, FileText, Share2, ChevronDown, Pencil
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -61,6 +64,7 @@ interface CarDetail {
   external_links: ExternalLinkData[] | null;
   timeline_events: TimelineEvent[] | null;
   car_images: CarImage[];
+  owner_profile_id: string | null;
 }
 
 const CATEGORY_LABELS: Record<string, { label: string; color: string }> = {
@@ -98,6 +102,11 @@ const BilDetalj = () => {
   const [showScrollIndicator, setShowScrollIndicator] = useState(true);
   const ctaSectionRef = useRef<HTMLElement>(null);
   const { data: ownerProfile } = useCarOwnerProfile(car?.id ?? undefined);
+  const { user } = useAuth();
+  const { data: myProfile } = useMyPersonProfile();
+  const [showFeedComposer, setShowFeedComposer] = useState(false);
+  const isOwner = !!(myProfile && car?.owner_profile_id === myProfile.id);
+  const firstCarImage = car ? [...car.car_images].sort((a, b) => a.sort_order - b.sort_order)[0]?.image_url ?? null : null;
 
   // Hide scroll indicator when CTA section is visible
   useEffect(() => {
@@ -126,7 +135,8 @@ const BilDetalj = () => {
           id, title, slug, brand, model, variant, body_type, year, story, 
           overhauled, tags, featured, published_at, created_at, updated_at, category,
           external_links, timeline_events,
-          car_images(id, image_url, alt_text, sort_order)
+          car_images(id, image_url, alt_text, sort_order),
+          car_owners!car_owners_car_id_fkey(user_id)
         `)
         .eq("slug", slug)
         .not("published_at", "is", null)
@@ -140,7 +150,19 @@ const BilDetalj = () => {
           ...data,
           external_links: (data.external_links as unknown) as ExternalLinkData[] | null,
           timeline_events: (data.timeline_events as unknown) as TimelineEvent[] | null,
+          owner_profile_id: null as string | null,
         } : null;
+        // Resolve owner_profile_id from car_owners join
+        if (parsed && (data as any).car_owners?.length > 0) {
+          // Look up person_profile by user_id
+          const ownerUserId = (data as any).car_owners[0].user_id;
+          const { data: pp } = await supabase
+            .from("person_profiles")
+            .select("id")
+            .eq("user_id", ownerUserId)
+            .maybeSingle();
+          if (pp) parsed.owner_profile_id = pp.id;
+        }
         setCar(parsed);
       }
       setIsLoading(false);
@@ -382,6 +404,47 @@ const BilDetalj = () => {
         title="BILHISTORIE" 
         subtitle="En unik historie fra vårt fellesskap" 
       />
+
+      {isOwner && (
+        <div className="bg-[#111315] border-b border-white/[0.08]">
+          <div className="container mx-auto px-4 py-3 flex items-center justify-between">
+            <span className="text-[12px] uppercase tracking-[0.12em] text-white/40 font-sans font-medium">
+              Din bil
+            </span>
+            <div className="flex items-center gap-2">
+              <Link
+                to={`/dashboard/bil/${car.id}`}
+                className="flex items-center gap-1.5 text-[11px] uppercase tracking-[0.12em] text-white/60 hover:text-white bg-white/[0.06] hover:bg-white/[0.10] border border-white/[0.10] px-3 py-1.5 transition-all font-sans"
+              >
+                <Pencil className="w-3 h-3" />
+                Rediger
+              </Link>
+              {!showFeedComposer && (
+                <button
+                  onClick={() => setShowFeedComposer(true)}
+                  className="flex items-center gap-1.5 text-[11px] uppercase tracking-[0.12em] text-white/60 hover:text-white bg-white/[0.06] hover:bg-white/[0.10] border border-white/[0.10] px-3 py-1.5 transition-all font-sans"
+                >
+                  <Share2 className="w-3 h-3" />
+                  Del til feed
+                </button>
+              )}
+            </div>
+          </div>
+          {showFeedComposer && (
+            <div className="container mx-auto px-4 pb-4">
+              <PostComposer
+                compact
+                postType="car_update"
+                carId={car.id}
+                snapshotTitle={car.title}
+                snapshotImageUrl={firstCarImage}
+                snapshotEntityType="car"
+                onClose={() => setShowFeedComposer(false)}
+              />
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Hero Section */}
       <section className="py-8 md:py-16">

@@ -7,10 +7,13 @@ import { PageHeader } from "@/components/layout/PageHeader";
 import { supabase } from "@/integrations/supabase/client";
 import { useMarketplaceItemBySlug } from "@/hooks/useMarketplace";
 import { useCart } from "@/hooks/useCart";
+import { useAuth } from "@/hooks/useAuth";
+import { useMyPersonProfile } from "@/hooks/useMyPersonProfile";
+import { PostComposer } from "@/components/feed/PostComposer";
 import { ImageLightbox } from "@/components/ui/image-lightbox";
 import { getOptimizedImageUrl, getThumbnailUrl } from "@/lib/imageUtils";
 import {
-  ChevronRight, ChevronLeft, ArrowLeft, Check,
+  ChevronRight, ChevronLeft, ArrowLeft, Check, Share2, Pencil,
 } from "lucide-react";
 import { OwnerCard } from "@/components/car/OwnerCard";
 import { SimcaNorgeSellerCard } from "@/components/car/SimcaNorgeSellerCard";
@@ -223,6 +226,13 @@ function MarketplaceDetailView({ item }: { item: any }) {
   const { addItem, removeItem, isInCart } = useCart();
   const [activeImage, setActiveImage] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
+  const { user } = useAuth();
+  const { data: myProfile } = useMyPersonProfile();
+  const [showFeedComposer, setShowFeedComposer] = useState(false);
+  const isOwner = !!(myProfile && (item as any).person_profile_id === myProfile.id);
+  const firstImage = (item as any).marketplace_images
+    ?.slice()
+    .sort((a: any, b: any) => (a.sort_order ?? 0) - (b.sort_order ?? 0))[0]?.image_url ?? null;
 
   const images = [...(item.marketplace_images || [])].sort((a: any, b: any) => (a.sort_order || 0) - (b.sort_order || 0));
   const allImages = images.map((img: any) => img.image_url);
@@ -255,6 +265,46 @@ function MarketplaceDetailView({ item }: { item: any }) {
 
       <section className="poster-section pb-[max(2rem,env(safe-area-inset-bottom))] sm:pb-[max(5rem,env(safe-area-inset-bottom))]">
         <div className="container mx-auto px-4 relative z-10">
+          {isOwner && (
+            <div className="bg-[#111315] border border-white/[0.08] mb-6 -mx-4 sm:mx-0">
+              <div className="px-4 py-3 flex items-center justify-between">
+                <span className="text-[12px] uppercase tracking-[0.12em] text-white/40 font-sans font-medium">
+                  Din annonse
+                </span>
+                <div className="flex items-center gap-2">
+                  <Link
+                    to={`/dashboard/annonse/${item.id}/rediger`}
+                    className="flex items-center gap-1.5 text-[11px] uppercase tracking-[0.12em] text-white/60 hover:text-white bg-white/[0.06] hover:bg-white/[0.10] border border-white/[0.10] px-3 py-1.5 transition-all font-sans"
+                  >
+                    <Pencil className="w-3 h-3" />
+                    Rediger
+                  </Link>
+                  {!showFeedComposer && (
+                    <button
+                      onClick={() => setShowFeedComposer(true)}
+                      className="flex items-center gap-1.5 text-[11px] uppercase tracking-[0.12em] text-white/60 hover:text-white bg-white/[0.06] hover:bg-white/[0.10] border border-white/[0.10] px-3 py-1.5 transition-all font-sans"
+                    >
+                      <Share2 className="w-3 h-3" />
+                      Del til feed
+                    </button>
+                  )}
+                </div>
+              </div>
+              {showFeedComposer && (
+                <div className="px-4 pb-4">
+                  <PostComposer
+                    compact
+                    postType="marketplace_published"
+                    marketplaceItemId={item.id}
+                    snapshotTitle={item.title}
+                    snapshotImageUrl={firstImage}
+                    snapshotEntityType="marketplace"
+                    onClose={() => setShowFeedComposer(false)}
+                  />
+                </div>
+              )}
+            </div>
+          )}
           <Link to="/markedsplass" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6 font-display uppercase tracking-wider">
             <ArrowLeft className="w-4 h-4" /> Tilbake
           </Link>
