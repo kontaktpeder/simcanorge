@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { formatDistanceToNow } from "date-fns";
 import { nb } from "date-fns/locale";
-import { Heart, Car, ShoppingBag, CalendarDays, Pencil, MoreHorizontal, Trash2, Check, X, MessageSquare } from "lucide-react";
+import { Heart, Car, ShoppingBag, CalendarDays, Pencil, MoreHorizontal, Trash2, Check, X, MessageSquare, MapPin } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { useMyPersonProfile } from "@/hooks/useMyPersonProfile";
@@ -169,6 +169,23 @@ export function FeedCard({ post }: { post: FeedPost }) {
               {entityTitle}
             </h3>
           )
+        )}
+
+        {/* ── Event meta (location + organizer) ── */}
+        {event && (
+          <div className="flex items-center gap-4 mt-2 text-[13px] text-white/40" style={oswald}>
+            {event.location && (
+              <span className="flex items-center gap-1.5 uppercase tracking-[0.1em]">
+                <MapPin className="w-3.5 h-3.5" />
+                {event.location}
+              </span>
+            )}
+            {(event.owner_page?.title || event.owner_profile?.display_name) && (
+              <span className="uppercase tracking-[0.1em]">
+                Av {event.owner_page?.title || event.owner_profile?.display_name}
+              </span>
+            )}
+          </div>
         )}
 
         {/* ── Body ── */}
