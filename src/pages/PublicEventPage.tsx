@@ -330,50 +330,22 @@ export default function PublicEventPage() {
         onClose={() => setLightboxIndex(null)}
       />
 
-      {/* ── MOBILE DETAILS ── */}
-      <div className="md:hidden">
-        <Divider />
-        <div className="px-6 py-5 space-y-3">
-          <SectionLabel>Detaljer</SectionLabel>
-          <div className="space-y-0">
-            <MobileRow label="Dato" value={`${dayNum}. ${monthStr} ${yearStr}`} />
-            <MobileRow label="Tid" value={`${timeStr}${endTimeStr ? ` – ${endTimeStr}` : ""}`} />
-            <MobileRow label="Sted" value={event.location} />
-            <MobileAttendees eventId={event.id} maxAttendees={event.max_attendees} />
+      {/* ── MOBILE ORGANIZER ── */}
+      {organizerName && (
+        <div className="md:hidden px-6 py-4">
+          <SectionLabel>Arrangør</SectionLabel>
+          <div className="flex items-center gap-3">
+            {organizerLogo && (
+              <img src={organizerLogo} alt="" className="w-10 h-10 rounded-full object-cover" />
+            )}
+            {organizerLink ? (
+              <Link to={organizerLink} className="text-[16px] text-neutral-800" style={body}>{organizerName}</Link>
+            ) : (
+              <span className="text-[16px] text-neutral-800" style={body}>{organizerName}</span>
+            )}
           </div>
-          <div className="pt-1">
-            <EventHeroCTA eventId={event.id} />
-          </div>
-          {event.registration_url && (
-            <a
-              href={event.registration_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-[15px] text-neutral-500 hover:text-neutral-800 transition"
-              style={body}
-            >
-              <ExternalLink className="w-4 h-4" />
-              Mer info / kjøp billetter
-            </a>
-          )}
-
-          {organizerName && (
-            <div className="pt-2">
-              <SectionLabel>Arrangør</SectionLabel>
-              <div className="flex items-center gap-3">
-                {organizerLogo && (
-                  <img src={organizerLogo} alt="" className="w-10 h-10 rounded-full object-cover" />
-                )}
-                {organizerLink ? (
-                  <Link to={organizerLink} className="text-[16px] text-neutral-800" style={body}>{organizerName}</Link>
-                ) : (
-                  <span className="text-[16px] text-neutral-800" style={body}>{organizerName}</span>
-                )}
-              </div>
-            </div>
-          )}
         </div>
-      </div>
+      )}
 
       {/* Comments */}
       <div className="max-w-6xl mx-auto px-6 sm:px-10 pb-10">
