@@ -80,7 +80,7 @@ export default function RedigerAnnonse() {
     return null;
   }
 
-  if (item && ownerProfile && item.owner_id !== ownerProfile.id) {
+  if (item && legacyOwnerId && item.owner_id !== legacyOwnerId) {
     navigate('/dashboard/mine-annonser');
     return null;
   }
