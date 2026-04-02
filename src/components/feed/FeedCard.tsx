@@ -51,7 +51,7 @@ export function FeedCard({ post }: { post: FeedPost }) {
   const Icon = meta.icon;
 
   return (
-    <div className="border border-white/[0.06] rounded-sm overflow-hidden bg-[#141210]">
+    <div className="border border-white/[0.06] rounded-sm overflow-hidden bg-[#1f2327] hover:bg-[#242830] transition-colors duration-200">
       {/* Bilde */}
       {heroImage && (
         entityLink ? (
@@ -68,11 +68,11 @@ export function FeedCard({ post }: { post: FeedPost }) {
       <div className="p-4">
         {/* Type + tid */}
         <div className="flex items-center justify-between mb-2">
-          <span className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.15em] text-[#a89880]/60">
-            <Icon className="w-3 h-3" />
+          <span className="flex items-center gap-1.5 text-[11px] uppercase tracking-[0.12em] text-[#d4af37]/70">
+            <Icon className="w-3.5 h-3.5" />
             {meta.label}
           </span>
-          <span className="text-[10px] text-white/20">
+          <span className="text-[11px] text-[#b0b7bd]/50">
             {formatDistanceToNow(new Date(post.created_at), { locale: nb, addSuffix: true })}
           </span>
         </div>
@@ -81,13 +81,13 @@ export function FeedCard({ post }: { post: FeedPost }) {
         {entityTitle && (
           entityLink ? (
             <Link to={entityLink} className="block group">
-              <p className="text-[15px] font-semibold text-white/80 group-hover:text-white transition-colors leading-snug mb-1"
+              <p className="text-[16px] font-semibold text-white group-hover:text-[#d4af37] transition-colors leading-snug mb-1"
                 style={{ fontFamily: "'Oswald', sans-serif" }}>
                 {entityTitle}
               </p>
             </Link>
           ) : (
-            <p className="text-[15px] font-semibold text-white/80 leading-snug mb-1"
+            <p className="text-[16px] font-semibold text-white leading-snug mb-1"
               style={{ fontFamily: "'Oswald', sans-serif" }}>
               {entityTitle}
             </p>
@@ -96,25 +96,25 @@ export function FeedCard({ post }: { post: FeedPost }) {
 
         {/* Brukerens melding */}
         {post.body && (
-          <p className="text-[13px] text-white/50 leading-relaxed mt-1">
+          <p className="text-[14px] text-[#b0b7bd] leading-relaxed mt-1">
             {post.body}
           </p>
         )}
 
         {/* Forfatter + like */}
-        <div className="flex items-center justify-between mt-3 pt-3 border-t border-white/[0.04]">
+        <div className="flex items-center justify-between mt-3 pt-3 border-t border-white/[0.06]">
           {author && (
             <Link to={`/profil/${author.slug}`} className="flex items-center gap-2 group">
               {author.avatar_url ? (
                 <img src={author.avatar_url} alt="" className="w-5 h-5 rounded-full object-cover" />
               ) : (
-                <div className="w-5 h-5 rounded-full bg-white/5 flex items-center justify-center">
-                  <span className="text-[8px] text-white/30">
+                <div className="w-5 h-5 rounded-full bg-white/[0.08] flex items-center justify-center">
+                  <span className="text-[9px] text-[#b0b7bd]">
                     {author.display_name?.[0] ?? "?"}
                   </span>
                 </div>
               )}
-              <span className="text-[11px] text-white/30 group-hover:text-white/50 transition-colors">
+              <span className="text-[12px] text-[#b0b7bd]/70 group-hover:text-white transition-colors">
                 {author.display_name}
               </span>
             </Link>
@@ -126,7 +126,7 @@ export function FeedCard({ post }: { post: FeedPost }) {
               toggleLike({ postId: post.id, liked });
             }}
             className={`flex items-center gap-1.5 transition-colors ${
-              liked ? "text-red-400" : "text-white/20 hover:text-white/50"
+              liked ? "text-red-400" : "text-[#b0b7bd]/40 hover:text-[#b0b7bd]/80"
             } ${!user ? "cursor-default" : "cursor-pointer"}`}
           >
             <Heart className={`w-3.5 h-3.5 ${liked ? "fill-current" : ""}`} />
