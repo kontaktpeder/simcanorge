@@ -2,6 +2,7 @@ import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
 import { useMyPages } from "@/hooks/useMyPages";
 import { PageCard } from "@/components/pages/PageCard";
+import { RequestPageAccessButton } from "@/components/profile/RequestPageAccessButton";
 import { Button } from "@/components/ui/button";
 import { useMyPersonProfile } from "@/hooks/useMyPersonProfile";
 import { PlusIcon } from "lucide-react";
@@ -42,9 +43,7 @@ export default function DashboardPagesPage() {
               </Button>
             )}
             {!profile?.can_create_pages && (
-              <p className="text-sm text-muted-foreground">
-                Ta kontakt med admin for å få tilgang til å opprette sider.
-              </p>
+              <RequestPageAccessButton />
             )}
           </div>
         )}
