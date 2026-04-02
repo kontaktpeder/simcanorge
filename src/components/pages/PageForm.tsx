@@ -65,9 +65,10 @@ interface Props {
   isPending: boolean;
   submitLabel?: string;
   showSlug?: boolean;
+  onTogglePublic?: (value: boolean) => void;
 }
 
-export function PageForm({ defaultValues, onSubmit, isPending, submitLabel = "Lagre", showSlug = true }: Props) {
+export function PageForm({ defaultValues, onSubmit, isPending, submitLabel = "Lagre", showSlug = true, onTogglePublic }: Props) {
   const slugManuallyEdited = useRef(!!defaultValues?.slug);
 
   const {
@@ -200,7 +201,10 @@ export function PageForm({ defaultValues, onSubmit, isPending, submitLabel = "La
         </div>
         <Switch
           checked={watch("is_public")}
-          onCheckedChange={(v) => setValue("is_public", v)}
+          onCheckedChange={(v) => {
+            setValue("is_public", v);
+            onTogglePublic?.(v);
+          }}
         />
       </div>
 
