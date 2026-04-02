@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { formatDistanceToNow } from "date-fns";
+import { format, formatDistanceToNow } from "date-fns";
 import { nb } from "date-fns/locale";
 import { Heart, Car, ShoppingBag, CalendarDays, Pencil, MoreHorizontal, Trash2, Check, X, MessageSquare, MapPin } from "lucide-react";
 import { toast } from "sonner";
@@ -171,9 +171,15 @@ export function FeedCard({ post }: { post: FeedPost }) {
           )
         )}
 
-        {/* ── Event meta (location + organizer) ── */}
+        {/* ── Event meta (date, location, organizer) ── */}
         {event && (
-          <div className="flex items-center gap-4 mt-2 text-[13px] text-white/40" style={oswald}>
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2 text-[13px] text-white/40" style={oswald}>
+            {event.starts_at && (
+              <span className="uppercase tracking-[0.1em] flex items-center gap-1.5">
+                <CalendarDays className="w-3.5 h-3.5" />
+                {format(new Date(event.starts_at), "d. MMM yyyy · HH:mm", { locale: nb })}
+              </span>
+            )}
             {event.location && (
               <span className="flex items-center gap-1.5 uppercase tracking-[0.1em]">
                 <MapPin className="w-3.5 h-3.5" />
