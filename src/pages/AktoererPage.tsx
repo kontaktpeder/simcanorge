@@ -34,8 +34,8 @@ export default function AktoererPage() {
         {/* Hero */}
         <section className="pt-12 pb-8 max-w-[1000px] mx-auto px-5 md:px-8">
           <p
-            className="text-[11px] text-[#c4a882]/70 tracking-[0.3em] uppercase mb-2"
-            style={{ fontFamily: "'Oswald', sans-serif", fontWeight: 400 }}
+            className="text-[14px] sm:text-[16px] tracking-[0.3em] uppercase mb-2"
+            style={{ fontFamily: "'Oswald', sans-serif", fontWeight: 500, background: 'linear-gradient(135deg, #F5A623, #FFD166)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}
           >
             bilgarasje.no
           </p>

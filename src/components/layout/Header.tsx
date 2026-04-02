@@ -24,7 +24,7 @@ export function Header() {
             <img
               src={bilgarasjeLogo}
               alt="Bilgarasje.no"
-              className="h-16 md:h-[76px] w-auto invert opacity-90 group-hover:opacity-100 transition-opacity duration-300"
+              className="h-20 md:h-[92px] w-auto invert opacity-90 group-hover:opacity-100 transition-opacity duration-300"
             />
           </Link>
 
