@@ -33,7 +33,7 @@ interface ItemDetail {
   updated_at: string;
   marketplace_images?: { id: string; image_url: string; sort_order: number }[];
   categories?: { id: string; name: string; slug: string } | null;
-  owners?: { id: string; display_name: string | null; slug: string | null; user_id?: string } | null;
+  person_profiles?: { id: string; display_name: string | null; slug: string | null; user_id?: string } | null;
 }
 
 const statusLabels: Record<string, { label: string; className: string }> = {
