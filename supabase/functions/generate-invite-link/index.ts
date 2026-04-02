@@ -70,7 +70,7 @@ Deno.serve(async (req: Request): Promise<Response> => {
         type: "invite",
         email,
         options: {
-          redirectTo: `${siteUrl}/kom-i-gang`,
+          redirectTo: `${siteUrl}/kom-i-gang?sett-passord=1`,
           data: { display_name: name ?? "" },
         },
       });

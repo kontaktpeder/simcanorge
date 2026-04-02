@@ -12,12 +12,21 @@ import { Link } from 'react-router-dom';
 export default function SokOmTilgang() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [emailConfirm, setEmailConfirm] = useState('');
+  const [emailError, setEmailError] = useState('');
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setEmailError('');
+
+    if (email.trim().toLowerCase() !== emailConfirm.trim().toLowerCase()) {
+      setEmailError('E-postadressene stemmer ikke overens');
+      return;
+    }
+
     setIsLoading(true);
     try {
       const { error } = await supabase
@@ -87,6 +96,21 @@ export default function SokOmTilgang() {
                   placeholder="ola@eksempel.no"
                   required
                 />
+              </div>
+
+              <div>
+                <label className="text-sm font-medium mb-1.5 block">Bekreft e-post *</label>
+                <Input
+                  type="email"
+                  value={emailConfirm}
+                  onChange={(e) => setEmailConfirm(e.target.value)}
+                  placeholder="ola@eksempel.no"
+                  required
+                  autoComplete="off"
+                />
+                {emailError && (
+                  <p className="text-sm text-destructive mt-1">{emailError}</p>
+                )}
               </div>
 
               <div>
