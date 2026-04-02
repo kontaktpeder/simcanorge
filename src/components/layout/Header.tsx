@@ -98,7 +98,7 @@ export function Header() {
         </div>
       </div>
 
-      <div className="h-px bg-white/[0.06]" />
+      <div className="h-px bg-[#a89880]/10" />
 
       {mobileMenuOpen && (
         <nav className="lg:hidden bg-[#0a0a0a] border-t border-white/[0.04]">
