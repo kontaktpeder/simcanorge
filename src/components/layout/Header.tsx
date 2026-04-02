@@ -16,7 +16,7 @@ export function Header() {
   const { user } = useAuth();
 
   return (
-    <header className="sticky top-0 z-50 bg-[#0a0a0a]">
+    <header className="sticky top-0 z-50 bg-[#0f0d0b]">
       <div className="max-w-[1400px] mx-auto px-5 md:px-8">
         <div className="flex items-center h-14 md:h-16 gap-4">
 
@@ -45,33 +45,36 @@ export function Header() {
                   className={`relative px-3 py-1 text-[10.5px] tracking-[0.18em] uppercase transition-all duration-300 ${
                     isActive
                       ? "text-white"
-                      : "text-white/30 hover:text-white/65"
+                      : "text-[#a89880]/60 hover:text-white/80"
                   }`}
                 >
                   {link.label}
                   {isActive && (
-                    <span className="absolute -bottom-[7px] left-3 right-3 h-px bg-white/60" />
+                    <span className="absolute -bottom-[7px] left-3 right-3 h-px bg-[#c4a882]" />
                   )}
                   {i < navLinks.length - 1 && (
-                    <span className="absolute right-0 top-1/2 -translate-y-1/2 w-px h-2.5 bg-white/[0.07]" />
+                    <span className="absolute right-0 top-1/2 -translate-y-1/2 w-px h-2.5 bg-[#a89880]/10" />
                   )}
                 </Link>
               );
             })}
           </nav>
 
+          {/* Spacer to push CTAs right */}
+          <div className="hidden lg:block flex-1" />
+
           <div className="hidden lg:flex items-center gap-2 flex-shrink-0">
             {user ? (
               <Link
                 to="/dashboard"
-                className="px-4 py-1.5 text-[10.5px] tracking-[0.15em] uppercase text-white/40 hover:text-white/80 border border-white/10 hover:border-white/25 transition-all duration-300"
+                className="px-4 py-1.5 text-[10.5px] tracking-[0.15em] uppercase text-[#a89880]/70 hover:text-white border border-[#a89880]/15 hover:border-[#a89880]/30 transition-all duration-300"
               >
                 Min garasje
               </Link>
             ) : (
               <Link
                 to="/login?returnUrl=/dashboard"
-                className="flex items-center gap-1.5 px-4 py-1.5 text-[10.5px] tracking-[0.15em] uppercase text-white/40 hover:text-white/80 border border-white/10 hover:border-white/25 transition-all duration-300"
+                className="flex items-center gap-1.5 px-4 py-1.5 text-[10.5px] tracking-[0.15em] uppercase text-[#a89880]/70 hover:text-white border border-[#a89880]/15 hover:border-[#a89880]/30 transition-all duration-300"
               >
                 <LogIn className="w-3 h-3" />
                 Logg inn
@@ -79,7 +82,7 @@ export function Header() {
             )}
             <Link
               to="/send-inn"
-              className="px-4 py-1.5 text-[10.5px] tracking-[0.15em] uppercase text-[#0a0a0a] bg-white/85 hover:bg-white transition-all duration-300 font-semibold"
+              className="px-4 py-1.5 text-[10.5px] tracking-[0.15em] uppercase text-[#0f0d0b] bg-[#c4a882] hover:bg-[#d4b892] transition-all duration-300 font-semibold"
             >
               Send inn bil
             </Link>
