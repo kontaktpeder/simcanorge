@@ -8,7 +8,7 @@ export interface SearchResult {
   subtitle?: string;
   thumbnail?: string | null;
   href: string;
-  section: "biler" | "arrangement" | "markedsplass" | "sider";
+  section: "biler" | "arrangement" | "markedsplass" | "sider" | "deler";
   sectionLabel: string;
 }
 
