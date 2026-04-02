@@ -166,51 +166,45 @@ export default function Index() {
         </section>
 
         {/* ─── FEED ─── */}
-        <section className="pt-14 md:pt-20 pb-16 md:pb-24 bg-[#141618]">
-          <div className="max-w-[960px] mx-auto px-5 md:px-8">
+        <section className="pt-16 md:pt-24 pb-20 md:pb-32 bg-[#111315]">
+          <div className="max-w-[1000px] mx-auto px-5 md:px-8">
+
+            {/* Section header */}
+            <div className="flex items-end justify-between mb-12">
+              <div>
+                <p className="text-[11px] uppercase tracking-[0.3em] text-[#c8102e] font-bold mb-3"
+                  style={{ fontFamily: "'Oswald', sans-serif" }}>
+                  Live
+                </p>
+                <h2 className="text-[2.2rem] md:text-[3rem] uppercase text-white font-bold leading-[1] tracking-[0.06em]"
+                  style={{ fontFamily: "'Oswald', 'Impact', sans-serif" }}>
+                  Oppdateringer
+                </h2>
+              </div>
+              {!user && (
+                <Link to="/login"
+                  className="text-[11px] uppercase tracking-[0.2em] text-white/25 hover:text-white/60 transition-colors font-bold border-b border-white/10 hover:border-white/30 pb-1"
+                  style={{ fontFamily: "'Oswald', sans-serif" }}>
+                  Logg inn →
+                </Link>
+              )}
+            </div>
 
             {/* Composer */}
             <div className="mb-14">
               <HomeFeedComposer />
             </div>
 
-            {/* Section title */}
-            <div className="flex items-end justify-between mb-10">
-              <div>
-                <p
-                  className="text-[10px] uppercase tracking-[0.25em] text-[#c8102e] font-semibold mb-2"
-                  style={{ fontFamily: "'Oswald', sans-serif" }}
-                >
-                  Feed
-                </p>
-                <h2
-                  className="text-[1.8rem] md:text-[2.2rem] text-white/95 font-bold leading-[1.1]"
-                  style={{ fontFamily: "'DM Serif Display', Georgia, serif" }}
-                >
-                  Siste oppdateringer
-                </h2>
-              </div>
-              {!user && (
-                <Link
-                  to="/login"
-                  className="text-[10px] uppercase tracking-[0.2em] text-white/30 hover:text-white/60 transition-colors font-semibold border-b border-white/10 hover:border-white/30 pb-0.5"
-                  style={{ fontFamily: "'Oswald', sans-serif" }}
-                >
-                  Logg inn
-                </Link>
-              )}
-            </div>
+            {/* Divider */}
+            <div className="h-[2px] bg-gradient-to-r from-[#c8102e]/40 via-white/[0.06] to-transparent mb-12" />
 
-            {/* Thin top rule */}
-            <div className="h-px bg-white/[0.08] mb-10" />
-
-            {/* Feed posts */}
+            {/* Feed */}
             {feedLoading && (
-              <div className="space-y-10">
+              <div className="space-y-12">
                 {[...Array(3)].map((_, i) => (
                   <div key={i}>
-                    <div className="h-[400px] bg-white/[0.03] animate-pulse" />
-                    <div className="h-px bg-white/[0.06] mt-10" />
+                    <div className="h-[420px] bg-white/[0.02] animate-pulse" />
+                    <div className="h-px bg-white/[0.04] mt-12" />
                   </div>
                 ))}
               </div>
@@ -222,7 +216,7 @@ export default function Index() {
                   <div key={post.id}>
                     <FeedCard post={post} />
                     {i < feedPosts.length - 1 && (
-                      <div className="h-px bg-white/[0.06] my-10" />
+                      <div className="h-px bg-white/[0.06] my-12" />
                     )}
                   </div>
                 ))}
@@ -230,15 +224,13 @@ export default function Index() {
             )}
 
             {!feedLoading && (!feedPosts || feedPosts.length === 0) && (
-              <div className="py-20 text-center">
-                <p
-                  className="text-[1.3rem] text-white/40 mb-2"
-                  style={{ fontFamily: "'DM Serif Display', serif" }}
-                >
+              <div className="py-24 text-center">
+                <p className="text-[1.6rem] uppercase text-white/25 font-bold tracking-[0.08em]"
+                  style={{ fontFamily: "'Oswald', sans-serif" }}>
                   Ingen oppdateringer enda
                 </p>
-                <p className="text-[13px] text-white/20">
-                  Bli den første til å dele noe med bilsamfunnet
+                <p className="text-[14px] text-white/15 mt-2">
+                  Bli den første til å dele noe
                 </p>
               </div>
             )}

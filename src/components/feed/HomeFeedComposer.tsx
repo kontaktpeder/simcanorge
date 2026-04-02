@@ -6,6 +6,8 @@ import { useMyPersonProfile } from "@/hooks/useMyPersonProfile";
 import { useCreateFeedPost } from "@/hooks/useCreateFeedPost";
 import { useAuth } from "@/hooks/useAuth";
 
+const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
+
 export function HomeFeedComposer() {
   const { user } = useAuth();
   const { data: profile } = useMyPersonProfile();
@@ -15,14 +17,11 @@ export function HomeFeedComposer() {
 
   if (!user) {
     return (
-      <div className="flex items-center gap-3 px-4 py-3 border border-white/[0.08] rounded-sm bg-[#1f2327]">
-        <div className="flex-1">
-          <p className="text-sm text-[#b0b7bd]/50">Hva skjer i garasjen din?</p>
-        </div>
-        <Link
-          to="/login"
-          className="text-[12px] uppercase tracking-[0.12em] text-[#d4af37]/70 hover:text-[#d4af37] transition-colors font-medium"
-        >
+      <div className="flex items-center gap-4 py-5 border-b-2 border-white/[0.06]">
+        <p className="text-[14px] text-white/25 flex-1">Hva skjer i garasjen din?</p>
+        <Link to="/login"
+          className="text-[12px] uppercase tracking-[0.15em] text-[#c8102e] hover:text-[#e01830] transition-colors font-bold"
+          style={oswald}>
           Logg inn
         </Link>
       </div>
@@ -42,39 +41,41 @@ export function HomeFeedComposer() {
   }
 
   return (
-    <div className="border border-white/[0.08] rounded-sm bg-[#1f2327] transition-colors duration-200 focus-within:border-[#d4af37]/30">
-      <div className="flex items-start gap-3 px-4 py-3">
+    <div className="border-b-2 border-white/[0.06] focus-within:border-[#c8102e]/30 transition-colors pb-5">
+      <div className="flex items-start gap-4">
         {profile?.avatar_url ? (
-          <img
-            src={profile.avatar_url}
-            alt=""
-            className="w-8 h-8 rounded-full object-cover flex-shrink-0 mt-0.5"
-          />
+          <img src={profile.avatar_url} alt="" className="w-11 h-11 rounded-full object-cover ring-2 ring-white/[0.06] flex-shrink-0 mt-1" />
         ) : (
-          <div className="w-8 h-8 rounded-full bg-white/[0.08] flex items-center justify-center flex-shrink-0 mt-0.5">
-            <span className="text-[11px] text-[#b0b7bd]">
+          <div className="w-11 h-11 rounded-full bg-white/[0.06] flex items-center justify-center flex-shrink-0 mt-1 ring-2 ring-white/[0.06]">
+            <span className="text-[14px] font-bold text-white/40" style={oswald}>
               {profile?.display_name?.[0] ?? "?"}
             </span>
           </div>
         )}
-        <textarea
-          value={body}
-          onChange={(e) => setBody(e.target.value)}
-          onFocus={() => setFocused(true)}
-          placeholder="Hva tenker du på i dag? Del din historie eller spørsmål..."
-          rows={focused ? 3 : 1}
-          className="flex-1 bg-transparent text-white placeholder:text-[#b0b7bd]/40 text-[15px] font-sans resize-none focus:outline-none leading-relaxed transition-all duration-200"
-        />
+        <div className="flex-1">
+          <textarea
+            value={body}
+            onChange={(e) => setBody(e.target.value)}
+            onFocus={() => setFocused(true)}
+            placeholder="Hva tenker du på i dag? Del din historie eller spørsmål..."
+            rows={focused ? 3 : 1}
+            className="w-full bg-transparent text-white/80 placeholder:text-white/25 text-[16px] resize-none focus:outline-none leading-relaxed transition-all duration-200 py-2"
+          />
+        </div>
       </div>
       {focused && (
-        <div className="px-4 pb-4 flex justify-end border-t border-white/[0.06] pt-3">
+        <div className="flex items-center justify-between mt-4 pt-4 border-t border-white/[0.04]">
+          <span className="text-[11px] text-white/15 uppercase tracking-[0.1em]" style={oswald}>
+            {profile?.display_name}
+          </span>
           <button
             onClick={handleSubmit}
             disabled={isPending || !body.trim()}
-            className="flex items-center gap-2 px-5 py-2 bg-[#d4af37] text-[#111315] text-[12px] uppercase tracking-[0.12em] font-semibold font-sans hover:bg-[#e0bf4a] transition-colors disabled:opacity-30 rounded-sm"
+            className="flex items-center gap-2 px-6 py-2.5 bg-[#c8102e] hover:bg-[#a00d24] text-white text-[12px] uppercase tracking-[0.15em] font-bold transition-colors disabled:opacity-25"
+            style={oswald}
           >
-            <Send className="w-3 h-3" />
-            {isPending ? "Publiserer…" : "Del"}
+            <Send className="w-3.5 h-3.5" />
+            {isPending ? "Publiserer…" : "Publiser"}
           </button>
         </div>
       )}
