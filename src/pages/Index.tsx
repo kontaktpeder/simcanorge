@@ -134,15 +134,15 @@ export default function Index() {
                     </div>
                     <div className="text-left">
                       <p
-                        className={`text-[13px] md:text-[15px] tracking-[0.1em] uppercase font-semibold leading-tight transition-colors duration-300 ${
-                          mod.active ? "text-white/80 group-hover:text-white" : "text-white/20"
+                        className={`text-[14px] md:text-[16px] tracking-[0.08em] uppercase font-semibold leading-tight transition-colors duration-300 ${
+                          mod.active ? "text-white/90 group-hover:text-white" : "text-white/25"
                         }`}
                         style={{ fontFamily: "'Oswald', 'Bebas Neue', sans-serif" }}
                       >
                         {mod.title}
                       </p>
-                      <p className={`text-[10px] md:text-[11px] leading-tight mt-0.5 transition-colors duration-300 ${
-                        mod.active ? "text-[#a89880]/40 group-hover:text-[#a89880]/60" : "text-white/10"
+                      <p className={`text-[11px] md:text-[12px] leading-tight mt-1 transition-colors duration-300 ${
+                        mod.active ? "text-[#a89880]/50 group-hover:text-[#a89880]/70" : "text-white/15"
                       }`}>
                         {mod.desc}
                       </p>
