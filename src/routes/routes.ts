@@ -46,6 +46,7 @@ const DashboardEventsPage = lazy(() => import("@/pages/dashboard/DashboardEvents
 const CreateEventPage = lazy(() => import("@/pages/dashboard/CreateEventPage"));
 const EditEventPage = lazy(() => import("@/pages/dashboard/EditEventPage"));
 const PublicEventPage = lazy(() => import("@/pages/PublicEventPage"));
+const EventsPage = lazy(() => import("@/pages/EventsPage"));
 
 // Admin pages
 const AdminLogin = lazy(() => import("@/pages/admin/AdminLogin"));
