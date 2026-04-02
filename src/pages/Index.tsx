@@ -1,9 +1,8 @@
 import { Link } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { Helmet } from "react-helmet-async";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, PlusCircle } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
-import { GlobalSearch } from "@/components/layout/GlobalSearch";
 import heroCar from "@/assets/hero-car.jpg";
 
 const modules = [
@@ -22,7 +21,7 @@ const modules = [
   },
   {
     href: "/markedsplass",
-    title: "Marked",
+    title: "Markedsplass",
     desc: "Kjøp & salg",
     active: true,
     icon: (
@@ -36,7 +35,7 @@ const modules = [
   {
     href: "/arrangement",
     title: "Events",
-    desc: "Treff",
+    desc: "Treff & samlinger",
     active: true,
     icon: (
       <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.3" className="w-6 h-6">
@@ -50,7 +49,7 @@ const modules = [
   {
     href: "#",
     title: "Klubber",
-    desc: "Snart",
+    desc: "Kommer snart",
     active: false,
     icon: (
       <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.3" className="w-6 h-6">
@@ -62,7 +61,7 @@ const modules = [
   {
     href: "#",
     title: "Aktører",
-    desc: "Snart",
+    desc: "Kommer snart",
     active: false,
     icon: (
       <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.3" className="w-6 h-6">
@@ -85,103 +84,100 @@ export default function Index() {
 
       <div className="min-h-[calc(100vh-4rem)] bg-[#0a0a0a]">
 
-        {/* ─── MAIN HERO COMPOSITION ─── */}
-        <section className="relative overflow-hidden">
-          {/* Background image — portrait, right-aligned, tall */}
-          <div className="absolute top-0 right-0 bottom-0 w-[55%] md:w-[52%]">
-            <img
-              src={heroCar}
-              alt="Porsche 911 i garasje"
-              className="w-full h-full object-cover object-[center_40%]"
-            />
-            {/* Fade left */}
-            <div className="absolute inset-y-0 left-0 w-2/3 bg-gradient-to-r from-[#0a0a0a] to-transparent" />
-            {/* Fade bottom */}
-            <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#0a0a0a] to-transparent" />
-            {/* Fade top */}
-            <div className="absolute top-0 left-0 right-0 h-16 bg-gradient-to-b from-[#0a0a0a]/60 to-transparent" />
+        {/* ─── HERO ─── */}
+        <section className="relative overflow-hidden h-[280px] sm:h-[320px] md:h-[360px]">
+          {/* Full-width image */}
+          <img
+            src={heroCar}
+            alt="Simca 1000 Rallye racerbil"
+            className="absolute inset-0 w-full h-full object-cover object-[center_35%]"
+          />
+          {/* Gradient overlays */}
+          <div className="absolute inset-0 bg-gradient-to-r from-[#0a0a0a] via-[#0a0a0a]/70 to-transparent" />
+          <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-[#0a0a0a] to-transparent" />
+          <div className="absolute top-0 left-0 right-0 h-12 bg-gradient-to-b from-[#0a0a0a]/50 to-transparent" />
+
+          {/* Title */}
+          <div className="relative z-10 h-full flex flex-col justify-center max-w-[1200px] mx-auto px-5 md:px-8">
+            <h1 className="font-display text-[2.2rem] sm:text-[3rem] md:text-[3.8rem] leading-[1.05] uppercase tracking-wider text-white/90">
+              Hele Norges bilsamfunn
+            </h1>
+            <p className="font-display text-[1.1rem] sm:text-[1.4rem] md:text-[1.7rem] uppercase tracking-[0.15em] text-white/25 mt-1">
+              på nett
+            </p>
+            <p className="text-[11px] sm:text-xs text-white/35 mt-3 tracking-wide">
+              Se oppdateringer fra norske bilentusiaster
+            </p>
           </div>
+        </section>
 
-          {/* Content overlay */}
-          <div className="relative z-10 max-w-[1100px] mx-auto px-5 md:px-8">
-            {/* Search */}
-            <div className="pt-6 pb-8 max-w-[380px]">
-              <GlobalSearch />
-            </div>
-
-            {/* Title — left column, vertically centered */}
-            <div className="pb-10 md:pb-14 max-w-[50%]">
-              <p className="text-[9px] tracking-[0.4em] uppercase text-white/20 mb-3">
-                bilgarasje.no
-              </p>
-              <h1 className="font-display text-[2rem] sm:text-[2.6rem] md:text-[3.2rem] leading-[1.05] uppercase tracking-wider text-white/90">
-                Hele Norges bilsamfunn
-              </h1>
-              <p className="font-display text-[1.2rem] sm:text-[1.5rem] md:text-[1.8rem] uppercase tracking-[0.15em] text-white/25 mt-1">
-                — på nett
-              </p>
-            </div>
-
-            {/* Modules — inline row along bottom */}
-            <div className="pb-8 md:pb-12">
-              <div className="flex items-stretch overflow-x-auto -mx-1">
-                {modules.map((mod, i) => {
-                  const inner = (
-                    <div
-                      className={`flex items-center gap-3 px-4 md:px-5 py-3 whitespace-nowrap transition-all duration-300 group ${
-                        mod.active
-                          ? "cursor-pointer"
-                          : "opacity-25 cursor-default"
-                      }`}
-                    >
-                      <div className={`text-white/35 transition-colors duration-300 ${mod.active ? "group-hover:text-white/70" : ""}`}>
-                        {mod.icon}
-                      </div>
-                      <div>
-                        <p className={`text-[13px] md:text-sm tracking-[0.04em] uppercase font-semibold leading-tight transition-colors duration-300 ${
-                          mod.active ? "text-white/75 group-hover:text-white" : "text-white/25"
-                        }`}>
-                          {mod.title}
-                        </p>
-                        <p className="text-[9px] md:text-[10px] text-white/20 leading-tight mt-0.5">
-                          {mod.desc}
-                        </p>
-                      </div>
+        {/* ─── MODULES ─── */}
+        <section className="bg-[#0a0a0a]">
+          <div className="max-w-[1200px] mx-auto px-5 md:px-8">
+            <div className="grid grid-cols-5 border-t border-white/[0.06]">
+              {modules.map((mod, i) => {
+                const inner = (
+                  <div
+                    className={`flex flex-col items-center justify-center gap-2 py-6 md:py-8 text-center transition-all duration-300 group ${
+                      mod.active ? "cursor-pointer" : "opacity-25 cursor-default"
+                    } ${i < modules.length - 1 ? "border-r border-white/[0.06]" : ""}`}
+                  >
+                    <div className={`text-white/30 transition-colors duration-300 ${mod.active ? "group-hover:text-white/70" : ""}`}>
+                      {mod.icon}
                     </div>
-                  );
-
-                  const separator = i < modules.length - 1 ? (
-                    <div className="w-px self-stretch bg-white/[0.08] my-2" />
-                  ) : null;
-
-                  return (
-                    <div key={mod.title} className="flex items-stretch">
-                      {mod.active ? (
-                        <Link to={mod.href}>{inner}</Link>
-                      ) : (
-                        <div>{inner}</div>
-                      )}
-                      {separator}
+                    <div>
+                      <p className={`text-sm md:text-base tracking-[0.06em] uppercase font-semibold leading-tight transition-colors duration-300 ${
+                        mod.active ? "text-white/70 group-hover:text-white" : "text-white/25"
+                      }`}>
+                        {mod.title}
+                      </p>
+                      <p className="text-[9px] md:text-[10px] text-white/20 leading-tight mt-1">
+                        {mod.desc}
+                      </p>
                     </div>
-                  );
-                })}
-              </div>
+                  </div>
+                );
+
+                return mod.active ? (
+                  <Link key={mod.title} to={mod.href}>{inner}</Link>
+                ) : (
+                  <div key={mod.title}>{inner}</div>
+                );
+              })}
             </div>
           </div>
-
-          {/* Minimum height to let the car image breathe */}
-          <div className="h-[520px] sm:h-[560px] md:h-[600px]" />
         </section>
 
         {/* ─── TRANSITION ─── */}
         <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
 
-        {/* ─── FEED SECTION ─── */}
-        <section className="bg-background py-10 md:py-14">
+        {/* ─── POST UPDATE + FEED ─── */}
+        <section className="bg-background py-8 md:py-12">
           <div className="max-w-[860px] mx-auto px-5 md:px-8">
-            <div className="flex items-center justify-between mb-8">
-              <p className="text-[10px] md:text-[11px] tracking-[0.2em] uppercase text-muted-foreground">
-                Oppdateringer
+
+            {/* Post update bar */}
+            <div className="flex items-center gap-3 mb-8">
+              <div className="flex-1 flex items-center gap-3 px-5 py-3.5 bg-muted/50 border border-border/40 rounded-sm">
+                <div className="w-8 h-8 rounded-full bg-muted-foreground/10 flex items-center justify-center flex-shrink-0">
+                  <span className="text-xs text-muted-foreground/40">👤</span>
+                </div>
+                <p className="text-sm text-muted-foreground/40">
+                  Hva tenker du på i dag? Del et bilde eller en oppdatering...
+                </p>
+              </div>
+              <Link
+                to={user ? "/dashboard" : "/login?returnUrl=/dashboard"}
+                className="flex items-center gap-2 px-5 py-3.5 bg-foreground text-background text-sm font-semibold tracking-wide hover:bg-foreground/90 transition-colors flex-shrink-0"
+              >
+                <PlusCircle className="w-4 h-4" />
+                Legg ut oppdatering
+              </Link>
+            </div>
+
+            {/* Feed header */}
+            <div className="flex items-center justify-between mb-6">
+              <p className="text-base font-semibold text-foreground/80">
+                Siste oppdateringer
               </p>
               {!user && (
                 <Link
@@ -194,7 +190,8 @@ export default function Index() {
               )}
             </div>
 
-            <div className="flex flex-col items-center justify-center py-20 border border-dashed border-border/30">
+            {/* Feed placeholder */}
+            <div className="flex flex-col items-center justify-center py-16 border border-dashed border-border/30">
               <p className="text-sm font-medium text-foreground/60 mb-1">
                 Feed kommer snart
               </p>

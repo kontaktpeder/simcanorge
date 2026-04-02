@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X, LogIn } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { GlobalSearch } from "@/components/layout/GlobalSearch";
 import bilgarasjeLogo from "@/assets/bilgarasje-logo.png";
 
 const navLinks = [
@@ -17,7 +18,7 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 bg-[#0a0a0a]">
       <div className="max-w-[1400px] mx-auto px-5 md:px-8">
-        <div className="flex items-center h-14 md:h-16 gap-6">
+        <div className="flex items-center h-14 md:h-16 gap-4">
 
           <Link to="/" className="flex-shrink-0 group -my-2">
             <img
@@ -26,6 +27,13 @@ export function Header() {
               className="h-16 md:h-[76px] w-auto invert opacity-90 group-hover:opacity-100 transition-opacity duration-300"
             />
           </Link>
+
+          {/* Search field */}
+          <div className="hidden md:block flex-1 max-w-md mx-4">
+            <GlobalSearch />
+          </div>
+
+          <div className="flex-1 md:hidden" />
 
           <nav className="hidden lg:flex items-center gap-0 flex-shrink-0">
             {navLinks.map((link, i) => {
@@ -51,8 +59,6 @@ export function Header() {
               );
             })}
           </nav>
-
-          <div className="flex-1" />
 
           <div className="hidden lg:flex items-center gap-2 flex-shrink-0">
             {user ? (
@@ -94,6 +100,9 @@ export function Header() {
       {mobileMenuOpen && (
         <nav className="lg:hidden bg-[#0a0a0a] border-t border-white/[0.04]">
           <div className="px-5 py-2 flex flex-col">
+            <div className="py-3">
+              <GlobalSearch />
+            </div>
             {navLinks.map((link) => {
               const isActive = location.pathname === link.href;
               return (
