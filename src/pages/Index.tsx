@@ -172,10 +172,6 @@ export default function Index() {
             {/* Section header */}
             <div className="flex items-end justify-between mb-12">
               <div>
-                <p className="text-[11px] uppercase tracking-[0.3em] text-[#c8102e] font-bold mb-3"
-                  style={{ fontFamily: "'Oswald', sans-serif" }}>
-                  Live
-                </p>
                 <h2 className="text-[2.2rem] md:text-[3rem] uppercase text-white font-bold leading-[1] tracking-[0.06em]"
                   style={{ fontFamily: "'Oswald', 'Impact', sans-serif" }}>
                   Oppdateringer
