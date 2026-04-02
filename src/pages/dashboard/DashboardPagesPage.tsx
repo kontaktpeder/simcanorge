@@ -22,13 +22,15 @@ export default function DashboardPagesPage() {
             <h1 className="text-2xl font-bold">Mine sider</h1>
             <p className="text-muted-foreground">Klubber, verksteder og andre sider du er tilknyttet</p>
           </div>
-          {profile?.can_create_pages && (
+          {profile?.can_create_pages ? (
             <Button asChild>
               <Link to="/dashboard/sider/ny">
                 <PlusIcon className="w-4 h-4 mr-1" />
                 Ny side
               </Link>
             </Button>
+          ) : (
+            <RequestPageAccessButton />
           )}
         </div>
 
