@@ -14,6 +14,8 @@ interface OwnerProfile {
   slug: string | null;
   avatar_url: string | null;
   approved_at: string | null;
+  contact_email: string | null;
+  contact_phone: string | null;
   created_at: string;
   updated_at: string;
 }

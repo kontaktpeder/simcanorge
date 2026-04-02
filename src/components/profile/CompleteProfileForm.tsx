@@ -107,6 +107,7 @@ export function CompleteProfileForm() {
           <div className="space-y-1">
             <Label htmlFor="bio">Bio</Label>
             <Textarea id="bio" {...register("bio")} placeholder="Fortell litt om deg selv" rows={3} />
+            <p className="text-xs text-muted-foreground">En god bio øker sjansen for å få sidetilgang</p>
           </div>
 
           <div className="space-y-1">
