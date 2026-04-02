@@ -164,22 +164,22 @@ export default function Index() {
         <div className="h-px bg-gradient-to-r from-transparent via-[#a89880]/15 to-transparent" />
 
         {/* ─── POST UPDATE + FEED ─── */}
-        <section className="bg-background py-8 md:py-12">
+        <section className="py-8 md:py-12" style={{ background: '#151210' }}>
           <div className="max-w-[860px] mx-auto px-5 md:px-8">
 
             {/* Post update bar */}
             <div className="flex items-center gap-3 mb-8">
-              <div className="flex-1 flex items-center gap-3 px-5 py-3.5 bg-[#1a1714]/60 border border-[#a89880]/10 rounded-sm">
-                <div className="w-8 h-8 rounded-full bg-[#a89880]/8 flex items-center justify-center flex-shrink-0">
+              <div className="flex-1 flex items-center gap-3 px-5 py-3.5 bg-[#1c1916] border border-[#a89880]/8 rounded-sm">
+                <div className="w-8 h-8 rounded-full bg-[#a89880]/10 flex items-center justify-center flex-shrink-0">
                   <span className="text-xs text-[#a89880]/40">👤</span>
                 </div>
-                <p className="text-sm text-[#a89880]/35">
+                <p className="text-sm text-white/30">
                   Hva tenker du på i dag? Del et bilde eller en oppdatering...
                 </p>
               </div>
               <Link
                 to={user ? "/dashboard" : "/login?returnUrl=/dashboard"}
-                className="flex items-center gap-2 px-5 py-3.5 bg-[#c4a882] text-[#0f0d0b] text-sm font-semibold tracking-wide hover:bg-[#d4b892] transition-colors flex-shrink-0"
+                className="flex items-center gap-2 px-5 py-3.5 bg-white text-[#0f0d0b] text-sm font-semibold tracking-wide hover:bg-white/90 transition-colors flex-shrink-0"
               >
                 <PlusCircle className="w-4 h-4" />
                 Legg ut oppdatering
@@ -188,13 +188,13 @@ export default function Index() {
 
             {/* Feed header */}
             <div className="flex items-center justify-between mb-6">
-              <p className="text-base font-semibold text-foreground/80">
+              <p className="text-base font-semibold text-white/70">
                 Siste oppdateringer
               </p>
               {!user && (
                 <Link
                   to="/login"
-                  className="flex items-center gap-1.5 text-[10px] tracking-[0.15em] uppercase text-muted-foreground/50 hover:text-foreground transition-colors"
+                  className="flex items-center gap-1.5 text-[10px] tracking-[0.15em] uppercase text-white/30 hover:text-white/60 transition-colors"
                 >
                   Logg inn
                   <ArrowRight className="w-3 h-3" />
@@ -203,11 +203,11 @@ export default function Index() {
             </div>
 
             {/* Feed placeholder */}
-            <div className="flex flex-col items-center justify-center py-16 border border-dashed border-border/30">
-              <p className="text-sm font-medium text-foreground/60 mb-1">
+            <div className="flex flex-col items-center justify-center py-16 border border-dashed border-white/10">
+              <p className="text-sm font-medium text-white/50 mb-1">
                 Feed kommer snart
               </p>
-              <p className="text-xs text-muted-foreground/60 text-center max-w-xs">
+              <p className="text-xs text-white/30 text-center max-w-xs">
                 Oppdateringer fra bileiere, treff og markedsplass
               </p>
             </div>
