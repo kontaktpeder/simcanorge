@@ -8,7 +8,7 @@ export interface SearchResult {
   subtitle?: string;
   thumbnail?: string | null;
   href: string;
-  section: "biler" | "arrangement" | "markedsplass" | "sider";
+  section: "biler" | "arrangement" | "markedsplass" | "sider" | "deler";
   sectionLabel: string;
 }
 
@@ -24,7 +24,7 @@ export function useGlobalSearch(debouncedQuery: string) {
   const { data, isFetching } = useQuery({
     queryKey: ["global-search", q],
     queryFn: async () => {
-      const [carsRes, eventsRes, marketRes, pagesRes] = await Promise.allSettled([
+      const [carsRes, eventsRes, marketRes, pagesRes, partsRes] = await Promise.allSettled([
         supabase
           .from("cars")
           .select("id, title, slug, year, brand, model, car_images(image_url, sort_order)")
@@ -41,7 +41,7 @@ export function useGlobalSearch(debouncedQuery: string) {
           .from("marketplace_items")
           .select("id, title, slug, price, marketplace_images(image_url, sort_order)")
           .not("published_at", "is", null)
-          .ilike("title", `%${safe}%`)
+          .or(`title.ilike.%${safe}%,description.ilike.%${safe}%`)
           .limit(5),
         supabase
           .from("pages")
@@ -49,6 +49,12 @@ export function useGlobalSearch(debouncedQuery: string) {
           .eq("is_public", true)
           .or(`title.ilike.%${safe}%,tagline.ilike.%${safe}%`)
           .limit(3),
+        supabase
+          .from("parts")
+          .select("id, title, slug, price_note, part_images(image_url, sort_order)")
+          .eq("published", true)
+          .or(`title.ilike.%${safe}%,description.ilike.%${safe}%`)
+          .limit(5),
       ]);
 
       return {
@@ -56,6 +62,7 @@ export function useGlobalSearch(debouncedQuery: string) {
         events: eventsRes.status === "fulfilled" ? (eventsRes.value.data ?? []) : [],
         marketplace: marketRes.status === "fulfilled" ? (marketRes.value.data ?? []) : [],
         pages: pagesRes.status === "fulfilled" ? (pagesRes.value.data ?? []) : [],
+        parts: partsRes.status === "fulfilled" ? (partsRes.value.data ?? []) : [],
       };
     },
     enabled: active,
@@ -121,6 +128,21 @@ export function useGlobalSearch(debouncedQuery: string) {
         href: `/s/${page.slug}`,
         section: "sider",
         sectionLabel: "Sider",
+      });
+    }
+
+    for (const part of data.parts) {
+      const imgs = [...((part as any).part_images ?? [])].sort(
+        (a: any, b: any) => (a.sort_order ?? 0) - (b.sort_order ?? 0)
+      );
+      all.push({
+        id: part.id,
+        title: part.title,
+        subtitle: part.price_note ?? undefined,
+        thumbnail: imgs[0]?.image_url ?? null,
+        href: `/markedsplass/bildeler?del=${part.slug}`,
+        section: "deler",
+        sectionLabel: "Deler",
       });
     }
 

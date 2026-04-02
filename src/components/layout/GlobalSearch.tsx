@@ -7,6 +7,7 @@ const SECTION_COLORS: Record<string, string> = {
   biler: "bg-blue-500/15 text-blue-300",
   arrangement: "bg-amber-500/15 text-amber-300",
   markedsplass: "bg-emerald-500/15 text-emerald-300",
+  deler: "bg-rose-500/15 text-rose-300",
   sider: "bg-purple-500/15 text-purple-300",
 };
 
@@ -14,6 +15,7 @@ const SECTION_LABELS: Record<string, string> = {
   biler: "Biler",
   arrangement: "Arrangement",
   markedsplass: "Markedsplass",
+  deler: "Deler",
   sider: "Sider",
 };
 
