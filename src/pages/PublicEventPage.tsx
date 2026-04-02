@@ -397,6 +397,11 @@ export default function PublicEventPage() {
           )}
         </div>
       </div>
+
+      {/* Comments */}
+      <div className="max-w-6xl mx-auto px-6 sm:px-10 pb-10">
+        <CommentSection eventId={event.id} />
+      </div>
     </div>
   );
 }
