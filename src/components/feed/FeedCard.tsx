@@ -81,14 +81,14 @@ export function FeedCard({ post }: { post: FeedPost }) {
             <img
               src={heroImage}
               alt={entityTitle ?? ""}
-              className="w-full h-56 sm:h-64 object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+              className="w-full h-72 sm:h-80 md:h-[380px] object-cover transition-transform duration-700 group-hover:scale-[1.03]"
             />
             {/* Cinematic gradient overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-[#1a1d21] via-transparent to-transparent opacity-60" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#131517] via-[#131517]/20 to-transparent" />
 
             {/* Image count badge */}
             {allImages.length > 1 && (
-              <div className="absolute bottom-3 right-3 bg-black/60 backdrop-blur-sm text-white/90 text-[11px] px-2.5 py-1 rounded-full tracking-wide">
+              <div className="absolute bottom-3 right-3 bg-black/50 backdrop-blur-md text-white/90 text-[11px] px-2.5 py-1 rounded-full tracking-wide font-medium">
                 1 / {allImages.length}
               </div>
             )}
