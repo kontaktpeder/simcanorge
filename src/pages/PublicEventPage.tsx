@@ -262,19 +262,19 @@ export default function PublicEventPage() {
               </section>
             )}
 
-            {/* Gallery images — stacked, clickable */}
+            {/* Gallery images — compact grid */}
             {extraImages.length > 0 && (
-              <section className="space-y-3">
+              <section className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                 {extraImages.map((img, idx) => (
                   <button
                     key={img.id}
                     onClick={() => setLightboxIndex(idx + 1)}
-                    className="block w-full overflow-hidden cursor-pointer group"
+                    className="block overflow-hidden cursor-pointer group aspect-square"
                   >
                     <img
-                      src={getOptimizedImageUrl(img.image_url, { width: 1200 })}
+                      src={getOptimizedImageUrl(img.image_url, { width: 400 })}
                       alt={img.alt_text ?? ""}
-                      className="w-full h-auto object-contain group-hover:opacity-95 transition-opacity duration-300"
+                      className="w-full h-full object-cover group-hover:opacity-90 transition-opacity duration-300"
                       loading="lazy"
                     />
                   </button>

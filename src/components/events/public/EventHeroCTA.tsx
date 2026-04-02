@@ -14,8 +14,8 @@ export function EventHeroCTA({ eventId }: { eventId: string }) {
 
   if (!user) {
     return (
-      <Link to="/login" className={`${base} bg-neutral-900 text-white hover:bg-neutral-800`} aria-label="Meld interesse">
-        Meld interesse
+      <Link to="/login" className={`${base} bg-neutral-900 text-white hover:bg-neutral-800`} aria-label="Jeg kommer">
+        Jeg kommer
       </Link>
     );
   }
@@ -35,7 +35,7 @@ export function EventHeroCTA({ eventId }: { eventId: string }) {
           : "bg-neutral-900 text-white hover:bg-neutral-800"
       }`}
     >
-      {isGoing ? "Påmeldt ✓" : "Meld interesse"}
+      {isGoing ? "Jeg kommer ✓" : "Jeg kommer"}
     </button>
   );
 }
