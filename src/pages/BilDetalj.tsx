@@ -61,6 +61,7 @@ interface CarDetail {
   external_links: ExternalLinkData[] | null;
   timeline_events: TimelineEvent[] | null;
   car_images: CarImage[];
+  owner_profile_id: string | null;
 }
 
 const CATEGORY_LABELS: Record<string, { label: string; color: string }> = {
