@@ -3,6 +3,7 @@ import { Layout } from "@/components/layout/Layout";
 import { Helmet } from "react-helmet-async";
 import { ArrowRight } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { GlobalSearch } from "@/components/layout/GlobalSearch";
 import heroCar from "@/assets/hero-car.jpg";
 
 const modules = [
@@ -84,48 +85,44 @@ export default function Index() {
 
       <div className="min-h-[calc(100vh-4rem)]">
 
-        {/* ─── HERO: Title left, Image right ─── */}
-        <section className="relative bg-[#0a0a0a] overflow-hidden">
-          <div className="max-w-[1100px] mx-auto px-5 md:px-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-0 items-stretch min-h-[340px] md:min-h-[420px]">
-              {/* Left: Title */}
-              <div className="flex flex-col justify-center py-10 md:py-14 pr-0 md:pr-8">
-                <p className="text-[9px] md:text-[10px] tracking-[0.4em] uppercase text-white/20 mb-4">
-                  bilgarasje.no
-                </p>
-                <h1 className="font-display text-[2.4rem] sm:text-[3.2rem] md:text-[3.8rem] leading-[1] uppercase tracking-wider text-white/90">
-                  Norges
-                  <br />
-                  bilsamfunn
-                </h1>
-                <p className="text-[11px] tracking-[0.15em] uppercase text-white/25 mt-4">
-                  Biler · Historier · Fellesskap
-                </p>
-              </div>
-
-              {/* Right: Hero image */}
-              <div className="relative hidden md:block">
-                <img
-                  src={heroCar}
-                  alt="Klassisk Porsche 911 i garasje"
-                  className="absolute inset-0 w-full h-full object-cover object-center"
-                />
-                {/* Left fade into dark */}
-                <div className="absolute inset-0 bg-gradient-to-r from-[#0a0a0a] via-[#0a0a0a]/40 to-transparent" />
-                {/* Bottom fade */}
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-transparent" />
-              </div>
-            </div>
+        {/* ─── SEARCH BAR ─── */}
+        <section className="bg-[#0a0a0a] pt-6 pb-2">
+          <div className="max-w-[420px] mx-auto px-5">
+            <GlobalSearch />
           </div>
+        </section>
 
-          {/* Mobile: show image below title */}
-          <div className="md:hidden relative h-[200px] -mt-2">
+        {/* ─── HERO: Full-width image with title overlay ─── */}
+        <section className="relative bg-[#0a0a0a] overflow-hidden">
+          {/* Full-width image */}
+          <div className="relative w-full h-[260px] sm:h-[340px] md:h-[420px]">
             <img
               src={heroCar}
               alt="Klassisk Porsche 911 i garasje"
               className="w-full h-full object-cover object-center"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/30 to-transparent" />
+            {/* Left fade */}
+            <div className="absolute inset-0 bg-gradient-to-r from-[#0a0a0a] via-transparent to-transparent w-1/3" />
+            {/* Right fade */}
+            <div className="absolute inset-0 bg-gradient-to-l from-[#0a0a0a] via-transparent to-transparent left-auto w-1/3" />
+            {/* Bottom fade */}
+            <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-[#0a0a0a] to-transparent" />
+            {/* Top fade */}
+            <div className="absolute top-0 left-0 right-0 h-1/4 bg-gradient-to-b from-[#0a0a0a] to-transparent" />
+
+            {/* Title overlay — bottom left */}
+            <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10">
+              <div className="max-w-[860px] mx-auto">
+                <p className="text-[9px] md:text-[10px] tracking-[0.4em] uppercase text-white/25 mb-2">
+                  bilgarasje.no
+                </p>
+                <h1 className="font-display text-[2.2rem] sm:text-[2.8rem] md:text-[3.6rem] leading-[1] uppercase tracking-wider text-white/90">
+                  Norges
+                  <br />
+                  bilsamfunn
+                </h1>
+              </div>
+            </div>
           </div>
         </section>
 
@@ -136,26 +133,26 @@ export default function Index() {
               {modules.map((mod) => {
                 const inner = (
                   <div
-                    className={`relative flex flex-col items-center text-center p-6 md:p-7 bg-[#0a0a0a] transition-all duration-300 group ${
+                    className={`relative flex flex-col items-center text-center p-5 md:p-6 bg-[#0a0a0a] transition-all duration-300 group ${
                       mod.active
                         ? "hover:bg-white/[0.04] cursor-pointer"
                         : "opacity-30 cursor-default"
                     }`}
                   >
                     {!mod.active && (
-                      <span className="absolute top-2.5 right-2.5 text-[7px] tracking-[0.2em] uppercase text-white/30 border border-white/10 px-1.5 py-0.5">
+                      <span className="absolute top-2 right-2 text-[7px] tracking-[0.2em] uppercase text-white/30 border border-white/10 px-1.5 py-0.5">
                         Snart
                       </span>
                     )}
-                    <div className={`text-white/50 mb-4 transition-colors duration-300 ${mod.active ? "group-hover:text-white/80" : ""}`}>
+                    <div className={`text-white/50 mb-3 transition-colors duration-300 ${mod.active ? "group-hover:text-white/80" : ""}`}>
                       {mod.icon}
                     </div>
-                    <p className={`text-[11px] tracking-[0.15em] uppercase font-semibold mb-1 transition-colors duration-300 ${
-                      mod.active ? "text-white/70 group-hover:text-white" : "text-white/30"
+                    <p className={`text-[13px] md:text-sm tracking-[0.08em] uppercase font-semibold mb-1 transition-colors duration-300 ${
+                      mod.active ? "text-white/80 group-hover:text-white" : "text-white/30"
                     }`}>
                       {mod.title}
                     </p>
-                    <p className="text-[9px] tracking-[0.05em] text-white/20 leading-relaxed">
+                    <p className="text-[10px] md:text-[11px] tracking-[0.03em] text-white/30 leading-relaxed">
                       {mod.desc}
                     </p>
                   </div>
