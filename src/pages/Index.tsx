@@ -3,7 +3,7 @@ import { Layout } from "@/components/layout/Layout";
 import { Helmet } from "react-helmet-async";
 import { ArrowRight } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
-import carSilhouette from "@/assets/car-silhouette.png";
+import heroCar from "@/assets/hero-car.jpg";
 
 const modules = [
   {
@@ -84,22 +84,48 @@ export default function Index() {
 
       <div className="min-h-[calc(100vh-4rem)]">
 
-        {/* ─── HERO ─── */}
-        <section className="relative bg-[#0a0a0a] pt-10 pb-14 md:pt-12 md:pb-16 overflow-hidden">
-          {/* Car silhouette watermark */}
-          <img
-            src={carSilhouette}
-            alt=""
-            aria-hidden="true"
-            className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-[15%] w-[700px] md:w-[900px] opacity-[0.04] invert pointer-events-none select-none"
-          />
-          <div className="relative max-w-[1100px] mx-auto px-5 md:px-8 text-center">
-            <p className="text-[9px] md:text-[10px] tracking-[0.4em] uppercase text-white/20 mb-4 md:mb-5">
-              bilgarasje.no
-            </p>
-            <h1 className="font-display text-[2.2rem] sm:text-[3rem] md:text-[3.8rem] leading-[1] uppercase tracking-wider text-white/90">
-              Norges bilsamfunn på nett
-            </h1>
+        {/* ─── HERO: Title left, Image right ─── */}
+        <section className="relative bg-[#0a0a0a] overflow-hidden">
+          <div className="max-w-[1100px] mx-auto px-5 md:px-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-0 items-stretch min-h-[340px] md:min-h-[420px]">
+              {/* Left: Title */}
+              <div className="flex flex-col justify-center py-10 md:py-14 pr-0 md:pr-8">
+                <p className="text-[9px] md:text-[10px] tracking-[0.4em] uppercase text-white/20 mb-4">
+                  bilgarasje.no
+                </p>
+                <h1 className="font-display text-[2.4rem] sm:text-[3.2rem] md:text-[3.8rem] leading-[1] uppercase tracking-wider text-white/90">
+                  Norges
+                  <br />
+                  bilsamfunn
+                </h1>
+                <p className="text-[11px] tracking-[0.15em] uppercase text-white/25 mt-4">
+                  Biler · Historier · Fellesskap
+                </p>
+              </div>
+
+              {/* Right: Hero image */}
+              <div className="relative hidden md:block">
+                <img
+                  src={heroCar}
+                  alt="Klassisk Porsche 911 i garasje"
+                  className="absolute inset-0 w-full h-full object-cover object-center"
+                />
+                {/* Left fade into dark */}
+                <div className="absolute inset-0 bg-gradient-to-r from-[#0a0a0a] via-[#0a0a0a]/40 to-transparent" />
+                {/* Bottom fade */}
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-transparent" />
+              </div>
+            </div>
+          </div>
+
+          {/* Mobile: show image below title */}
+          <div className="md:hidden relative h-[200px] -mt-2">
+            <img
+              src={heroCar}
+              alt="Klassisk Porsche 911 i garasje"
+              className="w-full h-full object-cover object-center"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/30 to-transparent" />
           </div>
         </section>
 
