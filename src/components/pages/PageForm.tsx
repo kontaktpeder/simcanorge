@@ -65,6 +65,7 @@ interface Props {
   isPending: boolean;
   submitLabel?: string;
   showSlug?: boolean;
+  onTogglePublic?: (value: boolean) => void;
 }
 
 export function PageForm({ defaultValues, onSubmit, isPending, submitLabel = "Lagre", showSlug = true }: Props) {
