@@ -28,7 +28,7 @@ export function EventAttendButton({ eventId }: { eventId: string }) {
           variant={isGoing ? "secondary" : "default"}
           disabled={isPending}
           onClick={() =>
-            toggle(attendance?.id ?? null, {
+            toggle((attendance as any)?.id ?? null, {
               onSuccess: () =>
                 toast.success(isGoing ? "Påmelding fjernet" : "Du er påmeldt!"),
               onError: () => toast.error("Noe gikk galt"),
