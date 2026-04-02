@@ -14,7 +14,7 @@ export function EventHeroCTA({ eventId }: { eventId: string }) {
 
   if (!user) {
     return (
-      <Link to="/login" className={`${base} bg-neutral-900 text-white hover:bg-neutral-800`}>
+      <Link to="/login" className={`${base} bg-neutral-900 text-white hover:bg-neutral-800`} aria-label="Meld interesse">
         Bli med
       </Link>
     );
