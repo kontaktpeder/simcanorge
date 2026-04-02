@@ -170,7 +170,7 @@ export default function Index() {
 
         {/* ─── POST UPDATE + FEED ─── */}
         <section className="py-8 md:py-12 bg-[#171a1d]">
-          <div className="max-w-[860px] mx-auto px-5 md:px-8">
+          <div className="max-w-[1000px] mx-auto px-5 md:px-8">
 
             {/* Composer */}
             <div className="mb-8">
