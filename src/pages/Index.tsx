@@ -62,10 +62,10 @@ const modules = [
     ),
   },
   {
-    href: "#",
+    href: "/aktoerer",
     title: "Aktører",
-    desc: "Kommer snart",
-    active: false,
+    desc: "Verksteder & bedrifter",
+    active: true,
     icon: (
       <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.3" className="w-6 h-6">
         <path d="M5 28V13l11-8 11 8v15" strokeLinejoin="round"/>

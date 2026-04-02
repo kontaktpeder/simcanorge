@@ -40,6 +40,7 @@ const DashboardPagesPage = lazy(() => import("@/pages/dashboard/DashboardPagesPa
 const CreatePagePage = lazy(() => import("@/pages/dashboard/CreatePagePage"));
 const EditPagePage = lazy(() => import("@/pages/dashboard/EditPagePage"));
 const PublicPagePage = lazy(() => import("@/pages/PublicPagePage"));
+const AktoererPage = lazy(() => import("@/pages/AktoererPage"));
 
 // Events
 const DashboardEventsPage = lazy(() => import("@/pages/dashboard/DashboardEventsPage"));
@@ -105,6 +106,7 @@ export const routes: RouteConfig[] = [
   { path: "/start-annonse", element: StartAnnonse, isPublic: true },
   { path: "/s/:slug", element: PublicPagePage, isPublic: true },
   { path: "/e/:slug", element: PublicEventPage, isPublic: true },
+  { path: "/aktoerer", element: AktoererPage, label: "Aktører", description: "Verksteder, forhandlere og andre aktører", isPublic: true, showInNav: false },
 
   // Auth required
   { path: "/konto", element: Konto, requiresAuth: true },
