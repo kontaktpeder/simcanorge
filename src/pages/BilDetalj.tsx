@@ -102,6 +102,11 @@ const BilDetalj = () => {
   const [showScrollIndicator, setShowScrollIndicator] = useState(true);
   const ctaSectionRef = useRef<HTMLElement>(null);
   const { data: ownerProfile } = useCarOwnerProfile(car?.id ?? undefined);
+  const { user } = useAuth();
+  const { data: myProfile } = useMyPersonProfile();
+  const [showFeedComposer, setShowFeedComposer] = useState(false);
+  const isOwner = !!(myProfile && car?.owner_profile_id === myProfile.id);
+  const firstCarImage = car ? [...car.car_images].sort((a, b) => a.sort_order - b.sort_order)[0]?.image_url ?? null : null;
 
   // Hide scroll indicator when CTA section is visible
   useEffect(() => {
