@@ -61,7 +61,7 @@ export function HomeFeedComposer() {
           value={body}
           onChange={(e) => setBody(e.target.value)}
           onFocus={() => setFocused(true)}
-          placeholder="Hva skjer i garasjen?"
+          placeholder="Hva tenker du på i dag? Del din historie eller spørsmål..."
           rows={focused ? 3 : 1}
           className="flex-1 bg-transparent text-white placeholder:text-[#b0b7bd]/40 text-[15px] font-sans resize-none focus:outline-none leading-relaxed transition-all duration-200"
         />
