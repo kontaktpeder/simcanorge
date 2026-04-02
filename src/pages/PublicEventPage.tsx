@@ -387,8 +387,7 @@ function AttendeeCount({ eventId, maxAttendees }: { eventId: string; maxAttendee
   const { data: count } = useEventAttendeeCount(eventId);
   if (!count && count !== 0) return null;
   return (
-    <span className="flex items-center gap-1.5 text-[15px] text-neutral-500" style={body}>
-      <Users className="w-4 h-4 text-neutral-400" />
+    <span className="text-[15px] text-neutral-500" style={body}>
       {count} påmeldt{maxAttendees ? ` av ${maxAttendees}` : ""}
     </span>
   );
