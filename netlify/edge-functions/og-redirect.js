@@ -1,8 +1,5 @@
-import type { Config, Context } from "@netlify/edge-functions";
-
-const CRAWLER_UA = /facebookexternalhit|facebot|twitterbot|linkedinbot|slackbot|whatsapp|telegrambot|discordbot|pinterest|googlebot|bingbot/i;
-
-export default async function handler(req: Request, context: Context) {
+export default async function handler(req, context) {
+  const CRAWLER_UA = /facebookexternalhit|facebot|twitterbot|linkedinbot|slackbot|whatsapp|telegrambot|discordbot|pinterest|googlebot|bingbot/i;
   const ua = req.headers.get("user-agent") ?? "";
 
   if (!CRAWLER_UA.test(ua)) {
@@ -26,6 +23,6 @@ export default async function handler(req: Request, context: Context) {
   });
 }
 
-export const config: Config = {
+export const config = {
   path: "/biler/:slug",
 };
