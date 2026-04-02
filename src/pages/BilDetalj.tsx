@@ -405,6 +405,47 @@ const BilDetalj = () => {
         subtitle="En unik historie fra vårt fellesskap" 
       />
 
+      {isOwner && (
+        <div className="bg-[#111315] border-b border-white/[0.08]">
+          <div className="container mx-auto px-4 py-3 flex items-center justify-between">
+            <span className="text-[12px] uppercase tracking-[0.12em] text-white/40 font-sans font-medium">
+              Din bil
+            </span>
+            <div className="flex items-center gap-2">
+              <Link
+                to={`/dashboard/bil/${car.id}`}
+                className="flex items-center gap-1.5 text-[11px] uppercase tracking-[0.12em] text-white/60 hover:text-white bg-white/[0.06] hover:bg-white/[0.10] border border-white/[0.10] px-3 py-1.5 transition-all font-sans"
+              >
+                <Pencil className="w-3 h-3" />
+                Rediger
+              </Link>
+              {!showFeedComposer && (
+                <button
+                  onClick={() => setShowFeedComposer(true)}
+                  className="flex items-center gap-1.5 text-[11px] uppercase tracking-[0.12em] text-white/60 hover:text-white bg-white/[0.06] hover:bg-white/[0.10] border border-white/[0.10] px-3 py-1.5 transition-all font-sans"
+                >
+                  <Share2 className="w-3 h-3" />
+                  Del til feed
+                </button>
+              )}
+            </div>
+          </div>
+          {showFeedComposer && (
+            <div className="container mx-auto px-4 pb-4">
+              <PostComposer
+                compact
+                postType="car_update"
+                carId={car.id}
+                snapshotTitle={car.title}
+                snapshotImageUrl={firstCarImage}
+                snapshotEntityType="car"
+                onClose={() => setShowFeedComposer(false)}
+              />
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Hero Section */}
       <section className="py-8 md:py-16">
         <div className="container mx-auto px-4">
