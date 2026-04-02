@@ -119,6 +119,9 @@ export const routes: RouteConfig[] = [
   { path: "/dashboard/sider", element: DashboardPagesPage, requiresAuth: true },
   { path: "/dashboard/sider/ny", element: CreatePagePage, requiresAuth: true },
   { path: "/dashboard/sider/:pageId", element: EditPagePage, requiresAuth: true },
+  { path: "/dashboard/events", element: DashboardEventsPage, requiresAuth: true },
+  { path: "/dashboard/events/ny", element: CreateEventPage, requiresAuth: true },
+  { path: "/dashboard/events/:eventId", element: EditEventPage, requiresAuth: true },
 
   // Admin
   { path: "/admin/login", element: AdminLogin, isPublic: true },
