@@ -101,8 +101,8 @@ export default function Index() {
           <div className="absolute top-0 left-0 right-0 h-16 bg-gradient-to-b from-[#111315]/40 to-transparent" />
 
           <div className="relative z-10 h-full flex flex-col justify-center max-w-[1200px] mx-auto px-5 md:px-8">
-            <p className="text-[11px] sm:text-xs text-[#c4a882]/70 tracking-[0.3em] uppercase mb-2"
-              style={{ fontFamily: "'Oswald', sans-serif", fontWeight: 400 }}>
+            <p className="text-[14px] sm:text-[16px] tracking-[0.3em] uppercase mb-2"
+              style={{ fontFamily: "'Oswald', sans-serif", fontWeight: 500, background: 'linear-gradient(135deg, #F5A623, #FFD166)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
               bilgarasje.no
             </p>
             <h1
