@@ -85,69 +85,67 @@ export default function Index() {
 
       <div className="min-h-[calc(100vh-4rem)]">
 
-        {/* ─── SEARCH BAR — centered ─── */}
-        <section className="bg-[#0a0a0a] pt-6 pb-2">
+        {/* ─── SEARCH BAR — centered above hero ─── */}
+        <section className="relative z-10 bg-[#0a0a0a] pt-5 pb-3">
           <div className="max-w-[420px] mx-auto px-5">
             <GlobalSearch />
           </div>
         </section>
 
-        {/* ─── HERO: Full-width image with title overlay ─── */}
+        {/* ─── HERO ─── */}
         <section className="relative bg-[#0a0a0a] overflow-hidden">
-          <div className="relative w-full h-[220px] sm:h-[280px] md:h-[360px]">
-            {/* Image — slightly right-shifted, contained */}
-            <img
-              src={heroCar}
-              alt="Klassisk Porsche 911 i garasje"
-              className="absolute inset-0 w-full h-full object-cover object-[60%_center]"
-            />
-            {/* Left fade */}
-            <div className="absolute inset-y-0 left-0 w-2/5 bg-gradient-to-r from-[#0a0a0a] to-transparent" />
-            {/* Right fade */}
-            <div className="absolute inset-y-0 right-0 w-1/4 bg-gradient-to-l from-[#0a0a0a] to-transparent" />
-            {/* Bottom fade */}
-            <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-[#0a0a0a] to-transparent" />
-            {/* Top subtle fade */}
-            <div className="absolute top-0 left-0 right-0 h-1/5 bg-gradient-to-b from-[#0a0a0a]/80 to-transparent" />
-
-            {/* Title overlay — bottom left, wider */}
-            <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10">
-              <div className="max-w-[1100px] mx-auto">
-                <p className="text-[9px] md:text-[10px] tracking-[0.4em] uppercase text-white/20 mb-2">
+          <div className="max-w-[1100px] mx-auto px-5 md:px-8">
+            <div className="grid grid-cols-1 md:grid-cols-[1fr_1.4fr] items-end gap-0 md:gap-8">
+              {/* Left: Title */}
+              <div className="py-6 md:py-10">
+                <p className="text-[9px] md:text-[10px] tracking-[0.4em] uppercase text-white/20 mb-3">
                   bilgarasje.no
                 </p>
-                <h1 className="font-display text-[2rem] sm:text-[2.6rem] md:text-[3.4rem] leading-[1.05] uppercase tracking-wider text-white/90">
-                  Hele Norges
-                  <br />
-                  bilsamfunn — <span className="text-white/40">på nett</span>
+                <h1 className="font-display text-[1.8rem] sm:text-[2.2rem] md:text-[2.8rem] leading-[1.05] uppercase tracking-wider text-white/90 whitespace-nowrap">
+                  Hele Norges bilsamfunn <span className="text-white/35">— på nett</span>
                 </h1>
+              </div>
+
+              {/* Right: Full landscape image */}
+              <div className="relative">
+                <img
+                  src={heroCar}
+                  alt="Klassisk Porsche 911 i garasje"
+                  className="w-full h-auto object-contain"
+                />
+                {/* Left fade into bg */}
+                <div className="absolute inset-y-0 left-0 w-1/4 bg-gradient-to-r from-[#0a0a0a] to-transparent" />
+                {/* Bottom fade */}
+                <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-[#0a0a0a] to-transparent" />
               </div>
             </div>
           </div>
         </section>
 
-        {/* ─── MODULE GRID — wider, with gaps ─── */}
-        <section className="bg-[#0a0a0a] pt-4 pb-10 md:pb-14">
+        {/* ─── MODULE ROW — separated by lines ─── */}
+        <section className="bg-[#0a0a0a] pt-6 pb-10 md:pb-14">
           <div className="max-w-[1100px] mx-auto px-5 md:px-8">
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-px">
-              {modules.map((mod) => {
+            {/* Top line */}
+            <div className="h-px bg-white/[0.08] mb-1" />
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">
+              {modules.map((mod, i) => {
                 const inner = (
                   <div
-                    className={`relative flex flex-col items-center text-center p-5 md:p-6 bg-[#0a0a0a] border border-white/[0.06] transition-all duration-300 group ${
+                    className={`relative flex flex-col items-center text-center py-6 md:py-8 transition-all duration-300 group ${
                       mod.active
-                        ? "hover:border-white/[0.12] hover:bg-white/[0.02] cursor-pointer"
+                        ? "hover:bg-white/[0.02] cursor-pointer"
                         : "opacity-30 cursor-default"
                     }`}
                   >
                     {!mod.active && (
-                      <span className="absolute top-2 right-2 text-[7px] tracking-[0.2em] uppercase text-white/30 border border-white/10 px-1.5 py-0.5">
+                      <span className="absolute top-2 right-2 text-[7px] tracking-[0.2em] uppercase text-white/30">
                         Snart
                       </span>
                     )}
-                    <div className={`text-white/45 mb-3 transition-colors duration-300 ${mod.active ? "group-hover:text-white/80" : ""}`}>
+                    <div className={`text-white/40 mb-3 transition-colors duration-300 ${mod.active ? "group-hover:text-white/80" : ""}`}>
                       {mod.icon}
                     </div>
-                    <p className={`text-[13px] md:text-sm tracking-[0.06em] uppercase font-semibold mb-1 transition-colors duration-300 ${
+                    <p className={`text-sm md:text-[15px] tracking-[0.04em] uppercase font-semibold mb-1 transition-colors duration-300 ${
                       mod.active ? "text-white/80 group-hover:text-white" : "text-white/30"
                     }`}>
                       {mod.title}
@@ -158,15 +156,21 @@ export default function Index() {
                   </div>
                 );
 
+                const wrapperClass = i < modules.length - 1
+                  ? "border-r border-white/[0.06]"
+                  : "";
+
                 return mod.active ? (
-                  <Link key={mod.title} to={mod.href}>
+                  <Link key={mod.title} to={mod.href} className={wrapperClass}>
                     {inner}
                   </Link>
                 ) : (
-                  <div key={mod.title}>{inner}</div>
+                  <div key={mod.title} className={wrapperClass}>{inner}</div>
                 );
               })}
             </div>
+            {/* Bottom line */}
+            <div className="h-px bg-white/[0.08] mt-1" />
           </div>
         </section>
 
