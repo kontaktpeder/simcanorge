@@ -44,6 +44,7 @@ const statusColors: Record<InquiryStatus, string> = {
 export default function DashboardMineForesporsler() {
   const { user, isLoading: authLoading } = useAuth();
   const { data: ownerProfile, isLoading: profileLoading } = useOwnerProfile(user?.id);
+  const { data: legacyOwnerId } = useLegacyOwnerId(user?.id);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [selectedId, setSelectedId] = useState<string | null>(null);
