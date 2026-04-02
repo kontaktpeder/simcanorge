@@ -11,9 +11,12 @@ export function PublicPageEvents({ pageId }: { pageId: string }) {
   if (isLoading || !events || events.length === 0) return null;
 
   return (
-    <section className="col-span-full mt-6">
-      <h2 className="text-sm font-semibold uppercase tracking-wider text-[hsl(var(--page-accent))] mb-4">
-        Kommende arrangement
+    <div>
+      <h2
+        className="text-[1.4rem] md:text-[1.6rem] uppercase text-white font-bold leading-[1] tracking-[0.06em] mb-5"
+        style={{ fontFamily: "'Oswald', 'Impact', sans-serif" }}
+      >
+        Arrangementer
       </h2>
       <div className="space-y-3">
         {events.map((event) => {
@@ -27,11 +30,11 @@ export function PublicPageEvents({ pageId }: { pageId: string }) {
             <Link
               key={event.id}
               to={`/e/${event.slug}`}
-              className="flex items-center gap-4 p-3 rounded-xl border border-[hsl(var(--page-card-border))] bg-[hsl(var(--page-card))] hover:border-[hsl(var(--page-accent)/0.3)] transition-colors group"
+              className="flex items-center gap-4 py-3 border-b border-white/[0.06] hover:bg-white/[0.02] transition-colors group -mx-2 px-2 rounded"
             >
-              {/* Date badge */}
+              {/* Date */}
               <div className="flex-shrink-0 text-center w-12">
-                <div className="text-[10px] uppercase tracking-wider text-[hsl(var(--page-text-muted))]">
+                <div className="text-[10px] uppercase tracking-wider text-white/30">
                   {format(startDate, "MMM", { locale: nb })}
                 </div>
                 <div className="text-xl font-bold leading-tight text-[hsl(var(--page-accent))]">
@@ -44,10 +47,10 @@ export function PublicPageEvents({ pageId }: { pageId: string }) {
                 <div className="mb-0.5">
                   <EventTypeBadge type={event.event_type} />
                 </div>
-                <p className="font-medium text-sm truncate text-[hsl(var(--page-text)/0.9)] group-hover:text-[hsl(var(--page-accent))] transition-colors">
+                <p className="font-medium text-sm truncate text-white/80 group-hover:text-[hsl(var(--page-accent))] transition-colors">
                   {event.title}
                 </p>
-                <p className="text-xs text-[hsl(var(--page-text-muted))] flex items-center gap-1">
+                <p className="text-xs text-white/35 flex items-center gap-1">
                   <MapPin className="w-3 h-3" />
                   {event.location}
                 </p>
@@ -55,7 +58,7 @@ export function PublicPageEvents({ pageId }: { pageId: string }) {
 
               {/* Thumbnail */}
               {heroImage && (
-                <div className="hidden sm:block flex-shrink-0 w-20 h-14 rounded-lg overflow-hidden">
+                <div className="hidden sm:block flex-shrink-0 w-16 h-12 rounded overflow-hidden">
                   <img src={heroImage} alt="" className="w-full h-full object-cover" />
                 </div>
               )}
@@ -63,12 +66,6 @@ export function PublicPageEvents({ pageId }: { pageId: string }) {
           );
         })}
       </div>
-
-      {events.length === 6 && (
-        <p className="text-xs text-[hsl(var(--page-text-muted))] mt-3 text-center">
-          Viser de 6 neste arrangementene
-        </p>
-      )}
-    </section>
+    </div>
   );
 }
