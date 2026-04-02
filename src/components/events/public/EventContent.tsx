@@ -9,13 +9,13 @@ export function EventContent({ description, program, practicalInfo }: EventConte
   if (!hasContent) return null;
 
   return (
-    <div className="space-y-12">
+    <div className="space-y-10">
       {description && (
         <section>
-          <h2 className="text-xl font-semibold text-white mb-4 tracking-tight">
+          <h2 className="text-2xl font-bold text-stone-900 mb-4">
             Om arrangementet
           </h2>
-          <div className="text-[15px] text-white/60 leading-[1.8] whitespace-pre-wrap">
+          <div className="text-base text-stone-600 leading-[1.8] whitespace-pre-wrap max-w-prose">
             {description}
           </div>
         </section>
@@ -23,10 +23,10 @@ export function EventContent({ description, program, practicalInfo }: EventConte
 
       {program && (
         <section>
-          <h2 className="text-xl font-semibold text-white mb-4 tracking-tight">
+          <h2 className="text-2xl font-bold text-stone-900 mb-4">
             Program
           </h2>
-          <div className="text-[15px] text-white/60 leading-[1.8] whitespace-pre-wrap font-mono">
+          <div className="text-base text-stone-600 leading-[2] whitespace-pre-wrap max-w-prose">
             {program}
           </div>
         </section>
@@ -34,10 +34,10 @@ export function EventContent({ description, program, practicalInfo }: EventConte
 
       {practicalInfo && (
         <section>
-          <h2 className="text-xl font-semibold text-white mb-4 tracking-tight">
+          <h2 className="text-2xl font-bold text-stone-900 mb-4">
             Praktisk informasjon
           </h2>
-          <div className="text-[15px] text-white/60 leading-[1.8] whitespace-pre-wrap">
+          <div className="text-base text-stone-600 leading-[1.8] whitespace-pre-wrap max-w-prose">
             {practicalInfo}
           </div>
         </section>

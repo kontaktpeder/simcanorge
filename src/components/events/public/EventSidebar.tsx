@@ -65,56 +65,56 @@ export function EventSidebar({
   const organizerLink = ownerPage ? `/s/${ownerPage.slug}` : null;
 
   return (
-    <div className="rounded-lg bg-[#11161D] border border-[#1F2730] p-5 space-y-5">
+    <div className="rounded-2xl bg-white shadow-lg border border-stone-100 p-6 space-y-5">
       {/* Date */}
       <div className="flex items-start gap-3">
-        <Calendar className="w-4 h-4 text-amber-500 mt-0.5 shrink-0" />
+        <Calendar className="w-5 h-5 text-amber-500 mt-0.5 shrink-0" />
         <div>
-          <p className="text-sm font-medium text-[#E6EDF3] capitalize">{dateDisplay}</p>
-          <p className="text-sm text-[#8B98A5]">kl. {timeDisplay}</p>
+          <p className="text-sm font-semibold text-stone-800 capitalize">{dateDisplay}</p>
+          <p className="text-sm text-stone-500">kl. {timeDisplay}</p>
         </div>
       </div>
 
       {/* Location */}
       <div className="flex items-start gap-3">
-        <MapPin className="w-4 h-4 text-amber-500 mt-0.5 shrink-0" />
-        <p className="text-sm text-[#E6EDF3]">{location}</p>
+        <MapPin className="w-5 h-5 text-amber-500 mt-0.5 shrink-0" />
+        <p className="text-sm font-medium text-stone-700">{location}</p>
       </div>
 
       {/* Attendees */}
       <div className="flex items-start gap-3">
-        <Users className="w-4 h-4 text-amber-500 mt-0.5 shrink-0" />
-        <p className="text-sm text-[#E6EDF3]">
+        <Users className="w-5 h-5 text-amber-500 mt-0.5 shrink-0" />
+        <p className="text-sm font-medium text-stone-700">
           {count ?? 0} påmeldt
-          {maxAttendees && <span className="text-[#8B98A5]"> / {maxAttendees} plasser</span>}
+          {maxAttendees && <span className="text-stone-400"> / {maxAttendees} plasser</span>}
         </p>
       </div>
 
       {/* Divider */}
-      <div className="border-t border-[#1F2730]" />
+      <div className="border-t border-stone-100" />
 
       {/* Organizer */}
       <div className="flex items-center gap-3">
-        <Avatar className="h-8 w-8">
+        <Avatar className="h-9 w-9">
           {organizerLogo && <AvatarImage src={organizerLogo} alt={organizerName} />}
-          <AvatarFallback className="bg-[#1F2730] text-[#8B98A5] text-xs">
+          <AvatarFallback className="bg-amber-100 text-amber-700 text-xs font-bold">
             {organizerName[0]}
           </AvatarFallback>
         </Avatar>
         <div className="text-sm">
-          <p className="text-[#8B98A5] text-xs">Arrangert av</p>
+          <p className="text-stone-400 text-xs">Arrangert av</p>
           {organizerLink ? (
-            <Link to={organizerLink} className="text-[#E6EDF3] hover:text-amber-500 transition-colors">
+            <Link to={organizerLink} className="text-stone-800 font-medium hover:text-amber-600 transition-colors">
               {organizerName}
             </Link>
           ) : (
-            <span className="text-[#E6EDF3]">{organizerName}</span>
+            <span className="text-stone-800 font-medium">{organizerName}</span>
           )}
         </div>
       </div>
 
       {/* Divider */}
-      <div className="border-t border-[#1F2730]" />
+      <div className="border-t border-stone-100" />
 
       {/* CTA */}
       <EventHeroCTA eventId={eventId} />
@@ -125,7 +125,7 @@ export function EventSidebar({
           href={registrationUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-1.5 text-sm text-amber-500 hover:text-amber-400 transition-colors"
+          className="inline-flex items-center gap-1.5 text-sm font-medium text-amber-600 hover:text-amber-700 transition-colors"
         >
           <ExternalLink className="w-3.5 h-3.5" />
           Ekstern påmelding
@@ -138,7 +138,7 @@ export function EventSidebar({
           href={ownerPage.website}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-1.5 text-sm text-[#8B98A5] hover:text-[#E6EDF3] transition-colors"
+          className="inline-flex items-center gap-1.5 text-sm text-stone-400 hover:text-stone-600 transition-colors"
         >
           <Globe className="w-3.5 h-3.5" />
           Besøk nettside
