@@ -894,6 +894,32 @@ export default function DashboardBilDetalj() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.35 }}
+        >
+          <EnamelCard>
+            <SectionHeader
+              title="Del i feeden"
+              icon={<Send className="w-6 h-6" />}
+              description="Del en oppdatering om denne bilen med resten av bilsamfunnet"
+            />
+            <PostComposer
+              compact
+              postType="car_update"
+              carId={car.id}
+              snapshotTitle={car.title}
+              snapshotImageUrl={
+                car.car_images
+                  ?.slice()
+                  .sort((a: any, b: any) => (a.sort_order ?? 0) - (b.sort_order ?? 0))[0]?.image_url ?? undefined
+              }
+              snapshotEntityType="car"
+            />
+          </EnamelCard>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.4 }}
         >
           <CarEventsList carId={car.id} />

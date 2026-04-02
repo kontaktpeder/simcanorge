@@ -304,6 +304,24 @@ export default function RedigerAnnonse() {
           </div>
         </EnamelCard>
       )}
+
+      {item && (
+        <EnamelCard className="mt-4">
+          <SectionHeader
+            title="Del i feeden"
+            icon={<Send className="w-6 h-6" />}
+            description="Del denne annonsen med bilsamfunnet"
+          />
+          <PostComposer
+            compact
+            postType="marketplace_published"
+            marketplaceItemId={item.id}
+            snapshotTitle={item.title}
+            snapshotImageUrl={existingImages[0]?.url}
+            snapshotEntityType="marketplace"
+          />
+        </EnamelCard>
+      )}
     </GarageLayout>
   );
 }
