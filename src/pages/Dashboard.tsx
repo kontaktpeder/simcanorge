@@ -5,7 +5,7 @@ import { GarageLayout } from '@/components/ui/garage/GarageLayout';
 import { EnamelCard } from '@/components/ui/garage/EnamelCard';
 import { BigActionButton } from '@/components/ui/garage/BigActionButton';
 import { SectionHeader } from '@/components/ui/garage/SectionHeader';
-import { Car, Clock, Settings, Bell, CheckCircle, Send, X, User, HelpCircle, Sparkles, ShoppingBag, Plus, ExternalLink, Inbox, ChevronRight, FileText } from 'lucide-react';
+import { Car, Clock, Settings, Bell, CheckCircle, Send, X, User, HelpCircle, Sparkles, ShoppingBag, Plus, ExternalLink, Inbox, ChevronRight, FileText, Calendar } from 'lucide-react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Loader2 } from 'lucide-react';
@@ -381,6 +381,29 @@ export default function Dashboard() {
                     {myPages?.length || 0}
                   </p>
                 )}
+              </div>
+            </Link>
+          </motion.div>
+        )}
+
+        {/* Arrangementer */}
+        {personProfile && (
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.29 }}
+          >
+            <Link to="/dashboard/events" className="block h-full touch-manipulation">
+              <div className="h-full p-6 sm:p-8 border-2 border-foreground/15 bg-card/90 backdrop-blur-sm group hover:bg-card hover:border-foreground/25 transition-all min-h-[180px]">
+                <p className="font-display text-sm uppercase tracking-wider text-muted-foreground mb-5">
+                  Events
+                </p>
+                <h3 className="font-display text-2xl sm:text-3xl uppercase tracking-wider mb-2 group-hover:text-primary transition-colors">
+                  Arrangementer
+                </h3>
+                <p className="text-base text-muted-foreground">
+                  Opprett og administrer biltreff og events
+                </p>
               </div>
             </Link>
           </motion.div>

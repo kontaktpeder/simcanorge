@@ -41,6 +41,12 @@ const CreatePagePage = lazy(() => import("@/pages/dashboard/CreatePagePage"));
 const EditPagePage = lazy(() => import("@/pages/dashboard/EditPagePage"));
 const PublicPagePage = lazy(() => import("@/pages/PublicPagePage"));
 
+// Events
+const DashboardEventsPage = lazy(() => import("@/pages/dashboard/DashboardEventsPage"));
+const CreateEventPage = lazy(() => import("@/pages/dashboard/CreateEventPage"));
+const EditEventPage = lazy(() => import("@/pages/dashboard/EditEventPage"));
+const PublicEventPage = lazy(() => import("@/pages/PublicEventPage"));
+
 // Admin pages
 const AdminLogin = lazy(() => import("@/pages/admin/AdminLogin"));
 const AdminDashboard = lazy(() => import("@/pages/admin/AdminDashboard"));
@@ -96,6 +102,7 @@ export const routes: RouteConfig[] = [
   { path: "/sok-om-tilgang", element: SokOmTilgang, isPublic: true },
   { path: "/start-annonse", element: StartAnnonse, isPublic: true },
   { path: "/s/:slug", element: PublicPagePage, isPublic: true },
+  { path: "/e/:slug", element: PublicEventPage, isPublic: true },
 
   // Auth required
   { path: "/konto", element: Konto, requiresAuth: true },
@@ -112,6 +119,9 @@ export const routes: RouteConfig[] = [
   { path: "/dashboard/sider", element: DashboardPagesPage, requiresAuth: true },
   { path: "/dashboard/sider/ny", element: CreatePagePage, requiresAuth: true },
   { path: "/dashboard/sider/:pageId", element: EditPagePage, requiresAuth: true },
+  { path: "/dashboard/events", element: DashboardEventsPage, requiresAuth: true },
+  { path: "/dashboard/events/ny", element: CreateEventPage, requiresAuth: true },
+  { path: "/dashboard/events/:eventId", element: EditEventPage, requiresAuth: true },
 
   // Admin
   { path: "/admin/login", element: AdminLogin, isPublic: true },

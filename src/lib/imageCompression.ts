@@ -124,6 +124,13 @@ export function getCarEventImagePath(carId: string, eventId: string, imageId: st
 /**
  * Generate storage path for marketplace images
  */
+/**
+ * Generate storage path for event images
+ */
+export function getEventImagePath(eventId: string, imageId: string): string {
+  return `events/${eventId}/images/${imageId}/original.webp`;
+}
+
 export function getMarketplaceImagePath(itemId: string, imageId: string): string {
   return `marketplace/${itemId}/images/${imageId}/original.webp`;
 }
