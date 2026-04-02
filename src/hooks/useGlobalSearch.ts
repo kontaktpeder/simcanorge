@@ -51,7 +51,7 @@ export function useGlobalSearch(debouncedQuery: string) {
           .limit(3),
         supabase
           .from("parts")
-          .select("id, title, slug, price_note, part_images(image_url, sort_order)")
+          .select("id, title, slug, price_note, image_url, part_images(image_url, sort_order)")
           .eq("published", true)
           .or(`title.ilike.%${safe}%,description.ilike.%${safe}%`)
           .limit(5),
@@ -135,12 +135,13 @@ export function useGlobalSearch(debouncedQuery: string) {
       const imgs = [...((part as any).part_images ?? [])].sort(
         (a: any, b: any) => (a.sort_order ?? 0) - (b.sort_order ?? 0)
       );
+      const thumb = imgs[0]?.image_url ?? (part as any).image_url ?? null;
       all.push({
         id: part.id,
         title: part.title,
         subtitle: part.price_note ?? undefined,
-        thumbnail: imgs[0]?.image_url ?? null,
-        href: `/markedsplass/bildeler?del=${part.slug}`,
+        thumbnail: thumb,
+        href: `/markedsplass/bildeler?del=${(part as any).slug ?? part.id}`,
         section: "deler",
         sectionLabel: "Deler",
       });
