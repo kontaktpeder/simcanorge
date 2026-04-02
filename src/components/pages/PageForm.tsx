@@ -146,8 +146,9 @@ export function PageForm({ defaultValues, onSubmit, isPending, submitLabel = "La
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="space-y-1">
-          <Label htmlFor="contact_email">E-post</Label>
+          <Label htmlFor="contact_email">E-post for kontakt *</Label>
           <Input id="contact_email" type="email" {...register("contact_email")} placeholder="kontakt@simcanorge.no" />
+          <p className="text-xs text-muted-foreground">Vises i kontaktskjemaet på siden</p>
           {errors.contact_email && <p className="text-sm text-destructive">{errors.contact_email.message}</p>}
         </div>
 

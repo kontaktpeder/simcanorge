@@ -55,7 +55,7 @@ function usePendingRequests() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("page_access_requests")
-        .select(`id, message, created_at, profile_id, status`)
+        .select(`id, message, created_at, profile_id, status, page_type`)
         .eq("status", "pending")
         .order("created_at", { ascending: true });
       if (error) throw error;
@@ -65,7 +65,7 @@ function usePendingRequests() {
       const profileIds = data.map((r) => r.profile_id);
       const { data: profiles } = await supabase
         .from("person_profiles")
-        .select("id, display_name, slug")
+        .select("id, display_name, slug, bio, is_public")
         .in("id", profileIds);
 
       const profileMap = new Map((profiles ?? []).map((p) => [p.id, p]));

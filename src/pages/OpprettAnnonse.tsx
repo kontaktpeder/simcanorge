@@ -61,6 +61,7 @@ export default function OpprettAnnonse() {
   if (!user) return null;
 
   if (!ownerProfile) {
+    // No owner profile at all
     return (
       <Layout>
         <section className="relative overflow-hidden" style={{ background: 'hsl(42, 30%, 95%)' }}>

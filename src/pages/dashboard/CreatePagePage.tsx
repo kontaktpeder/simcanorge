@@ -6,11 +6,15 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { PageForm, type PageFormValues } from "@/components/pages/PageForm";
 import { Card, CardContent } from "@/components/ui/card";
 import { useMyPersonProfile } from "@/hooks/useMyPersonProfile";
+import { useOwnerProfile } from "@/hooks/useOwnerProfile";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function CreatePagePage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { data: profile } = useMyPersonProfile();
+  const { user } = useAuth();
+  const { data: ownerProfile } = useOwnerProfile(user?.id);
 
   const { mutateAsync, isPending } = useMutation({
     mutationFn: async (values: PageFormValues) => {
@@ -33,10 +37,20 @@ export default function CreatePagePage() {
         p_is_public: values.is_public,
       } as any);
       if (error) throw error;
+
+      // Write contact_email back to owners if not already set
+      if (!ownerProfile?.contact_email && values.contact_email && ownerProfile?.id) {
+        await supabase
+          .from("owners")
+          .update({ contact_email: values.contact_email } as any)
+          .eq("id", ownerProfile.id);
+      }
+
       return data;
     },
     onSuccess: (data: any) => {
       queryClient.invalidateQueries({ queryKey: ["my_pages"] });
+      queryClient.invalidateQueries({ queryKey: ["owner-profile", user?.id] });
       toast.success("Siden er opprettet!");
       navigate(`/dashboard/sider/${data.id}`);
     },
@@ -69,7 +83,14 @@ export default function CreatePagePage() {
         </div>
         <Card>
           <CardContent className="p-6">
-            <PageForm onSubmit={mutateAsync} isPending={isPending} submitLabel="Opprett side" />
+            <PageForm
+              onSubmit={mutateAsync}
+              isPending={isPending}
+              submitLabel="Opprett side"
+              defaultValues={{
+                contact_email: ownerProfile?.contact_email || "",
+              }}
+            />
           </CardContent>
         </Card>
       </div>

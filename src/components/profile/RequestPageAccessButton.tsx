@@ -7,6 +7,19 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { useState } from "react";
+import { Link } from "react-router-dom";
+import { AlertCircle } from "lucide-react";
+
+const PAGE_TYPE_OPTIONS = [
+  { value: "club", label: "Bilklubb / org." },
+  { value: "workshop", label: "Verksted / garage" },
+  { value: "garage", label: "Personlig garasje" },
+  { value: "dealer", label: "Forhandler" },
+  { value: "collection", label: "Samling" },
+  { value: "other", label: "Annet" },
+];
+
+const MIN_BIO_LENGTH = 30;
 
 function useMyAccessRequest(profileId: string | undefined) {
   return useQuery({
@@ -30,6 +43,7 @@ export function RequestPageAccessButton() {
   const { data: request, isLoading } = useMyAccessRequest(profile?.id);
   const queryClient = useQueryClient();
   const [message, setMessage] = useState("");
+  const [pageType, setPageType] = useState("");
   const [showForm, setShowForm] = useState(false);
 
   const { mutate: sendRequest, isPending } = useMutation({
@@ -37,7 +51,11 @@ export function RequestPageAccessButton() {
       if (!profile) throw new Error("Ingen profil");
       const { error } = await supabase
         .from("page_access_requests")
-        .insert({ profile_id: profile.id, message: message || null });
+        .insert({
+          profile_id: profile.id,
+          message: message || null,
+          page_type: pageType || null,
+        } as any);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -73,6 +91,39 @@ export function RequestPageAccessButton() {
     );
   }
 
+  // Requirements check
+  const missingRequirements: string[] = [];
+  if (!profile?.bio || profile.bio.trim().length < MIN_BIO_LENGTH) {
+    missingRequirements.push("Bio på minst 30 tegn");
+  }
+  if (!profile?.is_public) {
+    missingRequirements.push("Offentlig profil (slå på i Rediger profil)");
+  }
+
+  if (missingRequirements.length > 0) {
+    return (
+      <Card className="border-amber-200 bg-amber-50/50">
+        <CardContent className="p-4 space-y-3">
+          <div className="flex items-start gap-2">
+            <AlertCircle className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" />
+            <div>
+              <p className="text-sm font-medium">Krav for å søke om sidetilgang</p>
+              <p className="text-xs text-muted-foreground mt-1">Du må fullføre profilen din først:</p>
+              <ul className="text-xs text-muted-foreground mt-1 list-disc list-inside space-y-0.5">
+                {missingRequirements.map((r) => (
+                  <li key={r}>{r}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
+          <Button asChild variant="outline" size="sm">
+            <Link to="/dashboard/min-profil">Fullfør profil</Link>
+          </Button>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <div>
       {!showForm ? (
@@ -84,7 +135,27 @@ export function RequestPageAccessButton() {
           <CardHeader className="pb-3">
             <CardTitle className="text-base">Be om sidetilgang</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-3">
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <p className="text-sm font-medium">Hva vil du opprette? *</p>
+              <div className="grid grid-cols-2 gap-2">
+                {PAGE_TYPE_OPTIONS.map((o) => (
+                  <button
+                    key={o.value}
+                    type="button"
+                    onClick={() => setPageType(o.value)}
+                    className={`text-sm px-3 py-2 rounded-lg border transition-colors ${
+                      pageType === o.value
+                        ? "bg-primary text-primary-foreground border-primary"
+                        : "border-border hover:border-primary/50"
+                    }`}
+                  >
+                    {o.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             <Textarea
               value={message}
               onChange={(e) => setMessage(e.target.value)}
@@ -92,7 +163,7 @@ export function RequestPageAccessButton() {
               rows={3}
             />
             <div className="flex gap-2">
-              <Button size="sm" disabled={isPending} onClick={() => sendRequest()}>
+              <Button size="sm" disabled={isPending || !pageType} onClick={() => sendRequest()}>
                 {isPending ? "Sender…" : "Send forespørsel"}
               </Button>
               <Button size="sm" variant="ghost" onClick={() => setShowForm(false)}>
