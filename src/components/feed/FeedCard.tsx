@@ -16,10 +16,6 @@ const TYPE_META: Record<string, { label: string; icon: typeof Pencil }> = {
   event_published:       { label: "Arrangement",   icon: CalendarDays },
 };
 
-function sortedFirst(imgs: { image_url: string; sort_order: number | null }[]) {
-  return [...imgs].sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))[0]?.image_url ?? null;
-}
-
 function getAllImages(post: FeedPost) {
   const car = (post as any).car;
   const marketItem = (post as any).marketplace_item;
@@ -70,131 +66,116 @@ export function FeedCard({ post }: { post: FeedPost }) {
 
   return (
     <>
-    <article className="group relative overflow-hidden rounded-lg bg-[#131517] border border-white/[0.04] hover:border-white/[0.10] transition-all duration-400 hover:shadow-[0_12px_48px_-12px_rgba(212,175,55,0.10)]">
+      <article className="group">
+        {/* ── Type label ── */}
+        <div className="flex items-center gap-2 mb-4">
+          <Icon className="w-3.5 h-3.5 text-[#c8102e]" />
+          <span
+            className="text-[10px] uppercase tracking-[0.2em] font-semibold text-[#c8102e]"
+            style={{ fontFamily: "'Oswald', sans-serif" }}
+          >
+            {meta.label}
+          </span>
+          <span className="text-[10px] text-white/20 tracking-[0.1em] uppercase">{timeAgo}</span>
+        </div>
 
-        {/* Image with click-to-lightbox */}
+        {/* ── Image ── */}
         {heroImage && (
           <div
-            className="relative cursor-pointer overflow-hidden"
+            className="relative cursor-pointer overflow-hidden mb-5"
             onClick={() => setLightboxOpen(true)}
           >
             <img
               src={heroImage}
               alt={entityTitle ?? ""}
-              className="w-full h-72 sm:h-80 md:h-[380px] object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+              className="w-full h-[320px] sm:h-[400px] md:h-[460px] object-cover transition-transform duration-700 group-hover:scale-[1.015]"
             />
-            {/* Cinematic gradient overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-[#131517] via-[#131517]/20 to-transparent" />
-
-            {/* Image count badge */}
             {allImages.length > 1 && (
-              <div className="absolute bottom-3 right-3 bg-black/50 backdrop-blur-md text-white/90 text-[11px] px-2.5 py-1 rounded-full tracking-wide font-medium">
+              <div className="absolute bottom-4 right-4 text-[11px] text-white/70 tracking-[0.1em] font-medium uppercase"
+                style={{ fontFamily: "'Oswald', sans-serif" }}
+              >
                 1 / {allImages.length}
               </div>
             )}
-
-            {/* Type badge floating on image */}
-            <div className="absolute top-3 left-3">
-              <span className="inline-flex items-center gap-1.5 bg-black/50 backdrop-blur-sm text-[#d4af37] text-[10px] uppercase tracking-[0.15em] font-semibold px-3 py-1.5 rounded-full">
-                <Icon className="w-3 h-3" />
-                {meta.label}
-              </span>
-            </div>
           </div>
         )}
 
-        <div className="p-5">
-          {/* No-image type badge */}
-          {!heroImage && (
-            <div className="flex items-center gap-2 mb-3">
-              <span className="inline-flex items-center gap-1.5 text-[10px] uppercase tracking-[0.15em] text-[#d4af37]/80 font-semibold">
-                <Icon className="w-3.5 h-3.5" />
-                {meta.label}
-              </span>
-              <span className="text-[11px] text-white/30">·</span>
-              <span className="text-[11px] text-white/30">{timeAgo}</span>
-            </div>
-          )}
-
-          {/* Title */}
-          {entityTitle && (
-            entityLink ? (
-              <Link to={entityLink} className="block group/title">
-                <h3
-                  className="text-[1.25rem] md:text-[1.4rem] font-bold text-white group-hover/title:text-[#d4af37] transition-colors leading-tight tracking-[0.02em]"
-                  style={{ fontFamily: "'DM Serif Display', 'Oswald', serif" }}
-                >
-                  {entityTitle}
-                </h3>
-              </Link>
-            ) : (
+        {/* ── Title ── */}
+        {entityTitle && (
+          entityLink ? (
+            <Link to={entityLink} className="block group/title">
               <h3
-                className="text-[1.25rem] md:text-[1.4rem] font-bold text-white leading-tight tracking-[0.02em]"
-                style={{ fontFamily: "'DM Serif Display', 'Oswald', serif" }}
+                className="text-[1.6rem] md:text-[2rem] font-bold text-white/95 group-hover/title:text-[#c4a882] transition-colors leading-[1.15] tracking-[0.01em]"
+                style={{ fontFamily: "'DM Serif Display', Georgia, serif" }}
               >
                 {entityTitle}
               </h3>
-            )
-          )}
-
-          {/* Body */}
-          {post.body && (
-            <p className="text-[15px] text-white/65 leading-[1.7] mt-2.5 font-light">
-              {post.body}
-            </p>
-          )}
-
-          {/* Author + meta + like */}
-          <div className="flex items-center justify-between mt-4 pt-4 border-t border-white/[0.06]">
-            {author && (
-              <Link to={`/profil/${author.slug}`} className="flex items-center gap-2.5 group/author">
-                {author.avatar_url ? (
-                  <img
-                    src={author.avatar_url}
-                    alt={author.display_name ?? ""}
-                    className="w-7 h-7 rounded-full object-cover ring-1 ring-white/10 group-hover/author:ring-[#d4af37]/40 transition-all"
-                  />
-                ) : (
-                  <div className="w-7 h-7 rounded-full bg-[#d4af37]/10 flex items-center justify-center ring-1 ring-white/10">
-                    <span className="text-[11px] font-semibold text-[#d4af37]">
-                      {author.display_name?.[0] ?? "?"}
-                    </span>
-                  </div>
-                )}
-                <div className="flex flex-col">
-                  <span className="text-[13px] font-medium text-white/80 group-hover/author:text-white transition-colors leading-tight">
-                    {author.display_name}
-                  </span>
-                  {heroImage && (
-                    <span className="text-[11px] text-white/30 leading-tight">
-                      {timeAgo}
-                    </span>
-                  )}
-                </div>
-              </Link>
-            )}
-
-            <button
-              onClick={() => {
-                if (!user) return;
-                toggleLike({ postId: post.id, liked });
-              }}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-all duration-200 ${
-                liked
-                  ? "text-red-400 bg-red-400/10"
-                  : "text-white/30 hover:text-white/60 hover:bg-white/[0.04]"
-              } ${!user ? "cursor-default" : "cursor-pointer"}`}
+            </Link>
+          ) : (
+            <h3
+              className="text-[1.6rem] md:text-[2rem] font-bold text-white/95 leading-[1.15] tracking-[0.01em]"
+              style={{ fontFamily: "'DM Serif Display', Georgia, serif" }}
             >
-              <Heart className={`w-4 h-4 ${liked ? "fill-current" : ""}`} />
-              {likeCount > 0 && (
-                <span className="text-[12px] font-medium">{likeCount}</span>
+              {entityTitle}
+            </h3>
+          )
+        )}
+
+        {/* ── Body ── */}
+        {post.body && (
+          <p className="text-[15px] md:text-[16px] text-white/55 leading-[1.75] mt-3 max-w-[90%]">
+            {post.body}
+          </p>
+        )}
+
+        {/* ── Author + like row ── */}
+        <div className="flex items-center justify-between mt-5">
+          {author && (
+            <Link to={`/profil/${author.slug}`} className="flex items-center gap-3 group/author">
+              {author.avatar_url ? (
+                <img
+                  src={author.avatar_url}
+                  alt={author.display_name ?? ""}
+                  className="w-8 h-8 rounded-full object-cover ring-1 ring-white/[0.08]"
+                />
+              ) : (
+                <div className="w-8 h-8 rounded-full bg-white/[0.06] flex items-center justify-center">
+                  <span
+                    className="text-[12px] font-bold text-white/50"
+                    style={{ fontFamily: "'Oswald', sans-serif" }}
+                  >
+                    {author.display_name?.[0] ?? "?"}
+                  </span>
+                </div>
               )}
-            </button>
-          </div>
+              <span
+                className="text-[12px] uppercase tracking-[0.12em] text-white/40 group-hover/author:text-white/70 transition-colors font-medium"
+                style={{ fontFamily: "'Oswald', sans-serif" }}
+              >
+                {author.display_name}
+              </span>
+            </Link>
+          )}
+
+          <button
+            onClick={() => {
+              if (!user) return;
+              toggleLike({ postId: post.id, liked });
+            }}
+            className={`flex items-center gap-1.5 transition-colors duration-200 ${
+              liked
+                ? "text-[#c8102e]"
+                : "text-white/20 hover:text-white/50"
+            } ${!user ? "cursor-default" : "cursor-pointer"}`}
+          >
+            <Heart className={`w-4 h-4 ${liked ? "fill-current" : ""}`} />
+            {likeCount > 0 && (
+              <span className="text-[11px] font-medium tracking-wide">{likeCount}</span>
+            )}
+          </button>
         </div>
       </article>
 
-      {/* Fullscreen lightbox */}
       <ImageLightbox
         images={allImages}
         initialIndex={0}
