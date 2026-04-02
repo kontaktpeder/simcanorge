@@ -317,7 +317,7 @@ export default function RedigerAnnonse() {
             postType="marketplace_published"
             marketplaceItemId={item.id}
             snapshotTitle={item.title}
-            snapshotImageUrl={existingImages[0]?.url}
+            snapshotImageUrl={existingImages[0]?.image_url}
             snapshotEntityType="marketplace"
           />
         </EnamelCard>
