@@ -119,85 +119,92 @@ export default function PublicEventPage() {
         <meta name="description" content={event.short_description || `${event.title} – ${event.location}`} />
       </Helmet>
 
-      {/* ── HERO ── */}
-      <div className="max-w-6xl mx-auto px-6 sm:px-10 pt-6 md:pt-10">
-        {/* Type + countdown */}
-        <div className="flex items-center gap-3 mb-4">
-          <span className="text-[13px] uppercase tracking-[0.15em] text-neutral-500 font-medium" style={body}>
-            {TYPE_LABELS[event.event_type] || event.event_type}
-          </span>
-          {event.status === "cancelled" && (
-            <span className="text-[13px] uppercase tracking-[0.15em] text-red-600 font-medium">Avlyst</span>
-          )}
-          {!eventPassed && daysUntil >= 0 && (
-            <span className="text-[13px] text-neutral-500" style={body}>
-              · {daysUntil === 0 ? "I dag" : daysUntil === 1 ? "I morgen" : `Om ${daysUntil} dager`}
-            </span>
-          )}
-        </div>
+      {/* ── HERO — compact two-column ── */}
+      <div className="max-w-6xl mx-auto px-6 sm:px-10 pt-6 md:pt-8">
+        <div className="grid grid-cols-1 md:grid-cols-[1fr_1fr] gap-6 md:gap-10 items-start">
+          {/* Left: all key info */}
+          <div>
+            {/* Type + countdown */}
+            <div className="flex items-center gap-3 mb-3">
+              <span className="text-[13px] uppercase tracking-[0.15em] text-neutral-500 font-medium" style={body}>
+                {TYPE_LABELS[event.event_type] || event.event_type}
+              </span>
+              {event.status === "cancelled" && (
+                <span className="text-[13px] uppercase tracking-[0.15em] text-red-600 font-medium">Avlyst</span>
+              )}
+              {!eventPassed && daysUntil >= 0 && (
+                <span className="text-[13px] text-neutral-500" style={body}>
+                  · {daysUntil === 0 ? "I dag" : daysUntil === 1 ? "I morgen" : `Om ${daysUntil} dager`}
+                </span>
+              )}
+            </div>
 
-        {/* Title */}
-        <h1
-          className="text-[2.4rem] sm:text-[3rem] md:text-[3.6rem] leading-[1.08] tracking-[-0.015em] mb-3"
-          style={serif}
-        >
-          {event.title}
-        </h1>
-
-        {event.short_description && (
-          <p className="text-[20px] sm:text-[22px] text-neutral-600 leading-[1.55] max-w-2xl mb-5" style={body}>
-            {event.short_description}
-          </p>
-        )}
-
-        {/* Meta row: date + time + place + attendees */}
-        <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-[16px] text-neutral-600 mb-4" style={body}>
-          <span className="capitalize">{dayName} {dayNum}. {monthStr} {yearStr}</span>
-          <span className="flex items-center gap-1.5">
-            <Clock className="w-4 h-4 text-neutral-400" />
-            {timeStr}{endTimeStr ? ` – ${endTimeStr}` : ""}
-          </span>
-          <span className="flex items-center gap-1.5">
-            <MapPin className="w-4 h-4 text-neutral-400" />
-            {event.location}
-          </span>
-          <AttendeeCount eventId={event.id} maxAttendees={event.max_attendees} />
-        </div>
-
-        {/* CTA + external link */}
-        <div className="flex items-center gap-4 flex-wrap mb-6">
-          <EventHeroCTA eventId={event.id} />
-          {event.registration_url && (
-            <a
-              href={event.registration_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-[15px] text-neutral-500 hover:text-neutral-800 transition"
-              style={body}
+            {/* Title */}
+            <h1
+              className="text-[2rem] sm:text-[2.4rem] md:text-[2.8rem] leading-[1.08] tracking-[-0.015em] mb-2"
+              style={serif}
             >
-              <ExternalLink className="w-4 h-4" />
-              Mer info / kjøp billetter
-            </a>
+              {event.title}
+            </h1>
+
+            {event.short_description && (
+              <p className="text-[17px] sm:text-[19px] text-neutral-600 leading-[1.5] max-w-xl mb-4" style={body}>
+                {event.short_description}
+              </p>
+            )}
+
+            {/* Meta details */}
+            <div className="space-y-1.5 text-[15px] text-neutral-600 mb-4" style={body}>
+              <div className="flex items-center gap-2">
+                <Clock className="w-4 h-4 text-neutral-400 shrink-0" />
+                <span className="capitalize">{dayName} {dayNum}. {monthStr} {yearStr} · {timeStr}{endTimeStr ? ` – ${endTimeStr}` : ""}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <MapPin className="w-4 h-4 text-neutral-400 shrink-0" />
+                <span>{event.location}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Users className="w-4 h-4 text-neutral-400 shrink-0" />
+                <AttendeeCount eventId={event.id} maxAttendees={event.max_attendees} />
+              </div>
+            </div>
+
+            {/* CTA */}
+            <div className="flex items-center gap-4 flex-wrap">
+              <EventHeroCTA eventId={event.id} />
+              {event.registration_url && (
+                <a
+                  href={event.registration_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 text-[15px] text-neutral-500 hover:text-neutral-800 transition"
+                  style={body}
+                >
+                  <ExternalLink className="w-4 h-4" />
+                  Mer info
+                </a>
+              )}
+            </div>
+          </div>
+
+          {/* Right: hero image */}
+          {heroImage && (
+            <button
+              onClick={() => setLightboxIndex(0)}
+              className="block w-full overflow-hidden cursor-pointer group"
+            >
+              <img
+                src={getOptimizedImageUrl(heroImage, { width: 800, quality: 85 })}
+                srcSet={`${getOptimizedImageUrl(heroImage, { width: 600, quality: 85 })} 600w, ${getOptimizedImageUrl(heroImage, { width: 800, quality: 85 })} 800w, ${getOptimizedImageUrl(heroImage, { width: 1200, quality: 80 })} 1200w`}
+                sizes="(max-width: 768px) 100vw, 50vw"
+                alt=""
+                loading="eager"
+                fetchPriority="high"
+                className="w-full h-auto max-h-[400px] object-contain group-hover:opacity-95 transition-opacity duration-300"
+              />
+            </button>
           )}
         </div>
-
-        {/* Hero image — right-aligned feel on desktop via max-width */}
-        {heroImage && (
-          <button
-            onClick={() => setLightboxIndex(0)}
-            className="block w-full overflow-hidden cursor-pointer group"
-          >
-            <img
-              src={getOptimizedImageUrl(heroImage, { width: 1200, quality: 85 })}
-              srcSet={`${getOptimizedImageUrl(heroImage, { width: 800, quality: 85 })} 800w, ${getOptimizedImageUrl(heroImage, { width: 1200, quality: 85 })} 1200w, ${getOptimizedImageUrl(heroImage, { width: 1600, quality: 80 })} 1600w`}
-              sizes="(max-width: 768px) 100vw, 70vw"
-              alt=""
-              loading="eager"
-              fetchPriority="high"
-              className="w-full h-auto object-contain group-hover:opacity-95 transition-opacity duration-300"
-            />
-          </button>
-        )}
       </div>
 
       <Divider />
