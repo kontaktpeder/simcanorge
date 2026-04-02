@@ -406,6 +406,7 @@ export default function PublicEventPage() {
         <CommentSection eventId={event.id} />
       </div>
     </div>
+    </Layout>
   );
 }
 
