@@ -141,14 +141,14 @@ export default function PublicEventPage() {
 
             {/* Title */}
             <h1
-              className="text-[2rem] sm:text-[2.4rem] md:text-[2.8rem] leading-[1.08] tracking-[-0.015em] mb-2"
+              className="text-[2rem] sm:text-[2.4rem] md:text-[2.8rem] leading-[1.08] tracking-[-0.015em] mb-2 text-neutral-900"
               style={serif}
             >
               {event.title}
             </h1>
 
             {event.short_description && (
-              <p className="text-[17px] sm:text-[19px] text-neutral-600 leading-[1.5] max-w-xl mb-4" style={body}>
+              <p className="text-[15px] sm:text-[16px] text-neutral-500 leading-[1.5] max-w-xl mb-4" style={body}>
                 {event.short_description}
               </p>
             )}
