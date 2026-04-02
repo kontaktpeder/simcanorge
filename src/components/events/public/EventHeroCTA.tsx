@@ -35,7 +35,7 @@ export function EventHeroCTA({ eventId }: { eventId: string }) {
           : "bg-neutral-900 text-white hover:bg-neutral-800"
       }`}
     >
-      {isGoing ? "Påmeldt ✓" : "Meld meg på"}
+      {isGoing ? "Påmeldt ✓" : "Meld interesse"}
     </button>
   );
 }

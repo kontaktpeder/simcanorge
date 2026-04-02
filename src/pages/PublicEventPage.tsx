@@ -128,9 +128,7 @@ export default function PublicEventPage() {
               <AttendeeChip eventId={event.id} maxAttendees={event.max_attendees} />
             </div>
 
-            <div className="pt-3">
-              <EventHeroCTA eventId={event.id} />
-            </div>
+            {/* CTA only in sidebar / bottom — not duplicated here */}
           </div>
         </div>
       </div>
