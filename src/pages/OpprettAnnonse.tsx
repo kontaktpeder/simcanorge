@@ -435,3 +435,54 @@ export default function OpprettAnnonse() {
     </Layout>
   );
 }
+
+function ContactEmailGate({ ownerProfileId, onSuccess }: { ownerProfileId: string; onSuccess: () => void }) {
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  const handleSave = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!email.includes("@")) return;
+    setSaving(true);
+    await supabase
+      .from("owners")
+      .update({ contact_email: email, contact_phone: phone || null } as any)
+      .eq("id", ownerProfileId);
+    setSaving(false);
+    onSuccess();
+  };
+
+  return (
+    <form onSubmit={handleSave} className="space-y-4 text-left max-w-sm mx-auto">
+      <div className="space-y-1">
+        <label className="text-sm font-medium">E-post *</label>
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="din@epost.no"
+          required
+          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        />
+      </div>
+      <div className="space-y-1">
+        <label className="text-sm font-medium">Telefon (valgfritt)</label>
+        <input
+          type="tel"
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+          placeholder="+47 000 00 000"
+          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        />
+      </div>
+      <button
+        type="submit"
+        disabled={saving || !email.includes("@")}
+        className="w-full inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+      >
+        {saving ? "Lagrer..." : "Lagre og fortsett"}
+      </button>
+    </form>
+  );
+}
