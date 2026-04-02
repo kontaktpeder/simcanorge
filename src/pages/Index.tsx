@@ -1,8 +1,11 @@
 import { Link } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { Helmet } from "react-helmet-async";
-import { ArrowRight, PlusCircle } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { useFeedPosts } from "@/hooks/useFeedPosts";
+import { FeedCard } from "@/components/feed/FeedCard";
+import { HomeFeedComposer } from "@/components/feed/HomeFeedComposer";
 import heroCar from "@/assets/hero-car.jpg";
 
 const modules = [
