@@ -16,7 +16,7 @@ export function Footer() {
           src={carSilhouette}
           alt=""
           aria-hidden="true"
-          className="absolute bottom-0 right-0 translate-x-[20%] translate-y-[15%] w-[500px] md:w-[600px] opacity-[0.03] invert pointer-events-none select-none"
+          className="absolute bottom-0 right-0 translate-x-[20%] translate-y-[15%] w-[500px] md:w-[600px] opacity-[0.03] invert pointer-events-none select-none -scale-x-100"
         />
 
         <div className="h-px bg-white/[0.06]" />
