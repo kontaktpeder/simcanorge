@@ -22,9 +22,10 @@ import { GarageLayout } from '@/components/ui/garage/GarageLayout';
 import { EnamelCard } from '@/components/ui/garage/EnamelCard';
 import { SectionHeader } from '@/components/ui/garage/SectionHeader';
 import { Label } from '@/components/ui/label';
-import { ChevronLeft, Loader2, Trash2, Pencil, Clock } from 'lucide-react';
+import { ChevronLeft, Loader2, Trash2, Pencil, Clock, Send } from 'lucide-react';
 import { Layout } from '@/components/layout/Layout';
 import { toast } from 'sonner';
+import { PostComposer } from '@/components/feed/PostComposer';
 
 export default function RedigerAnnonse() {
   const { itemId } = useParams<{ itemId: string }>();
@@ -301,6 +302,24 @@ export default function RedigerAnnonse() {
               Slett annonse
             </button>
           </div>
+        </EnamelCard>
+      )}
+
+      {item && (
+        <EnamelCard className="mt-4">
+          <SectionHeader
+            title="Del i feeden"
+            icon={<Send className="w-6 h-6" />}
+            description="Del denne annonsen med bilsamfunnet"
+          />
+          <PostComposer
+            compact
+            postType="marketplace_published"
+            marketplaceItemId={item.id}
+            snapshotTitle={item.title}
+            snapshotImageUrl={existingImages[0]?.image_url}
+            snapshotEntityType="marketplace"
+          />
         </EnamelCard>
       )}
     </GarageLayout>
