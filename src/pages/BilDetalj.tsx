@@ -10,6 +10,7 @@ import { useCarOwnerProfile } from "@/hooks/useOwnerProfile";
 import { useAuth } from "@/hooks/useAuth";
 import { useMyPersonProfile } from "@/hooks/useMyPersonProfile";
 import { PostComposer } from "@/components/feed/PostComposer";
+import { CommentSection } from "@/components/comments/CommentSection";
 import { supabase } from "@/integrations/supabase/client";
 import { getResponsiveImageProps, IMAGE_SIZES, getThumbnailUrl } from "@/lib/imageUtils";
 import { 
@@ -875,6 +876,15 @@ const BilDetalj = () => {
               </Link>
             </p>
           </AnimatedSection>
+        </div>
+      </section>
+
+      {/* Comments */}
+      <section className="bg-[#f5f4f0] py-8">
+        <div className="container mx-auto px-4">
+          <div className="max-w-2xl mx-auto">
+            <CommentSection carId={car.id} />
+          </div>
         </div>
       </section>
     </Layout>
