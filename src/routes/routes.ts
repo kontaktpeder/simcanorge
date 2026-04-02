@@ -40,6 +40,7 @@ const DashboardPagesPage = lazy(() => import("@/pages/dashboard/DashboardPagesPa
 const CreatePagePage = lazy(() => import("@/pages/dashboard/CreatePagePage"));
 const EditPagePage = lazy(() => import("@/pages/dashboard/EditPagePage"));
 const PublicPagePage = lazy(() => import("@/pages/PublicPagePage"));
+const AktoererPage = lazy(() => import("@/pages/AktoererPage"));
 
 // Events
 const DashboardEventsPage = lazy(() => import("@/pages/dashboard/DashboardEventsPage"));
