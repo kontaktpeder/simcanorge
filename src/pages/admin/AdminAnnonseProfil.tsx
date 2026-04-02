@@ -127,7 +127,7 @@ const AdminAnnonseProfil = () => {
   const images = [...(item.marketplace_images || [])].sort((a, b) => a.sort_order - b.sort_order);
   const canPublish = item.status === "submitted" || item.status === "draft";
   const canUnpublish = item.status === "published";
-  const owner = item.owners;
+  const owner = item.person_profiles;
   const status = statusLabels[item.status] || statusLabels.draft;
 
   return (
