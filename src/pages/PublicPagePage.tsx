@@ -4,6 +4,7 @@ import { usePublicPageBySlug } from "@/hooks/usePageBySlug";
 import { PublicPageHero } from "@/components/pages/PublicPageHero";
 import { PublicPageAbout } from "@/components/pages/PublicPageAbout";
 import { PublicPageContact } from "@/components/pages/PublicPageContact";
+import { PublicPageEvents } from "@/components/pages/PublicPageEvents";
 
 export default function PublicPagePage() {
   const { slug } = useParams<{ slug: string }>();
@@ -39,6 +40,8 @@ export default function PublicPagePage() {
           <PublicPageAbout page={page} />
           <PublicPageContact page={page} />
         </div>
+
+        <PublicPageEvents pageId={page.id} />
       </div>
     </>
   );

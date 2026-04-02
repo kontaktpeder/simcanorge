@@ -13,6 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useMyPages } from "@/hooks/useMyPages";
 
 function toSlug(v: string) {
   return v
@@ -49,6 +50,7 @@ const schema = z
       z.undefined(),
     ]).optional(),
     status: z.enum(["draft", "published", "cancelled", "archived"]),
+    owner_page_id: z.string().nullable().optional(),
   })
   .refine(
     (d) => {
@@ -87,6 +89,8 @@ export function EventForm({
   mode = "create",
 }: Props) {
   const slugManuallyEdited = useRef(false);
+  const { data: myPages } = useMyPages();
+
   const {
     register,
     handleSubmit,
@@ -95,7 +99,7 @@ export function EventForm({
     formState: { errors },
   } = useForm<EventFormValues>({
     resolver: zodResolver(schema),
-    defaultValues: { status: "draft", event_type: "meet", ...defaultValues },
+    defaultValues: { status: "draft", event_type: "meet", owner_page_id: null, ...defaultValues },
   });
 
   const title = watch("title");
@@ -191,6 +195,34 @@ export function EventForm({
           )}
         </div>
       </div>
+
+      {/* Organizer page — only shown if user has pages */}
+      {myPages && myPages.length > 0 && (
+        <div className="space-y-1">
+          <Label>Arrangert av</Label>
+          <Select
+            defaultValue={defaultValues?.owner_page_id ?? "none"}
+            onValueChange={(v) =>
+              setValue("owner_page_id", v === "none" ? null : v)
+            }
+          >
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="none">Personlig (deg selv)</SelectItem>
+              {myPages.map((page) => (
+                <SelectItem key={page.id} value={page.id}>
+                  {page.title}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <p className="text-xs text-muted-foreground">
+            Velg om arrangementet skjer på vegne av en side du administrerer
+          </p>
+        </div>
+      )}
 
       {/* Extended fields in edit mode */}
       {mode === "edit" && (

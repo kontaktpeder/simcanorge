@@ -9,6 +9,7 @@ const navLinks = [
   { href: "/", label: "Hjem" },
   { href: "/biler", label: "Biler" },
   { href: "/markedsplass", label: "Markedsplass" },
+  { href: "/arrangement", label: "Arrangement" },
   { href: "/manedens-bil", label: "Månedens bil" },
   { href: "/historie", label: "Historie" },
   { href: "/om-oss", label: "Om oss" },

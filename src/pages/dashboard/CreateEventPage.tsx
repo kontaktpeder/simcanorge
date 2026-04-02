@@ -20,6 +20,7 @@ export default function CreateEventPage() {
         starts_at: values.starts_at,
         ends_at: values.ends_at || null,
         status: values.status,
+        owner_page_id: values.owner_page_id ?? null,
       });
       toast.success("Arrangement opprettet!");
       navigate(`/dashboard/events/${event.id}`);

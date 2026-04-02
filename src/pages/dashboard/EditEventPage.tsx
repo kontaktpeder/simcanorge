@@ -48,6 +48,7 @@ export default function EditEventPage() {
           ? Number(values.max_attendees)
           : null,
         status: values.status,
+        owner_page_id: values.owner_page_id ?? null,
       });
       toast.success("Arrangement oppdatert");
     } catch (err: unknown) {
@@ -106,6 +107,7 @@ export default function EditEventPage() {
                 registration_url: event.registration_url ?? "",
                 max_attendees: event.max_attendees ?? undefined,
                 status: event.status as any,
+                owner_page_id: event.owner_page_id ?? null,
               }}
               onSubmit={onSubmit}
               isPending={isPending}
