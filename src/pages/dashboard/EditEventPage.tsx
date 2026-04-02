@@ -125,6 +125,20 @@ export default function EditEventPage() {
             <EventImageUpload eventId={eventId!} />
           </CardContent>
         </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Del i feeden</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <PostComposer
+              compact
+              postType="event_published"
+              eventId={eventId!}
+              snapshotTitle={event.title}
+              snapshotEntityType="event"
+            />
+          </CardContent>
+        </Card>
       </div>
     </Layout>
   );
