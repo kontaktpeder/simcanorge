@@ -65,7 +65,7 @@ export default function PublicEventPage() {
       {/* ═══════════════════════════════════════
           HERO — full bleed image
          ═══════════════════════════════════════ */}
-      <div className="relative w-full h-[65vh] sm:h-[72vh] md:h-[82vh] overflow-hidden">
+      <div className="relative w-full h-[40vh] sm:h-[45vh] md:h-[50vh] overflow-hidden">
         {heroImage ? (
           <img src={heroImage} alt="" className="absolute inset-0 w-full h-full object-cover" />
         ) : (
