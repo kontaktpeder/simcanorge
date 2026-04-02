@@ -201,7 +201,10 @@ export function PageForm({ defaultValues, onSubmit, isPending, submitLabel = "La
         </div>
         <Switch
           checked={watch("is_public")}
-          onCheckedChange={(v) => setValue("is_public", v)}
+          onCheckedChange={(v) => {
+            setValue("is_public", v);
+            onTogglePublic?.(v);
+          }}
         />
       </div>
 
