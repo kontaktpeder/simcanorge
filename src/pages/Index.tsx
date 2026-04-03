@@ -126,7 +126,7 @@ export default function Index() {
         <section className="bg-[#111315]">
           <div className="max-w-[1200px] mx-auto px-4 sm:px-5 md:px-8">
             {/* Mobile: compact grid / Desktop: flex row */}
-            <div className="grid grid-cols-3 gap-px border-t border-white/[0.06] md:hidden">
+            <div className="grid grid-cols-2 gap-px border-t border-white/[0.06] md:hidden">
               {modules.filter(m => m.active).map((mod) => {
                 const cell = (
                   <div className="flex flex-col items-center gap-1.5 py-4 px-2 text-center group active:bg-white/[0.04] transition-colors">
