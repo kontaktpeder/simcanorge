@@ -17,12 +17,11 @@ export function HomeFeedComposer() {
 
   if (!user) {
     return (
-      <div className="flex items-center gap-4 py-5 border-b-2 border-white/[0.06]">
-        <p className="text-[14px] text-white/25 flex-1">Hva skjer i garasjen din?</p>
+      <div className="flex items-center justify-center py-8">
         <Link to="/login"
-          className="text-[12px] uppercase tracking-[0.15em] text-[#c8102e] hover:text-[#e01830] transition-colors font-bold"
+          className="text-[1.1rem] sm:text-[1.3rem] uppercase tracking-[0.18em] text-white/30 hover:text-white/60 transition-colors font-bold"
           style={oswald}>
-          Logg inn
+          Logg inn for å dele en oppdatering →
         </Link>
       </div>
     );

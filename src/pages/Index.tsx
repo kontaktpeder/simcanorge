@@ -177,13 +177,6 @@ export default function Index() {
                   Oppdateringer
                 </h2>
               </div>
-              {!user && (
-                <Link to="/login"
-                  className="text-[11px] uppercase tracking-[0.2em] text-white/25 hover:text-white/60 transition-colors font-bold border-b border-white/10 hover:border-white/30 pb-1"
-                  style={{ fontFamily: "'Oswald', sans-serif" }}>
-                  Logg inn →
-                </Link>
-              )}
             </div>
 
             {/* Composer */}
