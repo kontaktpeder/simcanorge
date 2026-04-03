@@ -40,7 +40,7 @@ export function HomeFeedComposer() {
   }
 
   return (
-    <div className="border-b-2 border-white/[0.06] focus-within:border-[#c8102e]/30 transition-colors pb-5">
+    <div className="focus-within:border-[#c8102e]/30 transition-colors pb-5">
       <div className="flex items-start gap-4">
         {profile?.avatar_url ? (
           <img src={profile.avatar_url} alt="" className="w-11 h-11 rounded-full object-cover ring-2 ring-white/[0.06] flex-shrink-0 mt-1" />
