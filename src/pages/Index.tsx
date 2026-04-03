@@ -193,12 +193,9 @@ export default function Index() {
             </div>
 
             {/* Composer */}
-            <div className="mb-6 sm:mb-14">
+            <div className="mb-8 sm:mb-14">
               <HomeFeedComposer />
             </div>
-
-            {/* Divider */}
-            <div className="h-[2px] bg-gradient-to-r from-[#c8102e]/40 via-white/[0.06] to-transparent mb-6 sm:mb-12" />
 
             {/* Feed */}
             {feedLoading && (
