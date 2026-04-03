@@ -13,7 +13,7 @@ export default function DashboardPagesPage() {
   const { data: profile } = useMyPersonProfile();
 
   return (
-    <>
+    <Layout>
       <Helmet>
         <title>Mine sider | Bilgarasjen</title>
       </Helmet>
