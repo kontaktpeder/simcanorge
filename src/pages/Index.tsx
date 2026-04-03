@@ -157,9 +157,9 @@ export default function Index() {
                 );
 
                 return mod.active ? (
-                  <Link key={mod.title} to={mod.href} className="flex-1 min-w-0 md:min-w-0">{inner}</Link>
+                  <Link key={mod.title} to={mod.href} className="shrink-0 md:shrink md:flex-1">{inner}</Link>
                 ) : (
-                  <div key={mod.title} className="flex-1 min-w-0 md:min-w-0">{inner}</div>
+                  <div key={mod.title} className="shrink-0 md:shrink md:flex-1">{inner}</div>
                 );
               })}
             </div>
