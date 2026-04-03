@@ -20,6 +20,7 @@ import { useMyListings } from '@/hooks/useMarketplace';
 import { GarageIcon } from '@/components/ui/GarageIcon';
 import { useMyPersonProfile } from '@/hooks/useMyPersonProfile';
 import { useMyPages } from '@/hooks/useMyPages';
+import { useMyEvents } from '@/hooks/useMyEvents';
 import { UserPlus } from 'lucide-react';
 
 export default function Dashboard() {
@@ -35,6 +36,7 @@ export default function Dashboard() {
   const { data: myListings } = useMyListings(user?.id);
   const { data: personProfile } = useMyPersonProfile();
   const { data: myPages } = useMyPages();
+  const { data: myEvents } = useMyEvents();
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -285,11 +287,67 @@ export default function Dashboard() {
           </Link>
         </motion.div>
 
+        {/* Mine sider */}
+        {personProfile && (
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.2 }}
+          >
+            <Link to="/dashboard/sider" className="block h-full touch-manipulation">
+              <div className="h-full p-6 sm:p-8 border-2 border-foreground/15 bg-card/90 backdrop-blur-sm group hover:bg-card hover:border-foreground/25 transition-all min-h-[180px]">
+                <p className="font-display text-sm uppercase tracking-wider text-muted-foreground mb-5">
+                  Organisasjoner
+                </p>
+                <h3 className="font-display text-2xl sm:text-3xl uppercase tracking-wider mb-2 group-hover:text-primary transition-colors">
+                  Mine sider
+                </h3>
+                <p className="text-base text-muted-foreground">
+                  {personProfile.can_create_pages
+                    ? (myPages?.length ?? 0) === 0
+                      ? 'Opprett din første side →'
+                      : 'Se og rediger sidene dine'
+                    : 'Søk om tilgang til å opprette sider →'}
+                </p>
+                <p className="font-display text-4xl sm:text-5xl text-foreground leading-none mt-4">
+                  {myPages?.length || 0}
+                </p>
+              </div>
+            </Link>
+          </motion.div>
+        )}
+
+        {/* Mine arrangementer */}
+        {personProfile && (
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.25 }}
+          >
+            <Link to="/dashboard/events" className="block h-full touch-manipulation">
+              <div className="h-full p-6 sm:p-8 border-2 border-foreground/15 bg-card/90 backdrop-blur-sm group hover:bg-card hover:border-foreground/25 transition-all min-h-[180px]">
+                <p className="font-display text-sm uppercase tracking-wider text-muted-foreground mb-5">
+                  Events
+                </p>
+                <h3 className="font-display text-2xl sm:text-3xl uppercase tracking-wider mb-2 group-hover:text-primary transition-colors">
+                  Mine arrangementer
+                </h3>
+                <p className="text-base text-muted-foreground">
+                  Opprett og administrer biltreff og events
+                </p>
+                <p className="font-display text-4xl sm:text-5xl text-foreground leading-none mt-4">
+                  {myEvents?.length || 0}
+                </p>
+              </div>
+            </Link>
+          </motion.div>
+        )}
+
         {/* Entusiastprofil */}
         <motion.div
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.2 }}
+          transition={{ duration: 0.4, delay: 0.3 }}
         >
           <Link to="/dashboard/min-profil" className="block h-full touch-manipulation">
             <div 
@@ -331,7 +389,7 @@ export default function Dashboard() {
           <motion.div
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.25 }}
+            transition={{ duration: 0.4, delay: 0.35 }}
           >
             <Link to="/dashboard/mine-foresporsler" className="block h-full touch-manipulation">
               <div className="h-full p-6 sm:p-8 border-2 border-foreground/15 bg-card/90 backdrop-blur-sm group hover:bg-card hover:border-foreground/25 transition-all min-h-[180px]">
@@ -348,61 +406,6 @@ export default function Dashboard() {
                 </p>
                 <p className="font-display text-4xl sm:text-5xl text-foreground leading-none mt-4">
                   {myInquiries?.total || 0}
-                </p>
-              </div>
-            </Link>
-          </motion.div>
-        )}
-
-        {/* Mine sider */}
-        {personProfile && (
-          <motion.div
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.27 }}
-          >
-            <Link to="/dashboard/sider" className="block h-full touch-manipulation">
-              <div className="h-full p-6 sm:p-8 border-2 border-foreground/15 bg-card/90 backdrop-blur-sm group hover:bg-card hover:border-foreground/25 transition-all min-h-[180px]">
-                <p className="font-display text-sm uppercase tracking-wider text-muted-foreground mb-5">
-                  Organisasjoner
-                </p>
-                <h3 className="font-display text-2xl sm:text-3xl uppercase tracking-wider mb-2 group-hover:text-primary transition-colors">
-                  Mine sider
-                </h3>
-                <p className="text-base text-muted-foreground">
-                  {personProfile.can_create_pages
-                    ? (myPages?.length ?? 0) === 0
-                      ? 'Opprett din første side →'
-                      : 'Se og rediger sidene dine'
-                    : 'Søk om tilgang til å opprette sider →'}
-                </p>
-                {personProfile.can_create_pages && (
-                  <p className="font-display text-4xl sm:text-5xl text-foreground leading-none mt-4">
-                    {myPages?.length || 0}
-                  </p>
-                )}
-              </div>
-            </Link>
-          </motion.div>
-        )}
-
-        {/* Arrangementer */}
-        {personProfile && (
-          <motion.div
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.29 }}
-          >
-            <Link to="/dashboard/events" className="block h-full touch-manipulation">
-              <div className="h-full p-6 sm:p-8 border-2 border-foreground/15 bg-card/90 backdrop-blur-sm group hover:bg-card hover:border-foreground/25 transition-all min-h-[180px]">
-                <p className="font-display text-sm uppercase tracking-wider text-muted-foreground mb-5">
-                  Events
-                </p>
-                <h3 className="font-display text-2xl sm:text-3xl uppercase tracking-wider mb-2 group-hover:text-primary transition-colors">
-                  Arrangementer
-                </h3>
-                <p className="text-base text-muted-foreground">
-                  Opprett og administrer biltreff og events
                 </p>
               </div>
             </Link>
