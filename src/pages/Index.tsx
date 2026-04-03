@@ -126,27 +126,28 @@ export default function Index() {
         {/* ─── MODULES ─── */}
         <section className="bg-[#111315]">
           <div className="max-w-[1200px] mx-auto px-5 md:px-8">
-            <div className="flex border-t border-white/[0.06]">
+            {/* Mobile: horizontal scroll strip */}
+            <div className="flex overflow-x-auto scrollbar-hide border-t border-white/[0.06] md:overflow-visible">
               {modules.map((mod, i) => {
                 const inner = (
                   <div
-                    className={`flex-1 flex items-center justify-center gap-3 py-6 md:py-7 text-center transition-all duration-300 group ${
+                    className={`flex items-center gap-2.5 md:gap-3 py-5 md:py-7 px-4 md:px-0 md:justify-center transition-all duration-300 group whitespace-nowrap ${
                       mod.active ? "cursor-pointer hover:bg-white/[0.03]" : "opacity-25 cursor-default"
                     } ${i < modules.length - 1 ? "border-r border-white/[0.06]" : ""}`}
                   >
-                    <div className={`transition-colors duration-300 ${mod.active ? "text-[#b0b7bd] group-hover:text-[#d4af37]" : "text-white/20"}`}>
+                    <div className={`transition-colors duration-300 flex-shrink-0 ${mod.active ? "text-[#b0b7bd] group-hover:text-[#d4af37]" : "text-white/20"}`}>
                       {mod.icon}
                     </div>
                     <div className="text-left">
                       <p
-                        className={`text-[16px] md:text-[18px] tracking-[0.06em] uppercase font-semibold leading-tight transition-colors duration-300 ${
+                        className={`text-[14px] md:text-[18px] tracking-[0.06em] uppercase font-semibold leading-tight transition-colors duration-300 ${
                           mod.active ? "text-white group-hover:text-white" : "text-white/25"
                         }`}
                         style={{ fontFamily: "'Oswald', 'Bebas Neue', sans-serif" }}
                       >
                         {mod.title}
                       </p>
-                      <p className={`text-[12px] md:text-[13px] leading-tight mt-1 transition-colors duration-300 ${
+                      <p className={`text-[11px] md:text-[13px] leading-tight mt-0.5 md:mt-1 transition-colors duration-300 ${
                         mod.active ? "text-[#b0b7bd]/70 group-hover:text-[#b0b7bd]" : "text-white/15"
                       }`}>
                         {mod.desc}
@@ -156,9 +157,9 @@ export default function Index() {
                 );
 
                 return mod.active ? (
-                  <Link key={mod.title} to={mod.href} className="flex-1">{inner}</Link>
+                  <Link key={mod.title} to={mod.href} className="shrink-0 md:shrink md:flex-1">{inner}</Link>
                 ) : (
-                  <div key={mod.title} className="flex-1">{inner}</div>
+                  <div key={mod.title} className="shrink-0 md:shrink md:flex-1">{inner}</div>
                 );
               })}
             </div>
