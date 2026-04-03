@@ -214,6 +214,6 @@ export default function EditPagePage() {
           </CardContent>
         </Card>
       </div>
-    </>
+    </Layout>
   );
 }
