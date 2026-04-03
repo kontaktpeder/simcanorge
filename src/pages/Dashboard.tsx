@@ -36,6 +36,7 @@ export default function Dashboard() {
   const { data: myListings } = useMyListings(user?.id);
   const { data: personProfile } = useMyPersonProfile();
   const { data: myPages } = useMyPages();
+  const { data: myEvents } = useMyEvents();
 
   useEffect(() => {
     if (!authLoading && !user) {
