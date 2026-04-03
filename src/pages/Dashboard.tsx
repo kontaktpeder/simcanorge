@@ -20,6 +20,7 @@ import { useMyListings } from '@/hooks/useMarketplace';
 import { GarageIcon } from '@/components/ui/GarageIcon';
 import { useMyPersonProfile } from '@/hooks/useMyPersonProfile';
 import { useMyPages } from '@/hooks/useMyPages';
+import { useMyEvents } from '@/hooks/useMyEvents';
 import { UserPlus } from 'lucide-react';
 
 export default function Dashboard() {
