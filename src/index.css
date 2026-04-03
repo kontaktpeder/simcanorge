@@ -4,6 +4,15 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Hide scrollbar but allow scrolling */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
 /* Simca Norge Design System - Metallic Badge/Enamel Sign Aesthetic
    Inspired by classic French car badges: chrome frames, metallic blue lacquer, enamel red
    All colors MUST be HSL for semantic tokens, hex for gradients.
