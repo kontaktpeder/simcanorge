@@ -103,7 +103,7 @@ export default function EditPagePage() {
   }
 
   return (
-    <>
+    <Layout>
       <Helmet>
         <title>Rediger: {page.title} | Bilgarasjen</title>
       </Helmet>
