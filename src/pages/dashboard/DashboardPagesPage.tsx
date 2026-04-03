@@ -1,5 +1,6 @@
 import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
+import { Layout } from "@/components/layout/Layout";
 import { useMyPages } from "@/hooks/useMyPages";
 import { PageCard } from "@/components/pages/PageCard";
 import { RequestPageAccessButton } from "@/components/profile/RequestPageAccessButton";
@@ -12,7 +13,7 @@ export default function DashboardPagesPage() {
   const { data: profile } = useMyPersonProfile();
 
   return (
-    <>
+    <Layout>
       <Helmet>
         <title>Mine sider | Bilgarasjen</title>
       </Helmet>
@@ -55,6 +56,6 @@ export default function DashboardPagesPage() {
           ))}
         </div>
       </div>
-    </>
+    </Layout>
   );
 }

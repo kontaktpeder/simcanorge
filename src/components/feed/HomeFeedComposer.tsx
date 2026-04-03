@@ -56,7 +56,7 @@ export function HomeFeedComposer() {
             value={body}
             onChange={(e) => setBody(e.target.value)}
             onFocus={() => setFocused(true)}
-            placeholder="Hva tenker du på i dag? Del din historie eller spørsmål..."
+            placeholder="Del en oppdatering…"
             rows={focused ? 3 : 1}
             className="w-full bg-transparent text-white/80 placeholder:text-white/25 text-[16px] resize-none focus:outline-none leading-relaxed transition-all duration-200 py-2"
           />

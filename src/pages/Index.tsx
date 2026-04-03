@@ -116,7 +116,7 @@ export default function Index() {
             >
               — på nett
             </p>
-            <p className="text-[11px] sm:text-sm text-white/50 mt-2 sm:mt-3 tracking-[0.05em] hidden sm:block">
+            <p className="text-[11px] sm:text-sm text-white/50 mt-2 sm:mt-3 tracking-[0.05em]">
               Se oppdateringer fra norske bilentusiaster
             </p>
           </div>

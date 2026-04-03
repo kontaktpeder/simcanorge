@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Helmet } from "react-helmet-async";
+import { Layout } from "@/components/layout/Layout";
 import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useQuery } from "@tanstack/react-query";
@@ -102,7 +103,7 @@ export default function EditPagePage() {
   }
 
   return (
-    <>
+    <Layout>
       <Helmet>
         <title>Rediger: {page.title} | Bilgarasjen</title>
       </Helmet>
@@ -213,6 +214,6 @@ export default function EditPagePage() {
           </CardContent>
         </Card>
       </div>
-    </>
+    </Layout>
   );
 }
