@@ -89,35 +89,34 @@ export default function Index() {
       <div className="min-h-[calc(100vh-4rem)] bg-[#111315]">
 
         {/* ─── HERO ─── */}
-        <section className="relative overflow-hidden h-[280px] sm:h-[320px] md:h-[360px]">
+        <section className="relative overflow-hidden h-[220px] sm:h-[320px] md:h-[360px]">
           <img
             src={heroCar}
             alt="Simca 1000 Rallye racerbil"
             className="absolute inset-0 w-full h-full object-cover object-[center_35%]"
           />
-          {/* Softer overlays — more cinematic, less wall */}
           <div className="absolute inset-0 bg-gradient-to-r from-[#111315] via-[#111315]/60 to-transparent" />
-          <div className="absolute bottom-0 left-0 right-0 h-28 bg-gradient-to-t from-[#111315] to-transparent" />
+          <div className="absolute bottom-0 left-0 right-0 h-24 sm:h-28 bg-gradient-to-t from-[#111315] to-transparent" />
           <div className="absolute top-0 left-0 right-0 h-16 bg-gradient-to-b from-[#111315]/40 to-transparent" />
 
-          <div className="relative z-10 h-full flex flex-col justify-center max-w-[1200px] mx-auto px-5 md:px-8">
-            <p className="text-[14px] sm:text-[16px] tracking-[0.3em] uppercase mb-2"
+          <div className="relative z-10 h-full flex flex-col justify-end pb-6 sm:justify-center sm:pb-0 max-w-[1200px] mx-auto px-5 md:px-8">
+            <p className="text-[12px] sm:text-[16px] tracking-[0.3em] uppercase mb-1 sm:mb-2"
               style={{ fontFamily: "'Oswald', sans-serif", fontWeight: 500, background: 'linear-gradient(135deg, #F5A623, #FFD166)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
               bilgarasje.no
             </p>
             <h1
-              className="text-[2.4rem] sm:text-[3.2rem] md:text-[4.2rem] leading-[1] uppercase tracking-[0.12em] text-white font-bold"
+              className="text-[2rem] sm:text-[3.2rem] md:text-[4.2rem] leading-[1] uppercase tracking-[0.08em] sm:tracking-[0.12em] text-white font-bold"
               style={{ fontFamily: "'Oswald', 'Bebas Neue', sans-serif" }}
             >
               Hele Norges bilsamfunn
             </h1>
             <p
-              className="text-[1.1rem] sm:text-[1.5rem] md:text-[1.8rem] uppercase tracking-[0.25em] text-white font-bold mt-1"
+              className="text-[0.9rem] sm:text-[1.5rem] md:text-[1.8rem] uppercase tracking-[0.2em] sm:tracking-[0.25em] text-white font-bold mt-0.5 sm:mt-1"
               style={{ fontFamily: "'Oswald', 'Bebas Neue', sans-serif" }}
             >
               — på nett
             </p>
-            <p className="text-[12px] sm:text-sm text-white/50 mt-3 tracking-[0.05em]">
+            <p className="text-[11px] sm:text-sm text-white/50 mt-2 sm:mt-3 tracking-[0.05em] hidden sm:block">
               Se oppdateringer fra norske bilentusiaster
             </p>
           </div>
@@ -125,29 +124,45 @@ export default function Index() {
 
         {/* ─── MODULES ─── */}
         <section className="bg-[#111315]">
-          <div className="max-w-[1200px] mx-auto px-5 md:px-8">
-            {/* Mobile: horizontal scroll strip */}
-            <div className="flex overflow-x-auto scrollbar-hide border-t border-white/[0.06] md:overflow-visible">
+          <div className="max-w-[1200px] mx-auto px-4 sm:px-5 md:px-8">
+            {/* Mobile: compact grid / Desktop: flex row */}
+            <div className="grid grid-cols-2 gap-px border-t border-white/[0.06] md:hidden">
+              {modules.filter(m => m.active).map((mod) => {
+                const cell = (
+                  <div className="flex flex-col items-center gap-1.5 py-4 px-2 text-center group active:bg-white/[0.04] transition-colors">
+                    <div className="text-[#b0b7bd]">{mod.icon}</div>
+                    <p className="text-[11px] tracking-[0.08em] uppercase font-semibold text-white leading-tight"
+                      style={{ fontFamily: "'Oswald', sans-serif" }}>
+                      {mod.title}
+                    </p>
+                  </div>
+                );
+                return (
+                  <Link key={mod.title} to={mod.href} className="border-b border-white/[0.04]">
+                    {cell}
+                  </Link>
+                );
+              })}
+            </div>
+            {/* Desktop row */}
+            <div className="hidden md:flex border-t border-white/[0.06]">
               {modules.map((mod, i) => {
                 const inner = (
                   <div
-                    className={`flex items-center gap-2.5 md:gap-3 py-5 md:py-7 px-4 md:px-0 md:justify-center transition-all duration-300 group whitespace-nowrap ${
+                    className={`flex items-center gap-3 py-7 justify-center transition-all duration-300 group ${
                       mod.active ? "cursor-pointer hover:bg-white/[0.03]" : "opacity-25 cursor-default"
                     } ${i < modules.length - 1 ? "border-r border-white/[0.06]" : ""}`}
                   >
-                    <div className={`transition-colors duration-300 flex-shrink-0 ${mod.active ? "text-[#b0b7bd] group-hover:text-[#d4af37]" : "text-white/20"}`}>
+                    <div className={`transition-colors duration-300 ${mod.active ? "text-[#b0b7bd] group-hover:text-[#d4af37]" : "text-white/20"}`}>
                       {mod.icon}
                     </div>
                     <div className="text-left">
-                      <p
-                        className={`text-[14px] md:text-[18px] tracking-[0.06em] uppercase font-semibold leading-tight transition-colors duration-300 ${
-                          mod.active ? "text-white group-hover:text-white" : "text-white/25"
-                        }`}
-                        style={{ fontFamily: "'Oswald', 'Bebas Neue', sans-serif" }}
-                      >
+                      <p className={`text-[18px] tracking-[0.06em] uppercase font-semibold leading-tight transition-colors duration-300 ${
+                        mod.active ? "text-white group-hover:text-white" : "text-white/25"
+                      }`} style={{ fontFamily: "'Oswald', 'Bebas Neue', sans-serif" }}>
                         {mod.title}
                       </p>
-                      <p className={`text-[11px] md:text-[13px] leading-tight mt-0.5 md:mt-1 transition-colors duration-300 ${
+                      <p className={`text-[13px] leading-tight mt-1 transition-colors duration-300 ${
                         mod.active ? "text-[#b0b7bd]/70 group-hover:text-[#b0b7bd]" : "text-white/15"
                       }`}>
                         {mod.desc}
@@ -155,11 +170,10 @@ export default function Index() {
                     </div>
                   </div>
                 );
-
                 return mod.active ? (
-                  <Link key={mod.title} to={mod.href} className="shrink-0 md:shrink md:flex-1">{inner}</Link>
+                  <Link key={mod.title} to={mod.href} className="flex-1">{inner}</Link>
                 ) : (
-                  <div key={mod.title} className="shrink-0 md:shrink md:flex-1">{inner}</div>
+                  <div key={mod.title} className="flex-1">{inner}</div>
                 );
               })}
             </div>
@@ -167,34 +181,32 @@ export default function Index() {
         </section>
 
         {/* ─── FEED ─── */}
-        <section className="pt-16 md:pt-24 pb-20 md:pb-32 bg-[#111315]">
-          <div className="max-w-[1000px] mx-auto px-5 md:px-8">
+        <section className="pt-8 sm:pt-16 md:pt-24 pb-12 sm:pb-20 md:pb-32 bg-[#111315]">
+          <div className="max-w-[1000px] mx-auto px-4 sm:px-5 md:px-8">
 
             {/* Section header */}
-            <div className="flex items-end justify-between mb-12">
-              <div>
-                <h2 className="text-[2.2rem] md:text-[3rem] uppercase text-white font-bold leading-[1] tracking-[0.06em]"
-                  style={{ fontFamily: "'Oswald', 'Impact', sans-serif" }}>
-                  Oppdateringer
-                </h2>
-              </div>
+            <div className="mb-6 sm:mb-12">
+              <h2 className="text-[1.6rem] sm:text-[2.2rem] md:text-[3rem] uppercase text-white font-bold leading-[1] tracking-[0.06em]"
+                style={{ fontFamily: "'Oswald', 'Impact', sans-serif" }}>
+                Oppdateringer
+              </h2>
             </div>
 
             {/* Composer */}
-            <div className="mb-14">
+            <div className="mb-6 sm:mb-14">
               <HomeFeedComposer />
             </div>
 
             {/* Divider */}
-            <div className="h-[2px] bg-gradient-to-r from-[#c8102e]/40 via-white/[0.06] to-transparent mb-12" />
+            <div className="h-[2px] bg-gradient-to-r from-[#c8102e]/40 via-white/[0.06] to-transparent mb-6 sm:mb-12" />
 
             {/* Feed */}
             {feedLoading && (
-              <div className="space-y-12">
+              <div className="space-y-8 sm:space-y-12">
                 {[...Array(3)].map((_, i) => (
                   <div key={i}>
-                    <div className="h-[420px] bg-white/[0.02] animate-pulse" />
-                    <div className="h-px bg-white/[0.04] mt-12" />
+                    <div className="h-[280px] sm:h-[420px] bg-white/[0.02] animate-pulse" />
+                    <div className="h-px bg-white/[0.04] mt-8 sm:mt-12" />
                   </div>
                 ))}
               </div>
@@ -206,7 +218,7 @@ export default function Index() {
                   <div key={post.id}>
                     <FeedCard post={post} />
                     {i < feedPosts.length - 1 && (
-                      <div className="h-px bg-white/[0.06] my-12" />
+                      <div className="h-px bg-white/[0.06] my-8 sm:my-12" />
                     )}
                   </div>
                 ))}
@@ -214,14 +226,28 @@ export default function Index() {
             )}
 
             {!feedLoading && (!feedPosts || feedPosts.length === 0) && (
-              <div className="py-24 text-center">
-                <p className="text-[1.6rem] uppercase text-white/25 font-bold tracking-[0.08em]"
+              <div className="py-12 sm:py-24 text-center">
+                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-white/[0.03] flex items-center justify-center">
+                  <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1" className="w-8 h-8 text-white/15">
+                    <path d="M5 21l3-7h16l3 7" strokeLinecap="round" strokeLinejoin="round"/>
+                    <rect x="3" y="21" width="26" height="5" rx="1"/>
+                    <circle cx="9" cy="26" r="2"/><circle cx="23" cy="26" r="2"/>
+                  </svg>
+                </div>
+                <p className="text-[1.2rem] sm:text-[1.6rem] uppercase text-white/20 font-bold tracking-[0.08em]"
                   style={{ fontFamily: "'Oswald', sans-serif" }}>
                   Ingen oppdateringer enda
                 </p>
-                <p className="text-[14px] text-white/15 mt-2">
+                <p className="text-[13px] text-white/12 mt-1.5">
                   Bli den første til å dele noe
                 </p>
+                {!user && (
+                  <Link to="/login"
+                    className="inline-block mt-5 text-[12px] uppercase tracking-[0.2em] text-[#c8102e] hover:text-[#e01830] font-bold transition-colors border-b border-[#c8102e]/30 hover:border-[#c8102e]/60 pb-0.5"
+                    style={{ fontFamily: "'Oswald', sans-serif" }}>
+                    Logg inn for å starte →
+                  </Link>
+                )}
               </div>
             )}
           </div>
