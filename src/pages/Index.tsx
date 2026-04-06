@@ -53,7 +53,7 @@ const modules = [
   {
     href: "/aktoerer",
     title: "Klubber",
-    desc: "Klubber & fellesskap",
+    desc: "Kommer snart",
     icon: (
       <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.3" className="w-6 h-6">
         <circle cx="12" cy="11" r="4"/><circle cx="22" cy="13" r="3"/>
