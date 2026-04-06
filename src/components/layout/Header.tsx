@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, LogIn } from "lucide-react";
+import { Menu, X, LogIn, Search as SearchIcon } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { GlobalSearch } from "@/components/layout/GlobalSearch";
 import bilgarasjeLogo from "@/assets/bilgarasje-logo.png";
@@ -14,6 +14,31 @@ export function Header() {
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { user } = useAuth();
+  const [navSearchOpen, setNavSearchOpen] = useState(false);
+  const [heroVisible, setHeroVisible] = useState(true);
+
+  const isHome = location.pathname === "/";
+
+  // Track if hero search is visible (only on home page)
+  useEffect(() => {
+    if (!isHome) {
+      setHeroVisible(false);
+      return;
+    }
+    const onScroll = () => {
+      // Hero search appears around 260px from top on mobile, 380px on desktop
+      setHeroVisible(window.scrollY < 200);
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [isHome]);
+
+  // On non-home pages, always show full search in nav
+  const showFullNavSearch = !isHome;
+  // On home page, show compact icon when hero is visible, full search when scrolled past
+  const showCompactIcon = isHome && heroVisible;
+  const showExpandedNavSearch = isHome && !heroVisible;
 
   return (
     <header className="sticky top-0 z-50 bg-[#0f0d0b]">
@@ -53,9 +78,23 @@ export function Header() {
             })}
           </nav>
 
-          {/* Search field — centered */}
-          <div className="hidden md:block flex-1 max-w-md mx-4">
-            <GlobalSearch />
+          {/* Search area — adapts based on context */}
+          <div className="hidden md:flex flex-1 max-w-md mx-4 items-center justify-center">
+            {showFullNavSearch && <GlobalSearch />}
+            {showExpandedNavSearch && (
+              <div className="w-full animate-in fade-in duration-200">
+                <GlobalSearch />
+              </div>
+            )}
+            {showCompactIcon && (
+              <button
+                onClick={() => setNavSearchOpen(!navSearchOpen)}
+                className="p-2 text-white/30 hover:text-white/60 transition-colors"
+                aria-label="Søk"
+              >
+                <SearchIcon className="w-4 h-4" />
+              </button>
+            )}
           </div>
 
           <div className="flex-1 md:hidden" />
@@ -100,6 +139,15 @@ export function Header() {
       </div>
 
       <div className="h-px bg-[#a89880]/10" />
+
+      {/* Compact icon expanded state overlay */}
+      {navSearchOpen && showCompactIcon && (
+        <div className="hidden md:block bg-[#0f0d0b] border-t border-[#a89880]/10 px-5 md:px-8 py-3">
+          <div className="max-w-md mx-auto">
+            <GlobalSearch />
+          </div>
+        </div>
+      )}
 
       {mobileMenuOpen && (
         <nav className="lg:hidden bg-[#0f0d0b] border-t border-[#a89880]/10">
