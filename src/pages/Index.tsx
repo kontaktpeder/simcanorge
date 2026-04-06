@@ -1,19 +1,22 @@
+import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { Helmet } from "react-helmet-async";
-import { ArrowRight } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useFeedPosts } from "@/hooks/useFeedPosts";
 import { FeedCard } from "@/components/feed/FeedCard";
 import { HomeFeedComposer } from "@/components/feed/HomeFeedComposer";
+import { HeroSearch } from "@/components/layout/HeroSearch";
+import { FeedFilterTabs, type FeedFilter } from "@/components/feed/FeedFilterTabs";
 import heroCar from "@/assets/hero-car.jpg";
+
+const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
 
 const modules = [
   {
     href: "/biler",
     title: "Biler",
     desc: "Historier og profiler",
-    active: true,
     icon: (
       <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.3" className="w-6 h-6">
         <path d="M5 21l3-7h16l3 7" strokeLinecap="round" strokeLinejoin="round"/>
@@ -26,7 +29,6 @@ const modules = [
     href: "/markedsplass",
     title: "Markedsplass",
     desc: "Kjøp & salg",
-    active: true,
     icon: (
       <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.3" className="w-6 h-6">
         <path d="M7 9h18l-2 13H9L7 9z" strokeLinejoin="round"/>
@@ -39,7 +41,6 @@ const modules = [
     href: "/arrangement",
     title: "Arrangementer",
     desc: "Treff & samlinger",
-    active: true,
     icon: (
       <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.3" className="w-6 h-6">
         <rect x="5" y="7" width="22" height="20" rx="2"/>
@@ -50,10 +51,9 @@ const modules = [
     ),
   },
   {
-    href: "#",
+    href: "/aktoerer",
     title: "Klubber",
-    desc: "Kommer snart",
-    active: false,
+    desc: "Klubber & fellesskap",
     icon: (
       <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.3" className="w-6 h-6">
         <circle cx="12" cy="11" r="4"/><circle cx="22" cy="13" r="3"/>
@@ -65,7 +65,6 @@ const modules = [
     href: "/aktoerer",
     title: "Aktører",
     desc: "Verksteder & bedrifter",
-    active: true,
     icon: (
       <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.3" className="w-6 h-6">
         <path d="M5 28V13l11-8 11 8v15" strokeLinejoin="round"/>
@@ -78,6 +77,16 @@ const modules = [
 export default function Index() {
   const { user } = useAuth();
   const { data: feedPosts, isLoading: feedLoading } = useFeedPosts();
+  const [feedFilter, setFeedFilter] = useState<FeedFilter>("alle");
+
+  const filteredPosts = useMemo(() => {
+    if (!feedPosts) return [];
+    if (feedFilter === "alle") return feedPosts;
+    if (feedFilter === "biler") return feedPosts.filter((p) => p.car != null);
+    if (feedFilter === "marked") return feedPosts.filter((p) => p.marketplace_item != null);
+    if (feedFilter === "arrangementer") return feedPosts.filter((p) => p.event != null);
+    return feedPosts;
+  }, [feedPosts, feedFilter]);
 
   return (
     <Layout>
@@ -88,94 +97,83 @@ export default function Index() {
 
       <div className="min-h-[calc(100vh-4rem)] bg-[#111315]">
 
-        {/* ─── HERO ─── */}
-        <section className="relative overflow-hidden h-[220px] sm:h-[320px] md:h-[360px]">
+        {/* ─── HERO with search ─── */}
+        <section className="relative overflow-hidden h-[260px] sm:h-[320px] md:h-[380px]">
           <img
             src={heroCar}
             alt="Simca 1000 Rallye racerbil"
             className="absolute inset-0 w-full h-full object-cover object-[center_35%]"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#111315] via-[#111315]/60 to-transparent" />
-          <div className="absolute bottom-0 left-0 right-0 h-24 sm:h-28 bg-gradient-to-t from-[#111315] to-transparent" />
-          <div className="absolute top-0 left-0 right-0 h-16 bg-gradient-to-b from-[#111315]/40 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#111315] via-[#111315]/70 to-transparent" />
+          <div className="absolute bottom-0 left-0 right-0 h-28 sm:h-32 bg-gradient-to-t from-[#111315] to-transparent" />
+          <div className="absolute top-0 left-0 right-0 h-16 bg-gradient-to-b from-[#111315]/50 to-transparent" />
 
-          <div className="relative z-10 h-full flex flex-col justify-end pb-6 sm:justify-center sm:pb-0 max-w-[1200px] mx-auto px-5 md:px-8">
+          <div className="relative z-10 h-full flex flex-col justify-end pb-8 sm:justify-center sm:pb-0 max-w-[1200px] mx-auto px-5 md:px-8">
             <p className="text-[12px] sm:text-[16px] tracking-[0.3em] uppercase mb-1 sm:mb-2"
-              style={{ fontFamily: "'Oswald', sans-serif", fontWeight: 500, background: 'linear-gradient(135deg, #F5A623, #FFD166)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+              style={{ ...oswald, fontWeight: 500, background: 'linear-gradient(135deg, #F5A623, #FFD166)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
               bilgarasje.no
             </p>
             <h1
-              className="text-[2rem] sm:text-[3.2rem] md:text-[4.2rem] leading-[1] uppercase tracking-[0.08em] sm:tracking-[0.12em] text-white font-bold"
+              className="text-[1.8rem] sm:text-[3rem] md:text-[4rem] leading-[1] uppercase tracking-[0.08em] sm:tracking-[0.12em] text-white font-bold"
               style={{ fontFamily: "'Oswald', 'Bebas Neue', sans-serif" }}
             >
               Hele Norges bilsamfunn
             </h1>
             <p
-              className="text-[0.9rem] sm:text-[1.5rem] md:text-[1.8rem] uppercase tracking-[0.2em] sm:tracking-[0.25em] text-white font-bold mt-0.5 sm:mt-1"
+              className="text-[0.85rem] sm:text-[1.4rem] md:text-[1.7rem] uppercase tracking-[0.2em] sm:tracking-[0.25em] text-white font-bold mt-0.5 sm:mt-1"
               style={{ fontFamily: "'Oswald', 'Bebas Neue', sans-serif" }}
             >
               — på nett
             </p>
-            <p className="text-[11px] sm:text-sm text-white/50 mt-2 sm:mt-3 tracking-[0.05em]">
-              Se oppdateringer fra norske bilentusiaster
-            </p>
+
+            {/* Hero search */}
+            <div className="mt-4 sm:mt-6">
+              <HeroSearch />
+            </div>
           </div>
         </section>
 
         {/* ─── MODULES ─── */}
         <section className="bg-[#111315]">
           <div className="max-w-[1200px] mx-auto px-4 sm:px-5 md:px-8">
-            {/* Mobile: compact grid / Desktop: flex row */}
+            {/* Mobile: compact grid */}
             <div className="grid grid-cols-2 gap-px border-t border-white/[0.06] md:hidden">
-              {modules.filter(m => m.active).map((mod) => {
-                const cell = (
+              {modules.map((mod) => (
+                <Link key={mod.title} to={mod.href} className="border-b border-white/[0.04]">
                   <div className="flex flex-col items-center gap-1.5 py-4 px-2 text-center group active:bg-white/[0.04] transition-colors">
                     <div className="text-[#b0b7bd]">{mod.icon}</div>
                     <p className="text-[11px] tracking-[0.08em] uppercase font-semibold text-white leading-tight"
-                      style={{ fontFamily: "'Oswald', sans-serif" }}>
+                      style={oswald}>
                       {mod.title}
                     </p>
                   </div>
-                );
-                return (
-                  <Link key={mod.title} to={mod.href} className="border-b border-white/[0.04]">
-                    {cell}
-                  </Link>
-                );
-              })}
+                </Link>
+              ))}
             </div>
             {/* Desktop row */}
             <div className="hidden md:flex border-t border-white/[0.06]">
-              {modules.map((mod, i) => {
-                const inner = (
+              {modules.map((mod, i) => (
+                <Link key={mod.title} to={mod.href} className="flex-1">
                   <div
-                    className={`flex items-center gap-3 py-7 justify-center transition-all duration-300 group ${
-                      mod.active ? "cursor-pointer hover:bg-white/[0.03]" : "opacity-25 cursor-default"
-                    } ${i < modules.length - 1 ? "border-r border-white/[0.06]" : ""}`}
+                    className={`flex items-center gap-3 py-7 justify-center transition-all duration-300 group cursor-pointer hover:bg-white/[0.03] ${
+                      i < modules.length - 1 ? "border-r border-white/[0.06]" : ""
+                    }`}
                   >
-                    <div className={`transition-colors duration-300 ${mod.active ? "text-[#b0b7bd] group-hover:text-[#d4af37]" : "text-white/20"}`}>
+                    <div className="transition-colors duration-300 text-[#b0b7bd] group-hover:text-[#d4af37]">
                       {mod.icon}
                     </div>
                     <div className="text-left">
-                      <p className={`text-[18px] tracking-[0.06em] uppercase font-semibold leading-tight transition-colors duration-300 ${
-                        mod.active ? "text-white group-hover:text-white" : "text-white/25"
-                      }`} style={{ fontFamily: "'Oswald', 'Bebas Neue', sans-serif" }}>
+                      <p className="text-[18px] tracking-[0.06em] uppercase font-semibold leading-tight transition-colors duration-300 text-white group-hover:text-white"
+                        style={{ fontFamily: "'Oswald', 'Bebas Neue', sans-serif" }}>
                         {mod.title}
                       </p>
-                      <p className={`text-[13px] leading-tight mt-1 transition-colors duration-300 ${
-                        mod.active ? "text-[#b0b7bd]/70 group-hover:text-[#b0b7bd]" : "text-white/15"
-                      }`}>
+                      <p className="text-[13px] leading-tight mt-1 transition-colors duration-300 text-[#b0b7bd]/70 group-hover:text-[#b0b7bd]">
                         {mod.desc}
                       </p>
                     </div>
                   </div>
-                );
-                return mod.active ? (
-                  <Link key={mod.title} to={mod.href} className="flex-1">{inner}</Link>
-                ) : (
-                  <div key={mod.title} className="flex-1">{inner}</div>
-                );
-              })}
+                </Link>
+              ))}
             </div>
           </div>
         </section>
@@ -184,12 +182,13 @@ export default function Index() {
         <section className="pt-8 sm:pt-16 md:pt-24 pb-12 sm:pb-20 md:pb-32 bg-[#111315]">
           <div className="max-w-[1000px] mx-auto px-4 sm:px-5 md:px-8">
 
-            {/* Section header */}
-            <div className="mb-6 sm:mb-12">
-              <h2 className="text-[1.6rem] sm:text-[2.2rem] md:text-[3rem] uppercase text-white font-bold leading-[1] tracking-[0.06em]"
-                style={{ fontFamily: "'Oswald', 'Impact', sans-serif" }}>
+            {/* Section header + filter tabs */}
+            <div className="mb-6 sm:mb-10">
+              <h2 className="text-[1.6rem] sm:text-[2.2rem] md:text-[3rem] uppercase text-white font-bold leading-[1] tracking-[0.06em] mb-4 sm:mb-6"
+                style={oswald}>
                 Oppdateringer
               </h2>
+              <FeedFilterTabs active={feedFilter} onChange={setFeedFilter} />
             </div>
 
             {/* Composer */}
@@ -209,12 +208,12 @@ export default function Index() {
               </div>
             )}
 
-            {!feedLoading && feedPosts && feedPosts.length > 0 && (
+            {!feedLoading && filteredPosts.length > 0 && (
               <div>
-                {feedPosts.map((post, i) => (
+                {filteredPosts.map((post, i) => (
                   <div key={post.id}>
                     <FeedCard post={post} />
-                    {i < feedPosts.length - 1 && (
+                    {i < filteredPosts.length - 1 && (
                       <div className="h-px bg-white/[0.06] my-8 sm:my-12" />
                     )}
                   </div>
@@ -222,7 +221,7 @@ export default function Index() {
               </div>
             )}
 
-            {!feedLoading && (!feedPosts || feedPosts.length === 0) && (
+            {!feedLoading && filteredPosts.length === 0 && (
               <div className="py-12 sm:py-24 text-center">
                 <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-white/[0.03] flex items-center justify-center">
                   <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1" className="w-8 h-8 text-white/15">
@@ -232,16 +231,16 @@ export default function Index() {
                   </svg>
                 </div>
                 <p className="text-[1.2rem] sm:text-[1.6rem] uppercase text-white/20 font-bold tracking-[0.08em]"
-                  style={{ fontFamily: "'Oswald', sans-serif" }}>
-                  Ingen oppdateringer enda
+                  style={oswald}>
+                  {feedFilter === "alle" ? "Ingen oppdateringer enda" : "Ingen treff i denne kategorien"}
                 </p>
-                <p className="text-[13px] text-white/12 mt-1.5">
-                  Bli den første til å dele noe
+                <p className="text-[13px] text-white/[0.12] mt-1.5">
+                  {feedFilter === "alle" ? "Bli den første til å dele noe" : "Prøv en annen kategori"}
                 </p>
-                {!user && (
+                {!user && feedFilter === "alle" && (
                   <Link to="/login"
                     className="inline-block mt-5 text-[12px] uppercase tracking-[0.2em] text-[#c8102e] hover:text-[#e01830] font-bold transition-colors border-b border-[#c8102e]/30 hover:border-[#c8102e]/60 pb-0.5"
-                    style={{ fontFamily: "'Oswald', sans-serif" }}>
+                    style={oswald}>
                     Logg inn for å starte →
                   </Link>
                 )}
