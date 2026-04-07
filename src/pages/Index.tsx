@@ -142,8 +142,8 @@ export default function Index() {
                 <Link key={mod.title} to={mod.href} className="border-b border-white/[0.04]">
                   <div className="flex flex-col items-center gap-1.5 py-4 px-2 text-center group active:bg-white/[0.04] transition-colors">
                     <div className="text-[#b0b7bd]">{mod.icon}</div>
-                    <p className="text-[11px] tracking-[0.08em] uppercase font-semibold text-white leading-tight"
-                      style={oswald}>
+                    <p className="text-[11px] tracking-[0.08em] uppercase font-bold text-white leading-tight"
+                      style={{ fontFamily: "'Chakra Petch', sans-serif" }}>
                       {mod.title}
                     </p>
                   </div>
@@ -163,11 +163,12 @@ export default function Index() {
                       {mod.icon}
                     </div>
                     <div className="text-left">
-                      <p className="text-[18px] tracking-[0.06em] uppercase font-semibold leading-tight transition-colors duration-300 text-white group-hover:text-white"
-                        style={{ fontFamily: "'Oswald', 'Bebas Neue', sans-serif" }}>
+                      <p className="text-[18px] tracking-[0.06em] uppercase font-bold leading-tight transition-colors duration-300 text-white group-hover:text-white"
+                        style={{ fontFamily: "'Chakra Petch', sans-serif" }}>
                         {mod.title}
                       </p>
-                      <p className="text-[13px] leading-tight mt-1 transition-colors duration-300 text-[#b0b7bd]/70 group-hover:text-[#b0b7bd]">
+                      <p className="text-[13px] leading-tight mt-1 transition-colors duration-300 text-[#b0b7bd]/70 group-hover:text-[#b0b7bd]"
+                        style={{ fontFamily: "'Chakra Petch', sans-serif" }}>
                         {mod.desc}
                       </p>
                     </div>
