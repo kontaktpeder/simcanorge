@@ -114,14 +114,14 @@ export default function Index() {
               bilgarasje.no
             </p>
             <h1
-              className="text-[1.8rem] sm:text-[3rem] md:text-[4rem] leading-[1] uppercase tracking-[0.08em] sm:tracking-[0.12em] text-white font-bold"
-              style={{ fontFamily: "'Oswald', 'Bebas Neue', sans-serif" }}
+              className="text-[2rem] sm:text-[3.2rem] md:text-[4.2rem] leading-[0.95] uppercase tracking-[0.04em] sm:tracking-[0.06em] text-white italic"
+              style={{ fontFamily: "'Racing Sans One', 'Oswald', sans-serif" }}
             >
               Hele Norges bilsamfunn
             </h1>
             <p
-              className="text-[0.85rem] sm:text-[1.4rem] md:text-[1.7rem] uppercase tracking-[0.2em] sm:tracking-[0.25em] text-white font-bold mt-0.5 sm:mt-1"
-              style={{ fontFamily: "'Oswald', 'Bebas Neue', sans-serif" }}
+              className="text-[0.95rem] sm:text-[1.5rem] md:text-[1.8rem] uppercase tracking-[0.15em] sm:tracking-[0.2em] text-white/80 italic mt-0.5 sm:mt-1"
+              style={{ fontFamily: "'Racing Sans One', 'Oswald', sans-serif" }}
             >
               — på nett
             </p>
