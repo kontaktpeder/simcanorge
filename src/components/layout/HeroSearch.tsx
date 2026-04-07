@@ -78,6 +78,7 @@ export function HeroSearch() {
           }}
           onFocus={() => setOpen(true)}
           placeholder="Søk etter biler, deler, arrangementer…"
+          style={{ fontFamily: "'Chakra Petch', sans-serif" }}
           className="w-full bg-white/[0.07] backdrop-blur-sm border border-white/[0.12] hover:border-white/[0.2] focus:border-white/[0.3] rounded-none pl-12 pr-10 py-3.5 text-[14px] sm:text-[15px] text-white placeholder:text-white/30 focus:outline-none transition-all tracking-wide"
         />
         {inputValue && (
