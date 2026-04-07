@@ -146,7 +146,6 @@ export default function Index() {
                       style={{ fontFamily: "'Chakra Petch', sans-serif" }}>
                       {mod.title}
                     </p>
-                    </p>
                   </div>
                 </Link>
               ))}
@@ -167,7 +166,6 @@ export default function Index() {
                       <p className="text-[18px] tracking-[0.06em] uppercase font-bold leading-tight transition-colors duration-300 text-white group-hover:text-white"
                         style={{ fontFamily: "'Chakra Petch', sans-serif" }}>
                         {mod.title}
-                      </p>
                       </p>
                       <p className="text-[13px] leading-tight mt-1 transition-colors duration-300 text-[#b0b7bd]/70 group-hover:text-[#b0b7bd]"
                         style={{ fontFamily: "'Chakra Petch', sans-serif" }}>
