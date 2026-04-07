@@ -41,7 +41,7 @@ export function Header() {
   const showExpandedNavSearch = isHome && !heroVisible;
 
   return (
-    <header className="sticky top-0 z-50 bg-[#0f0d0b]">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-[#0f0d0b]">
       <div className="max-w-[1400px] mx-auto px-5 md:px-8">
         <div className="flex items-center h-14 md:h-16 gap-4">
 

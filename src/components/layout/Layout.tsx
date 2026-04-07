@@ -15,7 +15,7 @@ export function Layout({ children, contained = false, hideFooter = false }: Layo
     return (
     <div className="h-screen min-h-[100dvh] flex flex-col overflow-hidden">
       <Header />
-      <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden">
+      <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden pt-14 md:pt-16">
         <main className="min-h-full">
           {children}
         </main>
@@ -28,7 +28,7 @@ export function Layout({ children, contained = false, hideFooter = false }: Layo
   return (
     <div className="min-h-screen flex flex-col overflow-x-hidden">
       <Header />
-      <main className="flex-1 overflow-x-hidden">
+      <main className="flex-1 overflow-x-hidden pt-14 md:pt-16">
         {children}
       </main>
       {!hideFooter && <Footer />}
