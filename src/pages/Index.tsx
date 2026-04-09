@@ -52,19 +52,16 @@ export default function Index() {
           {/* Warm glow behind car */}
           <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(circle at 75% 50%, rgba(255,180,80,0.2) 0%, transparent 50%)' }} />
 
-          {/* Car image — fills right side, fades into background */}
+          {/* Car image — zoomed in, covers right 2/3, soft fade left */}
           <div className="absolute inset-0 pointer-events-none hidden md:block">
             <img
               src={heroCar}
               alt=""
-              className="absolute right-0 bottom-0 h-full w-[65%] object-contain object-right-bottom"
+              className="absolute right-[-5%] bottom-0 h-[130%] w-[75%] object-cover object-center"
               style={{
-                WebkitMaskImage: 'linear-gradient(to left, black 30%, transparent 85%), linear-gradient(to top, black 70%, transparent 100%)',
-                WebkitMaskComposite: 'intersect',
-                maskImage: 'linear-gradient(to left, black 30%, transparent 85%), linear-gradient(to top, black 70%, transparent 100%)',
-                maskComposite: 'intersect',
-                filter: 'drop-shadow(0 4px 40px rgba(0,0,0,0.3))',
-                opacity: 0.9,
+                WebkitMaskImage: 'linear-gradient(to left, black 50%, transparent 100%)',
+                maskImage: 'linear-gradient(to left, black 50%, transparent 100%)',
+                opacity: 0.85,
               }}
             />
           </div>
@@ -107,9 +104,9 @@ export default function Index() {
                 const ModIcon = mod.icon;
                 return (
                   <Link key={mod.title} to={mod.href} className="group flex-shrink-0">
-                    <div className="flex items-center gap-2 py-2 px-3 rounded-full bg-white/50 border border-[#c4962c]/10 hover:border-[#c4962c]/25 active:scale-[0.97] transition-all">
-                      <ModIcon className="w-4 h-4 text-[#8b6914]" strokeWidth={1.8} />
-                      <span className="text-[11px] tracking-[0.04em] uppercase font-bold text-[#3a2e24] whitespace-nowrap" style={chakra}>
+                    <div className="flex items-center gap-2 py-2.5 px-4 rounded-full bg-white/50 border border-[#c4962c]/10 hover:border-[#c4962c]/25 active:scale-[0.97] transition-all">
+                      <ModIcon className="w-5 h-5 text-[#8b6914]" strokeWidth={1.8} />
+                      <span className="text-[13px] tracking-[0.04em] uppercase font-bold text-[#3a2e24] whitespace-nowrap" style={chakra}>
                         {mod.title}
                       </span>
                     </div>
@@ -133,14 +130,14 @@ export default function Index() {
                   >
                     <Link
                       to={mod.href}
-                      className="flex items-center justify-center gap-2.5 py-3.5 hover:bg-white/40 transition-colors duration-200"
+                      className="flex items-center justify-center gap-3 py-4 hover:bg-white/40 transition-colors duration-200"
                     >
-                      <ModIcon className="w-5 h-5 text-[#8b6914] group-hover:text-[#c4962c] transition-colors" strokeWidth={1.6} />
+                      <ModIcon className="w-6 h-6 text-[#8b6914] group-hover:text-[#c4962c] transition-colors" strokeWidth={1.6} />
                       <div className="flex flex-col">
-                        <span className="text-[13px] lg:text-[14px] tracking-[0.05em] uppercase font-bold text-[#3a2e24] leading-tight" style={chakra}>
+                        <span className="text-[15px] lg:text-[16px] tracking-[0.05em] uppercase font-bold text-[#3a2e24] leading-tight" style={chakra}>
                           {mod.title}
                         </span>
-                        <span className="text-[10px] text-[#3a2e24]/40 leading-tight" style={chakra}>
+                        <span className="text-[11px] lg:text-[12px] text-[#3a2e24]/45 leading-tight" style={chakra}>
                           {mod.desc}
                         </span>
                       </div>
@@ -162,12 +159,19 @@ export default function Index() {
           </div>
         </nav>
 
-        {/* ─── FEED (scrolls right in) ─── */}
+        {/* ─── FEED ─── */}
         <section
-          className="pt-6 sm:pt-8 md:pt-10 pb-12 sm:pb-20 md:pb-32"
+          className="relative pt-6 sm:pt-8 md:pt-10 pb-12 sm:pb-20 md:pb-32 overflow-hidden"
           style={{ background: 'linear-gradient(180deg, #ebe3d8 0%, #e2d9cc 40%, #dbd0c2 100%)' }}
         >
-          <div className="max-w-[1000px] mx-auto px-4 sm:px-5 md:px-8">
+          {/* Subtle car silhouette watermark */}
+          <div className="absolute inset-0 pointer-events-none flex items-center justify-center" style={{ opacity: 0.03 }}>
+            <svg viewBox="0 0 800 300" fill="currentColor" className="w-[90%] max-w-[1200px] text-[#3a2e24]">
+              <path d="M60 220 Q60 200 80 190 L180 170 Q200 130 240 110 L360 80 Q400 70 440 70 L560 75 Q620 80 660 100 L720 140 Q740 155 750 180 L760 200 Q770 215 760 220 L740 225 Q730 200 710 190 Q690 180 670 190 Q650 200 650 220 L350 225 Q340 200 320 190 Q300 180 280 190 Q260 200 260 220 Z" />
+            </svg>
+          </div>
+
+          <div className="relative z-10 max-w-[800px] mx-auto px-4 sm:px-5 md:px-8">
 
             <div className="flex items-end justify-between mb-5 sm:mb-7">
               <FeedFilterTabs active={feedFilter} onChange={setFeedFilter} />
