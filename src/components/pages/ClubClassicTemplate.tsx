@@ -114,15 +114,15 @@ export function ClubClassicTemplate({ page }: { page: Page }) {
     <div className="bg-background font-sans">
 
       {/* ── HERO — banner image full size ── */}
-      {page.cover_url && (
-        <section className="w-full">
+      <section className="w-full h-[280px] md:h-[340px] bg-muted overflow-hidden">
+        {page.cover_url && (
           <img
             src={page.cover_url}
             alt=""
-            className="w-full h-auto"
+            className="w-full h-full object-contain"
           />
-        </section>
-      )}
+        )}
+      </section>
 
       {/* ── LOGO + TITLE — between hero and content ── */}
       <div className="max-w-[1000px] mx-auto px-5 md:px-8 -mt-12 relative z-10 mb-8 md:mb-10">
