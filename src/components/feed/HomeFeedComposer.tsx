@@ -17,13 +17,13 @@ export function HomeFeedComposer() {
 
   if (!user) {
     return (
-      <div className="rounded-xl border border-[#c4962c]/12 bg-gradient-to-br from-[#f5efe6] to-[#f0e9df] px-6 py-8 sm:py-10 text-center">
-        <p className="text-[1rem] sm:text-[1.15rem] uppercase tracking-[0.06em] font-bold text-[#3a2e24]/60 leading-snug" style={chakra}>
+      <div className="rounded-xl border border-[#c4962c]/12 bg-gradient-to-br from-[#f5efe6] to-[#f0e9df] px-4 py-6 sm:px-6 sm:py-10 text-center">
+        <p className="text-[0.85rem] sm:text-[1.15rem] uppercase tracking-[0.06em] font-bold text-[#3a2e24]/60 leading-snug" style={chakra}>
           Del bilhistorier, oppdateringer<br className="hidden sm:block" /> og nyheter med fellesskapet
         </p>
         <Link
           to="/login"
-          className="inline-block mt-4 px-6 py-2.5 text-[12px] uppercase tracking-[0.15em] font-bold text-[#0f0d0b] rounded-lg transition-all hover:brightness-110"
+          className="inline-block mt-3 sm:mt-4 px-5 sm:px-6 py-2 sm:py-2.5 text-[11px] sm:text-[12px] uppercase tracking-[0.15em] font-bold text-[#0f0d0b] rounded-lg transition-all hover:brightness-110"
           style={{ ...chakra, background: 'linear-gradient(135deg, #d4a017, #e8c547, #c4962c)' }}
         >
           Logg inn for å starte
