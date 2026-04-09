@@ -1,4 +1,5 @@
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { usePublicPageBySlug } from "@/hooks/usePageBySlug";
 import { PublicPageHero } from "@/components/pages/PublicPageHero";
