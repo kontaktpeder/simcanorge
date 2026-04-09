@@ -69,7 +69,7 @@ export function HeroSection() {
     const sorted = [...car.car_images].sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
     return sorted[0];
   };
-  return <section className="poster-section poster-section-blue hero-watermark relative overflow-hidden min-h-[60vh] md:min-h-[85vh] flex flex-col justify-start pt-2 md:pt-8">
+  return <section className="poster-section poster-section-blue hero-watermark relative overflow-hidden min-h-[60vh] md:min-h-[80vh] flex flex-col justify-start pt-2 md:pt-6">
       {/* Gradient transition from sky header into deep navy hero */}
       <div className="absolute inset-x-0 top-0 h-24 md:h-32 bg-gradient-to-b from-[#1a4a7a]/60 via-[#0B2A55]/80 to-transparent z-[1] pointer-events-none" />
       <div className="absolute inset-0 stripes-diagonal" />
@@ -81,7 +81,7 @@ export function HeroSection() {
               <img 
                 src="/simca-badge.png" 
                 alt="Simca Norge" 
-                className="h-44 md:h-72 lg:h-96 xl:h-[28rem] w-auto" 
+                className="h-36 md:h-56 lg:h-72 xl:h-80 w-auto" 
                 loading="eager"
                 fetchPriority="high"
                 onError={(e) => {
@@ -218,7 +218,7 @@ export function HeroSection() {
                         getMainImage(featuredCar)!.alt_text || featuredCar.title,
                         { sizes: IMAGE_SIZES.featured, priority: true }
                       )}
-                      className="w-full aspect-[16/10] object-cover shadow-lg group-hover:scale-105 transition-transform duration-500"
+                      className="w-full aspect-[4/3] object-cover shadow-lg group-hover:scale-105 transition-transform duration-500"
                     />
                     <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
                     <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
