@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
-import { Plus } from "lucide-react";
+import { Plus, Car, ShoppingBag, CalendarDays, Users, Building2 } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 import { Helmet } from "react-helmet-async";
 import { useAuth } from "@/hooks/useAuth";
@@ -10,22 +10,16 @@ import { HomeFeedComposer } from "@/components/feed/HomeFeedComposer";
 import { HeroSearch } from "@/components/layout/HeroSearch";
 import { FeedFilterTabs, type FeedFilter } from "@/components/feed/FeedFilterTabs";
 import heroCar from "@/assets/hero-car.jpg";
-import moduleBiler from "@/assets/module-biler.jpg";
-import moduleMarkedsplass from "@/assets/module-markedsplass.jpg";
-import moduleArrangementer from "@/assets/module-arrangementer.jpg";
-import moduleKlubber from "@/assets/module-klubber.jpg";
-import moduleAktoerer from "@/assets/module-aktoerer.jpg";
-
 
 const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
 const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
 
 const modules = [
-  { href: "/biler", title: "Biler", desc: "Historier og profiler", image: moduleBiler, createUrl: "/send-inn", createLabel: "Send inn din bil" },
-  { href: "/markedsplass", title: "Markedsplass", desc: "Kjøp & salg", image: moduleMarkedsplass, createUrl: "/dashboard/opprett-annonse", createLabel: "Legg ut annonse" },
-  { href: "/arrangement", title: "Arrangementer", desc: "Treff & samlinger", image: moduleArrangementer, createUrl: "/dashboard/events/ny", createLabel: "Opprett arrangement" },
-  { href: "/aktoerer", title: "Klubber", desc: "Kommer snart", image: moduleKlubber, comingSoon: true, createUrl: "/dashboard/sider/ny", createLabel: "Opprett side" },
-  { href: "/aktoerer", title: "Aktører", desc: "Verksteder & bedrifter", image: moduleAktoerer, createUrl: "/dashboard/sider/ny", createLabel: "Opprett side" },
+  { href: "/biler", title: "Biler", desc: "Historier og profiler", icon: Car, createUrl: "/send-inn", createLabel: "Send inn din bil" },
+  { href: "/markedsplass", title: "Markedsplass", desc: "Kjøp & salg", icon: ShoppingBag, createUrl: "/dashboard/opprett-annonse", createLabel: "Legg ut annonse" },
+  { href: "/arrangement", title: "Arrangementer", desc: "Treff & samlinger", icon: CalendarDays, createUrl: "/dashboard/events/ny", createLabel: "Opprett arrangement" },
+  { href: "/aktoerer", title: "Klubber", desc: "Kommer snart", icon: Users, comingSoon: true, createUrl: "/dashboard/sider/ny", createLabel: "Opprett side" },
+  { href: "/aktoerer", title: "Aktører", desc: "Verksteder & bedrifter", icon: Building2, createUrl: "/dashboard/sider/ny", createLabel: "Opprett side" },
 ];
 
 export default function Index() {
