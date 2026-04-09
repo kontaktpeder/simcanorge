@@ -27,84 +27,16 @@ export function ClubClassicTemplate({ page }: { page: Page }) {
   return (
     <div className="bg-background font-sans">
 
-      {/* ── HERO — same poster-section-blue as homepage ── */}
-      <section className="poster-section poster-section-blue hero-watermark relative overflow-hidden min-h-[340px] md:min-h-[420px] flex flex-col justify-center">
-        <div className="absolute inset-0 stripes-diagonal" />
-
-        {page.cover_url && (
-          <>
-            <img
-              src={page.cover_url}
-              alt=""
-              className="absolute inset-0 w-full h-full object-cover opacity-20 mix-blend-luminosity"
-            />
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#071D3D]/90" />
-          </>
-        )}
-
-        {/* Chrome rule top */}
-        <div className="absolute top-0 inset-x-0 z-10 pt-4 px-6 md:px-12">
-          <div
-            className="h-[2px] rounded-full opacity-40"
-            style={{ background: "linear-gradient(90deg, transparent 0%, #B8C0CC 20%, #FFFFFF 50%, #B8C0CC 80%, transparent 100%)" }}
+      {/* ── HERO — cover image only ── */}
+      {page.cover_url && (
+        <section className="relative w-full h-[240px] md:h-[360px]">
+          <img
+            src={page.cover_url}
+            alt=""
+            className="absolute inset-0 w-full h-full object-cover"
           />
-        </div>
-
-        <div className="relative z-10 flex flex-col items-center justify-center text-center px-6 md:px-12">
-          {page.logo_url && (
-            <div className="mb-4 md:mb-6">
-              <img
-                src={page.logo_url}
-                alt=""
-                className="w-20 h-20 md:w-28 md:h-28 rounded-xl object-cover"
-                style={{
-                  filter: 'drop-shadow(0 8px 24px rgba(0,0,0,0.5))',
-                  border: '2px solid rgba(255,255,255,0.15)',
-                }}
-              />
-            </div>
-          )}
-
-          {page.founded_year && (
-            <p className="text-[10px] tracking-[0.35em] uppercase text-white/50 mb-2 font-sans font-semibold">
-              Est. {page.founded_year}
-            </p>
-          )}
-
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-display leading-[0.95] text-white uppercase tracking-wide drop-shadow-[0_4px_12px_rgba(0,0,0,0.5)]">
-            {page.title}
-          </h1>
-
-          {page.tagline && (
-            <p className="text-base md:text-lg text-white/60 mt-3 max-w-xl italic font-serif">
-              {page.tagline}
-            </p>
-          )}
-
-          <div className="flex items-center gap-5 mt-6 text-xs text-white/45 font-sans">
-            {page.location && (
-              <span className="flex items-center gap-1.5">
-                <MapPin className="w-3.5 h-3.5 text-white/35" />
-                {page.location}
-              </span>
-            )}
-            {page.founded_year && (
-              <span className="flex items-center gap-1.5">
-                <Calendar className="w-3.5 h-3.5 text-white/35" />
-                Siden {page.founded_year}
-              </span>
-            )}
-          </div>
-        </div>
-
-        {/* Chrome rule bottom */}
-        <div className="absolute bottom-0 inset-x-0 z-10 pb-4 px-6 md:px-12">
-          <div
-            className="h-[2px] rounded-full opacity-40"
-            style={{ background: "linear-gradient(90deg, transparent 0%, #B8C0CC 20%, #FFFFFF 50%, #B8C0CC 80%, transparent 100%)" }}
-          />
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* ── ACCENT STRIP — enamel red, thinner ── */}
       <div
