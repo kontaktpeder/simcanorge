@@ -2,6 +2,7 @@ import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { GarageLayout } from '@/components/ui/garage/GarageLayout';
 import { EnamelCard } from '@/components/ui/garage/EnamelCard';
 import { BigActionButton } from '@/components/ui/garage/BigActionButton';
@@ -11,13 +12,12 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
-import { Loader2, Car, Upload, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Loader2, Car, Upload, CheckCircle2, AlertCircle, Users } from 'lucide-react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { CAR_BRANDS, getModelsForBrand, getVariantsForModel } from '@/data/carBrands';
 import { CAR_BODY_TYPES } from '@/data/carBodyTypes';
 import { compressImages, generateImageId, getCarImagePath } from '@/lib/imageCompression';
-import { motion } from 'framer-motion';
 
 const CATEGORIES = [
   { value: 'registrert', label: 'Registrert' },
@@ -57,6 +57,30 @@ export default function DashboardOpprettBil() {
   const [category, setCategory] = useState('registrert');
   const [story, setStory] = useState('');
 
+  // Consent fields
+  const [allowEdits, setAllowEdits] = useState<boolean | null>(null);
+  const [allowInstagram, setAllowInstagram] = useState(false);
+  const [clubLinkRequested, setClubLinkRequested] = useState(false);
+  const [clubPageId, setClubPageId] = useState('');
+  const [clubMessage, setClubMessage] = useState('');
+
+  const { data: clubs } = useQuery({
+    queryKey: ['public-clubs-for-opprett'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('pages')
+        .select('id, title, slug')
+        .eq('page_type', 'club')
+        .eq('is_public', true)
+        .eq('status', 'active')
+        .order('title');
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
+  const selectedClub = clubs?.find(c => c.id === clubPageId) ?? null;
+
   useEffect(() => {
     if (!authLoading && !user) {
       navigate('/login?returnUrl=/dashboard/opprett-bil');
@@ -84,6 +108,16 @@ export default function DashboardOpprettBil() {
       return;
     }
 
+    if (allowEdits === null) {
+      toast.error('Du må velge om du godkjenner redigering');
+      return;
+    }
+
+    if (clubLinkRequested && !clubPageId) {
+      toast.error('Velg ønsket klubb');
+      return;
+    }
+
     setIsSaving(true);
     try {
       const title = [brand, model, variant].filter(Boolean).join(' ');
@@ -91,6 +125,21 @@ export default function DashboardOpprettBil() {
       const slug = `${baseSlug}-${Date.now().toString(36)}`;
 
       const userEmail = user.email || '';
+
+      const submissionPayload = {
+        submitted_at: new Date().toISOString(),
+        allow_edits: allowEdits === true,
+        allow_instagram: allowInstagram,
+        club_join_request: clubLinkRequested && selectedClub
+          ? {
+              requested: true,
+              page_id: selectedClub.id,
+              page_title: selectedClub.title,
+              page_slug: selectedClub.slug,
+              message: clubMessage.trim() || null,
+            }
+          : { requested: false, page_id: null, page_title: null, page_slug: null, message: null },
+      };
 
       // 1. Create car
       const { data: car, error: carError } = await supabase
@@ -108,6 +157,8 @@ export default function DashboardOpprettBil() {
           source: 'owner_self' as any,
           status: 'draft' as any,
           created_by_user_id: user.id,
+          allow_edits: allowEdits === true,
+          submission_payload: submissionPayload,
         })
         .select('id')
         .single();
@@ -131,7 +182,23 @@ export default function DashboardOpprettBil() {
       if (ownerError) {
         console.error('Owner claim error:', ownerError);
         toast.error('Bil opprettet, men kunne ikke knytte deg som eier. Kontakt admin.');
-        // Still proceed — car exists
+      }
+
+      // 3. Club link request via RPC
+      if (clubLinkRequested && selectedClub) {
+        try {
+          const { data: rpcResult } = await supabase.rpc('create_page_car_link_request', {
+            p_car_id: car.id,
+            p_page_id: selectedClub.id,
+            p_message: clubMessage.trim() || null,
+          });
+          const rpcData = rpcResult as { success?: boolean } | null;
+          if (rpcData && !rpcData.success) {
+            console.warn('Club link request RPC returned:', rpcData);
+          }
+        } catch (rpcErr) {
+          console.error('Club link request failed:', rpcErr);
+        }
       }
 
       setCreatedCarId(car.id);
@@ -209,7 +276,6 @@ export default function DashboardOpprettBil() {
 
       if (error) {
         console.error('Publish error:', error);
-        // The trigger will raise exceptions for missing requirements
         if (error.message?.includes('Merke')) {
           toast.error('Merke må være satt før publisering');
         } else if (error.message?.includes('Modell')) {
@@ -463,9 +529,107 @@ export default function DashboardOpprettBil() {
             />
           </div>
 
+          {/* ── Consent: Redigering ── */}
+          <div className="space-y-2 p-3 sm:p-4 bg-muted/30 rounded-lg border-2 border-muted">
+            <p className="font-semibold text-base mb-2">Godkjenning for redigering *</p>
+            <p className="text-xs sm:text-sm text-muted-foreground mb-3">
+              Vi kan rette små skrivefeil, tydeliggjøre detaljer og legge til teknisk info. Innholdet endres ikke helt – vi bygger videre på det du har sendt inn.
+            </p>
+            <label className="flex items-start gap-3 cursor-pointer p-2 rounded-lg hover:bg-muted/50 transition-colors">
+              <input type="radio" name="allowEdits" checked={allowEdits === true} onChange={() => setAllowEdits(true)} className="w-5 h-5 mt-0.5 accent-primary flex-shrink-0" />
+              <span className="text-sm text-foreground font-medium">
+                Ja, jeg godkjenner at Simca Norge kan redigere og forbedre innsendelsen min.
+              </span>
+            </label>
+            <label className="flex items-start gap-3 cursor-pointer p-2 rounded-lg hover:bg-muted/50 transition-colors">
+              <input type="radio" name="allowEdits" checked={allowEdits === false} onChange={() => setAllowEdits(false)} className="w-5 h-5 mt-0.5 accent-primary flex-shrink-0" />
+              <span className="text-sm text-foreground font-medium">
+                Nei, jeg ønsker at innholdet publiseres som det er.
+              </span>
+            </label>
+          </div>
+
+          {/* ── Consent: Klubbtilknytning ── */}
+          <div className="p-3 sm:p-4 bg-muted/30 rounded-lg border-2 border-muted">
+            <p className="font-semibold text-base mb-2 flex items-center gap-2">
+              <Users className="w-5 h-5" />
+              Knytte bilen til en klubb
+            </p>
+            <p className="text-xs sm:text-sm text-muted-foreground mb-3">
+              Ønsker du at bilen skal vises på en klubbside? Klubben/admin godkjenner koblingen.
+            </p>
+            <label className="flex items-start gap-3 cursor-pointer p-2 rounded-lg hover:bg-muted/50 transition-colors">
+              <input
+                type="checkbox"
+                checked={clubLinkRequested}
+                onChange={(e) => {
+                  setClubLinkRequested(e.target.checked);
+                  if (!e.target.checked) { setClubPageId(''); setClubMessage(''); }
+                }}
+                className="w-5 h-5 mt-0.5 accent-primary flex-shrink-0"
+              />
+              <span className="text-sm text-foreground font-medium">
+                Ja, jeg ønsker å knytte bilen til en klubb på Bilgarasjen
+              </span>
+            </label>
+
+            {clubLinkRequested && (
+              <div className="mt-3 space-y-3 pl-8">
+                <div>
+                  <Label className="text-sm font-medium">Velg klubb *</Label>
+                  <select
+                    value={clubPageId}
+                    onChange={(e) => setClubPageId(e.target.value)}
+                    className="w-full h-10 px-3 text-sm rounded-md border bg-background mt-1"
+                  >
+                    <option value="">Velg klubb...</option>
+                    {clubs?.map(club => (
+                      <option key={club.id} value={club.id}>{club.title}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <Label className="text-sm font-medium">Melding til klubb/admin (valgfritt)</Label>
+                  <Textarea
+                    value={clubMessage}
+                    onChange={(e) => setClubMessage(e.target.value)}
+                    placeholder="F.eks. «Jeg er medlem og vil gjerne ha bilen på klubbsiden»"
+                    maxLength={2000}
+                    className="mt-1"
+                    rows={2}
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* ── Consent: Instagram ── */}
+          <div className="p-3 sm:p-4 bg-muted/30 rounded-lg border-2 border-muted">
+            <p className="font-semibold text-base mb-2">Deling på Instagram</p>
+            <label className="flex items-start gap-3 cursor-pointer p-2 rounded-lg hover:bg-muted/50 transition-colors">
+              <input
+                type="checkbox"
+                checked={allowInstagram}
+                onChange={(e) => setAllowInstagram(e.target.checked)}
+                className="w-5 h-5 mt-0.5 accent-primary flex-shrink-0"
+              />
+              <span className="text-sm text-foreground font-medium">
+                Jeg godkjenner at bilder og beskrivelse av bilen min deles på Simca Norge sin{' '}
+                <a
+                  href="https://www.instagram.com/simcanorge/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary underline hover:text-accent"
+                >
+                  Instagram
+                </a>.
+              </span>
+            </label>
+          </div>
+
           <BigActionButton
             onClick={handleCreateCar}
-            disabled={isSaving || !brand || !model}
+            disabled={isSaving || !brand || !model || allowEdits === null}
             className="w-full"
           >
             {isSaving ? (
