@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { Layout } from "@/components/layout/Layout";
 import { CreateCTA } from "@/components/ui/CreateCTA";
-import { MapPin, Calendar, Users, ArrowRight } from "lucide-react";
+import { MapPin, Calendar, Users } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
