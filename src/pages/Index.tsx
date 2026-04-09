@@ -13,7 +13,7 @@ import moduleBiler from "@/assets/module-biler.jpg";
 import moduleMarkedsplass from "@/assets/module-markedsplass.jpg";
 import moduleArrangementer from "@/assets/module-arrangementer.jpg";
 import moduleKlubber from "@/assets/module-klubber.jpg";
-import moduleAktoerer from "@/assets/module-aktoerer.jpg";
+import heroWallBg from "@/assets/hero-wall-bg.jpg";
 
 const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
 const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
@@ -50,13 +50,21 @@ export default function Index() {
       <div className="min-h-[calc(100vh-4rem)]" style={{ background: 'linear-gradient(180deg, #f0ebe3 0%, #e8e2d8 40%, #e4ddd3 100%)' }}>
 
         {/* ─── HERO (compact) ─── */}
-        <section className="relative overflow-hidden h-[180px] sm:h-[200px] md:h-[220px] bg-[#1a1a1a]">
+        <section className="relative overflow-hidden h-[180px] sm:h-[200px] md:h-[220px]">
+          {/* Brick wall background */}
+          <img
+            src={heroWallBg}
+            alt=""
+            aria-hidden="true"
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+          {/* Car on top, right-aligned */}
           <img
             src={heroCar}
             alt="Klassisk bil"
             className="absolute inset-0 w-full h-full object-contain object-right brightness-110"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#1a1a1a]/70 via-[#1a1a1a]/45 to-[#1a1a1a]/25" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#1a1a1a]/60 via-transparent to-transparent" />
           <div className="absolute bottom-0 left-0 right-0 h-10" style={{ background: 'linear-gradient(to top, #f0ebe3, transparent)' }} />
 
           <div className="relative z-10 h-full flex flex-col items-center justify-center text-center max-w-[800px] mx-auto px-5 md:px-8">
