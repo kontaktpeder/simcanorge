@@ -37,7 +37,7 @@ export function Header() {
   const showExpandedNavSearch = isHome && !heroVisible;
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-[#f5f0e8]/95 backdrop-blur-md shadow-sm">
+    <header className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md shadow-sm" style={{ background: 'linear-gradient(135deg, rgba(58,46,36,0.97) 0%, rgba(42,33,24,0.97) 100%)' }}>
       <div className="max-w-[1400px] mx-auto px-5 md:px-8">
         <div className="flex items-center h-14 md:h-16 gap-4">
 

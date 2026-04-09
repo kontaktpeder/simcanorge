@@ -4,55 +4,59 @@ import { ReportProblemModal } from "@/components/support";
 import { useAuth } from "@/hooks/useAuth";
 import carSilhouette from "@/assets/car-silhouette.png";
 
+const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
+
 export function Footer() {
   const [reportModalOpen, setReportModalOpen] = useState(false);
   const { user } = useAuth();
 
   return (
     <>
-      <footer className="relative bg-[#0a0a0a] text-white/60 overflow-hidden">
-        {/* Car silhouette watermark — bottom right */}
+      <footer className="relative overflow-hidden" style={{ background: 'linear-gradient(180deg, #2a2118 0%, #1e1812 100%)' }}>
+        {/* Car silhouette watermark */}
         <img
           src={carSilhouette}
           alt=""
           aria-hidden="true"
-          className="absolute bottom-0 right-0 translate-x-[20%] translate-y-[15%] w-[500px] md:w-[600px] opacity-[0.03] invert pointer-events-none select-none -scale-x-100"
+          className="absolute bottom-0 right-0 translate-x-[20%] translate-y-[15%] w-[500px] md:w-[600px] opacity-[0.04] pointer-events-none select-none -scale-x-100"
+          style={{ filter: 'invert(1)' }}
         />
 
-        <div className="h-px bg-white/[0.06]" />
+        <div className="h-px bg-[#c4962c]/10" />
         <div className="relative max-w-[860px] mx-auto px-5 md:px-8 py-10 md:py-14">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-10">
             {/* Brand */}
             <div className="col-span-2 md:col-span-1">
-              <p className="text-[10px] tracking-[0.3em] uppercase text-white/30 mb-3">
-                Bilgarasje.no
+              <p className="text-[11px] tracking-[0.25em] uppercase font-bold mb-3"
+                style={{ ...chakra, background: 'linear-gradient(135deg, #F5A623, #FFD166)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                bilgarasje.no
               </p>
-              <p className="text-xs text-white/40 leading-relaxed">
+              <p className="text-[12px] text-white/35 leading-relaxed" style={chakra}>
                 Norges bilsamfunn på nett. Biler, deler, treff og historier.
               </p>
             </div>
 
             {/* Utforsk */}
             <div>
-              <h3 className="text-[10px] tracking-[0.2em] uppercase text-white/30 mb-3">Utforsk</h3>
-              <nav className="flex flex-col gap-1.5 text-xs">
-                <Link to="/biler" className="hover:text-white transition-colors">Biler</Link>
-                <Link to="/markedsplass" className="hover:text-white transition-colors">Markedsplass</Link>
-                <Link to="/arrangement" className="hover:text-white transition-colors">Arrangementer</Link>
-                <Link to="/historie" className="hover:text-white transition-colors">Historie</Link>
+              <h3 className="text-[10px] tracking-[0.2em] uppercase text-[#c4962c]/50 font-bold mb-3" style={chakra}>Utforsk</h3>
+              <nav className="flex flex-col gap-1.5 text-[12px]" style={chakra}>
+                <Link to="/biler" className="text-white/40 hover:text-[#c4962c] transition-colors">Biler</Link>
+                <Link to="/markedsplass" className="text-white/40 hover:text-[#c4962c] transition-colors">Markedsplass</Link>
+                <Link to="/arrangement" className="text-white/40 hover:text-[#c4962c] transition-colors">Arrangementer</Link>
+                <Link to="/historie" className="text-white/40 hover:text-[#c4962c] transition-colors">Historie</Link>
               </nav>
             </div>
 
             {/* Delta */}
             <div>
-              <h3 className="text-[10px] tracking-[0.2em] uppercase text-white/30 mb-3">Delta</h3>
-              <nav className="flex flex-col gap-1.5 text-xs">
-                <Link to="/send-inn" className="hover:text-white transition-colors">Send inn bil</Link>
-                <Link to="/start-annonse" className="hover:text-white transition-colors">Opprett annonse</Link>
-                <Link to="/kontakt" className="hover:text-white transition-colors">Kontakt oss</Link>
+              <h3 className="text-[10px] tracking-[0.2em] uppercase text-[#c4962c]/50 font-bold mb-3" style={chakra}>Delta</h3>
+              <nav className="flex flex-col gap-1.5 text-[12px]" style={chakra}>
+                <Link to="/send-inn" className="text-white/40 hover:text-[#c4962c] transition-colors">Send inn bil</Link>
+                <Link to="/start-annonse" className="text-white/40 hover:text-[#c4962c] transition-colors">Opprett annonse</Link>
+                <Link to="/kontakt" className="text-white/40 hover:text-[#c4962c] transition-colors">Kontakt oss</Link>
                 <button
                   onClick={() => setReportModalOpen(true)}
-                  className="text-left hover:text-white transition-colors"
+                  className="text-left text-white/40 hover:text-[#c4962c] transition-colors"
                 >
                   Rapporter problem
                 </button>
@@ -61,23 +65,23 @@ export function Footer() {
 
             {/* Fellesskap */}
             <div>
-              <h3 className="text-[10px] tracking-[0.2em] uppercase text-white/30 mb-3">Fellesskap</h3>
-              <nav className="flex flex-col gap-1.5 text-xs">
-                <a href="https://www.facebook.com/groups/1569119639997670" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
+              <h3 className="text-[10px] tracking-[0.2em] uppercase text-[#c4962c]/50 font-bold mb-3" style={chakra}>Fellesskap</h3>
+              <nav className="flex flex-col gap-1.5 text-[12px]" style={chakra}>
+                <a href="https://www.facebook.com/groups/1569119639997670" target="_blank" rel="noopener noreferrer" className="text-white/40 hover:text-[#c4962c] transition-colors">
                   Facebook
                 </a>
-                <Link to="/om-oss" className="hover:text-white transition-colors">Om oss</Link>
+                <Link to="/om-oss" className="text-white/40 hover:text-[#c4962c] transition-colors">Om oss</Link>
               </nav>
             </div>
           </div>
 
-          <div className="h-px bg-white/[0.06] mt-10 mb-6" />
+          <div className="h-px bg-[#c4962c]/10 mt-10 mb-6" />
 
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-[10px] tracking-[0.1em] text-white/25">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-[10px] tracking-[0.1em] text-white/20" style={chakra}>
             <p>© {new Date().getFullYear()} Bilgarasje.no</p>
             <div className="flex items-center gap-4">
-              <Link to="/personvern" className="hover:text-white/50 transition-colors">Personvern</Link>
-              <Link to="/admin/login" className="hover:text-white/50 transition-colors">Admin</Link>
+              <Link to="/personvern" className="hover:text-[#c4962c]/50 transition-colors">Personvern</Link>
+              <Link to="/admin/login" className="hover:text-[#c4962c]/50 transition-colors">Admin</Link>
             </div>
           </div>
         </div>
