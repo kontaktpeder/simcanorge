@@ -7,7 +7,7 @@ export type ClubPageForCars = {
   brand_key: string | null;
 };
 
-/** Normalise brand token for matching against cars.brand */
+/** Still useful for the "Se alle biler" link */
 export function clubBrandToken(page: ClubPageForCars): string | null {
   const fromKey = page.brand_key?.trim().toLowerCase();
   if (fromKey && fromKey.length >= 2) return fromKey;
@@ -15,26 +15,28 @@ export function clubBrandToken(page: ClubPageForCars): string | null {
   return fromSlug.length >= 2 ? fromSlug : null;
 }
 
+/**
+ * Fetches cars explicitly linked to a page via page_cars join table.
+ * New cars are NOT automatically included — they must be linked manually.
+ */
 export function useClubCommunityCars(page: ClubPageForCars | null | undefined) {
   return useQuery({
-    queryKey: ["club-community-cars", page?.id, page?.slug, page?.brand_key],
+    queryKey: ["club-community-cars", page?.id],
     queryFn: async () => {
       if (!page) return [];
-      const token = clubBrandToken(page);
-      if (!token) return [];
 
       const { data, error } = await supabase
-        .from("cars")
-        .select("id, title, slug, brand, year, car_images(image_url, sort_order)")
-        .ilike("brand", token)
-        .not("published_at", "is", null)
-        .lte("published_at", new Date().toISOString())
-        .order("published_at", { ascending: false })
+        .from("page_cars")
+        .select("car_id, cars(id, title, slug, brand, year, car_images(image_url, sort_order))")
+        .eq("page_id", page.id)
         .limit(6);
+
       if (error) throw error;
-      return data ?? [];
+      return (data ?? [])
+        .map((row: any) => row.cars)
+        .filter(Boolean);
     },
-    enabled: !!page && !!clubBrandToken(page),
+    enabled: !!page?.id,
   });
 }
 
