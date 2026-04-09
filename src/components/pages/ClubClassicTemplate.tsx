@@ -223,5 +223,6 @@ export function ClubClassicTemplate({ page }: { page: Page }) {
           )}
         </Tabs>
       </div>
+    </div>
   );
 }
