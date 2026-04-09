@@ -422,6 +422,7 @@ export type Database = {
           brand: string | null
           category: string
           created_at: string
+          created_by_user_id: string | null
           editorial_status: string | null
           external_links: Json | null
           featured: boolean | null
@@ -455,6 +456,7 @@ export type Database = {
           brand?: string | null
           category?: string
           created_at?: string
+          created_by_user_id?: string | null
           editorial_status?: string | null
           external_links?: Json | null
           featured?: boolean | null
@@ -488,6 +490,7 @@ export type Database = {
           brand?: string | null
           category?: string
           created_at?: string
+          created_by_user_id?: string | null
           editorial_status?: string | null
           external_links?: Json | null
           featured?: boolean | null
@@ -1918,7 +1921,7 @@ export type Database = {
     }
     Enums: {
       app_role: "admin"
-      car_source: "manual" | "submission"
+      car_source: "manual" | "submission" | "owner_self"
       car_status: "submitted" | "draft" | "published" | "archived"
     }
     CompositeTypes: {
@@ -2048,7 +2051,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin"],
-      car_source: ["manual", "submission"],
+      car_source: ["manual", "submission", "owner_self"],
       car_status: ["submitted", "draft", "published", "archived"],
     },
   },

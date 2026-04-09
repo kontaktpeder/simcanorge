@@ -1,0 +1,1 @@
+ALTER TYPE public.car_source ADD VALUE IF NOT EXISTS 'owner_self';
