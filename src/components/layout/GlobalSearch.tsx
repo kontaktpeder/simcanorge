@@ -4,11 +4,11 @@ import { Search, X } from "lucide-react";
 import { useGlobalSearch, type SearchResult } from "@/hooks/useGlobalSearch";
 
 const SECTION_COLORS: Record<string, string> = {
-  biler: "bg-blue-500/15 text-blue-300",
-  arrangement: "bg-amber-500/15 text-amber-300",
-  markedsplass: "bg-emerald-500/15 text-emerald-300",
-  deler: "bg-rose-500/15 text-rose-300",
-  sider: "bg-purple-500/15 text-purple-300",
+  biler: "bg-blue-500/15 text-blue-700",
+  arrangement: "bg-amber-500/15 text-amber-700",
+  markedsplass: "bg-emerald-500/15 text-emerald-700",
+  deler: "bg-rose-500/15 text-rose-700",
+  sider: "bg-purple-500/15 text-purple-700",
 };
 
 const SECTION_LABELS: Record<string, string> = {
@@ -92,7 +92,7 @@ export function GlobalSearch() {
 
   return (
     <div ref={containerRef} className="relative w-full">
-      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-white/15" />
+      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#1a1a1a]/25" />
       <input
         ref={inputRef}
         type="text"
@@ -103,24 +103,24 @@ export function GlobalSearch() {
         }}
         onFocus={() => setOpen(true)}
         placeholder="Søk etter biler, deler, arrangement..."
-        className="w-full bg-transparent border-b border-white/[0.08] pl-9 pr-8 py-1.5 text-[12px] text-white/50 placeholder:text-white/20 focus:outline-none focus:border-white/20 transition-all tracking-wide"
+        className="w-full bg-transparent border-b border-[#1a1a1a]/[0.12] pl-9 pr-8 py-1.5 text-[12px] text-[#1a1a1a]/70 placeholder:text-[#1a1a1a]/25 focus:outline-none focus:border-[#c4962c]/50 transition-all tracking-wide"
       />
       {inputValue && (
-        <button onClick={handleClear} className="absolute right-2 top-1/2 -translate-y-1/2 text-white/25 hover:text-white/50 transition-colors">
+        <button onClick={handleClear} className="absolute right-2 top-1/2 -translate-y-1/2 text-[#1a1a1a]/25 hover:text-[#1a1a1a]/50 transition-colors">
           <X className="w-3.5 h-3.5" />
         </button>
       )}
 
       {showDropdown && (
-        <div className="absolute top-full left-0 right-0 mt-1 bg-[#111] border border-white/[0.08] shadow-2xl z-[100] max-h-[380px] overflow-y-auto">
+        <div className="absolute top-full left-0 right-0 mt-1 bg-white/95 backdrop-blur-md border border-[#1a1a1a]/[0.1] shadow-2xl z-[100] max-h-[380px] overflow-y-auto rounded-lg">
           {isSearching && (
-            <div className="px-4 py-3 text-[12px] text-white/30 tracking-wide">
+            <div className="px-4 py-3 text-[12px] text-[#1a1a1a]/30 tracking-wide">
               Søker…
             </div>
           )}
 
           {!isSearching && debouncedQuery.length >= 2 && results.length === 0 && (
-            <div className="px-4 py-4 text-[12px] text-white/25 tracking-wide">
+            <div className="px-4 py-4 text-[12px] text-[#1a1a1a]/25 tracking-wide">
               Ingen treff for «{debouncedQuery}»
             </div>
           )}
@@ -129,7 +129,7 @@ export function GlobalSearch() {
             <>
               {contextResults.length > 0 && currentSection && (
                 <div>
-                  <div className="px-4 pt-3 pb-1 text-[10px] tracking-[0.15em] uppercase text-white/20">
+                  <div className="px-4 pt-3 pb-1 text-[10px] tracking-[0.15em] uppercase text-[#1a1a1a]/30">
                     I {SECTION_LABELS[currentSection]}
                   </div>
                   {contextResults.map((r) => (
@@ -141,7 +141,7 @@ export function GlobalSearch() {
               {otherResults.length > 0 && (
                 <div>
                   {contextResults.length > 0 && (
-                    <div className="px-4 pt-3 pb-1 text-[10px] tracking-[0.15em] uppercase text-white/20">
+                    <div className="px-4 pt-3 pb-1 text-[10px] tracking-[0.15em] uppercase text-[#1a1a1a]/30">
                       Resten av siden
                     </div>
                   )}
@@ -168,9 +168,9 @@ function ResultRow({
   return (
     <button
       onClick={() => onSelect(result)}
-      className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-white/[0.04] transition-colors text-left group"
+      className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-[#1a1a1a]/[0.04] transition-colors text-left group"
     >
-      <div className="w-9 h-9 rounded overflow-hidden flex-shrink-0 bg-white/[0.04]">
+      <div className="w-9 h-9 rounded overflow-hidden flex-shrink-0 bg-[#1a1a1a]/[0.06]">
         {result.thumbnail ? (
           <img src={result.thumbnail} alt="" className="w-full h-full object-cover" />
         ) : (
@@ -179,17 +179,17 @@ function ResultRow({
       </div>
 
       <div className="flex-1 min-w-0">
-        <div className="text-[12px] text-white/70 group-hover:text-white/90 truncate transition-colors">
+        <div className="text-[12px] text-[#1a1a1a]/70 group-hover:text-[#1a1a1a]/90 truncate transition-colors">
           {result.title}
         </div>
         {result.subtitle && (
-          <div className="text-[11px] text-white/25 truncate">
+          <div className="text-[11px] text-[#1a1a1a]/35 truncate">
             {result.subtitle}
           </div>
         )}
       </div>
 
-      <span className={`text-[9px] tracking-[0.12em] uppercase px-2 py-0.5 rounded-full flex-shrink-0 ${SECTION_COLORS[result.section] || "bg-white/10 text-white/30"}`}>
+      <span className={`text-[9px] tracking-[0.12em] uppercase px-2 py-0.5 rounded-full flex-shrink-0 ${SECTION_COLORS[result.section] || "bg-[#1a1a1a]/10 text-[#1a1a1a]/40"}`}>
         {result.sectionLabel}
       </span>
     </button>
