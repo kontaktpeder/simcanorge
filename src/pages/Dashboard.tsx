@@ -377,12 +377,12 @@ function DashCard({ children, to, icon: Icon, delay, highlight, ...rest }: {
       <Link to={to} className="block h-full touch-manipulation group">
         <div className={`h-full rounded-sm p-5 sm:p-6 transition-all duration-300 border ${
           highlight
-            ? 'border-[#c4962c]/30 bg-[#1a1714] hover:border-[#c4962c]/50 hover:bg-[#1e1b16]'
-            : 'border-white/[0.12] bg-[#161412] hover:border-white/[0.2] hover:bg-[#1a1714]'
-        }`}>
+            ? 'border-[#c4962c]/30 hover:border-[#c4962c]/50 hover:shadow-[0_8px_30px_-10px_rgba(196,150,44,0.15)]'
+            : 'border-[#c4962c]/10 hover:border-[#c4962c]/25 hover:shadow-[0_8px_30px_-10px_rgba(196,150,44,0.1)]'
+        }`} style={{ background: 'linear-gradient(180deg, #f5efe6 0%, #f0e9df 100%)' }}>
           <div className="flex items-start justify-between mb-3">
-            <Icon className="w-5 h-5 text-white/20 group-hover:text-[#c4962c]/60 transition-colors" strokeWidth={1.5} />
-            <ChevronRight className="w-4 h-4 text-white/10 group-hover:text-white/30 group-hover:translate-x-0.5 transition-all" />
+            <Icon className="w-5 h-5 text-[#3a2e24]/25 group-hover:text-[#c4962c]/60 transition-colors" strokeWidth={1.5} />
+            <ChevronRight className="w-4 h-4 text-[#3a2e24]/15 group-hover:text-[#3a2e24]/40 group-hover:translate-x-0.5 transition-all" />
           </div>
           {children}
         </div>
@@ -393,19 +393,19 @@ function DashCard({ children, to, icon: Icon, delay, highlight, ...rest }: {
 
 function DashTitle({ children }: { children: React.ReactNode }) {
   return (
-    <h3 className="text-[14px] sm:text-[15px] font-bold uppercase tracking-[0.04em] text-white/90 group-hover:text-white transition-colors leading-tight mb-1" style={chakraFont}>
+    <h3 className="text-[14px] sm:text-[15px] font-bold uppercase tracking-[0.04em] text-[#3a2e24] group-hover:text-[#8b6914] transition-colors leading-tight mb-1" style={chakraFont}>
       {children}
     </h3>
   );
 }
 
 function DashDesc({ children }: { children: React.ReactNode }) {
-  return <p className="text-[12px] text-white/35 leading-relaxed">{children}</p>;
+  return <p className="text-[12px] text-[#3a2e24]/50 leading-relaxed">{children}</p>;
 }
 
 function DashCount({ children }: { children: React.ReactNode }) {
   return (
-    <p className="text-[1.8rem] sm:text-[2.2rem] font-bold text-white/80 leading-none mt-3" style={chakraFont}>
+    <p className="text-[1.8rem] sm:text-[2.2rem] font-bold text-[#3a2e24] leading-none mt-3" style={chakraFont}>
       {children}
     </p>
   );
