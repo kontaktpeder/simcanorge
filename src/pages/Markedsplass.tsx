@@ -23,13 +23,6 @@ import {
 } from "@/hooks/useUnifiedCategories";
 import { LISTING_TYPES, type ListingTypeId } from "@/config/listingTypes";
 import { CreateCTA } from "@/components/ui/CreateCTA";
-import { MarkedsplassSidePanel, EMPTY_FILTER, type MarkedsplassFilterState } from "@/components/markedsplass/MarkedsplassSidePanel";
-import {
-  useUnifiedCategories,
-  getAllDescendants,
-  getRootCategories,
-} from "@/hooks/useUnifiedCategories";
-import { LISTING_TYPES, type ListingTypeId } from "@/config/listingTypes";
 
 const TYPE_ICONS: Record<ListingTypeId, React.ReactNode> = {
   deler: <Wrench className="w-8 h-8" />,
