@@ -422,6 +422,7 @@ export type Database = {
           brand: string | null
           category: string
           created_at: string
+          created_by_user_id: string | null
           editorial_status: string | null
           external_links: Json | null
           featured: boolean | null
@@ -455,6 +456,7 @@ export type Database = {
           brand?: string | null
           category?: string
           created_at?: string
+          created_by_user_id?: string | null
           editorial_status?: string | null
           external_links?: Json | null
           featured?: boolean | null
@@ -488,6 +490,7 @@ export type Database = {
           brand?: string | null
           category?: string
           created_at?: string
+          created_by_user_id?: string | null
           editorial_status?: string | null
           external_links?: Json | null
           featured?: boolean | null
