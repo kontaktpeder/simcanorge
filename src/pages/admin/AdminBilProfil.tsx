@@ -182,6 +182,7 @@ function ClubLinkRequestBox({ carId, clubReq }: { carId: string; clubReq: Record
   );
 }
 
+const AdminBilProfil = () => {
   const { carId } = useParams<{ carId: string }>();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
