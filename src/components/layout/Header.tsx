@@ -37,7 +37,7 @@ export function Header() {
   const showExpandedNavSearch = isHome && !heroVisible;
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md shadow-sm" style={{ background: 'linear-gradient(135deg, rgba(58,46,36,0.97) 0%, rgba(42,33,24,0.97) 100%)' }}>
+    <header className="fixed top-0 left-0 right-0 z-50 bg-[#f0ebe3]/95 backdrop-blur-md shadow-[0_1px_3px_rgba(58,46,36,0.06)]">
       <div className="max-w-[1400px] mx-auto px-5 md:px-8">
         <div className="flex items-center h-14 md:h-16 gap-4">
 
@@ -58,8 +58,8 @@ export function Header() {
                   to={link.href}
                   className={`relative px-4 py-1.5 text-[13px] tracking-[0.12em] uppercase font-medium transition-all duration-300 ${
                     isActive
-                      ? "text-white/90"
-                      : "text-white/40 hover:text-white/70"
+                      ? "text-[#3a2e24]"
+                      : "text-[#3a2e24]/40 hover:text-[#3a2e24]/70"
                   }`}
                 >
                   {link.label}
@@ -67,7 +67,7 @@ export function Header() {
                     <span className="absolute -bottom-[7px] left-4 right-4 h-px bg-[#c4962c]" />
                   )}
                   {i < navLinks.length - 1 && (
-                    <span className="absolute right-0 top-1/2 -translate-y-1/2 w-px h-2.5 bg-white/10" />
+                    <span className="absolute right-0 top-1/2 -translate-y-1/2 w-px h-2.5 bg-[#3a2e24]/10" />
                   )}
                 </Link>
               );
@@ -84,7 +84,7 @@ export function Header() {
             {showCompactIcon && (
               <button
                 onClick={() => setNavSearchOpen(!navSearchOpen)}
-                className="p-2 text-white/30 hover:text-white/60 transition-colors"
+                className="p-2 text-[#3a2e24]/30 hover:text-[#3a2e24]/60 transition-colors"
                 aria-label="Søk"
               >
                 <SearchIcon className="w-4 h-4" />
@@ -99,14 +99,14 @@ export function Header() {
             {user ? (
               <Link
                 to="/dashboard"
-                className="px-5 py-2 text-[13px] tracking-[0.1em] uppercase font-medium text-white/50 hover:text-white/80 border border-white/15 hover:border-white/30 transition-all duration-300"
+                className="px-5 py-2 text-[13px] tracking-[0.1em] uppercase font-medium text-[#3a2e24]/50 hover:text-[#3a2e24]/80 border border-[#3a2e24]/15 hover:border-[#3a2e24]/30 transition-all duration-300"
               >
                 Min garasje
               </Link>
             ) : (
               <Link
                 to="/login?returnUrl=/dashboard"
-                className="flex items-center gap-2 px-5 py-2 text-[13px] tracking-[0.1em] uppercase font-medium text-white/50 hover:text-white/80 border border-white/15 hover:border-white/30 transition-all duration-300"
+                className="flex items-center gap-2 px-5 py-2 text-[13px] tracking-[0.1em] uppercase font-medium text-[#3a2e24]/50 hover:text-[#3a2e24]/80 border border-[#3a2e24]/15 hover:border-[#3a2e24]/30 transition-all duration-300"
               >
                 <LogIn className="w-3.5 h-3.5" />
                 Logg inn
@@ -123,7 +123,7 @@ export function Header() {
 
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden ml-auto p-2 text-white/40 hover:text-white/80 transition-colors"
+            className="lg:hidden ml-auto p-2 text-[#3a2e24]/40 hover:text-[#3a2e24]/80 transition-colors"
             aria-label="Meny"
           >
             {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -134,7 +134,7 @@ export function Header() {
       <div className="h-px bg-[#c4962c]/10" />
 
       {navSearchOpen && showCompactIcon && (
-        <div className="hidden md:block border-t border-[#c4962c]/10 px-5 md:px-8 py-3" style={{ background: 'rgba(42,33,24,0.95)' }}>
+        <div className="hidden md:block bg-[#f0ebe3] border-t border-[#3a2e24]/[0.06] px-5 md:px-8 py-3">
           <div className="max-w-md mx-auto">
             <HeroSearch compact />
           </div>
@@ -142,7 +142,7 @@ export function Header() {
       )}
 
       {mobileMenuOpen && (
-        <nav className="lg:hidden border-t border-[#c4962c]/10" style={{ background: 'rgba(42,33,24,0.98)' }}>
+        <nav className="lg:hidden bg-[#f0ebe3] border-t border-[#3a2e24]/[0.06]">
           <div className="px-5 py-2 flex flex-col">
             <div className="py-3">
               <HeroSearch compact />
@@ -154,8 +154,8 @@ export function Header() {
                   key={link.href}
                   to={link.href}
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`py-2.5 text-[11px] tracking-[0.15em] uppercase border-b border-white/[0.06] transition-all ${
-                    isActive ? "text-white/80" : "text-white/30 hover:text-white/60"
+                  className={`py-2.5 text-[11px] tracking-[0.15em] uppercase border-b border-[#3a2e24]/[0.06] transition-all ${
+                    isActive ? "text-[#3a2e24]" : "text-[#3a2e24]/35 hover:text-[#3a2e24]/65"
                   }`}
                 >
                   {link.label}
@@ -165,12 +165,12 @@ export function Header() {
             <div className="flex flex-col gap-2 mt-3 pb-2">
               {user ? (
                 <Link to="/dashboard" onClick={() => setMobileMenuOpen(false)}
-                  className="py-2 text-center text-[11px] tracking-[0.15em] uppercase text-white/40 border border-white/15">
+                  className="py-2 text-center text-[11px] tracking-[0.15em] uppercase text-[#3a2e24]/50 border border-[#3a2e24]/15">
                   Min garasje
                 </Link>
               ) : (
                 <Link to="/login?returnUrl=/dashboard" onClick={() => setMobileMenuOpen(false)}
-                  className="py-2 text-center text-[11px] tracking-[0.15em] uppercase text-white/40 border border-white/15 flex items-center justify-center gap-2">
+                  className="py-2 text-center text-[11px] tracking-[0.15em] uppercase text-[#3a2e24]/50 border border-[#3a2e24]/15 flex items-center justify-center gap-2">
                   <LogIn className="w-3.5 h-3.5" /> Logg inn
                 </Link>
               )}
