@@ -69,7 +69,7 @@ export function HeroSection() {
     const sorted = [...car.car_images].sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
     return sorted[0];
   };
-  return <section className="poster-section poster-section-blue hero-watermark relative overflow-hidden min-h-[60vh] md:min-h-[80vh] flex flex-col justify-start pt-2 md:pt-6">
+  return <section className="poster-section poster-section-blue hero-watermark relative overflow-hidden min-h-[60vh] md:min-h-[70vh] flex flex-col justify-start pt-2 md:pt-4">
       {/* Gradient transition from sky header into deep navy hero */}
       <div className="absolute inset-x-0 top-0 h-24 md:h-32 bg-gradient-to-b from-[#1a4a7a]/60 via-[#0B2A55]/80 to-transparent z-[1] pointer-events-none" />
       <div className="absolute inset-0 stripes-diagonal" />
@@ -81,7 +81,7 @@ export function HeroSection() {
               <img 
                 src="/simca-badge.png" 
                 alt="Simca Norge" 
-                className="h-36 md:h-56 lg:h-72 xl:h-80 w-auto" 
+                className="h-32 md:h-44 lg:h-56 xl:h-64 w-auto" 
                 loading="eager"
                 fetchPriority="high"
                 onError={(e) => {
@@ -94,7 +94,7 @@ export function HeroSection() {
                 }}
               />
             </div>
-            <p className="text-sm md:text-xl lg:text-3xl font-light mb-2 md:mb-6 max-w-lg mx-auto lg:mx-0 text-white/90 font-serif">
+            <p className="text-sm md:text-lg lg:text-2xl font-light mb-2 md:mb-4 max-w-lg mx-auto lg:mx-0 text-white/90 font-serif">
               Din kilde til Simca, Talbot og Matra klassikere. Bildeler og historier fra entusiaster i Norge.
             </p>
             
