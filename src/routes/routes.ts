@@ -115,6 +115,7 @@ export const routes: RouteConfig[] = [
   { path: "/aktoerer", element: AktoererPage, label: "Aktører", description: "Verksteder, forhandlere og andre aktører", isPublic: true, showInNav: false },
   { path: "/klubber", element: KlubberPage, label: "Klubber", description: "Bilklubber og foreninger", isPublic: true, showInNav: false },
   { path: "/klubber/:slug", element: PublicPagePage, isPublic: true },
+  { path: "/merker/:brand", element: MerkeHub, isPublic: true },
 
   // Auth required
   { path: "/konto", element: Konto, requiresAuth: true },
