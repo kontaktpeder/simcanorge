@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import { MapPin, Calendar, Mail, Globe, Phone } from "lucide-react";
-import { PublicPageEvents } from "./PublicPageEvents";
 import { PublicPageContact } from "./PublicPageContact";
 import { useFeedPosts } from "@/hooks/useFeedPosts";
 import { FeedCard } from "@/components/feed/FeedCard";
