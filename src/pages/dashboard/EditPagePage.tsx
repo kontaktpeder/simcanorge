@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { Layout } from "@/components/layout/Layout";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { toast } from "sonner";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -11,7 +11,7 @@ import { PageImageUpload } from "@/components/pages/PageImageUpload";
 import { getPageLogoPath, getPageCoverPath } from "@/lib/imageCompression";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Trash2, AlertTriangle } from "lucide-react";
+import { Trash2, AlertTriangle, ExternalLink } from "lucide-react";
 
 const roleLabels: Record<string, string> = {
   owner: "Eier",
@@ -131,12 +131,23 @@ export default function EditPagePage() {
         <title>Rediger: {page.title} | Bilgarasjen</title>
       </Helmet>
       <div className="max-w-2xl mx-auto px-4 py-8 space-y-6">
-        <div>
-          <h1 className="text-2xl font-bold">Rediger: {page.title}</h1>
-          <p className="text-sm text-muted-foreground">
-            Adresse:{" "}
-            <span className="font-mono text-foreground">bilgarasje.no/s/{page.slug}</span>
-          </p>
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-bold">Rediger: {page.title}</h1>
+            <p className="text-sm text-muted-foreground">
+              Adresse:{" "}
+              <span className="font-mono text-foreground">
+                bilgarasje.no/{page.page_type === "club" ? "klubber" : "s"}/{page.slug}
+              </span>
+            </p>
+          </div>
+          <Link
+            to={page.page_type === "club" ? `/klubber/${page.slug}` : `/s/${page.slug}`}
+            className="inline-flex items-center gap-2 shrink-0 px-4 py-2 text-sm font-medium rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+          >
+            <ExternalLink className="w-4 h-4" />
+            Se offentlig side
+          </Link>
         </div>
 
         <Card>
