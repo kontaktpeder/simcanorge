@@ -50,7 +50,7 @@ export default function Index() {
       <div className="min-h-[calc(100vh-4rem)]" style={{ background: 'linear-gradient(180deg, #f0ebe3 0%, #e8e2d8 40%, #e4ddd3 100%)' }}>
 
         {/* ─── HERO (compact) ─── */}
-        <section className="relative overflow-hidden h-[180px] sm:h-[200px] md:h-[220px]">
+        <section className="relative overflow-hidden h-[180px] sm:h-[200px] md:h-[220px] bg-[#1a1a1a]">
           <img
             src={heroCar}
             alt="Klassisk bil"
