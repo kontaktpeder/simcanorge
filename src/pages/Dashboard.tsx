@@ -291,7 +291,8 @@ export default function Dashboard() {
       <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.45 }}>
         <div
           onClick={handleOpenForm}
-          className="cursor-pointer rounded-sm border border-[#c4962c]/25 hover:border-[#c4962c]/40 transition-all duration-300 overflow-hidden group bg-[#1a1714] hover:bg-[#1e1b16]"
+          className="cursor-pointer rounded-sm border border-[#c4962c]/20 hover:border-[#c4962c]/40 transition-all duration-300 overflow-hidden group hover:shadow-[0_8px_30px_-10px_rgba(196,150,44,0.15)]"
+          style={{ background: 'linear-gradient(135deg, #f5efe6 0%, #ede5d8 100%)' }}
         >
           <div className="flex items-center justify-between px-6 sm:px-8 py-6 sm:py-8">
             <div className="flex items-center gap-4">
@@ -299,10 +300,10 @@ export default function Dashboard() {
                 <Send className="w-5 h-5 text-[#0f0d0b]" />
               </div>
               <div>
-                <h3 className="text-[17px] sm:text-[20px] font-bold uppercase tracking-[0.03em] text-white group-hover:text-[#e8c547] transition-colors" style={chakra}>
+                <h3 className="text-[17px] sm:text-[20px] font-bold uppercase tracking-[0.03em] text-[#3a2e24] group-hover:text-[#8b6914] transition-colors" style={chakra}>
                   Send inn bil
                 </h3>
-                <p className="text-[12px] sm:text-[13px] text-white/35 mt-0.5">
+                <p className="text-[12px] sm:text-[13px] text-[#3a2e24]/45 mt-0.5">
                   Legg til en ny bil i garasjen din — del historien bak bilen
                 </p>
               </div>
@@ -337,7 +338,7 @@ export default function Dashboard() {
               </button>
             </div>
 
-            <div className="border border-white/[0.1] bg-[#161412] rounded-sm p-5 sm:p-6">
+            <div className="border border-[#c4962c]/10 rounded-sm p-5 sm:p-6" style={{ background: 'linear-gradient(180deg, #f5efe6 0%, #f0e9df 100%)' }}>
               <SendInnBilForm
                 onSuccess={handleFormSuccess}
                 onCancel={() => setShowCarForm(false)}
