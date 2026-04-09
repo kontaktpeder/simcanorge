@@ -1,11 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { GarageLayout } from '@/components/ui/garage/GarageLayout';
 import { CarCardLarge } from '@/components/ui/garage/CarCardLarge';
+import { BigActionButton } from '@/components/ui/garage/BigActionButton';
 import { EmptyState } from '@/components/ui/garage/EmptyState';
-import { Car, Loader2, Send } from 'lucide-react';
+import { Car, Loader2, Send, Plus } from 'lucide-react';
 import { useEffect } from 'react';
 import { Layout } from '@/components/layout/Layout';
 
@@ -100,6 +101,15 @@ export default function DashboardMineBiler() {
       backTo="/dashboard"
       backLabel="Til Min side"
     >
+      {/* Create new car button */}
+      <div className="mb-6">
+        <Link to="/dashboard/opprett-bil">
+          <BigActionButton icon={<Plus className="w-5 h-5" />} className="w-full sm:w-auto">
+            Opprett ny bil
+          </BigActionButton>
+        </Link>
+      </div>
+
       {!myCars || myCars.length === 0 ? (
         <EmptyState
           icon={<Car />}

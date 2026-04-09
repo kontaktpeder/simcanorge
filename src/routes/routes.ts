@@ -28,6 +28,7 @@ const NotFound = lazy(() => import("@/pages/NotFound"));
 // Dashboard pages
 const Dashboard = lazy(() => import("@/pages/Dashboard"));
 const DashboardMineBiler = lazy(() => import("@/pages/DashboardMineBiler"));
+const DashboardOpprettBil = lazy(() => import("@/pages/DashboardOpprettBil"));
 const DashboardBilDetalj = lazy(() => import("@/pages/DashboardBilDetalj"));
 const DashboardMineAnnonser = lazy(() => import("@/pages/DashboardMineAnnonser"));
 const DashboardMineForesporsler = lazy(() => import("@/pages/DashboardMineForesporsler"));
@@ -123,6 +124,7 @@ export const routes: RouteConfig[] = [
   { path: "/kom-i-gang", element: CompleteProfilePage, requiresAuth: true },
   { path: "/dashboard", element: Dashboard, requiresAuth: true },
   { path: "/dashboard/mine-biler", element: DashboardMineBiler, requiresAuth: true },
+  { path: "/dashboard/opprett-bil", element: DashboardOpprettBil, requiresAuth: true },
   { path: "/dashboard/bil/:carId", element: DashboardBilDetalj, requiresAuth: true },
   { path: "/dashboard/mine-annonser", element: DashboardMineAnnonser, requiresAuth: true },
   { path: "/dashboard/mine-foresporsler", element: DashboardMineForesporsler, requiresAuth: true },
