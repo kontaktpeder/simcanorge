@@ -24,8 +24,8 @@ export function FeedFilterTabs({
           onClick={() => onChange(f.key)}
           className={`px-4 py-2 text-[12px] sm:text-[13px] tracking-[0.1em] uppercase font-semibold whitespace-nowrap transition-all duration-200 ${
             active === f.key
-              ? "text-white border-b-2 border-[#c8102e]"
-              : "text-white/30 hover:text-white/60 border-b-2 border-transparent"
+              ? "text-[#1a1a1a] border-b-2 border-[#c4962c]"
+              : "text-[#1a1a1a]/30 hover:text-[#1a1a1a]/60 border-b-2 border-transparent"
           }`}
           style={oswald}
         >

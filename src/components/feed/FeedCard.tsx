@@ -16,11 +16,11 @@ import type { FeedPost } from "@/hooks/useFeedPosts";
 const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
 
 const TYPE_META: Record<string, { label: string; icon: typeof Pencil; color: string }> = {
-  manual:                { label: "Oppdatering",  icon: Pencil,       color: "text-white/40" },
-  car_published:         { label: "Ny bil",        icon: Car,          color: "text-[#c8102e]" },
-  car_update:            { label: "Bil oppdatert", icon: Car,          color: "text-[#c8102e]" },
-  marketplace_published: { label: "Til salgs",     icon: ShoppingBag,  color: "text-[#c4a882]" },
-  event_published:       { label: "Arrangement",   icon: CalendarDays, color: "text-[#c8102e]" },
+  manual:                { label: "Oppdatering",  icon: Pencil,       color: "text-[#1a1a1a]/40" },
+  car_published:         { label: "Ny bil",        icon: Car,          color: "text-[#c4962c]" },
+  car_update:            { label: "Bil oppdatert", icon: Car,          color: "text-[#c4962c]" },
+  marketplace_published: { label: "Til salgs",     icon: ShoppingBag,  color: "text-[#c4962c]" },
+  event_published:       { label: "Arrangement",   icon: CalendarDays, color: "text-[#c4962c]" },
 };
 
 function getAllImages(post: FeedPost) {
@@ -106,14 +106,14 @@ export function FeedCard({ post }: { post: FeedPost }) {
             {author && (
               <Link to={`/profil/${author.slug}`} className="flex items-center gap-3 group/author">
                 {author.avatar_url ? (
-                  <img src={author.avatar_url} alt="" className="w-10 h-10 rounded-full object-cover ring-2 ring-white/[0.06]" />
+                  <img src={author.avatar_url} alt="" className="w-10 h-10 rounded-full object-cover ring-2 ring-[#1a1a1a]/[0.08]" />
                 ) : (
-                  <div className="w-10 h-10 rounded-full bg-white/[0.08] flex items-center justify-center ring-2 ring-white/[0.06]">
-                    <span className="text-[14px] font-bold text-white/50" style={oswald}>{author.display_name?.[0] ?? "?"}</span>
+                  <div className="w-10 h-10 rounded-full bg-[#1a1a1a]/[0.08] flex items-center justify-center ring-2 ring-[#1a1a1a]/[0.08]">
+                    <span className="text-[14px] font-bold text-[#1a1a1a]/50" style={oswald}>{author.display_name?.[0] ?? "?"}</span>
                   </div>
                 )}
                 <div>
-                  <span className="text-[14px] uppercase tracking-[0.08em] text-white/80 group-hover/author:text-white font-bold block leading-tight" style={oswald}>
+                  <span className="text-[14px] uppercase tracking-[0.08em] text-[#1a1a1a]/80 group-hover/author:text-[#1a1a1a] font-bold block leading-tight" style={oswald}>
                     {author.display_name}
                   </span>
                   <div className="flex items-center gap-2 mt-0.5">
@@ -121,9 +121,9 @@ export function FeedCard({ post }: { post: FeedPost }) {
                     <span className={`text-[10px] uppercase tracking-[0.18em] font-bold ${meta.color}`} style={oswald}>
                       {meta.label}
                     </span>
-                    <span className="text-[10px] text-white/20">·</span>
-                    <span className="text-[10px] text-white/25 tracking-wide">{timeAgo}</span>
-                    {(post as any).updated_at && <span className="text-[10px] text-white/15 italic">redigert</span>}
+                    <span className="text-[10px] text-[#1a1a1a]/20">·</span>
+                    <span className="text-[10px] text-[#1a1a1a]/30 tracking-wide">{timeAgo}</span>
+                    {(post as any).updated_at && <span className="text-[10px] text-[#1a1a1a]/20 italic">redigert</span>}
                   </div>
                 </div>
               </Link>
@@ -132,17 +132,17 @@ export function FeedCard({ post }: { post: FeedPost }) {
 
           {isOwn && !isEditing && !showDeleteConfirm && (
             <div className="relative">
-              <button onClick={() => setShowMenu(!showMenu)} className="p-2 text-white/15 hover:text-white/50 transition-colors">
+              <button onClick={() => setShowMenu(!showMenu)} className="p-2 text-[#1a1a1a]/15 hover:text-[#1a1a1a]/50 transition-colors">
                 <MoreHorizontal className="w-5 h-5" />
               </button>
               {showMenu && (
-                <div className="absolute right-0 top-full mt-1 bg-[#1a1d21] border border-white/[0.08] py-1 z-20 min-w-[130px]">
+                <div className="absolute right-0 top-full mt-1 bg-white border border-[#1a1a1a]/[0.1] py-1 z-20 min-w-[130px] rounded-lg shadow-lg">
                   <button onClick={() => { setIsEditing(true); setShowMenu(false); }}
-                    className="flex items-center gap-2 w-full px-4 py-2.5 text-[12px] uppercase tracking-[0.1em] text-white/50 hover:text-white hover:bg-white/[0.04] transition-colors font-bold" style={oswald}>
+                    className="flex items-center gap-2 w-full px-4 py-2.5 text-[12px] uppercase tracking-[0.1em] text-[#1a1a1a]/50 hover:text-[#1a1a1a] hover:bg-[#1a1a1a]/[0.04] transition-colors font-bold" style={oswald}>
                     <Pencil className="w-3 h-3" /> Rediger
                   </button>
                   <button onClick={handleDelete}
-                    className="flex items-center gap-2 w-full px-4 py-2.5 text-[12px] uppercase tracking-[0.1em] text-[#c8102e]/60 hover:text-[#c8102e] hover:bg-white/[0.04] transition-colors font-bold" style={oswald}>
+                    className="flex items-center gap-2 w-full px-4 py-2.5 text-[12px] uppercase tracking-[0.1em] text-red-500/60 hover:text-red-600 hover:bg-[#1a1a1a]/[0.04] transition-colors font-bold" style={oswald}>
                     <Trash2 className="w-3 h-3" /> Slett
                   </button>
                 </div>
@@ -152,12 +152,12 @@ export function FeedCard({ post }: { post: FeedPost }) {
 
           {showDeleteConfirm && (
             <div className="flex items-center gap-3">
-              <span className="text-[11px] uppercase tracking-[0.12em] text-[#c8102e] font-bold" style={oswald}>Slett?</span>
+              <span className="text-[11px] uppercase tracking-[0.12em] text-red-600 font-bold" style={oswald}>Slett?</span>
               <button onClick={confirmDelete}
-                className="text-[11px] uppercase tracking-[0.12em] text-white bg-[#c8102e] hover:bg-[#a00d24] px-3 py-1 font-bold transition-colors" style={oswald}>
+                className="text-[11px] uppercase tracking-[0.12em] text-white bg-red-600 hover:bg-red-700 px-3 py-1 font-bold transition-colors rounded" style={oswald}>
                 Ja, slett
               </button>
-              <button onClick={() => setShowDeleteConfirm(false)} className="text-white/25 hover:text-white/60 transition-colors">
+              <button onClick={() => setShowDeleteConfirm(false)} className="text-[#1a1a1a]/25 hover:text-[#1a1a1a]/60 transition-colors">
                 <X className="w-4 h-4" />
               </button>
             </div>
@@ -166,7 +166,7 @@ export function FeedCard({ post }: { post: FeedPost }) {
 
         {/* ── Image ── */}
         {heroImage && (
-          <div className="relative overflow-hidden mb-4">
+          <div className="relative overflow-hidden mb-4 rounded-lg">
             {entityLink ? (
               <Link to={entityLink} className="block">
                 <img src={heroImage} alt={entityTitle ?? ""}
@@ -177,7 +177,6 @@ export function FeedCard({ post }: { post: FeedPost }) {
                 className="w-full h-[340px] sm:h-[420px] md:h-[480px] object-cover transition-transform duration-700 group-hover:scale-[1.02]" />
             )}
 
-            {/* Event date & location overlay — bottom right */}
             {event && (event.starts_at || event.location) && (
               <div className="absolute bottom-0 right-0 p-4 text-right" style={{ background: 'linear-gradient(to top left, rgba(0,0,0,0.75), transparent)' }}>
                 {event.starts_at && (
@@ -205,20 +204,20 @@ export function FeedCard({ post }: { post: FeedPost }) {
         {entityTitle && (
           entityLink ? (
             <Link to={entityLink} className="block group/title">
-              <h3 className="text-[1.8rem] md:text-[2.4rem] uppercase font-bold text-white group-hover/title:text-[#c4a882] transition-colors leading-[1.05] tracking-[0.04em]"
+              <h3 className="text-[1.8rem] md:text-[2.4rem] uppercase font-bold text-[#1a1a1a] group-hover/title:text-[#c4962c] transition-colors leading-[1.05] tracking-[0.04em]"
                 style={oswald}>
                 {entityTitle}
               </h3>
             </Link>
           ) : (
-            <h3 className="text-[1.8rem] md:text-[2.4rem] uppercase font-bold text-white leading-[1.05] tracking-[0.04em]"
+            <h3 className="text-[1.8rem] md:text-[2.4rem] uppercase font-bold text-[#1a1a1a] leading-[1.05] tracking-[0.04em]"
               style={oswald}>
               {entityTitle}
             </h3>
           )
         )}
 
-        {/* ── Event organizer under title ── */}
+        {/* ── Event organizer ── */}
         {event && (() => {
           const orgName = event.owner_page?.title || event.owner_profile?.display_name;
           const orgSlug = event.owner_page?.slug ? `/s/${event.owner_page.slug}` : event.owner_profile?.slug ? `/profil/${event.owner_profile.slug}` : null;
@@ -227,16 +226,16 @@ export function FeedCard({ post }: { post: FeedPost }) {
           const inner = (
             <span className="flex items-center gap-2">
               {orgAvatar ? (
-                <img src={orgAvatar} alt="" className="w-6 h-6 rounded-full object-cover ring-1 ring-white/10" />
+                <img src={orgAvatar} alt="" className="w-6 h-6 rounded-full object-cover ring-1 ring-[#1a1a1a]/10" />
               ) : (
-                <span className="w-6 h-6 rounded-full bg-white/10 flex items-center justify-center text-[11px] font-bold text-white/50" style={oswald}>{orgName[0]}</span>
+                <span className="w-6 h-6 rounded-full bg-[#1a1a1a]/10 flex items-center justify-center text-[11px] font-bold text-[#1a1a1a]/50" style={oswald}>{orgName[0]}</span>
               )}
-              <span className="text-white/50 group-hover/org:text-white transition-colors">{orgName}</span>
+              <span className="text-[#1a1a1a]/50 group-hover/org:text-[#1a1a1a] transition-colors">{orgName}</span>
             </span>
           );
           return (
             <div className="mt-2 text-[13px] uppercase tracking-[0.1em]" style={oswald}>
-              <span className="text-white/25 mr-1.5">Arrangert av</span>
+              <span className="text-[#1a1a1a]/25 mr-1.5">Arrangert av</span>
               {orgSlug ? <Link to={orgSlug} className="group/org inline-flex">{inner}</Link> : inner}
             </div>
           );
@@ -246,21 +245,22 @@ export function FeedCard({ post }: { post: FeedPost }) {
         {isEditing ? (
           <div className="mt-3">
             <textarea value={editBody} onChange={(e) => setEditBody(e.target.value)} rows={3} autoFocus
-              className="w-full bg-transparent border-b-2 border-white/[0.12] focus:border-[#c4a882] text-white/80 text-[16px] px-0 py-3 resize-none focus:outline-none transition-colors leading-relaxed" />
+              className="w-full bg-transparent border-b-2 border-[#1a1a1a]/[0.12] focus:border-[#c4962c] text-[#1a1a1a]/80 text-[16px] px-0 py-3 resize-none focus:outline-none transition-colors leading-relaxed" />
             <div className="flex items-center gap-4 mt-3">
               <button onClick={handleSaveEdit} disabled={isEditPending}
-                className="text-[12px] uppercase tracking-[0.15em] text-white bg-[#c8102e] hover:bg-[#a00d24] px-5 py-2 font-bold transition-colors" style={oswald}>
+                className="text-[12px] uppercase tracking-[0.15em] text-white px-5 py-2 font-bold transition-colors rounded"
+                style={{ ...oswald, background: 'linear-gradient(135deg, #d4a017, #c4962c)' }}>
                 <Check className="w-3.5 h-3.5 inline mr-1.5" />{isEditPending ? "Lagrer…" : "Lagre"}
               </button>
               <button onClick={() => { setIsEditing(false); setEditBody(post.body ?? ""); }}
-                className="text-[12px] uppercase tracking-[0.12em] text-white/30 hover:text-white/60 font-bold transition-colors" style={oswald}>
+                className="text-[12px] uppercase tracking-[0.12em] text-[#1a1a1a]/30 hover:text-[#1a1a1a]/60 font-bold transition-colors" style={oswald}>
                 Avbryt
               </button>
             </div>
           </div>
         ) : (
           post.body && (
-            <p className="text-[16px] md:text-[17px] text-white/50 leading-[1.8] mt-3">
+            <p className="text-[16px] md:text-[17px] text-[#1a1a1a]/60 leading-[1.8] mt-3">
               {post.body}
             </p>
           )
@@ -269,7 +269,7 @@ export function FeedCard({ post }: { post: FeedPost }) {
         {/* ── Actions bar ── */}
         <div className="flex items-center gap-6 mt-5">
           <button onClick={() => setShowComments(!showComments)}
-            className={`flex items-center gap-1.5 transition-colors ${showComments ? "text-white/60" : "text-white/20 hover:text-white/50"}`}>
+            className={`flex items-center gap-1.5 transition-colors ${showComments ? "text-[#1a1a1a]/60" : "text-[#1a1a1a]/20 hover:text-[#1a1a1a]/50"}`}>
             <MessageSquare className="w-4.5 h-4.5" />
             <span className="text-[11px] uppercase tracking-[0.12em] font-bold" style={oswald}>Kommentar</span>
           </button>
@@ -277,14 +277,13 @@ export function FeedCard({ post }: { post: FeedPost }) {
           <button
             onClick={() => { if (!user) return; toggleLike({ postId: post.id, liked }); }}
             className={`flex items-center gap-1.5 transition-colors duration-200 ${
-              liked ? "text-[#c8102e]" : "text-white/20 hover:text-white/50"
+              liked ? "text-red-500" : "text-[#1a1a1a]/20 hover:text-[#1a1a1a]/50"
             } ${!user ? "cursor-default" : "cursor-pointer"}`}>
             <Heart className={`w-4.5 h-4.5 ${liked ? "fill-current" : ""}`} />
             {likeCount > 0 && <span className="text-[12px] font-bold" style={oswald}>{likeCount}</span>}
           </button>
         </div>
 
-        {/* ── Inline comments ── */}
         {showComments && <CommentSection feedPostId={post.id} />}
       </article>
 
