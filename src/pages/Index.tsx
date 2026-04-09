@@ -50,11 +50,11 @@ export default function Index() {
       <div className="min-h-[calc(100vh-4rem)]" style={{ background: 'linear-gradient(180deg, #f0ebe3 0%, #e8e2d8 40%, #e4ddd3 100%)' }}>
 
         {/* ─── HERO (compact) ─── */}
-        <section className="relative overflow-hidden h-[180px] sm:h-[200px] md:h-[220px]">
+        <section className="relative overflow-hidden h-[180px] sm:h-[200px] md:h-[220px] bg-[#1a1a1a]">
           <img
             src={heroCar}
             alt="Klassisk bil"
-            className="absolute inset-0 w-full h-full object-cover object-[70%_40%] brightness-110 scale-110"
+            className="absolute inset-0 w-full h-full object-contain object-right brightness-110"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-[#1a1a1a]/70 via-[#1a1a1a]/45 to-[#1a1a1a]/25" />
           <div className="absolute bottom-0 left-0 right-0 h-10" style={{ background: 'linear-gradient(to top, #f0ebe3, transparent)' }} />
