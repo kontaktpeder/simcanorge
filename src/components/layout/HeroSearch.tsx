@@ -4,11 +4,11 @@ import { Search, X } from "lucide-react";
 import { useGlobalSearch, type SearchResult } from "@/hooks/useGlobalSearch";
 
 const SECTION_COLORS: Record<string, string> = {
-  biler: "bg-blue-500/15 text-blue-300",
-  arrangement: "bg-amber-500/15 text-amber-300",
-  markedsplass: "bg-emerald-500/15 text-emerald-300",
-  deler: "bg-rose-500/15 text-rose-300",
-  sider: "bg-purple-500/15 text-purple-300",
+  biler: "bg-[#c4962c]/15 text-[#c4962c]",
+  arrangement: "bg-[#8b6914]/15 text-[#8b6914]",
+  markedsplass: "bg-[#3a2e24]/10 text-[#3a2e24]/70",
+  deler: "bg-[#3a2e24]/10 text-[#3a2e24]/60",
+  sider: "bg-[#8b6914]/10 text-[#8b6914]/80",
 };
 
 export function HeroSearch() {
@@ -89,26 +89,26 @@ export function HeroSearch() {
       </div>
 
       {showDropdown && (
-        <div className="absolute top-full left-0 right-0 mt-1 bg-[#111315]/95 backdrop-blur-md border border-white/[0.1] shadow-2xl z-[100] max-h-[380px] overflow-y-auto">
+        <div className="absolute top-full left-0 right-0 mt-2 bg-[#f5f0e8]/98 backdrop-blur-xl border border-[#c4962c]/15 shadow-[0_12px_40px_rgba(58,46,36,0.2)] z-[9999] max-h-[380px] overflow-y-auto rounded-xl">
           {isSearching && (
-            <div className="px-4 py-3 text-[13px] text-white/30 tracking-wide">Søker…</div>
+            <div className="px-4 py-3 text-[13px] text-[#3a2e24]/40 tracking-wide" style={{ fontFamily: "'Chakra Petch', sans-serif" }}>Søker…</div>
           )}
 
           {!isSearching && debouncedQuery.length >= 2 && results.length === 0 && (
-            <div className="px-4 py-4 text-[13px] text-white/25 tracking-wide">
+            <div className="px-4 py-4 text-[13px] text-[#3a2e24]/35 tracking-wide" style={{ fontFamily: "'Chakra Petch', sans-serif" }}>
               Ingen treff for «{debouncedQuery}»
             </div>
           )}
 
           {!isSearching && results.length > 0 && (
-            <div>
+            <div className="py-1">
               {results.map((r) => (
                 <button
                   key={r.id}
                   onClick={() => handleSelect(r)}
-                  className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-white/[0.06] transition-colors text-left group"
+                  className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-[#c4962c]/8 transition-colors text-left group"
                 >
-                  <div className="w-10 h-10 rounded overflow-hidden flex-shrink-0 bg-white/[0.04]">
+                  <div className="w-10 h-10 rounded-lg overflow-hidden flex-shrink-0 bg-[#3a2e24]/[0.06] border border-[#3a2e24]/[0.06]">
                     {r.thumbnail ? (
                       <img src={r.thumbnail} alt="" className="w-full h-full object-cover" />
                     ) : (
@@ -116,14 +116,14 @@ export function HeroSearch() {
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="text-[13px] text-white/70 group-hover:text-white/90 truncate transition-colors">
+                    <div className="text-[13px] text-[#3a2e24]/80 group-hover:text-[#3a2e24] truncate transition-colors font-medium">
                       {r.title}
                     </div>
                     {r.subtitle && (
-                      <div className="text-[11px] text-white/25 truncate">{r.subtitle}</div>
+                      <div className="text-[11px] text-[#3a2e24]/35 truncate">{r.subtitle}</div>
                     )}
                   </div>
-                  <span className={`text-[9px] tracking-[0.12em] uppercase px-2 py-0.5 rounded-full flex-shrink-0 ${SECTION_COLORS[r.section] || "bg-white/10 text-white/30"}`}>
+                  <span className={`text-[9px] tracking-[0.12em] uppercase px-2 py-0.5 rounded-full flex-shrink-0 ${SECTION_COLORS[r.section] || "bg-[#3a2e24]/10 text-[#3a2e24]/40"}`}>
                     {r.sectionLabel}
                   </span>
                 </button>
