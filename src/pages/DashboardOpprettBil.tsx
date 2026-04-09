@@ -471,78 +471,143 @@ export default function DashboardOpprettBil() {
                 className="rounded-sm overflow-hidden border"
                 style={{ borderColor: '#c4962c33', background: '#faf6f0' }}
               >
+                {/* Header */}
                 <div
                   className="px-5 py-3 border-b flex items-center gap-2"
                   style={{ borderColor: '#e8e0d4', background: '#f5efe6' }}
                 >
                   <Camera className="w-4 h-4" style={{ color: '#c4962c' }} />
-                  <span
-                    className="text-[11px] tracking-[0.15em] uppercase font-bold"
-                    style={{ ...oswald, color: '#3a2e24' }}
-                  >
-                    Last opp bilder
+                  <span className="text-[11px] tracking-[0.15em] uppercase font-bold" style={{ ...oswald, color: '#3a2e24' }}>
+                    Bilder
                   </span>
-                  {uploadedCount > 0 && (
-                    <span
-                      className="ml-auto text-[11px] tracking-[0.1em] uppercase font-semibold"
-                      style={{ ...oswald, color: '#c4962c' }}
-                    >
-                      {uploadedCount} lastet opp
+                  {sortedImages.length > 0 && (
+                    <span className="ml-auto text-[11px] tracking-[0.1em] uppercase font-semibold" style={{ ...oswald, color: '#c4962c' }}>
+                      {sortedImages.length} bilde{sortedImages.length !== 1 ? 'r' : ''}
                     </span>
                   )}
-                </div>
-
-                <div className="p-5 sm:p-6">
-                  <input ref={fileInputRef} type="file" accept="image/*" multiple className="hidden" onChange={handleImageUpload} />
-
                   <button
-                    type="button"
                     onClick={() => fileInputRef.current?.click()}
                     disabled={isUploading}
-                    className="w-full py-10 rounded-sm border-2 border-dashed transition-all group hover:border-[#c4962c]/50 hover:bg-[#f5efe6] active:scale-[0.99]"
-                    style={{ borderColor: '#d5cec3' }}
+                    className="ml-2 px-3 py-1.5 text-[10px] tracking-[0.12em] uppercase font-bold rounded-sm border transition-all hover:bg-[#f0ebe3]"
+                    style={{ ...oswald, borderColor: '#c4962c55', color: '#3a2e24' }}
                   >
                     {isUploading ? (
-                      <span className="flex items-center justify-center gap-2 text-sm" style={{ color: '#8b7d6b' }}>
-                        <Loader2 className="w-5 h-5 animate-spin" />
-                        Laster opp...
-                      </span>
+                      <span className="flex items-center gap-1.5"><Loader2 className="w-3 h-3 animate-spin" /> Laster opp...</span>
                     ) : (
-                      <div className="flex flex-col items-center gap-2">
-                        <div
-                          className="w-12 h-12 rounded-full flex items-center justify-center group-hover:scale-105 transition-transform"
-                          style={{ background: '#e8e0d4' }}
-                        >
-                          <ImagePlus className="w-6 h-6" style={{ color: '#8b7d6b' }} />
-                        </div>
-                        <span className="text-sm font-medium" style={{ color: '#6b5d4f' }}>
-                          Klikk for å velge bilder
-                        </span>
-                        <span className="text-xs" style={{ color: '#a89b8c' }}>
-                          JPG, PNG eller WebP — maks 10 bilder
-                        </span>
-                      </div>
+                      <span className="flex items-center gap-1.5"><Upload className="w-3 h-3" /> Last opp</span>
                     )}
                   </button>
-
-                  {uploadedCount === 0 && (
-                    <div
-                      className="flex items-start gap-2 mt-4 p-3 rounded-sm border"
-                      style={{ background: '#fef9ee', borderColor: '#e8d8a8' }}
-                    >
-                      <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#c4962c' }} />
-                      <p className="text-sm" style={{ color: '#6b5d4f' }}>
-                        Minst ett bilde kreves for å publisere bilen.
-                      </p>
-                    </div>
-                  )}
                 </div>
+
+                <input ref={fileInputRef} type="file" accept="image/*" multiple className="hidden" onChange={handleImageUpload} />
+
+                {/* Image gallery — matches DashboardBilDetalj */}
+                {sortedImages.length > 0 ? (
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3 p-3 sm:p-5">
+                    {sortedImages.map((img, index) => (
+                      <div key={img.id} className="relative group aspect-video rounded-sm overflow-hidden" style={{ background: '#e8e0d4' }}>
+                        <img
+                          src={img.image_url}
+                          alt={img.alt_text || generatedTitle}
+                          className="w-full h-full object-cover"
+                        />
+                        {index === 0 && (
+                          <span
+                            className="absolute top-1.5 left-1.5 sm:top-2 sm:left-2 text-[10px] tracking-[0.1em] uppercase font-bold px-2 py-1 rounded-sm inline-flex items-center gap-1"
+                            style={{ ...oswald, background: 'linear-gradient(135deg, #d4a017, #c4962c)', color: '#0f0d0b' }}
+                          >
+                            <Star className="w-3 h-3 fill-current" />
+                            <span className="hidden sm:inline">Hovedbilde</span>
+                          </span>
+                        )}
+
+                        {/* Reorder + main controls */}
+                        <div className="absolute inset-0 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity bg-gradient-to-t from-black/60 via-transparent to-transparent sm:bg-black/40 flex items-end sm:items-center justify-center gap-1 sm:gap-2 p-2 sm:p-0">
+                          {index > 0 && (
+                            <button
+                              onClick={() => moveImageLeft(index)}
+                              disabled={isReorderingImages}
+                              className="bg-white/20 hover:bg-white/30 text-white p-2 rounded-full transition-colors min-h-[36px] min-w-[36px] flex items-center justify-center active:scale-90"
+                            >
+                              <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
+                            </button>
+                          )}
+                          {index !== 0 && (
+                            <button
+                              onClick={() => setMainImage(index)}
+                              disabled={isReorderingImages}
+                              className="bg-white/20 hover:bg-white/30 text-white p-2 rounded-full transition-colors min-h-[36px] min-w-[36px] flex items-center justify-center active:scale-90"
+                              title="Sett som hovedbilde"
+                            >
+                              <Star className="w-4 h-4 sm:w-5 sm:h-5" />
+                            </button>
+                          )}
+                          {index < sortedImages.length - 1 && (
+                            <button
+                              onClick={() => moveImageRight(index)}
+                              disabled={isReorderingImages}
+                              className="bg-white/20 hover:bg-white/30 text-white p-2 rounded-full transition-colors min-h-[36px] min-w-[36px] flex items-center justify-center active:scale-90"
+                            >
+                              <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
+                            </button>
+                          )}
+                        </div>
+
+                        <button
+                          onClick={() => deleteImage(img.id)}
+                          className="absolute top-1.5 right-1.5 sm:top-2 sm:right-2 bg-red-600 text-white p-1.5 rounded-full sm:opacity-0 sm:group-hover:opacity-100 transition-opacity min-h-[28px] min-w-[28px] flex items-center justify-center active:scale-90"
+                          aria-label="Slett bilde"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="p-5 sm:p-6">
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={isUploading}
+                      className="w-full py-10 rounded-sm border-2 border-dashed transition-all group hover:border-[#c4962c]/50 hover:bg-[#f5efe6] active:scale-[0.99]"
+                      style={{ borderColor: '#d5cec3' }}
+                    >
+                      {isUploading ? (
+                        <span className="flex items-center justify-center gap-2 text-sm" style={{ color: '#8b7d6b' }}>
+                          <Loader2 className="w-5 h-5 animate-spin" />
+                          Laster opp...
+                        </span>
+                      ) : (
+                        <div className="flex flex-col items-center gap-2">
+                          <div className="w-12 h-12 rounded-full flex items-center justify-center group-hover:scale-105 transition-transform" style={{ background: '#e8e0d4' }}>
+                            <ImagePlus className="w-6 h-6" style={{ color: '#8b7d6b' }} />
+                          </div>
+                          <span className="text-sm font-medium" style={{ color: '#6b5d4f' }}>Klikk for å velge bilder</span>
+                          <span className="text-xs" style={{ color: '#a89b8c' }}>JPG, PNG eller WebP — maks 10 bilder</span>
+                        </div>
+                      )}
+                    </button>
+
+                    <div className="flex items-start gap-2 mt-4 p-3 rounded-sm border" style={{ background: '#fef9ee', borderColor: '#e8d8a8' }}>
+                      <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#c4962c' }} />
+                      <p className="text-sm" style={{ color: '#6b5d4f' }}>Minst ett bilde kreves for å publisere bilen.</p>
+                    </div>
+                  </div>
+                )}
+
+                {sortedImages.length > 0 && (
+                  <div className="px-5 pb-1 pt-0">
+                    <p className="text-[11px] mb-3" style={{ color: '#8b7d6b' }}>
+                      Første bilde brukes som hovedbilde. Bruk pilene for å endre rekkefølge.
+                    </p>
+                  </div>
+                )}
               </div>
 
               <div className="flex flex-col sm:flex-row gap-3">
                 <button
                   onClick={handlePublish}
-                  disabled={uploadedCount === 0 || isSaving}
+                  disabled={sortedImages.length === 0 || isSaving}
                   className="flex-1 px-6 py-3.5 text-[12px] tracking-[0.12em] uppercase font-bold rounded-sm transition-all hover:brightness-110 disabled:opacity-40 disabled:cursor-not-allowed"
                   style={{ ...oswald, background: 'linear-gradient(135deg, #d4a017, #e8c547, #c4962c)', color: '#0f0d0b' }}
                 >
