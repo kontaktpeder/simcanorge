@@ -65,9 +65,9 @@ export function HeroSearch() {
   }, []);
 
   return (
-    <div ref={containerRef} className="relative w-full max-w-[560px]">
+    <div ref={containerRef} className="relative w-full">
       <div className="relative">
-        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30" />
+        <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-white/50" />
         <input
           ref={inputRef}
           type="text"
@@ -79,7 +79,7 @@ export function HeroSearch() {
           onFocus={() => setOpen(true)}
           placeholder="Søk etter biler, deler, arrangementer…"
           style={{ fontFamily: "'Chakra Petch', sans-serif" }}
-          className="w-full bg-white/[0.15] backdrop-blur-md border border-white/[0.2] hover:border-white/[0.35] focus:border-[#c4962c]/60 rounded-lg pl-12 pr-10 py-4 text-[14px] sm:text-[15px] text-white placeholder:text-white/40 focus:outline-none transition-all tracking-wide shadow-lg"
+          className="w-full bg-white/20 backdrop-blur-lg border-2 border-white/30 hover:border-white/50 focus:border-[#c4962c] rounded-xl pl-14 pr-12 py-4 sm:py-5 text-[15px] sm:text-[16px] text-white placeholder:text-white/50 focus:outline-none transition-all tracking-wide shadow-[0_4px_30px_rgba(0,0,0,0.25)]"
         />
         {inputValue && (
           <button onClick={handleClear} className="absolute right-3 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/60 transition-colors">
