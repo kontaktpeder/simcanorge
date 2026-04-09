@@ -9,10 +9,13 @@ import { ClubClassicTemplate } from "@/components/pages/ClubClassicTemplate";
 import { Layout } from "@/components/layout/Layout";
 import { getPageThemeStyle } from "@/lib/pageThemes";
 import { MapPin, Calendar } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { CreateCTA } from "@/components/ui/CreateCTA";
 
 export default function PublicPagePage() {
   const { slug } = useParams<{ slug: string }>();
   const { data: page, isLoading, isError } = usePublicPageBySlug(slug);
+  const { user } = useAuth();
 
   if (isLoading) {
     return (
@@ -93,6 +96,17 @@ export default function PublicPagePage() {
             <PublicPageContact page={page} />
           </div>
         </div>
+
+        {!user && (
+          <div className="max-w-[1000px] mx-auto px-5 md:px-8 pb-12">
+            <CreateCTA
+              createUrl="/dashboard/sider/ny"
+              label="Opprett din side"
+              description="Har du en klubb, bedrift eller samling?"
+              variant="card"
+            />
+          </div>
+        )}
       </div>
     </Layout>
   );

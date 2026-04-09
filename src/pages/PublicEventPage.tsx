@@ -14,6 +14,7 @@ import { useMyPersonProfile } from "@/hooks/useMyPersonProfile";
 import { PostComposer } from "@/components/feed/PostComposer";
 import { CommentSection } from "@/components/comments/CommentSection";
 import { MapPin, Users, ExternalLink, Clock, Share2, Pencil } from "lucide-react";
+import { CreateCTA } from "@/components/ui/CreateCTA";
 
 const TYPE_LABELS: Record<string, string> = {
   meet: "Biltreff", show: "Show", market: "Delemarked", drive: "Kjøretur",
@@ -362,6 +363,17 @@ export default function PublicEventPage() {
         </div>
       )}
     </div>
+
+    {!user && (
+      <div className="max-w-2xl mx-auto px-4 py-6">
+        <CreateCTA
+          createUrl="/dashboard/events/ny"
+          label="Opprett arrangement"
+          description="Planlegger du et treff eller arrangement?"
+          variant="card"
+        />
+      </div>
+    )}
     </Layout>
   );
 }

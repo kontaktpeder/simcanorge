@@ -5,6 +5,7 @@ import { PageTypeBadge } from "@/components/pages/PageTypeBadge";
 import { MapPin } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { CreateCTA } from "@/components/ui/CreateCTA";
 
 const EXCLUDED_TYPES = ["club"];
 
@@ -31,6 +32,12 @@ export default function AktoererPage() {
       </Helmet>
 
       <div className="min-h-screen bg-[#111315]">
+        <CreateCTA
+          createUrl="/dashboard/sider/ny"
+          label="Opprett din side"
+          description="Har du en klubb, bedrift eller samling?"
+          variant="strip"
+        />
         {/* Hero */}
         <section className="pt-12 pb-8 max-w-[1000px] mx-auto px-5 md:px-8">
           <p

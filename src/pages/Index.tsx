@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
+import { Plus } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 import { Helmet } from "react-helmet-async";
 import { useAuth } from "@/hooks/useAuth";
@@ -20,11 +21,11 @@ const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
 const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
 
 const modules = [
-  { href: "/biler", title: "Biler", desc: "Historier og profiler", image: moduleBiler },
-  { href: "/markedsplass", title: "Markedsplass", desc: "Kjøp & salg", image: moduleMarkedsplass },
-  { href: "/arrangement", title: "Arrangementer", desc: "Treff & samlinger", image: moduleArrangementer },
-  { href: "/aktoerer", title: "Klubber", desc: "Kommer snart", image: moduleKlubber, comingSoon: true },
-  { href: "/aktoerer", title: "Aktører", desc: "Verksteder & bedrifter", image: moduleAktoerer },
+  { href: "/biler", title: "Biler", desc: "Historier og profiler", image: moduleBiler, createUrl: "/send-inn", createLabel: "Send inn din bil" },
+  { href: "/markedsplass", title: "Markedsplass", desc: "Kjøp & salg", image: moduleMarkedsplass, createUrl: "/dashboard/opprett-annonse", createLabel: "Legg ut annonse" },
+  { href: "/arrangement", title: "Arrangementer", desc: "Treff & samlinger", image: moduleArrangementer, createUrl: "/dashboard/events/ny", createLabel: "Opprett arrangement" },
+  { href: "/aktoerer", title: "Klubber", desc: "Kommer snart", image: moduleKlubber, comingSoon: true, createUrl: "/dashboard/sider/ny", createLabel: "Opprett side" },
+  { href: "/aktoerer", title: "Aktører", desc: "Verksteder & bedrifter", image: moduleAktoerer, createUrl: "/dashboard/sider/ny", createLabel: "Opprett side" },
 ];
 
 export default function Index() {
@@ -127,25 +128,43 @@ export default function Index() {
 
             {/* Desktop: 5-col row — compact */}
             <div className="hidden md:grid md:grid-cols-5 gap-3">
-              {modules.map((mod) => (
-                <Link key={mod.title} to={mod.href} className="group relative">
-                  <div className="relative overflow-hidden rounded-xl shadow-lg border border-[#c4962c]/20 hover:border-[#c4962c]/50 hover:shadow-xl hover:shadow-[#c4962c]/10 transition-all duration-500">
-                    <img src={mod.image} alt={mod.title} className="w-full h-[130px] lg:h-[150px] object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 to-black/5" />
-                    <div className="absolute bottom-0 left-0 right-0 p-3">
-                      <p className="text-[17px] lg:text-[19px] tracking-[0.06em] uppercase font-bold text-white leading-tight drop-shadow-md" style={chakra}>
-                        {mod.title}
-                      </p>
-                      <p className="text-[12px] text-white/65 mt-1 drop-shadow-sm" style={chakra}>
-                        {mod.desc}
-                      </p>
-                    </div>
-                    <div className="absolute inset-0 rounded-xl ring-1 ring-inset ring-[#c4962c]/20 pointer-events-none" />
-                    <div className="absolute -inset-px rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-                      style={{ boxShadow: 'inset 0 0 20px rgba(196, 150, 44, 0.15), 0 0 30px rgba(196, 150, 44, 0.08)' }} />
+              {modules.map((mod) => {
+                const createHref = user
+                  ? mod.createUrl
+                  : `/login?returnUrl=${encodeURIComponent(mod.createUrl)}`;
+                return (
+                  <div key={mod.title} className="group relative">
+                    <Link to={mod.href}>
+                      <div className="relative overflow-hidden rounded-xl shadow-lg border border-[#c4962c]/20 hover:border-[#c4962c]/50 hover:shadow-xl hover:shadow-[#c4962c]/10 transition-all duration-500">
+                        <img src={mod.image} alt={mod.title} className="w-full h-[130px] lg:h-[150px] object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 to-black/5" />
+                        <div className="absolute bottom-0 left-0 right-0 p-3">
+                          <p className="text-[17px] lg:text-[19px] tracking-[0.06em] uppercase font-bold text-white leading-tight drop-shadow-md" style={chakra}>
+                            {mod.title}
+                          </p>
+                          <p className="text-[12px] text-white/65 mt-1 drop-shadow-sm" style={chakra}>
+                            {mod.desc}
+                          </p>
+                        </div>
+                        <div className="absolute inset-0 rounded-xl ring-1 ring-inset ring-[#c4962c]/20 pointer-events-none" />
+                        <div className="absolute -inset-px rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                          style={{ boxShadow: 'inset 0 0 20px rgba(196, 150, 44, 0.15), 0 0 30px rgba(196, 150, 44, 0.08)' }} />
+                      </div>
+                    </Link>
+
+                    {!mod.comingSoon && (
+                      <Link
+                        to={createHref}
+                        className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center gap-1 px-2 py-1 bg-black/60 backdrop-blur-sm border border-white/20 text-white/80 hover:text-white hover:bg-black/80 text-[10px] uppercase tracking-[0.15em] font-bold z-10"
+                        style={chakra}
+                      >
+                        <Plus className="w-3 h-3" />
+                        {user ? "Opprett" : "Logg inn"}
+                      </Link>
+                    )}
                   </div>
-                </Link>
-              ))}
+                );
+              })}
             </div>
           </div>
         </section>
