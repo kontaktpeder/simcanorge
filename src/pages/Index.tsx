@@ -50,34 +50,34 @@ export default function Index() {
       <div className="min-h-[calc(100vh-4rem)]" style={{ background: 'linear-gradient(180deg, #f0ebe3 0%, #e8e2d8 40%, #e4ddd3 100%)' }}>
 
         {/* ─── HERO ─── */}
-        <section className="relative overflow-hidden h-[280px] sm:h-[340px] md:h-[400px]">
+        <section className="relative overflow-hidden h-[320px] sm:h-[380px] md:h-[440px]">
           <img
             src={heroCar}
             alt="Klassisk bil"
             className="absolute inset-0 w-full h-full object-cover object-[center_35%] brightness-110"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#1a1a1a]/70 via-[#1a1a1a]/40 to-transparent" />
-          <div className="absolute bottom-0 left-0 right-0 h-16" style={{ background: 'linear-gradient(to top, #f0ebe3, transparent)' }} />
+          <div className="absolute inset-0 bg-[#1a1a1a]/50" />
+          <div className="absolute bottom-0 left-0 right-0 h-12" style={{ background: 'linear-gradient(to top, #f0ebe3, transparent)' }} />
 
-          <div className="relative z-10 h-full flex flex-col justify-end pb-6 sm:pb-10 max-w-[1200px] mx-auto px-5 md:px-8">
-            <p className="text-[12px] sm:text-[16px] tracking-[0.3em] uppercase mb-1 sm:mb-2"
+          <div className="relative z-10 h-full flex flex-col items-center justify-center text-center max-w-[800px] mx-auto px-5 md:px-8">
+            <p className="text-[11px] sm:text-[14px] tracking-[0.3em] uppercase mb-1 sm:mb-2"
               style={{ ...oswald, fontWeight: 500, background: 'linear-gradient(135deg, #F5A623, #FFD166)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
               bilgarasje.no
             </p>
             <h1
-              className="text-[2rem] sm:text-[3.2rem] md:text-[4.2rem] leading-[0.95] uppercase tracking-[0.02em] sm:tracking-[0.04em] text-white font-bold italic drop-shadow-lg"
-              style={chakra}
+              className="text-[1.8rem] sm:text-[2.8rem] md:text-[3.6rem] leading-[0.95] uppercase tracking-[0.02em] sm:tracking-[0.04em] text-white font-bold italic"
+              style={{ ...chakra, textShadow: '0 2px 12px rgba(0,0,0,0.5)' }}
             >
               Hele Norges bilsamfunn
             </h1>
             <p
-              className="text-[0.95rem] sm:text-[1.5rem] md:text-[1.8rem] uppercase tracking-[0.12em] sm:tracking-[0.18em] text-white/80 font-bold italic mt-0.5 sm:mt-1 drop-shadow-md"
-              style={chakra}
+              className="text-[0.85rem] sm:text-[1.2rem] md:text-[1.5rem] uppercase tracking-[0.12em] sm:tracking-[0.18em] text-white/80 font-bold italic mt-0.5 sm:mt-1"
+              style={{ ...chakra, textShadow: '0 1px 8px rgba(0,0,0,0.4)' }}
             >
               — på nett
             </p>
 
-            <div className="mt-5 sm:mt-7">
+            <div className="mt-6 sm:mt-8 w-full max-w-[600px]">
               <HeroSearch />
             </div>
           </div>
