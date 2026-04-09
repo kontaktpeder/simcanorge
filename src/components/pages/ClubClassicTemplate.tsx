@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import { MapPin, Calendar, Mail, Globe, Phone } from "lucide-react";
-import { PublicPageEvents } from "./PublicPageEvents";
 import { PublicPageContact } from "./PublicPageContact";
 import { useFeedPosts } from "@/hooks/useFeedPosts";
 import { FeedCard } from "@/components/feed/FeedCard";
@@ -151,23 +150,7 @@ export function ClubClassicTemplate({ page }: { page: Page }) {
           </div>
         )}
 
-        {/* Chrome divider */}
-        <div className="flex items-center gap-4 my-8">
-          <div className="flex-1 h-[2px] rounded-full" style={{ background: "linear-gradient(90deg, transparent, #B8C0CC 30%, #FFFFFF 50%, #B8C0CC 70%, transparent)" }} />
-          <div className="w-2 h-2 rounded-full bg-accent" />
-          <div className="flex-1 h-[2px] rounded-full" style={{ background: "linear-gradient(90deg, transparent, #B8C0CC 30%, #FFFFFF 50%, #B8C0CC 70%, transparent)" }} />
-        </div>
-
-        {/* Arrangementer */}
-        <div className="border-chrome rounded-xl p-6 md:p-8 bg-card mb-12">
-          <p className="text-[10px] tracking-[0.35em] uppercase text-muted-foreground font-sans font-semibold mb-2">
-            Kommende
-          </p>
-          <h2 className="text-2xl font-display uppercase tracking-wide text-foreground mb-6">
-            Arrangementer
-          </h2>
-          <PublicPageEvents pageId={page.id} light />
-        </div>
+        {/* TODO: Reintroduce events for clubs later when we have a clearer event model */}
 
         {/* Klubb-feed */}
         {feedPosts && feedPosts.length > 0 && (

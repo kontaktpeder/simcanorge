@@ -186,13 +186,10 @@ export default function PublicPagePage() {
 
               <div className="h-px bg-gradient-to-r from-[#c4962c]/25 via-[#3a2e24]/[0.06] to-transparent mb-12 md:mb-16" />
 
-              <div className="grid gap-12 md:gap-16 md:grid-cols-[1.2fr_1fr]">
-                {/* Events */}
-                <PublicPageEvents pageId={page.id} light />
+              {/* TODO: Reintroduce events for clubs later when we have a clearer event model */}
 
-                {/* Contact */}
-                <PublicPageContact page={page} light />
-              </div>
+              {/* Contact — full width */}
+              <PublicPageContact page={page} light />
             </div>
           </section>
 
