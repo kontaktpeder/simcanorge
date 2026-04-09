@@ -174,20 +174,20 @@ export default function Dashboard() {
       {/* ─── VARSLER ─── */}
       {notifications && notifications.length > 0 && (
         <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }} className="mb-8">
-          <div className="border border-white/[0.1] bg-[#161412] rounded-sm overflow-hidden">
-            <div className="px-5 py-3 border-b border-white/[0.06] flex items-center gap-2.5">
+          <div className="border border-[#c4962c]/15 rounded-sm overflow-hidden" style={{ background: 'linear-gradient(180deg, #f5efe6 0%, #f0e9df 100%)' }}>
+            <div className="px-5 py-3 border-b border-[#c4962c]/10 flex items-center gap-2.5">
               <Bell className="w-4 h-4 text-[#c4962c]" />
-              <span className="text-[11px] uppercase tracking-[0.15em] font-semibold text-white/60" style={oswald}>
+              <span className="text-[11px] uppercase tracking-[0.15em] font-semibold text-[#3a2e24]/60" style={oswald}>
                 Varsler ({notifications.length})
               </span>
             </div>
-            <div className="divide-y divide-white/[0.04]">
+            <div className="divide-y divide-[#c4962c]/5">
               {notifications.map((notif: any) => (
                 <div key={notif.id} className="px-5 py-4 flex items-start justify-between gap-4">
                   <div className="flex-1">
-                    <p className="text-[13px] font-bold text-white/90" style={chakra}>{notif.title}</p>
-                    <p className="text-[12px] text-white/40 mt-0.5">{notif.body}</p>
-                    <p className="text-[10px] text-white/20 mt-1">
+                    <p className="text-[13px] font-bold text-[#3a2e24]" style={chakra}>{notif.title}</p>
+                    <p className="text-[12px] text-[#3a2e24]/50 mt-0.5">{notif.body}</p>
+                    <p className="text-[10px] text-[#3a2e24]/30 mt-1">
                       {new Date(notif.created_at).toLocaleDateString('nb-NO', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}
                     </p>
                   </div>
@@ -199,7 +199,7 @@ export default function Dashboard() {
                         </button>
                       </Link>
                     )}
-                    <button onClick={() => markAsRead(notif.id)} className="p-1.5 text-white/20 hover:text-white/50 transition-colors">
+                    <button onClick={() => markAsRead(notif.id)} className="p-1.5 text-[#3a2e24]/20 hover:text-[#3a2e24]/50 transition-colors">
                       <CheckCircle className="w-4 h-4" />
                     </button>
                   </div>
@@ -291,7 +291,8 @@ export default function Dashboard() {
       <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.45 }}>
         <div
           onClick={handleOpenForm}
-          className="cursor-pointer rounded-sm border border-[#c4962c]/25 hover:border-[#c4962c]/40 transition-all duration-300 overflow-hidden group bg-[#1a1714] hover:bg-[#1e1b16]"
+          className="cursor-pointer rounded-sm border border-[#c4962c]/20 hover:border-[#c4962c]/40 transition-all duration-300 overflow-hidden group hover:shadow-[0_8px_30px_-10px_rgba(196,150,44,0.15)]"
+          style={{ background: 'linear-gradient(135deg, #f5efe6 0%, #ede5d8 100%)' }}
         >
           <div className="flex items-center justify-between px-6 sm:px-8 py-6 sm:py-8">
             <div className="flex items-center gap-4">
@@ -299,10 +300,10 @@ export default function Dashboard() {
                 <Send className="w-5 h-5 text-[#0f0d0b]" />
               </div>
               <div>
-                <h3 className="text-[17px] sm:text-[20px] font-bold uppercase tracking-[0.03em] text-white group-hover:text-[#e8c547] transition-colors" style={chakra}>
+                <h3 className="text-[17px] sm:text-[20px] font-bold uppercase tracking-[0.03em] text-[#3a2e24] group-hover:text-[#8b6914] transition-colors" style={chakra}>
                   Send inn bil
                 </h3>
-                <p className="text-[12px] sm:text-[13px] text-white/35 mt-0.5">
+                <p className="text-[12px] sm:text-[13px] text-[#3a2e24]/45 mt-0.5">
                   Legg til en ny bil i garasjen din — del historien bak bilen
                 </p>
               </div>
@@ -337,7 +338,7 @@ export default function Dashboard() {
               </button>
             </div>
 
-            <div className="border border-white/[0.1] bg-[#161412] rounded-sm p-5 sm:p-6">
+            <div className="border border-[#c4962c]/10 rounded-sm p-5 sm:p-6" style={{ background: 'linear-gradient(180deg, #f5efe6 0%, #f0e9df 100%)' }}>
               <SendInnBilForm
                 onSuccess={handleFormSuccess}
                 onCancel={() => setShowCarForm(false)}
@@ -377,12 +378,12 @@ function DashCard({ children, to, icon: Icon, delay, highlight, ...rest }: {
       <Link to={to} className="block h-full touch-manipulation group">
         <div className={`h-full rounded-sm p-5 sm:p-6 transition-all duration-300 border ${
           highlight
-            ? 'border-[#c4962c]/30 bg-[#1a1714] hover:border-[#c4962c]/50 hover:bg-[#1e1b16]'
-            : 'border-white/[0.12] bg-[#161412] hover:border-white/[0.2] hover:bg-[#1a1714]'
-        }`}>
+            ? 'border-[#c4962c]/30 hover:border-[#c4962c]/50 hover:shadow-[0_8px_30px_-10px_rgba(196,150,44,0.15)]'
+            : 'border-[#c4962c]/10 hover:border-[#c4962c]/25 hover:shadow-[0_8px_30px_-10px_rgba(196,150,44,0.1)]'
+        }`} style={{ background: 'linear-gradient(180deg, #f5efe6 0%, #f0e9df 100%)' }}>
           <div className="flex items-start justify-between mb-3">
-            <Icon className="w-5 h-5 text-white/20 group-hover:text-[#c4962c]/60 transition-colors" strokeWidth={1.5} />
-            <ChevronRight className="w-4 h-4 text-white/10 group-hover:text-white/30 group-hover:translate-x-0.5 transition-all" />
+            <Icon className="w-5 h-5 text-[#3a2e24]/25 group-hover:text-[#c4962c]/60 transition-colors" strokeWidth={1.5} />
+            <ChevronRight className="w-4 h-4 text-[#3a2e24]/15 group-hover:text-[#3a2e24]/40 group-hover:translate-x-0.5 transition-all" />
           </div>
           {children}
         </div>
@@ -393,19 +394,19 @@ function DashCard({ children, to, icon: Icon, delay, highlight, ...rest }: {
 
 function DashTitle({ children }: { children: React.ReactNode }) {
   return (
-    <h3 className="text-[14px] sm:text-[15px] font-bold uppercase tracking-[0.04em] text-white/90 group-hover:text-white transition-colors leading-tight mb-1" style={chakraFont}>
+    <h3 className="text-[14px] sm:text-[15px] font-bold uppercase tracking-[0.04em] text-[#3a2e24] group-hover:text-[#8b6914] transition-colors leading-tight mb-1" style={chakraFont}>
       {children}
     </h3>
   );
 }
 
 function DashDesc({ children }: { children: React.ReactNode }) {
-  return <p className="text-[12px] text-white/35 leading-relaxed">{children}</p>;
+  return <p className="text-[12px] text-[#3a2e24]/50 leading-relaxed">{children}</p>;
 }
 
 function DashCount({ children }: { children: React.ReactNode }) {
   return (
-    <p className="text-[1.8rem] sm:text-[2.2rem] font-bold text-white/80 leading-none mt-3" style={chakraFont}>
+    <p className="text-[1.8rem] sm:text-[2.2rem] font-bold text-[#3a2e24] leading-none mt-3" style={chakraFont}>
       {children}
     </p>
   );
