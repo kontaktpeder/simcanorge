@@ -142,6 +142,21 @@ export function getOwnerAvatarPath(ownerId: string): string {
   return `owners/${ownerId}/avatar.webp`;
 }
 
+
+/**
+ * Generate storage path for page logo
+ */
+export function getPageLogoPath(pageId: string): string {
+  return `pages/${pageId}/logo.webp`;
+}
+
+/**
+ * Generate storage path for page cover
+ */
+export function getPageCoverPath(pageId: string): string {
+  return `pages/${pageId}/cover.webp`;
+}
+
 /**
  * Convert Blob to File with WebP type
  */
