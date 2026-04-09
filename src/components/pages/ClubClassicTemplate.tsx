@@ -46,27 +46,27 @@ export function ClubClassicTemplate({ page }: { page: Page }) {
           <div className="mb-10 md:mb-14">
             <div className="grid md:grid-cols-[240px_1fr] gap-6 md:gap-10">
               <div className="space-y-3">
-                <p className="text-[10px] tracking-[0.35em] uppercase text-white/40 font-sans font-semibold">
+                <p className="text-[10px] tracking-[0.35em] uppercase text-muted-foreground font-sans font-semibold">
                   Om klubben
                 </p>
-                <h2 className="text-xl md:text-2xl font-display uppercase tracking-wide text-white">
+                <h2 className="text-xl md:text-2xl font-display uppercase tracking-wide text-foreground">
                   Hvem er vi?
                 </h2>
                 <div className="flex flex-col gap-2 mt-4">
                   {page.contact_email && (
-                    <a href={`mailto:${page.contact_email}`} className="flex items-center gap-2 text-[13px] text-white/70 hover:text-white transition-colors">
+                    <a href={`mailto:${page.contact_email}`} className="flex items-center gap-2 text-[13px] text-primary hover:text-accent transition-colors">
                       <Mail className="w-3.5 h-3.5" />
                       Kontakt oss
                     </a>
                   )}
                   {page.website && (
-                    <a href={page.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-[13px] text-white/70 hover:text-white transition-colors">
+                    <a href={page.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-[13px] text-primary hover:text-accent transition-colors">
                       <Globe className="w-3.5 h-3.5" />
                       Nettside
                     </a>
                   )}
                   {page.contact_phone && (
-                    <a href={`tel:${page.contact_phone}`} className="flex items-center gap-2 text-[13px] text-white/70 hover:text-white transition-colors">
+                    <a href={`tel:${page.contact_phone}`} className="flex items-center gap-2 text-[13px] text-primary hover:text-accent transition-colors">
                       <Phone className="w-3.5 h-3.5" />
                       {page.contact_phone}
                     </a>
@@ -74,8 +74,8 @@ export function ClubClassicTemplate({ page }: { page: Page }) {
                 </div>
               </div>
 
-              <div className="md:border-l md:border-white/10 md:pl-10">
-                <p className="text-[15px] leading-[1.8] text-white/70 whitespace-pre-line font-sans">
+              <div className="md:border-l md:border-border md:pl-10">
+                <p className="text-[15px] leading-[1.8] text-muted-foreground whitespace-pre-line font-sans">
                   {page.about}
                 </p>
               </div>
