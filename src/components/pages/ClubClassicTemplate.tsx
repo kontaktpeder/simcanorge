@@ -38,18 +38,12 @@ export function ClubClassicTemplate({ page }: { page: Page }) {
         </section>
       )}
 
-      {/* ── ACCENT STRIP — enamel red, thinner ── */}
-      <div
-        className="h-1"
-        style={{ background: 'linear-gradient(90deg, #C10D0D 0%, #E52020 50%, #C10D0D 100%)' }}
-      />
-
       {/* ── BODY ── */}
       <div className="max-w-[960px] mx-auto px-4 md:px-8 py-8 md:py-14">
 
         {/* Om klubben */}
         {page.about && (
-          <div className="featured-card-premium rounded-xl p-6 md:p-8 mb-10 md:mb-14">
+          <div className="mb-10 md:mb-14">
             <div className="grid md:grid-cols-[240px_1fr] gap-6 md:gap-10">
               <div className="space-y-3">
                 <p className="text-[10px] tracking-[0.35em] uppercase text-white/40 font-sans font-semibold">
