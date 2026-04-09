@@ -140,6 +140,30 @@ export default function EditPagePage() {
         </div>
 
         <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Bilder</CardTitle>
+          </CardHeader>
+          <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <PageImageUpload
+              label="Logo"
+              currentUrl={logoUrl}
+              storagePath={getPageLogoPath(pageId!)}
+              aspectClass="aspect-square"
+              onUploaded={(url) => handleImageUpdate("logo_url", url)}
+              onRemoved={() => handleImageUpdate("logo_url", null)}
+            />
+            <PageImageUpload
+              label="Coverbilde"
+              currentUrl={coverUrl}
+              storagePath={getPageCoverPath(pageId!)}
+              aspectClass="aspect-[3/1]"
+              onUploaded={(url) => handleImageUpdate("cover_url", url)}
+              onRemoved={() => handleImageUpdate("cover_url", null)}
+            />
+          </CardContent>
+        </Card>
+
+        <Card>
           <CardContent className="p-6">
             <PageForm
               defaultValues={page as any}
