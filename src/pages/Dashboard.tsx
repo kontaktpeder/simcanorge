@@ -174,7 +174,7 @@ export default function Dashboard() {
       {/* ─── VARSLER ─── */}
       {notifications && notifications.length > 0 && (
         <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }} className="mb-8">
-          <div className="border border-white/[0.08] bg-white/[0.02] rounded-sm overflow-hidden">
+          <div className="border border-white/[0.1] bg-[#161412] rounded-sm overflow-hidden">
             <div className="px-5 py-3 border-b border-white/[0.06] flex items-center gap-2.5">
               <Bell className="w-4 h-4 text-[#c4962c]" />
               <span className="text-[11px] uppercase tracking-[0.15em] font-semibold text-white/60" style={oswald}>
@@ -291,8 +291,7 @@ export default function Dashboard() {
       <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.45 }}>
         <div
           onClick={handleOpenForm}
-          className="cursor-pointer rounded-sm border border-[#c4962c]/20 hover:border-[#c4962c]/40 transition-all duration-300 overflow-hidden group"
-          style={{ background: 'linear-gradient(135deg, rgba(196,150,44,0.08) 0%, rgba(196,150,44,0.03) 100%)' }}
+          className="cursor-pointer rounded-sm border border-[#c4962c]/25 hover:border-[#c4962c]/40 transition-all duration-300 overflow-hidden group bg-[#1a1714] hover:bg-[#1e1b16]"
         >
           <div className="flex items-center justify-between px-6 sm:px-8 py-6 sm:py-8">
             <div className="flex items-center gap-4">
@@ -338,7 +337,7 @@ export default function Dashboard() {
               </button>
             </div>
 
-            <div className="border border-white/[0.08] bg-white/[0.02] rounded-sm p-5 sm:p-6">
+            <div className="border border-white/[0.1] bg-[#161412] rounded-sm p-5 sm:p-6">
               <SendInnBilForm
                 onSuccess={handleFormSuccess}
                 onCancel={() => setShowCarForm(false)}
@@ -378,8 +377,8 @@ function DashCard({ children, to, icon: Icon, delay, highlight, ...rest }: {
       <Link to={to} className="block h-full touch-manipulation group">
         <div className={`h-full rounded-sm p-5 sm:p-6 transition-all duration-300 border ${
           highlight
-            ? 'border-[#c4962c]/25 bg-[#c4962c]/[0.06] hover:bg-[#c4962c]/[0.1]'
-            : 'border-white/[0.08] bg-white/[0.02] hover:bg-white/[0.04] hover:border-white/[0.12]'
+            ? 'border-[#c4962c]/30 bg-[#1a1714] hover:border-[#c4962c]/50 hover:bg-[#1e1b16]'
+            : 'border-white/[0.12] bg-[#161412] hover:border-white/[0.2] hover:bg-[#1a1714]'
         }`}>
           <div className="flex items-start justify-between mb-3">
             <Icon className="w-5 h-5 text-white/20 group-hover:text-[#c4962c]/60 transition-colors" strokeWidth={1.5} />
