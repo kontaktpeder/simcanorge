@@ -211,13 +211,6 @@ export default function Index() {
 
             {!feedLoading && filteredPosts.length === 0 && (
               <div className="py-12 sm:py-24 text-center">
-                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#3a2e24]/[0.06] flex items-center justify-center">
-                  <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1" className="w-8 h-8 text-[#3a2e24]/20">
-                    <path d="M5 21l3-7h16l3 7" strokeLinecap="round" strokeLinejoin="round"/>
-                    <rect x="3" y="21" width="26" height="5" rx="1"/>
-                    <circle cx="9" cy="26" r="2"/><circle cx="23" cy="26" r="2"/>
-                  </svg>
-                </div>
                 <p className="text-[1.2rem] sm:text-[1.6rem] uppercase text-[#3a2e24]/30 font-bold tracking-[0.08em]"
                   style={oswald}>
                   {feedFilter === "alle" ? "Ingen oppdateringer enda" : "Ingen treff i denne kategorien"}
