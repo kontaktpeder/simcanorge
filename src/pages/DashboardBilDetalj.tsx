@@ -178,18 +178,48 @@ export default function DashboardBilDetalj() {
     enabled: !!carId && !!user
   });
 
-  const requestPublication = async () => {
+  const clearOpenPublicationRequests = async (cid: string) => {
+    await supabase.from('car_publication_requests').delete().eq('car_id', cid).eq('status', 'open');
+    queryClient.invalidateQueries({ queryKey: ['publication-request', carId, user?.id] });
+  };
+
+  const handlePublish = async () => {
     if (!car || !user) return;
-    const action = car.status === 'published' ? 'unpublish' : 'publish';
-    const { error } = await supabase.from('car_publication_requests').insert({
-      car_id: car.id, requested_by: user.id, action, status: 'open'
-    });
-    if (error) {
-      toast.error(error.code === '23505' ? 'Du har allerede sendt en forespørsel' : 'Kunne ikke sende forespørsel');
-    } else {
-      toast.success('Forespørsel sendt!');
-      queryClient.invalidateQueries({ queryKey: ['publication-request', carId, user?.id] });
-    }
+    setIsPublishing(true);
+    try {
+      const { error } = await supabase.from('cars').update({
+        published_at: new Date().toISOString(),
+        status: 'published' as any,
+      }).eq('id', car.id);
+      if (error) {
+        const msg = error.message || '';
+        if (msg.includes('Merke')) toast.error('Merke må være satt før publisering');
+        else if (msg.includes('Modell')) toast.error('Modell må være satt før publisering');
+        else if (msg.includes('bilde')) toast.error('Minst ett bilde kreves for publisering');
+        else toast.error(`Kunne ikke publisere: ${msg}`);
+        return;
+      }
+      await clearOpenPublicationRequests(car.id);
+      toast.success('Bilen er publisert! 🎉');
+      queryClient.invalidateQueries({ queryKey: ['my-car', carId, user?.id] });
+    } catch { toast.error('Uventet feil ved publisering'); }
+    finally { setIsPublishing(false); }
+  };
+
+  const handleUnpublish = async () => {
+    if (!car || !user) return;
+    if (!confirm('Er du sikker på at du vil avpublisere bilen? Den vil ikke lenger være synlig for andre.')) return;
+    setIsPublishing(true);
+    try {
+      const { error } = await supabase.from('cars').update({
+        published_at: null,
+        status: 'draft' as any,
+      }).eq('id', car.id);
+      if (error) { toast.error(`Kunne ikke avpublisere: ${error.message}`); return; }
+      toast.success('Bilen er avpublisert');
+      queryClient.invalidateQueries({ queryKey: ['my-car', carId, user?.id] });
+    } catch { toast.error('Uventet feil'); }
+    finally { setIsPublishing(false); }
   };
 
   const cancelRequest = async () => {
