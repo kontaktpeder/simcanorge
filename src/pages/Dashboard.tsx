@@ -2,8 +2,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState, useRef } from 'react';
 import { GarageLayout } from '@/components/ui/garage/GarageLayout';
-import { SectionHeader } from '@/components/ui/garage/SectionHeader';
-import { Bell, CheckCircle, Send, X, ChevronRight } from 'lucide-react';
+import { Bell, CheckCircle, X, ChevronRight, Settings, Send, Car, ShoppingBag, FileText, Calendar, User, Inbox, UserPlus } from 'lucide-react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Loader2 } from 'lucide-react';
@@ -18,7 +17,6 @@ import { useMyListings } from '@/hooks/useMarketplace';
 import { useMyPersonProfile } from '@/hooks/useMyPersonProfile';
 import { useMyPages } from '@/hooks/useMyPages';
 import { useMyEvents } from '@/hooks/useMyEvents';
-import { UserPlus } from 'lucide-react';
 
 const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
 const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
@@ -121,9 +119,7 @@ export default function Dashboard() {
     );
   }
 
-  if (!user) {
-    return null;
-  }
+  if (!user) return null;
 
   const filledFields = ownerProfile ? [
     ownerProfile.bio,
@@ -133,49 +129,77 @@ export default function Dashboard() {
   ].filter(Boolean).length : 0;
   const profileNeedsAttention = !ownerProfile || filledFields < 2;
 
-  const cardBase = "group block rounded-lg overflow-hidden border border-[#c4962c]/10 hover:border-[#c4962c]/25 transition-all duration-300 hover:shadow-[0_8px_30px_-10px_rgba(196,150,44,0.15)]";
-  const cardBg = { background: 'linear-gradient(180deg, #f5efe6 0%, #f0e9df 100%)' };
+  const kontoAction = (
+    <Link
+      to="/konto"
+      className="inline-flex items-center gap-2 px-3 py-2 text-[11px] uppercase tracking-[0.12em] font-semibold text-white/50 hover:text-white/80 border border-white/[0.1] hover:border-white/[0.2] rounded transition-all"
+      style={oswald}
+    >
+      <Settings className="w-3.5 h-3.5" />
+      Konto
+    </Link>
+  );
 
   return (
     <GarageLayout
       title="Min side"
       subtitle="Bilgarasje"
-      description="Bilene dine, profilen din og annonsene dine"
+      description="Bilene dine, profilen din og annonsene dine."
+      headerAction={kontoAction}
     >
-      {/* Notifikasjoner */}
-      {notifications && notifications.length > 0 && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-          className="mb-8"
-        >
-          <div className="rounded-lg border border-[#c4962c]/20 overflow-hidden" style={{ background: 'linear-gradient(180deg, #f5efe6 0%, #f0e9df 100%)' }}>
-            <div className="px-5 py-3 border-b border-[#c4962c]/10 flex items-center gap-2.5">
-              <Bell className="w-4 h-4 text-[#c4962c]" />
-              <h3 className="text-[13px] uppercase tracking-[0.1em] font-bold text-[#3a2e24]" style={oswald}>
-                Varsler ({notifications.length})
-              </h3>
+      {/* ─── KOM I GANG ─── */}
+      {!personProfile && (
+        <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="mb-6">
+          <Link to="/kom-i-gang" className="block touch-manipulation">
+            <div className="p-5 sm:p-6 border border-[#c4962c]/30 bg-[#c4962c]/[0.06] group hover:bg-[#c4962c]/[0.1] transition-all rounded-sm">
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 rounded-full bg-[#c4962c]/15 flex items-center justify-center flex-shrink-0">
+                  <UserPlus className="w-5 h-5 text-[#c4962c]" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-[14px] sm:text-[15px] font-bold uppercase tracking-[0.04em] text-white" style={chakra}>
+                    Kom i gang
+                  </h3>
+                  <p className="text-[12px] text-white/40 mt-0.5">
+                    Sett opp profilen din for å få tilgang til alle funksjoner
+                  </p>
+                </div>
+                <ChevronRight className="w-5 h-5 text-[#c4962c]/40 group-hover:text-[#c4962c] group-hover:translate-x-0.5 transition-all flex-shrink-0" />
+              </div>
             </div>
-            <div className="divide-y divide-[#c4962c]/5">
+          </Link>
+        </motion.div>
+      )}
+
+      {/* ─── VARSLER ─── */}
+      {notifications && notifications.length > 0 && (
+        <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }} className="mb-8">
+          <div className="border border-white/[0.08] bg-white/[0.02] rounded-sm overflow-hidden">
+            <div className="px-5 py-3 border-b border-white/[0.06] flex items-center gap-2.5">
+              <Bell className="w-4 h-4 text-[#c4962c]" />
+              <span className="text-[11px] uppercase tracking-[0.15em] font-semibold text-white/60" style={oswald}>
+                Varsler ({notifications.length})
+              </span>
+            </div>
+            <div className="divide-y divide-white/[0.04]">
               {notifications.map((notif: any) => (
                 <div key={notif.id} className="px-5 py-4 flex items-start justify-between gap-4">
                   <div className="flex-1">
-                    <p className="text-[14px] font-bold text-[#3a2e24]" style={chakra}>{notif.title}</p>
-                    <p className="text-[13px] text-[#3a2e24]/55 mt-0.5">{notif.body}</p>
-                    <p className="text-[11px] text-[#3a2e24]/35 mt-1.5">
+                    <p className="text-[13px] font-bold text-white/90" style={chakra}>{notif.title}</p>
+                    <p className="text-[12px] text-white/40 mt-0.5">{notif.body}</p>
+                    <p className="text-[10px] text-white/20 mt-1">
                       {new Date(notif.created_at).toLocaleDateString('nb-NO', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
                     {notif.link && (
                       <Link to={notif.link} onClick={() => markAsRead(notif.id)}>
-                        <button className="px-3 py-1.5 text-[11px] uppercase tracking-[0.1em] font-bold text-[#0f0d0b] hover:brightness-110 transition-all" style={{ background: 'linear-gradient(135deg, #d4a017, #e8c547, #c4962c)' }}>
+                        <button className="px-3 py-1.5 text-[10px] uppercase tracking-[0.1em] font-bold text-[#0f0d0b] hover:brightness-110 transition-all rounded-sm" style={{ background: 'linear-gradient(135deg, #d4a017, #e8c547, #c4962c)' }}>
                           Vis
                         </button>
                       </Link>
                     )}
-                    <button onClick={() => markAsRead(notif.id)} className="p-2 text-[#3a2e24]/30 hover:text-[#3a2e24]/60 transition-colors">
+                    <button onClick={() => markAsRead(notif.id)} className="p-1.5 text-white/20 hover:text-white/50 transition-colors">
                       <CheckCircle className="w-4 h-4" />
                     </button>
                   </div>
@@ -186,142 +210,110 @@ export default function Dashboard() {
         </motion.div>
       )}
 
-      {/* Dashboard Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      {/* ═══════════════════════════════════════════════
+          SEKSJON 1 — Garasje & Marked
+          ═══════════════════════════════════════════════ */}
+      <SectionLabel label="Garasje & Marked" delay={0.05} />
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+        <DashCard to="/dashboard/mine-biler" icon={Car} delay={0.1} data-guide="my-cars-card">
+          <DashTitle>Mine biler</DashTitle>
+          <DashDesc>Se og rediger bilene dine</DashDesc>
+          <DashCount>{carsLoading ? '—' : carCount || 0}</DashCount>
+        </DashCard>
 
-        {/* Kom i gang */}
-        {!personProfile && (
-          <motion.div
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.05 }}
-            className="sm:col-span-2 lg:col-span-3"
-          >
-            <Link to="/kom-i-gang" className="block touch-manipulation">
-              <div className="rounded-lg border-2 border-[#c4962c]/30 p-5 sm:p-6 group hover:border-[#c4962c]/50 transition-all" style={{ background: 'linear-gradient(135deg, #f5efe6 0%, #ede5d8 100%)' }}>
-                <div className="flex items-center gap-4">
-                  <div className="w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: 'linear-gradient(135deg, #3a2e24, #4a3d30)' }}>
-                    <UserPlus className="w-5 h-5 text-[#c4962c]" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="text-[15px] sm:text-[17px] font-bold uppercase tracking-[0.04em] text-[#3a2e24]" style={chakra}>
-                      Kom i gang
-                    </h3>
-                    <p className="text-[13px] text-[#3a2e24]/50 mt-0.5">
-                      Sett opp profilen din for å få tilgang til alle funksjoner
-                    </p>
-                  </div>
-                  <ChevronRight className="w-5 h-5 text-[#c4962c]/40 group-hover:text-[#c4962c] group-hover:translate-x-0.5 transition-all flex-shrink-0" />
-                </div>
-              </div>
-            </Link>
-          </motion.div>
-        )}
-
-        {/* Mine biler */}
-        <DashboardCard delay={0.1} to="/dashboard/mine-biler" data-guide="my-cars-card">
-          <CardLabel>Garasje</CardLabel>
-          <CardTitle>Mine biler</CardTitle>
-          <CardDesc>Se og rediger bilene dine</CardDesc>
-          <CardCount>{carsLoading ? '—' : carCount || 0}</CardCount>
-        </DashboardCard>
-
-        {/* Mine annonser */}
-        <DashboardCard delay={0.15} to="/dashboard/mine-annonser">
-          <CardLabel>Markedsplass</CardLabel>
-          <CardTitle>Mine annonser</CardTitle>
-          <CardDesc>
+        <DashCard to="/dashboard/mine-annonser" icon={ShoppingBag} delay={0.15}>
+          <DashTitle>Mine annonser</DashTitle>
+          <DashDesc>
             {ownerProfile?.approved_at
-              ? (myListings?.length ?? 0) === 0
-                ? 'Opprett din første annonse'
-                : 'Se og rediger annonsene dine'
-              : ownerProfile
-                ? 'Venter på godkjenning'
-                : 'Opprett entusiastprofil for å selge'}
-          </CardDesc>
-          <CardCount>{myListings?.length || 0}</CardCount>
-        </DashboardCard>
+              ? (myListings?.length ?? 0) === 0 ? 'Opprett din første annonse' : 'Se og rediger annonsene dine'
+              : ownerProfile ? 'Venter på godkjenning' : 'Opprett entusiastprofil for å selge'}
+          </DashDesc>
+          <DashCount>{myListings?.length || 0}</DashCount>
+        </DashCard>
+      </div>
 
-        {/* Mine sider */}
-        {personProfile && (
-          <DashboardCard delay={0.2} to="/dashboard/sider">
-            <CardLabel>Organisasjoner</CardLabel>
-            <CardTitle>Mine sider</CardTitle>
-            <CardDesc>
-              {personProfile.can_create_pages
-                ? (myPages?.length ?? 0) === 0 ? 'Opprett din første side' : 'Se og rediger sidene dine'
-                : 'Be om tilgang eller se status'}
-            </CardDesc>
-            <CardCount>{myPages?.length || 0}</CardCount>
-          </DashboardCard>
-        )}
+      {/* ═══════════════════════════════════════════════
+          SEKSJON 2 — Sider & Arrangementer
+          ═══════════════════════════════════════════════ */}
+      {personProfile && (
+        <>
+          <SectionLabel label="Sider & Arrangementer" delay={0.2} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+            <DashCard to="/dashboard/sider" icon={FileText} delay={0.25}>
+              <DashTitle>Mine sider</DashTitle>
+              <DashDesc>
+                {personProfile.can_create_pages
+                  ? (myPages?.length ?? 0) === 0 ? 'Opprett din første side' : 'Se og rediger sidene dine'
+                  : 'Be om tilgang eller se status'}
+              </DashDesc>
+              <DashCount>{myPages?.length || 0}</DashCount>
+            </DashCard>
 
-        {/* Mine arrangementer */}
-        {personProfile && (
-          <DashboardCard delay={0.25} to="/dashboard/events">
-            <CardLabel>Events</CardLabel>
-            <CardTitle>Mine arrangementer</CardTitle>
-            <CardDesc>Opprett og administrer biltreff og events</CardDesc>
-            <CardCount>{myEvents?.length || 0}</CardCount>
-          </DashboardCard>
-        )}
+            <DashCard to="/dashboard/events" icon={Calendar} delay={0.3}>
+              <DashTitle>Mine arrangementer</DashTitle>
+              <DashDesc>Opprett og administrer biltreff og events</DashDesc>
+              <DashCount>{myEvents?.length || 0}</DashCount>
+            </DashCard>
+          </div>
+        </>
+      )}
 
-        {/* Entusiastprofil */}
-        <DashboardCard delay={0.3} to="/dashboard/min-profil" highlight={profileNeedsAttention}>
-          <CardLabel>Profil</CardLabel>
-          <CardTitle highlight={profileNeedsAttention}>Entusiastprofil</CardTitle>
-          <CardDesc>
+      {/* ═══════════════════════════════════════════════
+          SEKSJON 3 — Profil & Forespørsler
+          ═══════════════════════════════════════════════ */}
+      <SectionLabel label="Profil & Innboks" delay={0.3} />
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
+        <DashCard to="/dashboard/min-profil" icon={User} delay={0.35} highlight={profileNeedsAttention}>
+          <DashTitle>{profileNeedsAttention ? '⚡ Entusiastprofil' : 'Entusiastprofil'}</DashTitle>
+          <DashDesc>
             {ownerProfile
               ? (profileNeedsAttention ? 'Fullfør profilen din →' : 'Vises i eier- og selgerprofil')
               : 'Opprett entusiastprofil →'}
-          </CardDesc>
-          {profileNeedsAttention && (
-            <p className="text-[11px] text-[#3a2e24]/35 mt-1">
-              {ownerProfile ? `${filledFields} av 2 felt fylt ut` : 'Kom i gang her'}
-            </p>
-          )}
-        </DashboardCard>
+          </DashDesc>
+        </DashCard>
 
-        {/* Forespørsler */}
         {ownerProfile && (
-          <DashboardCard delay={0.35} to="/dashboard/mine-foresporsler">
-            <CardLabel>Innboks</CardLabel>
-            <CardTitle>Forespørsler</CardTitle>
-            <CardDesc>
+          <DashCard to="/dashboard/mine-foresporsler" icon={Inbox} delay={0.4}>
+            <DashTitle>Forespørsler</DashTitle>
+            <DashDesc>
               {(myInquiries?.pending ?? 0) > 0
                 ? `${myInquiries!.pending} venter på svar`
                 : 'Se forespørsler fra kjøpere'}
-            </CardDesc>
-            <CardCount>{myInquiries?.total || 0}</CardCount>
-          </DashboardCard>
+            </DashDesc>
+            <DashCount>{myInquiries?.total || 0}</DashCount>
+          </DashCard>
         )}
-
-        {/* Send inn ny bil */}
-        <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.4 }}
-        >
-          <div
-            onClick={handleOpenForm}
-            className="h-full rounded-lg overflow-hidden border border-[#c4962c]/10 hover:border-[#c4962c]/25 transition-all duration-300 hover:shadow-[0_8px_30px_-10px_rgba(196,150,44,0.15)] cursor-pointer p-5 sm:p-6 min-h-[160px]"
-            style={{ background: 'linear-gradient(180deg, #f5efe6 0%, #f0e9df 100%)' }}
-          >
-            <CardLabel>Innsending</CardLabel>
-            <CardTitle>Send inn bil</CardTitle>
-            <CardDesc>Legg til en ny bil i garasjen din</CardDesc>
-          </div>
-        </motion.div>
-
-        {/* Konto */}
-        <DashboardCard delay={0.45} to="/konto">
-          <CardLabel>Innstillinger</CardLabel>
-          <CardTitle>Konto</CardTitle>
-          <CardDesc>Innlogging, personvern og innstillinger</CardDesc>
-        </DashboardCard>
       </div>
 
-      {/* Send inn ny bil skjema */}
+      {/* ═══════════════════════════════════════════════
+          STOR CTA — Send inn bil
+          ═══════════════════════════════════════════════ */}
+      <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.45 }}>
+        <div
+          onClick={handleOpenForm}
+          className="cursor-pointer rounded-sm border border-[#c4962c]/20 hover:border-[#c4962c]/40 transition-all duration-300 overflow-hidden group"
+          style={{ background: 'linear-gradient(135deg, rgba(196,150,44,0.08) 0%, rgba(196,150,44,0.03) 100%)' }}
+        >
+          <div className="flex items-center justify-between px-6 sm:px-8 py-6 sm:py-8">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: 'linear-gradient(135deg, #d4a017, #c4962c)' }}>
+                <Send className="w-5 h-5 text-[#0f0d0b]" />
+              </div>
+              <div>
+                <h3 className="text-[17px] sm:text-[20px] font-bold uppercase tracking-[0.03em] text-white group-hover:text-[#e8c547] transition-colors" style={chakra}>
+                  Send inn bil
+                </h3>
+                <p className="text-[12px] sm:text-[13px] text-white/35 mt-0.5">
+                  Legg til en ny bil i garasjen din — del historien bak bilen
+                </p>
+              </div>
+            </div>
+            <ChevronRight className="w-5 h-5 text-[#c4962c]/40 group-hover:text-[#c4962c] group-hover:translate-x-1 transition-all flex-shrink-0" />
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Send inn bil skjema */}
       <AnimatePresence>
         {showCarForm && (
           <motion.div
@@ -330,15 +322,15 @@ export default function Dashboard() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.3 }}
-            className="mt-8"
+            className="mt-6"
           >
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-[16px] font-bold uppercase tracking-[0.04em] text-[#3a2e24]" style={chakra}>
+              <h3 className="text-[15px] font-bold uppercase tracking-[0.04em] text-white" style={chakra}>
                 Send inn ny bil
               </h3>
               <button
                 onClick={() => setShowCarForm(false)}
-                className="px-4 py-2 text-[11px] uppercase tracking-[0.1em] font-bold text-[#3a2e24]/60 hover:text-[#3a2e24] border border-[#c4962c]/15 hover:border-[#c4962c]/30 rounded transition-all flex items-center gap-2"
+                className="px-3 py-1.5 text-[11px] uppercase tracking-[0.1em] font-bold text-white/40 hover:text-white/70 border border-white/[0.1] hover:border-white/[0.2] rounded-sm transition-all flex items-center gap-2"
                 style={oswald}
               >
                 <X className="w-3.5 h-3.5" />
@@ -346,7 +338,7 @@ export default function Dashboard() {
               </button>
             </div>
 
-            <div className="rounded-lg border border-[#c4962c]/10 p-5 sm:p-6" style={{ background: 'linear-gradient(180deg, #f5efe6 0%, #f0e9df 100%)' }}>
+            <div className="border border-white/[0.08] bg-white/[0.02] rounded-sm p-5 sm:p-6">
               <SendInnBilForm
                 onSuccess={handleFormSuccess}
                 onCancel={() => setShowCarForm(false)}
@@ -362,26 +354,37 @@ export default function Dashboard() {
 
 /* ─── Sub-components ─── */
 
-const chakraStyle = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
-const oswaldStyle = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
+const chakraFont = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
+const oswaldFont = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
 
-function DashboardCard({ children, delay, to, highlight, ...rest }: { children: React.ReactNode; delay: number; to: string; highlight?: boolean; [k: string]: any }) {
+function SectionLabel({ label, delay }: { label: string; delay: number }) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 15 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay }}
-      {...rest}
-    >
-      <Link to={to} className="block h-full touch-manipulation">
-        <div
-          className={`h-full rounded-lg overflow-hidden border transition-all duration-300 hover:shadow-[0_8px_30px_-10px_rgba(196,150,44,0.15)] p-5 sm:p-6 min-h-[160px] ${
-            highlight
-              ? 'border-[#c4962c]/30 hover:border-[#c4962c]/50'
-              : 'border-[#c4962c]/10 hover:border-[#c4962c]/25'
-          }`}
-          style={{ background: 'linear-gradient(180deg, #f5efe6 0%, #f0e9df 100%)' }}
-        >
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3, delay }} className="mb-3">
+      <div className="flex items-center gap-3">
+        <p className="text-[10px] sm:text-[11px] uppercase tracking-[0.2em] text-white/30 font-semibold" style={oswaldFont}>
+          {label}
+        </p>
+        <div className="flex-1 h-px bg-white/[0.06]" />
+      </div>
+    </motion.div>
+  );
+}
+
+function DashCard({ children, to, icon: Icon, delay, highlight, ...rest }: {
+  children: React.ReactNode; to: string; icon: any; delay: number; highlight?: boolean; [k: string]: any;
+}) {
+  return (
+    <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay }} {...rest}>
+      <Link to={to} className="block h-full touch-manipulation group">
+        <div className={`h-full rounded-sm p-5 sm:p-6 transition-all duration-300 border ${
+          highlight
+            ? 'border-[#c4962c]/25 bg-[#c4962c]/[0.06] hover:bg-[#c4962c]/[0.1]'
+            : 'border-white/[0.08] bg-white/[0.02] hover:bg-white/[0.04] hover:border-white/[0.12]'
+        }`}>
+          <div className="flex items-start justify-between mb-3">
+            <Icon className="w-5 h-5 text-white/20 group-hover:text-[#c4962c]/60 transition-colors" strokeWidth={1.5} />
+            <ChevronRight className="w-4 h-4 text-white/10 group-hover:text-white/30 group-hover:translate-x-0.5 transition-all" />
+          </div>
           {children}
         </div>
       </Link>
@@ -389,34 +392,21 @@ function DashboardCard({ children, delay, to, highlight, ...rest }: { children: 
   );
 }
 
-function CardLabel({ children }: { children: React.ReactNode }) {
+function DashTitle({ children }: { children: React.ReactNode }) {
   return (
-    <p className="text-[10px] uppercase tracking-[0.2em] text-[#8b6914]/60 font-semibold mb-3" style={oswaldStyle}>
-      {children}
-    </p>
-  );
-}
-
-function CardTitle({ children, highlight }: { children: React.ReactNode; highlight?: boolean }) {
-  return (
-    <h3
-      className={`text-[15px] sm:text-[17px] font-bold uppercase tracking-[0.04em] leading-tight mb-1 ${
-        highlight ? 'text-[#8b6914]' : 'text-[#3a2e24] group-hover:text-[#8b6914]'
-      } transition-colors`}
-      style={chakraStyle}
-    >
+    <h3 className="text-[14px] sm:text-[15px] font-bold uppercase tracking-[0.04em] text-white/90 group-hover:text-white transition-colors leading-tight mb-1" style={chakraFont}>
       {children}
     </h3>
   );
 }
 
-function CardDesc({ children }: { children: React.ReactNode }) {
-  return <p className="text-[12px] sm:text-[13px] text-[#3a2e24]/50 leading-relaxed">{children}</p>;
+function DashDesc({ children }: { children: React.ReactNode }) {
+  return <p className="text-[12px] text-white/35 leading-relaxed">{children}</p>;
 }
 
-function CardCount({ children }: { children: React.ReactNode }) {
+function DashCount({ children }: { children: React.ReactNode }) {
   return (
-    <p className="text-[2rem] sm:text-[2.5rem] font-bold text-[#3a2e24] leading-none mt-3" style={chakraStyle}>
+    <p className="text-[1.8rem] sm:text-[2.2rem] font-bold text-white/80 leading-none mt-3" style={chakraFont}>
       {children}
     </p>
   );
