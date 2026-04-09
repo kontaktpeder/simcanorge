@@ -202,19 +202,7 @@ export function PageForm({ defaultValues, onSubmit, isPending, submitLabel = "La
         </div>
       )}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="space-y-1">
-          <Label htmlFor="logo_url">Logo URL</Label>
-          <Input id="logo_url" {...register("logo_url")} placeholder="https://..." />
-          {errors.logo_url && <p className="text-sm text-destructive">{errors.logo_url.message}</p>}
-        </div>
-
-        <div className="space-y-1">
-          <Label htmlFor="cover_url">Coverbilde URL</Label>
-          <Input id="cover_url" {...register("cover_url")} placeholder="https://..." />
-          {errors.cover_url && <p className="text-sm text-destructive">{errors.cover_url.message}</p>}
-        </div>
-      </div>
+      {/* Logo/cover URL fields removed — use PageImageUpload in EditPagePage instead */}
 
       <div className="flex items-center justify-between rounded-lg border p-3">
         <div>

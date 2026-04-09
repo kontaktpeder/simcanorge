@@ -7,6 +7,8 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { usePageById, useUpdatePage, useDeletePage } from "@/hooks/usePageById";
 import { PageForm, type PageFormValues } from "@/components/pages/PageForm";
+import { PageImageUpload } from "@/components/pages/PageImageUpload";
+import { getPageLogoPath, getPageCoverPath } from "@/lib/imageCompression";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Trash2, AlertTriangle } from "lucide-react";
@@ -54,6 +56,26 @@ export default function EditPagePage() {
   const { mutateAsync: deletePage, isPending: isDeleting } = useDeletePage();
   const { data: members } = usePageMemberships(pageId);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [logoUrl, setLogoUrl] = useState<string | null>(null);
+  const [coverUrl, setCoverUrl] = useState<string | null>(null);
+
+  // Sync image URLs when page data loads
+  const [imagesSynced, setImagesSynced] = useState(false);
+  if (page && !imagesSynced) {
+    setLogoUrl(page.logo_url ?? null);
+    setCoverUrl(page.cover_url ?? null);
+    setImagesSynced(true);
+  }
+
+  async function handleImageUpdate(field: "logo_url" | "cover_url", url: string | null) {
+    if (field === "logo_url") setLogoUrl(url);
+    else setCoverUrl(url);
+    try {
+      await mutateAsync({ [field]: url });
+    } catch {
+      toast.error("Kunne ikke lagre bildeendring");
+    }
+  }
 
   if (isLoading) return <p className="p-8 text-muted-foreground">Laster…</p>;
   if (!page) return <p className="p-8 text-muted-foreground">Siden ble ikke funnet.</p>;
@@ -116,6 +138,30 @@ export default function EditPagePage() {
             <span className="font-mono text-foreground">bilgarasje.no/s/{page.slug}</span>
           </p>
         </div>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Bilder</CardTitle>
+          </CardHeader>
+          <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <PageImageUpload
+              label="Logo"
+              currentUrl={logoUrl}
+              storagePath={getPageLogoPath(pageId!)}
+              aspectClass="aspect-square"
+              onUploaded={(url) => handleImageUpdate("logo_url", url)}
+              onRemoved={() => handleImageUpdate("logo_url", null)}
+            />
+            <PageImageUpload
+              label="Coverbilde"
+              currentUrl={coverUrl}
+              storagePath={getPageCoverPath(pageId!)}
+              aspectClass="aspect-[3/1]"
+              onUploaded={(url) => handleImageUpdate("cover_url", url)}
+              onRemoved={() => handleImageUpdate("cover_url", null)}
+            />
+          </CardContent>
+        </Card>
 
         <Card>
           <CardContent className="p-6">
