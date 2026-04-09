@@ -89,9 +89,13 @@ export function HeroSearch() {
       </div>
 
       {showDropdown && (
-        <div className="absolute top-full left-0 right-0 mt-1 rounded-lg border border-[#c4962c]/15 bg-[#ede6db] shadow-[0_18px_60px_rgba(58,46,36,0.24)] z-[9999] max-h-[380px] overflow-hidden">
-          <div className="pointer-events-none absolute inset-x-0 top-0 h-12 bg-gradient-to-b from-[#f3ede4]/95 via-[#f1e9de]/70 to-transparent z-10" />
-          <div className="max-h-[380px] overflow-y-auto backdrop-blur-xl">
+        <>
+          {/* Overlay to dim content behind */}
+          <div className="fixed inset-0 bg-[#3a2e24]/10 z-[9998]" onClick={() => setOpen(false)} />
+          <div
+            className="fixed left-1/2 -translate-x-1/2 mt-1 w-full max-w-[480px] rounded-lg border border-[#c4962c]/20 bg-[#ede6db] shadow-[0_18px_60px_rgba(58,46,36,0.3)] z-[9999] max-h-[400px] overflow-y-auto"
+            style={{ top: (inputRef.current?.getBoundingClientRect().bottom ?? 0) + window.scrollY }}
+          >
             {isSearching && (
               <div className="px-4 py-3 text-[13px] uppercase tracking-[0.08em] text-[#3a2e24]/40" style={{ fontFamily: "'Chakra Petch', sans-serif" }}>Søker…</div>
             )}
@@ -108,7 +112,7 @@ export function HeroSearch() {
                   <button
                     key={r.id}
                     onClick={() => handleSelect(r)}
-                    className="w-full flex items-center gap-3 px-4 py-3 hover:bg-[#c4962c]/7 transition-colors text-left group border-b border-[#3a2e24]/[0.05] last:border-b-0"
+                    className="w-full flex items-center gap-3 px-4 py-3 hover:bg-[#c4962c]/10 transition-colors text-left group border-b border-[#3a2e24]/[0.05] last:border-b-0"
                   >
                     <div className="w-10 h-10 rounded-md overflow-hidden flex-shrink-0 bg-[#3a2e24]/[0.06] border border-[#3a2e24]/[0.06]">
                       {r.thumbnail ? (
@@ -118,7 +122,7 @@ export function HeroSearch() {
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="text-[15px] uppercase tracking-[0.03em] text-[#3a2e24] truncate transition-colors font-bold" style={{ fontFamily: "'Chakra Petch', sans-serif" }}>
+                      <div className="text-[15px] uppercase tracking-[0.03em] text-[#3a2e24] truncate font-bold" style={{ fontFamily: "'Chakra Petch', sans-serif" }}>
                         {r.title}
                       </div>
                       {r.subtitle && (
@@ -133,7 +137,7 @@ export function HeroSearch() {
               </div>
             )}
           </div>
-        </div>
+        </>
       )}
     </div>
   );
