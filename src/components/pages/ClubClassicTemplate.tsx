@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { Mail, Globe, Phone, ArrowRight } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PublicPageHero } from "./PublicPageHero";
 import { useFeedPosts } from "@/hooks/useFeedPosts";
 import { FeedCard } from "@/components/feed/FeedCard";
@@ -158,71 +159,69 @@ export function ClubClassicTemplate({ page }: { page: Page }) {
       {/* ── BODY ── */}
       <div className="max-w-[1000px] mx-auto px-5 md:px-8 pb-8 md:pb-14">
 
-        {/* Om klubben */}
+        {/* Beskrivelse */}
         {page.about && (
           <div className="mb-10 md:mb-14">
-            <div className="grid md:grid-cols-[240px_1fr] gap-6 md:gap-10">
-              <div className="space-y-3">
-                <p className="text-[10px] tracking-[0.35em] uppercase text-muted-foreground font-sans font-semibold">
-                  Om klubben
-                </p>
-                <h2 className="text-xl md:text-2xl font-display uppercase tracking-wide text-foreground">
-                  Hvem er vi?
-                </h2>
-                <div className="flex flex-col gap-2 mt-4">
-                  {page.contact_email && (
-                    <a href={`mailto:${page.contact_email}`} className="flex items-center gap-2 text-[13px] text-primary hover:text-accent transition-colors">
-                      <Mail className="w-3.5 h-3.5" />
-                      Kontakt oss
-                    </a>
-                  )}
-                  {page.website && (
-                    <a href={page.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-[13px] text-primary hover:text-accent transition-colors">
-                      <Globe className="w-3.5 h-3.5" />
-                      Nettside
-                    </a>
-                  )}
-                  {page.contact_phone && (
-                    <a href={`tel:${page.contact_phone}`} className="flex items-center gap-2 text-[13px] text-primary hover:text-accent transition-colors">
-                      <Phone className="w-3.5 h-3.5" />
-                      {page.contact_phone}
-                    </a>
-                  )}
-                </div>
-              </div>
-
-              <div className="md:border-l md:border-border md:pl-10">
-                <p className="text-[15px] leading-[1.8] text-muted-foreground whitespace-pre-line font-sans">
-                  {page.about}
-                </p>
-              </div>
-            </div>
+            <p className="text-[15px] leading-[1.8] text-muted-foreground whitespace-pre-line font-sans">
+              {page.about}
+            </p>
           </div>
         )}
 
-        {/* Biler — inline, no card wrapper */}
-        <ClubCarsSection page={page} />
+        {/* Tabs: Biler / Feed / Om oss */}
+        <Tabs defaultValue="biler" className="w-full">
+          <TabsList className="mb-6">
+            <TabsTrigger value="biler">Biler</TabsTrigger>
+            {feedPosts && feedPosts.length > 0 && (
+              <TabsTrigger value="feed">Siste nytt</TabsTrigger>
+            )}
+            {(page.contact_email || page.website || page.contact_phone) && (
+              <TabsTrigger value="om">Om oss</TabsTrigger>
+            )}
+          </TabsList>
 
-        {/* Klubb-feed */}
-        {feedPosts && feedPosts.length > 0 && (
-          <>
-            <div className="section-divider" />
+          <TabsContent value="biler">
+            <ClubCarsSection page={page} />
+          </TabsContent>
 
-            <div>
-              <p className="text-[10px] tracking-[0.35em] uppercase text-muted-foreground font-sans font-semibold mb-2">
-                Siste nytt
-              </p>
-              <h2 className="text-xl md:text-2xl font-display uppercase tracking-wide text-foreground mb-6">
-                Fra klubben
-              </h2>
+          {feedPosts && feedPosts.length > 0 && (
+            <TabsContent value="feed">
               <div className="space-y-6">
                 {feedPosts.map((post) => (
                   <FeedCard key={post.id} post={post} />
                 ))}
               </div>
-            </div>
-          </>
-        )}
+            </TabsContent>
+          )}
+
+          {(page.contact_email || page.website || page.contact_phone) && (
+            <TabsContent value="om">
+              <div className="space-y-4 max-w-md">
+                <h2 className="text-xl md:text-2xl font-display uppercase tracking-wide text-foreground mb-4">
+                  Kontakt
+                </h2>
+                {page.contact_email && (
+                  <a href={`mailto:${page.contact_email}`} className="flex items-center gap-2.5 text-sm text-primary hover:text-accent transition-colors">
+                    <Mail className="w-4 h-4" />
+                    {page.contact_email}
+                  </a>
+                )}
+                {page.website && (
+                  <a href={page.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2.5 text-sm text-primary hover:text-accent transition-colors">
+                    <Globe className="w-4 h-4" />
+                    Nettside
+                  </a>
+                )}
+                {page.contact_phone && (
+                  <a href={`tel:${page.contact_phone}`} className="flex items-center gap-2.5 text-sm text-primary hover:text-accent transition-colors">
+                    <Phone className="w-4 h-4" />
+                    {page.contact_phone}
+                  </a>
+                )}
+              </div>
+            </TabsContent>
+          )}
+        </Tabs>
       </div>
     </div>
   );
