@@ -115,14 +115,12 @@ export function ClubClassicTemplate({ page }: { page: Page }) {
 
       {/* ── HERO — banner image full size ── */}
       {page.cover_url && (
-        <section className="relative w-full">
+        <section className="w-full">
           <img
             src={page.cover_url}
             alt=""
-            className="w-full h-auto max-h-[420px] object-cover"
+            className="w-full h-auto"
           />
-          {/* Subtle bottom fade only */}
-          <div className="absolute bottom-0 inset-x-0 h-8 bg-gradient-to-t from-background to-transparent" />
         </section>
       )}
 
