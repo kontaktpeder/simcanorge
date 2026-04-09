@@ -102,7 +102,7 @@ export default function Index() {
         </section>
 
         {/* ─── MODULES ─── */}
-        <section className="py-4 sm:py-6 md:py-8">
+        <section className="py-4 sm:py-6 md:py-8" style={{ background: 'linear-gradient(180deg, #2c2318 0%, #3a2c1e 50%, #352a1d 100%)' }}>
           <div className="max-w-[1200px] mx-auto px-4 sm:px-5 md:px-8">
             {/* Mobile: compact horizontal scroll */}
             <div className="flex gap-2.5 overflow-x-auto scrollbar-hide -mx-1 px-1 md:hidden">
@@ -151,11 +151,11 @@ export default function Index() {
         </section>
 
         {/* ─── FEED ─── */}
-        <section className="pt-2 sm:pt-6 md:pt-8 pb-12 sm:pb-20 md:pb-32">
+        <section className="pt-2 sm:pt-6 md:pt-8 pb-12 sm:pb-20 md:pb-32" style={{ background: 'linear-gradient(180deg, #352a1d 0%, #2e2419 30%, #271f15 100%)' }}>
           <div className="max-w-[1000px] mx-auto px-4 sm:px-5 md:px-8">
 
             <div className="mb-6 sm:mb-10">
-              <h2 className="text-[1.6rem] sm:text-[2.2rem] md:text-[3rem] uppercase text-[#1a1a1a] font-bold leading-[1] tracking-[0.06em] mb-4 sm:mb-6"
+              <h2 className="text-[1.6rem] sm:text-[2.2rem] md:text-[3rem] uppercase text-white/90 font-bold leading-[1] tracking-[0.06em] mb-4 sm:mb-6"
                 style={oswald}>
                 Oppdateringer
               </h2>
@@ -170,8 +170,8 @@ export default function Index() {
               <div className="space-y-8 sm:space-y-12">
                 {[...Array(3)].map((_, i) => (
                   <div key={i}>
-                    <div className="h-[280px] sm:h-[420px] bg-[#1a1a1a]/[0.04] rounded-lg animate-pulse" />
-                    <div className="h-px bg-[#1a1a1a]/[0.06] mt-8 sm:mt-12" />
+                    <div className="h-[280px] sm:h-[420px] bg-white/[0.04] rounded-lg animate-pulse" />
+                    <div className="h-px bg-white/[0.06] mt-8 sm:mt-12" />
                   </div>
                 ))}
               </div>
@@ -183,7 +183,7 @@ export default function Index() {
                   <div key={post.id}>
                     <FeedCard post={post} />
                     {i < filteredPosts.length - 1 && (
-                      <div className="h-px bg-[#1a1a1a]/[0.08] my-8 sm:my-12" />
+                      <div className="h-px bg-white/[0.08] my-8 sm:my-12" />
                     )}
                   </div>
                 ))}
@@ -192,23 +192,23 @@ export default function Index() {
 
             {!feedLoading && filteredPosts.length === 0 && (
               <div className="py-12 sm:py-24 text-center">
-                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#1a1a1a]/[0.05] flex items-center justify-center">
-                  <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1" className="w-8 h-8 text-[#1a1a1a]/15">
+                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-white/[0.05] flex items-center justify-center">
+                  <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1" className="w-8 h-8 text-white/15">
                     <path d="M5 21l3-7h16l3 7" strokeLinecap="round" strokeLinejoin="round"/>
                     <rect x="3" y="21" width="26" height="5" rx="1"/>
                     <circle cx="9" cy="26" r="2"/><circle cx="23" cy="26" r="2"/>
                   </svg>
                 </div>
-                <p className="text-[1.2rem] sm:text-[1.6rem] uppercase text-[#1a1a1a]/25 font-bold tracking-[0.08em]"
+                <p className="text-[1.2rem] sm:text-[1.6rem] uppercase text-white/25 font-bold tracking-[0.08em]"
                   style={oswald}>
                   {feedFilter === "alle" ? "Ingen oppdateringer enda" : "Ingen treff i denne kategorien"}
                 </p>
-                <p className="text-[13px] text-[#1a1a1a]/20 mt-1.5">
+                <p className="text-[13px] text-white/20 mt-1.5">
                   {feedFilter === "alle" ? "Bli den første til å dele noe" : "Prøv en annen kategori"}
                 </p>
                 {!user && feedFilter === "alle" && (
                   <Link to="/login"
-                    className="inline-block mt-5 text-[12px] uppercase tracking-[0.2em] text-[#c4962c] hover:text-[#a07820] font-bold transition-colors border-b border-[#c4962c]/30 hover:border-[#c4962c]/60 pb-0.5"
+                    className="inline-block mt-5 text-[12px] uppercase tracking-[0.2em] text-[#c4962c] hover:text-[#e8c547] font-bold transition-colors border-b border-[#c4962c]/30 hover:border-[#c4962c]/60 pb-0.5"
                     style={oswald}>
                     Logg inn for å starte →
                   </Link>
