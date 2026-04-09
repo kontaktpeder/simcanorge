@@ -254,6 +254,11 @@ export function SendInnBilForm({ onSuccess, onCancel, showCancelButton = false }
       setErrors(fieldErrors);
       return;
     }
+
+    if (clubLinkRequested && !clubPageId) {
+      setErrors(prev => ({ ...prev, club_page: "Velg ønsket klubb" }));
+      return;
+    }
     
     setIsSubmitting(true);
     setUploadProgress(null);
