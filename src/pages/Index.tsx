@@ -113,7 +113,7 @@ export default function Index() {
                       <p className="text-[12px] tracking-[0.06em] uppercase font-bold text-[#3a2e24] leading-tight text-center" style={chakra}>
                         {mod.title}
                       </p>
-                      {mod.comingSoon && (
+                      {(mod as any).comingSoon && (
                         <span className="text-[8px] tracking-[0.1em] uppercase text-[#c4962c] font-bold" style={oswald}>Snart</span>
                       )}
                     </div>
@@ -142,13 +142,13 @@ export default function Index() {
                             {mod.desc}
                           </p>
                         </div>
-                        {mod.comingSoon && (
+                        {(mod as any).comingSoon && (
                           <span className="text-[9px] tracking-[0.1em] uppercase text-[#c4962c] font-bold" style={oswald}>Kommer snart</span>
                         )}
                       </div>
                     </Link>
 
-                    {!mod.comingSoon && (
+                    {!(mod as any).comingSoon && (
                       <Link
                         to={createHref}
                         className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center gap-1 px-2 py-1 bg-[#3a2e24]/80 backdrop-blur-sm border border-[#c4962c]/20 text-white/80 hover:text-white text-[9px] uppercase tracking-[0.15em] font-bold z-10 rounded"

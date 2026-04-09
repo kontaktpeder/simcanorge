@@ -17,6 +17,15 @@ export default function PublicPagePage() {
   const { slug } = useParams<{ slug: string }>();
   const { data: page, isLoading, isError } = usePublicPageBySlug(slug);
   const { user } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Redirect /s/:slug → /klubber/:slug for clubs
+  useEffect(() => {
+    if (page && page.page_type === "club" && location.pathname.startsWith("/s/")) {
+      navigate(`/klubber/${page.slug}`, { replace: true });
+    }
+  }, [page, location.pathname, navigate]);
 
   if (isLoading) {
     return (
