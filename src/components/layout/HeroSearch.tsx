@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useCallback, useLayoutEffect, type CSSProperties } from "react";
+import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
 import { Search, X } from "lucide-react";
 import { useGlobalSearch, type SearchResult } from "@/hooks/useGlobalSearch";
@@ -92,34 +93,8 @@ export function HeroSearch() {
     inputRef.current?.focus();
   }, []);
 
-  return (
-    <div ref={containerRef} className="relative w-full" style={{ zIndex: showDropdown ? 10000 : 120 }}>
-      <div className="relative">
-        <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-[#8b6914]" />
-        <input
-          ref={inputRef}
-          type="text"
-          value={inputValue}
-          onChange={(e) => {
-            setInputValue(e.target.value);
-            setOpen(true);
-          }}
-          onFocus={() => setOpen(true)}
-          placeholder="Søk etter biler, deler, arrangementer…"
-          style={{ fontFamily: "'Chakra Petch', sans-serif" }}
-          className="w-full bg-[#e8e0d4] border border-[#c4962c]/20 hover:border-[#c4962c]/40 focus:border-[#c4962c] rounded-lg pl-14 pr-12 py-3.5 sm:py-4 text-[14px] sm:text-[15px] text-[#3a2e24] placeholder:text-[#3a2e24]/35 focus:outline-none transition-all tracking-wide shadow-[0_2px_16px_rgba(58,46,36,0.15)]"
-        />
-        {inputValue && (
-          <button
-            onClick={handleClear}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-[#3a2e24]/30 hover:text-[#3a2e24]/60 transition-colors"
-          >
-            <X className="w-4 h-4" />
-          </button>
-        )}
-      </div>
-
-      {showDropdown && (
+  const dropdown = showDropdown && typeof document !== "undefined"
+    ? createPortal(
         <>
           <div className="fixed inset-0 bg-[#3a2e24]/10 z-[9998]" onMouseDown={() => setOpen(false)} />
           <div
@@ -189,8 +164,40 @@ export function HeroSearch() {
               )}
             </div>
           </div>
-        </>
-      )}
-    </div>
+        </>,
+        document.body
+      )
+    : null;
+
+  return (
+    <>
+      <div ref={containerRef} className="relative w-full">
+        <div className="relative">
+          <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-[#8b6914]" />
+          <input
+            ref={inputRef}
+            type="text"
+            value={inputValue}
+            onChange={(e) => {
+              setInputValue(e.target.value);
+              setOpen(true);
+            }}
+            onFocus={() => setOpen(true)}
+            placeholder="Søk etter biler, deler, arrangementer…"
+            style={{ fontFamily: "'Chakra Petch', sans-serif" }}
+            className="w-full bg-[#e8e0d4] border border-[#c4962c]/20 hover:border-[#c4962c]/40 focus:border-[#c4962c] rounded-lg pl-14 pr-12 py-3.5 sm:py-4 text-[14px] sm:text-[15px] text-[#3a2e24] placeholder:text-[#3a2e24]/35 focus:outline-none transition-all tracking-wide shadow-[0_2px_16px_rgba(58,46,36,0.15)]"
+          />
+          {inputValue && (
+            <button
+              onClick={handleClear}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-[#3a2e24]/30 hover:text-[#3a2e24]/60 transition-colors"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          )}
+        </div>
+      </div>
+      {dropdown}
+    </>
   );
 }
