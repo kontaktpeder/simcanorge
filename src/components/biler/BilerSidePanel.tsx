@@ -2,7 +2,7 @@ import React from 'react';
 import { Label } from '@/components/ui/label';
 import {
   Car, CheckCircle, Wrench, History, AlertTriangle,
-  RotateCcw, Search,
+  RotateCcw, Search, PanelLeftClose, PanelLeft,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -10,6 +10,9 @@ import { CarFormFields } from '@/components/car/CarFormFields';
 import {
   Drawer, DrawerContent, DrawerHeader, DrawerTitle,
 } from '@/components/ui/drawer';
+
+const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
+const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
 
 const CATEGORIES = [
   { id: 'alle', label: 'Alle biler', icon: Car },
@@ -48,11 +51,15 @@ interface Props {
   onSearchChange: (query: string) => void;
   resultCount: number;
   categoryCounts: Record<string, number>;
+  /** Whether the desktop panel is expanded */
+  expanded: boolean;
+  onExpandedChange: (expanded: boolean) => void;
 }
 
 export function BilerSidePanel({
   open, onOpenChange, filterState, onFilterChange,
   searchQuery, onSearchChange, resultCount, categoryCounts,
+  expanded, onExpandedChange,
 }: Props) {
   const isMobile = useIsMobile();
 
@@ -71,9 +78,12 @@ export function BilerSidePanel({
   if (isMobile) {
     return (
       <Drawer open={open} onOpenChange={onOpenChange}>
-        <DrawerContent className="max-h-[85vh]" style={{ background: 'hsl(42, 30%, 95%)' }}>
+        <DrawerContent className="max-h-[85vh]" style={{ background: '#f5efe6' }}>
           <DrawerHeader className="pb-0">
-            <DrawerTitle className="font-display text-base uppercase tracking-wider">
+            <DrawerTitle
+              className="text-[13px] uppercase tracking-[0.15em] font-bold"
+              style={oswald}
+            >
               Filter
             </DrawerTitle>
           </DrawerHeader>
@@ -85,34 +95,74 @@ export function BilerSidePanel({
     );
   }
 
-  // Desktop: static sidebar
+  // Desktop: collapsible sidebar
   return (
     <aside
-      className="shrink-0 z-40 border-r-2 border-foreground/10 overflow-y-auto static h-full w-[300px]"
-      style={{ background: 'hsl(42, 30%, 95%)' }}
+      className={cn(
+        'shrink-0 z-40 overflow-y-auto static h-full transition-all duration-300 ease-in-out',
+        expanded ? 'w-[280px]' : 'w-[48px]',
+      )}
+      style={{ background: 'linear-gradient(180deg, #3a2e24 0%, #2a2118 100%)' }}
     >
-      <div className="w-[300px] min-h-full flex flex-col">
-        {/* Header */}
-        <div
-          className="sticky top-0 z-10 flex items-center justify-between px-5 py-4 border-b-2 border-foreground/10"
-          style={{ background: 'hsl(212, 80%, 15%)' }}
-        >
-          <div>
-            <p className="font-display text-[10px] uppercase tracking-[0.4em] text-white/40">
-              Simca Norge
-            </p>
-            <h2 className="font-display text-lg uppercase tracking-wider text-white leading-none mt-0.5">
-              Arkivet
-            </h2>
+      <div className="min-h-full flex flex-col">
+        {/* Header with toggle */}
+        <div className="sticky top-0 z-10 flex items-center justify-between px-3 py-3 border-b border-white/[0.06]">
+          {expanded && (
+            <div className="min-w-0">
+              <p
+                className="text-[9px] tracking-[0.3em] uppercase"
+                style={{ ...oswald, fontWeight: 500, background: 'linear-gradient(135deg, #F5A623, #FFD166)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}
+              >
+                bilgarasje.no
+              </p>
+              <h2
+                className="text-[1rem] leading-[0.95] uppercase tracking-[0.02em] text-white font-bold italic mt-0.5"
+                style={chakra}
+              >
+                Arkivet
+              </h2>
+            </div>
+          )}
+          <button
+            onClick={() => onExpandedChange(!expanded)}
+            className="p-1.5 rounded text-white/40 hover:text-white/80 hover:bg-white/[0.06] transition-colors shrink-0"
+            title={expanded ? 'Skjul panel' : 'Vis panel'}
+          >
+            {expanded ? <PanelLeftClose className="w-4 h-4" /> : <PanelLeft className="w-4 h-4" />}
+          </button>
+        </div>
+
+        {/* Collapsed: show icon-only category buttons */}
+        {!expanded && (
+          <div className="flex flex-col items-center gap-1 py-3">
+            {CATEGORIES.map((cat) => {
+              const Icon = cat.icon;
+              const isActive = filterState.category === cat.id;
+              return (
+                <button
+                  key={cat.id}
+                  onClick={() => onFilterChange({ ...filterState, category: cat.id })}
+                  className={cn(
+                    'w-8 h-8 flex items-center justify-center rounded transition-colors',
+                    isActive
+                      ? 'bg-[#c4962c]/20 text-[#F5A623]'
+                      : 'text-white/30 hover:text-white/60 hover:bg-white/[0.04]',
+                  )}
+                  title={cat.label}
+                >
+                  <Icon className="w-4 h-4" />
+                </button>
+              );
+            })}
           </div>
-        </div>
+        )}
 
-        {/* Red accent line */}
-        <div className="h-1 w-full" style={{ background: 'hsl(2, 85%, 40%)' }} />
-
-        <div className="flex-1 flex flex-col">
-          {filterContent}
-        </div>
+        {/* Expanded: full filter content */}
+        {expanded && (
+          <div className="flex-1 flex flex-col">
+            {filterContent}
+          </div>
+        )}
       </div>
     </aside>
   );
@@ -121,7 +171,7 @@ export function BilerSidePanel({
 /** The actual filter UI, shared between Drawer and Sidebar */
 function BilerFilterContent({
   filterState, onFilterChange, searchQuery, onSearchChange, resultCount, categoryCounts,
-}: Omit<Props, 'open' | 'onOpenChange'>) {
+}: Omit<Props, 'open' | 'onOpenChange' | 'expanded' | 'onExpandedChange'>) {
   const hasActiveFilters =
     filterState.category !== 'alle' || filterState.brand !== '' || filterState.model !== '' || filterState.variant !== '' || filterState.body_type !== '' || filterState.year !== '' || filterState.decade !== '' || searchQuery !== '';
 
@@ -143,32 +193,39 @@ function BilerFilterContent({
   return (
     <>
       {/* Search + result count */}
-      <div className="px-5 pt-5 pb-3 space-y-3 border-b-2 border-foreground/8">
+      <div className="px-4 pt-4 pb-3 space-y-3 border-b border-white/[0.06]">
         <div className="relative">
-          <Search className="absolute left-0 bottom-2 h-4 w-4 text-foreground/40" />
+          <Search className="absolute left-0 bottom-2 h-4 w-4 text-white/30" />
           <input
             type="text"
             placeholder="Søk i arkivet…"
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
-            className="w-full bg-transparent border-0 border-b-2 border-foreground/15 focus:border-primary pl-6 pr-2 py-1.5 text-sm font-serif italic placeholder:text-muted-foreground/50 outline-none transition-colors"
+            className="w-full bg-transparent border-0 border-b border-white/10 focus:border-[#c4962c]/50 pl-6 pr-2 py-1.5 text-sm text-white/80 placeholder:text-white/20 outline-none transition-colors"
+            style={{ fontFamily: "'Playfair Display', serif", fontStyle: 'italic' }}
           />
         </div>
         <div className="flex items-center justify-between">
-          <span className="font-serif text-xs text-muted-foreground italic">
+          <span
+            className="text-[11px] text-white/25"
+            style={{ ...oswald, letterSpacing: '0.05em' }}
+          >
             {resultCount} {resultCount === 1 ? 'bil' : 'biler'}
           </span>
         </div>
       </div>
 
       {/* Filter content */}
-      <div className="flex-1 px-5 py-5 space-y-5">
+      <div className="flex-1 px-4 py-4 space-y-4">
         {/* Categories */}
         <div>
-          <Label className="font-display text-[11px] uppercase tracking-[0.15em] text-foreground/60">
+          <label
+            className="text-[10px] uppercase tracking-[0.2em] text-white/25 block mb-2"
+            style={oswald}
+          >
             Kategori
-          </Label>
-          <div className="mt-2 space-y-1">
+          </label>
+          <div className="space-y-0.5">
             {CATEGORIES.map((cat) => {
               const Icon = cat.icon;
               const isActive = filterState.category === cat.id;
@@ -178,17 +235,22 @@ function BilerFilterContent({
                   key={cat.id}
                   onClick={() => onFilterChange({ ...filterState, category: cat.id })}
                   className={cn(
-                    'w-full flex items-center gap-3 px-3 py-2.5 text-left text-sm transition-all',
+                    'w-full flex items-center gap-2.5 px-3 py-2 text-left text-sm rounded transition-all',
                     isActive
-                      ? 'bg-foreground text-background font-medium'
-                      : 'text-foreground/70 hover:bg-foreground/5 hover:text-foreground',
+                      ? 'bg-[#c4962c]/15 text-[#F5A623]'
+                      : 'text-white/40 hover:bg-white/[0.04] hover:text-white/60',
                   )}
                 >
-                  <Icon className="w-4 h-4 shrink-0" />
-                  <span className="flex-1 font-display text-xs uppercase tracking-wider">{cat.label}</span>
+                  <Icon className="w-3.5 h-3.5 shrink-0" />
+                  <span
+                    className="flex-1 text-[11px] uppercase tracking-[0.1em]"
+                    style={oswald}
+                  >
+                    {cat.label}
+                  </span>
                   <span className={cn(
                     'text-[10px] tabular-nums',
-                    isActive ? 'text-background/60' : 'text-muted-foreground',
+                    isActive ? 'text-[#F5A623]/60' : 'text-white/15',
                   )}>
                     {count}
                   </span>
@@ -199,39 +261,45 @@ function BilerFilterContent({
         </div>
 
         {/* Divider */}
-        <div className="border-t-2 border-foreground/8" />
+        <div className="border-t border-white/[0.06]" />
 
         {/* Car fields filter */}
         <div>
-          <Label className="font-display text-[11px] uppercase tracking-[0.15em] text-foreground/60 mb-3 block">
+          <label
+            className="text-[10px] uppercase tracking-[0.2em] text-white/25 block mb-3"
+            style={oswald}
+          >
             Bilmodell
-          </Label>
-          <CarFormFields
-            formData={{
-              brand: filterState.brand,
-              model: filterState.model,
-              variant: filterState.variant,
-              body_type: filterState.body_type,
-              year: filterState.year,
-            }}
-            onChange={handleCarFieldChange}
-            showTooltips={false}
-          />
+          </label>
+          <div className="[&_label]:text-white/30 [&_select]:bg-white/[0.06] [&_select]:border-white/[0.08] [&_select]:text-white/70 [&_input]:bg-white/[0.06] [&_input]:border-white/[0.08] [&_input]:text-white/70">
+            <CarFormFields
+              formData={{
+                brand: filterState.brand,
+                model: filterState.model,
+                variant: filterState.variant,
+                body_type: filterState.body_type,
+                year: filterState.year,
+              }}
+              onChange={handleCarFieldChange}
+              showTooltips={false}
+            />
+          </div>
         </div>
 
         {/* Reset */}
         {hasActiveFilters && (
           <>
-            <div className="border-t-2 border-foreground/8" />
+            <div className="border-t border-white/[0.06]" />
             <button
               type="button"
               onClick={() => {
                 onFilterChange(EMPTY_BILER_FILTER);
                 onSearchChange('');
               }}
-              className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors font-display uppercase tracking-wider"
+              className="flex items-center gap-2 text-[11px] text-white/30 hover:text-[#F5A623] transition-colors uppercase tracking-[0.15em]"
+              style={oswald}
             >
-              <RotateCcw className="w-3.5 h-3.5" />
+              <RotateCcw className="w-3 h-3" />
               Nullstill
             </button>
           </>
