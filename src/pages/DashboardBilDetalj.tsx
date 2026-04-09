@@ -5,9 +5,10 @@ import { useAuth } from '@/hooks/useAuth';
 import { Layout } from '@/components/layout/Layout';
 import { CarEventsList } from '@/components/car/CarEventsList';
 import { 
-  Car, Calendar, Wrench, Loader2, XCircle, 
+  Car, Wrench, Loader2, XCircle, 
   Pencil, Save, X, Eye, EyeOff, Upload, Trash2, Clock, Send,
-  ChevronLeft, ChevronRight, Star, ImageIcon, BookOpen, Info, ArrowLeft
+  ChevronLeft, ChevronRight, Star, ImageIcon, BookOpen, Info, ArrowLeft,
+  CheckCircle2, Circle
 } from 'lucide-react';
 import { useEffect, useState, useRef } from 'react';
 import { Input } from '@/components/ui/input';
