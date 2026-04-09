@@ -10,6 +10,7 @@ import { HomeFeedComposer } from "@/components/feed/HomeFeedComposer";
 import { HeroSearch } from "@/components/layout/HeroSearch";
 import { FeedFilterTabs, type FeedFilter } from "@/components/feed/FeedFilterTabs";
 import heroCar from "@/assets/hero-car.jpg";
+import carSilhouette from "@/assets/car-silhouette.png";
 
 const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
 const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
@@ -57,7 +58,7 @@ export default function Index() {
             <img
               src={heroCar}
               alt=""
-              className="absolute right-[-5%] bottom-0 h-[130%] w-[75%] object-cover object-center"
+              className="absolute right-[-5%] top-[50%] translate-y-[-50%] h-[160%] w-[75%] object-cover object-center"
               style={{
                 WebkitMaskImage: 'linear-gradient(to left, black 50%, transparent 100%)',
                 maskImage: 'linear-gradient(to left, black 50%, transparent 100%)',
@@ -164,11 +165,14 @@ export default function Index() {
           className="relative pt-6 sm:pt-8 md:pt-10 pb-12 sm:pb-20 md:pb-32 overflow-hidden"
           style={{ background: 'linear-gradient(180deg, #ebe3d8 0%, #e2d9cc 40%, #dbd0c2 100%)' }}
         >
-          {/* Subtle car silhouette watermark */}
-          <div className="absolute inset-0 pointer-events-none flex items-center justify-center" style={{ opacity: 0.03 }}>
-            <svg viewBox="0 0 800 300" fill="currentColor" className="w-[90%] max-w-[1200px] text-[#3a2e24]">
-              <path d="M60 220 Q60 200 80 190 L180 170 Q200 130 240 110 L360 80 Q400 70 440 70 L560 75 Q620 80 660 100 L720 140 Q740 155 750 180 L760 200 Q770 215 760 220 L740 225 Q730 200 710 190 Q690 180 670 190 Q650 200 650 220 L350 225 Q340 200 320 190 Q300 180 280 190 Q260 200 260 220 Z" />
-            </svg>
+          {/* Car silhouette watermark — flipped */}
+          <div className="absolute inset-0 pointer-events-none flex items-center justify-center overflow-hidden" style={{ opacity: 0.035 }}>
+            <img
+              src={carSilhouette}
+              alt=""
+              className="w-[80%] max-w-[1000px]"
+              style={{ transform: 'scaleX(-1)', filter: 'brightness(0) opacity(1)' }}
+            />
           </div>
 
           <div className="relative z-10 max-w-[800px] mx-auto px-4 sm:px-5 md:px-8">
