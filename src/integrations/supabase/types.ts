@@ -1358,6 +1358,54 @@ export type Database = {
           },
         ]
       }
+      page_car_link_requests: {
+        Row: {
+          car_id: string
+          created_at: string
+          id: string
+          message: string | null
+          page_id: string
+          resolved_at: string | null
+          resolved_by: string | null
+          status: string
+        }
+        Insert: {
+          car_id: string
+          created_at?: string
+          id?: string
+          message?: string | null
+          page_id: string
+          resolved_at?: string | null
+          resolved_by?: string | null
+          status?: string
+        }
+        Update: {
+          car_id?: string
+          created_at?: string
+          id?: string
+          message?: string | null
+          page_id?: string
+          resolved_at?: string | null
+          resolved_by?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "page_car_link_requests_car_id_fkey"
+            columns: ["car_id"]
+            isOneToOne: false
+            referencedRelation: "cars"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "page_car_link_requests_page_id_fkey"
+            columns: ["page_id"]
+            isOneToOne: false
+            referencedRelation: "pages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       page_cars: {
         Row: {
           car_id: string
@@ -1811,7 +1859,15 @@ export type Database = {
           slug: string
         }[]
       }
+      approve_page_car_link_request: {
+        Args: { p_request_id: string }
+        Returns: Json
+      }
       cleanup_old_page_views: { Args: never; Returns: undefined }
+      create_page_car_link_request: {
+        Args: { p_car_id: string; p_message?: string; p_page_id: string }
+        Returns: Json
+      }
       create_page_with_owner: {
         Args: {
           p_about?: string
@@ -1853,6 +1909,10 @@ export type Database = {
       notify_owner_profile_pending: {
         Args: { _display_name: string; _owner_id: string; _user_id: string }
         Returns: undefined
+      }
+      reject_page_car_link_request: {
+        Args: { p_request_id: string }
+        Returns: Json
       }
       request_seller_approval: { Args: never; Returns: Json }
     }
