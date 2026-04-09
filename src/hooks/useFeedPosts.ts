@@ -1,14 +1,21 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
-export function useFeedPosts() {
+interface FeedFilters {
+  pageId?: string;
+  limit?: number;
+}
+
+export function useFeedPosts(filters?: FeedFilters) {
+  const { pageId, limit = 30 } = filters ?? {};
+
   return useQuery({
-    queryKey: ["feed_posts"],
+    queryKey: ["feed_posts", { pageId, limit }],
     queryFn: async () => {
-      const { data, error } = await supabase
+      let query = supabase
         .from("feed_posts")
         .select(`
-          id, created_at, post_type, body,
+          id, created_at, updated_at, post_type, body, page_id,
           snapshot_title, snapshot_image_url, snapshot_entity_type,
           author:person_profiles!feed_posts_author_profile_id_fkey(
             id, display_name, slug, avatar_url
@@ -31,8 +38,13 @@ export function useFeedPosts() {
         `)
         .eq("is_visible", true)
         .order("created_at", { ascending: false })
-        .limit(30);
+        .limit(limit);
 
+      if (pageId) {
+        query = query.eq("page_id", pageId);
+      }
+
+      const { data, error } = await query;
       if (error) throw error;
       return data ?? [];
     },

@@ -70,6 +70,7 @@ export default function EditPagePage() {
         contact_email: values.contact_email || null,
         website: values.website || null,
         theme_color: values.theme_color || null,
+        page_template: (values as any).page_template || "modern",
         tagline: values.tagline || null,
         about: values.about || null,
         contact_phone: values.contact_phone || null,

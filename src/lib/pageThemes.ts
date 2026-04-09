@@ -6,9 +6,9 @@
  */
 
 export interface PageTheme {
-  accent: string;      // HSL values for --page-accent
-  accentLight: string; // HSL values for --page-accent-light
-  gradient: string;    // CSS gradient for subtle glow effects
+  accent: string;
+  accentLight: string;
+  gradient: string;
 }
 
 const themes: Record<string, PageTheme> = {
@@ -47,17 +47,23 @@ const themes: Record<string, PageTheme> = {
     accentLight: "210 85% 65%",
     gradient: "linear-gradient(135deg, #2563EB, #60A5FA)",
   },
+  club_classic: {
+    accent: "32 55% 45%",
+    accentLight: "38 70% 62%",
+    gradient: "linear-gradient(135deg, #92400E, #D97706)",
+  },
 };
 
 const defaultTheme: PageTheme = themes.business;
 
-export function getPageTheme(pageType: string): PageTheme {
+export function getPageTheme(pageType: string, pageTemplate?: string | null): PageTheme {
+  if (pageType === "club" && pageTemplate === "classic") return themes.club_classic;
   return themes[pageType] ?? defaultTheme;
 }
 
 /** Returns CSS custom property overrides as a style object */
-export function getPageThemeStyle(pageType: string): React.CSSProperties {
-  const t = getPageTheme(pageType);
+export function getPageThemeStyle(pageType: string, pageTemplate?: string | null): React.CSSProperties {
+  const t = getPageTheme(pageType, pageTemplate);
   return {
     "--page-accent": t.accent,
     "--page-accent-light": t.accentLight,
