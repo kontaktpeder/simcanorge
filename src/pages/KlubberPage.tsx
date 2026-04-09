@@ -66,15 +66,14 @@ export default function KlubberPage() {
         </section>
 
         {/* ─── CTA ─── */}
-        <div className="max-w-[1200px] mx-auto px-4 sm:px-5 md:px-8 py-6">
-          <div className="max-w-md">
-            <CreateCTA
-              createUrl="/dashboard/sider/ny"
-              label="Registrer din klubb"
-              description="Har du en bilklubb eller forening?"
-              variant="strip"
-            />
-          </div>
+        <div className="max-w-[1200px] mx-auto px-4 sm:px-5 md:px-8 -mt-5 relative z-10">
+          <CreateCTA
+            createUrl="/dashboard/sider/ny"
+            label="Registrer din klubb"
+            description="Har du en bilklubb eller forening?"
+            variant="inline"
+            className="rounded-sm shadow-md"
+          />
         </div>
 
         {/* ─── GRID ─── */}
