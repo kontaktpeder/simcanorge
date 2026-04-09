@@ -312,6 +312,15 @@ export function SendInnBilForm({ onSuccess, onCancel, showCancelButton = false }
         car_story: result.data.car_story || null,
         allow_edits: allowEdits === true,
         allow_instagram: allowInstagram,
+        club_join_request: clubLinkRequested && selectedClub
+          ? {
+              requested: true,
+              page_id: selectedClub.id,
+              page_title: selectedClub.title,
+              page_slug: selectedClub.slug,
+              message: clubMessage.trim() || null,
+            }
+          : { requested: false, page_id: null, page_title: null, page_slug: null, message: null },
         image_count: uploadResult.urls.length,
         images_selected: images.length,
       };
