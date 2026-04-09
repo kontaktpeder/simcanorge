@@ -113,66 +113,52 @@ export function ClubClassicTemplate({ page }: { page: Page }) {
   return (
     <div className="bg-background font-sans">
 
-      {/* ── HERO — split: text left, logo right, cover bg with soft fade ── */}
-      <section className="relative overflow-hidden min-h-[280px] md:min-h-[360px] flex items-center">
-        {/* Cover image — full bleed, no overlay, soft edge fade */}
-        {page.cover_url ? (
-          <>
+      {/* ── HERO — banner image full size ── */}
+      {page.cover_url && (
+        <section className="relative w-full">
+          <img
+            src={page.cover_url}
+            alt=""
+            className="w-full h-auto max-h-[420px] object-cover"
+          />
+          {/* Subtle bottom fade only */}
+          <div className="absolute bottom-0 inset-x-0 h-8 bg-gradient-to-t from-background to-transparent" />
+        </section>
+      )}
+
+      {/* ── LOGO + TITLE — between hero and content ── */}
+      <div className="max-w-[1000px] mx-auto px-5 md:px-8 -mt-12 relative z-10 mb-8 md:mb-10">
+        <div className="flex items-end gap-5 md:gap-6">
+          {page.logo_url && (
             <img
-              src={page.cover_url}
-              alt=""
-              className="absolute inset-0 w-full h-full object-cover"
+              src={page.logo_url}
+              alt={page.title}
+              className="h-20 md:h-28 w-auto flex-shrink-0 rounded-xl border-4 border-background bg-background"
+              style={{
+                filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.15))'
+              }}
             />
-            {/* Soft fades — no harsh overlay, just gentle edges into background */}
-            <div className="absolute inset-0 bg-gradient-to-r from-background via-background/80 to-transparent" />
-            <div className="absolute bottom-0 inset-x-0 h-16 bg-gradient-to-t from-background to-transparent" />
-            <div className="absolute top-0 inset-x-0 h-12 bg-gradient-to-b from-background/60 to-transparent" />
-          </>
-        ) : (
-          <div className="absolute inset-0 poster-section-blue" />
-        )}
-
-        <div className="container mx-auto relative z-10 px-5 md:px-8">
-          <div className="flex items-center justify-between gap-6 md:gap-10">
-            {/* Text left */}
-            <div className="flex-1 min-w-0">
-              {page.founded_year && (
-                <p className="text-[10px] tracking-[0.35em] uppercase text-muted-foreground font-sans font-semibold mb-1">
-                  Est. {page.founded_year}
-                </p>
-              )}
-              <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-display leading-[0.95] text-foreground uppercase tracking-wide">
-                {page.title}
-              </h1>
-              {page.tagline && (
-                <p className="text-sm md:text-lg text-muted-foreground mt-2 max-w-lg font-serif italic">
-                  {page.tagline}
-                </p>
-              )}
-              {page.location && (
-                <p className="text-xs text-muted-foreground/60 mt-3 tracking-wide">
-                  📍 {page.location}
-                </p>
-              )}
-            </div>
-
-            {/* Logo right */}
-            {page.logo_url && (
-              <img
-                src={page.logo_url}
-                alt={page.title}
-                className="h-24 md:h-36 lg:h-44 w-auto flex-shrink-0"
-                style={{
-                  filter: 'drop-shadow(0 8px 24px rgba(0,0,0,0.3))'
-                }}
-              />
+          )}
+          <div className="pb-1">
+            {page.founded_year && (
+              <p className="text-[10px] tracking-[0.35em] uppercase text-muted-foreground font-sans font-semibold mb-0.5">
+                Est. {page.founded_year}
+              </p>
+            )}
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-display leading-[0.95] text-foreground uppercase tracking-wide">
+              {page.title}
+            </h1>
+            {page.tagline && (
+              <p className="text-sm md:text-base text-muted-foreground mt-1 font-serif italic">
+                {page.tagline}
+              </p>
             )}
           </div>
         </div>
-      </section>
+      </div>
 
       {/* ── BODY ── */}
-      <div className="max-w-[1000px] mx-auto px-5 md:px-8 py-8 md:py-14">
+      <div className="max-w-[1000px] mx-auto px-5 md:px-8 pb-8 md:pb-14">
 
         {/* Om klubben */}
         {page.about && (
