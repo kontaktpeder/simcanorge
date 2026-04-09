@@ -7,7 +7,7 @@ import { Layout } from '@/components/layout/Layout';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { Loader2, Car, Upload, CheckCircle2, AlertCircle, Users, ChevronRight, ArrowLeft, Camera, ImagePlus } from 'lucide-react';
+import { Loader2, Car, Upload, CheckCircle2, AlertCircle, Users, ChevronRight, ChevronLeft, ArrowLeft, Camera, ImagePlus, Star, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { CAR_BRANDS, getModelsForBrand, getVariantsForModel } from '@/data/carBrands';
