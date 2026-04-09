@@ -103,7 +103,7 @@ export default function Index() {
                     <img src={mod.image} alt={mod.title} className="w-full h-[90px] object-cover group-active:scale-105 transition-transform duration-500" loading="lazy" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
                     <div className="absolute bottom-0 left-0 right-0 p-2">
-                      <p className="text-[11px] tracking-[0.06em] uppercase font-bold text-white leading-tight" style={chakra}>
+                      <p className="text-[13px] tracking-[0.06em] uppercase font-bold text-white leading-tight drop-shadow-md" style={chakra}>
                         {mod.title}
                       </p>
                       {mod.comingSoon && (
@@ -124,10 +124,10 @@ export default function Index() {
                     <img src={mod.image} alt={mod.title} className="w-full h-[130px] lg:h-[150px] object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 to-black/5" />
                     <div className="absolute bottom-0 left-0 right-0 p-3">
-                      <p className="text-[15px] tracking-[0.06em] uppercase font-bold text-white leading-tight" style={chakra}>
+                      <p className="text-[17px] lg:text-[19px] tracking-[0.06em] uppercase font-bold text-white leading-tight drop-shadow-md" style={chakra}>
                         {mod.title}
                       </p>
-                      <p className="text-[11px] text-white/55 mt-0.5" style={chakra}>
+                      <p className="text-[12px] text-white/65 mt-1 drop-shadow-sm" style={chakra}>
                         {mod.desc}
                       </p>
                     </div>
