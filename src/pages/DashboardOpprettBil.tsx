@@ -130,13 +130,14 @@ function StyledSelect({
 export default function DashboardOpprettBil() {
   const { user, isLoading: authLoading } = useAuth();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [step, setStep] = useState<Step>('info');
   const [isSaving, setIsSaving] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [createdCarId, setCreatedCarId] = useState<string | null>(null);
-  const [uploadedCount, setUploadedCount] = useState(0);
+  const [isReorderingImages, setIsReorderingImages] = useState(false);
 
   // Form
   const [brand, setBrand] = useState('');
