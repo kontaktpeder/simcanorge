@@ -92,8 +92,6 @@ export default function Index() {
             </div>
           </div>
 
-          {/* Soft transition to category nav */}
-          <div className="absolute bottom-0 left-0 right-0 h-8 pointer-events-none" style={{ background: 'linear-gradient(to bottom, transparent, #f2ece4)' }} />
         </section>
 
         {/* ─── CATEGORY NAV ─── */}
