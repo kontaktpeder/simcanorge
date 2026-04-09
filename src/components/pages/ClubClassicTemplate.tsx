@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
-import { MapPin, Calendar, Mail, Globe, Phone } from "lucide-react";
-import { PublicPageContact } from "./PublicPageContact";
+import { MapPin, Calendar, Mail, Globe, Phone, ArrowRight } from "lucide-react";
 import { ClubCommunityCars } from "./ClubCommunityCars";
 import { useFeedPosts } from "@/hooks/useFeedPosts";
 import { FeedCard } from "@/components/feed/FeedCard";
@@ -28,61 +27,70 @@ export function ClubClassicTemplate({ page }: { page: Page }) {
   return (
     <div className="bg-background font-sans">
 
-      {/* ── HERO — metallic blue lacquer ── */}
-      <section className="relative overflow-hidden bg-metal-blue" style={{ minHeight: "420px" }}>
+      {/* ── HERO — same poster-section-blue as homepage ── */}
+      <section className="poster-section poster-section-blue hero-watermark relative overflow-hidden min-h-[340px] md:min-h-[420px] flex flex-col justify-center">
+        <div className="absolute inset-0 stripes-diagonal" />
+
         {page.cover_url && (
           <>
             <img
               src={page.cover_url}
               alt=""
-              className="absolute inset-0 w-full h-full object-cover opacity-30 mix-blend-luminosity"
+              className="absolute inset-0 w-full h-full object-cover opacity-20 mix-blend-luminosity"
             />
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#0F3E7A]" />
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#071D3D]/90" />
           </>
         )}
 
         {/* Chrome rule top */}
-        <div className="relative z-10 pt-6 px-6 md:px-12">
+        <div className="absolute top-0 inset-x-0 z-10 pt-4 px-6 md:px-12">
           <div
-            className="h-[3px] rounded-full"
+            className="h-[2px] rounded-full opacity-40"
             style={{ background: "linear-gradient(90deg, transparent 0%, #B8C0CC 20%, #FFFFFF 50%, #B8C0CC 80%, transparent 100%)" }}
           />
         </div>
 
-        {/* Content */}
-        <div className="relative z-10 flex flex-col items-center justify-center text-center px-6 md:px-12 py-12 md:py-20">
+        <div className="relative z-10 flex flex-col items-center justify-center text-center px-6 md:px-12">
           {page.logo_url && (
-            <div className="badge-frame p-1 mb-6">
-              <img src={page.logo_url} alt="" className="w-24 h-24 rounded-xl object-cover" />
+            <div className="mb-4 md:mb-6">
+              <img
+                src={page.logo_url}
+                alt=""
+                className="w-20 h-20 md:w-28 md:h-28 rounded-xl object-cover"
+                style={{
+                  filter: 'drop-shadow(0 8px 24px rgba(0,0,0,0.5))',
+                  border: '2px solid rgba(255,255,255,0.15)',
+                }}
+              />
             </div>
           )}
 
           {page.founded_year && (
-            <p className="text-xs tracking-[0.35em] uppercase text-white/60 mb-3 font-sans font-semibold">
+            <p className="text-[10px] tracking-[0.35em] uppercase text-white/50 mb-2 font-sans font-semibold">
               Est. {page.founded_year}
             </p>
           )}
 
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-display leading-[0.95] text-white uppercase tracking-wide">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-display leading-[0.95] text-white uppercase tracking-wide drop-shadow-[0_4px_12px_rgba(0,0,0,0.5)]">
             {page.title}
           </h1>
 
           {page.tagline && (
-            <p className="text-lg md:text-xl text-white/50 mt-4 max-w-xl italic font-serif">
+            <p className="text-base md:text-lg text-white/60 mt-3 max-w-xl italic font-serif">
               {page.tagline}
             </p>
           )}
 
-          <div className="flex items-center gap-6 mt-8 text-xs text-white/50 font-sans">
+          <div className="flex items-center gap-5 mt-6 text-xs text-white/45 font-sans">
             {page.location && (
               <span className="flex items-center gap-1.5">
-                <MapPin className="w-3.5 h-3.5 text-white/40" />
+                <MapPin className="w-3.5 h-3.5 text-white/35" />
                 {page.location}
               </span>
             )}
             {page.founded_year && (
               <span className="flex items-center gap-1.5">
-                <Calendar className="w-3.5 h-3.5 text-white/40" />
+                <Calendar className="w-3.5 h-3.5 text-white/35" />
                 Siden {page.founded_year}
               </span>
             )}
@@ -90,52 +98,49 @@ export function ClubClassicTemplate({ page }: { page: Page }) {
         </div>
 
         {/* Chrome rule bottom */}
-        <div className="relative z-10 pb-0 px-6 md:px-12">
+        <div className="absolute bottom-0 inset-x-0 z-10 pb-4 px-6 md:px-12">
           <div
-            className="h-[3px] rounded-full"
+            className="h-[2px] rounded-full opacity-40"
             style={{ background: "linear-gradient(90deg, transparent 0%, #B8C0CC 20%, #FFFFFF 50%, #B8C0CC 80%, transparent 100%)" }}
           />
         </div>
       </section>
 
-      {/* ── ENAMEL RED STRIP ── */}
-      <div className="bg-metal-red">
-        <div className="max-w-[900px] mx-auto px-6 md:px-12 py-3 flex items-center justify-center">
-          <span className="text-[10px] tracking-[0.4em] uppercase text-white/80 font-display">
-            {page.page_type === "club" ? "Klubb" : page.page_type} · Bilgarasjen
-          </span>
-        </div>
-      </div>
+      {/* ── ACCENT STRIP — enamel red, thinner ── */}
+      <div
+        className="h-1"
+        style={{ background: 'linear-gradient(90deg, #C10D0D 0%, #E52020 50%, #C10D0D 100%)' }}
+      />
 
-      {/* ── BODY — cream background ── */}
-      <div className="max-w-[900px] mx-auto px-6 md:px-12 py-12 md:py-16">
+      {/* ── BODY ── */}
+      <div className="max-w-[960px] mx-auto px-4 md:px-8 py-8 md:py-14">
 
         {/* Om klubben */}
         {page.about && (
-          <div className="border-chrome rounded-xl p-6 md:p-8 bg-card mb-12 md:mb-16">
-            <div className="grid md:grid-cols-[260px_1fr] gap-8 md:gap-12">
-              <div className="space-y-4">
-                <p className="text-[10px] tracking-[0.35em] uppercase text-muted-foreground font-sans font-semibold">
+          <div className="featured-card-premium rounded-xl p-6 md:p-8 mb-10 md:mb-14">
+            <div className="grid md:grid-cols-[240px_1fr] gap-6 md:gap-10">
+              <div className="space-y-3">
+                <p className="text-[10px] tracking-[0.35em] uppercase text-white/40 font-sans font-semibold">
                   Om klubben
                 </p>
-                <h2 className="text-2xl font-display uppercase tracking-wide text-foreground">
+                <h2 className="text-xl md:text-2xl font-display uppercase tracking-wide text-white">
                   Hvem er vi?
                 </h2>
                 <div className="flex flex-col gap-2 mt-4">
                   {page.contact_email && (
-                    <a href={`mailto:${page.contact_email}`} className="flex items-center gap-2 text-[13px] text-primary hover:text-accent transition-colors">
+                    <a href={`mailto:${page.contact_email}`} className="flex items-center gap-2 text-[13px] text-white/70 hover:text-white transition-colors">
                       <Mail className="w-3.5 h-3.5" />
                       Kontakt oss
                     </a>
                   )}
                   {page.website && (
-                    <a href={page.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-[13px] text-primary hover:text-accent transition-colors">
+                    <a href={page.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-[13px] text-white/70 hover:text-white transition-colors">
                       <Globe className="w-3.5 h-3.5" />
                       Nettside
                     </a>
                   )}
                   {page.contact_phone && (
-                    <a href={`tel:${page.contact_phone}`} className="flex items-center gap-2 text-[13px] text-primary hover:text-accent transition-colors">
+                    <a href={`tel:${page.contact_phone}`} className="flex items-center gap-2 text-[13px] text-white/70 hover:text-white transition-colors">
                       <Phone className="w-3.5 h-3.5" />
                       {page.contact_phone}
                     </a>
@@ -143,8 +148,8 @@ export function ClubClassicTemplate({ page }: { page: Page }) {
                 </div>
               </div>
 
-              <div className="md:border-l md:border-chrome-mid/30 md:pl-12">
-                <p className="text-[15px] leading-[1.8] text-muted-foreground whitespace-pre-line font-sans">
+              <div className="md:border-l md:border-white/10 md:pl-10">
+                <p className="text-[15px] leading-[1.8] text-white/70 whitespace-pre-line font-sans">
                   {page.about}
                 </p>
               </div>
@@ -158,23 +163,21 @@ export function ClubClassicTemplate({ page }: { page: Page }) {
           variant="classic"
         />
 
-        {/* TODO: Reintroduce events for clubs later when we have a clearer event model */}
-
         {/* Klubb-feed */}
         {feedPosts && feedPosts.length > 0 && (
           <>
             {/* Chrome divider */}
-            <div className="flex items-center gap-4 my-8">
+            <div className="flex items-center gap-4 my-8 md:my-12">
               <div className="flex-1 h-[2px] rounded-full" style={{ background: "linear-gradient(90deg, transparent, #B8C0CC 30%, #FFFFFF 50%, #B8C0CC 70%, transparent)" }} />
-              <div className="w-2 h-2 rounded-full bg-primary" />
+              <div className="w-2 h-2 rounded-full bg-accent" />
               <div className="flex-1 h-[2px] rounded-full" style={{ background: "linear-gradient(90deg, transparent, #B8C0CC 30%, #FFFFFF 50%, #B8C0CC 70%, transparent)" }} />
             </div>
 
-            <div className="border-chrome rounded-xl p-6 md:p-8 bg-card">
+            <div className="border border-border/50 rounded-xl p-5 md:p-8 bg-card">
               <p className="text-[10px] tracking-[0.35em] uppercase text-muted-foreground font-sans font-semibold mb-2">
                 Siste nytt
               </p>
-              <h2 className="text-2xl font-display uppercase tracking-wide text-foreground mb-6">
+              <h2 className="text-xl md:text-2xl font-display uppercase tracking-wide text-foreground mb-6">
                 Fra klubben
               </h2>
               <div className="space-y-6">
@@ -187,15 +190,16 @@ export function ClubClassicTemplate({ page }: { page: Page }) {
         )}
       </div>
 
-      {/* ── FOOTER — metallic blue ── */}
-      <div className="bg-metal-blue">
+      {/* ── FOOTER — poster-section-blue matching hero ── */}
+      <div className="poster-section-blue relative">
+        <div className="absolute inset-0 stripes-diagonal" />
         <div className="relative z-10 px-6 md:px-12 pt-1">
           <div
-            className="h-[2px] rounded-full"
+            className="h-[2px] rounded-full opacity-40"
             style={{ background: "linear-gradient(90deg, transparent 0%, #B8C0CC 20%, #FFFFFF 50%, #B8C0CC 80%, transparent 100%)" }}
           />
         </div>
-        <div className="max-w-[900px] mx-auto px-6 md:px-12 py-6 flex items-center justify-between relative z-10">
+        <div className="max-w-[960px] mx-auto px-6 md:px-12 py-5 flex items-center justify-between relative z-10">
           <span className="text-xs text-white/40 font-sans">
             {page.title}{page.founded_year ? ` · Est. ${page.founded_year}` : ""}
           </span>
