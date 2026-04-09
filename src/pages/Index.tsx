@@ -99,16 +99,16 @@ export default function Index() {
           className="border-b"
           style={{ background: 'linear-gradient(180deg, #f2ece4 0%, #eee7dd 100%)', borderColor: 'rgba(58,46,36,0.06)' }}
         >
-          <div className="max-w-[1200px] mx-auto px-4 sm:px-5 md:px-8">
-            {/* Mobile: scroll */}
-            <div className="flex gap-1 overflow-x-auto scrollbar-hide -mx-1 px-1 md:hidden py-2.5">
+          <div className="max-w-[1200px] mx-auto px-3 sm:px-5 md:px-8">
+            {/* Mobile: compact scroll */}
+            <div className="flex gap-0.5 overflow-x-auto scrollbar-hide -mx-1 px-1 md:hidden py-2">
               {modules.map((mod) => {
                 const ModIcon = mod.icon;
                 return (
                   <Link key={mod.title} to={mod.href} className="group flex-shrink-0">
-                    <div className="flex items-center gap-2 py-2.5 px-4 rounded-full bg-white/50 border border-[#c4962c]/10 hover:border-[#c4962c]/25 active:scale-[0.97] transition-all">
-                      <ModIcon className="w-5 h-5 text-[#8b6914]" strokeWidth={1.8} />
-                      <span className="text-[13px] tracking-[0.04em] uppercase font-bold text-[#3a2e24] whitespace-nowrap" style={chakra}>
+                    <div className="flex items-center gap-1.5 py-2 px-3 rounded-full bg-white/50 border border-[#c4962c]/10 hover:border-[#c4962c]/25 active:scale-[0.97] transition-all">
+                      <ModIcon className="w-4 h-4 text-[#8b6914]" strokeWidth={1.8} />
+                      <span className="text-[11px] tracking-[0.04em] uppercase font-bold text-[#3a2e24] whitespace-nowrap" style={chakra}>
                         {mod.title}
                       </span>
                     </div>
