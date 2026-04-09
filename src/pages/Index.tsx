@@ -47,22 +47,22 @@ export default function Index() {
       <div className="min-h-[calc(100vh-4rem)]">
 
         {/* ─── HERO ─── */}
-        <section className="relative overflow-visible" style={{ background: 'linear-gradient(135deg, #3a2e24 0%, #2a2118 40%, #1e1812 100%)' }}>
-          {/* Vignette */}
-          <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 30% 50%, transparent 40%, rgba(0,0,0,0.35) 100%)' }} />
+        <section className="relative overflow-visible" style={{ background: 'linear-gradient(135deg, #4a3d30 0%, #3a2e24 40%, #2a2118 100%)' }}>
+          {/* Softer vignette */}
+          <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 30% 50%, transparent 50%, rgba(0,0,0,0.2) 100%)' }} />
           {/* Warm glow behind car */}
-          <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(circle at 75% 50%, rgba(255,180,80,0.2) 0%, transparent 50%)' }} />
+          <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(circle at 75% 50%, rgba(255,190,100,0.15) 0%, transparent 50%)' }} />
 
-          {/* Car image — zoomed in, covers right 2/3, soft fade left */}
+          {/* Car image — more visible */}
           <div className="absolute inset-0 pointer-events-none hidden md:block">
             <img
               src={heroCar}
               alt=""
-              className="absolute right-0 top-0 h-full w-[55%] object-cover object-[60%_20%]"
+              className="absolute right-0 top-0 h-full w-[58%] object-cover object-[60%_20%]"
               style={{
-                WebkitMaskImage: 'linear-gradient(to left, black 50%, transparent 100%)',
-                maskImage: 'linear-gradient(to left, black 50%, transparent 100%)',
-                opacity: 0.85,
+                WebkitMaskImage: 'linear-gradient(to left, black 60%, transparent 100%)',
+                maskImage: 'linear-gradient(to left, black 60%, transparent 100%)',
+                opacity: 0.9,
               }}
             />
           </div>
@@ -75,12 +75,12 @@ export default function Index() {
               </p>
               <h1
                 className="text-[1.5rem] sm:text-[1.9rem] md:text-[2.4rem] lg:text-[2.8rem] leading-[0.93] uppercase tracking-[0.02em] text-white font-bold italic"
-                style={{ ...chakra, textShadow: '0 2px 20px rgba(0,0,0,0.6)' }}
+                style={{ ...chakra, textShadow: '0 2px 20px rgba(0,0,0,0.4)' }}
               >
                 Hele Norges<br />bilsamfunn
               </h1>
               <p
-                className="text-[0.7rem] sm:text-[0.85rem] md:text-[1rem] uppercase tracking-[0.15em] text-white/55 font-bold italic mt-0.5"
+                className="text-[0.7rem] sm:text-[0.85rem] md:text-[1rem] uppercase tracking-[0.15em] text-white/50 font-bold italic mt-0.5"
                 style={chakra}
               >
                 — på nett
@@ -91,12 +91,15 @@ export default function Index() {
               </div>
             </div>
           </div>
+
+          {/* Soft transition to category nav */}
+          <div className="absolute bottom-0 left-0 right-0 h-8 pointer-events-none" style={{ background: 'linear-gradient(to bottom, transparent, #f2ece4)' }} />
         </section>
 
         {/* ─── CATEGORY NAV ─── */}
         <nav
           className="border-b"
-          style={{ background: 'linear-gradient(180deg, #e8e0d4 0%, #ebe3d8 100%)', borderColor: 'rgba(58,46,36,0.08)' }}
+          style={{ background: 'linear-gradient(180deg, #f2ece4 0%, #eee7dd 100%)', borderColor: 'rgba(58,46,36,0.06)' }}
         >
           <div className="max-w-[1200px] mx-auto px-4 sm:px-5 md:px-8">
             {/* Mobile: scroll */}
@@ -163,7 +166,7 @@ export default function Index() {
         {/* ─── FEED ─── */}
         <section
           className="relative pt-6 sm:pt-8 md:pt-10 pb-12 sm:pb-20 md:pb-32 overflow-hidden"
-          style={{ background: 'linear-gradient(180deg, #ebe3d8 0%, #e2d9cc 40%, #dbd0c2 100%)' }}
+          style={{ background: 'linear-gradient(180deg, #eee7dd 0%, #ebe4da 40%, #e8e1d6 100%)' }}
         >
           {/* Car silhouette watermark — flipped */}
           <div className="absolute inset-0 pointer-events-none flex items-center justify-center overflow-hidden" style={{ opacity: 0.035 }}>
