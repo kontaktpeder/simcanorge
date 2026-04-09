@@ -65,7 +65,7 @@ export function HeroSearch() {
   }, []);
 
   return (
-    <div ref={containerRef} className="relative w-full" style={{ zIndex: 9999 }}>
+    <div ref={containerRef} className="relative w-full z-[120]">
       <div className="relative">
         <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-[#8b6914]" />
         <input
@@ -89,47 +89,50 @@ export function HeroSearch() {
       </div>
 
       {showDropdown && (
-        <div className="absolute top-full left-0 right-0 mt-1 bg-[#ede6db] border border-[#c4962c]/15 shadow-[0_8px_32px_rgba(58,46,36,0.18)] z-[9999] max-h-[380px] overflow-y-auto rounded-lg">
-          {isSearching && (
-            <div className="px-4 py-3 text-[13px] text-[#3a2e24]/40 tracking-wide" style={{ fontFamily: "'Chakra Petch', sans-serif" }}>Søker…</div>
-          )}
+        <div className="absolute top-full left-0 right-0 mt-1 rounded-lg border border-[#c4962c]/15 bg-[#ede6db] shadow-[0_18px_60px_rgba(58,46,36,0.24)] z-[9999] max-h-[380px] overflow-hidden">
+          <div className="pointer-events-none absolute inset-x-0 top-0 h-12 bg-gradient-to-b from-[#f3ede4]/95 via-[#f1e9de]/70 to-transparent z-10" />
+          <div className="max-h-[380px] overflow-y-auto backdrop-blur-xl">
+            {isSearching && (
+              <div className="px-4 py-3 text-[13px] uppercase tracking-[0.08em] text-[#3a2e24]/40" style={{ fontFamily: "'Chakra Petch', sans-serif" }}>Søker…</div>
+            )}
 
-          {!isSearching && debouncedQuery.length >= 2 && results.length === 0 && (
-            <div className="px-4 py-4 text-[13px] text-[#3a2e24]/35 tracking-wide" style={{ fontFamily: "'Chakra Petch', sans-serif" }}>
-              Ingen treff for «{debouncedQuery}»
-            </div>
-          )}
+            {!isSearching && debouncedQuery.length >= 2 && results.length === 0 && (
+              <div className="px-4 py-4 text-[13px] uppercase tracking-[0.05em] text-[#3a2e24]/35" style={{ fontFamily: "'Chakra Petch', sans-serif" }}>
+                Ingen treff for «{debouncedQuery}»
+              </div>
+            )}
 
-          {!isSearching && results.length > 0 && (
-            <div className="py-1">
-              {results.map((r) => (
-                <button
-                  key={r.id}
-                  onClick={() => handleSelect(r)}
-                  className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-[#c4962c]/8 transition-colors text-left group"
-                >
-                  <div className="w-10 h-10 rounded-lg overflow-hidden flex-shrink-0 bg-[#3a2e24]/[0.06] border border-[#3a2e24]/[0.06]">
-                    {r.thumbnail ? (
-                      <img src={r.thumbnail} alt="" className="w-full h-full object-cover" />
-                    ) : (
-                      <div className="w-full h-full" />
-                    )}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="text-[13px] text-[#3a2e24]/80 group-hover:text-[#3a2e24] truncate transition-colors font-medium">
-                      {r.title}
+            {!isSearching && results.length > 0 && (
+              <div className="py-1">
+                {results.map((r) => (
+                  <button
+                    key={r.id}
+                    onClick={() => handleSelect(r)}
+                    className="w-full flex items-center gap-3 px-4 py-3 hover:bg-[#c4962c]/7 transition-colors text-left group border-b border-[#3a2e24]/[0.05] last:border-b-0"
+                  >
+                    <div className="w-10 h-10 rounded-md overflow-hidden flex-shrink-0 bg-[#3a2e24]/[0.06] border border-[#3a2e24]/[0.06]">
+                      {r.thumbnail ? (
+                        <img src={r.thumbnail} alt="" className="w-full h-full object-cover" />
+                      ) : (
+                        <div className="w-full h-full" />
+                      )}
                     </div>
-                    {r.subtitle && (
-                      <div className="text-[11px] text-[#3a2e24]/35 truncate">{r.subtitle}</div>
-                    )}
-                  </div>
-                  <span className={`text-[9px] tracking-[0.12em] uppercase px-2 py-0.5 rounded-full flex-shrink-0 ${SECTION_COLORS[r.section] || "bg-[#3a2e24]/10 text-[#3a2e24]/40"}`}>
-                    {r.sectionLabel}
-                  </span>
-                </button>
-              ))}
-            </div>
-          )}
+                    <div className="flex-1 min-w-0">
+                      <div className="text-[15px] uppercase tracking-[0.03em] text-[#3a2e24] truncate transition-colors font-bold" style={{ fontFamily: "'Chakra Petch', sans-serif" }}>
+                        {r.title}
+                      </div>
+                      {r.subtitle && (
+                        <div className="text-[11px] uppercase tracking-[0.04em] text-[#3a2e24]/45 truncate" style={{ fontFamily: "'Chakra Petch', sans-serif" }}>{r.subtitle}</div>
+                      )}
+                    </div>
+                    <span className={`text-[10px] uppercase tracking-[0.14em] px-2.5 py-1 rounded-full flex-shrink-0 font-bold ${SECTION_COLORS[r.section] || "bg-[#3a2e24]/10 text-[#3a2e24]/40"}`} style={{ fontFamily: "'Chakra Petch', sans-serif" }}>
+                      {r.sectionLabel}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       )}
     </div>
