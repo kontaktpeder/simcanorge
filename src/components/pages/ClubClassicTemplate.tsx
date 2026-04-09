@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
-import { MapPin, Calendar, Mail, Globe } from "lucide-react";
+import { MapPin, Calendar, Mail, Globe, Phone } from "lucide-react";
 import { PublicPageEvents } from "./PublicPageEvents";
+import { PublicPageContact } from "./PublicPageContact";
 import { useFeedPosts } from "@/hooks/useFeedPosts";
 import { FeedCard } from "@/components/feed/FeedCard";
 
@@ -20,172 +21,174 @@ interface Page {
   page_type: string;
 }
 
-const serif = { fontFamily: "'Playfair Display', 'Georgia', 'Times New Roman', serif" } as const;
-const mono = { fontFamily: "'Courier New', 'Courier', monospace" } as const;
-
 export function ClubClassicTemplate({ page }: { page: Page }) {
   const { data: feedPosts } = useFeedPosts({ pageId: page.id, limit: 8 });
 
   return (
-    <div className="min-h-screen bg-[#0f0d0b] text-white/90">
+    <div className="min-h-screen bg-background font-sans">
 
-      {/* ── HERO ── */}
-      <section className="relative overflow-hidden" style={{ minHeight: "420px" }}>
-        {page.cover_url ? (
+      {/* ── HERO — metallic blue lacquer ── */}
+      <section className="relative overflow-hidden bg-metal-blue" style={{ minHeight: "420px" }}>
+        {page.cover_url && (
           <>
             <img
               src={page.cover_url}
               alt=""
-              className="absolute inset-0 w-full h-full object-cover"
+              className="absolute inset-0 w-full h-full object-cover opacity-30 mix-blend-luminosity"
             />
-            <div className="absolute inset-0 bg-gradient-to-b from-[#0f0d0b]/70 via-[#0f0d0b]/50 to-[#0f0d0b]" />
-            <div className="absolute inset-0 bg-gradient-to-r from-[#0f0d0b]/60 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#0F3E7A]" />
           </>
-        ) : (
-          <div className="absolute inset-0 bg-gradient-to-br from-[#1a1714] to-[#0f0d0b]" />
         )}
 
-        {/* Top rule */}
-        <div className="relative z-10 flex items-center gap-4 px-6 md:px-12 pt-8">
-          <div className="flex-1 h-px bg-[#c4a882]/30" />
-          <span className="text-[10px] tracking-[0.3em] uppercase text-[#c4a882]/60" style={mono}>
-            Bilgarasjen · Klubb
-          </span>
-          <div className="flex-1 h-px bg-[#c4a882]/30" />
+        {/* Chrome rule top */}
+        <div className="relative z-10 pt-6 px-6 md:px-12">
+          <div
+            className="h-[3px] rounded-full"
+            style={{ background: "linear-gradient(90deg, transparent 0%, #B8C0CC 20%, #FFFFFF 50%, #B8C0CC 80%, transparent 100%)" }}
+          />
         </div>
 
         {/* Content */}
-        <div className="relative z-10 flex flex-col items-center justify-center text-center px-6 md:px-12 py-16 md:py-24">
+        <div className="relative z-10 flex flex-col items-center justify-center text-center px-6 md:px-12 py-12 md:py-20">
           {page.logo_url && (
-            <img src={page.logo_url} alt="" className="w-20 h-20 rounded-full object-cover mb-6 border-2 border-[#c4a882]/30" />
+            <div className="badge-frame p-1 mb-6">
+              <img src={page.logo_url} alt="" className="w-24 h-24 rounded-xl object-cover" />
+            </div>
           )}
 
           {page.founded_year && (
-            <p className="text-[11px] tracking-[0.35em] uppercase text-[#c4a882]/70 mb-4" style={mono}>
+            <p className="text-xs tracking-[0.35em] uppercase text-white/60 mb-3 font-sans font-semibold">
               Est. {page.founded_year}
             </p>
           )}
 
-          <h1
-            className="text-4xl sm:text-5xl md:text-6xl font-bold leading-[1.1] text-white max-w-3xl"
-            style={serif}
-          >
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-display leading-[0.95] text-white uppercase tracking-wide">
             {page.title}
           </h1>
 
           {page.tagline && (
-            <p
-              className="text-lg md:text-xl text-white/50 mt-4 max-w-xl italic"
-              style={serif}
-            >
+            <p className="text-lg md:text-xl text-white/50 mt-4 max-w-xl italic font-serif">
               {page.tagline}
             </p>
           )}
 
-          <div className="flex items-center gap-6 mt-8 text-[12px] text-white/40" style={mono}>
+          <div className="flex items-center gap-6 mt-8 text-xs text-white/50 font-sans">
             {page.location && (
               <span className="flex items-center gap-1.5">
-                <MapPin className="w-3.5 h-3.5 text-[#c4a882]/60" />
+                <MapPin className="w-3.5 h-3.5 text-white/40" />
                 {page.location}
               </span>
             )}
             {page.founded_year && (
               <span className="flex items-center gap-1.5">
-                <Calendar className="w-3.5 h-3.5 text-[#c4a882]/60" />
+                <Calendar className="w-3.5 h-3.5 text-white/40" />
                 Siden {page.founded_year}
               </span>
             )}
           </div>
         </div>
+
+        {/* Chrome rule bottom */}
+        <div className="relative z-10 pb-0 px-6 md:px-12">
+          <div
+            className="h-[3px] rounded-full"
+            style={{ background: "linear-gradient(90deg, transparent 0%, #B8C0CC 20%, #FFFFFF 50%, #B8C0CC 80%, transparent 100%)" }}
+          />
+        </div>
       </section>
 
-      {/* ── THIN RULE ── */}
-      <div className="max-w-[900px] mx-auto px-6 md:px-12">
-        <div className="flex items-center gap-4">
-          <div className="flex-1 h-px bg-[#c4a882]/20" />
-          <span className="text-[9px] tracking-[0.4em] uppercase text-[#c4a882]/40" style={mono}>
-            {page.page_type}
+      {/* ── ENAMEL RED STRIP ── */}
+      <div className="bg-metal-red">
+        <div className="max-w-[900px] mx-auto px-6 md:px-12 py-3 flex items-center justify-center">
+          <span className="text-[10px] tracking-[0.4em] uppercase text-white/80 font-display">
+            {page.page_type === "club" ? "Klubb" : page.page_type} · Bilgarasjen
           </span>
-          <div className="flex-1 h-px bg-[#c4a882]/20" />
         </div>
       </div>
 
-      {/* ── BODY ── */}
+      {/* ── BODY — cream background ── */}
       <div className="max-w-[900px] mx-auto px-6 md:px-12 py-12 md:py-16">
 
-        {/* Om klubben — two-column editorial */}
+        {/* Om klubben */}
         {page.about && (
-          <div className="grid md:grid-cols-[280px_1fr] gap-8 md:gap-12">
-            <div className="space-y-4">
-              <p className="text-[10px] tracking-[0.35em] uppercase text-[#c4a882]/60" style={mono}>
-                Om klubben
-              </p>
-              <h2 className="text-2xl font-bold text-white" style={serif}>
-                Hvem er vi?
-              </h2>
-              <div className="flex flex-col gap-2 mt-4">
-                {page.contact_email && (
-                  <a href={`mailto:${page.contact_email}`} className="flex items-center gap-2 text-[13px] text-[#c4a882]/80 hover:text-[#c4a882] transition-colors">
-                    <Mail className="w-3.5 h-3.5" />
-                    Kontakt oss
-                  </a>
-                )}
-                {page.website && (
-                  <a href={page.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-[13px] text-[#c4a882]/80 hover:text-[#c4a882] transition-colors">
-                    <Globe className="w-3.5 h-3.5" />
-                    Nettside
-                  </a>
-                )}
+          <div className="border-chrome rounded-xl p-6 md:p-8 bg-card mb-12 md:mb-16">
+            <div className="grid md:grid-cols-[260px_1fr] gap-8 md:gap-12">
+              <div className="space-y-4">
+                <p className="text-[10px] tracking-[0.35em] uppercase text-muted-foreground font-sans font-semibold">
+                  Om klubben
+                </p>
+                <h2 className="text-2xl font-display uppercase tracking-wide text-foreground">
+                  Hvem er vi?
+                </h2>
+                <div className="flex flex-col gap-2 mt-4">
+                  {page.contact_email && (
+                    <a href={`mailto:${page.contact_email}`} className="flex items-center gap-2 text-[13px] text-primary hover:text-accent transition-colors">
+                      <Mail className="w-3.5 h-3.5" />
+                      Kontakt oss
+                    </a>
+                  )}
+                  {page.website && (
+                    <a href={page.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-[13px] text-primary hover:text-accent transition-colors">
+                      <Globe className="w-3.5 h-3.5" />
+                      Nettside
+                    </a>
+                  )}
+                  {page.contact_phone && (
+                    <a href={`tel:${page.contact_phone}`} className="flex items-center gap-2 text-[13px] text-primary hover:text-accent transition-colors">
+                      <Phone className="w-3.5 h-3.5" />
+                      {page.contact_phone}
+                    </a>
+                  )}
+                </div>
               </div>
-            </div>
 
-            <div className="md:border-l md:border-[#c4a882]/15 md:pl-12">
-              <p className="text-[15px] leading-[1.8] text-white/60 whitespace-pre-line" style={serif}>
-                {page.about}
-              </p>
+              <div className="md:border-l md:border-chrome-mid/30 md:pl-12">
+                <p className="text-[15px] leading-[1.8] text-muted-foreground whitespace-pre-line font-sans">
+                  {page.about}
+                </p>
+              </div>
             </div>
           </div>
         )}
 
-        {/* Divider dot */}
-        <div className="flex items-center justify-center gap-3 my-12 md:my-16">
-          <div className="w-12 h-px bg-[#c4a882]/20" />
-          <div className="w-1.5 h-1.5 rounded-full bg-[#c4a882]/30" />
-          <div className="w-12 h-px bg-[#c4a882]/20" />
+        {/* Chrome divider */}
+        <div className="flex items-center gap-4 my-8">
+          <div className="flex-1 h-[2px] rounded-full" style={{ background: "linear-gradient(90deg, transparent, #B8C0CC 30%, #FFFFFF 50%, #B8C0CC 70%, transparent)" }} />
+          <div className="w-2 h-2 rounded-full bg-accent" />
+          <div className="flex-1 h-[2px] rounded-full" style={{ background: "linear-gradient(90deg, transparent, #B8C0CC 30%, #FFFFFF 50%, #B8C0CC 70%, transparent)" }} />
         </div>
 
         {/* Arrangementer */}
-        <div className="space-y-6">
-          <p className="text-[10px] tracking-[0.35em] uppercase text-[#c4a882]/60" style={mono}>
+        <div className="border-chrome rounded-xl p-6 md:p-8 bg-card mb-12">
+          <p className="text-[10px] tracking-[0.35em] uppercase text-muted-foreground font-sans font-semibold mb-2">
             Kommende
           </p>
-          <h2 className="text-2xl font-bold text-white" style={serif}>
+          <h2 className="text-2xl font-display uppercase tracking-wide text-foreground mb-6">
             Arrangementer
           </h2>
-          <PublicPageEvents pageId={page.id} />
+          <PublicPageEvents pageId={page.id} light />
         </div>
 
-        {/* Divider dot + Klubb-feed */}
+        {/* Klubb-feed */}
         {feedPosts && feedPosts.length > 0 && (
           <>
-            <div className="flex items-center justify-center gap-3 my-12 md:my-16">
-              <div className="w-12 h-px bg-[#c4a882]/20" />
-              <div className="w-1.5 h-1.5 rounded-full bg-[#c4a882]/30" />
-              <div className="w-12 h-px bg-[#c4a882]/20" />
+            {/* Chrome divider */}
+            <div className="flex items-center gap-4 my-8">
+              <div className="flex-1 h-[2px] rounded-full" style={{ background: "linear-gradient(90deg, transparent, #B8C0CC 30%, #FFFFFF 50%, #B8C0CC 70%, transparent)" }} />
+              <div className="w-2 h-2 rounded-full bg-primary" />
+              <div className="flex-1 h-[2px] rounded-full" style={{ background: "linear-gradient(90deg, transparent, #B8C0CC 30%, #FFFFFF 50%, #B8C0CC 70%, transparent)" }} />
             </div>
 
-            <div className="space-y-6">
-              <p className="text-[10px] tracking-[0.35em] uppercase text-[#c4a882]/60" style={mono}>
+            <div className="border-chrome rounded-xl p-6 md:p-8 bg-card">
+              <p className="text-[10px] tracking-[0.35em] uppercase text-muted-foreground font-sans font-semibold mb-2">
                 Siste nytt
               </p>
-              <h2 className="text-2xl font-bold text-white" style={serif}>
+              <h2 className="text-2xl font-display uppercase tracking-wide text-foreground mb-6">
                 Fra klubben
               </h2>
               <div className="space-y-6">
                 {feedPosts.map((post) => (
-                  <div key={post.id} className="[&_*]:text-white/80">
-                    <FeedCard post={post} />
-                  </div>
+                  <FeedCard key={post.id} post={post} />
                 ))}
               </div>
             </div>
@@ -193,13 +196,19 @@ export function ClubClassicTemplate({ page }: { page: Page }) {
         )}
       </div>
 
-      {/* ── FOOTER ── */}
-      <div className="border-t border-[#c4a882]/15 py-8">
-        <div className="max-w-[900px] mx-auto px-6 md:px-12 flex items-center justify-between">
-          <span className="text-[11px] text-white/30" style={mono}>
+      {/* ── FOOTER — metallic blue ── */}
+      <div className="bg-metal-blue">
+        <div className="relative z-10 px-6 md:px-12 pt-1">
+          <div
+            className="h-[2px] rounded-full"
+            style={{ background: "linear-gradient(90deg, transparent 0%, #B8C0CC 20%, #FFFFFF 50%, #B8C0CC 80%, transparent 100%)" }}
+          />
+        </div>
+        <div className="max-w-[900px] mx-auto px-6 md:px-12 py-6 flex items-center justify-between relative z-10">
+          <span className="text-xs text-white/40 font-sans">
             {page.title}{page.founded_year ? ` · Est. ${page.founded_year}` : ""}
           </span>
-          <Link to="/" className="text-[11px] text-[#c4a882]/40 hover:text-[#c4a882]/70 transition-colors" style={mono}>
+          <Link to="/" className="text-xs text-white/30 hover:text-white/60 transition-colors font-sans">
             Bilgarasjen.no
           </Link>
         </div>
