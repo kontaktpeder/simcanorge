@@ -163,7 +163,7 @@ export default function Index() {
 
         {/* ─── FEED ─── */}
         <section
-          className="relative pt-6 sm:pt-8 md:pt-10 pb-12 sm:pb-20 md:pb-32 overflow-hidden"
+          className="relative pt-5 sm:pt-8 md:pt-10 pb-10 sm:pb-20 md:pb-32 overflow-hidden"
           style={{ background: 'linear-gradient(180deg, #eee7dd 0%, #ebe4da 40%, #e8e1d6 100%)' }}
         >
           {/* Car silhouette watermark — flipped */}
@@ -176,22 +176,22 @@ export default function Index() {
             />
           </div>
 
-          <div className="relative z-10 max-w-[800px] mx-auto px-4 sm:px-5 md:px-8">
+          <div className="relative z-10 max-w-[800px] mx-auto px-3 sm:px-5 md:px-8">
 
-            <div className="flex items-end justify-between mb-5 sm:mb-7">
+            <div className="flex items-end justify-between mb-4 sm:mb-7">
               <FeedFilterTabs active={feedFilter} onChange={setFeedFilter} />
             </div>
 
-            <div className="mb-6 sm:mb-10">
+            <div className="mb-5 sm:mb-10">
               <HomeFeedComposer />
             </div>
 
             {feedLoading && (
-              <div className="space-y-8 sm:space-y-12">
+              <div className="space-y-6 sm:space-y-12">
                 {[...Array(3)].map((_, i) => (
                   <div key={i}>
-                    <div className="h-[280px] sm:h-[420px] bg-[#3a2e24]/[0.06] rounded-lg animate-pulse" />
-                    <div className="h-px bg-[#3a2e24]/[0.08] mt-8 sm:mt-12" />
+                    <div className="h-[200px] sm:h-[420px] bg-[#3a2e24]/[0.06] rounded-lg animate-pulse" />
+                    <div className="h-px bg-[#3a2e24]/[0.08] mt-6 sm:mt-12" />
                   </div>
                 ))}
               </div>
@@ -203,7 +203,7 @@ export default function Index() {
                   <div key={post.id}>
                     <FeedCard post={post} />
                     {i < filteredPosts.length - 1 && (
-                      <div className="h-px bg-[#3a2e24]/[0.1] my-8 sm:my-12" />
+                      <div className="h-px bg-[#3a2e24]/[0.1] my-6 sm:my-12" />
                     )}
                   </div>
                 ))}
@@ -211,17 +211,17 @@ export default function Index() {
             )}
 
             {!feedLoading && filteredPosts.length === 0 && (
-              <div className="py-12 sm:py-24 text-center">
-                <p className="text-[1.2rem] sm:text-[1.6rem] uppercase text-[#3a2e24]/30 font-bold tracking-[0.08em]"
+              <div className="py-10 sm:py-24 text-center">
+                <p className="text-[1rem] sm:text-[1.6rem] uppercase text-[#3a2e24]/30 font-bold tracking-[0.08em]"
                   style={oswald}>
                   {feedFilter === "alle" ? "Ingen oppdateringer enda" : "Ingen treff i denne kategorien"}
                 </p>
-                <p className="text-[13px] text-[#3a2e24]/25 mt-1.5">
+                <p className="text-[12px] sm:text-[13px] text-[#3a2e24]/25 mt-1.5">
                   {feedFilter === "alle" ? "Bli den første til å dele noe" : "Prøv en annen kategori"}
                 </p>
                 {!user && feedFilter === "alle" && (
                   <Link to="/login"
-                    className="inline-block mt-5 text-[12px] uppercase tracking-[0.2em] text-[#c4962c] hover:text-[#a07820] font-bold transition-colors border-b border-[#c4962c]/30 hover:border-[#c4962c]/60 pb-0.5"
+                    className="inline-block mt-4 sm:mt-5 text-[11px] sm:text-[12px] uppercase tracking-[0.2em] text-[#c4962c] hover:text-[#a07820] font-bold transition-colors border-b border-[#c4962c]/30 hover:border-[#c4962c]/60 pb-0.5"
                     style={oswald}>
                     Logg inn for å starte →
                   </Link>
