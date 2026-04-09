@@ -13,6 +13,7 @@ import moduleBiler from "@/assets/module-biler.jpg";
 import moduleMarkedsplass from "@/assets/module-markedsplass.jpg";
 import moduleArrangementer from "@/assets/module-arrangementer.jpg";
 import moduleKlubber from "@/assets/module-klubber.jpg";
+import moduleAktoerer from "@/assets/module-aktoerer.jpg";
 import heroWallBg from "@/assets/hero-wall-bg.jpg";
 
 const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
