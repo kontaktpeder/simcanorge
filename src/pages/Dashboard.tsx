@@ -174,7 +174,7 @@ export default function Dashboard() {
       {/* ─── VARSLER ─── */}
       {notifications && notifications.length > 0 && (
         <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }} className="mb-8">
-          <div className="border border-white/[0.08] bg-white/[0.02] rounded-sm overflow-hidden">
+          <div className="border border-white/[0.1] bg-[#161412] rounded-sm overflow-hidden">
             <div className="px-5 py-3 border-b border-white/[0.06] flex items-center gap-2.5">
               <Bell className="w-4 h-4 text-[#c4962c]" />
               <span className="text-[11px] uppercase tracking-[0.15em] font-semibold text-white/60" style={oswald}>
@@ -338,7 +338,7 @@ export default function Dashboard() {
               </button>
             </div>
 
-            <div className="border border-white/[0.08] bg-white/[0.02] rounded-sm p-5 sm:p-6">
+            <div className="border border-white/[0.1] bg-[#161412] rounded-sm p-5 sm:p-6">
               <SendInnBilForm
                 onSuccess={handleFormSuccess}
                 onCancel={() => setShowCarForm(false)}
