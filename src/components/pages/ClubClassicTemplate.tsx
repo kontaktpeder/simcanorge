@@ -124,20 +124,20 @@ export function ClubClassicTemplate({ page }: { page: Page }) {
         )}
       </section>
 
-      {/* ── LOGO + TITLE — between hero and content ── */}
-      <div className="max-w-[1000px] mx-auto px-5 md:px-8 -mt-12 relative z-10 mb-8 md:mb-10">
-        <div className="flex items-end gap-5 md:gap-6">
+      {/* ── LOGO (overlaps hero) + TITLE (below) ── */}
+      <div className="max-w-[1000px] mx-auto px-5 md:px-8 relative z-10 mb-8 md:mb-10">
+        <div className="flex items-start gap-5 md:gap-6">
           {page.logo_url && (
             <img
               src={page.logo_url}
               alt={page.title}
-              className="h-20 md:h-28 w-auto flex-shrink-0 rounded-xl border-4 border-background bg-background"
+              className="h-20 md:h-28 w-auto flex-shrink-0 rounded-xl border-4 border-background bg-background -mt-12"
               style={{
                 filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.15))'
               }}
             />
           )}
-          <div className="pb-1">
+          <div className="pt-3">
             {page.founded_year && (
               <p className="text-[10px] tracking-[0.35em] uppercase text-muted-foreground font-sans font-semibold mb-0.5">
                 Est. {page.founded_year}
