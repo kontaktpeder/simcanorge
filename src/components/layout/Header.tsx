@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X, LogIn, Search as SearchIcon } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
-import { GlobalSearch } from "@/components/layout/GlobalSearch";
+import { HeroSearch } from "@/components/layout/HeroSearch";
 import bilgarasjeLogo from "@/assets/bilgarasje-logo.png";
 
 const navLinks = [
@@ -76,10 +76,9 @@ export function Header() {
 
           {/* Search area */}
           <div className="hidden md:flex flex-1 max-w-md mx-4 items-center justify-center">
-            {showFullNavSearch && <GlobalSearch />}
-            {showExpandedNavSearch && (
-              <div className="w-full animate-in fade-in duration-200">
-                <GlobalSearch />
+            {(showFullNavSearch || showExpandedNavSearch) && (
+              <div className={`w-full ${showExpandedNavSearch ? 'animate-in fade-in duration-200' : ''}`}>
+                <HeroSearch compact />
               </div>
             )}
             {showCompactIcon && (
@@ -137,7 +136,7 @@ export function Header() {
       {navSearchOpen && showCompactIcon && (
         <div className="hidden md:block bg-[#f5f0e8] border-t border-[#c4962c]/10 px-5 md:px-8 py-3">
           <div className="max-w-md mx-auto">
-            <GlobalSearch />
+            <HeroSearch compact />
           </div>
         </div>
       )}
@@ -146,7 +145,7 @@ export function Header() {
         <nav className="lg:hidden bg-[#f5f0e8] border-t border-[#c4962c]/10">
           <div className="px-5 py-2 flex flex-col">
             <div className="py-3">
-              <GlobalSearch />
+              <HeroSearch compact />
             </div>
             {navLinks.map((link) => {
               const isActive = location.pathname === link.href;
