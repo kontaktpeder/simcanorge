@@ -58,8 +58,8 @@ export function Header() {
                   to={link.href}
                   className={`relative px-4 py-1.5 text-[13px] tracking-[0.12em] uppercase font-medium transition-all duration-300 ${
                     isActive
-                      ? "text-[#1a1a1a]"
-                      : "text-[#1a1a1a]/50 hover:text-[#1a1a1a]/90"
+                      ? "text-white/90"
+                      : "text-white/40 hover:text-white/70"
                   }`}
                 >
                   {link.label}
@@ -67,7 +67,7 @@ export function Header() {
                     <span className="absolute -bottom-[7px] left-4 right-4 h-px bg-[#c4962c]" />
                   )}
                   {i < navLinks.length - 1 && (
-                    <span className="absolute right-0 top-1/2 -translate-y-1/2 w-px h-2.5 bg-[#1a1a1a]/10" />
+                    <span className="absolute right-0 top-1/2 -translate-y-1/2 w-px h-2.5 bg-white/10" />
                   )}
                 </Link>
               );
@@ -84,7 +84,7 @@ export function Header() {
             {showCompactIcon && (
               <button
                 onClick={() => setNavSearchOpen(!navSearchOpen)}
-                className="p-2 text-[#1a1a1a]/30 hover:text-[#1a1a1a]/60 transition-colors"
+                className="p-2 text-white/30 hover:text-white/60 transition-colors"
                 aria-label="Søk"
               >
                 <SearchIcon className="w-4 h-4" />
@@ -99,14 +99,14 @@ export function Header() {
             {user ? (
               <Link
                 to="/dashboard"
-                className="px-5 py-2 text-[13px] tracking-[0.1em] uppercase font-medium text-[#1a1a1a]/70 hover:text-[#1a1a1a] border border-[#1a1a1a]/20 hover:border-[#1a1a1a]/40 transition-all duration-300"
+                className="px-5 py-2 text-[13px] tracking-[0.1em] uppercase font-medium text-white/50 hover:text-white/80 border border-white/15 hover:border-white/30 transition-all duration-300"
               >
                 Min garasje
               </Link>
             ) : (
               <Link
                 to="/login?returnUrl=/dashboard"
-                className="flex items-center gap-2 px-5 py-2 text-[13px] tracking-[0.1em] uppercase font-medium text-[#1a1a1a]/70 hover:text-[#1a1a1a] border border-[#1a1a1a]/20 hover:border-[#1a1a1a]/40 transition-all duration-300"
+                className="flex items-center gap-2 px-5 py-2 text-[13px] tracking-[0.1em] uppercase font-medium text-white/50 hover:text-white/80 border border-white/15 hover:border-white/30 transition-all duration-300"
               >
                 <LogIn className="w-3.5 h-3.5" />
                 Logg inn
@@ -114,7 +114,7 @@ export function Header() {
             )}
             <Link
               to="/send-inn"
-              className="px-5 py-2 text-[13px] tracking-[0.1em] uppercase text-[#0f0d0b] font-bold transition-all duration-300"
+              className="px-5 py-2 text-[13px] tracking-[0.1em] uppercase text-[#0f0d0b] font-bold transition-all duration-300 hover:brightness-110"
               style={{ background: 'linear-gradient(135deg, #d4a017, #e8c547, #c4962c)' }}
             >
               Send inn bil
@@ -123,7 +123,7 @@ export function Header() {
 
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden ml-auto p-2 text-[#1a1a1a]/35 hover:text-[#1a1a1a] transition-colors"
+            className="lg:hidden ml-auto p-2 text-white/40 hover:text-white/80 transition-colors"
             aria-label="Meny"
           >
             {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -134,7 +134,7 @@ export function Header() {
       <div className="h-px bg-[#c4962c]/10" />
 
       {navSearchOpen && showCompactIcon && (
-        <div className="hidden md:block bg-[#f5f0e8] border-t border-[#c4962c]/10 px-5 md:px-8 py-3">
+        <div className="hidden md:block border-t border-[#c4962c]/10 px-5 md:px-8 py-3" style={{ background: 'rgba(42,33,24,0.95)' }}>
           <div className="max-w-md mx-auto">
             <HeroSearch compact />
           </div>
@@ -142,7 +142,7 @@ export function Header() {
       )}
 
       {mobileMenuOpen && (
-        <nav className="lg:hidden bg-[#f5f0e8] border-t border-[#c4962c]/10">
+        <nav className="lg:hidden border-t border-[#c4962c]/10" style={{ background: 'rgba(42,33,24,0.98)' }}>
           <div className="px-5 py-2 flex flex-col">
             <div className="py-3">
               <HeroSearch compact />
@@ -154,8 +154,8 @@ export function Header() {
                   key={link.href}
                   to={link.href}
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`py-2.5 text-[11px] tracking-[0.15em] uppercase border-b border-[#1a1a1a]/[0.06] transition-all ${
-                    isActive ? "text-[#1a1a1a]" : "text-[#1a1a1a]/35 hover:text-[#1a1a1a]/65"
+                  className={`py-2.5 text-[11px] tracking-[0.15em] uppercase border-b border-white/[0.06] transition-all ${
+                    isActive ? "text-white/80" : "text-white/30 hover:text-white/60"
                   }`}
                 >
                   {link.label}
@@ -165,12 +165,12 @@ export function Header() {
             <div className="flex flex-col gap-2 mt-3 pb-2">
               {user ? (
                 <Link to="/dashboard" onClick={() => setMobileMenuOpen(false)}
-                  className="py-2 text-center text-[11px] tracking-[0.15em] uppercase text-[#1a1a1a]/50 border border-[#1a1a1a]/15">
+                  className="py-2 text-center text-[11px] tracking-[0.15em] uppercase text-white/40 border border-white/15">
                   Min garasje
                 </Link>
               ) : (
                 <Link to="/login?returnUrl=/dashboard" onClick={() => setMobileMenuOpen(false)}
-                  className="py-2 text-center text-[11px] tracking-[0.15em] uppercase text-[#1a1a1a]/50 border border-[#1a1a1a]/15 flex items-center justify-center gap-2">
+                  className="py-2 text-center text-[11px] tracking-[0.15em] uppercase text-white/40 border border-white/15 flex items-center justify-center gap-2">
                   <LogIn className="w-3.5 h-3.5" /> Logg inn
                 </Link>
               )}
