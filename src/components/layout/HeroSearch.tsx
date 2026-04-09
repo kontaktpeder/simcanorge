@@ -67,7 +67,7 @@ export function HeroSearch() {
   return (
     <div ref={containerRef} className="relative w-full" style={{ zIndex: 9999 }}>
       <div className="relative">
-        <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-white/50" />
+        <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-[#8b6914]" />
         <input
           ref={inputRef}
           type="text"
@@ -79,17 +79,17 @@ export function HeroSearch() {
           onFocus={() => setOpen(true)}
           placeholder="Søk etter biler, deler, arrangementer…"
           style={{ fontFamily: "'Chakra Petch', sans-serif" }}
-          className="w-full bg-white/20 backdrop-blur-lg border-2 border-white/30 hover:border-white/50 focus:border-[#c4962c] rounded-xl pl-14 pr-12 py-3.5 sm:py-4 text-[14px] sm:text-[15px] text-white placeholder:text-white/50 focus:outline-none transition-all tracking-wide shadow-[0_4px_30px_rgba(0,0,0,0.25)]"
+          className="w-full bg-[#e8e0d4]/90 backdrop-blur-md border border-[#c4962c]/20 hover:border-[#c4962c]/40 focus:border-[#c4962c] rounded-lg pl-14 pr-12 py-3.5 sm:py-4 text-[14px] sm:text-[15px] text-[#3a2e24] placeholder:text-[#3a2e24]/35 focus:outline-none transition-all tracking-wide shadow-[0_2px_16px_rgba(58,46,36,0.15)]"
         />
         {inputValue && (
-          <button onClick={handleClear} className="absolute right-3 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/60 transition-colors">
+          <button onClick={handleClear} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#3a2e24]/30 hover:text-[#3a2e24]/60 transition-colors">
             <X className="w-4 h-4" />
           </button>
         )}
       </div>
 
       {showDropdown && (
-        <div className="absolute top-full left-0 right-0 mt-2 bg-[#f5f0e8]/98 backdrop-blur-xl border border-[#c4962c]/15 shadow-[0_12px_40px_rgba(58,46,36,0.2)] z-[9999] max-h-[380px] overflow-y-auto rounded-xl">
+        <div className="absolute top-full left-0 right-0 mt-1 bg-[#ede6db] border border-[#c4962c]/15 shadow-[0_8px_32px_rgba(58,46,36,0.18)] z-[9999] max-h-[380px] overflow-y-auto rounded-lg">
           {isSearching && (
             <div className="px-4 py-3 text-[13px] text-[#3a2e24]/40 tracking-wide" style={{ fontFamily: "'Chakra Petch', sans-serif" }}>Søker…</div>
           )}
