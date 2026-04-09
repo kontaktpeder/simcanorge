@@ -252,6 +252,24 @@ export default function DashboardOpprettBil() {
     finally { setIsSaving(false); }
   };
 
+  // Live query for car images
+  const { data: carImages = [] } = useQuery({
+    queryKey: ['opprett-car-images', createdCarId],
+    queryFn: async () => {
+      if (!createdCarId) return [];
+      const { data, error } = await supabase
+        .from('car_images')
+        .select('id, image_url, alt_text, sort_order')
+        .eq('car_id', createdCarId)
+        .order('sort_order');
+      if (error) throw error;
+      return data ?? [];
+    },
+    enabled: !!createdCarId,
+  });
+
+  const sortedImages = [...carImages].sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
+
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0 || !createdCarId) return;
@@ -259,19 +277,59 @@ export default function DashboardOpprettBil() {
     try {
       const results = await compressImages(Array.from(files));
       let successCount = 0;
+      const currentCount = sortedImages.length;
       for (const result of results) {
         const imageId = generateImageId();
         const filePath = getCarImagePath(createdCarId, imageId);
         const { error: uploadError } = await supabase.storage.from('simca-images').upload(filePath, result.file, { contentType: 'image/webp' });
         if (uploadError) { console.error('Upload error:', uploadError); continue; }
         const { data: urlData } = supabase.storage.from('simca-images').getPublicUrl(filePath);
-        const { error: dbError } = await supabase.from('car_images').insert({ car_id: createdCarId, image_url: urlData.publicUrl, sort_order: uploadedCount + successCount });
+        const { error: dbError } = await supabase.from('car_images').insert({ car_id: createdCarId, image_url: urlData.publicUrl, sort_order: currentCount + successCount });
         if (dbError) { console.error('DB error:', dbError); } else { successCount++; }
       }
-      setUploadedCount(prev => prev + successCount);
+      queryClient.invalidateQueries({ queryKey: ['opprett-car-images', createdCarId] });
       toast.success(`${successCount} bilde(r) lastet opp`);
     } catch (err) { console.error('Upload error:', err); toast.error('Feil ved bildeopplasting'); }
     finally { setIsUploading(false); if (fileInputRef.current) fileInputRef.current.value = ''; }
+  };
+
+  const deleteImage = async (imageId: string) => {
+    const { error } = await supabase.from('car_images').delete().eq('id', imageId);
+    if (error) { console.error('Delete error:', error); toast.error('Kunne ikke slette bilde'); }
+    else { toast.success('Bilde slettet'); queryClient.invalidateQueries({ queryKey: ['opprett-car-images', createdCarId] }); }
+  };
+
+  const persistImageOrder = async (images: typeof sortedImages) => {
+    setIsReorderingImages(true);
+    try {
+      for (let i = 0; i < images.length; i++) {
+        await supabase.from('car_images').update({ sort_order: i }).eq('id', images[i].id);
+      }
+      queryClient.invalidateQueries({ queryKey: ['opprett-car-images', createdCarId] });
+    } catch { toast.error('Kunne ikke endre rekkefølge'); }
+    finally { setIsReorderingImages(false); }
+  };
+
+  const moveImageLeft = (index: number) => {
+    if (index <= 0) return;
+    const next = [...sortedImages];
+    [next[index - 1], next[index]] = [next[index], next[index - 1]];
+    persistImageOrder(next);
+  };
+
+  const moveImageRight = (index: number) => {
+    if (index >= sortedImages.length - 1) return;
+    const next = [...sortedImages];
+    [next[index], next[index + 1]] = [next[index + 1], next[index]];
+    persistImageOrder(next);
+  };
+
+  const setMainImage = (index: number) => {
+    if (index <= 0) return;
+    const next = [...sortedImages];
+    const [picked] = next.splice(index, 1);
+    next.unshift(picked);
+    persistImageOrder(next);
   };
 
   const handlePublish = async () => {
