@@ -1,5 +1,6 @@
 import { useState, useRef, useMemo } from "react";
-import { Car, Send, Camera, X, ImagePlus } from "lucide-react";
+import { Car, Send, Camera, X, ImagePlus, Users } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -66,6 +67,9 @@ export function SendInnBilForm({ onSuccess, onCancel, showCancelButton = false }
   } | null>(null);
   const [allowEdits, setAllowEdits] = useState<boolean | null>(null);
   const [allowInstagram, setAllowInstagram] = useState<boolean>(false);
+  const [clubLinkRequested, setClubLinkRequested] = useState(false);
+  const [clubPageId, setClubPageId] = useState("");
+  const [clubMessage, setClubMessage] = useState("");
   const [lastSubmitTime, setLastSubmitTime] = useState<number>(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [formData, setFormData] = useState({
@@ -99,6 +103,22 @@ export function SendInnBilForm({ onSuccess, onCancel, showCancelButton = false }
     return generateCarTitle(formData.brand, formData.car_model, formData.car_year ? parseInt(formData.car_year) : null);
   }, [formData.brand, formData.car_model, formData.car_year]);
 
+  const { data: clubs } = useQuery({
+    queryKey: ["public-clubs-for-submission"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("pages")
+        .select("id, title, slug")
+        .eq("page_type", "club")
+        .eq("is_public", true)
+        .eq("status", "active")
+        .order("title");
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
+  const selectedClub = clubs?.find(c => c.id === clubPageId) ?? null;
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
@@ -234,6 +254,11 @@ export function SendInnBilForm({ onSuccess, onCancel, showCancelButton = false }
       setErrors(fieldErrors);
       return;
     }
+
+    if (clubLinkRequested && !clubPageId) {
+      setErrors(prev => ({ ...prev, club_page: "Velg ønsket klubb" }));
+      return;
+    }
     
     setIsSubmitting(true);
     setUploadProgress(null);
@@ -287,6 +312,15 @@ export function SendInnBilForm({ onSuccess, onCancel, showCancelButton = false }
         car_story: result.data.car_story || null,
         allow_edits: allowEdits === true,
         allow_instagram: allowInstagram,
+        club_join_request: clubLinkRequested && selectedClub
+          ? {
+              requested: true,
+              page_id: selectedClub.id,
+              page_title: selectedClub.title,
+              page_slug: selectedClub.slug,
+              message: clubMessage.trim() || null,
+            }
+          : { requested: false, page_id: null, page_title: null, page_slug: null, message: null },
         image_count: uploadResult.urls.length,
         images_selected: images.length,
       };
@@ -374,8 +408,6 @@ export function SendInnBilForm({ onSuccess, onCancel, showCancelButton = false }
           description: "Bilen vil bli vist når admin har godkjent den.",
         });
       }
-
-      onSuccess?.();
 
       onSuccess?.();
     } catch (error: any) {
@@ -618,6 +650,68 @@ export function SendInnBilForm({ onSuccess, onCancel, showCancelButton = false }
                 Nei, jeg ønsker at innsendelsen publiseres som den er.
               </span>
             </label>
+          </div>
+
+          {/* Club join request */}
+          <div className="p-3 sm:p-4 bg-muted/30 rounded-lg border-2 border-muted">
+            <p className="font-display text-base sm:text-lg mb-2 sm:mb-3 flex items-center gap-2">
+              <Users className="w-5 h-5" />
+              KNYTTE BILEN TIL EN KLUBB
+            </p>
+            <p className="text-xs sm:text-sm text-muted-foreground mb-3">
+              Ønsker du at bilen skal vises på en klubbside? Du kan sende en forespørsel her. Klubben/admin godkjenner koblingen.
+            </p>
+            <label className="flex items-start gap-3 cursor-pointer p-2 sm:p-3 rounded-lg hover:bg-muted/50 transition-colors">
+              <input
+                type="checkbox"
+                checked={clubLinkRequested}
+                onChange={(e) => {
+                  setClubLinkRequested(e.target.checked);
+                  if (!e.target.checked) {
+                    setClubPageId("");
+                    setClubMessage("");
+                  }
+                  if (errors.club_page) setErrors(prev => ({ ...prev, club_page: "" }));
+                }}
+                className="w-5 h-5 mt-0.5 accent-primary flex-shrink-0"
+              />
+              <span className="text-sm sm:text-base text-foreground font-medium">
+                Ja, jeg ønsker å knytte bilen til en klubb på Bilgarasjen
+              </span>
+            </label>
+
+            {clubLinkRequested && (
+              <div className="mt-3 space-y-3 pl-8">
+                <div>
+                  <Label className="text-sm font-medium">Velg klubb *</Label>
+                  <select
+                    value={clubPageId}
+                    onChange={(e) => {
+                      setClubPageId(e.target.value);
+                      if (errors.club_page) setErrors(prev => ({ ...prev, club_page: "" }));
+                    }}
+                    className={`w-full h-12 px-3 text-base rounded-md border-2 bg-background mt-1 ${errors.club_page ? 'border-destructive' : 'border-muted'}`}
+                  >
+                    <option value="">Velg klubb...</option>
+                    {clubs?.map(club => (
+                      <option key={club.id} value={club.id}>{club.title}</option>
+                    ))}
+                  </select>
+                  {errors.club_page && <p className="text-destructive text-xs mt-1">{errors.club_page}</p>}
+                </div>
+                <div>
+                  <Label className="text-sm font-medium">Melding til klubb/admin (valgfritt)</Label>
+                  <Textarea
+                    value={clubMessage}
+                    onChange={(e) => setClubMessage(e.target.value)}
+                    placeholder="F.eks. «Jeg er medlem og vil gjerne ha bilen på klubbsiden»"
+                    maxLength={2000}
+                    className="mt-1"
+                    rows={2}
+                  />
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Instagram consent */}
