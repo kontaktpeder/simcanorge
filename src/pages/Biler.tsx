@@ -93,7 +93,7 @@ const Biler = () => {
       query = query.eq("category", filterState.category);
     }
     if (filterState.brand) {
-      query = query.eq("brand", filterState.brand);
+      query = query.ilike("brand", filterState.brand);
     }
     if (filterState.model) {
       query = query.eq("model", filterState.model);
