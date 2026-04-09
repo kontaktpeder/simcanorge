@@ -272,17 +272,15 @@ export default function Dashboard() {
           </DashDesc>
         </DashCard>
 
-        {ownerProfile && (
-          <DashCard to="/dashboard/mine-foresporsler" icon={Inbox} delay={0.4}>
-            <DashTitle>Forespørsler</DashTitle>
-            <DashDesc>
-              {(myInquiries?.pending ?? 0) > 0
-                ? `${myInquiries!.pending} venter på svar`
-                : 'Se forespørsler fra kjøpere'}
-            </DashDesc>
-            <DashCount>{myInquiries?.total || 0}</DashCount>
-          </DashCard>
-        )}
+        <DashCard to="/dashboard/innboks" icon={Inbox} delay={0.4}>
+          <DashTitle>Innboks</DashTitle>
+          <DashDesc>
+            {(myInquiries?.pending ?? 0) > 0
+              ? `${myInquiries!.pending} venter på svar`
+              : 'Forespørsler og klubbtilknytning'}
+          </DashDesc>
+          <DashCount>{myInquiries?.total || 0}</DashCount>
+        </DashCard>
       </div>
 
       {/* ═══════════════════════════════════════════════

@@ -31,6 +31,7 @@ const DashboardMineBiler = lazy(() => import("@/pages/DashboardMineBiler"));
 const DashboardBilDetalj = lazy(() => import("@/pages/DashboardBilDetalj"));
 const DashboardMineAnnonser = lazy(() => import("@/pages/DashboardMineAnnonser"));
 const DashboardMineForesporsler = lazy(() => import("@/pages/DashboardMineForesporsler"));
+const DashboardInnboks = lazy(() => import("@/pages/DashboardInnboks"));
 const OpprettAnnonse = lazy(() => import("@/pages/OpprettAnnonse"));
 const RedigerAnnonse = lazy(() => import("@/pages/RedigerAnnonse"));
 const ForhandsvisAnnonse = lazy(() => import("@/pages/ForhandsvisAnnonse"));
@@ -125,6 +126,7 @@ export const routes: RouteConfig[] = [
   { path: "/dashboard/bil/:carId", element: DashboardBilDetalj, requiresAuth: true },
   { path: "/dashboard/mine-annonser", element: DashboardMineAnnonser, requiresAuth: true },
   { path: "/dashboard/mine-foresporsler", element: DashboardMineForesporsler, requiresAuth: true },
+  { path: "/dashboard/innboks", element: DashboardInnboks, requiresAuth: true },
   { path: "/dashboard/opprett-annonse", element: OpprettAnnonse, requiresAuth: true },
   { path: "/dashboard/annonse/:itemId/rediger", element: RedigerAnnonse, requiresAuth: true },
   { path: "/dashboard/annonse/:itemId/forhandsvis", element: ForhandsvisAnnonse, requiresAuth: true },
