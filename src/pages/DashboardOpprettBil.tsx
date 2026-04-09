@@ -2,7 +2,7 @@ import { useState, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useEffect } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Layout } from '@/components/layout/Layout';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
