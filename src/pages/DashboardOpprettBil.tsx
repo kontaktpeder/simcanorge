@@ -420,7 +420,7 @@ export default function DashboardOpprettBil() {
               <SelectTrigger><SelectValue placeholder="Velg karosseri (valgfritt)" /></SelectTrigger>
               <SelectContent>
                 {CAR_BODY_TYPES.map(bt => (
-                  <SelectItem key={bt.value} value={bt.value}>{bt.label}</SelectItem>
+                  <SelectItem key={bt.id} value={bt.id}>{bt.label}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
