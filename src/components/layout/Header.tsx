@@ -117,7 +117,7 @@ export function Header() {
               className="px-5 py-2 text-[13px] tracking-[0.1em] uppercase text-[#0f0d0b] font-bold transition-all duration-300 hover:brightness-110"
               style={{ background: 'linear-gradient(135deg, #d4a017, #e8c547, #c4962c)' }}
             >
-              Send inn bil
+              Opprett bil
             </Link>
           </div>
 
@@ -174,10 +174,10 @@ export function Header() {
                   <LogIn className="w-3.5 h-3.5" /> Logg inn
                 </Link>
               )}
-              <Link to="/send-inn" onClick={() => setMobileMenuOpen(false)}
+              <Link to="/dashboard/opprett-bil" onClick={() => setMobileMenuOpen(false)}
                 className="py-2 text-center text-[11px] tracking-[0.15em] uppercase text-[#0a0a0a] font-semibold"
                 style={{ background: 'linear-gradient(135deg, #d4a017, #e8c547, #c4962c)' }}>
-                Send inn bil
+                Opprett bil
               </Link>
             </div>
           </div>

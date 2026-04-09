@@ -299,7 +299,7 @@ export default function Dashboard() {
               </div>
               <div>
                 <h3 className="text-[17px] sm:text-[20px] font-bold uppercase tracking-[0.03em] text-[#3a2e24] group-hover:text-[#8b6914] transition-colors" style={chakra}>
-                  Send inn bil
+                  Opprett bil
                 </h3>
                 <p className="text-[12px] sm:text-[13px] text-[#3a2e24]/45 mt-0.5">
                   Legg til en ny bil i garasjen din — del historien bak bilen

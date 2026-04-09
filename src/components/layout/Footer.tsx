@@ -51,7 +51,7 @@ export function Footer() {
             <div>
               <h3 className="text-[10px] tracking-[0.2em] uppercase text-[#c4962c]/50 font-bold mb-3" style={chakra}>Delta</h3>
               <nav className="flex flex-col gap-1.5 text-[12px]" style={chakra}>
-                <Link to="/send-inn" className="text-white/40 hover:text-[#c4962c] transition-colors">Send inn bil</Link>
+                <Link to="/dashboard/opprett-bil" className="text-white/40 hover:text-[#c4962c] transition-colors">Opprett bil</Link>
                 <Link to="/start-annonse" className="text-white/40 hover:text-[#c4962c] transition-colors">Opprett annonse</Link>
                 <Link to="/kontakt" className="text-white/40 hover:text-[#c4962c] transition-colors">Kontakt oss</Link>
                 <button
