@@ -167,11 +167,11 @@ export default function Index() {
           style={{ background: 'linear-gradient(180deg, #eee7dd 0%, #ebe4da 40%, #e8e1d6 100%)' }}
         >
           {/* Car silhouette watermark — flipped */}
-          <div className="absolute inset-0 pointer-events-none flex items-center justify-center overflow-hidden" style={{ opacity: 0.035 }}>
+          <div className="absolute bottom-0 left-0 right-0 pointer-events-none flex justify-center overflow-hidden" style={{ opacity: 0.025 }}>
             <img
               src={carSilhouette}
               alt=""
-              className="w-[80%] max-w-[1000px]"
+              className="w-[80%] max-w-[1000px] translate-y-[30%]"
               style={{ transform: 'scaleX(-1)', filter: 'brightness(0) opacity(1)' }}
             />
           </div>
