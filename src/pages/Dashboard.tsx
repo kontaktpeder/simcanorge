@@ -305,9 +305,9 @@ export default function Dashboard() {
                 <p className="text-base text-muted-foreground">
                   {personProfile.can_create_pages
                     ? (myPages?.length ?? 0) === 0
-                      ? 'Opprett din første side →'
+                      ? 'Opprett din første side'
                       : 'Se og rediger sidene dine'
-                    : 'Søk om tilgang til å opprette sider →'}
+                    : 'Be om tilgang eller se status'}
                 </p>
                 <p className="font-display text-4xl sm:text-5xl text-foreground leading-none mt-4">
                   {myPages?.length || 0}

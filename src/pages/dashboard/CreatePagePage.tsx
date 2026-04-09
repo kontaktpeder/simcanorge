@@ -1,4 +1,5 @@
 import { Helmet } from "react-helmet-async";
+import { Layout } from "@/components/layout/Layout";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -66,21 +67,23 @@ export default function CreatePagePage() {
 
   if (!profile?.can_create_pages) {
     return (
-      <div className="max-w-lg mx-auto px-4 py-12 space-y-6">
-        <div className="text-center space-y-2">
-          <h1 className="text-2xl font-bold">Opprett side</h1>
-          <p className="text-muted-foreground">
-            For å opprette klubber, verksteder og andre sider må du søke om tilgang.
-            Vi behandler forespørsler manuelt for å sikre kvalitet.
-          </p>
+      <Layout>
+        <div className="max-w-lg mx-auto px-4 py-12 space-y-6">
+          <div className="text-center space-y-2">
+            <h1 className="text-2xl font-bold">Opprett side</h1>
+            <p className="text-muted-foreground">
+              For å opprette klubber, verksteder og andre sider må du søke om tilgang.
+              Vi behandler forespørsler manuelt for å sikre kvalitet.
+            </p>
+          </div>
+          <RequestPageAccessButton />
         </div>
-        <RequestPageAccessButton />
-      </div>
+      </Layout>
     );
   }
 
   return (
-    <>
+    <Layout>
       <Helmet>
         <title>Opprett ny side | Bilgarasjen</title>
       </Helmet>
@@ -102,6 +105,6 @@ export default function CreatePagePage() {
           </CardContent>
         </Card>
       </div>
-    </>
+    </Layout>
   );
 }
