@@ -199,7 +199,7 @@ export default function Dashboard() {
                         </button>
                       </Link>
                     )}
-                    <button onClick={() => markAsRead(notif.id)} className="p-1.5 text-white/20 hover:text-white/50 transition-colors">
+                    <button onClick={() => markAsRead(notif.id)} className="p-1.5 text-[#3a2e24]/20 hover:text-[#3a2e24]/50 transition-colors">
                       <CheckCircle className="w-4 h-4" />
                     </button>
                   </div>
