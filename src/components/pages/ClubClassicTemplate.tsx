@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { MapPin, Calendar, Mail, Globe, Phone } from "lucide-react";
 import { PublicPageContact } from "./PublicPageContact";
+import { ClubCommunityCars } from "./ClubCommunityCars";
 import { useFeedPosts } from "@/hooks/useFeedPosts";
 import { FeedCard } from "@/components/feed/FeedCard";
 
@@ -18,13 +19,14 @@ interface Page {
   contact_phone: string | null;
   website: string | null;
   page_type: string;
+  brand_key: string | null;
 }
 
 export function ClubClassicTemplate({ page }: { page: Page }) {
   const { data: feedPosts } = useFeedPosts({ pageId: page.id, limit: 8 });
 
   return (
-    <div className="min-h-screen bg-background font-sans">
+    <div className="bg-background font-sans">
 
       {/* ── HERO — metallic blue lacquer ── */}
       <section className="relative overflow-hidden bg-metal-blue" style={{ minHeight: "420px" }}>
@@ -149,6 +151,12 @@ export function ClubClassicTemplate({ page }: { page: Page }) {
             </div>
           </div>
         )}
+
+        {/* Community cars */}
+        <ClubCommunityCars
+          page={{ id: page.id, slug: page.slug, brand_key: page.brand_key }}
+          variant="classic"
+        />
 
         {/* TODO: Reintroduce events for clubs later when we have a clearer event model */}
 

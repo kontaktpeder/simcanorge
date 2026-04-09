@@ -12,6 +12,7 @@ import { getPageThemeStyle } from "@/lib/pageThemes";
 import { MapPin, Calendar } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { CreateCTA } from "@/components/ui/CreateCTA";
+import { ClubCommunityCars } from "@/components/pages/ClubCommunityCars";
 
 const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
 
@@ -53,7 +54,7 @@ export default function PublicPagePage() {
   // Klubb + classic template → eget editorial layout
   if (page.page_type === "club" && (page as any).page_template === "classic") {
     return (
-      <Layout>
+      <Layout shortPage>
         <Helmet>
           <title>{page.title} | Bilgarasjen</title>
           {page.tagline && <meta name="description" content={page.tagline} />}
@@ -68,13 +69,13 @@ export default function PublicPagePage() {
 
   if (isClub) {
     return (
-      <Layout>
+      <Layout shortPage>
         <Helmet>
           <title>{page.title} | Bilgarasjen</title>
           {page.tagline && <meta name="description" content={page.tagline} />}
         </Helmet>
 
-        <div className="min-h-screen">
+        <div>
           {/* ─── HERO ─── */}
           <section className="relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #4a3d30 0%, #3a2e24 40%, #2a2118 100%)' }}>
             <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 30% 50%, transparent 50%, rgba(0,0,0,0.2) 100%)' }} />
@@ -183,6 +184,12 @@ export default function PublicPagePage() {
                   </p>
                 </div>
               )}
+
+              {/* Community cars */}
+              <ClubCommunityCars
+                page={{ id: page.id, slug: page.slug, brand_key: (page as any).brand_key ?? null }}
+                variant="modern"
+              />
 
               <div className="h-px bg-gradient-to-r from-[#c4962c]/25 via-[#3a2e24]/[0.06] to-transparent mb-12 md:mb-16" />
 

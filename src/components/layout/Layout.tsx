@@ -8,9 +8,11 @@ interface LayoutProps {
   contained?: boolean;
   /** When true, Layout does not render its own Footer (useful when Footer is placed inside a custom scroll container) */
   hideFooter?: boolean;
+  /** When true, main does not use flex-1 so short pages don't get a huge blank area before the footer */
+  shortPage?: boolean;
 }
 
-export function Layout({ children, contained = false, hideFooter = false }: LayoutProps) {
+export function Layout({ children, contained = false, hideFooter = false, shortPage = false }: LayoutProps) {
   if (contained) {
     return (
     <div className="h-screen min-h-[100dvh] flex flex-col overflow-hidden">
@@ -28,7 +30,7 @@ export function Layout({ children, contained = false, hideFooter = false }: Layo
   return (
     <div className="min-h-screen flex flex-col overflow-x-hidden">
       <Header />
-      <main className="flex-1 overflow-x-hidden pt-14 md:pt-16">
+      <main className={`${shortPage ? '' : 'flex-1'} overflow-x-hidden pt-14 md:pt-16`}>
         {children}
       </main>
       {!hideFooter && <Footer />}
