@@ -42,7 +42,7 @@ export function GarageLayout({
           className="fixed inset-0 bg-cover bg-center bg-no-repeat -z-10"
           style={{ backgroundImage: `url(${garageBackground})` }}
         />
-        <div className="fixed inset-0 -z-10" style={{ background: 'linear-gradient(180deg, rgba(15,13,11,0.82) 0%, rgba(15,13,11,0.88) 50%, rgba(15,13,11,0.92) 100%)' }} />
+        <div className="fixed inset-0 -z-10" style={{ background: 'linear-gradient(180deg, rgba(15,13,11,0.95) 0%, rgba(15,13,11,0.97) 50%, rgba(15,13,11,0.98) 100%)' }} />
 
         {/* ─── HERO ─── */}
         <section className="relative overflow-hidden border-b border-white/[0.06]">

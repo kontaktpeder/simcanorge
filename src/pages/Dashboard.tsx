@@ -378,8 +378,8 @@ function DashCard({ children, to, icon: Icon, delay, highlight, ...rest }: {
       <Link to={to} className="block h-full touch-manipulation group">
         <div className={`h-full rounded-sm p-5 sm:p-6 transition-all duration-300 border ${
           highlight
-            ? 'border-[#c4962c]/25 bg-[#c4962c]/[0.06] hover:bg-[#c4962c]/[0.1]'
-            : 'border-white/[0.08] bg-white/[0.02] hover:bg-white/[0.04] hover:border-white/[0.12]'
+            ? 'border-[#c4962c]/30 hover:border-[#c4962c]/50'
+            : 'border-white/[0.12] hover:border-white/[0.2]'
         }`}>
           <div className="flex items-start justify-between mb-3">
             <Icon className="w-5 h-5 text-white/20 group-hover:text-[#c4962c]/60 transition-colors" strokeWidth={1.5} />
