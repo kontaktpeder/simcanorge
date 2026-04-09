@@ -47,7 +47,7 @@ export default function Index() {
       <div className="min-h-[calc(100vh-4rem)]">
 
         {/* ─── HERO ─── */}
-        <section className="relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #3a2e24 0%, #2a2118 40%, #1e1812 100%)' }}>
+        <section className="relative overflow-visible" style={{ background: 'linear-gradient(135deg, #3a2e24 0%, #2a2118 40%, #1e1812 100%)' }}>
           {/* Vignette */}
           <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 30% 50%, transparent 40%, rgba(0,0,0,0.35) 100%)' }} />
           {/* Warm glow behind car */}
