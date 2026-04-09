@@ -855,6 +855,7 @@ export type Database = {
           id: string
           is_visible: boolean
           marketplace_item_id: string | null
+          page_id: string | null
           post_type: string
           snapshot_entity_type: string | null
           snapshot_image_url: string | null
@@ -870,6 +871,7 @@ export type Database = {
           id?: string
           is_visible?: boolean
           marketplace_item_id?: string | null
+          page_id?: string | null
           post_type?: string
           snapshot_entity_type?: string | null
           snapshot_image_url?: string | null
@@ -885,6 +887,7 @@ export type Database = {
           id?: string
           is_visible?: boolean
           marketplace_item_id?: string | null
+          page_id?: string | null
           post_type?: string
           snapshot_entity_type?: string | null
           snapshot_image_url?: string | null
@@ -918,6 +921,13 @@ export type Database = {
             columns: ["marketplace_item_id"]
             isOneToOne: false
             referencedRelation: "marketplace_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "feed_posts_page_id_fkey"
+            columns: ["page_id"]
+            isOneToOne: false
+            referencedRelation: "pages"
             referencedColumns: ["id"]
           },
         ]
@@ -1431,6 +1441,7 @@ export type Database = {
           is_public: boolean
           location: string | null
           logo_url: string | null
+          page_template: string | null
           page_type: string
           slug: string
           status: string
@@ -1452,6 +1463,7 @@ export type Database = {
           is_public?: boolean
           location?: string | null
           logo_url?: string | null
+          page_template?: string | null
           page_type: string
           slug: string
           status?: string
@@ -1473,6 +1485,7 @@ export type Database = {
           is_public?: boolean
           location?: string | null
           logo_url?: string | null
+          page_template?: string | null
           page_type?: string
           slug?: string
           status?: string
