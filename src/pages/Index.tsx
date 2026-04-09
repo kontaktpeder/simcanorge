@@ -133,7 +133,7 @@ export default function Index() {
         </section>
 
         {/* ─── FEED ─── */}
-        <section className="pt-4 sm:pt-10 md:pt-16 pb-12 sm:pb-20 md:pb-32">
+        <section className="pt-2 sm:pt-6 md:pt-8 pb-12 sm:pb-20 md:pb-32">
           <div className="max-w-[1000px] mx-auto px-4 sm:px-5 md:px-8">
 
             <div className="mb-6 sm:mb-10">
