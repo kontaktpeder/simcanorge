@@ -100,59 +100,58 @@ export default function Index() {
         </section>
 
         {/* ─── MODULES ─── */}
-        <section className="py-4 sm:py-6 md:py-8" style={{ background: 'linear-gradient(180deg, #2c2318 0%, #3a2c1e 50%, #352a1d 100%)' }}>
+        <section className="py-5 sm:py-7 md:py-9" style={{ background: 'linear-gradient(180deg, #e8e0d4 0%, #dfd5c7 50%, #d8cebf 100%)' }}>
           <div className="max-w-[1200px] mx-auto px-4 sm:px-5 md:px-8">
-            {/* Mobile: compact horizontal scroll */}
+            {/* Mobile: horizontal scroll */}
             <div className="flex gap-2.5 overflow-x-auto scrollbar-hide -mx-1 px-1 md:hidden">
-              {modules.map((mod) => (
-                <Link key={mod.title} to={mod.href} className="group relative flex-shrink-0 w-[140px]">
-                  <div className="relative overflow-hidden rounded-lg shadow-lg border border-[#c4962c]/20 hover:border-[#c4962c]/50 transition-all duration-300">
-                    <img src={mod.image} alt={mod.title} className="w-full h-[90px] object-cover group-active:scale-105 transition-transform duration-500" loading="lazy" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-                    <div className="absolute bottom-0 left-0 right-0 p-2">
-                      <p className="text-[13px] tracking-[0.06em] uppercase font-bold text-white leading-tight drop-shadow-md" style={chakra}>
+              {modules.map((mod) => {
+                const ModIcon = mod.icon;
+                return (
+                  <Link key={mod.title} to={mod.href} className="group flex-shrink-0 w-[120px]">
+                    <div className="flex flex-col items-center gap-2 py-3 px-2 rounded-lg bg-white/60 border border-[#c4962c]/10 hover:border-[#c4962c]/30 transition-all">
+                      <ModIcon className="w-7 h-7 text-[#8b6914] group-active:scale-110 transition-transform" strokeWidth={1.5} />
+                      <p className="text-[12px] tracking-[0.06em] uppercase font-bold text-[#3a2e24] leading-tight text-center" style={chakra}>
                         {mod.title}
                       </p>
                       {mod.comingSoon && (
-                        <span className="text-[8px] tracking-[0.1em] uppercase text-[#c4962c] font-bold" style={oswald}>Kommer snart</span>
+                        <span className="text-[8px] tracking-[0.1em] uppercase text-[#c4962c] font-bold" style={oswald}>Snart</span>
                       )}
                     </div>
-                    <div className="absolute inset-0 rounded-lg ring-1 ring-inset ring-[#c4962c]/15 pointer-events-none" />
-                  </div>
-                </Link>
-              ))}
+                  </Link>
+                );
+              })}
             </div>
 
-            {/* Desktop: 5-col row — compact */}
-            <div className="hidden md:grid md:grid-cols-5 gap-3">
+            {/* Desktop: 5-col icon cards */}
+            <div className="hidden md:grid md:grid-cols-5 gap-4">
               {modules.map((mod) => {
+                const ModIcon = mod.icon;
                 const createHref = user
                   ? mod.createUrl
                   : `/login?returnUrl=${encodeURIComponent(mod.createUrl)}`;
                 return (
                   <div key={mod.title} className="group relative">
                     <Link to={mod.href}>
-                      <div className="relative overflow-hidden rounded-xl shadow-lg border border-[#c4962c]/20 hover:border-[#c4962c]/50 hover:shadow-xl hover:shadow-[#c4962c]/10 transition-all duration-500">
-                        <img src={mod.image} alt={mod.title} className="w-full h-[130px] lg:h-[150px] object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy" />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 to-black/5" />
-                        <div className="absolute bottom-0 left-0 right-0 p-3">
-                          <p className="text-[17px] lg:text-[19px] tracking-[0.06em] uppercase font-bold text-white leading-tight drop-shadow-md" style={chakra}>
+                      <div className="flex flex-col items-center gap-3 py-5 px-3 rounded-xl bg-white/50 border border-[#c4962c]/10 hover:border-[#c4962c]/30 hover:bg-white/70 hover:shadow-lg hover:shadow-[#c4962c]/5 transition-all duration-300">
+                        <ModIcon className="w-9 h-9 lg:w-10 lg:h-10 text-[#8b6914] group-hover:text-[#c4962c] transition-colors duration-300" strokeWidth={1.5} />
+                        <div className="text-center">
+                          <p className="text-[15px] lg:text-[17px] tracking-[0.06em] uppercase font-bold text-[#3a2e24] leading-tight" style={chakra}>
                             {mod.title}
                           </p>
-                          <p className="text-[12px] text-white/65 mt-1 drop-shadow-sm" style={chakra}>
+                          <p className="text-[11px] text-[#3a2e24]/50 mt-0.5" style={chakra}>
                             {mod.desc}
                           </p>
                         </div>
-                        <div className="absolute inset-0 rounded-xl ring-1 ring-inset ring-[#c4962c]/20 pointer-events-none" />
-                        <div className="absolute -inset-px rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-                          style={{ boxShadow: 'inset 0 0 20px rgba(196, 150, 44, 0.15), 0 0 30px rgba(196, 150, 44, 0.08)' }} />
+                        {mod.comingSoon && (
+                          <span className="text-[9px] tracking-[0.1em] uppercase text-[#c4962c] font-bold" style={oswald}>Kommer snart</span>
+                        )}
                       </div>
                     </Link>
 
                     {!mod.comingSoon && (
                       <Link
                         to={createHref}
-                        className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center gap-1 px-2 py-1 bg-black/60 backdrop-blur-sm border border-white/20 text-white/80 hover:text-white hover:bg-black/80 text-[10px] uppercase tracking-[0.15em] font-bold z-10"
+                        className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center gap-1 px-2 py-1 bg-[#3a2e24]/80 backdrop-blur-sm border border-[#c4962c]/20 text-white/80 hover:text-white text-[9px] uppercase tracking-[0.15em] font-bold z-10 rounded"
                         style={chakra}
                       >
                         <Plus className="w-3 h-3" />
@@ -167,7 +166,7 @@ export default function Index() {
         </section>
 
         {/* ─── FEED ─── */}
-        <section className="pt-2 sm:pt-6 md:pt-8 pb-12 sm:pb-20 md:pb-32" style={{ background: 'linear-gradient(180deg, #352a1d 0%, #2e2419 30%, #271f15 100%)' }}>
+        <section className="pt-2 sm:pt-6 md:pt-8 pb-12 sm:pb-20 md:pb-32" style={{ background: 'linear-gradient(180deg, #d8cebf 0%, #cfc4b3 30%, #c8bbaa 100%)' }}>
           <div className="max-w-[1000px] mx-auto px-4 sm:px-5 md:px-8">
 
             <div className="mb-6 sm:mb-10">
