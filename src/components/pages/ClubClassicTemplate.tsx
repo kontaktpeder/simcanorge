@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { MapPin, Calendar, Mail, Globe, Phone, ArrowRight } from "lucide-react";
+import { Mail, Globe, Phone } from "lucide-react";
 import { ClubCommunityCars } from "./ClubCommunityCars";
 import { useFeedPosts } from "@/hooks/useFeedPosts";
 import { FeedCard } from "@/components/feed/FeedCard";
