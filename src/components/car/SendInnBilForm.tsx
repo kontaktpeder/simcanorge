@@ -409,6 +409,24 @@ export function SendInnBilForm({ onSuccess, onCancel, showCancelButton = false }
         });
       }
 
+      // Create club link request via RPC if requested
+      if (clubLinkRequested && selectedClub) {
+        try {
+          const { data: rpcResult } = await supabase.rpc('create_page_car_link_request', {
+            p_car_id: carId,
+            p_page_id: selectedClub.id,
+            p_message: clubMessage.trim() || null,
+          });
+          const rpcData = rpcResult as { success?: boolean } | null;
+          if (rpcData && !rpcData.success) {
+            console.warn('Club link request RPC returned:', rpcData);
+          }
+        } catch (rpcErr) {
+          console.error('Club link request failed:', rpcErr);
+          // Non-critical — car is already saved
+        }
+      }
+
       onSuccess?.();
     } catch (error: any) {
       const errMsg = error?.details || error?.message || "Prøv igjen senere.";
