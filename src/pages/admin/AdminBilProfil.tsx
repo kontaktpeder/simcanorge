@@ -69,7 +69,119 @@ const CATEGORIES = [
   { id: "vrak", label: "Vrak" },
 ];
 
-const AdminBilProfil = () => {
+function ClubLinkRequestBox({ carId, clubReq }: { carId: string; clubReq: Record<string, unknown> }) {
+  const queryClient = useQueryClient();
+  const { data: linkRequest, isLoading } = useQuery({
+    queryKey: ["page-car-link-request", carId, clubReq.page_id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("page_car_link_requests")
+        .select("id, status, resolved_at")
+        .eq("car_id", carId)
+        .eq("page_id", String(clubReq.page_id))
+        .maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!clubReq.page_id,
+  });
+
+  const [acting, setActing] = useState(false);
+
+  const handleAction = async (action: 'approve' | 'reject') => {
+    if (!linkRequest?.id) {
+      // No request row yet — create one first via RPC
+      try {
+        setActing(true);
+        const { data: createRes } = await supabase.rpc('create_page_car_link_request', {
+          p_car_id: carId,
+          p_page_id: String(clubReq.page_id),
+          p_message: clubReq.message ? String(clubReq.message) : null,
+        });
+        if (action === 'approve') {
+          const createData = createRes as { request_id?: string } | null;
+          if (createData?.request_id) {
+            await supabase.rpc('approve_page_car_link_request', { p_request_id: createData.request_id });
+          }
+        }
+        // For reject after create, we'd need the id — refetch
+        queryClient.invalidateQueries({ queryKey: ["page-car-link-request", carId] });
+        toast.success(action === 'approve' ? 'Bilen er knyttet til klubben' : 'Forespørselen er opprettet');
+      } catch (err) {
+        console.error(err);
+        toast.error('Noe gikk galt');
+      } finally {
+        setActing(false);
+      }
+      return;
+    }
+
+    try {
+      setActing(true);
+      const rpcName = action === 'approve' ? 'approve_page_car_link_request' : 'reject_page_car_link_request';
+      const { data: result } = await supabase.rpc(rpcName, { p_request_id: linkRequest.id });
+      const res = result as { success?: boolean; message?: string } | null;
+      if (res?.success) {
+        toast.success(action === 'approve' ? 'Bilen er knyttet til klubben' : 'Forespørselen er avslått');
+        queryClient.invalidateQueries({ queryKey: ["page-car-link-request", carId] });
+      } else {
+        toast.error(res?.message || 'Noe gikk galt');
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error('Noe gikk galt');
+    } finally {
+      setActing(false);
+    }
+  };
+
+  const status = linkRequest?.status ?? 'pending';
+  const statusLabel = status === 'approved' ? 'Godkjent' : status === 'rejected' ? 'Avslått' : 'Ikke behandlet';
+  const statusColor = status === 'approved'
+    ? 'bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300'
+    : status === 'rejected'
+    ? 'bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300'
+    : 'bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300';
+
+  return (
+    <div className="p-3 rounded-lg bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800">
+      <div className="flex items-center gap-2 mb-2">
+        <Users className="w-5 h-5 text-blue-600" />
+        <p className="font-medium text-blue-800 dark:text-blue-200">Klubbforespørsel</p>
+        <span className={`ml-auto text-[10px] tracking-wider uppercase px-2 py-0.5 rounded-full font-semibold ${statusColor}`}>
+          {isLoading ? '…' : statusLabel}
+        </span>
+      </div>
+      <p className="text-sm text-blue-700 dark:text-blue-300">
+        Ønsker tilknytning til: <strong>{String(clubReq.page_title ?? 'Ukjent klubb')}</strong>
+      </p>
+      {clubReq.message && (
+        <p className="text-sm text-muted-foreground mt-1 italic">
+          «{String(clubReq.message)}»
+        </p>
+      )}
+      {clubReq.page_slug && (
+        <Link
+          to={`/klubber/${String(clubReq.page_slug)}`}
+          className="inline-flex items-center gap-1 text-xs text-primary hover:text-accent mt-2 underline"
+        >
+          Se klubbside <ExternalLink className="w-3 h-3" />
+        </Link>
+      )}
+      {status === 'pending' && !isLoading && (
+        <div className="flex gap-2 mt-3">
+          <Button size="sm" variant="default" disabled={acting} onClick={() => handleAction('approve')}>
+            <Check className="w-3.5 h-3.5 mr-1" /> Godkjenn
+          </Button>
+          <Button size="sm" variant="outline" disabled={acting} onClick={() => handleAction('reject')}>
+            <X className="w-3.5 h-3.5 mr-1" /> Avslå
+          </Button>
+        </div>
+      )}
+    </div>
+  );
+}
+
   const { carId } = useParams<{ carId: string }>();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
