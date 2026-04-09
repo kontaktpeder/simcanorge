@@ -113,7 +113,7 @@ export function Header() {
               </Link>
             )}
             <Link
-              to="/send-inn"
+              to="/dashboard/opprett-bil"
               className="px-5 py-2 text-[13px] tracking-[0.1em] uppercase text-[#0f0d0b] font-bold transition-all duration-300 hover:brightness-110"
               style={{ background: 'linear-gradient(135deg, #d4a017, #e8c547, #c4962c)' }}
             >
