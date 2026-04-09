@@ -79,7 +79,7 @@ export function HeroSearch() {
           onFocus={() => setOpen(true)}
           placeholder="Søk etter biler, deler, arrangementer…"
           style={{ fontFamily: "'Chakra Petch', sans-serif" }}
-          className="w-full bg-white/[0.07] backdrop-blur-sm border border-white/[0.12] hover:border-white/[0.2] focus:border-white/[0.3] rounded-none pl-12 pr-10 py-3.5 text-[14px] sm:text-[15px] text-white placeholder:text-white/30 focus:outline-none transition-all tracking-wide"
+          className="w-full bg-white/[0.15] backdrop-blur-md border border-white/[0.2] hover:border-white/[0.35] focus:border-[#c4962c]/60 rounded-lg pl-12 pr-10 py-4 text-[14px] sm:text-[15px] text-white placeholder:text-white/40 focus:outline-none transition-all tracking-wide shadow-lg"
         />
         {inputValue && (
           <button onClick={handleClear} className="absolute right-3 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/60 transition-colors">
