@@ -37,6 +37,7 @@ const schema = z.object({
   logo_url: z.string().url("Ugyldig URL").optional().or(z.literal("")),
   cover_url: z.string().url("Ugyldig URL").optional().or(z.literal("")),
   theme_color: z.string().optional(),
+  page_template: z.enum(["modern", "classic"]).optional(),
   contact_email: z.string().email("Ugyldig e-post").min(1, "E-post er påkrevd"),
   contact_phone: z.string().optional(),
   website: z.string().url("Ugyldig URL").optional().or(z.literal("")),
@@ -179,6 +180,27 @@ export function PageForm({ defaultValues, onSubmit, isPending, submitLabel = "La
           <Input id="theme_color" {...register("theme_color")} placeholder="#1e3a5f" />
         </div>
       </div>
+
+      {watch("page_type") === "club" && (
+        <div className="space-y-1">
+          <Label>Klubb-layout</Label>
+          <Select
+            value={watch("page_template") || "modern"}
+            onValueChange={(v) => setValue("page_template", v as "modern" | "classic")}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Velg layout" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="modern">Modern (standard, mørk)</SelectItem>
+              <SelectItem value="classic">Classic (retro, editorial)</SelectItem>
+            </SelectContent>
+          </Select>
+          <p className="text-xs text-muted-foreground">
+            Bestemmer utseende og følelse på den offentlige klubbsiden
+          </p>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="space-y-1">

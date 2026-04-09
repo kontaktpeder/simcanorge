@@ -5,9 +5,10 @@ import { PublicPageHero } from "@/components/pages/PublicPageHero";
 import { PublicPageAbout } from "@/components/pages/PublicPageAbout";
 import { PublicPageContact } from "@/components/pages/PublicPageContact";
 import { PublicPageEvents } from "@/components/pages/PublicPageEvents";
+import { ClubClassicTemplate } from "@/components/pages/ClubClassicTemplate";
 import { Layout } from "@/components/layout/Layout";
 import { getPageThemeStyle } from "@/lib/pageThemes";
-import { MapPin, Calendar, Users } from "lucide-react";
+import { MapPin, Calendar } from "lucide-react";
 
 export default function PublicPagePage() {
   const { slug } = useParams<{ slug: string }>();
@@ -34,7 +35,21 @@ export default function PublicPagePage() {
     );
   }
 
-  const themeStyle = getPageThemeStyle(page.page_type);
+  // Klubb + classic template → eget editorial layout
+  if (page.page_type === "club" && (page as any).page_template === "classic") {
+    return (
+      <Layout>
+        <Helmet>
+          <title>{page.title} | Bilgarasjen</title>
+          {page.tagline && <meta name="description" content={page.tagline} />}
+        </Helmet>
+        <ClubClassicTemplate page={page} />
+      </Layout>
+    );
+  }
+
+  // Standard layout for alle andre
+  const themeStyle = getPageThemeStyle(page.page_type, (page as any).page_template);
 
   return (
     <Layout>
@@ -44,10 +59,8 @@ export default function PublicPagePage() {
       </Helmet>
 
       <div className="min-h-screen bg-[#0B0B0C]" style={themeStyle}>
-        {/* HERO */}
         <PublicPageHero page={page} />
 
-        {/* INFO STRIP */}
         <div className="max-w-[1000px] mx-auto px-5 md:px-8">
           <div className="flex items-center gap-6 py-5 border-b border-white/[0.06]">
             {page.location && (
@@ -72,15 +85,9 @@ export default function PublicPagePage() {
           </div>
         </div>
 
-        {/* CONTENT */}
         <div className="max-w-[1000px] mx-auto px-5 md:px-8 py-12 md:py-16">
-          {/* Om oss */}
           <PublicPageAbout page={page} />
-
-          {/* Divider */}
           <div className="h-px bg-gradient-to-r from-[hsl(var(--page-accent)/0.25)] via-white/[0.04] to-transparent my-12 md:my-16" />
-
-          {/* Events + Contact */}
           <div className="grid gap-12 md:gap-16 md:grid-cols-[1.2fr_1fr]">
             <PublicPageEvents pageId={page.id} />
             <PublicPageContact page={page} />
