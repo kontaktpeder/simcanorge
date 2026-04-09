@@ -65,6 +65,7 @@ export function SendInnBilForm({ onSuccess, onCancel, showCancelButton = false }
     reduction: number;
   } | null>(null);
   const [allowEdits, setAllowEdits] = useState<boolean | null>(null);
+  const [allowInstagram, setAllowInstagram] = useState<boolean>(false);
   const [lastSubmitTime, setLastSubmitTime] = useState<number>(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [formData, setFormData] = useState({
@@ -285,6 +286,7 @@ export function SendInnBilForm({ onSuccess, onCancel, showCancelButton = false }
         tags: tagsArray,
         car_story: result.data.car_story || null,
         allow_edits: allowEdits === true,
+        allow_instagram: allowInstagram,
         image_count: uploadResult.urls.length,
         images_selected: images.length,
       };
@@ -614,6 +616,31 @@ export function SendInnBilForm({ onSuccess, onCancel, showCancelButton = false }
               <input type="radio" name="allowEdits" checked={allowEdits === false} onChange={() => setAllowEdits(false)} className="w-5 h-5 mt-0.5 accent-primary flex-shrink-0" />
               <span className="text-sm sm:text-base text-foreground font-medium">
                 Nei, jeg ønsker at innsendelsen publiseres som den er.
+              </span>
+            </label>
+          </div>
+
+          {/* Instagram consent */}
+          <div className="p-3 sm:p-4 bg-muted/30 rounded-lg border-2 border-muted">
+            <p className="font-display text-base sm:text-lg mb-2 sm:mb-3">DELING PÅ INSTAGRAM</p>
+            <label className="flex items-start gap-3 cursor-pointer p-2 sm:p-3 rounded-lg hover:bg-muted/50 transition-colors">
+              <input
+                type="checkbox"
+                checked={allowInstagram}
+                onChange={(e) => setAllowInstagram(e.target.checked)}
+                className="w-5 h-5 mt-0.5 accent-primary flex-shrink-0"
+              />
+              <span className="text-sm sm:text-base text-foreground font-medium">
+                Jeg godkjenner at bilder og beskrivelse av bilen min deles på Simca Norge sin{" "}
+                <a
+                  href="https://www.instagram.com/simcanorge/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary underline hover:text-accent"
+                >
+                  Instagram
+                </a>
+                .
               </span>
             </label>
           </div>
