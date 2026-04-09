@@ -1,5 +1,6 @@
 import { useState, useRef, useMemo } from "react";
-import { Car, Send, Camera, X, ImagePlus } from "lucide-react";
+import { Car, Send, Camera, X, ImagePlus, Users } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -66,6 +67,9 @@ export function SendInnBilForm({ onSuccess, onCancel, showCancelButton = false }
   } | null>(null);
   const [allowEdits, setAllowEdits] = useState<boolean | null>(null);
   const [allowInstagram, setAllowInstagram] = useState<boolean>(false);
+  const [clubLinkRequested, setClubLinkRequested] = useState(false);
+  const [clubPageId, setClubPageId] = useState("");
+  const [clubMessage, setClubMessage] = useState("");
   const [lastSubmitTime, setLastSubmitTime] = useState<number>(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [formData, setFormData] = useState({
@@ -99,6 +103,22 @@ export function SendInnBilForm({ onSuccess, onCancel, showCancelButton = false }
     return generateCarTitle(formData.brand, formData.car_model, formData.car_year ? parseInt(formData.car_year) : null);
   }, [formData.brand, formData.car_model, formData.car_year]);
 
+  const { data: clubs } = useQuery({
+    queryKey: ["public-clubs-for-submission"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("pages")
+        .select("id, title, slug")
+        .eq("page_type", "club")
+        .eq("is_public", true)
+        .eq("status", "active")
+        .order("title");
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
+  const selectedClub = clubs?.find(c => c.id === clubPageId) ?? null;
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
