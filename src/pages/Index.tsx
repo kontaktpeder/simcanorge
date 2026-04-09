@@ -68,25 +68,25 @@ export default function Index() {
           </div>
 
           <div className="relative z-10 max-w-[1200px] mx-auto px-4 sm:px-5 md:px-8">
-            <div className="flex flex-col justify-center min-h-[200px] sm:min-h-[230px] md:min-h-[280px] py-8 md:py-10 md:max-w-[50%]">
-              <p className="text-[10px] sm:text-[11px] tracking-[0.3em] uppercase mb-1.5"
+            <div className="flex flex-col justify-center min-h-[160px] sm:min-h-[230px] md:min-h-[280px] py-5 sm:py-8 md:py-10 md:max-w-[50%]">
+              <p className="text-[9px] sm:text-[11px] tracking-[0.3em] uppercase mb-1 sm:mb-1.5"
                 style={{ ...oswald, fontWeight: 500, background: 'linear-gradient(135deg, #F5A623, #FFD166)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
                 bilgarasje.no
               </p>
               <h1
-                className="text-[1.5rem] sm:text-[1.9rem] md:text-[2.4rem] lg:text-[2.8rem] leading-[0.93] uppercase tracking-[0.02em] text-white font-bold italic"
+                className="text-[1.3rem] sm:text-[1.9rem] md:text-[2.4rem] lg:text-[2.8rem] leading-[0.93] uppercase tracking-[0.02em] text-white font-bold italic"
                 style={{ ...chakra, textShadow: '0 2px 20px rgba(0,0,0,0.4)' }}
               >
                 Hele Norges<br />bilsamfunn
               </h1>
               <p
-                className="text-[0.7rem] sm:text-[0.85rem] md:text-[1rem] uppercase tracking-[0.15em] text-white/50 font-bold italic mt-0.5"
+                className="text-[0.65rem] sm:text-[0.85rem] md:text-[1rem] uppercase tracking-[0.15em] text-white/50 font-bold italic mt-0.5"
                 style={chakra}
               >
                 — på nett
               </p>
 
-              <div className="mt-5 w-full max-w-[480px]">
+              <div className="mt-4 sm:mt-5 w-full max-w-[480px]">
                 <HeroSearch />
               </div>
             </div>
