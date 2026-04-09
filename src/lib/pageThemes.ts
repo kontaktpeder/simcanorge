@@ -48,9 +48,9 @@ const themes: Record<string, PageTheme> = {
     gradient: "linear-gradient(135deg, #2563EB, #60A5FA)",
   },
   club_classic: {
-    accent: "32 55% 45%",
-    accentLight: "38 70% 62%",
-    gradient: "linear-gradient(135deg, #92400E, #D97706)",
+    accent: "210 75% 40%",
+    accentLight: "210 85% 62%",
+    gradient: "linear-gradient(135deg, #0F3E7A, #1F66B5)",
   },
 };
 
