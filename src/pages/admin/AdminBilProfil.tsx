@@ -725,6 +725,42 @@ const AdminBilProfil = () => {
                   </div>
                 );
               })()}
+              {/* Club join request */}
+              {car.source === 'submission' && (() => {
+                const payload = car.submission_payload as Record<string, unknown> | null;
+                const clubReq = payload && typeof payload === 'object' && 'club_join_request' in payload
+                  ? payload.club_join_request as Record<string, unknown> | null
+                  : null;
+                if (!clubReq || clubReq.requested !== true) return null;
+                return (
+                  <div className="p-3 rounded-lg bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Users className="w-5 h-5 text-blue-600" />
+                      <p className="font-medium text-blue-800 dark:text-blue-200">Klubbforespørsel</p>
+                      <span className="ml-auto text-[10px] tracking-wider uppercase bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300 px-2 py-0.5 rounded-full font-semibold">
+                        Ikke behandlet
+                      </span>
+                    </div>
+                    <p className="text-sm text-blue-700 dark:text-blue-300">
+                      Ønsker tilknytning til: <strong>{String(clubReq.page_title ?? 'Ukjent klubb')}</strong>
+                    </p>
+                    {clubReq.message && (
+                      <p className="text-sm text-muted-foreground mt-1 italic">
+                        «{String(clubReq.message)}»
+                      </p>
+                    )}
+                    {clubReq.page_slug && (
+                      <Link
+                        to={`/klubber/${String(clubReq.page_slug)}`}
+                        className="inline-flex items-center gap-1 text-xs text-primary hover:text-accent mt-2 underline"
+                      >
+                        Se klubbside <ExternalLink className="w-3 h-3" />
+                      </Link>
+                    )}
+                  </div>
+                );
+              })()}
+
               {car.submission_payload && (
                 <Collapsible className="pt-3 border-t border-blue-200">
                   <CollapsibleTrigger className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors">
