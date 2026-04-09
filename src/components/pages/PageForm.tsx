@@ -175,10 +175,7 @@ export function PageForm({ defaultValues, onSubmit, isPending, submitLabel = "La
           <Input id="founded_year" type="number" {...register("founded_year")} placeholder="1985" />
         </div>
 
-        <div className="space-y-1">
-          <Label htmlFor="theme_color">Temafarge (hex)</Label>
-          <Input id="theme_color" {...register("theme_color")} placeholder="#1e3a5f" />
-        </div>
+        {/* Temafarge styres av layout-valget, ikke manuelt */}
       </div>
 
       {watch("page_type") === "club" && (
