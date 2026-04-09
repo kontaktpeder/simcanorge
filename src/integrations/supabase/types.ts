@@ -1431,6 +1431,7 @@ export type Database = {
       pages: {
         Row: {
           about: string | null
+          brand_key: string | null
           contact_email: string | null
           contact_phone: string | null
           cover_url: string | null
@@ -1443,6 +1444,7 @@ export type Database = {
           logo_url: string | null
           page_template: string | null
           page_type: string
+          page_type_variant: string | null
           slug: string
           status: string
           tagline: string | null
@@ -1453,6 +1455,7 @@ export type Database = {
         }
         Insert: {
           about?: string | null
+          brand_key?: string | null
           contact_email?: string | null
           contact_phone?: string | null
           cover_url?: string | null
@@ -1465,6 +1468,7 @@ export type Database = {
           logo_url?: string | null
           page_template?: string | null
           page_type: string
+          page_type_variant?: string | null
           slug: string
           status?: string
           tagline?: string | null
@@ -1475,6 +1479,7 @@ export type Database = {
         }
         Update: {
           about?: string | null
+          brand_key?: string | null
           contact_email?: string | null
           contact_phone?: string | null
           cover_url?: string | null
@@ -1487,6 +1492,7 @@ export type Database = {
           logo_url?: string | null
           page_template?: string | null
           page_type?: string
+          page_type_variant?: string | null
           slug?: string
           status?: string
           tagline?: string | null

@@ -44,6 +44,7 @@ const EditPagePage = lazy(() => import("@/pages/dashboard/EditPagePage"));
 const PublicPagePage = lazy(() => import("@/pages/PublicPagePage"));
 const AktoererPage = lazy(() => import("@/pages/AktoererPage"));
 const KlubberPage = lazy(() => import("@/pages/KlubberPage"));
+const MerkeHub = lazy(() => import("@/pages/MerkeHub"));
 
 // Events
 const DashboardEventsPage = lazy(() => import("@/pages/dashboard/DashboardEventsPage"));
@@ -114,6 +115,7 @@ export const routes: RouteConfig[] = [
   { path: "/aktoerer", element: AktoererPage, label: "Aktører", description: "Verksteder, forhandlere og andre aktører", isPublic: true, showInNav: false },
   { path: "/klubber", element: KlubberPage, label: "Klubber", description: "Bilklubber og foreninger", isPublic: true, showInNav: false },
   { path: "/klubber/:slug", element: PublicPagePage, isPublic: true },
+  { path: "/merker/:brand", element: MerkeHub, isPublic: true },
 
   // Auth required
   { path: "/konto", element: Konto, requiresAuth: true },
