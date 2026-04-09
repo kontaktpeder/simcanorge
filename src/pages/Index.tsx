@@ -45,139 +45,135 @@ export default function Index() {
 
       <div className="min-h-[calc(100vh-4rem)]">
 
-        {/* ─── HERO (split layout) ─── */}
+        {/* ─── HERO ─── */}
         <section className="relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #3a2e24 0%, #2a2118 40%, #1e1812 100%)' }}>
-          {/* Subtle vignette */}
+          {/* Vignette */}
           <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 30% 50%, transparent 40%, rgba(0,0,0,0.35) 100%)' }} />
           {/* Warm glow behind car */}
-          <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(circle at 70% 45%, rgba(255,180,80,0.18) 0%, transparent 55%)' }} />
+          <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(circle at 75% 50%, rgba(255,180,80,0.2) 0%, transparent 50%)' }} />
+
+          {/* Car image — fills right side, fades into background */}
+          <div className="absolute inset-0 pointer-events-none hidden md:block">
+            <img
+              src={heroCar}
+              alt=""
+              className="absolute right-0 bottom-0 h-full w-[65%] object-contain object-right-bottom"
+              style={{
+                WebkitMaskImage: 'linear-gradient(to left, black 30%, transparent 85%), linear-gradient(to top, black 70%, transparent 100%)',
+                WebkitMaskComposite: 'intersect',
+                maskImage: 'linear-gradient(to left, black 30%, transparent 85%), linear-gradient(to top, black 70%, transparent 100%)',
+                maskComposite: 'intersect',
+                filter: 'drop-shadow(0 4px 40px rgba(0,0,0,0.3))',
+                opacity: 0.9,
+              }}
+            />
+          </div>
 
           <div className="relative z-10 max-w-[1200px] mx-auto px-4 sm:px-5 md:px-8">
-            <div className="flex flex-col md:flex-row items-center md:items-stretch min-h-[200px] sm:min-h-[220px] md:min-h-[260px]">
+            <div className="flex flex-col justify-center min-h-[200px] sm:min-h-[230px] md:min-h-[280px] py-8 md:py-10 md:max-w-[50%]">
+              <p className="text-[10px] sm:text-[11px] tracking-[0.3em] uppercase mb-1.5"
+                style={{ ...oswald, fontWeight: 500, background: 'linear-gradient(135deg, #F5A623, #FFD166)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                bilgarasje.no
+              </p>
+              <h1
+                className="text-[1.5rem] sm:text-[1.9rem] md:text-[2.4rem] lg:text-[2.8rem] leading-[0.93] uppercase tracking-[0.02em] text-white font-bold italic"
+                style={{ ...chakra, textShadow: '0 2px 20px rgba(0,0,0,0.6)' }}
+              >
+                Hele Norges<br />bilsamfunn
+              </h1>
+              <p
+                className="text-[0.7rem] sm:text-[0.85rem] md:text-[1rem] uppercase tracking-[0.15em] text-white/55 font-bold italic mt-0.5"
+                style={chakra}
+              >
+                — på nett
+              </p>
 
-              {/* LEFT — branding + title + search */}
-              <div className="flex-1 flex flex-col justify-center py-6 sm:py-8 md:py-10 md:pr-8 lg:pr-12 text-center md:text-left max-w-[520px] md:max-w-none">
-                <p className="text-[10px] sm:text-[11px] tracking-[0.3em] uppercase mb-1 sm:mb-1.5"
-                  style={{ ...oswald, fontWeight: 500, background: 'linear-gradient(135deg, #F5A623, #FFD166)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-                  bilgarasje.no
-                </p>
-                <h1
-                  className="text-[1.4rem] sm:text-[1.8rem] md:text-[2.2rem] lg:text-[2.6rem] leading-[0.95] uppercase tracking-[0.02em] text-white font-bold italic"
-                  style={{ ...chakra, textShadow: '0 2px 16px rgba(0,0,0,0.5)' }}
-                >
-                  Hele Norges<br />bilsamfunn
-                </h1>
-                <p
-                  className="text-[0.7rem] sm:text-[0.85rem] md:text-[1rem] uppercase tracking-[0.15em] text-white/60 font-bold italic mt-0.5 sm:mt-1"
-                  style={chakra}
-                >
-                  — på nett
-                </p>
-
-                <div className="mt-4 sm:mt-5 w-full max-w-[480px] mx-auto md:mx-0">
-                  <HeroSearch />
-                </div>
-              </div>
-
-              {/* RIGHT — car image with fade mask */}
-              <div className="hidden md:flex items-end justify-end flex-shrink-0 w-[45%] lg:w-[50%] relative">
-                <img
-                  src={heroCar}
-                  alt="Klassisk bil"
-                  className="w-full h-auto max-h-[240px] lg:max-h-[280px] object-contain object-bottom"
-                  style={{
-                    WebkitMaskImage: 'linear-gradient(to left, black 50%, transparent 95%)',
-                    maskImage: 'linear-gradient(to left, black 50%, transparent 95%)',
-                    filter: 'drop-shadow(0 8px 30px rgba(0,0,0,0.4))',
-                  }}
-                />
+              <div className="mt-5 w-full max-w-[480px]">
+                <HeroSearch />
               </div>
             </div>
           </div>
-
-          {/* Bottom fade into modules */}
-          <div className="absolute bottom-0 left-0 right-0 h-10" style={{ background: 'linear-gradient(to top, #e8e0d4, transparent)' }} />
         </section>
 
-        {/* ─── MODULES ─── */}
-        <section className="py-5 sm:py-7 md:py-9" style={{ background: 'linear-gradient(180deg, #e8e0d4 0%, #dfd5c7 50%, #d8cebf 100%)' }}>
+        {/* ─── CATEGORY NAV ─── */}
+        <nav
+          className="border-b"
+          style={{ background: 'linear-gradient(180deg, #e8e0d4 0%, #ebe3d8 100%)', borderColor: 'rgba(58,46,36,0.08)' }}
+        >
           <div className="max-w-[1200px] mx-auto px-4 sm:px-5 md:px-8">
-            {/* Mobile: horizontal scroll */}
-            <div className="flex gap-2.5 overflow-x-auto scrollbar-hide -mx-1 px-1 md:hidden">
+            {/* Mobile: scroll */}
+            <div className="flex gap-1 overflow-x-auto scrollbar-hide -mx-1 px-1 md:hidden py-2.5">
               {modules.map((mod) => {
                 const ModIcon = mod.icon;
                 return (
-                  <Link key={mod.title} to={mod.href} className="group flex-shrink-0 w-[120px]">
-                    <div className="flex flex-col items-center gap-2 py-3 px-2 rounded-lg bg-white/60 border border-[#c4962c]/10 hover:border-[#c4962c]/30 transition-all">
-                      <ModIcon className="w-7 h-7 text-[#8b6914] group-active:scale-110 transition-transform" strokeWidth={1.5} />
-                      <p className="text-[12px] tracking-[0.06em] uppercase font-bold text-[#3a2e24] leading-tight text-center" style={chakra}>
+                  <Link key={mod.title} to={mod.href} className="group flex-shrink-0">
+                    <div className="flex items-center gap-2 py-2 px-3 rounded-full bg-white/50 border border-[#c4962c]/10 hover:border-[#c4962c]/25 active:scale-[0.97] transition-all">
+                      <ModIcon className="w-4 h-4 text-[#8b6914]" strokeWidth={1.8} />
+                      <span className="text-[11px] tracking-[0.04em] uppercase font-bold text-[#3a2e24] whitespace-nowrap" style={chakra}>
                         {mod.title}
-                      </p>
-                      {(mod as any).comingSoon && (
-                        <span className="text-[8px] tracking-[0.1em] uppercase text-[#c4962c] font-bold" style={oswald}>Snart</span>
-                      )}
+                      </span>
                     </div>
                   </Link>
                 );
               })}
             </div>
 
-            {/* Desktop: 5-col icon cards */}
-            <div className="hidden md:grid md:grid-cols-5 gap-4">
-              {modules.map((mod) => {
+            {/* Desktop: even row */}
+            <div className="hidden md:flex items-stretch">
+              {modules.map((mod, i) => {
                 const ModIcon = mod.icon;
                 const createHref = user
                   ? mod.createUrl
                   : `/login?returnUrl=${encodeURIComponent(mod.createUrl)}`;
                 return (
-                  <div key={mod.title} className="group relative">
-                    <Link to={mod.href}>
-                      <div className="flex flex-col items-center gap-3 py-5 px-3 rounded-xl bg-white/50 border border-[#c4962c]/10 hover:border-[#c4962c]/30 hover:bg-white/70 hover:shadow-lg hover:shadow-[#c4962c]/5 transition-all duration-300">
-                        <ModIcon className="w-9 h-9 lg:w-10 lg:h-10 text-[#8b6914] group-hover:text-[#c4962c] transition-colors duration-300" strokeWidth={1.5} />
-                        <div className="text-center">
-                          <p className="text-[15px] lg:text-[17px] tracking-[0.06em] uppercase font-bold text-[#3a2e24] leading-tight" style={chakra}>
-                            {mod.title}
-                          </p>
-                          <p className="text-[11px] text-[#3a2e24]/50 mt-0.5" style={chakra}>
-                            {mod.desc}
-                          </p>
-                        </div>
-                        {(mod as any).comingSoon && (
-                          <span className="text-[9px] tracking-[0.1em] uppercase text-[#c4962c] font-bold" style={oswald}>Kommer snart</span>
-                        )}
+                  <div
+                    key={mod.title}
+                    className="group relative flex-1"
+                    style={i < modules.length - 1 ? { borderRight: '1px solid rgba(58,46,36,0.06)' } : undefined}
+                  >
+                    <Link
+                      to={mod.href}
+                      className="flex items-center justify-center gap-2.5 py-3.5 hover:bg-white/40 transition-colors duration-200"
+                    >
+                      <ModIcon className="w-5 h-5 text-[#8b6914] group-hover:text-[#c4962c] transition-colors" strokeWidth={1.6} />
+                      <div className="flex flex-col">
+                        <span className="text-[13px] lg:text-[14px] tracking-[0.05em] uppercase font-bold text-[#3a2e24] leading-tight" style={chakra}>
+                          {mod.title}
+                        </span>
+                        <span className="text-[10px] text-[#3a2e24]/40 leading-tight" style={chakra}>
+                          {mod.desc}
+                        </span>
                       </div>
                     </Link>
 
-                    {!(mod as any).comingSoon && (
-                      <Link
-                        to={createHref}
-                        className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center gap-1 px-2 py-1 bg-[#3a2e24]/80 backdrop-blur-sm border border-[#c4962c]/20 text-white/80 hover:text-white text-[9px] uppercase tracking-[0.15em] font-bold z-10 rounded"
-                        style={chakra}
-                      >
-                        <Plus className="w-3 h-3" />
-                        {user ? "Opprett" : "Logg inn"}
-                      </Link>
-                    )}
+                    {/* Create chip on hover */}
+                    <Link
+                      to={createHref}
+                      className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center gap-0.5 px-1.5 py-0.5 bg-[#3a2e24]/70 backdrop-blur-sm text-white/80 hover:text-white text-[8px] uppercase tracking-[0.12em] font-bold rounded"
+                      style={chakra}
+                    >
+                      <Plus className="w-2.5 h-2.5" />
+                      {user ? "Ny" : "Logg inn"}
+                    </Link>
                   </div>
                 );
               })}
             </div>
           </div>
-        </section>
+        </nav>
 
-        {/* ─── FEED ─── */}
-        <section className="pt-2 sm:pt-6 md:pt-8 pb-12 sm:pb-20 md:pb-32" style={{ background: 'linear-gradient(180deg, #d8cebf 0%, #cfc4b3 30%, #c8bbaa 100%)' }}>
+        {/* ─── FEED (scrolls right in) ─── */}
+        <section
+          className="pt-6 sm:pt-8 md:pt-10 pb-12 sm:pb-20 md:pb-32"
+          style={{ background: 'linear-gradient(180deg, #ebe3d8 0%, #e2d9cc 40%, #dbd0c2 100%)' }}
+        >
           <div className="max-w-[1000px] mx-auto px-4 sm:px-5 md:px-8">
 
-            <div className="mb-6 sm:mb-10">
-              <h2 className="text-[1.6rem] sm:text-[2.2rem] md:text-[3rem] uppercase text-[#3a2e24] font-bold leading-[1] tracking-[0.06em] mb-4 sm:mb-6"
-                style={oswald}>
-                Oppdateringer
-              </h2>
+            <div className="flex items-end justify-between mb-5 sm:mb-7">
               <FeedFilterTabs active={feedFilter} onChange={setFeedFilter} />
             </div>
 
-            <div className="mb-8 sm:mb-14">
+            <div className="mb-6 sm:mb-10">
               <HomeFeedComposer />
             </div>
 
