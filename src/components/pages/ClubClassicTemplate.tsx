@@ -1,8 +1,13 @@
 import { Link } from "react-router-dom";
-import { Mail, Globe, Phone } from "lucide-react";
-import { ClubCommunityCars } from "./ClubCommunityCars";
+import { Mail, Globe, Phone, ArrowRight } from "lucide-react";
+import { PublicPageHero } from "./PublicPageHero";
 import { useFeedPosts } from "@/hooks/useFeedPosts";
 import { FeedCard } from "@/components/feed/FeedCard";
+import { useClubCommunityCars, firstCarImage, clubBrandToken } from "@/hooks/useClubCommunityCars";
+import { Skeleton } from "@/components/ui/skeleton";
+import type { Database } from "@/integrations/supabase/types";
+
+type PageRow = Database["public"]["Tables"]["pages"]["Row"];
 
 interface Page {
   id: string;
@@ -21,25 +26,98 @@ interface Page {
   brand_key: string | null;
 }
 
+function ClubCarsSection({ page }: { page: Page }) {
+  const clubPage = { id: page.id, slug: page.slug, brand_key: page.brand_key };
+  const { data: cars, isLoading, isFetched } = useClubCommunityCars(clubPage);
+  const token = clubBrandToken(clubPage);
+
+  if (!token) return null;
+  if (isFetched && (!cars || cars.length === 0)) return null;
+
+  const listUrl = `/biler?brand=${encodeURIComponent(token)}`;
+
+  if (isLoading) {
+    return (
+      <div className="mb-10 md:mb-14">
+        <Skeleton className="h-6 w-40 mb-6" />
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+          {[1, 2, 3, 4, 5, 6].map((i) => (
+            <Skeleton key={i} className="aspect-[4/3] rounded-lg" />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mb-10 md:mb-14">
+      <div className="flex items-end justify-between mb-5">
+        <div>
+          <p className="text-[10px] tracking-[0.35em] uppercase text-muted-foreground font-sans font-semibold mb-1">
+            Miljøet
+          </p>
+          <h2 className="text-xl md:text-2xl font-display uppercase tracking-wide text-foreground">
+            Biler fra miljøet
+          </h2>
+        </div>
+        <Link
+          to={listUrl}
+          className="flex items-center gap-1.5 text-xs font-medium text-primary hover:text-accent transition-colors"
+        >
+          Se alle biler
+          <ArrowRight className="w-3.5 h-3.5" />
+        </Link>
+      </div>
+
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+        {cars!.map((car) => {
+          const img = firstCarImage(car);
+          return (
+            <Link
+              key={car.id}
+              to={`/biler/${car.slug}`}
+              className="group block rounded-lg overflow-hidden bg-card border border-border/50 hover:shadow-md transition-shadow"
+            >
+              <div className="aspect-[4/3] overflow-hidden bg-muted">
+                {img ? (
+                  <img
+                    src={img}
+                    alt={car.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    loading="lazy"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-muted-foreground/30 text-xs">
+                    Bilde
+                  </div>
+                )}
+              </div>
+              <div className="p-2.5">
+                <p className="text-sm font-semibold text-foreground truncate">{car.title}</p>
+                {car.year != null && <p className="text-xs text-muted-foreground">{car.year}</p>}
+              </div>
+            </Link>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 export function ClubClassicTemplate({ page }: { page: Page }) {
   const { data: feedPosts } = useFeedPosts({ pageId: page.id, limit: 8 });
+
+  // Cast to PageRow for PublicPageHero compatibility
+  const heroPage = page as unknown as PageRow;
 
   return (
     <div className="bg-background font-sans">
 
-      {/* ── HERO — cover image only ── */}
-      {page.cover_url && (
-        <section className="relative w-full h-[240px] md:h-[360px]">
-          <img
-            src={page.cover_url}
-            alt=""
-            className="absolute inset-0 w-full h-full object-cover"
-          />
-        </section>
-      )}
+      {/* ── HERO — same as other pages ── */}
+      <PublicPageHero page={heroPage} />
 
       {/* ── BODY ── */}
-      <div className="max-w-[960px] mx-auto px-4 md:px-8 py-8 md:py-14">
+      <div className="max-w-[1000px] mx-auto px-5 md:px-8 py-8 md:py-14">
 
         {/* Om klubben */}
         {page.about && (
@@ -83,23 +161,15 @@ export function ClubClassicTemplate({ page }: { page: Page }) {
           </div>
         )}
 
-        {/* Community cars */}
-        <ClubCommunityCars
-          page={{ id: page.id, slug: page.slug, brand_key: page.brand_key }}
-          variant="classic"
-        />
+        {/* Biler — inline, no card wrapper */}
+        <ClubCarsSection page={page} />
 
         {/* Klubb-feed */}
         {feedPosts && feedPosts.length > 0 && (
           <>
-            {/* Chrome divider */}
-            <div className="flex items-center gap-4 my-8 md:my-12">
-              <div className="flex-1 h-[2px] rounded-full" style={{ background: "linear-gradient(90deg, transparent, #B8C0CC 30%, #FFFFFF 50%, #B8C0CC 70%, transparent)" }} />
-              <div className="w-2 h-2 rounded-full bg-accent" />
-              <div className="flex-1 h-[2px] rounded-full" style={{ background: "linear-gradient(90deg, transparent, #B8C0CC 30%, #FFFFFF 50%, #B8C0CC 70%, transparent)" }} />
-            </div>
+            <div className="section-divider" />
 
-            <div className="border border-border/50 rounded-xl p-5 md:p-8 bg-card">
+            <div>
               <p className="text-[10px] tracking-[0.35em] uppercase text-muted-foreground font-sans font-semibold mb-2">
                 Siste nytt
               </p>
@@ -114,25 +184,6 @@ export function ClubClassicTemplate({ page }: { page: Page }) {
             </div>
           </>
         )}
-      </div>
-
-      {/* ── FOOTER — poster-section-blue matching hero ── */}
-      <div className="poster-section-blue relative">
-        <div className="absolute inset-0 stripes-diagonal" />
-        <div className="relative z-10 px-6 md:px-12 pt-1">
-          <div
-            className="h-[2px] rounded-full opacity-40"
-            style={{ background: "linear-gradient(90deg, transparent 0%, #B8C0CC 20%, #FFFFFF 50%, #B8C0CC 80%, transparent 100%)" }}
-          />
-        </div>
-        <div className="max-w-[960px] mx-auto px-6 md:px-12 py-5 flex items-center justify-between relative z-10">
-          <span className="text-xs text-white/40 font-sans">
-            {page.title}{page.founded_year ? ` · Est. ${page.founded_year}` : ""}
-          </span>
-          <Link to="/" className="text-xs text-white/30 hover:text-white/60 transition-colors font-sans">
-            Bilgarasjen.no
-          </Link>
-        </div>
       </div>
     </div>
   );
