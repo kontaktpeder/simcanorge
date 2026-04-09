@@ -49,85 +49,88 @@ export default function Index() {
 
       <div className="min-h-[calc(100vh-4rem)]" style={{ background: 'linear-gradient(180deg, #f0ebe3 0%, #e8e2d8 40%, #e4ddd3 100%)' }}>
 
-        {/* ─── HERO ─── */}
-        <section className="relative overflow-hidden h-[320px] sm:h-[380px] md:h-[440px]">
+        {/* ─── HERO (compact) ─── */}
+        <section className="relative overflow-hidden h-[180px] sm:h-[200px] md:h-[220px]">
           <img
             src={heroCar}
             alt="Klassisk bil"
             className="absolute inset-0 w-full h-full object-cover object-[center_35%] brightness-110"
           />
           <div className="absolute inset-0 bg-[#1a1a1a]/50" />
-          <div className="absolute bottom-0 left-0 right-0 h-12" style={{ background: 'linear-gradient(to top, #f0ebe3, transparent)' }} />
+          <div className="absolute bottom-0 left-0 right-0 h-10" style={{ background: 'linear-gradient(to top, #f0ebe3, transparent)' }} />
 
           <div className="relative z-10 h-full flex flex-col items-center justify-center text-center max-w-[800px] mx-auto px-5 md:px-8">
-            <p className="text-[11px] sm:text-[14px] tracking-[0.3em] uppercase mb-1 sm:mb-2"
+            <p className="text-[10px] sm:text-[12px] tracking-[0.3em] uppercase mb-0.5 sm:mb-1"
               style={{ ...oswald, fontWeight: 500, background: 'linear-gradient(135deg, #F5A623, #FFD166)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
               bilgarasje.no
             </p>
             <h1
-              className="text-[1.8rem] sm:text-[2.8rem] md:text-[3.6rem] leading-[0.95] uppercase tracking-[0.02em] sm:tracking-[0.04em] text-white font-bold italic"
+              className="text-[1.5rem] sm:text-[2.2rem] md:text-[2.8rem] leading-[0.95] uppercase tracking-[0.02em] sm:tracking-[0.04em] text-white font-bold italic"
               style={{ ...chakra, textShadow: '0 2px 12px rgba(0,0,0,0.5)' }}
             >
               Hele Norges bilsamfunn
             </h1>
             <p
-              className="text-[0.85rem] sm:text-[1.2rem] md:text-[1.5rem] uppercase tracking-[0.12em] sm:tracking-[0.18em] text-white/80 font-bold italic mt-0.5 sm:mt-1"
+              className="text-[0.75rem] sm:text-[1rem] md:text-[1.2rem] uppercase tracking-[0.12em] sm:tracking-[0.18em] text-white/80 font-bold italic mt-0.5"
               style={{ ...chakra, textShadow: '0 1px 8px rgba(0,0,0,0.4)' }}
             >
               — på nett
             </p>
 
-            <div className="mt-6 sm:mt-8 w-full max-w-[600px]">
+            <div className="mt-3 sm:mt-5 w-full max-w-[560px]">
               <HeroSearch />
             </div>
           </div>
         </section>
 
         {/* ─── MODULES ─── */}
-        <section className="py-6 sm:py-10 md:py-14">
+        <section className="py-4 sm:py-6 md:py-8">
           <div className="max-w-[1200px] mx-auto px-4 sm:px-5 md:px-8">
-            {/* Mobile: 2-col grid */}
-            <div className="grid grid-cols-2 gap-3 md:hidden">
+            {/* Mobile: compact horizontal scroll */}
+            <div className="flex gap-2.5 overflow-x-auto scrollbar-hide -mx-1 px-1 md:hidden">
               {modules.map((mod) => (
-                <Link key={mod.title} to={mod.href} className="group relative">
+                <Link key={mod.title} to={mod.href} className="group relative flex-shrink-0 w-[140px]">
                   <div className="relative overflow-hidden rounded-lg shadow-lg border border-[#c4962c]/20 hover:border-[#c4962c]/50 transition-all duration-300">
-                    <img src={mod.image} alt={mod.title} className="w-full h-[120px] object-cover group-active:scale-105 transition-transform duration-500" loading="lazy" />
+                    <img src={mod.image} alt={mod.title} className="w-full h-[90px] object-cover group-active:scale-105 transition-transform duration-500" loading="lazy" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-                    <div className="absolute bottom-0 left-0 right-0 p-3">
-                      <p className="text-[13px] tracking-[0.08em] uppercase font-bold text-white leading-tight" style={chakra}>
+                    <div className="absolute bottom-0 left-0 right-0 p-2">
+                      <p className="text-[11px] tracking-[0.06em] uppercase font-bold text-white leading-tight" style={chakra}>
                         {mod.title}
                       </p>
                       {mod.comingSoon && (
-                        <span className="text-[9px] tracking-[0.1em] uppercase text-[#c4962c] font-bold" style={oswald}>Kommer snart</span>
+                        <span className="text-[8px] tracking-[0.1em] uppercase text-[#c4962c] font-bold" style={oswald}>Kommer snart</span>
                       )}
                     </div>
-                    {/* Gold glow edge */}
                     <div className="absolute inset-0 rounded-lg ring-1 ring-inset ring-[#c4962c]/15 pointer-events-none" />
                   </div>
                 </Link>
               ))}
             </div>
 
-            {/* Desktop: 5-col row */}
-            <div className="hidden md:grid md:grid-cols-5 gap-4">
+            {/* Desktop: 5-col row — compact */}
+            <div className="hidden md:grid md:grid-cols-5 gap-3">
               {modules.map((mod) => (
                 <Link key={mod.title} to={mod.href} className="group relative">
-                  <div className="relative overflow-hidden rounded-xl shadow-xl border border-[#c4962c]/20 hover:border-[#c4962c]/50 hover:shadow-2xl hover:shadow-[#c4962c]/10 transition-all duration-500">
-                    <img src={mod.image} alt={mod.title} className="w-full h-[200px] lg:h-[240px] object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10" />
-                    <div className="absolute bottom-0 left-0 right-0 p-4">
-                      <p className="text-[18px] tracking-[0.06em] uppercase font-bold text-white leading-tight" style={chakra}>
+                  <div className="relative overflow-hidden rounded-xl shadow-lg border border-[#c4962c]/20 hover:border-[#c4962c]/50 hover:shadow-xl hover:shadow-[#c4962c]/10 transition-all duration-500">
+                    <img src={mod.image} alt={mod.title} className="w-full h-[130px] lg:h-[150px] object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 to-black/5" />
+                    <div className="absolute bottom-0 left-0 right-0 p-3">
+                      <p className="text-[15px] tracking-[0.06em] uppercase font-bold text-white leading-tight" style={chakra}>
                         {mod.title}
                       </p>
-                      <p className="text-[12px] text-white/60 mt-1" style={chakra}>
+                      <p className="text-[11px] text-white/55 mt-0.5" style={chakra}>
                         {mod.desc}
                       </p>
                     </div>
-                    {/* Gold glow effect */}
                     <div className="absolute inset-0 rounded-xl ring-1 ring-inset ring-[#c4962c]/20 pointer-events-none" />
                     <div className="absolute -inset-px rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
                       style={{ boxShadow: 'inset 0 0 20px rgba(196, 150, 44, 0.15), 0 0 30px rgba(196, 150, 44, 0.08)' }} />
                   </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
                 </Link>
               ))}
             </div>
