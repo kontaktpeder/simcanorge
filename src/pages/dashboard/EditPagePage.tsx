@@ -11,7 +11,7 @@ import { PageImageUpload } from "@/components/pages/PageImageUpload";
 import { getPageLogoPath, getPageCoverPath } from "@/lib/imageCompression";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Trash2, AlertTriangle } from "lucide-react";
+import { Trash2, AlertTriangle, ExternalLink } from "lucide-react";
 
 const roleLabels: Record<string, string> = {
   owner: "Eier",
