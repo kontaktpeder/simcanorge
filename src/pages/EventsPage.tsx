@@ -7,6 +7,7 @@ import { MapPin, Calendar } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 import { EventTypeBadge } from "@/components/events/EventTypeBadge";
 import { usePublicEvents } from "@/hooks/usePublicEvents";
+import { CreateCTA } from "@/components/ui/CreateCTA";
 
 const TYPE_FILTERS = [
   { value: "", label: "Alle" },
@@ -33,6 +34,12 @@ export default function EventsPage() {
       </Helmet>
 
       <div className="container max-w-5xl py-8 space-y-8">
+        <CreateCTA
+          createUrl="/dashboard/events/ny"
+          label="Opprett arrangement"
+          description="Planlegger du et biltreff eller arrangement?"
+          variant="strip"
+        />
         {/* Header */}
         <div className="text-center space-y-2">
           <h1 className="font-display text-3xl sm:text-4xl uppercase tracking-wider">

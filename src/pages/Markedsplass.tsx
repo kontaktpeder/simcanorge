@@ -14,8 +14,15 @@ import {
   ChevronRight, X, SlidersHorizontal, Lock
 } from "lucide-react";
 import { toast } from "sonner";
-// toolbox icon served from public/
 import type { FeedItem } from "@/lib/markedsplassUtils";
+import { MarkedsplassSidePanel, EMPTY_FILTER, type MarkedsplassFilterState } from "@/components/markedsplass/MarkedsplassSidePanel";
+import {
+  useUnifiedCategories,
+  getAllDescendants,
+  getRootCategories,
+} from "@/hooks/useUnifiedCategories";
+import { LISTING_TYPES, type ListingTypeId } from "@/config/listingTypes";
+import { CreateCTA } from "@/components/ui/CreateCTA";
 import { MarkedsplassSidePanel, EMPTY_FILTER, type MarkedsplassFilterState } from "@/components/markedsplass/MarkedsplassSidePanel";
 import {
   useUnifiedCategories,
@@ -145,6 +152,13 @@ export default function Markedsplass() {
         <title>{branchType ? `${branchType.label} | Markedsplass` : 'Markedsplass'} | Simca Norge</title>
         <meta name="description" content="Kjøp og selg deler, tilbehør og biler fra Simca-entusiaster i Norge." />
       </Helmet>
+
+      <CreateCTA
+        createUrl="/dashboard/opprett-annonse"
+        label="Legg ut annonse"
+        description="Selg deler, biler eller utstyr."
+        variant="strip"
+      />
 
       {/* Toolbox Banner */}
       {itemCount > 0 && (

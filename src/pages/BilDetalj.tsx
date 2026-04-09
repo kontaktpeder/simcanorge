@@ -19,6 +19,7 @@ import {
   Tag, Gauge, FileText, Share2, ChevronDown, Pencil
 } from "lucide-react";
 import { toast } from "sonner";
+import { CreateCTA } from "@/components/ui/CreateCTA";
 
 const SITE_URL =
   typeof window !== "undefined" && window.location.hostname.includes("simcanorge.no")
@@ -887,6 +888,17 @@ const BilDetalj = () => {
           </div>
         </div>
       </section>
+
+      {!user && (
+        <div className="max-w-2xl mx-auto px-4 py-6">
+          <CreateCTA
+            createUrl="/send-inn"
+            label="Del din bil"
+            description="Har du en klassiker du vil vise frem?"
+            variant="card"
+          />
+        </div>
+      )}
     </Layout>
   );
 };
