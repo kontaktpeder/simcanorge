@@ -1,4 +1,5 @@
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { usePublicPageBySlug } from "@/hooks/usePageBySlug";
 import { PublicPageHero } from "@/components/pages/PublicPageHero";
@@ -16,6 +17,15 @@ export default function PublicPagePage() {
   const { slug } = useParams<{ slug: string }>();
   const { data: page, isLoading, isError } = usePublicPageBySlug(slug);
   const { user } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Redirect /s/:slug → /klubber/:slug for clubs
+  useEffect(() => {
+    if (page && page.page_type === "club" && location.pathname.startsWith("/s/")) {
+      navigate(`/klubber/${page.slug}`, { replace: true });
+    }
+  }, [page, location.pathname, navigate]);
 
   if (isLoading) {
     return (

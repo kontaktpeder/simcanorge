@@ -6,6 +6,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { PageForm, type PageFormValues } from "@/components/pages/PageForm";
 import { Card, CardContent } from "@/components/ui/card";
 import { useMyPersonProfile } from "@/hooks/useMyPersonProfile";
+import { RequestPageAccessButton } from "@/components/profile/RequestPageAccessButton";
 import { useOwnerProfile } from "@/hooks/useOwnerProfile";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -65,8 +66,15 @@ export default function CreatePagePage() {
 
   if (!profile?.can_create_pages) {
     return (
-      <div className="max-w-lg mx-auto px-4 py-12 text-center">
-        <p className="text-muted-foreground">Du har ikke tilgang til å opprette sider.</p>
+      <div className="max-w-lg mx-auto px-4 py-12 space-y-6">
+        <div className="text-center space-y-2">
+          <h1 className="text-2xl font-bold">Opprett side</h1>
+          <p className="text-muted-foreground">
+            For å opprette klubber, verksteder og andre sider må du søke om tilgang.
+            Vi behandler forespørsler manuelt for å sikre kvalitet.
+          </p>
+        </div>
+        <RequestPageAccessButton />
       </div>
     );
   }
