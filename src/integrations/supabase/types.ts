@@ -1358,6 +1358,42 @@ export type Database = {
           },
         ]
       }
+      page_cars: {
+        Row: {
+          car_id: string
+          created_at: string
+          id: string
+          page_id: string
+        }
+        Insert: {
+          car_id: string
+          created_at?: string
+          id?: string
+          page_id: string
+        }
+        Update: {
+          car_id?: string
+          created_at?: string
+          id?: string
+          page_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "page_cars_car_id_fkey"
+            columns: ["car_id"]
+            isOneToOne: false
+            referencedRelation: "cars"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "page_cars_page_id_fkey"
+            columns: ["page_id"]
+            isOneToOne: false
+            referencedRelation: "pages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       page_memberships: {
         Row: {
           id: string
