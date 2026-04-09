@@ -96,6 +96,7 @@ export default function DashboardBilDetalj() {
   const [isSaving, setIsSaving] = useState(false);
   const [isUploadingImages, setIsUploadingImages] = useState(false);
   const [isReorderingImages, setIsReorderingImages] = useState(false);
+  const [isPublishing, setIsPublishing] = useState(false);
 
   const [basicForm, setBasicForm] = useState({
     brand: "", model: "", variant: "", body_type: "", year: "", category: "registrert", tags: "",
