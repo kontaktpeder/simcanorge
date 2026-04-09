@@ -54,7 +54,7 @@ export default function Index() {
           <img
             src={heroCar}
             alt="Klassisk bil"
-            className="absolute inset-0 w-full h-full object-cover object-[70%_40%] brightness-110 scale-110"
+            className="absolute inset-0 w-full h-full object-contain object-right brightness-110"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-[#1a1a1a]/70 via-[#1a1a1a]/45 to-[#1a1a1a]/25" />
           <div className="absolute bottom-0 left-0 right-0 h-10" style={{ background: 'linear-gradient(to top, #f0ebe3, transparent)' }} />
