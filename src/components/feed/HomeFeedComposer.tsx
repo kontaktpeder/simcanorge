@@ -17,7 +17,7 @@ export function HomeFeedComposer() {
 
   if (!user) {
     return (
-      <div className="rounded-xl border border-[#c4962c]/15 bg-gradient-to-br from-[#f0e8da] to-[#ebe3d6] px-6 py-8 sm:py-10 text-center">
+      <div className="rounded-xl border border-[#c4962c]/12 bg-gradient-to-br from-[#f5efe6] to-[#f0e9df] px-6 py-8 sm:py-10 text-center">
         <p className="text-[1rem] sm:text-[1.15rem] uppercase tracking-[0.06em] font-bold text-[#3a2e24]/60 leading-snug" style={chakra}>
           Del bilhistorier, oppdateringer<br className="hidden sm:block" /> og nyheter med fellesskapet
         </p>
@@ -45,7 +45,7 @@ export function HomeFeedComposer() {
   }
 
   return (
-    <div className="rounded-xl border border-[#c4962c]/15 bg-gradient-to-br from-[#f0e8da] to-[#ebe3d6] p-5 sm:p-6 transition-all focus-within:border-[#c4962c]/30 focus-within:shadow-[0_4px_24px_rgba(196,150,44,0.1)]">
+    <div className="rounded-xl border border-[#c4962c]/12 bg-gradient-to-br from-[#f5efe6] to-[#f0e9df] p-5 sm:p-6 transition-all focus-within:border-[#c4962c]/25 focus-within:shadow-[0_4px_24px_rgba(196,150,44,0.08)]">
       <div className="flex items-start gap-4">
         {profile?.avatar_url ? (
           <img src={profile.avatar_url} alt="" className="w-11 h-11 rounded-full object-cover ring-2 ring-[#c4962c]/20 flex-shrink-0 mt-0.5" />
