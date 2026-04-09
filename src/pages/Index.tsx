@@ -131,11 +131,6 @@ export default function Index() {
             </div>
           </div>
         </section>
-                </Link>
-              ))}
-            </div>
-          </div>
-        </section>
 
         {/* ─── FEED ─── */}
         <section className="pt-4 sm:pt-10 md:pt-16 pb-12 sm:pb-20 md:pb-32">
