@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { Layout } from "@/components/layout/Layout";
 import { CreateCTA } from "@/components/ui/CreateCTA";
-import { MapPin, Calendar, Users, ArrowRight } from "lucide-react";
+import { MapPin, Calendar, Users } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -93,75 +93,69 @@ export default function KlubberPage() {
                 <Link
                   key={page.id}
                   to={`/klubber/${page.slug}`}
-                  className="group block rounded-lg overflow-hidden border border-[#c4962c]/10 hover:border-[#c4962c]/25 transition-all duration-300 hover:shadow-[0_8px_30px_-10px_rgba(196,150,44,0.15)]"
-                  style={{ background: 'linear-gradient(180deg, #f5efe6 0%, #f0e9df 100%)' }}
+                  className="group block overflow-hidden transition-all duration-300"
                 >
                   {/* Cover */}
-                  <div className="h-32 relative overflow-hidden bg-[#e8e0d4]">
+                  <div className="aspect-[16/9] relative overflow-hidden rounded-md bg-[#e8e0d4]">
                     {page.cover_url ? (
                       <img
                         src={page.cover_url}
                         alt=""
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                        className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700"
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #3a2e24 0%, #4a3d30 100%)' }}>
                         <Users className="w-10 h-10 text-[#c4962c]/30" strokeWidth={1.2} />
                       </div>
                     )}
-                    {/* Fade overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#f5efe6]/60 to-transparent" />
+                    {/* Bottom fade */}
+                    <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/30 to-transparent" />
+
+                    {/* Logo badge */}
+                    {page.logo_url ? (
+                      <img
+                        src={page.logo_url}
+                        alt=""
+                        className="absolute bottom-3 left-3 w-9 h-9 rounded-full object-cover border-2 border-white/80 shadow-md"
+                      />
+                    ) : (
+                      <div
+                        className="absolute bottom-3 left-3 w-9 h-9 rounded-full flex items-center justify-center border-2 border-white/80 shadow-md"
+                        style={{ background: 'linear-gradient(135deg, #3a2e24, #4a3d30)' }}
+                      >
+                        <span className="text-xs font-bold text-[#c4962c]/90" style={chakra}>
+                          {page.title.charAt(0).toUpperCase()}
+                        </span>
+                      </div>
+                    )}
                   </div>
 
                   {/* Content */}
-                  <div className="p-4 sm:p-5 space-y-2.5">
-                    <div className="flex items-center gap-3">
-                      {page.logo_url ? (
-                        <img
-                          src={page.logo_url}
-                          alt=""
-                          className="w-10 h-10 rounded-full object-cover border-2 border-[#c4962c]/15 shadow-sm"
-                        />
-                      ) : (
-                        <div className="w-10 h-10 rounded-full flex items-center justify-center border-2 border-[#c4962c]/15" style={{ background: 'linear-gradient(135deg, #3a2e24, #4a3d30)' }}>
-                          <span className="text-sm font-bold text-[#c4962c]/80" style={chakra}>
-                            {page.title.charAt(0).toUpperCase()}
-                          </span>
-                        </div>
-                      )}
-                      <div className="flex-1 min-w-0">
-                        <h3
-                          className="text-[14px] sm:text-[15px] font-bold uppercase tracking-[0.04em] text-[#3a2e24] leading-tight group-hover:text-[#8b6914] transition-colors truncate"
-                          style={chakra}
-                        >
-                          {page.title}
-                        </h3>
-                        <span className="text-[10px] uppercase tracking-[0.15em] text-[#8b6914]/60 font-semibold" style={oswald}>
-                          Klubb
-                        </span>
-                      </div>
-                    </div>
+                  <div className="pt-3 space-y-1">
+                    <h3
+                      className="text-[14px] sm:text-[15px] font-bold uppercase tracking-[0.04em] text-[#3a2e24] leading-tight group-hover:text-[#8b6914] transition-colors truncate"
+                      style={chakra}
+                    >
+                      {page.title}
+                    </h3>
 
                     {page.tagline && (
-                      <p className="text-[12px] sm:text-[13px] text-[#3a2e24]/55 leading-relaxed line-clamp-2">
+                      <p className="text-[12px] sm:text-[13px] text-[#3a2e24]/50 leading-relaxed line-clamp-2">
                         {page.tagline}
                       </p>
                     )}
 
-                    <div className="flex items-center justify-between pt-1">
-                      <div className="flex items-center gap-3 text-[11px] text-[#3a2e24]/40">
-                        {page.location && (
-                          <span className="flex items-center gap-1">
-                            <MapPin className="w-3 h-3" /> {page.location}
-                          </span>
-                        )}
-                        {page.founded_year && (
-                          <span className="flex items-center gap-1">
-                            <Calendar className="w-3 h-3" /> Est. {page.founded_year}
-                          </span>
-                        )}
-                      </div>
-                      <ArrowRight className="w-3.5 h-3.5 text-[#c4962c]/40 group-hover:text-[#c4962c] group-hover:translate-x-0.5 transition-all" />
+                    <div className="flex items-center gap-3 text-[11px] text-[#3a2e24]/35 pt-0.5">
+                      {page.location && (
+                        <span className="flex items-center gap-1">
+                          <MapPin className="w-3 h-3" /> {page.location}
+                        </span>
+                      )}
+                      {page.founded_year && (
+                        <span className="flex items-center gap-1">
+                          <Calendar className="w-3 h-3" /> Est. {page.founded_year}
+                        </span>
+                      )}
                     </div>
                   </div>
                 </Link>
