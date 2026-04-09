@@ -113,8 +113,59 @@ export function ClubClassicTemplate({ page }: { page: Page }) {
   return (
     <div className="bg-background font-sans">
 
-      {/* ── HERO — same as other pages ── */}
-      <PublicPageHero page={heroPage} />
+      {/* ── HERO — poster-section-blue like homepage ── */}
+      <section className="poster-section poster-section-blue hero-watermark relative overflow-hidden min-h-[280px] md:min-h-[340px] flex flex-col justify-center">
+        <div className="absolute inset-0 stripes-diagonal" />
+
+        {page.cover_url && (
+          <>
+            <img
+              src={page.cover_url}
+              alt=""
+              className="absolute inset-0 w-full h-full object-cover opacity-15 mix-blend-luminosity"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#0B2A55]/90 via-[#0B2A55]/60 to-transparent" />
+          </>
+        )}
+
+        <div className="container mx-auto relative z-10">
+          <div className="flex items-center gap-6 md:gap-10">
+            {/* Logo left */}
+            {page.logo_url && (
+              <img
+                src={page.logo_url}
+                alt={page.title}
+                className="h-24 md:h-36 lg:h-44 w-auto flex-shrink-0"
+                style={{
+                  filter: 'drop-shadow(0 8px 24px rgba(0,0,0,0.4)) drop-shadow(0 4px 8px rgba(0,0,0,0.3))'
+                }}
+              />
+            )}
+
+            {/* Text right */}
+            <div>
+              {page.founded_year && (
+                <p className="text-[10px] tracking-[0.35em] uppercase text-white/40 font-sans font-semibold mb-1">
+                  Est. {page.founded_year}
+                </p>
+              )}
+              <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-display leading-[0.95] text-white uppercase tracking-wide">
+                {page.title}
+              </h1>
+              {page.tagline && (
+                <p className="text-sm md:text-lg text-white/60 mt-2 max-w-lg font-serif italic">
+                  {page.tagline}
+                </p>
+              )}
+              {page.location && (
+                <p className="text-xs text-white/35 mt-3 tracking-wide">
+                  📍 {page.location}
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* ── BODY ── */}
       <div className="max-w-[1000px] mx-auto px-5 md:px-8 py-8 md:py-14">
