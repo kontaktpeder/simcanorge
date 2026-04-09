@@ -174,20 +174,20 @@ export default function Dashboard() {
       {/* ─── VARSLER ─── */}
       {notifications && notifications.length > 0 && (
         <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }} className="mb-8">
-          <div className="border border-white/[0.1] bg-[#161412] rounded-sm overflow-hidden">
-            <div className="px-5 py-3 border-b border-white/[0.06] flex items-center gap-2.5">
+          <div className="border border-[#c4962c]/15 rounded-sm overflow-hidden" style={{ background: 'linear-gradient(180deg, #f5efe6 0%, #f0e9df 100%)' }}>
+            <div className="px-5 py-3 border-b border-[#c4962c]/10 flex items-center gap-2.5">
               <Bell className="w-4 h-4 text-[#c4962c]" />
-              <span className="text-[11px] uppercase tracking-[0.15em] font-semibold text-white/60" style={oswald}>
+              <span className="text-[11px] uppercase tracking-[0.15em] font-semibold text-[#3a2e24]/60" style={oswald}>
                 Varsler ({notifications.length})
               </span>
             </div>
-            <div className="divide-y divide-white/[0.04]">
+            <div className="divide-y divide-[#c4962c]/5">
               {notifications.map((notif: any) => (
                 <div key={notif.id} className="px-5 py-4 flex items-start justify-between gap-4">
                   <div className="flex-1">
-                    <p className="text-[13px] font-bold text-white/90" style={chakra}>{notif.title}</p>
-                    <p className="text-[12px] text-white/40 mt-0.5">{notif.body}</p>
-                    <p className="text-[10px] text-white/20 mt-1">
+                    <p className="text-[13px] font-bold text-[#3a2e24]" style={chakra}>{notif.title}</p>
+                    <p className="text-[12px] text-[#3a2e24]/50 mt-0.5">{notif.body}</p>
+                    <p className="text-[10px] text-[#3a2e24]/30 mt-1">
                       {new Date(notif.created_at).toLocaleDateString('nb-NO', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}
                     </p>
                   </div>
