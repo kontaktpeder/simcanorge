@@ -47,10 +47,10 @@ export default function Index() {
 
         {/* ─── HERO (split layout) ─── */}
         <section className="relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #3a2e24 0%, #2a2118 40%, #1e1812 100%)' }}>
-          {/* Subtle vignette overlay */}
-          <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 30% 50%, transparent 40%, rgba(0,0,0,0.4) 100%)' }} />
-          {/* Warm light glow from right */}
-          <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 85% 60%, rgba(196,150,44,0.08) 0%, transparent 60%)' }} />
+          {/* Subtle vignette */}
+          <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 30% 50%, transparent 40%, rgba(0,0,0,0.35) 100%)' }} />
+          {/* Warm glow behind car */}
+          <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(circle at 70% 45%, rgba(255,180,80,0.18) 0%, transparent 55%)' }} />
 
           <div className="relative z-10 max-w-[1200px] mx-auto px-4 sm:px-5 md:px-8">
             <div className="flex flex-col md:flex-row items-center md:items-stretch min-h-[200px] sm:min-h-[220px] md:min-h-[260px]">
@@ -79,21 +79,24 @@ export default function Index() {
                 </div>
               </div>
 
-              {/* RIGHT — car image */}
+              {/* RIGHT — car image with fade mask */}
               <div className="hidden md:flex items-end justify-end flex-shrink-0 w-[45%] lg:w-[50%] relative">
                 <img
                   src={heroCar}
                   alt="Klassisk bil"
-                  className="w-full h-auto max-h-[240px] lg:max-h-[280px] object-contain object-bottom drop-shadow-[0_8px_30px_rgba(0,0,0,0.5)]"
+                  className="w-full h-auto max-h-[240px] lg:max-h-[280px] object-contain object-bottom"
+                  style={{
+                    WebkitMaskImage: 'linear-gradient(to left, black 50%, transparent 95%)',
+                    maskImage: 'linear-gradient(to left, black 50%, transparent 95%)',
+                    filter: 'drop-shadow(0 8px 30px rgba(0,0,0,0.4))',
+                  }}
                 />
-                {/* Subtle floor reflection */}
-                <div className="absolute bottom-0 left-0 right-0 h-6" style={{ background: 'linear-gradient(to top, rgba(30,24,18,0.9), transparent)' }} />
               </div>
             </div>
           </div>
 
-          {/* Bottom fade into content */}
-          <div className="absolute bottom-0 left-0 right-0 h-8" style={{ background: 'linear-gradient(to top, #2c2318, transparent)' }} />
+          {/* Bottom fade into modules */}
+          <div className="absolute bottom-0 left-0 right-0 h-10" style={{ background: 'linear-gradient(to top, #e8e0d4, transparent)' }} />
         </section>
 
         {/* ─── MODULES ─── */}
