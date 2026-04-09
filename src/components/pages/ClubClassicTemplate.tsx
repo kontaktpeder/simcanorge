@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { Mail, Globe, Phone, ArrowRight } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PublicPageHero } from "./PublicPageHero";
 import { useFeedPosts } from "@/hooks/useFeedPosts";
 import { FeedCard } from "@/components/feed/FeedCard";
