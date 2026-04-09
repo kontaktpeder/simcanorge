@@ -410,8 +410,6 @@ export function SendInnBilForm({ onSuccess, onCancel, showCancelButton = false }
       }
 
       onSuccess?.();
-
-      onSuccess?.();
     } catch (error: any) {
       const errMsg = error?.details || error?.message || "Prøv igjen senere.";
 
