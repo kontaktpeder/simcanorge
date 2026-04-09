@@ -291,8 +291,7 @@ export default function Dashboard() {
       <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.45 }}>
         <div
           onClick={handleOpenForm}
-          className="cursor-pointer rounded-sm border border-[#c4962c]/20 hover:border-[#c4962c]/40 transition-all duration-300 overflow-hidden group"
-          style={{ background: 'linear-gradient(135deg, rgba(196,150,44,0.08) 0%, rgba(196,150,44,0.03) 100%)' }}
+          className="cursor-pointer rounded-sm border border-[#c4962c]/25 hover:border-[#c4962c]/40 transition-all duration-300 overflow-hidden group bg-[#1a1714] hover:bg-[#1e1b16]"
         >
           <div className="flex items-center justify-between px-6 sm:px-8 py-6 sm:py-8">
             <div className="flex items-center gap-4">
