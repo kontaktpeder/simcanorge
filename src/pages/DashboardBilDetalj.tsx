@@ -420,48 +420,107 @@ export default function DashboardBilDetalj() {
 
             {/* Publish actions */}
             <SectionCard delay={0}>
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <div className="flex items-center gap-3">
-                  {car.status === 'published' && car.slug && (
-                    <Link
-                      to={`/biler/${car.slug}`}
-                      className="inline-flex items-center gap-1.5 text-[12px] uppercase tracking-[0.08em] font-bold text-[#c4962c] hover:text-[#a07820] transition-colors"
-                      style={chakra}
-                    >
-                      <Eye className="w-4 h-4" />
-                      Se offentlig side →
-                    </Link>
-                  )}
-                </div>
+              {(() => {
+                const isPublished = car.status === 'published';
+                const isArchived = car.status === 'archived';
+                const brandOk = !!(car.brand && car.brand.trim());
+                const modelOk = !!(car.model && car.model.trim());
+                const imagesOk = (car.car_images?.length || 0) >= 1;
+                const canPublish = brandOk && modelOk && imagesOk && !isArchived && !isPublished;
 
-                {car.status !== 'archived' && (
+                return (
                   <>
-                    {openRequest ? (
-                      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full bg-amber-50 border border-amber-200 rounded-md p-4">
-                        <div className="flex items-start gap-2 flex-1">
-                          <Clock className="w-5 h-5 text-amber-600 mt-0.5 shrink-0" />
-                          <div>
-                            <p className="text-[13px] font-bold text-amber-800" style={chakra}>
-                              Forespørsel: {openRequest.action === 'publish' ? 'Publiser' : 'Avpubliser'}
-                            </p>
-                            <p className="text-[12px] text-amber-600">
-                              Sendt {new Date(openRequest.created_at).toLocaleDateString('nb-NO')}
-                            </p>
-                          </div>
-                        </div>
-                        <ActionBtn variant="outline" onClick={cancelRequest}>
-                          <X className="w-3.5 h-3.5" /> Avbryt
+                    {/* Published: show link + unpublish */}
+                    {isPublished && (
+                      <div className="flex flex-wrap items-center justify-between gap-3">
+                        {car.slug && (
+                          <Link
+                            to={`/biler/${car.slug}`}
+                            className="inline-flex items-center gap-1.5 text-[12px] uppercase tracking-[0.08em] font-bold text-[#c4962c] hover:text-[#a07820] transition-colors"
+                            style={chakra}
+                          >
+                            <Eye className="w-4 h-4" />
+                            Se offentlig side →
+                          </Link>
+                        )}
+                        <ActionBtn variant="outline" onClick={handleUnpublish} disabled={isPublishing}>
+                          <EyeOff className="w-4 h-4" />
+                          {isPublishing ? 'Avpubliserer...' : 'Avpubliser'}
                         </ActionBtn>
                       </div>
-                    ) : (
-                      <ActionBtn variant="outline" onClick={requestPublication}>
-                        {car.status === 'published' ? <EyeOff className="w-4 h-4" /> : <Send className="w-4 h-4" />}
-                        {car.status === 'published' ? 'Be admin avpublisere' : 'Be admin publisere'}
-                      </ActionBtn>
+                    )}
+
+                    {/* Not published: show checklist + publish */}
+                    {!isPublished && !isArchived && (
+                      <div>
+                        {/* Old open request warning */}
+                        {openRequest && (
+                          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full bg-amber-50 border border-amber-200 rounded-md p-4 mb-4">
+                            <div className="flex items-start gap-2 flex-1">
+                              <Clock className="w-5 h-5 text-amber-600 mt-0.5 shrink-0" />
+                              <div>
+                                <p className="text-[13px] font-bold text-amber-800" style={chakra}>
+                                  Du har en åpen forespørsel til admin fra før
+                                </p>
+                                <p className="text-[12px] text-amber-600">
+                                  Avbryt den hvis du heller vil publisere selv.
+                                </p>
+                              </div>
+                            </div>
+                            <ActionBtn variant="outline" onClick={cancelRequest}>
+                              <X className="w-3.5 h-3.5" /> Avbryt
+                            </ActionBtn>
+                          </div>
+                        )}
+
+                        <SectionTitle
+                          icon={<Send className="w-5 h-5" />}
+                          title="Publiser på bilgarasje.no"
+                          description="Når du publiserer, vises bilen under Biler med offentlig lenke."
+                        />
+
+                        {/* Checklist */}
+                        <div className="space-y-2 mb-4">
+                          {[
+                            { ok: brandOk, label: 'Merke er satt' },
+                            { ok: modelOk, label: 'Modell er satt' },
+                            { ok: imagesOk, label: 'Minst ett bilde er lastet opp' },
+                          ].map(({ ok, label }) => (
+                            <div key={label} className="flex items-center gap-2">
+                              {ok ? (
+                                <CheckCircle2 className="w-4.5 h-4.5 text-green-600 shrink-0" />
+                              ) : (
+                                <Circle className="w-4.5 h-4.5 text-[#3a2e24]/20 shrink-0" />
+                              )}
+                              <span className={`text-[13px] ${ok ? 'text-[#3a2e24]/70' : 'text-[#3a2e24]/35'}`}>
+                                {label}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+
+                        {!canPublish && (
+                          <p className="text-[12px] text-[#3a2e24]/35 mb-4">
+                            Fyll inn grunninfo og last opp bilder, så blir «Publiser» tilgjengelig.
+                          </p>
+                        )}
+
+                        <ActionBtn onClick={handlePublish} disabled={!canPublish || isPublishing}>
+                          <Send className="w-4 h-4" />
+                          {isPublishing ? 'Publiserer...' : 'Publiser'}
+                        </ActionBtn>
+                      </div>
+                    )}
+
+                    {/* Archived */}
+                    {isArchived && (
+                      <p className="text-[13px] text-[#3a2e24]/40" style={chakra}>
+                        Denne bilen er arkivert.
+                      </p>
                     )}
                   </>
-                )}
-              </div>
+                );
+              })()}
             </SectionCard>
 
             {/* Images */}
