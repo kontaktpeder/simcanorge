@@ -71,6 +71,7 @@ export function BilerSidePanel({
       onSearchChange={onSearchChange}
       resultCount={resultCount}
       categoryCounts={categoryCounts}
+      lightMode={isMobile}
     />
   );
 
