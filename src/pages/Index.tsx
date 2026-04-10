@@ -103,14 +103,27 @@ export default function Index() {
         >
           <div className="max-w-[1200px] mx-auto px-3 sm:px-5 md:px-8">
             {/* Mobile: wrapped grid, no scrolling */}
-            <div className="flex flex-wrap gap-1.5 md:hidden py-2.5">
-              {modules.map((mod) => {
+            <div className="grid grid-cols-3 gap-2 md:hidden py-3">
+              {modules.slice(0, 3).map((mod) => {
                 const ModIcon = mod.icon;
                 return (
                   <Link key={mod.title} to={mod.href} className="group">
-                    <div className="flex items-center gap-1.5 py-1.5 px-3 rounded-full bg-white/50 border border-[#c4962c]/10 hover:border-[#c4962c]/25 active:scale-[0.97] transition-all">
-                      <ModIcon className="w-3.5 h-3.5 text-[#8b6914]" strokeWidth={1.8} />
-                      <span className="text-[11px] tracking-[0.04em] uppercase font-bold text-[#3a2e24] whitespace-nowrap" style={chakra}>
+                    <div className="flex flex-col items-center gap-1 py-2.5 px-2 rounded-xl bg-white/60 border border-[#c4962c]/8 hover:border-[#c4962c]/20 active:scale-[0.97] transition-all shadow-sm">
+                      <ModIcon className="w-5 h-5 text-[#8b6914]" strokeWidth={1.6} />
+                      <span className="text-[10px] tracking-[0.06em] uppercase font-bold text-[#3a2e24]" style={chakra}>
+                        {mod.title}
+                      </span>
+                    </div>
+                  </Link>
+                );
+              })}
+              {modules.slice(3).map((mod) => {
+                const ModIcon = mod.icon;
+                return (
+                  <Link key={mod.title} to={mod.href} className="group">
+                    <div className="flex flex-col items-center gap-1 py-2.5 px-2 rounded-xl bg-white/60 border border-[#c4962c]/8 hover:border-[#c4962c]/20 active:scale-[0.97] transition-all shadow-sm">
+                      <ModIcon className="w-5 h-5 text-[#8b6914]" strokeWidth={1.6} />
+                      <span className="text-[10px] tracking-[0.06em] uppercase font-bold text-[#3a2e24]" style={chakra}>
                         {mod.title}
                       </span>
                     </div>
