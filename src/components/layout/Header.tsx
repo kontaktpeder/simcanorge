@@ -58,11 +58,12 @@ export function Header() {
                 <Link
                   key={link.href}
                   to={link.href}
-                  className={`relative px-4 py-1.5 text-[13px] tracking-[0.12em] uppercase font-medium transition-all duration-300 ${
+                  className={`relative px-4 py-1.5 text-[13px] tracking-[0.1em] uppercase font-bold transition-all duration-300 ${
                     isActive
                       ? "text-[#3a2e24]"
                       : "text-[#3a2e24]/40 hover:text-[#3a2e24]/70"
                   }`}
+                  style={chakra}
                 >
                   {link.label}
                   {isActive && (
@@ -101,14 +102,16 @@ export function Header() {
             {user ? (
               <Link
                 to="/dashboard"
-                className="px-5 py-2 text-[13px] tracking-[0.1em] uppercase font-medium text-[#3a2e24]/50 hover:text-[#3a2e24]/80 border border-[#3a2e24]/15 hover:border-[#3a2e24]/30 transition-all duration-300"
+                className="px-5 py-2 text-[13px] tracking-[0.1em] uppercase font-bold text-[#3a2e24]/50 hover:text-[#3a2e24]/80 border border-[#3a2e24]/15 hover:border-[#3a2e24]/30 transition-all duration-300"
+                style={chakra}
               >
                 Min garasje
               </Link>
             ) : (
               <Link
                 to="/login?returnUrl=/dashboard"
-                className="flex items-center gap-2 px-5 py-2 text-[13px] tracking-[0.1em] uppercase font-medium text-[#3a2e24]/50 hover:text-[#3a2e24]/80 border border-[#3a2e24]/15 hover:border-[#3a2e24]/30 transition-all duration-300"
+                className="flex items-center gap-2 px-5 py-2 text-[13px] tracking-[0.1em] uppercase font-bold text-[#3a2e24]/50 hover:text-[#3a2e24]/80 border border-[#3a2e24]/15 hover:border-[#3a2e24]/30 transition-all duration-300"
+                style={chakra}
               >
                 <LogIn className="w-3.5 h-3.5" />
                 Logg inn
@@ -117,7 +120,7 @@ export function Header() {
             <Link
               to="/dashboard/opprett-bil"
               className="px-5 py-2 text-[13px] tracking-[0.1em] uppercase text-[#0f0d0b] font-bold transition-all duration-300 hover:brightness-110"
-              style={{ background: 'linear-gradient(135deg, #d4a017, #e8c547, #c4962c)' }}
+              style={{ ...chakra, background: 'linear-gradient(135deg, #d4a017, #e8c547, #c4962c)' }}
             >
               Opprett bil
             </Link>
@@ -156,9 +159,10 @@ export function Header() {
                   key={link.href}
                   to={link.href}
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`py-2.5 text-[11px] tracking-[0.15em] uppercase border-b border-[#3a2e24]/[0.06] transition-all ${
+                  className={`py-2.5 text-[11px] tracking-[0.12em] uppercase font-bold border-b border-[#3a2e24]/[0.06] transition-all ${
                     isActive ? "text-[#3a2e24]" : "text-[#3a2e24]/35 hover:text-[#3a2e24]/65"
                   }`}
+                  style={chakra}
                 >
                   {link.label}
                 </Link>
@@ -167,18 +171,20 @@ export function Header() {
             <div className="flex flex-col gap-2 mt-3 pb-2">
               {user ? (
                 <Link to="/dashboard" onClick={() => setMobileMenuOpen(false)}
-                  className="py-2 text-center text-[11px] tracking-[0.15em] uppercase text-[#3a2e24]/50 border border-[#3a2e24]/15">
+                  className="py-2 text-center text-[11px] tracking-[0.12em] uppercase font-bold text-[#3a2e24]/50 border border-[#3a2e24]/15"
+                  style={chakra}>
                   Min garasje
                 </Link>
               ) : (
                 <Link to="/login?returnUrl=/dashboard" onClick={() => setMobileMenuOpen(false)}
-                  className="py-2 text-center text-[11px] tracking-[0.15em] uppercase text-[#3a2e24]/50 border border-[#3a2e24]/15 flex items-center justify-center gap-2">
+                  className="py-2 text-center text-[11px] tracking-[0.12em] uppercase font-bold text-[#3a2e24]/50 border border-[#3a2e24]/15 flex items-center justify-center gap-2"
+                  style={chakra}>
                   <LogIn className="w-3.5 h-3.5" /> Logg inn
                 </Link>
               )}
               <Link to="/dashboard/opprett-bil" onClick={() => setMobileMenuOpen(false)}
-                className="py-2 text-center text-[11px] tracking-[0.15em] uppercase text-[#0a0a0a] font-semibold"
-                style={{ background: 'linear-gradient(135deg, #d4a017, #e8c547, #c4962c)' }}>
+                className="py-2 text-center text-[11px] tracking-[0.12em] uppercase text-[#0a0a0a] font-bold"
+                style={{ ...chakra, background: 'linear-gradient(135deg, #d4a017, #e8c547, #c4962c)' }}>
                 Opprett bil
               </Link>
             </div>
