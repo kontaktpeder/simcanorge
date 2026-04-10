@@ -6,7 +6,7 @@ interface CreateCTAProps {
   createUrl: string;
   label: string;
   description?: string;
-  variant?: "strip" | "card" | "inline" | "ghost";
+  variant?: "strip" | "card" | "inline" | "ghost" | "hero";
   className?: string;
 }
 
@@ -23,6 +23,19 @@ export function CreateCTA({
     : `/login?returnUrl=${encodeURIComponent(createUrl)}`;
   const Icon = user ? Plus : LogIn;
   const text = user ? label : "Logg inn for å opprette";
+
+  if (variant === "hero") {
+    return (
+      <Link
+        to={href}
+        className={`inline-flex items-center gap-2 px-4 py-2 text-[11px] sm:text-[12px] uppercase tracking-[0.12em] font-bold text-[#3a2e24] bg-white/80 hover:bg-white transition-all backdrop-blur-sm rounded-sm ${className}`}
+        style={{ fontFamily: "'Chakra Petch', 'Oswald', sans-serif" }}
+      >
+        <Icon className="w-3.5 h-3.5" />
+        {text}
+      </Link>
+    );
+  }
 
   if (variant === "ghost") {
     return (
