@@ -32,12 +32,6 @@ export default function AktoererPage() {
       </Helmet>
 
       <div className="min-h-screen bg-[#111315]">
-        <CreateCTA
-          createUrl="/dashboard/sider/ny"
-          label="Opprett din side"
-          description="Har du en klubb, bedrift eller samling?"
-          variant="strip"
-        />
         {/* Hero */}
         <section className="pt-12 pb-8 max-w-[1000px] mx-auto px-5 md:px-8">
           <p
@@ -55,6 +49,13 @@ export default function AktoererPage() {
           <p className="text-[14px] text-white/40 mt-3 max-w-[500px]">
             Verksteder, forhandlere, museer, samlinger og andre aktører i det norske bilmiljøet.
           </p>
+          <div className="mt-5">
+            <CreateCTA
+              createUrl="/dashboard/sider/ny"
+              label="Opprett din side"
+              variant="hero"
+            />
+          </div>
         </section>
 
         {/* Divider */}
