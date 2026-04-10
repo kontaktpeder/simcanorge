@@ -71,6 +71,7 @@ export function BilerSidePanel({
       onSearchChange={onSearchChange}
       resultCount={resultCount}
       categoryCounts={categoryCounts}
+      lightMode={isMobile}
     />
   );
 
@@ -81,13 +82,13 @@ export function BilerSidePanel({
         <DrawerContent className="max-h-[85vh]" style={{ background: '#f5efe6' }}>
           <DrawerHeader className="pb-0">
             <DrawerTitle
-              className="text-[13px] uppercase tracking-[0.15em] font-bold"
+              className="text-[13px] uppercase tracking-[0.15em] font-bold text-[#3a2e24]"
               style={oswald}
             >
               Filter
             </DrawerTitle>
           </DrawerHeader>
-          <div className="overflow-y-auto px-5 pb-6">
+          <div className="overflow-y-auto px-5 pb-6 biler-filter-mobile">
             {filterContent}
           </div>
         </DrawerContent>
@@ -170,12 +171,11 @@ export function BilerSidePanel({
 
 /** The actual filter UI, shared between Drawer and Sidebar */
 function BilerFilterContent({
-  filterState, onFilterChange, searchQuery, onSearchChange, resultCount, categoryCounts,
-}: Omit<Props, 'open' | 'onOpenChange' | 'expanded' | 'onExpandedChange'>) {
+  filterState, onFilterChange, searchQuery, onSearchChange, resultCount, categoryCounts, lightMode = false,
+}: Omit<Props, 'open' | 'onOpenChange' | 'expanded' | 'onExpandedChange'> & { lightMode?: boolean }) {
   const hasActiveFilters =
     filterState.category !== 'alle' || filterState.brand !== '' || filterState.model !== '' || filterState.variant !== '' || filterState.body_type !== '' || filterState.year !== '' || filterState.decade !== '' || searchQuery !== '';
 
-  // Accumulate synchronous onChange calls from CarFormFields into a single update
   const pendingRef = React.useRef<Partial<BilerFilterState> | null>(null);
   const handleCarFieldChange = (field: string, value: string) => {
     if (!pendingRef.current) {
@@ -190,24 +190,59 @@ function BilerFilterContent({
     pendingRef.current[field as keyof BilerFilterState] = value;
   };
 
+  // Color tokens based on mode
+  const c = lightMode
+    ? {
+        searchIcon: 'text-[#3a2e24]/40',
+        searchInput: 'border-[#3a2e24]/15 focus:border-[#c4962c]/60 text-[#3a2e24] placeholder:text-[#3a2e24]/30',
+        searchBg: 'bg-transparent',
+        countText: 'text-[#3a2e24]/40',
+        divider: 'border-[#3a2e24]/8',
+        labelText: 'text-[#3a2e24]/50',
+        catActive: 'bg-[#c4962c]/15 text-[#8b6914]',
+        catInactive: 'text-[#3a2e24]/50 hover:bg-[#3a2e24]/[0.04] hover:text-[#3a2e24]/70',
+        catCountActive: 'text-[#8b6914]/60',
+        catCountInactive: 'text-[#3a2e24]/20',
+        catIcon: '',
+        catLabel: '',
+        fieldOverrides: '[&_label]:text-[#3a2e24]/60 [&_select]:bg-white/70 [&_select]:border-[#3a2e24]/10 [&_select]:text-[#3a2e24] [&_input]:bg-white/70 [&_input]:border-[#3a2e24]/10 [&_input]:text-[#3a2e24]',
+        resetText: 'text-[#3a2e24]/40 hover:text-[#8b6914]',
+      }
+    : {
+        searchIcon: 'text-white/30',
+        searchInput: 'border-white/10 focus:border-[#c4962c]/50 text-white/80 placeholder:text-white/20',
+        searchBg: 'bg-transparent',
+        countText: 'text-white/25',
+        divider: 'border-white/[0.06]',
+        labelText: 'text-white/25',
+        catActive: 'bg-[#c4962c]/15 text-[#F5A623]',
+        catInactive: 'text-white/40 hover:bg-white/[0.04] hover:text-white/60',
+        catCountActive: 'text-[#F5A623]/60',
+        catCountInactive: 'text-white/15',
+        catIcon: '',
+        catLabel: '',
+        fieldOverrides: '[&_label]:text-white/30 [&_select]:bg-white/[0.06] [&_select]:border-white/[0.08] [&_select]:text-white/70 [&_input]:bg-white/[0.06] [&_input]:border-white/[0.08] [&_input]:text-white/70',
+        resetText: 'text-white/30 hover:text-[#F5A623]',
+      };
+
   return (
     <>
       {/* Search + result count */}
-      <div className="px-4 pt-4 pb-3 space-y-3 border-b border-white/[0.06]">
+      <div className={`px-4 pt-4 pb-3 space-y-3 border-b ${c.divider}`}>
         <div className="relative">
-          <Search className="absolute left-0 bottom-2 h-4 w-4 text-white/30" />
+          <Search className={`absolute left-0 bottom-2 h-4 w-4 ${c.searchIcon}`} />
           <input
             type="text"
             placeholder="Søk i arkivet…"
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
-            className="w-full bg-transparent border-0 border-b border-white/10 focus:border-[#c4962c]/50 pl-6 pr-2 py-1.5 text-sm text-white/80 placeholder:text-white/20 outline-none transition-colors"
+            className={`w-full bg-transparent border-0 border-b ${c.searchInput} pl-6 pr-2 py-1.5 text-sm outline-none transition-colors`}
             style={{ fontFamily: "'Playfair Display', serif", fontStyle: 'italic' }}
           />
         </div>
         <div className="flex items-center justify-between">
           <span
-            className="text-[11px] text-white/25"
+            className={`text-[11px] ${c.countText}`}
             style={{ ...oswald, letterSpacing: '0.05em' }}
           >
             {resultCount} {resultCount === 1 ? 'bil' : 'biler'}
@@ -220,7 +255,7 @@ function BilerFilterContent({
         {/* Categories */}
         <div>
           <label
-            className="text-[10px] uppercase tracking-[0.2em] text-white/25 block mb-2"
+            className={`text-[10px] uppercase tracking-[0.2em] ${c.labelText} block mb-2`}
             style={oswald}
           >
             Kategori
@@ -236,9 +271,7 @@ function BilerFilterContent({
                   onClick={() => onFilterChange({ ...filterState, category: cat.id })}
                   className={cn(
                     'w-full flex items-center gap-2.5 px-3 py-2 text-left text-sm rounded transition-all',
-                    isActive
-                      ? 'bg-[#c4962c]/15 text-[#F5A623]'
-                      : 'text-white/40 hover:bg-white/[0.04] hover:text-white/60',
+                    isActive ? c.catActive : c.catInactive,
                   )}
                 >
                   <Icon className="w-3.5 h-3.5 shrink-0" />
@@ -250,7 +283,7 @@ function BilerFilterContent({
                   </span>
                   <span className={cn(
                     'text-[10px] tabular-nums',
-                    isActive ? 'text-[#F5A623]/60' : 'text-white/15',
+                    isActive ? c.catCountActive : c.catCountInactive,
                   )}>
                     {count}
                   </span>
@@ -261,17 +294,17 @@ function BilerFilterContent({
         </div>
 
         {/* Divider */}
-        <div className="border-t border-white/[0.06]" />
+        <div className={`border-t ${c.divider}`} />
 
         {/* Car fields filter */}
         <div>
           <label
-            className="text-[10px] uppercase tracking-[0.2em] text-white/25 block mb-3"
+            className={`text-[10px] uppercase tracking-[0.2em] ${c.labelText} block mb-3`}
             style={oswald}
           >
             Bilmodell
           </label>
-          <div className="[&_label]:text-white/30 [&_select]:bg-white/[0.06] [&_select]:border-white/[0.08] [&_select]:text-white/70 [&_input]:bg-white/[0.06] [&_input]:border-white/[0.08] [&_input]:text-white/70">
+          <div className={c.fieldOverrides}>
             <CarFormFields
               formData={{
                 brand: filterState.brand,
@@ -289,14 +322,14 @@ function BilerFilterContent({
         {/* Reset */}
         {hasActiveFilters && (
           <>
-            <div className="border-t border-white/[0.06]" />
+            <div className={`border-t ${c.divider}`} />
             <button
               type="button"
               onClick={() => {
                 onFilterChange(EMPTY_BILER_FILTER);
                 onSearchChange('');
               }}
-              className="flex items-center gap-2 text-[11px] text-white/30 hover:text-[#F5A623] transition-colors uppercase tracking-[0.15em]"
+              className={`flex items-center gap-2 text-[11px] ${c.resetText} transition-colors uppercase tracking-[0.15em]`}
               style={oswald}
             >
               <RotateCcw className="w-3 h-3" />
