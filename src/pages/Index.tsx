@@ -53,18 +53,20 @@ export default function Index() {
           {/* Warm glow behind car */}
           <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(circle at 75% 50%, rgba(255,190,100,0.15) 0%, transparent 50%)' }} />
 
-          {/* Car image — more visible */}
-          <div className="absolute inset-0 pointer-events-none hidden md:block">
+          {/* Car image — visible on all sizes */}
+          <div className="absolute inset-0 pointer-events-none">
             <img
               src={heroCar}
               alt=""
-              className="absolute right-0 top-0 h-full w-[58%] object-cover object-[60%_20%]"
+              className="absolute right-0 top-0 h-full w-full md:w-[58%] object-cover object-[60%_20%]"
               style={{
                 WebkitMaskImage: 'linear-gradient(to left, black 60%, transparent 100%)',
                 maskImage: 'linear-gradient(to left, black 60%, transparent 100%)',
-                opacity: 0.9,
+                opacity: 0.55,
               }}
             />
+            {/* Extra fade for mobile readability */}
+            <div className="absolute inset-0 md:hidden" style={{ background: 'linear-gradient(to right, rgba(74,61,48,0.85) 30%, rgba(74,61,48,0.3) 100%)' }} />
           </div>
 
           <div className="relative z-10 max-w-[1200px] mx-auto px-4 sm:px-5 md:px-8">
@@ -100,14 +102,14 @@ export default function Index() {
           style={{ background: 'linear-gradient(180deg, #f2ece4 0%, #eee7dd 100%)', borderColor: 'rgba(58,46,36,0.06)' }}
         >
           <div className="max-w-[1200px] mx-auto px-3 sm:px-5 md:px-8">
-            {/* Mobile: compact scroll */}
-            <div className="flex gap-0.5 overflow-x-auto scrollbar-hide -mx-1 px-1 md:hidden py-2">
+            {/* Mobile: wrapped grid, no scrolling */}
+            <div className="flex flex-wrap gap-1.5 md:hidden py-2.5">
               {modules.map((mod) => {
                 const ModIcon = mod.icon;
                 return (
-                  <Link key={mod.title} to={mod.href} className="group flex-shrink-0">
-                    <div className="flex items-center gap-1.5 py-2 px-3 rounded-full bg-white/50 border border-[#c4962c]/10 hover:border-[#c4962c]/25 active:scale-[0.97] transition-all">
-                      <ModIcon className="w-4 h-4 text-[#8b6914]" strokeWidth={1.8} />
+                  <Link key={mod.title} to={mod.href} className="group">
+                    <div className="flex items-center gap-1.5 py-1.5 px-3 rounded-full bg-white/50 border border-[#c4962c]/10 hover:border-[#c4962c]/25 active:scale-[0.97] transition-all">
+                      <ModIcon className="w-3.5 h-3.5 text-[#8b6914]" strokeWidth={1.8} />
                       <span className="text-[11px] tracking-[0.04em] uppercase font-bold text-[#3a2e24] whitespace-nowrap" style={chakra}>
                         {mod.title}
                       </span>
