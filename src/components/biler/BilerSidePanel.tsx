@@ -81,13 +81,13 @@ export function BilerSidePanel({
         <DrawerContent className="max-h-[85vh]" style={{ background: '#f5efe6' }}>
           <DrawerHeader className="pb-0">
             <DrawerTitle
-              className="text-[13px] uppercase tracking-[0.15em] font-bold"
+              className="text-[13px] uppercase tracking-[0.15em] font-bold text-[#3a2e24]"
               style={oswald}
             >
               Filter
             </DrawerTitle>
           </DrawerHeader>
-          <div className="overflow-y-auto px-5 pb-6">
+          <div className="overflow-y-auto px-5 pb-6 biler-filter-mobile">
             {filterContent}
           </div>
         </DrawerContent>
