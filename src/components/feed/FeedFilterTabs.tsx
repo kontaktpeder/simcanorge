@@ -36,13 +36,12 @@ export function FeedFilterTabs({
               <span className="hidden sm:inline">{f.label}</span>
             </span>
             <span
-              className={`text-[9px] sm:text-[11px] tracking-[0.08em] uppercase transition-colors duration-200 mt-0.5 ${
+              className={`hidden sm:block text-[11px] tracking-[0.08em] uppercase transition-colors duration-200 mt-0.5 ${
                 isActive ? "text-[#8b6914]" : "text-[#3a2e24]/15 group-hover:text-[#3a2e24]/30"
               }`}
               style={chakra}
             >
-              <span className="sm:hidden">{f.shortSub}</span>
-              <span className="hidden sm:inline">{f.subtitle}</span>
+              {f.subtitle}
             </span>
             {isActive && (
               <span className="w-6 sm:w-8 h-[2px] bg-[#c4962c] mt-1.5 sm:mt-2 rounded-full" />
