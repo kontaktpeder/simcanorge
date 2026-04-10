@@ -5,6 +5,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { HeroSearch } from "@/components/layout/HeroSearch";
 import bilgarasjeLogo from "@/assets/bilgarasje-logo.png";
 
+const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
+
 const navLinks = [
   { href: "/", label: "Hjem" },
   { href: "/om-oss", label: "Om oss" },
