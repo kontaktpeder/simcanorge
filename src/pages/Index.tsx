@@ -68,25 +68,25 @@ export default function Index() {
           </div>
 
           <div className="relative z-10 max-w-[1200px] mx-auto px-4 sm:px-5 md:px-8">
-            <div className="flex flex-col justify-center min-h-[200px] sm:min-h-[230px] md:min-h-[280px] py-8 md:py-10 md:max-w-[50%]">
-              <p className="text-[10px] sm:text-[11px] tracking-[0.3em] uppercase mb-1.5"
+            <div className="flex flex-col justify-center min-h-[160px] sm:min-h-[230px] md:min-h-[280px] py-5 sm:py-8 md:py-10 md:max-w-[50%]">
+              <p className="text-[9px] sm:text-[11px] tracking-[0.3em] uppercase mb-1 sm:mb-1.5"
                 style={{ ...oswald, fontWeight: 500, background: 'linear-gradient(135deg, #F5A623, #FFD166)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
                 bilgarasje.no
               </p>
               <h1
-                className="text-[1.5rem] sm:text-[1.9rem] md:text-[2.4rem] lg:text-[2.8rem] leading-[0.93] uppercase tracking-[0.02em] text-white font-bold italic"
+                className="text-[1.3rem] sm:text-[1.9rem] md:text-[2.4rem] lg:text-[2.8rem] leading-[0.93] uppercase tracking-[0.02em] text-white font-bold italic"
                 style={{ ...chakra, textShadow: '0 2px 20px rgba(0,0,0,0.4)' }}
               >
                 Hele Norges<br />bilsamfunn
               </h1>
               <p
-                className="text-[0.7rem] sm:text-[0.85rem] md:text-[1rem] uppercase tracking-[0.15em] text-white/50 font-bold italic mt-0.5"
+                className="text-[0.65rem] sm:text-[0.85rem] md:text-[1rem] uppercase tracking-[0.15em] text-white/50 font-bold italic mt-0.5"
                 style={chakra}
               >
                 — på nett
               </p>
 
-              <div className="mt-5 w-full max-w-[480px]">
+              <div className="mt-4 sm:mt-5 w-full max-w-[480px]">
                 <HeroSearch />
               </div>
             </div>
@@ -99,16 +99,16 @@ export default function Index() {
           className="border-b"
           style={{ background: 'linear-gradient(180deg, #f2ece4 0%, #eee7dd 100%)', borderColor: 'rgba(58,46,36,0.06)' }}
         >
-          <div className="max-w-[1200px] mx-auto px-4 sm:px-5 md:px-8">
-            {/* Mobile: scroll */}
-            <div className="flex gap-1 overflow-x-auto scrollbar-hide -mx-1 px-1 md:hidden py-2.5">
+          <div className="max-w-[1200px] mx-auto px-3 sm:px-5 md:px-8">
+            {/* Mobile: compact scroll */}
+            <div className="flex gap-0.5 overflow-x-auto scrollbar-hide -mx-1 px-1 md:hidden py-2">
               {modules.map((mod) => {
                 const ModIcon = mod.icon;
                 return (
                   <Link key={mod.title} to={mod.href} className="group flex-shrink-0">
-                    <div className="flex items-center gap-2 py-2.5 px-4 rounded-full bg-white/50 border border-[#c4962c]/10 hover:border-[#c4962c]/25 active:scale-[0.97] transition-all">
-                      <ModIcon className="w-5 h-5 text-[#8b6914]" strokeWidth={1.8} />
-                      <span className="text-[13px] tracking-[0.04em] uppercase font-bold text-[#3a2e24] whitespace-nowrap" style={chakra}>
+                    <div className="flex items-center gap-1.5 py-2 px-3 rounded-full bg-white/50 border border-[#c4962c]/10 hover:border-[#c4962c]/25 active:scale-[0.97] transition-all">
+                      <ModIcon className="w-4 h-4 text-[#8b6914]" strokeWidth={1.8} />
+                      <span className="text-[11px] tracking-[0.04em] uppercase font-bold text-[#3a2e24] whitespace-nowrap" style={chakra}>
                         {mod.title}
                       </span>
                     </div>
@@ -163,7 +163,7 @@ export default function Index() {
 
         {/* ─── FEED ─── */}
         <section
-          className="relative pt-6 sm:pt-8 md:pt-10 pb-12 sm:pb-20 md:pb-32 overflow-hidden"
+          className="relative pt-5 sm:pt-8 md:pt-10 pb-10 sm:pb-20 md:pb-32 overflow-hidden"
           style={{ background: 'linear-gradient(180deg, #eee7dd 0%, #ebe4da 40%, #e8e1d6 100%)' }}
         >
           {/* Car silhouette watermark — flipped */}
@@ -176,22 +176,22 @@ export default function Index() {
             />
           </div>
 
-          <div className="relative z-10 max-w-[800px] mx-auto px-4 sm:px-5 md:px-8">
+          <div className="relative z-10 max-w-[800px] mx-auto px-3 sm:px-5 md:px-8">
 
-            <div className="flex items-end justify-between mb-5 sm:mb-7">
+            <div className="flex items-end justify-between mb-4 sm:mb-7">
               <FeedFilterTabs active={feedFilter} onChange={setFeedFilter} />
             </div>
 
-            <div className="mb-6 sm:mb-10">
+            <div className="mb-5 sm:mb-10">
               <HomeFeedComposer />
             </div>
 
             {feedLoading && (
-              <div className="space-y-8 sm:space-y-12">
+              <div className="space-y-6 sm:space-y-12">
                 {[...Array(3)].map((_, i) => (
                   <div key={i}>
-                    <div className="h-[280px] sm:h-[420px] bg-[#3a2e24]/[0.06] rounded-lg animate-pulse" />
-                    <div className="h-px bg-[#3a2e24]/[0.08] mt-8 sm:mt-12" />
+                    <div className="h-[200px] sm:h-[420px] bg-[#3a2e24]/[0.06] rounded-lg animate-pulse" />
+                    <div className="h-px bg-[#3a2e24]/[0.08] mt-6 sm:mt-12" />
                   </div>
                 ))}
               </div>
@@ -203,7 +203,7 @@ export default function Index() {
                   <div key={post.id}>
                     <FeedCard post={post} />
                     {i < filteredPosts.length - 1 && (
-                      <div className="h-px bg-[#3a2e24]/[0.1] my-8 sm:my-12" />
+                      <div className="h-px bg-[#3a2e24]/[0.1] my-6 sm:my-12" />
                     )}
                   </div>
                 ))}
@@ -211,17 +211,17 @@ export default function Index() {
             )}
 
             {!feedLoading && filteredPosts.length === 0 && (
-              <div className="py-12 sm:py-24 text-center">
-                <p className="text-[1.2rem] sm:text-[1.6rem] uppercase text-[#3a2e24]/30 font-bold tracking-[0.08em]"
+              <div className="py-10 sm:py-24 text-center">
+                <p className="text-[1rem] sm:text-[1.6rem] uppercase text-[#3a2e24]/30 font-bold tracking-[0.08em]"
                   style={oswald}>
                   {feedFilter === "alle" ? "Ingen oppdateringer enda" : "Ingen treff i denne kategorien"}
                 </p>
-                <p className="text-[13px] text-[#3a2e24]/25 mt-1.5">
+                <p className="text-[12px] sm:text-[13px] text-[#3a2e24]/25 mt-1.5">
                   {feedFilter === "alle" ? "Bli den første til å dele noe" : "Prøv en annen kategori"}
                 </p>
                 {!user && feedFilter === "alle" && (
                   <Link to="/login"
-                    className="inline-block mt-5 text-[12px] uppercase tracking-[0.2em] text-[#c4962c] hover:text-[#a07820] font-bold transition-colors border-b border-[#c4962c]/30 hover:border-[#c4962c]/60 pb-0.5"
+                    className="inline-block mt-4 sm:mt-5 text-[11px] sm:text-[12px] uppercase tracking-[0.2em] text-[#c4962c] hover:text-[#a07820] font-bold transition-colors border-b border-[#c4962c]/30 hover:border-[#c4962c]/60 pb-0.5"
                     style={oswald}>
                     Logg inn for å starte →
                   </Link>

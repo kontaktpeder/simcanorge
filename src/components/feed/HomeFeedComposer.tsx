@@ -17,13 +17,13 @@ export function HomeFeedComposer() {
 
   if (!user) {
     return (
-      <div className="rounded-xl border border-[#c4962c]/12 bg-gradient-to-br from-[#f5efe6] to-[#f0e9df] px-6 py-8 sm:py-10 text-center">
-        <p className="text-[1rem] sm:text-[1.15rem] uppercase tracking-[0.06em] font-bold text-[#3a2e24]/60 leading-snug" style={chakra}>
+      <div className="rounded-xl border border-[#c4962c]/12 bg-gradient-to-br from-[#f5efe6] to-[#f0e9df] px-4 py-6 sm:px-6 sm:py-10 text-center">
+        <p className="text-[0.85rem] sm:text-[1.15rem] uppercase tracking-[0.06em] font-bold text-[#3a2e24]/60 leading-snug" style={chakra}>
           Del bilhistorier, oppdateringer<br className="hidden sm:block" /> og nyheter med fellesskapet
         </p>
         <Link
           to="/login"
-          className="inline-block mt-4 px-6 py-2.5 text-[12px] uppercase tracking-[0.15em] font-bold text-[#0f0d0b] rounded-lg transition-all hover:brightness-110"
+          className="inline-block mt-3 sm:mt-4 px-5 sm:px-6 py-2 sm:py-2.5 text-[11px] sm:text-[12px] uppercase tracking-[0.15em] font-bold text-[#0f0d0b] rounded-lg transition-all hover:brightness-110"
           style={{ ...chakra, background: 'linear-gradient(135deg, #d4a017, #e8c547, #c4962c)' }}
         >
           Logg inn for å starte
@@ -45,7 +45,7 @@ export function HomeFeedComposer() {
   }
 
   return (
-    <div className="rounded-xl border border-[#c4962c]/12 bg-gradient-to-br from-[#f5efe6] to-[#f0e9df] p-5 sm:p-6 transition-all focus-within:border-[#c4962c]/25 focus-within:shadow-[0_4px_24px_rgba(196,150,44,0.08)]">
+    <div className="rounded-xl border border-[#c4962c]/12 bg-gradient-to-br from-[#f5efe6] to-[#f0e9df] p-4 sm:p-6 transition-all focus-within:border-[#c4962c]/25 focus-within:shadow-[0_4px_24px_rgba(196,150,44,0.08)]">
       <div className="flex items-start gap-4">
         {profile?.avatar_url ? (
           <img src={profile.avatar_url} alt="" className="w-11 h-11 rounded-full object-cover ring-2 ring-[#c4962c]/20 flex-shrink-0 mt-0.5" />
