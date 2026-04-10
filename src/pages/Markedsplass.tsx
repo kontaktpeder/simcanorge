@@ -146,12 +146,6 @@ export default function Markedsplass() {
         <meta name="description" content="Kjøp og selg deler, tilbehør og biler fra Simca-entusiaster i Norge." />
       </Helmet>
 
-      <CreateCTA
-        createUrl="/dashboard/opprett-annonse"
-        label="Legg ut annonse"
-        description="Selg deler, biler eller utstyr."
-        variant="strip"
-      />
 
       {/* Toolbox Banner */}
       {itemCount > 0 && (

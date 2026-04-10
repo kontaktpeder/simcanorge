@@ -33,22 +33,38 @@ export default function EventsPage() {
         <meta name="description" content="Kommende biltreff, show og events i Norge" />
       </Helmet>
 
-      <div className="container max-w-5xl py-8 space-y-8">
-        <CreateCTA
-          createUrl="/dashboard/events/ny"
-          label="Opprett arrangement"
-          description="Planlegger du et biltreff eller arrangement?"
-          variant="strip"
-        />
-        {/* Header */}
-        <div className="text-center space-y-2">
-          <h1 className="font-display text-3xl sm:text-4xl uppercase tracking-wider">
-            Arrangement
-          </h1>
-          <p className="text-muted-foreground">
-            Kommende biltreff, show og events i Norge
-          </p>
-        </div>
+      <div className="min-h-screen" style={{ background: 'linear-gradient(180deg, #eee7dd 0%, #ebe4da 40%, #e8e1d6 100%)' }}>
+        {/* Hero */}
+        <section
+          className="relative overflow-hidden"
+          style={{ background: 'linear-gradient(135deg, #3a2e24 0%, #2a2118 100%)' }}
+        >
+          <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-5 md:px-8">
+            <div className="flex flex-col justify-center min-h-[160px] sm:min-h-[180px] md:min-h-[220px] py-8 md:py-10">
+              <h1
+                className="text-[1.5rem] sm:text-[1.9rem] md:text-[2.4rem] leading-[0.93] uppercase tracking-[0.02em] text-white font-bold italic"
+                style={{ fontFamily: "'Chakra Petch', 'Oswald', sans-serif", textShadow: '0 2px 20px rgba(0,0,0,0.4)' }}
+              >
+                Arrangement
+              </h1>
+              <p
+                className="text-[0.7rem] sm:text-[0.85rem] md:text-[1rem] uppercase tracking-[0.15em] text-white/50 font-bold italic mt-0.5"
+                style={{ fontFamily: "'Chakra Petch', 'Oswald', sans-serif" }}
+              >
+                — Kommende biltreff, show og events
+              </p>
+              <div className="mt-4">
+                <CreateCTA
+                  createUrl="/dashboard/events/ny"
+                  label="Opprett arrangement"
+                  variant="hero"
+                />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <div className="container max-w-5xl py-8 space-y-8">
 
         {/* Type filter */}
         <div className="flex flex-wrap justify-center gap-2">
@@ -146,6 +162,7 @@ export default function EventsPage() {
             })}
           </div>
         )}
+      </div>
       </div>
     </Layout>
   );
