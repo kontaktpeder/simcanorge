@@ -4,7 +4,7 @@ export type FeedFilter = "alle" | "biler" | "marked" | "arrangementer";
 
 const filters: { key: FeedFilter; label: string; shortLabel: string; subtitle: string; shortSub: string }[] = [
   { key: "alle", label: "Aktivitet", shortLabel: "Aktivitet", subtitle: "Alt som skjer", shortSub: "Alt" },
-  { key: "biler", label: "Biler", shortLabel: "Biler", subtitle: "Nye profiler", shortSub: "Profiler" },
+  { key: "biler", label: "Biler", shortLabel: "Biler", subtitle: "Nye profiler", shortSub: "Historier" },
   { key: "marked", label: "Marked", shortLabel: "Marked", subtitle: "Kjøp & salg", shortSub: "Kjøp" },
   { key: "arrangementer", label: "Arrangementer", shortLabel: "Arr.", subtitle: "Treff & samlinger", shortSub: "Treff" },
 ];
