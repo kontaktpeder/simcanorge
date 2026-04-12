@@ -48,8 +48,8 @@ export function Header() {
             <img
               src={bilgarasjeLogo}
               alt="Bilgarasje.no"
-              className="h-28 md:h-32 w-auto opacity-100 group-hover:opacity-100 transition-all duration-300"
-              style={{ filter: 'brightness(1.6) contrast(1.1)' }}
+              className="h-28 md:h-32 w-auto transition-all duration-300 group-hover:opacity-100"
+              style={{ filter: 'brightness(2) invert(1)', opacity: 0.9 }}
             />
           </Link>
 

@@ -48,14 +48,11 @@ export default function Index() {
 
         {/* ─── HERO ─── */}
         <section className="relative overflow-visible" style={{ background: 'linear-gradient(135deg, #070b10 0%, #0c1219 40%, #060a0f 100%)' }}>
-          {/* Vibrant teal glow — left */}
-          <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 900px 500px at 15% 60%, rgba(45,212,168,0.12) 0%, transparent 70%)' }} />
-          {/* Teal glow — right behind car */}
-          <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(circle 600px at 72% 40%, rgba(45,212,168,0.15) 0%, transparent 60%)' }} />
-          {/* Warm highlight kiss */}
-          <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(circle 400px at 60% 20%, rgba(255,255,255,0.04) 0%, transparent 60%)' }} />
+          {/* Subtle teal ambient — reduced */}
+          <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 800px 400px at 15% 60%, rgba(45,212,168,0.06) 0%, transparent 70%)' }} />
+          <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(circle 500px at 72% 40%, rgba(45,212,168,0.07) 0%, transparent 60%)' }} />
           {/* Bottom vignette */}
-          <div className="absolute inset-0 pointer-events-none" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.5) 0%, transparent 40%)' }} />
+          <div className="absolute inset-0 pointer-events-none" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.4) 0%, transparent 35%)' }} />
 
           {/* Car image — brighter, more visible */}
           <div className="absolute inset-0 pointer-events-none">
@@ -103,10 +100,10 @@ export default function Index() {
         {/* ─── CATEGORY NAV ─── */}
         <nav
           className="border-b relative"
-          style={{ background: 'linear-gradient(180deg, #0e141b 0%, #0b1018 100%)', borderColor: 'rgba(45,212,168,0.08)' }}
+          style={{ background: '#141a22', borderColor: 'rgba(255,255,255,0.08)' }}
         >
           {/* Top accent line */}
-          <div className="absolute top-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(90deg, transparent 10%, rgba(45,212,168,0.25) 50%, transparent 90%)' }} />
+          <div className="absolute top-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(90deg, transparent 15%, rgba(45,212,168,0.15) 50%, transparent 85%)' }} />
 
           <div className="max-w-[1200px] mx-auto px-3 sm:px-5 md:px-8">
             {/* Mobile: wrapped grid */}
@@ -115,10 +112,8 @@ export default function Index() {
                 const ModIcon = mod.icon;
                 return (
                   <Link key={mod.title} to={mod.href} className="group">
-                    <div className="flex flex-col items-center gap-1.5 py-3 px-2 rounded-xl bg-white/[0.03] border border-white/[0.06] hover:border-[#2dd4a8]/30 hover:bg-[#2dd4a8]/[0.04] active:scale-[0.97] transition-all duration-200"
-                      style={{ boxShadow: '0 0 0 0 transparent' }}
-                    >
-                      <ModIcon className="w-5 h-5 text-[#2dd4a8] group-hover:text-[#5aedc4] transition-colors" strokeWidth={1.8} style={{ filter: 'drop-shadow(0 0 4px rgba(45,212,168,0.3))' }} />
+                    <div className="flex flex-col items-center gap-1.5 py-3 px-2 rounded-xl bg-white/[0.05] border border-white/[0.08] hover:border-[#2dd4a8]/25 hover:bg-white/[0.08] active:scale-[0.97] transition-all duration-200">
+                      <ModIcon className="w-5 h-5 text-[#2dd4a8] group-hover:text-[#5aedc4] transition-colors" strokeWidth={1.8} />
                       <span className="text-[10px] tracking-[0.06em] uppercase font-bold text-white/80 group-hover:text-white transition-colors" style={chakra}>
                         {mod.title}
                       </span>
@@ -130,8 +125,8 @@ export default function Index() {
                 const ModIcon = mod.icon;
                 return (
                   <Link key={mod.title} to={mod.href} className="group">
-                    <div className="flex flex-col items-center gap-1.5 py-3 px-2 rounded-xl bg-white/[0.03] border border-white/[0.06] hover:border-[#2dd4a8]/30 hover:bg-[#2dd4a8]/[0.04] active:scale-[0.97] transition-all duration-200">
-                      <ModIcon className="w-5 h-5 text-[#2dd4a8] group-hover:text-[#5aedc4] transition-colors" strokeWidth={1.8} style={{ filter: 'drop-shadow(0 0 4px rgba(45,212,168,0.3))' }} />
+                    <div className="flex flex-col items-center gap-1.5 py-3 px-2 rounded-xl bg-white/[0.05] border border-white/[0.08] hover:border-[#2dd4a8]/25 hover:bg-white/[0.08] active:scale-[0.97] transition-all duration-200">
+                      <ModIcon className="w-5 h-5 text-[#2dd4a8] group-hover:text-[#5aedc4] transition-colors" strokeWidth={1.8} />
                       <span className="text-[10px] tracking-[0.06em] uppercase font-bold text-white/80 group-hover:text-white transition-colors" style={chakra}>
                         {mod.title}
                       </span>
@@ -156,9 +151,9 @@ export default function Index() {
                   >
                     <Link
                       to={mod.href}
-                      className="flex items-center justify-center gap-3 py-4.5 hover:bg-[#2dd4a8]/[0.04] transition-all duration-200"
+                      className="flex items-center justify-center gap-3 py-4.5 hover:bg-white/[0.04] transition-all duration-200"
                     >
-                      <ModIcon className="w-6 h-6 text-[#2dd4a8] group-hover:text-[#00ffc8] transition-colors duration-200" strokeWidth={1.6} style={{ filter: 'drop-shadow(0 0 6px rgba(45,212,168,0.35))' }} />
+                      <ModIcon className="w-6 h-6 text-[#2dd4a8] group-hover:text-[#5aedc4] transition-colors duration-200" strokeWidth={1.6} />
                       <div className="flex flex-col">
                         <span className="text-[15px] lg:text-[16px] tracking-[0.05em] uppercase font-bold text-white/90 group-hover:text-white leading-tight transition-colors" style={chakra}>
                           {mod.title}
@@ -172,7 +167,7 @@ export default function Index() {
                     {/* Create chip on hover */}
                     <Link
                       to={createHref}
-                      className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-all duration-200 flex items-center gap-0.5 px-1.5 py-0.5 bg-[#2dd4a8]/15 backdrop-blur-sm text-[#2dd4a8] hover:text-[#00ffc8] text-[8px] uppercase tracking-[0.12em] font-bold rounded border border-[#2dd4a8]/20"
+                      className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-all duration-200 flex items-center gap-0.5 px-1.5 py-0.5 bg-white/[0.08] backdrop-blur-sm text-[#2dd4a8] hover:text-[#5aedc4] text-[8px] uppercase tracking-[0.12em] font-bold rounded border border-white/[0.1]"
                       style={chakra}
                     >
                       <Plus className="w-2.5 h-2.5" />
@@ -188,7 +183,7 @@ export default function Index() {
         {/* ─── FEED ─── */}
         <section
           className="relative pt-5 sm:pt-8 md:pt-10 pb-10 sm:pb-20 md:pb-32 overflow-hidden"
-          style={{ background: 'linear-gradient(180deg, #0b1018 0%, #0a0e14 40%, #080c12 100%)' }}
+          style={{ background: '#151c24' }}
         >
           {/* Car silhouette watermark */}
           <div className="absolute bottom-0 left-0 right-0 pointer-events-none hidden sm:flex justify-center overflow-hidden" style={{ opacity: 0.03 }}>
