@@ -58,11 +58,11 @@ export default function SendInnBil() {
       if (claimHandledRef.current) return;
       claimHandledRef.current = true;
 
-      const { error, count } = await supabase
+      const { error, data: updated } = await supabase
         .from("cars")
         .update({ created_by_user_id: userId } as any)
         .eq("id", pendingCarId)
-        .select("id", { count: "exact", head: true });
+        .select("id");
 
       localStorage.removeItem("pendingClaimCarId");
 
