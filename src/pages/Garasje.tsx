@@ -8,6 +8,7 @@ import { Layout } from '@/components/layout/Layout';
 import { Helmet } from 'react-helmet-async';
 import { Loader2, Plus, Car, Eye, Pencil, Upload, BookOpen, User, ChevronRight, MapPin, CalendarPlus, Users, Settings, UserCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
+import garageBackground from '@/assets/garage-background.jpg';
 
 const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
 const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
