@@ -3,18 +3,18 @@ import { Factory, Calendar, Trophy } from "lucide-react";
 const funFacts = [
   {
     icon: Factory,
-    title: "POISSY",
-    fact: "Simca produserte biler fra 1934 til 1978 i den franske byen Poissy.",
+    title: "BILHISTORIE",
+    fact: "Norge har en rik bilhistorie – fra de første importbilene til dagens entusiastmiljøer over hele landet.",
   },
   {
     icon: Trophy,
-    title: "RALLYVINNER",
-    fact: "Simca 1000 Rallye var en populær konkurrent i europeisk rally på 70-tallet.",
+    title: "RESTAURERING",
+    fact: "Tusenvis av veteranbiler restaureres hvert år i Norge, fra garasjer og verksteder fra nord til sør.",
   },
   {
     icon: Calendar,
-    title: "1958",
-    fact: "Chrysler kjøpte majoriteten av Simca og skapte 'Simca-Chrysler'.",
+    title: "FELLESSKAP",
+    fact: "Bilgarasje.no samler entusiaster på tvers av merker – nye og gamle biler, historier og deler.",
   },
 ];
 
