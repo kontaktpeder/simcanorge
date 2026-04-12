@@ -32,8 +32,15 @@ const submissionSchema = z.object({
   phone: z.string().trim().max(20, "Telefonnummer kan ikke være mer enn 20 tegn").optional().or(z.literal("")),
   category: z.string().min(1, "Velg en kategori"),
   tags: z.string().max(500, "Tags kan ikke være mer enn 500 tegn").optional().or(z.literal("")),
-  car_story: z.string().trim().max(5000, "Historien kan ikke være mer enn 5000 tegn").optional().or(z.literal(""))
+  car_story: z.string().trim().max(5000, "Historien kan ikke være mer enn 5000 tegn").optional().or(z.literal("")),
+  registration_number: z.string().trim().max(10, "Maks 10 tegn").optional().or(z.literal("")),
 });
+
+function normalizeRegistrationNumber(raw: string): string {
+  return raw.replace(/[\s\-]/g, "").toUpperCase();
+}
+
+type DuplicateHit = { id: string; slug: string; title: string; published_at: string | null };
 
 const MIN_SUBMIT_INTERVAL = 2000;
 
