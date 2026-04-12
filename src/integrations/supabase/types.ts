@@ -431,6 +431,7 @@ export type Database = {
           model: string
           overhauled: boolean | null
           published_at: string | null
+          registration_number: string | null
           slug: string
           source: Database["public"]["Enums"]["car_source"]
           status: Database["public"]["Enums"]["car_status"]
@@ -465,6 +466,7 @@ export type Database = {
           model: string
           overhauled?: boolean | null
           published_at?: string | null
+          registration_number?: string | null
           slug: string
           source?: Database["public"]["Enums"]["car_source"]
           status?: Database["public"]["Enums"]["car_status"]
@@ -499,6 +501,7 @@ export type Database = {
           model?: string
           overhauled?: boolean | null
           published_at?: string | null
+          registration_number?: string | null
           slug?: string
           source?: Database["public"]["Enums"]["car_source"]
           status?: Database["public"]["Enums"]["car_status"]
@@ -1889,6 +1892,15 @@ export type Database = {
           p_website?: string
         }
         Returns: Json
+      }
+      find_cars_by_registration_number: {
+        Args: { p_normalized: string }
+        Returns: {
+          id: string
+          published_at: string
+          slug: string
+          title: string
+        }[]
       }
       get_event_attendee_count: {
         Args: { p_event_id: string }
