@@ -6,11 +6,9 @@ import type { WizardData } from "./WizardTypes";
 interface StepStoryProps {
   data: WizardData;
   onChange: (patch: Partial<WizardData>) => void;
-  onNext: () => void;
-  onBack: () => void;
 }
 
-export function StepStory({ data, onChange, onNext, onBack }: StepStoryProps) {
+export function StepStory({ data, onChange }: StepStoryProps) {
   return (
     <div className="space-y-6">
       <div className="text-center space-y-2">
@@ -45,18 +43,6 @@ export function StepStory({ data, onChange, onNext, onBack }: StepStoryProps) {
           />
           <p className="text-xs text-muted-foreground">Skill med komma</p>
         </div>
-      </div>
-
-      <div className="flex justify-between pt-4">
-        <button type="button" onClick={onBack}
-          className="px-6 py-3 rounded-lg font-display text-sm uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors">
-          ← Tilbake
-        </button>
-        <button type="button" onClick={onNext}
-          className="px-8 py-3 rounded-lg font-display text-base uppercase tracking-wider transition-all hover:brightness-110"
-          style={{ background: "linear-gradient(135deg, #1F66B5, #2B7BD4)", color: "#fff" }}>
-          {data.car_story.trim() ? "Neste →" : "Hopp over →"}
-        </button>
       </div>
     </div>
   );

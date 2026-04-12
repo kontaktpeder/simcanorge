@@ -15,11 +15,9 @@ const CATEGORIES = [
 interface StepDetailsProps {
   data: WizardData;
   onChange: (patch: Partial<WizardData>) => void;
-  onNext: () => void;
-  onBack: () => void;
 }
 
-export function StepDetails({ data, onChange, onNext, onBack }: StepDetailsProps) {
+export function StepDetails({ data, onChange }: StepDetailsProps) {
   const years = useMemo(() => getYearsForModel(data.brand, data.car_model), [data.brand, data.car_model]);
   const variants = useMemo(() => getVariantsForModel(data.brand, data.car_model), [data.brand, data.car_model]);
 
@@ -77,18 +75,6 @@ export function StepDetails({ data, onChange, onNext, onBack }: StepDetailsProps
             {CATEGORIES.map(c => <option key={c.id} value={c.id}>{c.label}</option>)}
           </select>
         </FormFieldWithTooltip>
-      </div>
-
-      <div className="flex justify-between pt-4">
-        <button type="button" onClick={onBack}
-          className="px-6 py-3 rounded-lg font-display text-sm uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors">
-          ← Tilbake
-        </button>
-        <button type="button" onClick={onNext}
-          className="px-8 py-3 rounded-lg font-display text-base uppercase tracking-wider transition-all hover:brightness-110"
-          style={{ background: "linear-gradient(135deg, #1F66B5, #2B7BD4)", color: "#fff" }}>
-          Neste →
-        </button>
       </div>
     </div>
   );

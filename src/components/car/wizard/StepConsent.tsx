@@ -1,21 +1,19 @@
 import { Link } from "react-router-dom";
-import { Send, Users, ShieldCheck } from "lucide-react";
+import { Users } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import type { WizardData } from "./WizardTypes";
 
 interface StepConsentProps {
   data: WizardData;
   onChange: (patch: Partial<WizardData>) => void;
-  onBack: () => void;
   onSubmit: () => void;
   isSubmitting: boolean;
   errors: Record<string, string>;
 }
 
-export function StepConsent({ data, onChange, onBack, onSubmit, isSubmitting, errors }: StepConsentProps) {
+export function StepConsent({ data, onChange, errors }: StepConsentProps) {
   const { data: clubs } = useQuery({
     queryKey: ["public-clubs-for-wizard"],
     queryFn: async () => {
@@ -104,19 +102,6 @@ export function StepConsent({ data, onChange, onBack, onSubmit, isSubmitting, er
           </span>
         </label>
         {errors.privacyAccepted && <p className="text-xs text-destructive pl-8">{errors.privacyAccepted}</p>}
-      </div>
-
-      {/* Buttons */}
-      <div className="flex justify-between pt-2">
-        <button type="button" onClick={onBack}
-          className="px-6 py-3 rounded-lg font-display text-sm uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors">
-          ← Tilbake
-        </button>
-        <Button type="button" onClick={onSubmit}
-          disabled={isSubmitting || data.allowEdits === null || !data.privacyAccepted}
-          className="btn-enamel-blue text-base h-12 px-8 disabled:opacity-40">
-          {isSubmitting ? "Sender…" : <><Send className="w-5 h-5 mr-2" /> Send inn</>}
-        </Button>
       </div>
     </div>
   );
