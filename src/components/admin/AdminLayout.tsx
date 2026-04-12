@@ -78,7 +78,7 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
       {/* Mobile Header */}
       <header className="md:hidden bg-metal-blue text-white px-4 py-3 flex items-center justify-between sticky top-0 z-50">
         <Link to="/" className="flex items-center gap-2">
-          <img src={simcaBadgeLogo} alt="Simca Norge" className="h-8 w-auto" />
+          <img src={simcaBadgeLogo} alt="Bilgarasje.no" className="h-8 w-auto" />
           <span className="font-display text-sm">ADMIN</span>
         </Link>
         <button
@@ -153,7 +153,7 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
       <aside className="hidden md:flex w-64 bg-metal-blue text-white flex-col relative overflow-hidden">
         <div className="p-6 border-b border-white/20 relative z-10">
           <Link to="/" className="flex items-center gap-3 group">
-            <img src={simcaBadgeLogo} alt="Simca Norge" className="h-12 w-auto transition-transform group-hover:scale-105 drop-shadow-lg" />
+            <img src={simcaBadgeLogo} alt="Bilgarasje.no" className="h-12 w-auto transition-transform group-hover:scale-105 drop-shadow-lg" />
             <span className="font-display text-lg text-metal drop-shadow">ADMIN</span>
           </Link>
         </div>

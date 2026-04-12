@@ -29,12 +29,12 @@ const SENDER_INFO: Record<'peder' | 'peter', SenderInfo> = {
   peder: {
     name: 'Peder August Halvorsen',
     email: 'kontaktpeder@gmail.com',
-    roleText: 'sønn av Peter, eier av nettsiden Simca Norge',
+    roleText: 'sønn av Peter, eier av nettsiden Bilgarasje.no',
   },
   peter: {
     name: 'Peter Arnt Halvorsen',
     email: 'p-ahalvo@online.no',
-    roleText: 'eier av nettsiden Simca Norge',
+    roleText: 'eier av nettsiden Bilgarasje.no',
   },
 };
 
@@ -134,8 +134,8 @@ ${senderInfo.email}`;
   };
 
   const emailSubject = mode === 'access'
-    ? 'Du har fått tilgang til Simca Norge'
-    : 'Tilgang til bilen din på Simca Norge';
+    ? 'Du har fått tilgang til Bilgarasje.no'
+    : 'Tilgang til bilen din på Bilgarasje.no';
 
   const copyToClipboard = async (text: string, section: string) => {
     try {

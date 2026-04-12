@@ -205,7 +205,7 @@ Simca ble i hovedsak produsert i Poissy/Paris, samt Spania, Stor-Britannia og Fi
                   Se bilene
                 </Link>
                 <Link to="/om-oss" className="btn-enamel-red">
-                  Om Simca Norge
+                  Om oss
                 </Link>
               </div>
             </AnimatedSection>

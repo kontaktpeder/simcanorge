@@ -716,7 +716,7 @@ export function SendInnBilForm({ onSuccess, onCancel, showCancelButton = false }
             <label className="flex items-start gap-3 cursor-pointer p-2 sm:p-3 rounded-lg hover:bg-muted/50 transition-colors">
               <input type="radio" name="allowEdits" checked={allowEdits === true} onChange={() => setAllowEdits(true)} className="w-5 h-5 mt-0.5 accent-primary flex-shrink-0" />
               <span className="text-sm sm:text-base text-foreground font-medium">
-                Ja, jeg godkjenner at Simca Norge kan redigere og forbedre innsendelsen min før publisering.
+                Ja, jeg godkjenner at Bilgarasje.no kan redigere og forbedre innsendelsen min før publisering.
               </span>
             </label>
             
@@ -801,7 +801,7 @@ export function SendInnBilForm({ onSuccess, onCancel, showCancelButton = false }
                 className="w-5 h-5 mt-0.5 accent-primary flex-shrink-0"
               />
               <span className="text-sm sm:text-base text-foreground font-medium">
-                Jeg godkjenner at bilder og beskrivelse av bilen min deles på Simca Norge sin{" "}
+                Jeg godkjenner at bilder og beskrivelse av bilen min deles på Bilgarasje.no sin{" "}
                 <a
                   href="https://www.instagram.com/simcanorge/"
                   target="_blank"
@@ -837,7 +837,7 @@ export function SendInnBilForm({ onSuccess, onCancel, showCancelButton = false }
       {/* Inner red footer */}
       <div className="bg-gradient-to-r from-[#C10D0D] to-[#D41515] p-4">
         <p className="text-center text-white/80 text-sm font-serif italic">
-          Alle innsendinger blir gjennomgått av Simca Norge
+          Alle innsendinger blir gjennomgått av Bilgarasje.no
         </p>
       </div>
 
