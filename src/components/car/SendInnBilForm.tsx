@@ -390,7 +390,8 @@ export function SendInnBilForm({ onSuccess, onCancel, showCancelButton = false }
           approved_at: null,
           approved_by: null,
           allow_edits: allowEdits === true,
-        });
+          registration_number: result.data.registration_number?.trim() || null,
+        } as any);
       };
 
       const { error: carError } = await tryInsertCar(carSlug);
