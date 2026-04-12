@@ -28,7 +28,7 @@ export function FeedFilterTabs({
           >
             <span
               className={`text-[0.95rem] sm:text-[1.3rem] tracking-[0.06em] uppercase font-bold leading-tight transition-colors duration-200 ${
-                isActive ? "text-[#3a2e24]" : "text-[#3a2e24]/25 group-hover:text-[#3a2e24]/50"
+                isActive ? "text-white" : "text-white/25 group-hover:text-white/50"
               }`}
               style={chakra}
             >
@@ -37,14 +37,14 @@ export function FeedFilterTabs({
             </span>
             <span
               className={`hidden sm:block text-[11px] tracking-[0.08em] uppercase transition-colors duration-200 mt-0.5 ${
-                isActive ? "text-[#8b6914]" : "text-[#3a2e24]/15 group-hover:text-[#3a2e24]/30"
+                isActive ? "text-[#2dd4a8]" : "text-white/15 group-hover:text-white/30"
               }`}
               style={chakra}
             >
               {f.subtitle}
             </span>
             {isActive && (
-              <span className="w-6 sm:w-8 h-[2px] bg-[#c4962c] mt-1.5 sm:mt-2 rounded-full" />
+              <span className="w-6 sm:w-8 h-[2px] bg-[#2dd4a8] mt-1.5 sm:mt-2 rounded-full" />
             )}
           </button>
         );
