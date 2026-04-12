@@ -206,7 +206,7 @@ export function CarWizard({ onSuccess }: CarWizardProps) {
       }
 
       toast({ title: "Takk for innsendingen!", description: "Vi har mottatt bilen din. Den blir synlig når admin har godkjent den." });
-      onSuccess?.();
+      onSuccess?.({ carId, email: data.email });
     } catch (error: any) {
       const isRls = error?.message?.toLowerCase().includes("row-level security");
       toast({
