@@ -20,7 +20,7 @@ function normalizeRegistrationNumber(raw: string): string {
 type DuplicateHit = { id: string; slug: string; title: string; published_at: string | null };
 
 interface CarWizardProps {
-  onSuccess?: () => void;
+  onSuccess?: (result: { carId: string; email: string }) => void;
 }
 
 export function CarWizard({ onSuccess }: CarWizardProps) {
