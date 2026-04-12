@@ -1,5 +1,5 @@
-import { useState, useRef, useMemo } from "react";
-import { Car, Send, Camera, X, ImagePlus, Users } from "lucide-react";
+import { useState, useRef, useMemo, useCallback } from "react";
+import { Car, Send, Camera, X, ImagePlus, Users, AlertTriangle, ExternalLink } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
