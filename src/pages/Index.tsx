@@ -103,7 +103,7 @@ export default function Index() {
           style={{ background: '#141a22', borderColor: 'rgba(255,255,255,0.08)' }}
         >
           {/* Top accent line */}
-          <div className="absolute top-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(90deg, transparent 15%, rgba(45,212,168,0.15) 50%, transparent 85%)' }} />
+          <div className="absolute top-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(90deg, transparent 10%, rgba(45,212,168,0.3) 50%, transparent 90%)' }} />
 
           <div className="max-w-[1200px] mx-auto px-3 sm:px-5 md:px-8">
             {/* Mobile: wrapped grid */}
@@ -112,8 +112,8 @@ export default function Index() {
                 const ModIcon = mod.icon;
                 return (
                   <Link key={mod.title} to={mod.href} className="group">
-                    <div className="flex flex-col items-center gap-1.5 py-3 px-2 rounded-xl bg-white/[0.05] border border-white/[0.08] hover:border-[#2dd4a8]/25 hover:bg-white/[0.08] active:scale-[0.97] transition-all duration-200">
-                      <ModIcon className="w-5 h-5 text-[#2dd4a8] group-hover:text-[#5aedc4] transition-colors" strokeWidth={1.8} />
+                    <div className="flex flex-col items-center gap-1.5 py-3 px-2 rounded-xl bg-white/[0.05] border border-white/[0.08] hover:border-[#2dd4a8]/40 hover:bg-[#2dd4a8]/[0.06] active:scale-[0.97] transition-all duration-200">
+                      <ModIcon className="w-5 h-5 text-[#34eab8] group-hover:text-[#5aedc4] transition-colors" strokeWidth={1.8} />
                       <span className="text-[10px] tracking-[0.06em] uppercase font-bold text-white/80 group-hover:text-white transition-colors" style={chakra}>
                         {mod.title}
                       </span>
@@ -125,8 +125,8 @@ export default function Index() {
                 const ModIcon = mod.icon;
                 return (
                   <Link key={mod.title} to={mod.href} className="group">
-                    <div className="flex flex-col items-center gap-1.5 py-3 px-2 rounded-xl bg-white/[0.05] border border-white/[0.08] hover:border-[#2dd4a8]/25 hover:bg-white/[0.08] active:scale-[0.97] transition-all duration-200">
-                      <ModIcon className="w-5 h-5 text-[#2dd4a8] group-hover:text-[#5aedc4] transition-colors" strokeWidth={1.8} />
+                    <div className="flex flex-col items-center gap-1.5 py-3 px-2 rounded-xl bg-white/[0.05] border border-white/[0.08] hover:border-[#2dd4a8]/40 hover:bg-[#2dd4a8]/[0.06] active:scale-[0.97] transition-all duration-200">
+                      <ModIcon className="w-5 h-5 text-[#34eab8] group-hover:text-[#5aedc4] transition-colors" strokeWidth={1.8} />
                       <span className="text-[10px] tracking-[0.06em] uppercase font-bold text-white/80 group-hover:text-white transition-colors" style={chakra}>
                         {mod.title}
                       </span>
@@ -153,7 +153,7 @@ export default function Index() {
                       to={mod.href}
                       className="flex items-center justify-center gap-3 py-4.5 hover:bg-white/[0.04] transition-all duration-200"
                     >
-                      <ModIcon className="w-6 h-6 text-[#2dd4a8] group-hover:text-[#5aedc4] transition-colors duration-200" strokeWidth={1.6} />
+                      <ModIcon className="w-6 h-6 text-[#34eab8] group-hover:text-[#5aedc4] transition-colors duration-200" strokeWidth={1.6} />
                       <div className="flex flex-col">
                         <span className="text-[15px] lg:text-[16px] tracking-[0.05em] uppercase font-bold text-white/90 group-hover:text-white leading-tight transition-colors" style={chakra}>
                           {mod.title}
@@ -167,7 +167,7 @@ export default function Index() {
                     {/* Create chip on hover */}
                     <Link
                       to={createHref}
-                      className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-all duration-200 flex items-center gap-0.5 px-1.5 py-0.5 bg-white/[0.08] backdrop-blur-sm text-[#2dd4a8] hover:text-[#5aedc4] text-[8px] uppercase tracking-[0.12em] font-bold rounded border border-white/[0.1]"
+                      className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-all duration-200 flex items-center gap-0.5 px-1.5 py-0.5 bg-[#2dd4a8]/10 backdrop-blur-sm text-[#34eab8] hover:text-[#5aedc4] text-[8px] uppercase tracking-[0.12em] font-bold rounded border border-[#2dd4a8]/20"
                       style={chakra}
                     >
                       <Plus className="w-2.5 h-2.5" />
