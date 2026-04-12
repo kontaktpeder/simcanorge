@@ -58,18 +58,20 @@ export default function SendInnBil() {
       if (claimHandledRef.current) return;
       claimHandledRef.current = true;
 
-      const { error } = await supabase
+      const { error, count } = await supabase
         .from("cars")
         .update({ created_by_user_id: userId } as any)
-        .eq("id", pendingCarId);
+        .eq("id", pendingCarId)
+        .select("id", { count: "exact", head: true });
 
       localStorage.removeItem("pendingClaimCarId");
 
-      if (error) {
+      if (error || count === 0) {
+        console.warn("Car claim failed:", error?.message ?? "0 rows updated");
         claimHandledRef.current = false;
         toast({
           title: "Innlogging registrert, men bilen ble ikke koblet",
-          description: error.message || "Prøv igjen fra lenken i e-posten.",
+          description: error?.message || "Bilen finnes kanskje ikke eller er allerede koblet.",
           variant: "destructive",
         });
         setState({ step: "wizard" });
