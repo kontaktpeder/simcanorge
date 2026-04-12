@@ -6,7 +6,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useMyPersonProfile } from '@/hooks/useMyPersonProfile';
 import { Layout } from '@/components/layout/Layout';
 import { Helmet } from 'react-helmet-async';
-import { Loader2, Plus, Car, User, Send, ChevronRight, MapPin } from 'lucide-react';
+import { Loader2, Plus, Car, Eye, Pencil, Upload, BookOpen, User, ChevronRight, MapPin } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
@@ -98,9 +98,9 @@ export default function Garasje() {
 
   if (!user) return null;
 
-  const carCount = myCars?.length || 0;
-  const publishedCars = myCars?.filter(c => c.cars?.published_at) || [];
   const firstCar = myCars?.[0];
+  const otherCars = myCars?.slice(1) || [];
+  const carCount = myCars?.length || 0;
 
   return (
     <Layout>
@@ -109,218 +109,248 @@ export default function Garasje() {
       </Helmet>
 
       <div className="min-h-[calc(100vh-4rem)]" style={{ background: 'linear-gradient(135deg, #070b10 0%, #0c1219 40%, #060a0f 100%)' }}>
+        {/* Accent line */}
+        <div className="h-[2px] w-full" style={{ background: 'linear-gradient(90deg, transparent 0%, #2dd4a8 30%, #34eab8 50%, #2dd4a8 70%, transparent 100%)' }} />
 
-        {/* ─── HERO ─── */}
-        <section className="relative overflow-hidden border-b border-white/[0.06]">
-          {/* Ambient glow */}
-          <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 30% 60%, rgba(45,212,168,0.06) 0%, transparent 60%)' }} />
+        <div className="max-w-[1000px] mx-auto px-4 sm:px-5 md:px-8">
 
-          {/* Accent line */}
-          <div className="h-[2px] w-full" style={{ background: 'linear-gradient(90deg, transparent 0%, #2dd4a8 30%, #34eab8 50%, #2dd4a8 70%, transparent 100%)' }} />
-
-          <div className="relative z-10 max-w-[1100px] mx-auto px-4 sm:px-5 md:px-8 py-10 sm:py-14 md:py-16">
-            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
-              <div>
-                <p
-                  className="text-[10px] sm:text-[11px] tracking-[0.3em] uppercase mb-2"
-                  style={{ ...oswald, fontWeight: 500, background: 'linear-gradient(135deg, #2dd4a8, #34eab8)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}
-                >
-                  bilgarasje.no
-                </p>
-                <h1
-                  className="text-[1.6rem] sm:text-[2rem] md:text-[2.6rem] leading-[0.93] uppercase tracking-[0.02em] text-white font-bold italic"
-                  style={{ ...chakra, textShadow: '0 2px 20px rgba(0,0,0,0.4)' }}
-                >
-                  Min garasje
-                </h1>
-                {profile ? (
-                  <div className="flex items-center gap-3 mt-3">
-                    <span className="text-[13px] text-white/50" style={oswald}>{profile.display_name}</span>
-                    {profile.location && (
-                      <span className="flex items-center gap-1 text-[11px] text-white/30">
-                        <MapPin className="w-3 h-3" />
-                        {profile.location}
-                      </span>
-                    )}
-                  </div>
-                ) : (
-                  <Link
-                    to="/dashboard/min-profil"
-                    className="inline-flex items-center gap-1.5 mt-3 text-[12px] text-[#2dd4a8]/70 hover:text-[#2dd4a8] transition-colors"
-                    style={oswald}
-                  >
-                    <User className="w-3.5 h-3.5" />
-                    Gjør garasjen personlig
-                  </Link>
-                )}
-                <p className="text-[12px] text-white/25 mt-2" style={oswald}>
-                  {carCount} {carCount === 1 ? 'bil' : 'biler'} i garasjen
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ─── CAR GRID ─── */}
-        <section className="max-w-[1100px] mx-auto px-4 sm:px-5 md:px-8 py-8 sm:py-12">
-          <h2
-            className="text-[13px] tracking-[0.15em] uppercase text-white/40 mb-5"
-            style={oswald}
-          >
-            Dine biler
-          </h2>
-
-          {carCount === 0 ? (
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="rounded-2xl border border-white/[0.08] p-8 sm:p-12 text-center"
-              style={{ background: 'linear-gradient(180deg, hsl(215 25% 11%) 0%, hsl(215 25% 9%) 100%)' }}
-            >
-              <Car className="w-10 h-10 text-white/15 mx-auto mb-4" />
-              <p className="text-[15px] text-white/50 mb-1" style={chakra}>Garasjen er tom — foreløpig</p>
-              <p className="text-[12px] text-white/25 mb-6">Legg til din første bil og start historien.</p>
-              <Link
-                to="/send-inn"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-lg text-[13px] tracking-[0.1em] uppercase font-bold text-[#070b10] transition-all hover:scale-[1.03]"
-                style={{ ...chakra, background: 'linear-gradient(135deg, #34eab8 0%, #2ab89a 100%)', boxShadow: '0 0 24px rgba(45,212,168,0.3)' }}
-              >
-                <Plus className="w-4 h-4" />
-                Legg til bil
-              </Link>
-            </motion.div>
+          {/* ─── HERO CAR ─── */}
+          {firstCar?.cars ? (
+            <HeroCarSection car={firstCar.cars} profile={profile} />
           ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
-              {myCars?.map((item, i) => {
-                const car = item.cars;
-                if (!car) return null;
-                const img = car.car_images?.sort((a: CarImage, b: CarImage) => (a.sort_order ?? 99) - (b.sort_order ?? 99))[0];
-                const isPublished = !!car.published_at;
-                return (
-                  <motion.div
-                    key={car.id}
-                    initial={{ opacity: 0, y: 16 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: i * 0.05 }}
-                  >
-                    <Link
-                      to={isPublished ? `/biler/${car.slug}` : `/dashboard/bil/${car.id}`}
-                      className="group block rounded-xl overflow-hidden border border-white/[0.08] hover:border-[#2dd4a8]/30 transition-all duration-300"
-                      style={{ background: 'linear-gradient(180deg, hsl(215 25% 12%) 0%, hsl(215 25% 9%) 100%)' }}
-                    >
-                      <div className="aspect-[4/5] relative overflow-hidden bg-black/30">
-                        {img ? (
-                          <img
-                            src={img.image_url}
-                            alt={car.title}
-                            className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                          />
-                        ) : (
-                          <div className="absolute inset-0 flex items-center justify-center">
-                            <Car className="w-8 h-8 text-white/10" />
-                          </div>
-                        )}
-                        {!isPublished && (
-                          <span className="absolute top-2 left-2 px-2 py-0.5 rounded text-[9px] uppercase tracking-wider font-bold bg-amber-500/20 text-amber-300 backdrop-blur-sm" style={oswald}>
-                            Kladd
-                          </span>
-                        )}
-                      </div>
-                      <div className="p-3">
-                        <p className="text-[12px] sm:text-[13px] text-white/80 font-semibold truncate" style={chakra}>{car.title}</p>
-                        {car.year && (
-                          <p className="text-[10px] text-white/25 mt-0.5" style={oswald}>{car.year}</p>
-                        )}
-                      </div>
-                    </Link>
-                  </motion.div>
-                );
-              })}
+            <EmptyGarageHero />
+          )}
 
-              {/* Add car tile */}
-              <motion.div
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: carCount * 0.05 }}
-              >
+          {/* ─── OTHER CARS ─── */}
+          {otherCars.length > 0 && (
+            <section className="mt-10">
+              <h2 className="text-[12px] tracking-[0.2em] uppercase text-white/30 mb-4" style={oswald}>
+                Flere biler i garasjen
+              </h2>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                {otherCars.map((item, i) => {
+                  const car = item.cars;
+                  if (!car) return null;
+                  const img = car.car_images?.sort((a, b) => (a.sort_order ?? 99) - (b.sort_order ?? 99))[0];
+                  const isPublished = !!car.published_at;
+                  return (
+                    <motion.div
+                      key={car.id}
+                      initial={{ opacity: 0, y: 12 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: i * 0.05 }}
+                    >
+                      <Link
+                        to={isPublished ? `/biler/${car.slug}` : `/dashboard/bil/${car.id}`}
+                        className="group block rounded-xl overflow-hidden border border-white/[0.06] hover:border-[#2dd4a8]/30 transition-all"
+                        style={{ background: 'hsl(215 25% 10%)' }}
+                      >
+                        <div className="aspect-[16/10] relative overflow-hidden bg-black/30">
+                          {img ? (
+                            <img src={img.image_url} alt={car.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                          ) : (
+                            <div className="absolute inset-0 flex items-center justify-center"><Car className="w-7 h-7 text-white/10" /></div>
+                          )}
+                          {!isPublished && (
+                            <span className="absolute top-2 left-2 px-2 py-0.5 rounded text-[9px] uppercase tracking-wider font-bold bg-amber-500/20 text-amber-300 backdrop-blur-sm" style={oswald}>Kladd</span>
+                          )}
+                        </div>
+                        <div className="p-2.5">
+                          <p className="text-[12px] text-white/70 font-semibold truncate" style={chakra}>{car.title}</p>
+                        </div>
+                      </Link>
+                    </motion.div>
+                  );
+                })}
+                {/* Add car tile */}
                 <Link
                   to="/send-inn"
-                  className="group flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-white/[0.08] hover:border-[#2dd4a8]/30 transition-all duration-300 aspect-[4/5]"
+                  className="group flex flex-col items-center justify-center rounded-xl border border-dashed border-white/[0.06] hover:border-[#2dd4a8]/30 transition-all aspect-[16/10]"
                 >
-                  <Plus className="w-6 h-6 text-white/15 group-hover:text-[#2dd4a8]/60 transition-colors mb-2" />
-                  <span className="text-[11px] uppercase tracking-[0.12em] text-white/20 group-hover:text-white/40 transition-colors" style={oswald}>
-                    Legg til bil
-                  </span>
+                  <Plus className="w-5 h-5 text-white/15 group-hover:text-[#2dd4a8]/60 transition-colors mb-1" />
+                  <span className="text-[10px] uppercase tracking-[0.12em] text-white/20 group-hover:text-white/40" style={oswald}>Legg til bil</span>
                 </Link>
-              </motion.div>
-            </div>
+              </div>
+            </section>
           )}
-        </section>
 
-        {/* ─── OPPDATERINGER ─── */}
-        <section className="max-w-[1100px] mx-auto px-4 sm:px-5 md:px-8 pb-8">
-          <h2
-            className="text-[13px] tracking-[0.15em] uppercase text-white/40 mb-4"
-            style={oswald}
-          >
-            Oppdateringer
-          </h2>
-
-          {(!notifications || notifications.length === 0) ? (
-            <div
-              className="rounded-xl border border-white/[0.06] p-6 text-center"
-              style={{ background: 'hsl(215 25% 10%)' }}
-            >
-              <p className="text-[12px] text-white/25" style={oswald}>Ingen oppdateringer ennå. Aktivitet rundt bilene dine vises her.</p>
-            </div>
-          ) : (
-            <div className="space-y-2">
-              {notifications.map((n) => (
-                <Link
-                  key={n.id}
-                  to={n.link || '/garasje'}
-                  className="flex items-start gap-3 rounded-lg border border-white/[0.06] px-4 py-3 hover:border-white/[0.12] transition-colors"
-                  style={{ background: n.is_read ? 'transparent' : 'hsl(215 25% 11%)' }}
-                >
-                  <div className="flex-1 min-w-0">
-                    <p className="text-[12px] text-white/60 font-medium truncate" style={oswald}>{n.title}</p>
-                    <p className="text-[11px] text-white/30 truncate mt-0.5">{n.body}</p>
-                  </div>
-                  <ChevronRight className="w-3.5 h-3.5 text-white/15 flex-shrink-0 mt-0.5" />
-                </Link>
-              ))}
-            </div>
-          )}
-        </section>
-
-        {/* ─── CTA BUTTONS ─── */}
-        <section className="max-w-[1100px] mx-auto px-4 sm:px-5 md:px-8 pb-16">
-          <div className="h-px bg-white/[0.06] mb-8" />
-          <h2
-            className="text-[13px] tracking-[0.15em] uppercase text-white/40 mb-5"
-            style={oswald}
-          >
-            Dette er bare starten
-          </h2>
-          <div className="grid sm:grid-cols-3 gap-3">
-            {[
-              { label: 'Legg til ny bil', to: '/send-inn', icon: Plus },
-              { label: 'Fortell historien', to: firstCar ? `/biler/${firstCar.cars?.slug}` : '/send-inn', icon: Send },
-              { label: 'Gjør garasjen personlig', to: '/dashboard/min-profil', icon: User },
-            ].map((cta) => (
-              <Link
-                key={cta.label}
-                to={cta.to}
-                className="flex items-center justify-center gap-2.5 py-4 rounded-lg text-[13px] tracking-[0.1em] uppercase font-bold text-[#070b10] transition-all hover:scale-[1.02] hover:brightness-110"
-                style={{ ...chakra, background: 'linear-gradient(135deg, #34eab8 0%, #2ab89a 100%)', boxShadow: '0 0 20px rgba(45,212,168,0.25)' }}
-              >
-                <cta.icon className="w-4 h-4" />
-                {cta.label}
-              </Link>
-            ))}
-          </div>
-        </section>
+          {/* ─── OPPDATERINGER ─── */}
+          <section className="mt-12 pb-16">
+            <h2 className="text-[12px] tracking-[0.2em] uppercase text-white/30 mb-4" style={oswald}>
+              Oppdateringer
+            </h2>
+            {(!notifications || notifications.length === 0) ? (
+              <div className="rounded-xl border border-white/[0.06] p-6 text-center" style={{ background: 'hsl(215 25% 10%)' }}>
+                <p className="text-[12px] text-white/25" style={oswald}>Ingen oppdateringer ennå. Aktivitet rundt bilene dine vises her.</p>
+              </div>
+            ) : (
+              <div className="space-y-1.5">
+                {notifications.map((n) => (
+                  <Link
+                    key={n.id}
+                    to={n.link || '/garasje'}
+                    className="flex items-start gap-3 rounded-lg border border-white/[0.06] px-4 py-3 hover:border-white/[0.1] transition-colors"
+                    style={{ background: n.is_read ? 'transparent' : 'hsl(215 25% 11%)' }}
+                  >
+                    <div className="flex-1 min-w-0">
+                      <p className="text-[12px] text-white/50 font-medium truncate" style={oswald}>{n.title}</p>
+                      <p className="text-[11px] text-white/25 truncate mt-0.5">{n.body}</p>
+                    </div>
+                    <ChevronRight className="w-3.5 h-3.5 text-white/15 flex-shrink-0 mt-0.5" />
+                  </Link>
+                ))}
+              </div>
+            )}
+          </section>
+        </div>
       </div>
     </Layout>
+  );
+}
+
+/* ─── Hero Car Section ─── */
+function HeroCarSection({ car, profile }: { car: CarData; profile: any }) {
+  const img = car.car_images?.sort((a, b) => (a.sort_order ?? 99) - (b.sort_order ?? 99))[0];
+  const isPublished = !!car.published_at;
+
+  return (
+    <motion.section
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="pt-6 sm:pt-8"
+    >
+      {/* Profile hint */}
+      <div className="flex items-center justify-between mb-4">
+        <p className="text-[10px] tracking-[0.3em] uppercase text-white/25" style={oswald}>
+          {profile?.display_name || 'Min garasje'}
+        </p>
+        {!profile && (
+          <Link to="/dashboard/min-profil" className="text-[10px] text-[#2dd4a8]/50 hover:text-[#2dd4a8] transition-colors" style={oswald}>
+            Gjør garasjen personlig →
+          </Link>
+        )}
+      </div>
+
+      {/* Large horizontal car image */}
+      <div className="rounded-2xl overflow-hidden border border-white/[0.06] relative" style={{ background: 'hsl(215 25% 8%)' }}>
+        <div className="aspect-[16/9] sm:aspect-[2.2/1] relative overflow-hidden bg-black/40">
+          {img ? (
+            <img
+              src={img.image_url}
+              alt={car.title}
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+          ) : (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <Car className="w-16 h-16 text-white/10" />
+            </div>
+          )}
+          {/* Gradient overlay at bottom */}
+          <div className="absolute inset-x-0 bottom-0 h-1/2" style={{ background: 'linear-gradient(to top, rgba(7,11,16,0.95) 0%, rgba(7,11,16,0.6) 50%, transparent 100%)' }} />
+
+          {/* Title + status over image */}
+          <div className="absolute bottom-0 inset-x-0 p-4 sm:p-6">
+            <div className="flex items-center gap-2 mb-1">
+              {isPublished ? (
+                <span className="px-2 py-0.5 rounded text-[9px] uppercase tracking-wider font-bold bg-[#2dd4a8]/20 text-[#2dd4a8] backdrop-blur-sm" style={oswald}>Publisert</span>
+              ) : (
+                <span className="px-2 py-0.5 rounded text-[9px] uppercase tracking-wider font-bold bg-amber-500/20 text-amber-300 backdrop-blur-sm" style={oswald}>Kladd</span>
+              )}
+            </div>
+            <h1
+              className="text-[1.4rem] sm:text-[1.8rem] md:text-[2.2rem] leading-[0.95] uppercase tracking-[0.01em] text-white font-bold"
+              style={{ ...chakra, textShadow: '0 2px 16px rgba(0,0,0,0.6)' }}
+            >
+              {car.title}
+            </h1>
+            {car.year && (
+              <p className="text-[12px] text-white/40 mt-1" style={oswald}>{car.year}</p>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Status text */}
+      <p className="text-[13px] text-white/40 mt-4 mb-5" style={oswald}>
+        {isPublished
+          ? 'Bilen din er synlig i garasjen.'
+          : 'Bilen din er inne i garasjen — gjør den klar for visning.'}
+      </p>
+
+      {/* Action buttons */}
+      <div className="grid sm:grid-cols-3 gap-2.5">
+        {isPublished ? (
+          <>
+            <ActionButton to={`/biler/${car.slug}`} icon={<Eye className="w-4 h-4" />} label="Se bilen offentlig" primary />
+            <ActionButton to={`/dashboard/bil/${car.id}`} icon={<Pencil className="w-4 h-4" />} label="Rediger bilen" />
+            <ActionButton to="/send-inn" icon={<Plus className="w-4 h-4" />} label="Legg til ny bil" />
+          </>
+        ) : (
+          <>
+            <ActionButton to={`/dashboard/bil/${car.id}`} icon={<Upload className="w-4 h-4" />} label="Gjør bilen klar" primary />
+            <ActionButton to={`/dashboard/bil/${car.id}`} icon={<BookOpen className="w-4 h-4" />} label="Skriv historien" />
+            <ActionButton to="/send-inn" icon={<Plus className="w-4 h-4" />} label="Legg til ny bil" />
+          </>
+        )}
+      </div>
+
+      {/* Contextual nudge */}
+      <p className="text-[11px] text-white/20 mt-4" style={oswald}>
+        Dette er starten på garasjen din. Gjør bilen klar, del historien, eller legg til flere.
+      </p>
+    </motion.section>
+  );
+}
+
+/* ─── Empty state ─── */
+function EmptyGarageHero() {
+  return (
+    <motion.section
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="pt-10 sm:pt-16 pb-8"
+    >
+      <div
+        className="rounded-2xl border border-white/[0.08] p-8 sm:p-14 text-center"
+        style={{ background: 'linear-gradient(180deg, hsl(215 25% 11%) 0%, hsl(215 25% 9%) 100%)' }}
+      >
+        <Car className="w-12 h-12 text-white/10 mx-auto mb-5" />
+        <h1
+          className="text-[1.6rem] sm:text-[2rem] uppercase tracking-[0.02em] text-white font-bold mb-2"
+          style={chakra}
+        >
+          Min garasje
+        </h1>
+        <p className="text-[13px] text-white/40 mb-1" style={oswald}>Garasjen er tom — foreløpig.</p>
+        <p className="text-[11px] text-white/20 mb-8" style={oswald}>Legg til din første bil og start historien.</p>
+        <Link
+          to="/send-inn"
+          className="inline-flex items-center gap-2 px-8 py-3.5 rounded-lg text-[13px] tracking-[0.1em] uppercase font-bold text-[#070b10] transition-all hover:scale-[1.03]"
+          style={{ ...chakra, background: 'linear-gradient(135deg, #34eab8 0%, #2ab89a 100%)', boxShadow: '0 0 24px rgba(45,212,168,0.3)' }}
+        >
+          <Plus className="w-4 h-4" />
+          Legg til bil
+        </Link>
+      </div>
+    </motion.section>
+  );
+}
+
+/* ─── Action Button ─── */
+function ActionButton({ to, icon, label, primary = false }: { to: string; icon: React.ReactNode; label: string; primary?: boolean }) {
+  return (
+    <Link
+      to={to}
+      className={`flex items-center justify-center gap-2.5 py-3.5 rounded-lg text-[12px] tracking-[0.08em] uppercase font-bold transition-all hover:scale-[1.02] ${
+        primary ? 'text-[#070b10]' : 'text-white/70 border border-white/[0.1] hover:border-white/[0.2] hover:text-white'
+      }`}
+      style={primary
+        ? { ...chakra, background: 'linear-gradient(135deg, #34eab8 0%, #2ab89a 100%)', boxShadow: '0 0 20px rgba(45,212,168,0.25)' }
+        : { ...chakra, background: 'hsl(215 25% 11%)' }
+      }
+    >
+      {icon}
+      {label}
+    </Link>
   );
 }
