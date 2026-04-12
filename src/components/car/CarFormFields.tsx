@@ -61,7 +61,7 @@ export function CarFormFields({
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
       {/* Brand */}
-      <FieldWrapper label="MERKE" <FieldWrapper label="MERKE" tooltip="Bilprodusent, f.eks. Volvo eller Ford">>
+      <FieldWrapper label="MERKE" tooltip="Bilprodusent, f.eks. Volvo eller Ford">
         <select
           value={formData.brand}
           onChange={(e) => handleBrandChange(e.target.value)}
