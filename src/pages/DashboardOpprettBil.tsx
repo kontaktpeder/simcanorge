@@ -201,6 +201,7 @@ export default function DashboardOpprettBil() {
 
     setIsSaving(true);
     try {
+      const carId = crypto.randomUUID();
       const title = generatedTitle;
       const baseSlug = generateSlug(title);
       const slug = `${baseSlug}-${Date.now().toString(36)}`;
@@ -215,9 +216,10 @@ export default function DashboardOpprettBil() {
           : { requested: false, page_id: null, page_title: null, page_slug: null, message: null },
       };
 
-      const { data: car, error: carError } = await supabase
+      const { error: carError } = await supabase
         .from('cars')
         .insert({
+          id: carId,
           title, slug, brand, model,
           variant: variant || null,
           body_type: bodyType || null,
@@ -227,25 +229,39 @@ export default function DashboardOpprettBil() {
           status: 'draft' as any,
           created_by_user_id: user.id,
           allow_edits: allowEdits === true,
+          published_at: null,
+          approved_at: null,
+          approved_by: null,
           submission_payload: submissionPayload,
         })
-        .select('id')
-        .single();
+        ;
 
-      if (carError) { console.error('Car create error:', carError); toast.error('Kunne ikke opprette bil: ' + (carError.message || 'Ukjent feil')); return; }
+      if (carError) {
+        console.error('Car create error:', carError);
+        if (carError.code === '42501') {
+          toast.error('Kunne ikke opprette bilen på grunn av tilgangsregler. Prøv igjen, og si ifra hvis feilen fortsetter.');
+        } else {
+          toast.error('Kunne ikke opprette bil: ' + (carError.message || 'Ukjent feil'));
+        }
+        return;
+      }
 
-      const { error: ownerError } = await supabase.from('car_owners').insert({ car_id: car.id, user_id: user.id, email: userEmail, role: 'owner' });
-      if (ownerError) { console.error('Owner claim error:', ownerError); toast.error('Bil opprettet, men kunne ikke knytte deg som eier. Kontakt admin.'); }
+      const { error: ownerError } = await supabase.from('car_owners').insert({ car_id: carId, user_id: user.id, email: userEmail, role: 'owner' });
+      if (ownerError) {
+        console.error('Owner claim error:', ownerError);
+        toast.error('Bil opprettet, men kunne ikke knytte deg som eier. Kontakt admin.');
+        return;
+      }
 
       if (clubLinkRequested && selectedClub) {
         try {
-          const { data: rpcResult } = await supabase.rpc('create_page_car_link_request', { p_car_id: car.id, p_page_id: selectedClub.id, p_message: clubMessage.trim() || null });
+          const { data: rpcResult } = await supabase.rpc('create_page_car_link_request', { p_car_id: carId, p_page_id: selectedClub.id, p_message: clubMessage.trim() || null });
           const rpcData = rpcResult as { success?: boolean } | null;
           if (rpcData && !rpcData.success) console.warn('Club link RPC:', rpcData);
         } catch (rpcErr) { console.error('Club link failed:', rpcErr); }
       }
 
-      setCreatedCarId(car.id);
+      setCreatedCarId(carId);
       setStep('images');
       toast.success('Bil opprettet! Last opp bilder nå.');
     } catch (err: any) { console.error('Unexpected:', err); toast.error('Uventet feil'); }
