@@ -127,7 +127,7 @@ export default function Garasje() {
               <h2 className="text-[12px] tracking-[0.2em] uppercase text-white/30 mb-4" style={oswald}>
                 Flere biler i garasjen
               </h2>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
                 {otherCars.map((item, i) => {
                   const car = item.cars;
                   if (!car) return null;
@@ -246,7 +246,7 @@ function HeroCarSection({ car, profile }: { car: CarData; profile: any }) {
 
       {/* Large horizontal car image */}
       <div className="rounded-2xl overflow-hidden border border-white/[0.06] relative" style={{ background: 'hsl(215 25% 8%)' }}>
-        <div className="aspect-[16/9] sm:aspect-[2.2/1] relative overflow-hidden bg-black/40">
+        <div className="aspect-[2.5/1] sm:aspect-[3/1] relative overflow-hidden bg-black/40">
           {img ? (
             <img
               src={img.image_url}
@@ -291,17 +291,15 @@ function HeroCarSection({ car, profile }: { car: CarData; profile: any }) {
       </p>
 
       {/* Action buttons */}
-      <div className="grid sm:grid-cols-3 gap-2.5">
+      <div className="grid sm:grid-cols-2 gap-2.5">
         {isPublished ? (
           <>
             <ActionButton to={`/biler/${car.slug}`} icon={<Eye className="w-4 h-4" />} label="Se bilen offentlig" primary />
             <ActionButton to={`/dashboard/bil/${car.id}`} icon={<Pencil className="w-4 h-4" />} label="Rediger bilen" />
-            <ActionButton to="/send-inn" icon={<Plus className="w-4 h-4" />} label="Legg til ny bil" />
           </>
         ) : (
           <>
-            <ActionButton to={`/dashboard/bil/${car.id}`} icon={<Upload className="w-4 h-4" />} label="Gjør bilen klar" primary />
-            <ActionButton to={`/dashboard/bil/${car.id}`} icon={<BookOpen className="w-4 h-4" />} label="Skriv historien" />
+            <ActionButton to={`/biler/${car.slug}`} icon={<Eye className="w-4 h-4" />} label="Se bilen" primary />
             <ActionButton to="/send-inn" icon={<Plus className="w-4 h-4" />} label="Legg til ny bil" />
           </>
         )}
