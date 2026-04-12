@@ -48,47 +48,59 @@ export default function Index() {
 
         {/* ─── HERO ─── */}
         <section className="relative overflow-visible" style={{ background: 'linear-gradient(135deg, #070b10 0%, #0c1219 40%, #060a0f 100%)' }}>
-          {/* Subtle teal ambient */}
-          <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 800px 400px at 15% 60%, rgba(45,212,168,0.05) 0%, transparent 70%)' }} />
-          {/* Bottom fade into nav — smooth transition */}
-          <div className="absolute bottom-0 left-0 right-0 h-24 pointer-events-none" style={{ background: 'linear-gradient(to bottom, transparent, #181f28)' }} />
+          {/* Dramatic teal ambient glow */}
+          <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 900px 500px at 10% 65%, rgba(45,212,168,0.09) 0%, transparent 65%)' }} />
+          {/* Secondary warm glow for depth */}
+          <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 600px 350px at 80% 20%, rgba(52,234,184,0.04) 0%, transparent 70%)' }} />
+          {/* Bottom fade into nav */}
+          <div className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none" style={{ background: 'linear-gradient(to bottom, transparent, #181f28)' }} />
 
-          {/* Car image — brighter, more visible */}
+          {/* Animated accent line at top */}
+          <div className="absolute top-0 left-0 right-0 h-[2px] pointer-events-none overflow-hidden">
+            <div className="h-full w-full" style={{
+              background: 'linear-gradient(90deg, transparent 0%, #2dd4a8 20%, #00ffc8 50%, #2dd4a8 80%, transparent 100%)',
+              animation: 'shimmer 4s ease-in-out infinite',
+            }} />
+          </div>
+
+          {/* Car image — brighter, more dramatic */}
           <div className="absolute inset-0 pointer-events-none">
             <img
               src={heroCar}
               alt=""
-              className="absolute right-0 top-0 h-full w-full md:w-[62%] object-cover object-[60%_30%]"
+              className="absolute right-0 top-0 h-full w-full md:w-[65%] object-cover object-[60%_30%]"
               style={{
-                WebkitMaskImage: 'linear-gradient(to left, black 50%, transparent 95%)',
-                maskImage: 'linear-gradient(to left, black 50%, transparent 95%)',
-                opacity: 0.6,
-                filter: 'contrast(1.1) saturate(1.15)',
+                WebkitMaskImage: 'linear-gradient(to left, black 40%, transparent 92%)',
+                maskImage: 'linear-gradient(to left, black 40%, transparent 92%)',
+                opacity: 0.7,
+                filter: 'contrast(1.15) saturate(1.2) brightness(1.05)',
               }}
             />
-            <div className="absolute inset-0 md:hidden" style={{ background: 'linear-gradient(to right, rgba(7,11,16,0.95) 25%, rgba(7,11,16,0.4) 100%)' }} />
+            {/* Teal light leak on car */}
+            <div className="absolute inset-0 pointer-events-none hidden md:block" style={{ background: 'radial-gradient(ellipse 400px 600px at 75% 80%, rgba(45,212,168,0.06) 0%, transparent 70%)' }} />
+            <div className="absolute inset-0 md:hidden" style={{ background: 'linear-gradient(to right, rgba(7,11,16,0.95) 25%, rgba(7,11,16,0.35) 100%)' }} />
           </div>
 
           <div className="relative z-10 max-w-[1200px] mx-auto px-4 sm:px-5 md:px-8">
-            <div className="flex flex-col justify-center min-h-[180px] sm:min-h-[260px] md:min-h-[320px] py-6 sm:py-10 md:py-12 md:max-w-[50%]">
-              <p className="text-[9px] sm:text-[11px] tracking-[0.35em] uppercase mb-1.5 sm:mb-2"
-                style={{ ...oswald, fontWeight: 600, background: 'linear-gradient(135deg, #2dd4a8, #00ffc8)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', filter: 'drop-shadow(0 0 8px rgba(45,212,168,0.4))' }}>
+            <div className="flex flex-col justify-center min-h-[200px] sm:min-h-[280px] md:min-h-[360px] py-8 sm:py-12 md:py-14 md:max-w-[50%]">
+              <p className="text-[9px] sm:text-[11px] tracking-[0.35em] uppercase mb-2 sm:mb-3"
+                style={{ ...oswald, fontWeight: 600, background: 'linear-gradient(135deg, #2dd4a8, #00ffc8, #34eab8)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', filter: 'drop-shadow(0 0 12px rgba(45,212,168,0.5))' }}>
                 bilgarasje.no
               </p>
               <h1
-                className="text-[1.4rem] sm:text-[2.1rem] md:text-[2.7rem] lg:text-[3.2rem] leading-[0.91] uppercase tracking-[0.01em] text-white font-bold italic"
-                style={{ ...chakra, textShadow: '0 2px 30px rgba(0,0,0,0.6), 0 0 60px rgba(45,212,168,0.08)' }}
+                className="text-[1.5rem] sm:text-[2.3rem] md:text-[3rem] lg:text-[3.6rem] leading-[0.89] uppercase tracking-[0.01em] text-white font-bold italic"
+                style={{ ...chakra, textShadow: '0 2px 40px rgba(0,0,0,0.7), 0 0 80px rgba(45,212,168,0.1), 0 0 120px rgba(45,212,168,0.05)' }}
               >
                 Hele Norges<br />bilsamfunn
               </h1>
               <p
-                className="text-[0.65rem] sm:text-[0.85rem] md:text-[1rem] uppercase tracking-[0.18em] text-white/50 font-bold italic mt-1"
-                style={{ ...chakra, textShadow: '0 0 20px rgba(45,212,168,0.15)' }}
+                className="text-[0.7rem] sm:text-[0.9rem] md:text-[1.05rem] uppercase tracking-[0.22em] text-white/45 font-bold italic mt-1.5"
+                style={{ ...chakra, textShadow: '0 0 24px rgba(45,212,168,0.18)' }}
               >
                 — på nett
               </p>
 
-              <div className="mt-5 sm:mt-6 w-full max-w-[480px]">
+              <div className="mt-6 sm:mt-8 w-full max-w-[480px]">
                 <HeroSearch />
               </div>
             </div>
