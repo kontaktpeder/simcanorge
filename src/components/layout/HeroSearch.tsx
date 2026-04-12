@@ -172,8 +172,8 @@ export function HeroSearch({ compact = false }: { compact?: boolean }) {
   return (
     <>
       <div ref={containerRef} className="relative w-full">
-        <div className="relative">
-          <Search className={`absolute ${compact ? 'left-3 w-3.5 h-3.5' : 'left-5 w-5 h-5'} top-1/2 -translate-y-1/2 text-[#2dd4a8]/60`} />
+        <div className="relative group">
+          <Search className={`absolute ${compact ? 'left-3 w-3.5 h-3.5' : 'left-5 w-5 h-5'} top-1/2 -translate-y-1/2 text-[#2dd4a8]/70 group-focus-within:text-[#2dd4a8] transition-colors`} style={{ filter: 'drop-shadow(0 0 3px rgba(45,212,168,0.3))' }} />
           <input
             ref={inputRef}
             type="text"
@@ -185,7 +185,7 @@ export function HeroSearch({ compact = false }: { compact?: boolean }) {
             onFocus={() => setOpen(true)}
             placeholder="Søk etter biler, deler, arrangementer…"
             style={{ fontFamily: "'Chakra Petch', sans-serif" }}
-            className={`w-full bg-white/[0.06] border border-white/10 hover:border-[#2dd4a8]/30 focus:border-[#2dd4a8]/60 rounded-lg ${compact ? 'pl-9 pr-8 py-1.5 text-[12px]' : 'pl-14 pr-12 py-3.5 sm:py-4 text-[14px] sm:text-[15px]'} text-white placeholder:text-white/30 focus:outline-none transition-all tracking-wide shadow-[0_2px_16px_rgba(0,0,0,0.2)]`}
+            className={`w-full bg-white/[0.05] border border-white/[0.08] hover:border-[#2dd4a8]/30 focus:border-[#2dd4a8]/50 focus:bg-white/[0.07] rounded-lg ${compact ? 'pl-9 pr-8 py-1.5 text-[12px]' : 'pl-14 pr-12 py-3.5 sm:py-4 text-[14px] sm:text-[15px]'} text-white placeholder:text-white/25 focus:outline-none transition-all duration-300 tracking-wide focus:shadow-[0_0_20px_rgba(45,212,168,0.12),0_4px_20px_rgba(0,0,0,0.3)] shadow-[0_2px_16px_rgba(0,0,0,0.3)]`}
           />
           {inputValue && (
             <button
