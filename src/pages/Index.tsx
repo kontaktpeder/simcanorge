@@ -185,12 +185,12 @@ export default function Index() {
           className="relative pt-5 sm:pt-8 md:pt-10 pb-10 sm:pb-20 md:pb-32 overflow-hidden"
           style={{ background: '#151c24' }}
         >
-          {/* Fixed car silhouette background */}
-          <div className="fixed inset-0 pointer-events-none hidden sm:flex justify-center items-end overflow-hidden z-0" style={{ opacity: 0.025 }}>
+          {/* Sticky silhouette — stays below composer, feed scrolls over it */}
+          <div className="sticky top-[60vh] pointer-events-none hidden sm:flex justify-center overflow-hidden z-0" style={{ opacity: 0.025, marginBottom: '-300px' }}>
             <img
               src={carSilhouette}
               alt=""
-              className="w-[70%] max-w-[900px] translate-y-[25%]"
+              className="w-[70%] max-w-[900px]"
               style={{ transform: 'scaleX(-1)', filter: 'invert(1) brightness(2)' }}
             />
           </div>
