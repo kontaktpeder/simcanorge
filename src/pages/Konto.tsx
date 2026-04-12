@@ -335,10 +335,11 @@ export default function Konto() {
                   )}
 
                   {/* Slett konto */}
-                  {hasPendingRequest('delete_account') ? (
-                    <div className="p-4 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg">
-                      <p className="text-sm text-red-800 dark:text-red-200">
-                        ✓ Du har allerede bedt om å slette kontoen din. Vi behandler forespørselen så snart som mulig.
+                  {isDeleting ? (
+                    <div className="p-4 bg-destructive/10 border border-destructive/20 rounded-lg flex items-center gap-3">
+                      <Loader2 className="h-4 w-4 animate-spin text-destructive" />
+                      <p className="text-sm text-destructive">
+                        Sletter kontoen din...
                       </p>
                     </div>
                   ) : (
@@ -363,19 +364,16 @@ export default function Konto() {
                               Er du sikker på at du vil slette kontoen din? Dette kan ikke angres.
                             </p>
                             <p>
-                              Vi vil behandle forespørselen din manuelt og kontakte deg på e-post for å bekrefte slettingen.
+                              All din data, inkludert biler du er eneste eier av, vil bli permanent slettet.
                             </p>
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
                           <AlertDialogCancel>Avbryt</AlertDialogCancel>
                           <AlertDialogAction
-                            onClick={handleDeleteRequest}
+                            onClick={handleDeleteAccount}
                             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                           >
-                            {createRequest.isPending ? (
-                              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                            ) : null}
                             Ja, slett kontoen min
                           </AlertDialogAction>
                         </AlertDialogFooter>
