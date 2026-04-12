@@ -63,7 +63,6 @@ export default function OpprettAnnonse() {
 
   if (!user) return null;
 
-  const opprettAnnonsePath = `/dashboard/opprett-annonse${searchParams.toString() ? `?${searchParams.toString()}` : ""}`;
   const komIGangHref = `/kom-i-gang?returnUrl=${encodeURIComponent(opprettAnnonsePath)}`;
 
   if (!ownerProfile) {
