@@ -4,20 +4,45 @@ import { CarWizard } from "@/components/car/wizard";
 import { StepVerify } from "@/components/car/wizard/StepVerify";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { CheckCircle, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 type PageState =
   | { step: "wizard" }
   | { step: "linking" }
-  | { step: "verify"; carId: string; email: string }
-  | { step: "done" };
+  | { step: "verify"; carId: string; email: string };
+
+async function navigateToCarDestination(
+  carId: string,
+  navigate: ReturnType<typeof useNavigate>,
+  toast: ReturnType<typeof useToast>["toast"],
+) {
+  const { data: car } = await supabase
+    .from("cars")
+    .select("id, slug, status, published_at")
+    .eq("id", carId)
+    .single();
+
+  toast({
+    title: "Bilen er koblet til kontoen din",
+    description: "Du kan nå redigere bilen fra ditt eget bilrom.",
+  });
+
+  if (car?.published_at) {
+    navigate(`/biler/${car.slug}`);
+  } else if (car) {
+    navigate(`/dashboard/bil/${car.id}`);
+  } else {
+    navigate("/dashboard/mine-biler");
+  }
+}
 
 export default function SendInnBil() {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const claimHandledRef = useRef(false);
   const [state, setState] = useState<PageState>(() => {
-    // Check if we have a pending car claim from localStorage (set before magic link was sent)
     if (typeof window !== "undefined" && localStorage.getItem("pendingClaimCarId")) {
       return { step: "linking" };
     }
@@ -51,11 +76,7 @@ export default function SendInnBil() {
         return;
       }
 
-      toast({
-        title: "Bilen er koblet til kontoen din",
-        description: "Du kan nå redigere bilen senere.",
-      });
-      setState({ step: "done" });
+      await navigateToCarDestination(pendingCarId, navigate, toast);
     };
 
     // If already signed in, link immediately
@@ -85,7 +106,7 @@ export default function SendInnBil() {
       window.clearTimeout(fallbackTimer);
       subscription.unsubscribe();
     };
-  }, [toast]);
+  }, [toast, navigate]);
 
   if (state.step === "linking") {
     return (
@@ -107,31 +128,6 @@ export default function SendInnBil() {
     );
   }
 
-  if (state.step === "done") {
-    return (
-      <Layout contained>
-        <section className="relative flex min-h-[80vh] items-center overflow-hidden">
-          <div className="absolute inset-0 top-0 h-1/2 bg-gradient-to-b from-primary to-primary/70" />
-          <div className="absolute inset-0 top-1/2 bg-gradient-to-b from-destructive to-destructive/80" />
-          <div className="absolute inset-0 stripes-diagonal opacity-30" />
-
-          <div className="container relative z-10 mx-auto px-4 text-center">
-            <div className="badge-frame mx-auto max-w-lg bg-background/10 p-12 backdrop-blur-sm">
-              <CheckCircle className="mx-auto mb-6 h-20 w-20 text-primary-foreground" />
-              <h1 className="mb-4 font-display text-4xl text-primary-foreground md:text-5xl">
-                TAKK!
-              </h1>
-              <p className="font-serif text-xl text-primary-foreground/90">
-                Vi gleder oss til å se hva du har sendt inn! Hvis du koblet bilen til kontoen din via lenken på e-post,
-                kan du redigere den senere fra ditt eget bilrom.
-              </p>
-            </div>
-          </div>
-        </section>
-      </Layout>
-    );
-  }
-
   if (state.step === "verify") {
     return (
       <Layout contained>
@@ -140,8 +136,16 @@ export default function SendInnBil() {
             <StepVerify
               email={state.email}
               carId={state.carId}
-              onSkip={() => setState({ step: "done" })}
-              onVerified={() => setState({ step: "done" })}
+              onSkip={() => {
+                toast({
+                  title: "Bilen er sendt inn!",
+                  description: "Du kan koble den til en konto senere.",
+                });
+                navigate("/");
+              }}
+              onVerified={async () => {
+                await navigateToCarDestination(state.carId, navigate, toast);
+              }}
             />
           </div>
         </section>
