@@ -3,15 +3,12 @@ import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { Layout } from '@/components/layout/Layout';
-import { Loader2, LogIn } from 'lucide-react';
+import { Loader2, LogIn, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { z } from 'zod';
 import { getBrowserAuthSupport } from '@/lib/browserSupport';
-
-const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
-const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
 
 const loginSchema = z.object({
   email: z.string().email('Ugyldig e-postadresse'),
@@ -36,9 +33,9 @@ export default function Login() {
     const support = getBrowserAuthSupport();
     if (!support.ok) {
       setCompatWarning(
-        "Denne PC-en/nettleseren ser ut til å mangle støtte som trengs for innlogging: " +
+        "Denne nettleseren mangler støtte for innlogging: " +
           support.reasons.join(" ") +
-          " Prøv å oppdatere nettleseren (Chrome/Edge/Firefox) eller slå på cookies/lagring."
+          " Prøv Chrome, Edge eller Firefox med cookies aktivert."
       );
     } else {
       setCompatWarning(null);
@@ -86,71 +83,120 @@ export default function Login() {
 
   return (
     <Layout>
-      {/* Hero banner */}
-      <section className="relative overflow-hidden py-10 md:py-16" style={{ background: 'linear-gradient(135deg, #4a3d30 0%, #3a2e24 40%, #2a2118 100%)' }}>
-        <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(circle at 70% 50%, rgba(255,190,100,0.10) 0%, transparent 50%)' }} />
-        <div className="relative z-10 max-w-[1200px] mx-auto px-5 md:px-8">
-          <p className="text-[10px] tracking-[0.3em] uppercase mb-1" style={{ ...oswald, fontWeight: 500, background: 'linear-gradient(135deg, #F5A623, #FFD166)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-            bilgarasje.no
-          </p>
-          <h1 className="text-xl sm:text-2xl md:text-3xl uppercase tracking-wide text-white font-bold italic leading-tight" style={chakra}>
-            Logg inn
-          </h1>
-          <p className="mt-1.5 text-[13px] text-white/40" style={oswald}>Få tilgang til din garasje</p>
+      <div className="min-h-[calc(100vh-4rem)] relative overflow-hidden flex items-center justify-center"
+        style={{ background: 'linear-gradient(135deg, #070b10 0%, #0c1219 40%, #060a0f 100%)' }}>
+
+        {/* Ambient glows matching homepage */}
+        <div className="absolute inset-0 pointer-events-none"
+          style={{ background: 'radial-gradient(ellipse 700px 400px at 30% 30%, rgba(45,212,168,0.07) 0%, transparent 65%)' }} />
+        <div className="absolute inset-0 pointer-events-none"
+          style={{ background: 'radial-gradient(ellipse 500px 300px at 70% 80%, rgba(52,234,184,0.04) 0%, transparent 70%)' }} />
+
+        {/* Accent line */}
+        <div className="absolute top-0 left-0 right-0 h-[2px] pointer-events-none overflow-hidden">
+          <div className="h-full w-full" style={{
+            background: 'linear-gradient(90deg, transparent 0%, #34eab8 30%, #2dd4a8 50%, #34eab8 70%, transparent 100%)',
+            opacity: 0.5,
+          }} />
         </div>
-      </section>
 
-      <div className="bg-background">
-        <div className="max-w-md mx-auto px-4 py-10 md:py-14">
-          <div className="bg-card border border-border rounded-xl p-6 md:p-8 shadow-sm">
-            <h2 className="text-lg font-bold uppercase tracking-wide mb-1" style={oswald}>Velkommen tilbake</h2>
-            <p className="text-sm text-muted-foreground mb-6">Logg inn for å se dine biler</p>
+        <div className="relative z-10 w-full max-w-md mx-auto px-4 py-12">
+          {/* Header */}
+          <div className="text-center mb-8">
+            <p className="text-[10px] tracking-[0.3em] uppercase font-display mb-2"
+              style={{ background: 'linear-gradient(135deg, #34eab8, #2dd4a8)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+              bilgarasje.no
+            </p>
+            <h1 className="font-display text-3xl sm:text-4xl uppercase tracking-wide text-foreground font-bold">
+              Logg inn
+            </h1>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Få tilgang til din garasje
+            </p>
+          </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Card */}
+          <div className="rounded-2xl border border-border/60 p-6 sm:p-8 shadow-2xl"
+            style={{ background: 'linear-gradient(180deg, hsl(215 25% 11%) 0%, hsl(215 25% 9%) 100%)' }}>
+
+            <form onSubmit={handleSubmit} className="space-y-5">
               {compatWarning && (
                 <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-3">
                   <p className="text-sm text-foreground">{compatWarning}</p>
                 </div>
               )}
               {error && (
-                <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-3">
+                <div className="bg-destructive/10 border border-destructive/30 rounded-lg p-3">
                   <p className="text-sm text-destructive">{error}</p>
                 </div>
               )}
 
-              <div>
-                <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1.5 block" style={oswald}>E-post</label>
-                <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="din@epost.no" required />
+              <div className="space-y-1.5">
+                <label className="text-xs font-display font-semibold uppercase tracking-wider text-muted-foreground block">
+                  E-post
+                </label>
+                <Input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="din@epost.no"
+                  required
+                  className="h-12 text-base bg-background/50 border-border/60 focus:border-primary/60"
+                />
               </div>
-              <div>
-                <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1.5 block" style={oswald}>Passord</label>
-                <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Ditt passord" required minLength={6} />
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-display font-semibold uppercase tracking-wider text-muted-foreground block">
+                  Passord
+                </label>
+                <Input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Ditt passord"
+                  required
+                  minLength={6}
+                  className="h-12 text-base bg-background/50 border-border/60 focus:border-primary/60"
+                />
               </div>
 
               <div className="text-right">
-                <Link to="/glemt-passord" className="text-xs text-muted-foreground hover:text-primary hover:underline">Glemt passord?</Link>
+                <Link to="/glemt-passord" className="text-xs text-muted-foreground hover:text-primary transition-colors">
+                  Glemt passord?
+                </Link>
               </div>
 
-              <Button type="submit" className="w-full" disabled={isLoading}>
+              <Button
+                type="submit"
+                disabled={isLoading}
+                className="w-full h-12 text-base font-display uppercase tracking-wider"
+                style={{
+                  background: 'linear-gradient(135deg, #34eab8 0%, #2ab89a 100%)',
+                  color: '#070b10',
+                  boxShadow: '0 0 24px rgba(52,234,184,0.2)',
+                }}
+              >
                 {isLoading ? (
-                  <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Logger inn...</>
+                  <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Logger inn…</>
                 ) : (
                   <><LogIn className="w-4 h-4 mr-2" />Logg inn</>
                 )}
               </Button>
             </form>
 
-            <div className="mt-6 pt-5 border-t border-border text-center text-sm">
-              <p>
+            <div className="mt-6 pt-5 border-t border-border/40 text-center">
+              <p className="text-sm text-muted-foreground">
                 Ikke medlem ennå?{' '}
-                <Link to="/sok-om-tilgang" className="text-primary hover:underline font-medium">Søk om tilgang</Link>
+                <Link to="/sok-om-tilgang" className="text-primary hover:underline font-medium inline-flex items-center gap-1">
+                  Søk om tilgang <ArrowRight className="w-3 h-3" />
+                </Link>
               </p>
             </div>
           </div>
 
-          <p className="text-center text-xs text-muted-foreground mt-6">
+          <p className="text-center text-xs text-muted-foreground/60 mt-6">
             Ved å logge inn godtar du våre{' '}
-            <Link to="/personvern" className="underline hover:text-foreground">personvernregler</Link>
+            <Link to="/personvern" className="underline hover:text-muted-foreground transition-colors">personvernregler</Link>
           </p>
         </div>
       </div>
