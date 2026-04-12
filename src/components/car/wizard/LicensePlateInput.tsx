@@ -34,7 +34,7 @@ export function LicensePlateInput({ value, onChange }: LicensePlateInputProps) {
   }, [digits]);
 
   return (
-    <div className="w-full max-w-[320px]">
+    <div className="w-full max-w-[380px]">
       {/* Outer plate border - thick black rounded frame */}
       <div
         className="relative flex items-stretch rounded-[6px] overflow-hidden"
