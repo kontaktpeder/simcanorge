@@ -1913,6 +1913,10 @@ export type Database = {
         Args: { _display_name: string; _owner_id: string; _user_id: string }
         Returns: undefined
       }
+      purge_user_data_before_auth_delete: {
+        Args: { _user_id: string }
+        Returns: undefined
+      }
       reject_page_car_link_request: {
         Args: { p_request_id: string }
         Returns: Json
