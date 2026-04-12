@@ -840,6 +840,65 @@ export function SendInnBilForm({ onSuccess, onCancel, showCancelButton = false }
           Alle innsendinger blir gjennomgått av Simca Norge
         </p>
       </div>
+
+      {/* Duplicate registration number dialog */}
+      {showDuplicateDialog && duplicateHits.length > 0 && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div className="bg-card border-2 border-amber-500/40 rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-4">
+            <div className="flex items-start gap-3">
+              <AlertTriangle className="w-6 h-6 text-amber-500 flex-shrink-0 mt-0.5" />
+              <div>
+                <h3 className="font-display text-lg text-foreground">Denne bilen kan allerede være lagt inn</h3>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Vi fant {duplicateHits.length === 1 ? 'en bil' : `${duplicateHits.length} biler`} med samme registreringsnummer.
+                </p>
+              </div>
+            </div>
+
+            <div className="space-y-2 max-h-48 overflow-y-auto">
+              {duplicateHits.map(hit => (
+                <a
+                  key={hit.id}
+                  href={`/biler/${hit.slug}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-between gap-2 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors group"
+                >
+                  <span className="text-sm font-medium text-foreground group-hover:text-primary truncate">{hit.title}</span>
+                  <ExternalLink className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                </a>
+              ))}
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-2 pt-2">
+              <Button
+                type="button"
+                variant="outline"
+                className="flex-1"
+                onClick={() => {
+                  setShowDuplicateDialog(false);
+                  setDuplicateHits([]);
+                }}
+              >
+                Avbryt
+              </Button>
+              <Button
+                type="button"
+                className="flex-1 btn-enamel-blue"
+                onClick={() => {
+                  setShowDuplicateDialog(false);
+                  setDuplicateChecked(true);
+                  // Re-trigger submit by clicking the form submit button
+                  const form = document.querySelector('form');
+                  if (form) form.requestSubmit();
+                }}
+              >
+                Fortsett likevel
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
