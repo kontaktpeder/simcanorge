@@ -1195,3 +1195,9 @@
 .ReactCrop__drag-handle {
   background: hsl(var(--primary)) !important;
 }
+
+/* Hero shimmer animation */
+@keyframes shimmer {
+  0%, 100% { transform: translateX(-30%); opacity: 0.4; }
+  50% { transform: translateX(30%); opacity: 1; }
+}
