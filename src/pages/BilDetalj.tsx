@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { CreateCTA } from "@/components/ui/CreateCTA";
+import BilgarasjeLoader from "@/components/ui/BilgarasjeLoader";
 
 const SITE_URL =
   typeof window !== "undefined" && window.location.hostname.includes("simcanorge.no")

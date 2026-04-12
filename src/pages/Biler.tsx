@@ -22,6 +22,7 @@ import {
 import { NewsprintBackground } from "@/components/editorial/NewsprintBackground";
 import { BilerSidePanel, EMPTY_BILER_FILTER, type BilerFilterState } from "@/components/biler/BilerSidePanel";
 import carSilhouette from "@/assets/car-silhouette.png";
+import BilgarasjeLoader from "@/components/ui/BilgarasjeLoader";
 
 const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
 const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
