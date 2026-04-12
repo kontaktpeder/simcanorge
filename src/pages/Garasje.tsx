@@ -6,7 +6,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useMyPersonProfile } from '@/hooks/useMyPersonProfile';
 import { Layout } from '@/components/layout/Layout';
 import { Helmet } from 'react-helmet-async';
-import { Loader2, Plus, Car, Eye, Pencil, Upload, BookOpen, User, ChevronRight, MapPin } from 'lucide-react';
+import { Loader2, Plus, Car, Eye, Pencil, Upload, BookOpen, User, ChevronRight, MapPin, CalendarPlus, Users, Settings, UserCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
@@ -174,8 +174,21 @@ export default function Garasje() {
             </section>
           )}
 
+          {/* ─── SNARVEIER ─── */}
+          <section className="mt-10">
+            <h2 className="text-[12px] tracking-[0.2em] uppercase text-white/30 mb-4" style={oswald}>
+              Snarveier
+            </h2>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+              <ShortcutTile to="/dashboard/events/opprett" icon={<CalendarPlus className="w-5 h-5" />} label="Opprett arrangement" />
+              <ShortcutTile to="/dashboard/sider" icon={<Users className="w-5 h-5" />} label="Klubber & sider" />
+              <ShortcutTile to="/dashboard/min-profil" icon={<UserCircle className="w-5 h-5" />} label="Min profil" />
+              <ShortcutTile to="/konto" icon={<Settings className="w-5 h-5" />} label="Konto" />
+            </div>
+          </section>
+
           {/* ─── OPPDATERINGER ─── */}
-          <section className="mt-12 pb-16">
+          <section className="mt-10 pb-16">
             <h2 className="text-[12px] tracking-[0.2em] uppercase text-white/30 mb-4" style={oswald}>
               Oppdateringer
             </h2>
@@ -351,6 +364,20 @@ function ActionButton({ to, icon, label, primary = false }: { to: string; icon: 
     >
       {icon}
       {label}
+    </Link>
+  );
+}
+
+/* ─── Shortcut Tile ─── */
+function ShortcutTile({ to, icon, label }: { to: string; icon: React.ReactNode; label: string }) {
+  return (
+    <Link
+      to={to}
+      className="group flex flex-col items-center gap-2 py-4 rounded-xl border border-white/[0.06] hover:border-[#2dd4a8]/30 transition-all text-center"
+      style={{ background: 'hsl(215 25% 10%)' }}
+    >
+      <span className="text-white/30 group-hover:text-[#2dd4a8]/70 transition-colors">{icon}</span>
+      <span className="text-[10px] sm:text-[11px] uppercase tracking-[0.1em] text-white/40 group-hover:text-white/60 transition-colors" style={oswald}>{label}</span>
     </Link>
   );
 }
