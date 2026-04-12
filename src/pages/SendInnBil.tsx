@@ -231,7 +231,7 @@ export default function SendInnBil() {
               DEL BILEN DIN
             </h1>
             <p className="mx-auto max-w-xl text-sm text-muted-foreground sm:text-base">
-              Har du en bil med en historie å dele? Legg den til – det tar bare noen minutter.
+              Har du en bil med en historie å dele? Legg den til – du kan bygge på med flere detaljer senere når du har fått tilgang til garasjen din.
             </p>
           </div>
 
