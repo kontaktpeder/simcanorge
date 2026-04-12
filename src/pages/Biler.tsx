@@ -351,13 +351,8 @@ const Biler = () => {
 
             <div className="w-full px-3 md:px-6 lg:px-8 xl:px-12 relative z-10">
               {isLoading ? (
-                <div className="text-center py-20">
-                  <div
-                    className="text-[1.2rem] uppercase text-[#3a2e24]/25 font-bold tracking-[0.08em]"
-                    style={oswald}
-                  >
-                    Laster arkivet...
-                  </div>
+                <div className="flex items-center justify-center py-16">
+                  <BilgarasjeLoader size={220} />
                 </div>
               ) : cars.length === 0 ? (
                 <div className="text-center py-20">
