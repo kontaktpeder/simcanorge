@@ -47,13 +47,12 @@ export default function Index() {
       <div className="min-h-[calc(100vh-4rem)]">
 
         {/* ─── HERO ─── */}
-        <section className="relative overflow-visible" style={{ background: 'linear-gradient(135deg, #4a3d30 0%, #3a2e24 40%, #2a2118 100%)' }}>
-          {/* Softer vignette */}
-          <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 30% 50%, transparent 50%, rgba(0,0,0,0.2) 100%)' }} />
-          {/* Warm glow behind car */}
-          <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(circle at 75% 50%, rgba(255,190,100,0.15) 0%, transparent 50%)' }} />
+        <section className="relative overflow-visible" style={{ background: 'linear-gradient(135deg, #0c1117 0%, #111820 40%, #0a1018 100%)' }}>
+          {/* Subtle teal glow */}
+          <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 30% 50%, transparent 50%, rgba(0,0,0,0.3) 100%)' }} />
+          <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(circle at 75% 50%, rgba(45,212,168,0.08) 0%, transparent 50%)' }} />
 
-          {/* Car image — visible on all sizes */}
+          {/* Car image */}
           <div className="absolute inset-0 pointer-events-none">
             <img
               src={heroCar}
@@ -62,27 +61,27 @@ export default function Index() {
               style={{
                 WebkitMaskImage: 'linear-gradient(to left, black 60%, transparent 100%)',
                 maskImage: 'linear-gradient(to left, black 60%, transparent 100%)',
-                opacity: 0.55,
+                opacity: 0.45,
               }}
             />
             {/* Extra fade for mobile readability */}
-            <div className="absolute inset-0 md:hidden" style={{ background: 'linear-gradient(to right, rgba(74,61,48,0.85) 30%, rgba(74,61,48,0.3) 100%)' }} />
+            <div className="absolute inset-0 md:hidden" style={{ background: 'linear-gradient(to right, rgba(12,17,23,0.9) 30%, rgba(12,17,23,0.3) 100%)' }} />
           </div>
 
           <div className="relative z-10 max-w-[1200px] mx-auto px-4 sm:px-5 md:px-8">
             <div className="flex flex-col justify-center min-h-[160px] sm:min-h-[230px] md:min-h-[280px] py-5 sm:py-8 md:py-10 md:max-w-[50%]">
               <p className="text-[9px] sm:text-[11px] tracking-[0.3em] uppercase mb-1 sm:mb-1.5"
-                style={{ ...oswald, fontWeight: 500, background: 'linear-gradient(135deg, #F5A623, #FFD166)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                style={{ ...oswald, fontWeight: 500, background: 'linear-gradient(135deg, #2dd4a8, #5aedc4)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
                 bilgarasje.no
               </p>
               <h1
                 className="text-[1.3rem] sm:text-[1.9rem] md:text-[2.4rem] lg:text-[2.8rem] leading-[0.93] uppercase tracking-[0.02em] text-white font-bold italic"
-                style={{ ...chakra, textShadow: '0 2px 20px rgba(0,0,0,0.4)' }}
+                style={{ ...chakra, textShadow: '0 2px 20px rgba(0,0,0,0.5)' }}
               >
                 Hele Norges<br />bilsamfunn
               </h1>
               <p
-                className="text-[0.65rem] sm:text-[0.85rem] md:text-[1rem] uppercase tracking-[0.15em] text-white/50 font-bold italic mt-0.5"
+                className="text-[0.65rem] sm:text-[0.85rem] md:text-[1rem] uppercase tracking-[0.15em] text-white/40 font-bold italic mt-0.5"
                 style={chakra}
               >
                 — på nett
@@ -99,18 +98,18 @@ export default function Index() {
         {/* ─── CATEGORY NAV ─── */}
         <nav
           className="border-b"
-          style={{ background: 'linear-gradient(180deg, #f2ece4 0%, #eee7dd 100%)', borderColor: 'rgba(58,46,36,0.06)' }}
+          style={{ background: 'linear-gradient(180deg, #151c24 0%, #131a22 100%)', borderColor: 'rgba(255,255,255,0.06)' }}
         >
           <div className="max-w-[1200px] mx-auto px-3 sm:px-5 md:px-8">
-            {/* Mobile: wrapped grid, no scrolling */}
+            {/* Mobile: wrapped grid */}
             <div className="grid grid-cols-3 gap-2 md:hidden py-3">
               {modules.slice(0, 3).map((mod) => {
                 const ModIcon = mod.icon;
                 return (
                   <Link key={mod.title} to={mod.href} className="group">
-                    <div className="flex flex-col items-center gap-1 py-2.5 px-2 rounded-xl bg-white/60 border border-[#c4962c]/8 hover:border-[#c4962c]/20 active:scale-[0.97] transition-all shadow-sm">
-                      <ModIcon className="w-5 h-5 text-[#8b6914]" strokeWidth={1.6} />
-                      <span className="text-[10px] tracking-[0.06em] uppercase font-bold text-[#3a2e24]" style={chakra}>
+                    <div className="flex flex-col items-center gap-1 py-2.5 px-2 rounded-xl bg-white/[0.04] border border-white/[0.06] hover:border-[#2dd4a8]/20 active:scale-[0.97] transition-all">
+                      <ModIcon className="w-5 h-5 text-[#2dd4a8]" strokeWidth={1.6} />
+                      <span className="text-[10px] tracking-[0.06em] uppercase font-bold text-white/80" style={chakra}>
                         {mod.title}
                       </span>
                     </div>
@@ -121,9 +120,9 @@ export default function Index() {
                 const ModIcon = mod.icon;
                 return (
                   <Link key={mod.title} to={mod.href} className="group">
-                    <div className="flex flex-col items-center gap-1 py-2.5 px-2 rounded-xl bg-white/60 border border-[#c4962c]/8 hover:border-[#c4962c]/20 active:scale-[0.97] transition-all shadow-sm">
-                      <ModIcon className="w-5 h-5 text-[#8b6914]" strokeWidth={1.6} />
-                      <span className="text-[10px] tracking-[0.06em] uppercase font-bold text-[#3a2e24]" style={chakra}>
+                    <div className="flex flex-col items-center gap-1 py-2.5 px-2 rounded-xl bg-white/[0.04] border border-white/[0.06] hover:border-[#2dd4a8]/20 active:scale-[0.97] transition-all">
+                      <ModIcon className="w-5 h-5 text-[#2dd4a8]" strokeWidth={1.6} />
+                      <span className="text-[10px] tracking-[0.06em] uppercase font-bold text-white/80" style={chakra}>
                         {mod.title}
                       </span>
                     </div>
@@ -143,18 +142,18 @@ export default function Index() {
                   <div
                     key={mod.title}
                     className="group relative flex-1"
-                    style={i < modules.length - 1 ? { borderRight: '1px solid rgba(58,46,36,0.06)' } : undefined}
+                    style={i < modules.length - 1 ? { borderRight: '1px solid rgba(255,255,255,0.06)' } : undefined}
                   >
                     <Link
                       to={mod.href}
-                      className="flex items-center justify-center gap-3 py-4 hover:bg-white/40 transition-colors duration-200"
+                      className="flex items-center justify-center gap-3 py-4 hover:bg-white/[0.04] transition-colors duration-200"
                     >
-                      <ModIcon className="w-6 h-6 text-[#8b6914] group-hover:text-[#c4962c] transition-colors" strokeWidth={1.6} />
+                      <ModIcon className="w-6 h-6 text-[#2dd4a8] group-hover:text-[#5aedc4] transition-colors" strokeWidth={1.6} />
                       <div className="flex flex-col">
-                        <span className="text-[15px] lg:text-[16px] tracking-[0.05em] uppercase font-bold text-[#3a2e24] leading-tight" style={chakra}>
+                        <span className="text-[15px] lg:text-[16px] tracking-[0.05em] uppercase font-bold text-white/90 leading-tight" style={chakra}>
                           {mod.title}
                         </span>
-                        <span className="text-[11px] lg:text-[12px] text-[#3a2e24]/45 leading-tight" style={chakra}>
+                        <span className="text-[11px] lg:text-[12px] text-white/35 leading-tight" style={chakra}>
                           {mod.desc}
                         </span>
                       </div>
@@ -163,7 +162,7 @@ export default function Index() {
                     {/* Create chip on hover */}
                     <Link
                       to={createHref}
-                      className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center gap-0.5 px-1.5 py-0.5 bg-[#3a2e24]/70 backdrop-blur-sm text-white/80 hover:text-white text-[8px] uppercase tracking-[0.12em] font-bold rounded"
+                      className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center gap-0.5 px-1.5 py-0.5 bg-[#2dd4a8]/20 backdrop-blur-sm text-[#2dd4a8]/80 hover:text-[#2dd4a8] text-[8px] uppercase tracking-[0.12em] font-bold rounded"
                       style={chakra}
                     >
                       <Plus className="w-2.5 h-2.5" />
@@ -179,15 +178,15 @@ export default function Index() {
         {/* ─── FEED ─── */}
         <section
           className="relative pt-5 sm:pt-8 md:pt-10 pb-10 sm:pb-20 md:pb-32 overflow-hidden"
-          style={{ background: 'linear-gradient(180deg, #eee7dd 0%, #ebe4da 40%, #e8e1d6 100%)' }}
+          style={{ background: 'linear-gradient(180deg, #131a22 0%, #111820 40%, #0e151d 100%)' }}
         >
-          {/* Car silhouette watermark — flipped */}
-          <div className="absolute bottom-0 left-0 right-0 pointer-events-none hidden sm:flex justify-center overflow-hidden" style={{ opacity: 0.025 }}>
+          {/* Car silhouette watermark */}
+          <div className="absolute bottom-0 left-0 right-0 pointer-events-none hidden sm:flex justify-center overflow-hidden" style={{ opacity: 0.03 }}>
             <img
               src={carSilhouette}
               alt=""
               className="w-[80%] max-w-[1000px] translate-y-[30%]"
-              style={{ transform: 'scaleX(-1)', filter: 'brightness(0) opacity(1)' }}
+              style={{ transform: 'scaleX(-1)', filter: 'invert(1) brightness(2)' }}
             />
           </div>
 
@@ -205,8 +204,8 @@ export default function Index() {
               <div className="space-y-6 sm:space-y-12">
                 {[...Array(3)].map((_, i) => (
                   <div key={i}>
-                    <div className="h-[200px] sm:h-[420px] bg-[#3a2e24]/[0.06] rounded-lg animate-pulse" />
-                    <div className="h-px bg-[#3a2e24]/[0.08] mt-6 sm:mt-12" />
+                    <div className="h-[200px] sm:h-[420px] bg-white/[0.04] rounded-lg animate-pulse" />
+                    <div className="h-px bg-white/[0.06] mt-6 sm:mt-12" />
                   </div>
                 ))}
               </div>
@@ -218,7 +217,7 @@ export default function Index() {
                   <div key={post.id}>
                     <FeedCard post={post} />
                     {i < filteredPosts.length - 1 && (
-                      <div className="h-px bg-[#3a2e24]/[0.1] my-6 sm:my-12" />
+                      <div className="h-px bg-white/[0.08] my-6 sm:my-12" />
                     )}
                   </div>
                 ))}
@@ -227,16 +226,16 @@ export default function Index() {
 
             {!feedLoading && filteredPosts.length === 0 && (
               <div className="py-10 sm:py-24 text-center">
-                <p className="text-[1rem] sm:text-[1.6rem] uppercase text-[#3a2e24]/30 font-bold tracking-[0.08em]"
+                <p className="text-[1rem] sm:text-[1.6rem] uppercase text-white/25 font-bold tracking-[0.08em]"
                   style={oswald}>
                   {feedFilter === "alle" ? "Ingen oppdateringer enda" : "Ingen treff i denne kategorien"}
                 </p>
-                <p className="text-[12px] sm:text-[13px] text-[#3a2e24]/25 mt-1.5">
+                <p className="text-[12px] sm:text-[13px] text-white/20 mt-1.5">
                   {feedFilter === "alle" ? "Bli den første til å dele noe" : "Prøv en annen kategori"}
                 </p>
                 {!user && feedFilter === "alle" && (
                   <Link to="/login"
-                    className="inline-block mt-4 sm:mt-5 text-[11px] sm:text-[12px] uppercase tracking-[0.2em] text-[#c4962c] hover:text-[#a07820] font-bold transition-colors border-b border-[#c4962c]/30 hover:border-[#c4962c]/60 pb-0.5"
+                    className="inline-block mt-4 sm:mt-5 text-[11px] sm:text-[12px] uppercase tracking-[0.2em] text-[#2dd4a8] hover:text-[#5aedc4] font-bold transition-colors border-b border-[#2dd4a8]/30 hover:border-[#2dd4a8]/60 pb-0.5"
                     style={oswald}>
                     Logg inn for å starte →
                   </Link>
