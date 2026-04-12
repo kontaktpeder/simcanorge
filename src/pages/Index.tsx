@@ -100,7 +100,7 @@ export default function Index() {
         {/* ─── CATEGORY NAV ─── */}
         <nav
           className="border-b relative"
-          style={{ background: '#141a22', borderColor: 'rgba(255,255,255,0.08)' }}
+          style={{ background: 'linear-gradient(180deg, #181f28 0%, #1a2230 100%)', borderColor: 'rgba(255,255,255,0.08)' }}
         >
           {/* Top accent line */}
           <div className="absolute top-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(90deg, transparent 10%, rgba(45,212,168,0.3) 50%, transparent 90%)' }} />
@@ -183,7 +183,7 @@ export default function Index() {
         {/* ─── FEED ─── */}
         <section
           className="relative pt-5 sm:pt-8 md:pt-10 pb-10 sm:pb-20 md:pb-32 overflow-hidden"
-          style={{ background: '#151c24' }}
+          style={{ background: 'linear-gradient(180deg, #1c2530 0%, #18202a 15%, #151c24 40%)' }}
         >
           {/* Car silhouette — positioned below composer area */}
           <div className="absolute bottom-0 left-0 right-0 pointer-events-none hidden sm:flex justify-center overflow-hidden z-0" style={{ opacity: 0.025, top: '220px' }}>
