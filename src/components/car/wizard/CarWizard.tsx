@@ -15,6 +15,7 @@ import { StepConsent } from "./StepConsent";
 import { CarWizardPreview } from "./CarWizardPreview";
 import { INITIAL_WIZARD_DATA, STEP_LABELS, type WizardData, type WizardStep } from "./WizardTypes";
 import { useAuth } from "@/hooks/useAuth";
+import { useMyPersonProfile } from "@/hooks/useMyPersonProfile";
 
 function normalizeRegistrationNumber(raw: string): string {
   return raw.replace(/[\s\-]/g, "").toUpperCase();
@@ -29,6 +30,7 @@ interface CarWizardProps {
 export function CarWizard({ onSuccess }: CarWizardProps) {
   const { toast } = useToast();
   const { user } = useAuth();
+  const { data: personProfile } = useMyPersonProfile();
   const [step, setStep] = useState<WizardStep>(0);
   const [data, setData] = useState<WizardData>(INITIAL_WIZARD_DATA);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -42,12 +44,14 @@ export function CarWizard({ onSuccess }: CarWizardProps) {
   // Prefill email and name for authenticated users
   useEffect(() => {
     if (!user?.email) return;
+    const profileName = personProfile?.display_name;
+    const fallbackName = user.user_metadata?.full_name || user.user_metadata?.name || "";
     setData(prev => ({
       ...prev,
       email: prev.email || user.email!.trim().toLowerCase(),
-      owner_name: prev.owner_name || user.user_metadata?.full_name || user.user_metadata?.name || "",
+      owner_name: prev.owner_name || profileName || fallbackName,
     }));
-  }, [user?.id]);
+  }, [user?.id, personProfile?.display_name]);
 
   const onChange = useCallback((patch: Partial<WizardData>) => {
     setData(prev => ({ ...prev, ...patch }));
@@ -352,7 +356,7 @@ export function CarWizard({ onSuccess }: CarWizardProps) {
             {step === 1 && <StepBrand data={data} onChange={onChange} errors={errors} />}
             {step === 2 && <StepDetails data={data} onChange={onChange} />}
             {step === 3 && <StepStory data={data} onChange={onChange} />}
-            {step === 4 && <StepContact data={data} onChange={onChange} errors={errors} emailLocked={!!user} />}
+            {step === 4 && <StepContact data={data} onChange={onChange} errors={errors} emailLocked={!!user} nameLocked={!!personProfile?.display_name} />}
             {step === 5 && <StepConsent data={data} onChange={onChange} onSubmit={handleSubmit} isSubmitting={isSubmitting} errors={errors} />}
 
             {/* Upload progress */}

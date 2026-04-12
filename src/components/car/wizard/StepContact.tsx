@@ -7,9 +7,10 @@ interface StepContactProps {
   onChange: (patch: Partial<WizardData>) => void;
   errors: Record<string, string>;
   emailLocked?: boolean;
+  nameLocked?: boolean;
 }
 
-export function StepContact({ data, onChange, errors, emailLocked }: StepContactProps) {
+export function StepContact({ data, onChange, errors, emailLocked, nameLocked }: StepContactProps) {
   return (
     <div className="space-y-6">
       <div className="text-center space-y-2">
@@ -24,8 +25,11 @@ export function StepContact({ data, onChange, errors, emailLocked }: StepContact
       <div className="space-y-4 p-4 bg-muted/30 rounded-xl border border-muted">
         <div className="space-y-2">
           <Label htmlFor="w-name" className="text-base font-display">DITT NAVN *</Label>
-          <Input id="w-name" value={data.owner_name} onChange={e => onChange({ owner_name: e.target.value })}
-            placeholder="Ola Nordmann" className={`h-12 text-base border-2 ${errors.owner_name ? "border-destructive" : "border-muted"}`} />
+          <Input id="w-name" value={data.owner_name}
+            readOnly={nameLocked}
+            onChange={e => !nameLocked && onChange({ owner_name: e.target.value })}
+            placeholder="Ola Nordmann"
+            className={`h-12 text-base border-2 ${nameLocked ? "opacity-70 cursor-not-allowed bg-muted/50" : ""} ${errors.owner_name ? "border-destructive" : "border-muted"}`} />
           {errors.owner_name && <p className="text-sm text-destructive">{errors.owner_name}</p>}
         </div>
 
