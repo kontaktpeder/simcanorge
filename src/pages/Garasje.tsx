@@ -109,9 +109,13 @@ export default function Garasje() {
         <title>Min garasje — Bilgarasje.no</title>
       </Helmet>
 
-      <div className="min-h-[calc(100vh-4rem)]" style={{ background: 'linear-gradient(135deg, #070b10 0%, #0c1219 40%, #060a0f 100%)' }}>
-        {/* Accent line */}
-        <div className="h-[2px] w-full" style={{ background: 'linear-gradient(90deg, transparent 0%, #2dd4a8 30%, #34eab8 50%, #2dd4a8 70%, transparent 100%)' }} />
+      <div className="min-h-[calc(100vh-4rem)] relative">
+        {/* Garage background */}
+        <div
+          className="fixed inset-0 bg-cover bg-center bg-no-repeat -z-10"
+          style={{ backgroundImage: `url(${garageBackground})` }}
+        />
+        <div className="fixed inset-0 -z-10" style={{ background: 'linear-gradient(180deg, rgba(7,11,16,0.80) 0%, rgba(7,11,16,0.88) 50%, rgba(7,11,16,0.94) 100%)' }} />
 
         <div className="max-w-[1000px] mx-auto px-4 sm:px-5 md:px-8">
 
