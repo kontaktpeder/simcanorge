@@ -151,7 +151,8 @@ export default function Login() {
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-display font-semibold uppercase tracking-wider text-muted-foreground block">
+                <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground block"
+                  style={oswald}>
                   Passord
                 </label>
                 <Input
