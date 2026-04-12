@@ -365,6 +365,21 @@ const BilDetalj = () => {
 
   return (
     <Layout>
+      {showPostPublishOverlay && (
+        <PostPublishOnboardingOverlay
+          carTitle={car.title}
+          carSlug={car.slug}
+          carId={car.id}
+          firstImageUrl={firstCarImage}
+          siteUrl={SITE_URL}
+          hasPersonProfile={!!myProfile}
+          onDismiss={() => setShowPostPublishOverlay(false)}
+          onOpenComposer={() => {
+            setComposerInitialBody("Hva er historien bak denne bilen? ");
+            setShowFeedComposer(true);
+          }}
+        />
+      )}
       <Helmet>
         <title>{ogTitle}</title>
         <meta name="description" content={ogDescription} />
@@ -457,7 +472,8 @@ const BilDetalj = () => {
                 snapshotTitle={car.title}
                 snapshotImageUrl={firstCarImage}
                 snapshotEntityType="car"
-                onClose={() => setShowFeedComposer(false)}
+                initialBody={composerInitialBody}
+                onClose={() => { setShowFeedComposer(false); setComposerInitialBody(undefined); }}
               />
             </div>
           )}
