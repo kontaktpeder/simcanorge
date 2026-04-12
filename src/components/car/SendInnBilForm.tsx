@@ -78,6 +78,9 @@ export function SendInnBilForm({ onSuccess, onCancel, showCancelButton = false }
   const [clubPageId, setClubPageId] = useState("");
   const [clubMessage, setClubMessage] = useState("");
   const [lastSubmitTime, setLastSubmitTime] = useState<number>(0);
+  const [duplicateHits, setDuplicateHits] = useState<DuplicateHit[]>([]);
+  const [showDuplicateDialog, setShowDuplicateDialog] = useState(false);
+  const [duplicateChecked, setDuplicateChecked] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [formData, setFormData] = useState({
     brand: "",
@@ -90,7 +93,8 @@ export function SendInnBilForm({ onSuccess, onCancel, showCancelButton = false }
     car_year: "",
     category: "registrert",
     tags: "",
-    car_story: ""
+    car_story: "",
+    registration_number: "",
   });
 
   const availableModels = useMemo(() => {
