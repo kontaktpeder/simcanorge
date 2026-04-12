@@ -268,6 +268,12 @@ export function SendInnBilForm({ onSuccess, onCancel, showCancelButton = false }
     }
     setLastSubmitTime(now);
     setErrors({});
+
+    // Duplicate regnr check (non-blocking dialog)
+    if (formData.registration_number.trim() && !duplicateChecked) {
+      const ok = await checkDuplicateRegnr();
+      if (!ok) return; // dialog will show – user picks action
+    }
     
     const dataToValidate = {
       ...formData,
