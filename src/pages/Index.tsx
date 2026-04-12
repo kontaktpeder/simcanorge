@@ -58,7 +58,7 @@ export default function Index() {
             <img
               src={heroCar}
               alt=""
-              className="absolute right-0 top-0 h-full w-full md:w-[62%] object-contain object-right-bottom"
+              className="absolute right-0 top-0 h-full w-full md:w-[58%] object-cover object-[60%_30%]"
               style={{
                 WebkitMaskImage: 'linear-gradient(to left, black 60%, transparent 100%)',
                 maskImage: 'linear-gradient(to left, black 60%, transparent 100%)',
