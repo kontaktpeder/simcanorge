@@ -7,6 +7,7 @@ import { Loader2, Mail, Home, ArrowRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { useQueryClient } from "@tanstack/react-query";
 
 type PageState =
   | { step: "wizard" }
@@ -63,6 +64,7 @@ function navigateToOnboarding(
 export default function SendInnBil() {
   const { toast } = useToast();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const claimHandledRef = useRef(false);
   const [state, setState] = useState<PageState>(() => {
     if (getPendingClaimCarId()) {
@@ -131,8 +133,18 @@ export default function SendInnBil() {
     };
   }, [toast, navigate]);
 
-  const handleWizardSuccess = async ({ carId, email }: { carId: string; email: string }) => {
-    // Send magic link automatically as part of submission
+  const handleWizardSuccess = async ({ carId, email, flow }: { carId: string; email: string; flow: "guest" | "authenticated" }) => {
+    if (flow === "authenticated") {
+      // Authenticated user: skip OTP, go directly to dashboard
+      queryClient.invalidateQueries({ queryKey: ["my-cars"] });
+      queryClient.invalidateQueries({ queryKey: ["my-cars-count"] });
+      const path = await resolvePostClaimPath(carId);
+      navigate(path);
+      toast({ title: "Bilen er lagt til", description: "Du finner den i garasjen din." });
+      return;
+    }
+
+    // Guest flow: send magic link
     try {
       localStorage.setItem("pendingClaimCarId", carId);
       const redirectUrl = new URL("/send-inn", window.location.origin);

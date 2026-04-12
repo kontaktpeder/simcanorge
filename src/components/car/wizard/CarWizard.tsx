@@ -28,6 +28,7 @@ interface CarWizardProps {
 
 export function CarWizard({ onSuccess }: CarWizardProps) {
   const { toast } = useToast();
+  const { user } = useAuth();
   const [step, setStep] = useState<WizardStep>(0);
   const [data, setData] = useState<WizardData>(INITIAL_WIZARD_DATA);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -37,6 +38,16 @@ export function CarWizard({ onSuccess }: CarWizardProps) {
   const [duplicateHits, setDuplicateHits] = useState<DuplicateHit[]>([]);
   const [showDuplicateDialog, setShowDuplicateDialog] = useState(false);
   const [duplicateChecked, setDuplicateChecked] = useState(false);
+
+  // Prefill email and name for authenticated users
+  useEffect(() => {
+    if (!user?.email) return;
+    setData(prev => ({
+      ...prev,
+      email: prev.email || user.email!.trim().toLowerCase(),
+      owner_name: prev.owner_name || user.user_metadata?.full_name || user.user_metadata?.name || "",
+    }));
+  }, [user?.id]);
 
   const onChange = useCallback((patch: Partial<WizardData>) => {
     setData(prev => ({ ...prev, ...patch }));
@@ -117,6 +128,10 @@ export function CarWizard({ onSuccess }: CarWizardProps) {
       const carId = createUuid();
       let carSlug = baseSlug;
 
+      // Check if user is authenticated
+      const { data: { session } } = await supabase.auth.getSession();
+      const isAuthenticated = !!session?.user;
+
       // Upload images
       const uploadedUrls: string[] = [];
       if (data.images.length > 0) {
@@ -127,7 +142,9 @@ export function CarWizard({ onSuccess }: CarWizardProps) {
 
         for (let i = 0; i < compressed.length; i++) {
           const { file } = compressed[i];
-          const path = getSubmissionImagePath(carId, generateImageId());
+          const path = isAuthenticated
+            ? getCarImagePath(carId, generateImageId())
+            : getSubmissionImagePath(carId, generateImageId());
           setUploadProgress({ stage: "uploading", current: i + 1, total: compressed.length, percentage: Math.round((i + 1) / compressed.length * 100) });
           const { error } = await supabase.storage.from("simca-images").upload(path, file);
           if (!error) {
@@ -162,8 +179,12 @@ export function CarWizard({ onSuccess }: CarWizardProps) {
         images_selected: data.images.length,
       };
 
-      const tryInsert = async (slug: string) =>
-        supabase.from("cars").insert({
+      if (isAuthenticated) {
+        // ── Authenticated flow: create as owner_self draft ──
+        const authUser = session!.user;
+        const slug = `${baseSlug}-${Date.now().toString(36)}`;
+
+        const { error: carError } = await supabase.from("cars").insert({
           id: carId,
           title: generatedTitle,
           slug,
@@ -175,67 +196,124 @@ export function CarWizard({ onSuccess }: CarWizardProps) {
           category: data.category,
           tags: tagsArray,
           story: data.car_story || null,
-          status: "submitted" as const,
+          status: "draft" as const,
           published_at: null,
-          source: "submission" as const,
-          submitted_by_email: data.email.trim().toLowerCase(),
-          submitted_by_name: data.owner_name,
-          submitted_by_phone: data.phone || null,
-          submission_payload: submissionPayload,
+          source: "owner_self" as const,
+          created_by_user_id: authUser.id,
           allow_edits: data.allowEdits === true,
           registration_number: data.registration_number.trim() || null,
+          submission_payload: submissionPayload,
         } as any);
 
-      const { error: carError } = await tryInsert(carSlug);
-      if (carError) {
-        if (carError.code === "23505") {
-          carSlug = `${baseSlug}-${Date.now()}`;
-          const { error: retry } = await tryInsert(carSlug);
-          if (retry) throw retry;
-        } else throw carError;
-      }
+        if (carError) throw carError;
 
-      // Insert images with error handling
-      const insertErrors: string[] = [];
-      let imagesSaved = 0;
-      for (let i = 0; i < uploadedUrls.length; i++) {
-        const { error: insertError } = await supabase.from("car_images").insert({
+        // Create car_owners row
+        const { error: ownerError } = await supabase.from("car_owners").insert({
           car_id: carId,
-          image_url: uploadedUrls[i],
-          sort_order: i,
+          user_id: authUser.id,
+          email: authUser.email || data.email.trim().toLowerCase(),
+          role: "owner",
         });
-        if (insertError) {
-          console.error("car_images insert error:", insertError);
-          insertErrors.push(insertError.message);
-        } else {
-          imagesSaved++;
-        }
-      }
-      const wanted = uploadedUrls.length;
-      if (wanted > 0 && imagesSaved === 0) {
-        throw new Error(
-          insertErrors[0] || "Kunne ikke knytte bildene til bilen. Teksten er lagret."
-        );
-      }
-      if (wanted > 0 && insertErrors.length > 0 && imagesSaved > 0) {
-        toast({
-          title: "Innsending delvis lagret",
-          description: `${imagesSaved} av ${wanted} bilde(r) ble knyttet. Noen feilet.`,
-          variant: "destructive",
-        });
-      }
+        if (ownerError) console.error("car_owners insert error:", ownerError);
 
-      // Club link request
-      if (selectedClub) {
-        try {
-          await supabase.rpc("create_page_car_link_request", {
-            p_car_id: carId, p_page_id: selectedClub.id, p_message: data.clubMessage.trim() || null,
+        // Insert images
+        for (let i = 0; i < uploadedUrls.length; i++) {
+          await supabase.from("car_images").insert({
+            car_id: carId,
+            image_url: uploadedUrls[i],
+            sort_order: i,
           });
-        } catch (err) { console.error("Club link failed:", err); }
-      }
+        }
 
-      toast({ title: "Takk for innsendingen!", description: "Vi har mottatt bilen din. Den blir synlig når admin har godkjent den." });
-      onSuccess?.({ carId, email: data.email });
+        // Club link request
+        if (selectedClub) {
+          try {
+            await supabase.rpc("create_page_car_link_request", {
+              p_car_id: carId, p_page_id: selectedClub.id, p_message: data.clubMessage.trim() || null,
+            });
+          } catch (err) { console.error("Club link failed:", err); }
+        }
+
+        toast({ title: "Bilen er lagt til!", description: "Du finner den i garasjen din." });
+        onSuccess?.({ carId, email: data.email, flow: "authenticated" });
+
+      } else {
+        // ── Guest flow: anonymous submission ──
+        const tryInsert = async (slug: string) =>
+          supabase.from("cars").insert({
+            id: carId,
+            title: generatedTitle,
+            slug,
+            brand: data.brand,
+            model: data.car_model,
+            variant: data.variant || null,
+            body_type: data.body_type || null,
+            year: data.car_year ? parseInt(data.car_year) : null,
+            category: data.category,
+            tags: tagsArray,
+            story: data.car_story || null,
+            status: "submitted" as const,
+            published_at: null,
+            source: "submission" as const,
+            submitted_by_email: data.email.trim().toLowerCase(),
+            submitted_by_name: data.owner_name,
+            submitted_by_phone: data.phone || null,
+            submission_payload: submissionPayload,
+            allow_edits: data.allowEdits === true,
+            registration_number: data.registration_number.trim() || null,
+          } as any);
+
+        const { error: carError } = await tryInsert(carSlug);
+        if (carError) {
+          if (carError.code === "23505") {
+            carSlug = `${baseSlug}-${Date.now()}`;
+            const { error: retry } = await tryInsert(carSlug);
+            if (retry) throw retry;
+          } else throw carError;
+        }
+
+        // Insert images with error handling
+        const insertErrors: string[] = [];
+        let imagesSaved = 0;
+        for (let i = 0; i < uploadedUrls.length; i++) {
+          const { error: insertError } = await supabase.from("car_images").insert({
+            car_id: carId,
+            image_url: uploadedUrls[i],
+            sort_order: i,
+          });
+          if (insertError) {
+            console.error("car_images insert error:", insertError);
+            insertErrors.push(insertError.message);
+          } else {
+            imagesSaved++;
+          }
+        }
+        const wanted = uploadedUrls.length;
+        if (wanted > 0 && imagesSaved === 0) {
+          throw new Error(
+            insertErrors[0] || "Kunne ikke knytte bildene til bilen. Teksten er lagret."
+          );
+        }
+        if (wanted > 0 && insertErrors.length > 0 && imagesSaved > 0) {
+          toast({
+            title: "Innsending delvis lagret",
+            description: `${imagesSaved} av ${wanted} bilde(r) ble knyttet. Noen feilet.`,
+            variant: "destructive",
+          });
+        }
+
+        // Club link request
+        if (selectedClub) {
+          try {
+            await supabase.rpc("create_page_car_link_request", {
+              p_car_id: carId, p_page_id: selectedClub.id, p_message: data.clubMessage.trim() || null,
+            });
+          } catch (err) { console.error("Club link failed:", err); }
+        }
+
+        toast({ title: "Takk for innsendingen!", description: "Vi har mottatt bilen din. Den blir synlig når admin har godkjent den." });
+        onSuccess?.({ carId, email: data.email, flow: "guest" });
+      }
     } catch (error: any) {
       const isRls = error?.message?.toLowerCase().includes("row-level security");
       toast({
@@ -274,7 +352,7 @@ export function CarWizard({ onSuccess }: CarWizardProps) {
             {step === 1 && <StepBrand data={data} onChange={onChange} errors={errors} />}
             {step === 2 && <StepDetails data={data} onChange={onChange} />}
             {step === 3 && <StepStory data={data} onChange={onChange} />}
-            {step === 4 && <StepContact data={data} onChange={onChange} errors={errors} />}
+            {step === 4 && <StepContact data={data} onChange={onChange} errors={errors} emailLocked={!!user} />}
             {step === 5 && <StepConsent data={data} onChange={onChange} onSubmit={handleSubmit} isSubmitting={isSubmitting} errors={errors} />}
 
             {/* Upload progress */}
