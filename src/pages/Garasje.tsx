@@ -304,7 +304,7 @@ function HeroCarSection({ car, profile }: { car: CarData; profile: any }) {
           </>
         ) : (
           <>
-            <ActionButton to={`/biler/${car.slug}`} icon={<Eye className="w-4 h-4" />} label="Se bilen" primary />
+            <ActionButton to={`/dashboard/bil/${car.id}`} icon={<Pencil className="w-4 h-4" />} label="Legg til flere detaljer om bilen" primary />
             <ActionButton to="/send-inn" icon={<Plus className="w-4 h-4" />} label="Legg til ny bil" />
           </>
         )}
