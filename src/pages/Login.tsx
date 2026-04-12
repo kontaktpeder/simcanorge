@@ -10,6 +10,9 @@ import { toast } from 'sonner';
 import { z } from 'zod';
 import { getBrowserAuthSupport } from '@/lib/browserSupport';
 
+const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
+const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
+
 const loginSchema = z.object({
   email: z.string().email('Ugyldig e-postadresse'),
   password: z.string().min(6, 'Passord må være minst 6 tegn'),
@@ -103,14 +106,15 @@ export default function Login() {
         <div className="relative z-10 w-full max-w-md mx-auto px-4 py-12">
           {/* Header */}
           <div className="text-center mb-8">
-            <p className="text-[10px] tracking-[0.3em] uppercase font-display mb-2"
-              style={{ background: 'linear-gradient(135deg, #34eab8, #2dd4a8)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+            <p className="text-[10px] tracking-[0.3em] uppercase mb-2"
+              style={{ ...oswald, fontWeight: 500, background: 'linear-gradient(135deg, #34eab8, #2dd4a8)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
               bilgarasje.no
             </p>
-            <h1 className="font-display text-3xl sm:text-4xl uppercase tracking-wide text-foreground font-bold">
+            <h1 className="text-3xl sm:text-4xl uppercase tracking-wide text-foreground font-bold italic"
+              style={chakra}>
               Logg inn
             </h1>
-            <p className="mt-2 text-sm text-muted-foreground">
+            <p className="mt-2 text-sm text-muted-foreground" style={oswald}>
               Få tilgang til din garasje
             </p>
           </div>
@@ -132,9 +136,10 @@ export default function Login() {
               )}
 
               <div className="space-y-1.5">
-                <label className="text-xs font-display font-semibold uppercase tracking-wider text-muted-foreground block">
-                  E-post
-                </label>
+              <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground block"
+                style={oswald}>
+                E-post
+              </label>
                 <Input
                   type="email"
                   value={email}
@@ -146,7 +151,8 @@ export default function Login() {
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-display font-semibold uppercase tracking-wider text-muted-foreground block">
+                <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground block"
+                  style={oswald}>
                   Passord
                 </label>
                 <Input
@@ -169,8 +175,9 @@ export default function Login() {
               <Button
                 type="submit"
                 disabled={isLoading}
-                className="w-full h-12 text-base font-display uppercase tracking-wider"
+                className="w-full h-12 text-base uppercase tracking-wider"
                 style={{
+                  ...chakra,
                   background: 'linear-gradient(135deg, #34eab8 0%, #2ab89a 100%)',
                   color: '#070b10',
                   boxShadow: '0 0 24px rgba(52,234,184,0.2)',
