@@ -1869,6 +1869,10 @@ export type Database = {
         Args: { p_request_id: string }
         Returns: Json
       }
+      can_attach_submission_image: {
+        Args: { _car_id: string }
+        Returns: boolean
+      }
       claim_car_after_email_verify: {
         Args: { p_car_id: string }
         Returns: Json
