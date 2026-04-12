@@ -22,6 +22,7 @@ export interface WizardData {
   phone: string;
   allowEdits: boolean | null;
   allowInstagram: boolean;
+  privacyAccepted: boolean;
   clubLinkRequested: boolean;
   clubPageId: string;
   clubMessage: string;
@@ -44,6 +45,7 @@ export const INITIAL_WIZARD_DATA: WizardData = {
   phone: "",
   allowEdits: null,
   allowInstagram: false,
+  privacyAccepted: false,
   clubLinkRequested: false,
   clubPageId: "",
   clubMessage: "",
