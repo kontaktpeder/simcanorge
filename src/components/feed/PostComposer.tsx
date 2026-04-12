@@ -13,6 +13,7 @@ interface Props {
   snapshotImageUrl?: string;
   snapshotEntityType?: string;
   compact?: boolean;
+  initialBody?: string;
   onClose?: () => void;
 }
 
@@ -25,10 +26,11 @@ export function PostComposer({
   snapshotImageUrl,
   snapshotEntityType,
   compact = false,
+  initialBody,
   onClose,
 }: Props) {
   const [open, setOpen] = useState(!compact);
-  const [body, setBody] = useState("");
+  const [body, setBody] = useState(initialBody ?? "");
   const { data: profile } = useMyPersonProfile();
   const { mutateAsync, isPending } = useCreateFeedPost();
 
