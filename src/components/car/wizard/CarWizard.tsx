@@ -174,7 +174,7 @@ export function CarWizard({ onSuccess }: CarWizardProps) {
           status: "submitted" as const,
           published_at: null,
           source: "submission" as const,
-          submitted_by_email: data.email,
+          submitted_by_email: data.email.trim().toLowerCase(),
           submitted_by_name: data.owner_name,
           submitted_by_phone: data.phone || null,
           submission_payload: submissionPayload,

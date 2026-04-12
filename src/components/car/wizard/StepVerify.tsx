@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
-import { Mail, ArrowRight, Loader2 } from "lucide-react";
+import { Mail, ArrowRight, Loader2, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
@@ -16,6 +17,9 @@ export function StepVerify({ email, carId, onSkip, onVerified }: StepVerifyProps
   const [linkSent, setLinkSent] = useState(false);
   const [isSending, setIsSending] = useState(false);
   const [cooldown, setCooldown] = useState(0);
+  const [showChangeEmail, setShowChangeEmail] = useState(false);
+  const [newEmail, setNewEmail] = useState("");
+  const [activeEmail, setActiveEmail] = useState(email);
   const verifiedRef = useRef(false);
 
   useEffect(() => {
@@ -25,17 +29,20 @@ export function StepVerify({ email, carId, onSkip, onVerified }: StepVerifyProps
   }, [cooldown]);
 
   useEffect(() => {
-    const linkCarToSignedInUser = async (userId: string) => {
-      const { error } = await supabase
-        .from("cars")
-        .update({ created_by_user_id: userId } as any)
-        .eq("id", carId);
+    const claimCar = async () => {
+      if (verifiedRef.current) return;
+      verifiedRef.current = true;
 
-      if (error) {
+      const { data, error } = await supabase.rpc("claim_car_after_email_verify", {
+        p_car_id: carId,
+      });
+
+      if (error || !(data as any)?.ok) {
         verifiedRef.current = false;
+        const errMsg = error?.message || (data as any)?.error || "Prøv igjen senere.";
         toast({
           title: "Innlogging registrert, men bilen ble ikke koblet",
-          description: error.message || "Prøv igjen senere.",
+          description: errMsg,
           variant: "destructive",
         });
         return;
@@ -53,26 +60,23 @@ export function StepVerify({ email, carId, onSkip, onVerified }: StepVerifyProps
     } = supabase.auth.onAuthStateChange((event, session) => {
       if (verifiedRef.current) return;
       if (event !== "SIGNED_IN" || !session?.user) return;
-
-      verifiedRef.current = true;
-
-      void linkCarToSignedInUser(session.user.id);
+      void claimCar();
     });
 
     return () => subscription.unsubscribe();
   }, [carId, onVerified, toast]);
 
-  const sendMagicLink = async () => {
+  const sendMagicLink = async (targetEmail?: string) => {
+    const emailToSend = targetEmail || activeEmail;
     setIsSending(true);
 
     try {
-      // Store carId in localStorage so we can retrieve it after the redirect
       localStorage.setItem("pendingClaimCarId", carId);
       const redirectUrl = new URL("/send-inn", window.location.origin);
       redirectUrl.searchParams.set("claimCarId", carId);
 
       const { error } = await supabase.auth.signInWithOtp({
-        email,
+        email: emailToSend,
         options: {
           shouldCreateUser: true,
           emailRedirectTo: redirectUrl.toString(),
@@ -81,11 +85,13 @@ export function StepVerify({ email, carId, onSkip, onVerified }: StepVerifyProps
 
       if (error) throw error;
 
+      setActiveEmail(emailToSend);
       setLinkSent(true);
       setCooldown(60);
+      setShowChangeEmail(false);
       toast({
         title: "Lenke sendt!",
-        description: `Vi har sendt en innloggingslenke til ${email}.`,
+        description: `Vi har sendt en innloggingslenke til ${emailToSend}.`,
       });
     } catch (err: any) {
       toast({
@@ -96,6 +102,14 @@ export function StepVerify({ email, carId, onSkip, onVerified }: StepVerifyProps
     } finally {
       setIsSending(false);
     }
+  };
+
+  const handleChangeEmail = () => {
+    if (!newEmail.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newEmail)) {
+      toast({ title: "Ugyldig e-postadresse", variant: "destructive" });
+      return;
+    }
+    void sendMagicLink(newEmail.trim().toLowerCase());
   };
 
   return (
@@ -110,14 +124,14 @@ export function StepVerify({ email, carId, onSkip, onVerified }: StepVerifyProps
         </h2>
         <p className="mx-auto max-w-md text-sm text-muted-foreground sm:text-base">
           Vil du koble bilen til en konto? Da kan du redigere den selv senere.
-          Vi sender en innloggingslenke til <strong className="text-foreground">{email}</strong>.
+          Vi sender en innloggingslenke til <strong className="text-foreground">{activeEmail}</strong>.
         </p>
       </div>
 
       {!linkSent ? (
         <div className="mx-auto max-w-sm space-y-4">
           <Button
-            onClick={sendMagicLink}
+            onClick={() => sendMagicLink()}
             disabled={isSending}
             className="btn-enamel-blue h-14 w-full text-lg"
           >
@@ -148,22 +162,66 @@ export function StepVerify({ email, carId, onSkip, onVerified }: StepVerifyProps
             <p className="text-xs">Sjekk også spam-mappen hvis du ikke ser e-posten.</p>
           </div>
 
-          <div className="flex items-center justify-between text-sm">
-            <button
-              type="button"
-              onClick={sendMagicLink}
-              disabled={cooldown > 0 || isSending}
-              className="text-primary transition-colors hover:text-primary/80 disabled:text-muted-foreground"
-            >
-              {cooldown > 0 ? `Send på nytt (${cooldown}s)` : "Send på nytt"}
-            </button>
-            <button
-              type="button"
-              onClick={onSkip}
-              className="text-muted-foreground transition-colors hover:text-foreground"
-            >
-              Hopp over <ArrowRight className="ml-1 inline h-3 w-3" />
-            </button>
+          <div className="flex flex-col gap-3">
+            {/* Resend */}
+            <div className="flex items-center justify-between text-sm">
+              <button
+                type="button"
+                onClick={() => sendMagicLink()}
+                disabled={cooldown > 0 || isSending}
+                className="flex items-center gap-1 text-primary transition-colors hover:text-primary/80 disabled:text-muted-foreground"
+              >
+                <RotateCcw className="h-3 w-3" />
+                {cooldown > 0 ? `Send på nytt (${cooldown}s)` : "Send på nytt"}
+              </button>
+              <button
+                type="button"
+                onClick={onSkip}
+                className="text-muted-foreground transition-colors hover:text-foreground"
+              >
+                Hopp over <ArrowRight className="ml-1 inline h-3 w-3" />
+              </button>
+            </div>
+
+            {/* Change email */}
+            {!showChangeEmail ? (
+              <button
+                type="button"
+                onClick={() => setShowChangeEmail(true)}
+                className="text-xs text-muted-foreground underline transition-colors hover:text-foreground"
+              >
+                Bruk en annen e-postadresse
+              </button>
+            ) : (
+              <div className="space-y-2 rounded-lg border border-border bg-muted/30 p-3">
+                <p className="text-xs text-muted-foreground text-left">Skriv inn ny e-postadresse:</p>
+                <Input
+                  type="email"
+                  value={newEmail}
+                  onChange={e => setNewEmail(e.target.value)}
+                  placeholder="ny@epost.no"
+                  className="h-10 text-sm"
+                />
+                <div className="flex gap-2">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => { setShowChangeEmail(false); setNewEmail(""); }}
+                    className="flex-1"
+                  >
+                    Avbryt
+                  </Button>
+                  <Button
+                    size="sm"
+                    onClick={handleChangeEmail}
+                    disabled={isSending || !newEmail.trim()}
+                    className="flex-1"
+                  >
+                    {isSending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Send lenke"}
+                  </Button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
