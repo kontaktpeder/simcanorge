@@ -1,17 +1,17 @@
 import { Layout } from "@/components/layout/Layout";
 import { AnimatedSection } from "@/components/layout/AnimatedSection";
 import { CarWizard } from "@/components/car/wizard";
-import { StepVerify } from "@/components/car/wizard/StepVerify";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2 } from "lucide-react";
+import { Loader2, Mail, Home, ArrowRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 
 type PageState =
   | { step: "wizard" }
   | { step: "linking" }
-  | { step: "verify"; carId: string; email: string };
+  | { step: "success"; email: string };
 
 function getPendingClaimCarIdFromUrl() {
   if (typeof window === "undefined") return null;
@@ -105,14 +105,12 @@ export default function SendInnBil() {
       setState({ step: "wizard" });
     };
 
-    // If already signed in, link immediately
     void supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) {
         void linkCarToUser(session.user.id);
       }
     });
 
-    // Also listen for auth state changes (magic link processing)
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -121,7 +119,6 @@ export default function SendInnBil() {
       }
     });
 
-    // Fallback: if nothing happens within 8s, clear and show wizard
     const fallbackTimer = window.setTimeout(() => {
       if (claimHandledRef.current) return;
       clearPendingClaimCarId();
@@ -133,6 +130,27 @@ export default function SendInnBil() {
       subscription.unsubscribe();
     };
   }, [toast, navigate]);
+
+  const handleWizardSuccess = async ({ carId, email }: { carId: string; email: string }) => {
+    // Send magic link automatically as part of submission
+    try {
+      localStorage.setItem("pendingClaimCarId", carId);
+      const redirectUrl = new URL("/send-inn", window.location.origin);
+      redirectUrl.searchParams.set("claimCarId", carId);
+
+      await supabase.auth.signInWithOtp({
+        email,
+        options: {
+          shouldCreateUser: true,
+          emailRedirectTo: redirectUrl.toString(),
+        },
+      });
+    } catch (err) {
+      console.warn("Magic link send failed:", err);
+    }
+
+    setState({ step: "success", email });
+  };
 
   if (state.step === "linking") {
     return (
@@ -154,25 +172,50 @@ export default function SendInnBil() {
     );
   }
 
-  if (state.step === "verify") {
+  if (state.step === "success") {
     return (
       <Layout contained>
         <section className="py-8 sm:py-12 md:py-16">
           <div className="container mx-auto max-w-xl px-4">
-            <StepVerify
-              email={state.email}
-              carId={state.carId}
-              onSkip={() => {
-                toast({
-                  title: "Bilen er sendt inn!",
-                  description: "Du kan koble den til en konto senere.",
-                });
-                navigate("/");
-              }}
-              onVerified={async () => {
-                navigateToOnboarding(state.carId, navigate, toast);
-              }}
-            />
+            <div className="space-y-6 text-center">
+              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
+                <Mail className="h-8 w-8 text-primary" />
+              </div>
+
+              <div className="space-y-2">
+                <h2 className="font-display text-2xl text-foreground sm:text-3xl">
+                  Takk! Vi har sendt deg en e-post
+                </h2>
+                <p className="mx-auto max-w-md text-sm text-muted-foreground sm:text-base">
+                  En innloggingslenke er sendt til{" "}
+                  <strong className="text-foreground">{state.email}</strong>.
+                </p>
+              </div>
+
+              <div className="mx-auto max-w-sm space-y-2 rounded-xl border border-border bg-muted/30 p-5 text-left text-sm text-muted-foreground">
+                <p className="font-display text-base text-foreground">Hva gjør lenken?</p>
+                <ul className="list-disc pl-5 space-y-1.5">
+                  <li>Logger deg inn og kobler bilen til din konto</li>
+                  <li>Du kan redigere, legge til bilder og følge godkjenningen</li>
+                  <li>Du velger passord når du logger inn første gang</li>
+                </ul>
+                <p className="text-xs pt-1">Sjekk spam-mappen om du ikke finner e-posten.</p>
+              </div>
+
+              <div className="mx-auto max-w-sm flex flex-col gap-3 pt-2">
+                <Button asChild className="btn-enamel-blue h-12 text-base w-full">
+                  <a href="https://mail.google.com" target="_blank" rel="noopener noreferrer">
+                    <Mail className="mr-2 h-5 w-5" /> Åpne e-post
+                  </a>
+                </Button>
+                <Button asChild variant="outline" className="h-12 text-base w-full">
+                  <Link to="/">
+                    <Home className="mr-2 h-5 w-5" /> Utforsk Bilgarasjen
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
+                </Button>
+              </div>
+            </div>
           </div>
         </section>
       </Layout>
@@ -193,7 +236,7 @@ export default function SendInnBil() {
           </div>
 
           <AnimatedSection triggerOnMount>
-            <CarWizard onSuccess={({ carId, email }) => setState({ step: "verify", carId, email })} />
+            <CarWizard onSuccess={handleWizardSuccess} />
           </AnimatedSection>
         </div>
       </section>
