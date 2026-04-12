@@ -82,7 +82,7 @@ export default function Index() {
           </div>
 
           <div className="relative z-10 max-w-[1200px] mx-auto px-4 sm:px-5 md:px-8">
-            <div className="flex flex-col justify-center min-h-[200px] sm:min-h-[280px] md:min-h-[360px] py-8 sm:py-12 md:py-14 md:max-w-[50%]">
+            <div className="flex flex-col justify-center min-h-[200px] sm:min-h-[240px] md:min-h-[280px] py-8 sm:py-10 md:py-10 md:max-w-[50%]">
               <p className="text-[9px] sm:text-[11px] tracking-[0.35em] uppercase mb-2 sm:mb-3"
                 style={{ ...oswald, fontWeight: 600, background: 'linear-gradient(135deg, #2dd4a8, #00ffc8, #34eab8)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', filter: 'drop-shadow(0 0 12px rgba(45,212,168,0.5))' }}>
                 bilgarasje.no
@@ -202,7 +202,7 @@ export default function Index() {
 
         {/* ─── FEED ─── */}
         <section
-          className="relative pt-10 sm:pt-14 md:pt-16 pb-10 sm:pb-20 md:pb-32 overflow-hidden"
+          className="relative pt-8 sm:pt-10 md:pt-12 pb-10 sm:pb-20 md:pb-32 overflow-hidden"
           style={{ background: 'linear-gradient(180deg, #1e2733 0%, #1a2230 8%, #171e28 25%, #151c24 50%, #10161e 100%)' }}
         >
           {/* Ambient glow behind feed */}
