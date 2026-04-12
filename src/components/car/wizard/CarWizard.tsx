@@ -356,7 +356,7 @@ export function CarWizard({ onSuccess }: CarWizardProps) {
             {step === 1 && <StepBrand data={data} onChange={onChange} errors={errors} />}
             {step === 2 && <StepDetails data={data} onChange={onChange} />}
             {step === 3 && <StepStory data={data} onChange={onChange} />}
-            {step === 4 && <StepContact data={data} onChange={onChange} errors={errors} emailLocked={!!user} />}
+            {step === 4 && <StepContact data={data} onChange={onChange} errors={errors} emailLocked={!!user} nameLocked={!!personProfile?.display_name} />}
             {step === 5 && <StepConsent data={data} onChange={onChange} onSubmit={handleSubmit} isSubmitting={isSubmitting} errors={errors} />}
 
             {/* Upload progress */}
