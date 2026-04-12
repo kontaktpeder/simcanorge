@@ -282,7 +282,8 @@ export function SendInnBilForm({ onSuccess, onCancel, showCancelButton = false }
       variant: formData.variant || undefined,
       body_type: formData.body_type || undefined,
       tags: formData.tags || undefined,
-      car_story: formData.car_story || undefined
+      car_story: formData.car_story || undefined,
+      registration_number: formData.registration_number || undefined,
     };
     
     const result = submissionSchema.safeParse(dataToValidate);
