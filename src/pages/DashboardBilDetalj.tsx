@@ -6,7 +6,7 @@ import { Layout } from '@/components/layout/Layout';
 import { CarEventsList } from '@/components/car/CarEventsList';
 import {
   Car, Wrench, Loader2, XCircle,
-  Pencil, Save, X, EyeOff, Upload, Trash2, Clock, Send,
+  Pencil, Save, X, Upload, Trash2, Clock, Send,
   ChevronLeft, ChevronRight, Star, ImageIcon, BookOpen, Info, ArrowLeft,
   CheckCircle2, Circle, ExternalLink
 } from 'lucide-react';
@@ -21,6 +21,9 @@ import { CAR_BODY_TYPES } from '@/data/carBodyTypes';
 import { motion } from 'framer-motion';
 import { PostComposer } from '@/components/feed/PostComposer';
 
+const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
+const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
+
 const CATEGORIES = [
   { value: 'registrert', label: 'Registrert' },
   { value: 'prosjekt', label: 'Prosjekt' },
@@ -29,11 +32,11 @@ const CATEGORIES = [
 
 const statusLabel = (s: string) => {
   switch (s) {
-    case 'published': return { text: 'Publisert', icon: <CheckCircle2 className="w-4 h-4" />, cls: 'bg-emerald-50 text-emerald-700 border-emerald-200' };
-    case 'draft': return { text: 'Kladd', icon: <Circle className="w-4 h-4" />, cls: 'bg-amber-50 text-amber-700 border-amber-200' };
-    case 'submitted': return { text: 'Innsendt', icon: <Clock className="w-4 h-4" />, cls: 'bg-blue-50 text-blue-700 border-blue-200' };
-    case 'archived': return { text: 'Arkivert', icon: <EyeOff className="w-4 h-4" />, cls: 'bg-stone-100 text-stone-500 border-stone-200' };
-    default: return { text: s, icon: null, cls: 'bg-stone-100 text-stone-500 border-stone-200' };
+    case 'published': return { text: 'PUBLISERT', cls: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/25' };
+    case 'draft': return { text: 'KLADD', cls: 'bg-amber-500/15 text-amber-400 border-amber-500/25' };
+    case 'submitted': return { text: 'INNSENDT', cls: 'bg-blue-500/15 text-blue-400 border-blue-500/25' };
+    case 'archived': return { text: 'ARKIVERT', cls: 'bg-white/5 text-white/30 border-white/10' };
+    default: return { text: s.toUpperCase(), cls: 'bg-white/5 text-white/30 border-white/10' };
   }
 };
 
@@ -90,7 +93,6 @@ export default function DashboardBilDetalj() {
     }
   }, [car]);
 
-  // ─── Actions ───
   const saveBasicInfo = async () => {
     if (!car) return;
     setIsSaving(true);
@@ -200,7 +202,7 @@ export default function DashboardBilDetalj() {
         else ok++;
       }
       if (isFirst && ok > 0) {
-        try { await supabase.rpc('notify_admins_images_added', { _car_id: car.id, _car_title: car.title }); } catch {}
+        try { await supabase.rpc('notify_admins_images_added', { _car_id: car.id, _car_title: car.title }); } catch { }
       }
       toast.success(`${results.length} bilde(r) lastet opp!`);
       queryClient.invalidateQueries({ queryKey: ['my-car', carId, user?.id] });
@@ -214,24 +216,23 @@ export default function DashboardBilDetalj() {
     else { toast.success('Slettet'); queryClient.invalidateQueries({ queryKey: ['my-car', carId, user?.id] }); }
   };
 
-  // ─── Loading / error states ───
   if (authLoading || isLoading) {
-    return <Layout><div className="min-h-[60vh] flex items-center justify-center bg-[#f8f7f5]"><Loader2 className="w-7 h-7 animate-spin text-stone-400" /></div></Layout>;
+    return <Layout><div className="min-h-[60vh] flex items-center justify-center bg-background"><Loader2 className="w-7 h-7 animate-spin text-primary/40" /></div></Layout>;
   }
   if (!user) return null;
   if (carData && !carData.hasAccess) {
     return (
       <Layout>
-        <div className="min-h-[60vh] flex flex-col items-center justify-center bg-[#f8f7f5]">
-          <XCircle className="w-12 h-12 text-red-300 mb-4" />
-          <p className="text-lg font-semibold text-stone-500">Ingen tilgang</p>
-          <Link to="/dashboard/mine-biler" className="mt-4 text-sm text-teal-600 hover:text-teal-700 font-medium underline underline-offset-4">← Tilbake til mine biler</Link>
+        <div className="min-h-[60vh] flex flex-col items-center justify-center bg-background">
+          <XCircle className="w-12 h-12 text-destructive/40 mb-4" />
+          <p className="text-lg font-bold uppercase tracking-wider text-muted-foreground" style={oswald}>Ingen tilgang</p>
+          <Link to="/dashboard/mine-biler" className="mt-4 text-sm text-primary hover:text-primary/80 font-semibold uppercase tracking-wider" style={oswald}>← Tilbake</Link>
         </div>
       </Layout>
     );
   }
   if (!car) {
-    return <Layout><div className="min-h-[60vh] flex flex-col items-center justify-center bg-[#f8f7f5]"><Car className="w-12 h-12 text-stone-300 mb-4" /><p className="text-lg font-semibold text-stone-400">Bilen finnes ikke</p></div></Layout>;
+    return <Layout><div className="min-h-[60vh] flex flex-col items-center justify-center bg-background"><Car className="w-12 h-12 text-muted-foreground/20 mb-4" /><p className="text-lg font-bold uppercase tracking-wider text-muted-foreground/40" style={oswald}>Bilen finnes ikke</p></div></Layout>;
   }
 
   const sortedImages = [...(car.car_images || [])].sort((a: any, b: any) => (a.sort_order || 0) - (b.sort_order || 0));
@@ -252,28 +253,9 @@ export default function DashboardBilDetalj() {
     } catch { toast.error('Kunne ikke endre rekkefølge'); }
     finally { setIsReorderingImages(false); }
   };
-
-  const moveCarImageLeft = async (index: number) => {
-    if (index <= 0) return;
-    const next = [...sortedImages];
-    [next[index - 1], next[index]] = [next[index], next[index - 1]];
-    await persistCarImageOrder(next);
-  };
-
-  const moveCarImageRight = async (index: number) => {
-    if (index >= sortedImages.length - 1) return;
-    const next = [...sortedImages];
-    [next[index], next[index + 1]] = [next[index + 1], next[index]];
-    await persistCarImageOrder(next);
-  };
-
-  const setCarMainImage = async (index: number) => {
-    if (index <= 0) return;
-    const next = [...sortedImages];
-    const [picked] = next.splice(index, 1);
-    next.unshift(picked);
-    await persistCarImageOrder(next);
-  };
+  const moveCarImageLeft = async (index: number) => { if (index <= 0) return; const next = [...sortedImages]; [next[index - 1], next[index]] = [next[index], next[index - 1]]; await persistCarImageOrder(next); };
+  const moveCarImageRight = async (index: number) => { if (index >= sortedImages.length - 1) return; const next = [...sortedImages]; [next[index], next[index + 1]] = [next[index + 1], next[index]]; await persistCarImageOrder(next); };
+  const setCarMainImage = async (index: number) => { if (index <= 0) return; const next = [...sortedImages]; const [picked] = next.splice(index, 1); next.unshift(picked); await persistCarImageOrder(next); };
 
   const isPublished = car.status === 'published';
   const isArchived = car.status === 'archived';
@@ -284,137 +266,127 @@ export default function DashboardBilDetalj() {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-[#f8f7f5]">
-
-        {/* ─── HERO ─── */}
-        <section className="relative overflow-hidden bg-[#1e1c19]">
+      <div className="min-h-screen bg-background">
+        <section className="relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #070b10 0%, #0c1219 40%, #060a0f 100%)' }}>
+          <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 700px 400px at 20% 80%, rgba(45,212,168,0.07) 0%, transparent 65%)' }} />
           {mainImage && (
-            <div className="absolute inset-0">
-              <img src={mainImage.image_url} alt="" className="absolute inset-0 w-full h-full object-cover opacity-20 blur-[1px] saturate-50" />
-              <div className="absolute inset-0 bg-gradient-to-b from-[#1e1c19]/60 via-[#1e1c19]/85 to-[#1e1c19]" />
+            <div className="absolute inset-0 pointer-events-none">
+              <img src={mainImage.image_url} alt="" className="absolute inset-0 w-full h-full object-cover opacity-15 saturate-50 blur-[1px]" />
+              <div className="absolute inset-0" style={{ background: 'linear-gradient(180deg, rgba(7,11,16,0.6) 0%, rgba(7,11,16,0.9) 60%, rgba(7,11,16,1) 100%)' }} />
             </div>
           )}
-
-          <div className="relative z-10 max-w-[860px] mx-auto px-5 sm:px-8 pt-8 pb-10 sm:pt-10 sm:pb-12">
+          <div className="absolute top-0 left-0 right-0 h-[2px] pointer-events-none overflow-hidden">
+            <div className="h-full w-full" style={{
+              background: 'linear-gradient(90deg, transparent 0%, rgba(45,212,168,0.4) 30%, rgba(52,234,184,0.6) 50%, rgba(45,212,168,0.4) 70%, transparent 100%)',
+              backgroundSize: '200% 100%',
+              animation: 'shimmer 4s ease-in-out infinite',
+            }} />
+          </div>
+          <div className="relative z-10 max-w-[900px] mx-auto px-5 sm:px-8 pt-8 pb-10 sm:pt-10 sm:pb-14">
             <Link to="/dashboard/mine-biler"
-              className="inline-flex items-center gap-1.5 text-white/40 hover:text-white/70 mb-5 transition-colors text-sm font-medium">
+              className="inline-flex items-center gap-1.5 text-white/30 hover:text-white/60 mb-6 transition-colors text-[13px] uppercase tracking-[0.15em] font-semibold"
+              style={oswald}>
               <ArrowLeft className="w-4 h-4" /> Mine biler
             </Link>
-
-            <div className="flex items-center gap-3 mb-2">
-              <span className={`inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-full border ${status.cls}`}>
-                {status.icon} {status.text}
+            <div className="flex items-center gap-3 mb-3">
+              <span className={`text-[11px] uppercase tracking-[0.1em] font-bold px-3 py-1 rounded-full border ${status.cls}`} style={oswald}>
+                {status.text}
               </span>
               {car.overhauled && (
-                <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-300">
+                <span className="inline-flex items-center gap-1 text-[11px] uppercase tracking-[0.1em] font-bold text-emerald-400/70" style={oswald}>
                   <Wrench className="w-3.5 h-3.5" /> Overhalt
                 </span>
               )}
             </div>
-
             {car.year && (
-              <span className="text-2xl sm:text-3xl font-serif text-white/20 leading-none block mb-0.5">{car.year}</span>
+              <span className="text-[1.5rem] sm:text-[1.8rem] font-bold text-primary/20 leading-none block mb-0.5" style={chakra}>{car.year}</span>
             )}
-            <h1 className="text-2xl sm:text-3xl md:text-4xl leading-tight font-bold text-white tracking-tight">
+            <h1 className="text-[1.5rem] sm:text-[2rem] md:text-[2.4rem] leading-[0.95] uppercase tracking-wide text-white font-bold"
+              style={chakra}>
               {car.title}
             </h1>
-
-            <div className="mt-4 h-[2px] w-40 rounded-full bg-gradient-to-r from-amber-400/60 to-transparent" />
-
+            <div className="mt-4 h-[2px] w-48 rounded-full" style={{
+              background: 'linear-gradient(90deg, hsl(168 70% 42% / 0.6) 0%, hsl(168 70% 42% / 0.15) 70%, transparent 100%)',
+            }} />
             {isPublished && car.slug && (
               <Link to={`/biler/${car.slug}`}
-                className="inline-flex items-center gap-1.5 text-sm font-medium text-white/40 hover:text-white/70 transition-colors mt-4">
-                <ExternalLink className="w-4 h-4" /> Se offentlig side
+                className="inline-flex items-center gap-1.5 mt-4 text-[12px] uppercase tracking-[0.12em] font-bold text-primary/50 hover:text-primary transition-colors" style={oswald}>
+                <ExternalLink className="w-3.5 h-3.5" /> Se offentlig side
               </Link>
             )}
           </div>
         </section>
-
-        {/* ─── CONTENT ─── */}
-        <div className="max-w-[860px] mx-auto px-5 sm:px-8 py-8 sm:py-12 space-y-10 sm:space-y-14">
-
-          {/* ── PUBLISH STATUS ── */}
+        <div className="max-w-[900px] mx-auto px-5 sm:px-8 py-8 sm:py-12 space-y-12 sm:space-y-16">
           {!isArchived && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.05 }}>
               {isPublished ? (
-                <div className="flex items-center justify-between py-3 px-5 rounded-xl bg-emerald-50 border border-emerald-200">
-                  <div className="flex items-center gap-2 text-emerald-700">
+                <div className="flex items-center justify-between py-3 px-5 rounded-xl border border-emerald-500/20 bg-emerald-500/[0.06]">
+                  <div className="flex items-center gap-2 text-emerald-400">
                     <CheckCircle2 className="w-5 h-5" />
-                    <span className="text-sm font-semibold">Bilen er live</span>
+                    <span className="text-[13px] uppercase tracking-[0.08em] font-bold" style={oswald}>Bilen er live</span>
                   </div>
                   <button onClick={handleUnpublish} disabled={isPublishing}
-                    className="text-sm font-medium text-stone-400 hover:text-stone-600 transition-colors">
+                    className="text-[13px] uppercase tracking-[0.08em] font-bold text-muted-foreground/40 hover:text-muted-foreground transition-colors" style={oswald}>
                     {isPublishing ? '...' : 'Avpubliser'}
                   </button>
                 </div>
               ) : (
-                <div className="bg-white rounded-xl border border-stone-200 p-5 space-y-4">
+                <div className="rounded-xl border border-border/40 bg-card/50 p-5 space-y-4">
                   {openRequest && (
-                    <div className="flex items-center gap-3 bg-amber-50 border border-amber-200 rounded-lg p-3">
-                      <Clock className="w-5 h-5 text-amber-600 shrink-0" />
-                      <p className="text-sm text-amber-700 flex-1 font-medium">Åpen forespørsel</p>
-                      <button onClick={cancelRequest} className="text-sm text-stone-400 hover:text-stone-600">Avbryt</button>
+                    <div className="flex items-center gap-3 bg-amber-500/[0.08] border border-amber-500/20 rounded-lg p-3">
+                      <Clock className="w-5 h-5 text-amber-400 shrink-0" />
+                      <p className="text-[13px] text-amber-400/80 flex-1 font-semibold uppercase tracking-wide" style={oswald}>Åpen forespørsel</p>
+                      <button onClick={cancelRequest} className="text-[12px] uppercase tracking-wider font-bold text-muted-foreground/40 hover:text-muted-foreground" style={oswald}>Avbryt</button>
                     </div>
                   )}
-                  <p className="text-sm font-semibold text-stone-700">Klar for publisering?</p>
+                  <p className="text-[14px] uppercase tracking-[0.08em] font-bold text-foreground/70" style={oswald}>Klar for publisering?</p>
                   <div className="flex items-center gap-4">
                     {[
                       { ok: brandOk, label: 'Merke' },
                       { ok: modelOk, label: 'Modell' },
                       { ok: imagesOk, label: 'Minst 1 bilde' },
                     ].map(({ ok, label }) => (
-                      <span key={label} className={`inline-flex items-center gap-1.5 text-sm font-medium ${ok ? 'text-emerald-600' : 'text-stone-300'}`}>
+                      <span key={label} className={`inline-flex items-center gap-1.5 text-[13px] uppercase tracking-[0.06em] font-semibold ${ok ? 'text-emerald-400' : 'text-muted-foreground/25'}`} style={oswald}>
                         {ok ? <CheckCircle2 className="w-4 h-4" /> : <Circle className="w-4 h-4" />} {label}
                       </span>
                     ))}
                   </div>
                   <button onClick={handlePublish} disabled={!canPublish || isPublishing}
-                    className="inline-flex items-center gap-2 bg-teal-600 hover:bg-teal-700 disabled:opacity-40 text-white font-semibold text-sm px-5 py-2.5 rounded-lg transition-colors shadow-sm">
+                    className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-bold text-[13px] uppercase tracking-[0.1em] px-6 py-3 rounded-lg transition-all hover:brightness-110 disabled:opacity-40 shadow-[0_0_20px_rgba(45,212,168,0.15)]"
+                    style={chakra}>
                     <Send className="w-4 h-4" /> {isPublishing ? 'Publiserer...' : 'Publiser bilen'}
                   </button>
                 </div>
               )}
             </motion.div>
           )}
-
-          {/* ── GALLERY ── */}
           <motion.section initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-            <SectionHeading icon={<ImageIcon />} title="Bilder" />
+            <SectionHeading icon={<ImageIcon />} title="BILDER" />
             <input type="file" ref={fileInputRef} onChange={handleImageUpload} accept="image/*" multiple className="hidden" />
-
             {sortedImages.length > 0 ? (
               <div className="space-y-3">
                 <div className={`grid gap-2.5 ${sideImages.length > 0 ? 'grid-cols-1 sm:grid-cols-[1fr_0.42fr]' : 'grid-cols-1'}`}>
-                  <div className="relative group aspect-[16/10] rounded-xl overflow-hidden bg-stone-100">
+                  <div className="relative group aspect-[16/10] rounded-xl overflow-hidden bg-secondary/30">
                     <img src={mainImage.image_url} alt={mainImage.alt_text || car.title} className="w-full h-full object-cover" />
                     <div className="absolute top-3 left-3">
-                      <span className="bg-black/50 backdrop-blur-sm text-white text-xs font-semibold px-2.5 py-1 rounded-md inline-flex items-center gap-1">
+                      <span className="bg-black/50 backdrop-blur-sm text-white text-[11px] uppercase tracking-[0.08em] font-bold px-2.5 py-1 rounded-md inline-flex items-center gap-1" style={oswald}>
                         <Star className="w-3 h-3 fill-current" /> Hovedbilde
                       </span>
                     </div>
                     <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity bg-black/30 flex items-center justify-center gap-2">
-                      <button onClick={() => deleteImage(mainImage.id)} className="bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white p-2.5 rounded-full">
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+                      <button onClick={() => deleteImage(mainImage.id)} className="bg-white/15 hover:bg-white/25 backdrop-blur-sm text-white p-2.5 rounded-full"><Trash2 className="w-4 h-4" /></button>
                     </div>
                   </div>
-
                   {sideImages.length > 0 && (
                     <div className="grid grid-cols-2 sm:grid-cols-1 gap-2.5">
                       {sideImages.map((img: any, i: number) => {
                         const realIndex = i + 1;
                         return (
-                          <div key={img.id} className="relative group aspect-[4/3] sm:aspect-auto sm:h-full rounded-xl overflow-hidden bg-stone-100">
+                          <div key={img.id} className="relative group aspect-[4/3] sm:aspect-auto sm:h-full rounded-xl overflow-hidden bg-secondary/30">
                             <img src={img.image_url} alt={img.alt_text || car.title} className="w-full h-full object-cover" />
                             <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity bg-black/40 flex items-center justify-center gap-1.5">
-                              <button onClick={() => setCarMainImage(realIndex)} disabled={isReorderingImages}
-                                className="bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white p-2 rounded-full" title="Sett som hovedbilde">
-                                <Star className="w-3.5 h-3.5" />
-                              </button>
-                              <button onClick={() => deleteImage(img.id)}
-                                className="bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white p-2 rounded-full">
-                                <Trash2 className="w-3.5 h-3.5" />
-                              </button>
+                              <button onClick={() => setCarMainImage(realIndex)} disabled={isReorderingImages} className="bg-white/15 hover:bg-white/25 backdrop-blur-sm text-white p-2 rounded-full" title="Sett som hovedbilde"><Star className="w-3.5 h-3.5" /></button>
+                              <button onClick={() => deleteImage(img.id)} className="bg-white/15 hover:bg-white/25 backdrop-blur-sm text-white p-2 rounded-full"><Trash2 className="w-3.5 h-3.5" /></button>
                             </div>
                           </div>
                         );
@@ -422,158 +394,126 @@ export default function DashboardBilDetalj() {
                     </div>
                   )}
                 </div>
-
                 {restImages.length > 0 && (
                   <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
                     {restImages.map((img: any, i: number) => {
                       const realIndex = i + 3;
                       return (
-                        <div key={img.id} className="relative group aspect-[4/3] rounded-lg overflow-hidden bg-stone-100">
+                        <div key={img.id} className="relative group aspect-[4/3] rounded-lg overflow-hidden bg-secondary/30">
                           <img src={img.image_url} alt={img.alt_text || car.title} className="w-full h-full object-cover" />
                           <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity bg-black/40 flex items-center justify-center gap-1.5">
-                            {realIndex > 0 && (
-                              <button onClick={() => moveCarImageLeft(realIndex)} disabled={isReorderingImages}
-                                className="bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white p-1.5 rounded-full">
-                                <ChevronLeft className="w-3.5 h-3.5" />
-                              </button>
-                            )}
-                            <button onClick={() => setCarMainImage(realIndex)} disabled={isReorderingImages}
-                              className="bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white p-1.5 rounded-full">
-                              <Star className="w-3.5 h-3.5" />
-                            </button>
-                            {realIndex < sortedImages.length - 1 && (
-                              <button onClick={() => moveCarImageRight(realIndex)} disabled={isReorderingImages}
-                                className="bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white p-1.5 rounded-full">
-                                <ChevronRight className="w-3.5 h-3.5" />
-                              </button>
-                            )}
-                            <button onClick={() => deleteImage(img.id)}
-                              className="bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white p-1.5 rounded-full">
-                              <Trash2 className="w-3.5 h-3.5" />
-                            </button>
+                            {realIndex > 0 && <button onClick={() => moveCarImageLeft(realIndex)} disabled={isReorderingImages} className="bg-white/15 hover:bg-white/25 backdrop-blur-sm text-white p-1.5 rounded-full"><ChevronLeft className="w-3.5 h-3.5" /></button>}
+                            <button onClick={() => setCarMainImage(realIndex)} disabled={isReorderingImages} className="bg-white/15 hover:bg-white/25 backdrop-blur-sm text-white p-1.5 rounded-full"><Star className="w-3.5 h-3.5" /></button>
+                            {realIndex < sortedImages.length - 1 && <button onClick={() => moveCarImageRight(realIndex)} disabled={isReorderingImages} className="bg-white/15 hover:bg-white/25 backdrop-blur-sm text-white p-1.5 rounded-full"><ChevronRight className="w-3.5 h-3.5" /></button>}
+                            <button onClick={() => deleteImage(img.id)} className="bg-white/15 hover:bg-white/25 backdrop-blur-sm text-white p-1.5 rounded-full"><Trash2 className="w-3.5 h-3.5" /></button>
                           </div>
                         </div>
                       );
                     })}
                   </div>
                 )}
-
                 <button onClick={() => fileInputRef.current?.click()} disabled={isUploadingImages}
-                  className="inline-flex items-center gap-2 text-sm font-medium text-stone-400 hover:text-teal-600 transition-colors mt-1">
+                  className="inline-flex items-center gap-2 text-[13px] uppercase tracking-[0.1em] font-bold text-muted-foreground/30 hover:text-primary transition-colors mt-1" style={oswald}>
                   <Upload className="w-4 h-4" />
                   {isUploadingImages ? 'Laster opp...' : 'Last opp flere bilder'}
                 </button>
               </div>
             ) : (
-              <div className="border-2 border-dashed border-stone-200 rounded-xl py-14 text-center cursor-pointer hover:border-teal-400 hover:bg-teal-50/30 transition-all"
+              <div className="border-2 border-dashed border-border/40 rounded-xl py-14 text-center cursor-pointer hover:border-primary/40 hover:bg-primary/[0.03] transition-all"
                 onClick={() => fileInputRef.current?.click()}>
-                <ImageIcon className="w-10 h-10 text-stone-300 mx-auto mb-3" strokeWidth={1.2} />
-                <p className="text-base font-semibold text-stone-400">
+                <ImageIcon className="w-10 h-10 text-muted-foreground/15 mx-auto mb-3" strokeWidth={1.2} />
+                <p className="text-[14px] uppercase tracking-[0.08em] font-bold text-muted-foreground/30" style={oswald}>
                   {isUploadingImages ? 'Laster opp...' : 'Last opp bilder'}
                 </p>
-                <p className="text-sm text-stone-400 mt-1">Første bilde blir hovedbilde</p>
+                <p className="text-[13px] text-muted-foreground/20 mt-1" style={oswald}>Første bilde blir hovedbilde</p>
               </div>
             )}
           </motion.section>
-
-          {/* ── TIMELINE ── */}
           <motion.section initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}>
-            <CarEventsList carId={car.id} variant="light" />
+            <CarEventsList carId={car.id} />
           </motion.section>
-
-          {/* ── STORY ── */}
           <motion.section initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-            <div className="flex items-center justify-between mb-3">
-              <SectionHeading icon={<BookOpen />} title="Historien" />
+            <div className="flex items-center justify-between mb-4">
+              <SectionHeading icon={<BookOpen />} title="HISTORIEN" />
               {!isEditingStory ? (
-                <EditButton onClick={() => setIsEditingStory(true)} />
+                <ActionBtn onClick={() => setIsEditingStory(true)}><Pencil className="w-3.5 h-3.5" /> Rediger</ActionBtn>
               ) : (
                 <div className="flex gap-2">
-                  <SaveButton onClick={saveStory} isSaving={isSaving} />
-                  <CancelButton onClick={() => { setIsEditingStory(false); setStoryForm(car.story || ""); }} />
+                  <ActionBtn variant="primary" onClick={saveStory} disabled={isSaving}><Save className="w-3.5 h-3.5" /> {isSaving ? '...' : 'Lagre'}</ActionBtn>
+                  <ActionBtn onClick={() => { setIsEditingStory(false); setStoryForm(car.story || ""); }}><X className="w-3.5 h-3.5" /> Avbryt</ActionBtn>
                 </div>
               )}
             </div>
-
-            <div className="max-w-[640px]">
+            <div className="max-w-[660px]">
               {isEditingStory ? (
                 <Textarea value={storyForm} onChange={(e) => setStoryForm(e.target.value)}
                   placeholder="Fortell historien om bilen din..."
                   rows={8}
-                  className="bg-white border-stone-200 text-base text-stone-800 leading-relaxed focus:border-teal-400 focus:ring-teal-400/20 rounded-lg min-h-[180px]" />
+                  className="bg-card border-border text-[15px] text-foreground/80 leading-[1.8] focus:border-primary/40 focus:ring-primary/20 rounded-lg min-h-[180px]" />
+              ) : car.story ? (
+                <p className="text-[15px] text-foreground/50 whitespace-pre-wrap leading-[1.8]">{car.story}</p>
               ) : (
-                car.story ? (
-                  <p className="text-base text-stone-600 whitespace-pre-wrap leading-[1.8]">{car.story}</p>
-                ) : (
-                  <p className="text-base text-stone-300 italic leading-relaxed">
-                    Ingen historie lagt til ennå. Trykk «Rediger» for å fortelle historien om bilen din.
-                  </p>
-                )
+                <p className="text-[15px] text-muted-foreground/25 italic leading-[1.8]">
+                  Ingen historie lagt til ennå. Trykk «Rediger» for å fortelle historien om bilen din.
+                </p>
               )}
             </div>
           </motion.section>
-
-          {/* ── BASIC INFO ── */}
           <motion.section initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}>
-            <div className="flex items-center justify-between mb-3">
-              <SectionHeading icon={<Info />} title="Grunninfo" />
+            <div className="flex items-center justify-between mb-4">
+              <SectionHeading icon={<Info />} title="GRUNNINFO" />
               {!isEditingBasic ? (
-                <EditButton onClick={() => setIsEditingBasic(true)} />
+                <ActionBtn onClick={() => setIsEditingBasic(true)}><Pencil className="w-3.5 h-3.5" /> Rediger</ActionBtn>
               ) : (
                 <div className="flex gap-2">
-                  <SaveButton onClick={saveBasicInfo} isSaving={isSaving} />
-                  <CancelButton onClick={() => {
+                  <ActionBtn variant="primary" onClick={saveBasicInfo} disabled={isSaving}><Save className="w-3.5 h-3.5" /> {isSaving ? '...' : 'Lagre'}</ActionBtn>
+                  <ActionBtn onClick={() => {
                     setIsEditingBasic(false);
-                    if (car) setBasicForm({
-                      brand: car.brand || "", model: car.model || "", variant: car.variant || "",
-                      body_type: car.body_type || "", year: car.year?.toString() || "",
-                      category: car.category || "registrert", tags: car.tags?.join(", ") || "",
-                    });
-                  }} />
+                    if (car) setBasicForm({ brand: car.brand || "", model: car.model || "", variant: car.variant || "", body_type: car.body_type || "", year: car.year?.toString() || "", category: car.category || "registrert", tags: car.tags?.join(", ") || "" });
+                  }}><X className="w-3.5 h-3.5" /> Avbryt</ActionBtn>
                 </div>
               )}
             </div>
-
-            <div className="bg-white rounded-xl border border-stone-200 p-5 sm:p-6">
+            <div className="rounded-xl border border-border/40 bg-card/50 p-5 sm:p-6">
               {isEditingBasic ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                  <FormField label="Merke">
+                  <FieldLabel label="Merke">
                     <Select value={basicForm.brand} onValueChange={(v) => setBasicForm({ ...basicForm, brand: v, model: "" })}>
-                      <SelectTrigger className="h-11 bg-white border-stone-200 text-base text-stone-800"><SelectValue placeholder="Velg merke" /></SelectTrigger>
+                      <SelectTrigger className="h-11 bg-card border-border text-[15px] text-foreground/80"><SelectValue placeholder="Velg merke" /></SelectTrigger>
                       <SelectContent>{CAR_BRANDS.map(b => <SelectItem key={b.name} value={b.name}>{b.name}</SelectItem>)}</SelectContent>
                     </Select>
-                  </FormField>
-                  <FormField label="Modell">
+                  </FieldLabel>
+                  <FieldLabel label="Modell">
                     <Select value={basicForm.model} onValueChange={(v) => setBasicForm({ ...basicForm, model: v })}>
-                      <SelectTrigger className="h-11 bg-white border-stone-200 text-base text-stone-800"><SelectValue placeholder="Velg modell" /></SelectTrigger>
+                      <SelectTrigger className="h-11 bg-card border-border text-[15px] text-foreground/80"><SelectValue placeholder="Velg modell" /></SelectTrigger>
                       <SelectContent>{availableModels.map(m => <SelectItem key={m.name} value={m.name}>{m.name}</SelectItem>)}</SelectContent>
                     </Select>
-                  </FormField>
-                  <FormField label="Variant">
+                  </FieldLabel>
+                  <FieldLabel label="Variant">
                     <Input value={basicForm.variant} onChange={(e) => setBasicForm({ ...basicForm, variant: e.target.value })}
-                      placeholder="f.eks. GLS" className="h-11 bg-white border-stone-200 text-base text-stone-800" />
-                  </FormField>
-                  <FormField label="Karosseri">
+                      placeholder="f.eks. GLS" className="h-11 bg-card border-border text-[15px] text-foreground/80" />
+                  </FieldLabel>
+                  <FieldLabel label="Karosseri">
                     <Select value={basicForm.body_type} onValueChange={(v) => setBasicForm({ ...basicForm, body_type: v })}>
-                      <SelectTrigger className="h-11 bg-white border-stone-200 text-base text-stone-800"><SelectValue placeholder="Velg type" /></SelectTrigger>
+                      <SelectTrigger className="h-11 bg-card border-border text-[15px] text-foreground/80"><SelectValue placeholder="Velg type" /></SelectTrigger>
                       <SelectContent>{CAR_BODY_TYPES.map(t => <SelectItem key={t.id} value={t.id}>{t.label}</SelectItem>)}</SelectContent>
                     </Select>
-                  </FormField>
-                  <FormField label="Årsmodell">
+                  </FieldLabel>
+                  <FieldLabel label="Årsmodell">
                     <Input type="number" value={basicForm.year} onChange={(e) => setBasicForm({ ...basicForm, year: e.target.value })}
-                      placeholder="1972" className="h-11 bg-white border-stone-200 text-base text-stone-800" />
-                  </FormField>
-                  <FormField label="Kategori">
+                      placeholder="1972" className="h-11 bg-card border-border text-[15px] text-foreground/80" />
+                  </FieldLabel>
+                  <FieldLabel label="Kategori">
                     <Select value={basicForm.category} onValueChange={(v) => setBasicForm({ ...basicForm, category: v })}>
-                      <SelectTrigger className="h-11 bg-white border-stone-200 text-base text-stone-800"><SelectValue /></SelectTrigger>
+                      <SelectTrigger className="h-11 bg-card border-border text-[15px] text-foreground/80"><SelectValue /></SelectTrigger>
                       <SelectContent>{CATEGORIES.map(c => <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>)}</SelectContent>
                     </Select>
-                  </FormField>
+                  </FieldLabel>
                   <div className="sm:col-span-2 lg:col-span-3">
-                    <FormField label="Tags (kommaseparert)">
+                    <FieldLabel label="Tags (kommaseparert)">
                       <Input value={basicForm.tags} onChange={(e) => setBasicForm({ ...basicForm, tags: e.target.value })}
-                        placeholder="original, restaurert, rallye" className="h-11 bg-white border-stone-200 text-base text-stone-800" />
-                    </FormField>
+                        placeholder="original, restaurert, rallye" className="h-11 bg-card border-border text-[15px] text-foreground/80" />
+                    </FieldLabel>
                   </div>
                 </div>
               ) : (
@@ -583,16 +523,16 @@ export default function DashboardBilDetalj() {
                     ['Karosseri', car.body_type], ['Årsmodell', car.year], ['Kategori', car.category],
                   ].map(([label, value]) => (
                     <div key={label as string}>
-                      <span className="text-xs font-semibold text-stone-400 block mb-1">{label}</span>
-                      <p className="text-base text-stone-700 capitalize font-medium">{value || '—'}</p>
+                      <span className="text-[12px] uppercase tracking-[0.12em] font-bold text-muted-foreground/30 block mb-1" style={oswald}>{label}</span>
+                      <p className="text-[15px] text-foreground/60 capitalize font-medium">{value || '—'}</p>
                     </div>
                   ))}
                   {car.tags && car.tags.length > 0 && (
                     <div className="col-span-full mt-2">
-                      <span className="text-xs font-semibold text-stone-400 block mb-2">Tags</span>
+                      <span className="text-[12px] uppercase tracking-[0.12em] font-bold text-muted-foreground/30 block mb-2" style={oswald}>Tags</span>
                       <div className="flex flex-wrap gap-2">
                         {car.tags.map((tag: string) => (
-                          <span key={tag} className="text-sm text-stone-600 bg-stone-100 border border-stone-200 px-2.5 py-1 rounded-md font-medium">{tag}</span>
+                          <span key={tag} className="text-[13px] text-foreground/40 bg-secondary border border-border px-2.5 py-1 rounded-md font-medium">{tag}</span>
                         ))}
                       </div>
                     </div>
@@ -601,63 +541,48 @@ export default function DashboardBilDetalj() {
               )}
             </div>
           </motion.section>
-
-          {/* ── FEED COMPOSER ── */}
           <motion.section initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
-            <SectionHeading icon={<Send />} title="Del i feeden" />
+            <SectionHeading icon={<Send />} title="DEL I FEEDEN" />
             <PostComposer compact postType="car_update" carId={car.id}
               snapshotTitle={car.title} snapshotImageUrl={mainImage?.image_url} snapshotEntityType="car" />
           </motion.section>
-
         </div>
       </div>
     </Layout>
   );
 }
 
-/* ─── Shared UI helpers ─── */
+const sectionOswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
 
 function SectionHeading({ icon, title }: { icon: React.ReactNode; title: string }) {
   return (
-    <h2 className="flex items-center gap-2 text-base font-semibold text-stone-500">
-      <span className="text-stone-400 [&>svg]:w-[18px] [&>svg]:h-[18px]">{icon}</span>
+    <h2 className="flex items-center gap-2 text-[14px] uppercase tracking-[0.12em] font-bold text-muted-foreground/40" style={sectionOswald}>
+      <span className="text-primary/40 [&>svg]:w-[18px] [&>svg]:h-[18px]">{icon}</span>
       {title}
     </h2>
   );
 }
 
-function FormField({ label, children }: { label: string; children: React.ReactNode }) {
+function FieldLabel({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div>
-      <label className="text-sm font-semibold text-stone-500 block mb-1.5">{label}</label>
+      <label className="text-[13px] uppercase tracking-[0.08em] font-bold text-muted-foreground/40 block mb-2" style={sectionOswald}>{label}</label>
       {children}
     </div>
   );
 }
 
-function EditButton({ onClick }: { onClick: () => void }) {
+function ActionBtn({ onClick, disabled, children, variant = 'ghost' }: {
+  onClick?: () => void; disabled?: boolean; children: React.ReactNode; variant?: 'primary' | 'ghost';
+}) {
+  const cls = variant === 'primary'
+    ? 'bg-primary text-primary-foreground hover:brightness-110'
+    : 'text-muted-foreground/40 hover:text-foreground hover:bg-white/[0.04]';
   return (
-    <button onClick={onClick}
-      className="inline-flex items-center gap-1.5 text-sm font-medium text-stone-400 hover:text-teal-600 transition-colors px-3 py-1.5 rounded-lg hover:bg-stone-100">
-      <Pencil className="w-4 h-4" /> Rediger
-    </button>
-  );
-}
-
-function SaveButton({ onClick, isSaving }: { onClick: () => void; isSaving: boolean }) {
-  return (
-    <button onClick={onClick} disabled={isSaving}
-      className="inline-flex items-center gap-1.5 text-sm font-semibold text-white bg-stone-800 hover:bg-stone-900 disabled:opacity-50 px-4 py-1.5 rounded-lg transition-colors">
-      <Save className="w-4 h-4" /> {isSaving ? 'Lagrer...' : 'Lagre'}
-    </button>
-  );
-}
-
-function CancelButton({ onClick }: { onClick: () => void }) {
-  return (
-    <button onClick={onClick}
-      className="inline-flex items-center gap-1 text-sm font-medium text-stone-400 hover:text-stone-600 px-3 py-1.5 rounded-lg hover:bg-stone-100 transition-colors">
-      <X className="w-4 h-4" /> Avbryt
+    <button onClick={onClick} disabled={disabled}
+      className={`inline-flex items-center gap-1.5 text-[12px] uppercase tracking-[0.08em] font-bold px-3 py-2 rounded-lg transition-all active:scale-95 disabled:opacity-40 ${cls}`}
+      style={sectionOswald}>
+      {children}
     </button>
   );
 }
