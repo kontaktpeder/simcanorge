@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { toast } from "sonner";
-import { Send } from "lucide-react";
+import { Send, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useMyPersonProfile } from "@/hooks/useMyPersonProfile";
 import { useCreateFeedPost } from "@/hooks/useCreateFeedPost";
 import { useAuth } from "@/hooks/useAuth";
+import heroCar from "@/assets/hero-car.jpg";
 
 const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
 
@@ -17,17 +18,25 @@ export function HomeFeedComposer() {
 
   if (!user) {
     return (
-      <div className="rounded-xl border border-white/[0.12] bg-white/[0.05] px-4 py-6 sm:px-6 sm:py-10 text-center">
-        <p className="text-[0.85rem] sm:text-[1.15rem] uppercase tracking-[0.06em] font-bold text-white/50 leading-snug" style={chakra}>
-          Del bilhistorier, oppdateringer<br className="hidden sm:block" /> og nyheter med fellesskapet
-        </p>
-        <Link
-          to="/login"
-          className="inline-block mt-3 sm:mt-4 px-5 sm:px-6 py-2 sm:py-2.5 text-[11px] sm:text-[12px] uppercase tracking-[0.15em] font-bold text-[#0c1117] rounded-lg transition-all hover:brightness-110 shadow-[0_0_20px_rgba(45,212,168,0.3)]"
-          style={{ ...chakra, background: 'linear-gradient(135deg, #34eab8, #2dd4a8)' }}
-        >
-          Logg inn for å starte
-        </Link>
+      <div className="relative rounded-xl border border-white/[0.12] overflow-hidden">
+        {/* Background image with heavy overlay */}
+        <div className="absolute inset-0">
+          <img src={heroCar} alt="" className="w-full h-full object-cover object-[50%_35%]" style={{ opacity: 0.12, filter: 'blur(1px) saturate(0.6)' }} />
+          <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, rgba(20,26,34,0.92) 0%, rgba(28,37,48,0.88) 100%)' }} />
+        </div>
+        <div className="relative px-5 py-8 sm:px-8 sm:py-12 text-center">
+          <p className="text-[0.9rem] sm:text-[1.2rem] uppercase tracking-[0.06em] font-bold text-white/60 leading-snug" style={chakra}>
+            Del bilhistorier, oppdateringer<br className="hidden sm:block" /> og nyheter med fellesskapet
+          </p>
+          <Link
+            to="/login"
+            className="inline-flex items-center gap-2 mt-4 sm:mt-5 px-7 sm:px-8 py-3 sm:py-3.5 text-[12px] sm:text-[13px] uppercase tracking-[0.15em] font-bold text-[#0a0f14] rounded-lg transition-all hover:scale-[1.03] hover:brightness-110"
+            style={{ ...chakra, background: 'linear-gradient(135deg, #34eab8 0%, #2dd4a8 40%, #1cb896 100%)', boxShadow: '0 0 28px rgba(45,212,168,0.35), 0 4px 12px rgba(0,0,0,0.3)' }}
+          >
+            Logg inn for å starte
+            <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
       </div>
     );
   }

@@ -201,8 +201,12 @@ export default function Index() {
               <FeedFilterTabs active={feedFilter} onChange={setFeedFilter} />
             </div>
 
-            <div className="mb-5 sm:mb-10">
-              <HomeFeedComposer />
+            {/* Subtle glow behind composer */}
+            <div className="relative mb-5 sm:mb-10">
+              <div className="absolute -inset-6 sm:-inset-10 rounded-3xl pointer-events-none" style={{ background: 'radial-gradient(ellipse at center, rgba(45,212,168,0.04) 0%, transparent 70%)' }} />
+              <div className="relative">
+                <HomeFeedComposer />
+              </div>
             </div>
 
             {feedLoading && (
