@@ -223,7 +223,7 @@ export default function SendInnBil() {
   }
 
   return (
-    <Layout contained shortPage>
+    <Layout contained fillHeight>
       <section className="flex flex-col flex-1 min-h-0 py-4 sm:py-6">
         <div className="container mx-auto px-4 flex flex-col flex-1 min-h-0">
           <div className="mb-4 text-center shrink-0">
