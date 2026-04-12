@@ -6,15 +6,18 @@ interface StepContactProps {
   data: WizardData;
   onChange: (patch: Partial<WizardData>) => void;
   errors: Record<string, string>;
+  emailLocked?: boolean;
 }
 
-export function StepContact({ data, onChange, errors }: StepContactProps) {
+export function StepContact({ data, onChange, errors, emailLocked }: StepContactProps) {
   return (
     <div className="space-y-6">
       <div className="text-center space-y-2">
         <h2 className="font-display text-2xl sm:text-3xl text-foreground">Hvem er du?</h2>
         <p className="text-muted-foreground text-sm sm:text-base">
-          Vi bruker e-posten til å sende deg en innloggingslenke.
+          {emailLocked
+            ? "Du er innlogget – vi bruker e-postadressen til kontoen din."
+            : "Vi bruker e-posten til å sende deg en innloggingslenke."}
         </p>
       </div>
 
@@ -28,8 +31,11 @@ export function StepContact({ data, onChange, errors }: StepContactProps) {
 
         <div className="space-y-2">
           <Label htmlFor="w-email" className="text-base font-display">E-POST *</Label>
-          <Input id="w-email" type="email" value={data.email} onChange={e => onChange({ email: e.target.value })}
-            placeholder="ola@eksempel.no" className={`h-12 text-base border-2 ${errors.email ? "border-destructive" : "border-muted"}`} />
+          <Input id="w-email" type="email" value={data.email}
+            readOnly={emailLocked}
+            onChange={e => !emailLocked && onChange({ email: e.target.value })}
+            placeholder="ola@eksempel.no"
+            className={`h-12 text-base border-2 ${emailLocked ? "opacity-70 cursor-not-allowed bg-muted/50" : ""} ${errors.email ? "border-destructive" : "border-muted"}`} />
           {errors.email && <p className="text-sm text-destructive">{errors.email}</p>}
         </div>
 
