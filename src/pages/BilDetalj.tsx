@@ -10,6 +10,7 @@ import { useCarOwnerProfile } from "@/hooks/useOwnerProfile";
 import { useAuth } from "@/hooks/useAuth";
 import { useMyPersonProfile } from "@/hooks/useMyPersonProfile";
 import { PostComposer } from "@/components/feed/PostComposer";
+import { PostPublishOnboardingOverlay } from "@/components/car/PostPublishOnboardingOverlay";
 import { CommentSection } from "@/components/comments/CommentSection";
 import { supabase } from "@/integrations/supabase/client";
 import { getResponsiveImageProps, IMAGE_SIZES, getThumbnailUrl } from "@/lib/imageUtils";
@@ -108,8 +109,25 @@ const BilDetalj = () => {
   const { user } = useAuth();
   const { data: myProfile } = useMyPersonProfile();
   const [showFeedComposer, setShowFeedComposer] = useState(false);
-  const isOwner = !!(myProfile && car?.owner_profile_id === myProfile.id);
+  const [composerInitialBody, setComposerInitialBody] = useState<string | undefined>(undefined);
+  const [showPostPublishOverlay, setShowPostPublishOverlay] = useState(false);
+
+  // Owner detection: car_owners join from query
+  const carOwners = (car as any)?.car_owners as { user_id: string }[] | undefined;
+  const userIsCarOwner = !!(user && carOwners?.some((r) => r.user_id === user.id));
+  const isOwner = !!(myProfile && car?.owner_profile_id === myProfile.id) || userIsCarOwner;
   const firstCarImage = car ? [...car.car_images].sort((a, b) => a.sort_order - b.sort_order)[0]?.image_url ?? null : null;
+
+  // Show post-publish overlay once per car for owners
+  useEffect(() => {
+    if (
+      car?.published_at &&
+      userIsCarOwner &&
+      localStorage.getItem(`bilgarasje_post_publish_seen_${car.id}`) !== "1"
+    ) {
+      setShowPostPublishOverlay(true);
+    }
+  }, [car?.id, car?.published_at, userIsCarOwner]);
 
   // Hide scroll indicator when CTA section is visible
   useEffect(() => {
