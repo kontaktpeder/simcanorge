@@ -592,6 +592,22 @@ export function SendInnBilForm({ onSuccess, onCancel, showCancelButton = false }
             )}
           </div>
 
+          {/* Registration number */}
+          <div className="space-y-1.5 sm:space-y-2">
+            <FormFieldWithTooltip label="REGISTRERINGSNUMMER" tooltip="Valgfritt. Norsk skiltnummer, f.eks. AB 12345" htmlFor="registration_number" error={errors.registration_number}>
+              <Input
+                id="registration_number"
+                name="registration_number"
+                value={formData.registration_number}
+                onChange={handleChange}
+                placeholder="F.eks. AB 12345"
+                maxLength={10}
+                className={`text-base h-12 border-2 uppercase ${errors.registration_number ? 'border-destructive' : 'border-muted'}`}
+              />
+            </FormFieldWithTooltip>
+            <p className="text-xs text-muted-foreground">Valgfritt – brukes for å sjekke om bilen allerede finnes hos oss</p>
+          </div>
+
           {/* Category */}
           <div className="space-y-1.5 sm:space-y-2">
             <Label htmlFor="category" className="text-base sm:text-lg font-display">KATEGORI *</Label>
