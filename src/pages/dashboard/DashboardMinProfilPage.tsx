@@ -10,10 +10,67 @@ import { CompleteProfileForm } from "@/components/profile/CompleteProfileForm";
 import { EditProfileForm } from "@/components/profile/EditProfileForm";
 import { RequestPageAccessButton } from "@/components/profile/RequestPageAccessButton";
 import { Layout } from "@/components/layout/Layout";
-import { ArrowLeft, FileText, Pencil, User, CheckCircle2, Circle, AlertTriangle } from "lucide-react";
+import { ArrowLeft, FileText, Pencil, User, CheckCircle2, Circle, AlertTriangle, ShoppingBag } from "lucide-react";
+import { isSellerMinimumComplete, getSellerMinimumSteps } from "@/lib/sellerProfile";
 
 const MIN_BIO_LENGTH = 30;
 
+/* ─── Section A: Seller minimum checklist ─── */
+function SellerReadinessCard({
+  profile,
+  onEdit,
+}: {
+  profile: any;
+  onEdit: () => void;
+}) {
+  const sellerReady = isSellerMinimumComplete(profile);
+  const steps = getSellerMinimumSteps(profile);
+
+  return (
+    <Card className={sellerReady ? "border-green-200 dark:border-green-800 bg-green-50/50 dark:bg-green-950/20" : "border-amber-200 dark:border-amber-800 bg-amber-50/50 dark:bg-amber-950/20"}>
+      <CardContent className="p-5 space-y-3">
+        <div className="flex items-start gap-3">
+          <ShoppingBag className={`h-5 w-5 mt-0.5 shrink-0 ${sellerReady ? "text-green-600" : "text-amber-600"}`} />
+          <div className="flex-1">
+            <p className="font-medium text-sm">{sellerReady ? "Klar til å selge" : "Klar til å selge?"}</p>
+            <p className="text-xs text-muted-foreground mt-1">
+              {sellerReady
+                ? "Du har alt du trenger for å opprette annonser. Annonser godkjennes av admin før publisering."
+                : "Fyll ut disse feltene for å opprette annonser på markedsplassen:"}
+            </p>
+          </div>
+          {sellerReady && (
+            <Badge variant="secondary" className="shrink-0 bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
+              <CheckCircle2 className="h-3 w-3 mr-1" />Klar
+            </Badge>
+          )}
+        </div>
+        {!sellerReady && (
+          <>
+            <ul className="space-y-1.5 ml-8">
+              {steps.map((s) => (
+                <li key={s.key} className="flex items-center gap-2 text-sm">
+                  {s.done ? (
+                    <CheckCircle2 className="h-4 w-4 text-green-600 shrink-0" />
+                  ) : (
+                    <Circle className="h-4 w-4 text-muted-foreground/40 shrink-0" />
+                  )}
+                  <span className={s.done ? "text-muted-foreground line-through" : ""}>{s.label}</span>
+                </li>
+              ))}
+            </ul>
+            <Button size="sm" onClick={onEdit}>
+              <Pencil className="w-4 h-4 mr-1.5" />
+              Fyll ut manglende felter
+            </Button>
+          </>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+/* ─── Section B: Public profile / page access ─── */
 function ProfileCompletionCard({
   profile,
   onEdit,
@@ -22,11 +79,9 @@ function ProfileCompletionCard({
   onEdit: () => void;
 }) {
   const checks = [
-    { label: "Navn", done: !!profile.display_name },
     { label: "Bio (minst 30 tegn)", done: !!profile.bio && profile.bio.trim().length >= MIN_BIO_LENGTH },
     { label: "Sted", done: !!profile.location },
     { label: "Offentlig profil", done: !!profile.is_public },
-    { label: "Kontakt e-post", done: !!(profile as any).contact_email },
   ];
 
   const doneCount = checks.filter((c) => c.done).length;
@@ -40,9 +95,9 @@ function ProfileCompletionCard({
         <div className="flex items-start gap-3">
           <AlertTriangle className="h-5 w-5 text-amber-600 mt-0.5 shrink-0" />
           <div className="flex-1">
-            <p className="font-medium text-sm">Fullfør profilen din</p>
+            <p className="font-medium text-sm">Fullfør for offentlig profil & sidetilgang</p>
             <p className="text-xs text-muted-foreground mt-1">
-              Du trenger en komplett profil for å opprette annonser og søke om sidetilgang.
+              Disse feltene trengs for å gjøre profilen offentlig og søke om sidetilgang.
             </p>
           </div>
           <Badge variant="secondary" className="shrink-0">
@@ -113,6 +168,10 @@ export default function DashboardMinProfilPage() {
           <p className="text-muted-foreground">Din offentlige profil på Bilgarasjen</p>
         </div>
 
+        {/* Section A: Seller readiness */}
+        <SellerReadinessCard profile={profile} onEdit={() => setEditing(true)} />
+
+        {/* Section B: Public profile completion */}
         {!editing && (
           <ProfileCompletionCard
             profile={profile}

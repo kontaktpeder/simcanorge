@@ -1,13 +1,13 @@
 import { motion } from 'framer-motion';
-import { User, MapPin, Heart, Eye, EyeOff, Info, Clock, CheckCircle2, Pencil } from 'lucide-react';
+import { User, MapPin, Heart, Eye, EyeOff, Info, CheckCircle2, Circle, Pencil } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { useOwnerProfile } from '@/hooks/useOwnerProfile';
-import { useAuth } from '@/hooks/useAuth';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
 import { EnamelCard } from '@/components/ui/garage/EnamelCard';
+import { isSellerMinimumComplete, getSellerMinimumSteps } from '@/lib/sellerProfile';
 
 interface OwnerProfileSectionProps {
   userId: string;
@@ -42,6 +42,9 @@ export function OwnerProfileSection({ userId }: OwnerProfileSectionProps) {
     );
   }
 
+  const sellerReady = isSellerMinimumComplete(profile);
+  const sellerSteps = getSellerMinimumSteps(profile);
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
@@ -60,29 +63,47 @@ export function OwnerProfileSection({ userId }: OwnerProfileSectionProps) {
             </Link>
           </div>
 
-          {/* Approval status */}
-          {!profile.approved_at && (
-            <div className="p-5 border-2 border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-950/30">
-              <div className="flex items-start gap-4">
-                <Clock className="h-6 w-6 mt-0.5 shrink-0 text-amber-600" />
-                <p className="text-base text-amber-800 dark:text-amber-300">
-                  Entusiastprofilen din er sendt til godkjenning. Du kan opprette annonser på markedsplassen når profilen er godkjent av admin.
-                </p>
-              </div>
-            </div>
-          )}
-
-          {profile.approved_at && (
+          {/* Seller status */}
+          {sellerReady ? (
             <div className="p-5 border-2 border-green-300 dark:border-green-700 bg-green-50 dark:bg-green-950/30">
               <div className="flex items-start gap-4">
                 <CheckCircle2 className="h-6 w-6 mt-0.5 shrink-0 text-green-600" />
                 <div className="space-y-1">
                   <p className="text-base font-display uppercase tracking-wider text-green-800 dark:text-green-300">
-                    Profilen din er godkjent!
+                    Klar til å selge
                   </p>
                   <p className="text-sm text-green-700 dark:text-green-400">
-                    Du kan nå opprette annonser på markedsplassen.
+                    Du kan opprette annonser på markedsplassen. Annonser godkjennes av admin før publisering.
                   </p>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="p-5 border-2 border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-950/30">
+              <div className="flex items-start gap-4">
+                <User className="h-6 w-6 mt-0.5 shrink-0 text-amber-600" />
+                <div className="space-y-2">
+                  <p className="text-base font-display uppercase tracking-wider text-amber-800 dark:text-amber-300">
+                    Fullfør profilen for å selge
+                  </p>
+                  <ul className="space-y-1.5">
+                    {sellerSteps.map((step) => (
+                      <li key={step.key} className="flex items-center gap-2 text-sm text-amber-800 dark:text-amber-300">
+                        {step.done ? (
+                          <CheckCircle2 className="h-4 w-4 text-green-600 shrink-0" />
+                        ) : (
+                          <Circle className="h-4 w-4 text-amber-400 shrink-0" />
+                        )}
+                        <span className={step.done ? "line-through opacity-60" : ""}>{step.label}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <Link to="/dashboard/min-profil?rediger=1">
+                    <Button size="sm" variant="outline" className="mt-2">
+                      <Pencil className="w-3.5 h-3.5 mr-1.5" />
+                      Fullfør selgerprofil
+                    </Button>
+                  </Link>
                 </div>
               </div>
             </div>
