@@ -94,12 +94,30 @@ export default function Konto() {
     setAnonymizeMessage("");
   };
 
-  const handleDeleteRequest = () => {
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleDeleteAccount = async () => {
     if (!user) return;
-    createRequest.mutate({
-      userId: user.id,
-      type: "delete_account",
-    });
+    setIsDeleting(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("delete-user", {
+        body: { user_id: user.id },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      toast.success("Kontoen din er slettet. Du blir nå logget ut.");
+      // Small delay so the toast is visible
+      setTimeout(() => {
+        signOut();
+        navigate("/");
+      }, 1500);
+    } catch (err: unknown) {
+      console.error("Delete account error:", err);
+      toast.error(
+        err instanceof Error ? err.message : "Kunne ikke slette kontoen. Prøv igjen."
+      );
+      setIsDeleting(false);
+    }
   };
 
   const hasPendingRequest = (type: 'anonymize' | 'delete_account') => {
