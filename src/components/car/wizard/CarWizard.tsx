@@ -267,16 +267,50 @@ export function CarWizard({ onSuccess }: CarWizardProps) {
 
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 flex-1 min-h-0">
         {/* Main form area */}
-        <div className="lg:col-span-3 overflow-y-auto min-h-0 pr-1 scrollbar-thin">
-          {step === 0 && <StepImages data={data} onChange={onChange} onNext={goNext} />}
-          {step === 1 && <StepBrand data={data} onChange={onChange} onNext={goNext} onBack={goBack} errors={errors} />}
-          {step === 2 && <StepDetails data={data} onChange={onChange} onNext={goNext} onBack={goBack} />}
-          {step === 3 && <StepStory data={data} onChange={onChange} onNext={goNext} onBack={goBack} />}
-          {step === 4 && <StepContact data={data} onChange={onChange} onNext={goNext} onBack={goBack} errors={errors} />}
-          {step === 5 && <StepConsent data={data} onChange={onChange} onBack={goBack} onSubmit={handleSubmit} isSubmitting={isSubmitting} errors={errors} />}
+        <div className="lg:col-span-3 flex flex-col min-h-0">
+          <div className="flex-1 overflow-y-auto min-h-0 pr-1 scrollbar-thin">
+            {step === 0 && <StepImages data={data} onChange={onChange} />}
+            {step === 1 && <StepBrand data={data} onChange={onChange} errors={errors} />}
+            {step === 2 && <StepDetails data={data} onChange={onChange} />}
+            {step === 3 && <StepStory data={data} onChange={onChange} />}
+            {step === 4 && <StepContact data={data} onChange={onChange} errors={errors} />}
+            {step === 5 && <StepConsent data={data} onChange={onChange} onSubmit={handleSubmit} isSubmitting={isSubmitting} errors={errors} />}
 
-          {/* Upload progress */}
-          {isSubmitting && uploadProgress && <div className="mt-4"><ImageUploadProgress progress={uploadProgress} compressionStats={compressionStats} /></div>}
+            {/* Upload progress */}
+            {isSubmitting && uploadProgress && <div className="mt-4"><ImageUploadProgress progress={uploadProgress} compressionStats={compressionStats} /></div>}
+          </div>
+
+          {/* Fixed navigation buttons */}
+          <div className="shrink-0 flex justify-between items-center pt-4 pb-2 border-t border-muted mt-2">
+            {step > 0 ? (
+              <button type="button" onClick={goBack}
+                className="px-6 py-3 rounded-lg font-display text-sm uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors">
+                ← Tilbake
+              </button>
+            ) : <div />}
+            {step < 5 ? (
+              <button type="button" onClick={() => {
+                if (step === 0) { goNext(); return; }
+                if (step === 1 && (!data.brand || !data.car_model)) return;
+                if (step === 4) {
+                  const canProceed = data.owner_name.trim().length >= 2 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email);
+                  if (!canProceed) return;
+                }
+                goNext();
+              }}
+                disabled={step === 1 && (!data.brand || !data.car_model) || step === 4 && (data.owner_name.trim().length < 2 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email))}
+                className="px-8 py-3 rounded-lg font-display text-base uppercase tracking-wider transition-all hover:brightness-110 disabled:opacity-40"
+                style={{ background: "linear-gradient(135deg, #1F66B5, #2B7BD4)", color: "#fff" }}>
+                {step === 0 && data.images.length === 0 ? "Hopp over bilder" : step === 3 && !data.car_story.trim() ? "Hopp over →" : "Neste →"}
+              </button>
+            ) : (
+              <Button type="button" onClick={handleSubmit}
+                disabled={isSubmitting || data.allowEdits === null || !data.privacyAccepted}
+                className="btn-enamel-blue text-base h-12 px-8 disabled:opacity-40">
+                {isSubmitting ? "Sender…" : <><Send className="w-5 h-5 mr-2" /> Send inn</>}
+              </Button>
+            )}
+          </div>
         </div>
 
         {/* Live preview (sticky on desktop) */}
