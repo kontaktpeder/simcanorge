@@ -175,8 +175,9 @@ export default function Login() {
               <Button
                 type="submit"
                 disabled={isLoading}
-                className="w-full h-12 text-base font-display uppercase tracking-wider"
+                className="w-full h-12 text-base uppercase tracking-wider"
                 style={{
+                  ...chakra,
                   background: 'linear-gradient(135deg, #34eab8 0%, #2ab89a 100%)',
                   color: '#070b10',
                   boxShadow: '0 0 24px rgba(52,234,184,0.2)',
