@@ -38,6 +38,7 @@ Deno.serve(async (req: Request): Promise<Response> => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
+    // Verify caller identity
     const supabaseUser = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_ANON_KEY")!,
@@ -54,22 +55,68 @@ Deno.serve(async (req: Request): Promise<Response> => {
     }
 
     const callerId = claimsData.claims.sub;
+    const isSelfDelete = callerId === targetUserId;
 
-    const { data: roleRow } = await supabaseAdmin
-      .from("user_roles")
-      .select("user_id")
-      .eq("user_id", callerId)
-      .eq("role", "admin")
-      .maybeSingle();
+    // Allow self-deletion OR admin deletion of others
+    if (!isSelfDelete) {
+      const { data: roleRow } = await supabaseAdmin
+        .from("user_roles")
+        .select("user_id")
+        .eq("user_id", callerId)
+        .eq("role", "admin")
+        .maybeSingle();
 
-    if (!roleRow) {
+      if (!roleRow) {
+        return new Response(
+          JSON.stringify({ error: "Kun admin kan slette andre brukere" }),
+          { status: 403, headers: { "Content-Type": "application/json", ...corsHeaders } }
+        );
+      }
+    }
+
+    // 1. Purge user data not covered by FK cascades
+    const { error: purgeError } = await supabaseAdmin.rpc(
+      "purge_user_data_before_auth_delete",
+      { _user_id: targetUserId }
+    );
+    if (purgeError) {
+      console.error("purge error:", purgeError);
       return new Response(
-        JSON.stringify({ error: "Kun admin kan slette brukere" }),
-        { status: 403, headers: { "Content-Type": "application/json", ...corsHeaders } }
+        JSON.stringify({ error: "Feil ved opprydding av brukerdata: " + purgeError.message }),
+        { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } }
       );
     }
 
-    // Invalider alle aktive sesjoner før sletting
+    // 2. Clean up Storage files for this user
+    try {
+      // Owner avatars
+      const { data: ownerFiles } = await supabaseAdmin.storage
+        .from("simca-images")
+        .list(`owners/${targetUserId}`);
+      if (ownerFiles && ownerFiles.length > 0) {
+        const paths = ownerFiles.map((f) => `owners/${targetUserId}/${f.name}`);
+        await supabaseAdmin.storage.from("simca-images").remove(paths);
+      }
+
+      // Person profile avatars & covers (stored under person profile id, need to look up)
+      const { data: personProfile } = await supabaseAdmin
+        .from("person_profiles")
+        .select("id")
+        .eq("user_id", targetUserId)
+        .maybeSingle();
+
+      if (personProfile) {
+        const profilePaths = [
+          `profiles/${personProfile.id}/avatar.webp`,
+          `profiles/${personProfile.id}/cover.webp`,
+        ];
+        await supabaseAdmin.storage.from("simca-images").remove(profilePaths);
+      }
+    } catch (storageErr) {
+      console.warn("Storage cleanup warning (non-fatal):", storageErr);
+    }
+
+    // 3. Invalidate all active sessions
     const { error: signOutError } = await supabaseAdmin.auth.admin.signOut(
       targetUserId,
       "global"
@@ -78,6 +125,7 @@ Deno.serve(async (req: Request): Promise<Response> => {
       console.warn("signOut warning (non-fatal):", signOutError.message);
     }
 
+    // 4. Delete the user from auth (triggers FK cascades)
     const { error: deleteError } = await supabaseAdmin.auth.admin.deleteUser(targetUserId);
     if (deleteError) {
       console.error("deleteUser error:", deleteError);
@@ -86,16 +134,6 @@ Deno.serve(async (req: Request): Promise<Response> => {
         { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
       );
     }
-
-    await supabaseAdmin
-      .from("account_requests")
-      .update({
-        status: "done",
-        admin_note: "Bruker slettet",
-        resolved_by: callerId,
-        resolved_at: new Date().toISOString(),
-      })
-      .eq("user_id", targetUserId);
 
     return new Response(
       JSON.stringify({ success: true, message: "Bruker slettet" }),
