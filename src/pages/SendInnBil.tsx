@@ -223,21 +223,21 @@ export default function SendInnBil() {
   }
 
   return (
-    <Layout contained>
-      <section className="py-8 sm:py-12 md:py-16">
-        <div className="container mx-auto px-4">
-          <div className="mb-8 text-center sm:mb-12">
-            <h1 className="mb-3 font-display text-3xl text-foreground sm:text-4xl md:text-5xl">
+    <Layout contained fillHeight>
+      <section className="flex flex-col flex-1 min-h-0 py-4 sm:py-6">
+        <div className="container mx-auto px-4 flex flex-col flex-1 min-h-0">
+          <div className="mb-4 text-center shrink-0">
+            <h1 className="mb-1 font-display text-2xl text-foreground sm:text-3xl md:text-4xl">
               DEL BILEN DIN
             </h1>
-            <p className="mx-auto max-w-xl text-base text-muted-foreground sm:text-lg">
+            <p className="mx-auto max-w-xl text-sm text-muted-foreground sm:text-base">
               Har du en bil med en historie å dele? Legg den til – det tar bare noen minutter.
             </p>
           </div>
 
-          <AnimatedSection triggerOnMount>
+          <div className="flex-1 min-h-0">
             <CarWizard onSuccess={handleWizardSuccess} />
-          </AnimatedSection>
+          </div>
         </div>
       </section>
     </Layout>

@@ -12,6 +12,8 @@ interface LayoutProps {
   hideFooter?: boolean;
   /** When true, main does not use flex-1 so short pages don't get a huge blank area before the footer */
   shortPage?: boolean;
+  /** When true (contained mode only), main becomes a flex column and children handle their own scrolling */
+  fillHeight?: boolean;
 }
 
 function SubpageSilhouette() {
@@ -27,11 +29,22 @@ function SubpageSilhouette() {
   );
 }
 
-export function Layout({ children, contained = false, hideFooter = false, shortPage = false }: LayoutProps) {
+export function Layout({ children, contained = false, hideFooter = false, shortPage = false, fillHeight = false }: LayoutProps) {
   const { pathname } = useLocation();
   const isIndex = pathname === "/";
 
   if (contained) {
+    if (fillHeight) {
+      return (
+        <div className="h-screen min-h-[100dvh] flex flex-col overflow-hidden">
+          <Header />
+          {!isIndex && <SubpageSilhouette />}
+          <main className="flex-1 min-h-0 flex flex-col relative z-10 pt-14 md:pt-16">
+            {children}
+          </main>
+        </div>
+      );
+    }
     return (
     <div className="h-screen min-h-[100dvh] flex flex-col overflow-hidden">
       <Header />
