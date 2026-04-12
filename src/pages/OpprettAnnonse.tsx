@@ -43,11 +43,13 @@ export default function OpprettAnnonse() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const opprettAnnonsePath = `/dashboard/opprett-annonse${searchParams.toString() ? `?${searchParams.toString()}` : ""}`;
+
   useEffect(() => {
     if (!authLoading && !user) {
-      navigate('/login?returnUrl=/dashboard/opprett-annonse');
+      navigate(`/login?returnUrl=${encodeURIComponent(opprettAnnonsePath)}`);
     }
-  }, [user, authLoading, navigate]);
+  }, [user, authLoading, navigate, opprettAnnonsePath]);
 
   if (authLoading || profileLoading) {
     return (
