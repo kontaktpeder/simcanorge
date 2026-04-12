@@ -20,10 +20,10 @@ export function SimcaNorgeSellerCard() {
         <div className="p-5 sm:p-6 md:p-8">
           <div className="flex items-center gap-4 mb-4">
             <div className="h-14 w-14 rounded-full bg-muted flex items-center justify-center overflow-hidden shrink-0 border">
-              <img src={simcaBadge} alt="Simca Norge" className="h-10 w-10 object-contain" />
+              <img src={simcaBadge} alt="Bilgarasje.no" className="h-10 w-10 object-contain" />
             </div>
             <div>
-              <h3 className="text-lg sm:text-xl font-semibold">Simca Norge</h3>
+              <h3 className="text-lg sm:text-xl font-semibold">Bilgarasje.no</h3>
               <p className="text-sm text-muted-foreground flex items-center gap-1.5">
                 <MapPin className="h-3.5 w-3.5" />
                 Grimstad
@@ -32,7 +32,7 @@ export function SimcaNorgeSellerCard() {
           </div>
 
           <p className="text-sm text-muted-foreground leading-relaxed">
-            Denne annonsen selges av Simca Norge. Lageret vårt holder til i Grimstad.
+            Denne annonsen selges av Bilgarasje.no. Lageret vårt holder til i Grimstad.
           </p>
 
           <Link

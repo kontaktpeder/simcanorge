@@ -116,11 +116,11 @@ serve(async (req: Request) => {
 
   const canonicalUrl = `${siteUrl}/biler/${car.slug}`;
 
-  const title = `${car.title}${car.year != null ? ` (${car.year})` : ""} – Bilhistorie fra Norge | Simca Norge`;
+  const title = `${car.title}${car.year != null ? ` (${car.year})` : ""} – Bilhistorie fra Norge | Bilgarasje.no`;
 
   const description = car.story
     ? car.story.slice(0, 155).trim() + (car.story.length > 155 ? "…" : "")
-    : `${[car.brand, car.model].filter(Boolean).join(" ")}${car.year != null ? ` (${car.year})` : ""} – Se historien på Simca Norge.`.trim();
+    : `${[car.brand, car.model].filter(Boolean).join(" ")}${car.year != null ? ` (${car.year})` : ""} – Se historien på Bilgarasje.no.`.trim();
 
   if (!isCrawler) {
     return new Response(null, {
@@ -147,7 +147,7 @@ serve(async (req: Request) => {
   <meta property="og:image" content="${escapeHtml(ogImage)}">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:site_name" content="Simca Norge">
+  <meta property="og:site_name" content="Bilgarasje.no">
   <meta property="og:locale" content="nb_NO">
 
   <meta name="twitter:card" content="summary_large_image">

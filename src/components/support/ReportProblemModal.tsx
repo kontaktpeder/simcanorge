@@ -118,7 +118,7 @@ export function ReportProblemModal({ open, onOpenChange, userId }: ReportProblem
         <DialogHeader>
           <DialogTitle>Rapporter et problem</DialogTitle>
           <DialogDescription>
-            Hjelp oss å gjøre Simca Norge bedre ved å rapportere problemer eller gi tilbakemelding.
+            Hjelp oss å gjøre Bilgarasje.no bedre ved å rapportere problemer eller gi tilbakemelding.
           </DialogDescription>
         </DialogHeader>
 

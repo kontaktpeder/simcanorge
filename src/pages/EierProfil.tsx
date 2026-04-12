@@ -38,7 +38,7 @@ export default function EierProfil() {
   if (!owner) {
     return (
       <Layout>
-        <Helmet><title>Profil ikke funnet | Simca Norge</title></Helmet>
+        <Helmet><title>Profil ikke funnet | Bilgarasje.no</title></Helmet>
         <PageHeader title="Profil ikke funnet" subtitle="Denne profilen finnes ikke eller er ikke offentlig." />
         <div className="container py-12 text-center">
           <Link to="/biler" className="text-primary hover:underline inline-flex items-center gap-2">
@@ -52,15 +52,15 @@ export default function EierProfil() {
   const SITE_URL = (import.meta.env.VITE_SITE_URL ?? "https://simcanorge.no").replace(/\/$/, "");
 
   const profileUrl = `${SITE_URL}/profil/${owner.slug}`;
-  const personDescription = owner.bio?.slice(0, 160) || `Simca-entusiast i Norge – profil for ${owner.display_name}`;
+  const personDescription = owner.bio?.slice(0, 160) || `Bilentusiast i Norge – profil for ${owner.display_name}`;
 
   return (
     <Layout>
       <Helmet>
-        <title>{owner.display_name} – Simca-entusiast i Norge | Simca Norge</title>
+        <title>{owner.display_name} – Bilentusiast i Norge | Bilgarasje.no</title>
         <meta name="description" content={personDescription} />
         <link rel="canonical" href={profileUrl} />
-        <meta property="og:title" content={`${owner.display_name} – Simca-entusiast i Norge | Simca Norge`} />
+        <meta property="og:title" content={`${owner.display_name} – Bilentusiast i Norge | Bilgarasje.no`} />
         <meta property="og:description" content={personDescription} />
         <meta property="og:url" content={profileUrl} />
         <meta property="og:type" content="profile" />

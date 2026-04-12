@@ -55,7 +55,7 @@ export default function ForhandsvisAnnonse() {
   return (
     <Layout>
       <Helmet>
-        <title>Forhåndsvisning: {item.title} | Simca Norge</title>
+        <title>Forhåndsvisning: {item.title} | Bilgarasje.no</title>
       </Helmet>
       <PageHeader title="MARKEDSPLASS" subtitle={category?.name || 'Annonse'} />
 

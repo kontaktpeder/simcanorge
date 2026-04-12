@@ -172,7 +172,7 @@ const AdminDashboard = () => {
           className="w-16 h-16 object-contain opacity-80"
         />
         <div>
-          <h1 className="font-display text-2xl md:text-3xl">Velkommen til Simca Norge</h1>
+          <h1 className="font-display text-2xl md:text-3xl">Velkommen til Bilgarasje.no</h1>
           {totalUnread > 0 || stats.submittedMarketplace > 0 || stats.pendingOwnerProfiles > 0 ? (
             <p className="text-muted-foreground">
               Du har{' '}

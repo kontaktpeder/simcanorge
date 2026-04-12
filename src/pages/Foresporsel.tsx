@@ -138,7 +138,7 @@ const Foresporsel = () => {
       map.set(p.id, {
         image: firstImage,
         price: priceStr,
-        ownerName: "Simca Norge",
+        ownerName: "Bilgarasje.no",
       });
     });
     return map;
@@ -399,7 +399,7 @@ const Foresporsel = () => {
                   {(() => {
                     // Build ordered list of recipient keys for next-CTA navigation
                     const recipientKeys: { key: string; label: string }[] = [];
-                    if (adminItems.length > 0) recipientKeys.push({ key: "admin", label: "Simca Norge" });
+                    if (adminItems.length > 0) recipientKeys.push({ key: "admin", label: "Bilgarasje.no" });
                     for (const [ownerId, { ownerName }] of byOwner) {
                       recipientKeys.push({ key: ownerId, label: ownerName });
                     }
@@ -418,7 +418,7 @@ const Foresporsel = () => {
                                   <Package className="w-4 h-4 text-primary" />
                                 </div>
                                 <div>
-                                  <p className="font-display text-sm sm:text-base leading-tight">SIMCA NORGE</p>
+                                  <p className="font-display text-sm sm:text-base leading-tight">BILGARASJE.NO</p>
                                   <p className="text-xs text-muted-foreground">{adminItems.length} {adminItems.length === 1 ? "vare" : "varer"}</p>
                                 </div>
                               </div>
@@ -449,7 +449,7 @@ const Foresporsel = () => {
                                   value={messagesByRecipient["admin"] ?? ""}
                                   onChange={(e) => setMessageForRecipient("admin", e.target.value)}
                                   rows={3}
-                                  placeholder="Skriv en melding til Simca Norge..."
+                                  placeholder="Skriv en melding til Bilgarasje.no..."
                                   className="w-full p-3 text-sm border-2 border-border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary transition-all resize-none"
                                 />
                                 {next && (

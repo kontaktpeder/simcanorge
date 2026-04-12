@@ -165,7 +165,7 @@ export const EVENT_CATEGORIES: Record<EventCategory, { label: string; icon: Cate
       dokumentert: 'Dokumentert',
       utstilt: 'Utstilt',
       pris: 'Pris / utmerkelse',
-      delt_offentlig: 'Delt offentlig (Simca Norge)',
+      delt_offentlig: 'Delt offentlig (Bilgarasje.no)',
       ny_eier_ansvar: 'Ny eier tar ansvar',
       annet: 'Annet'
     }
