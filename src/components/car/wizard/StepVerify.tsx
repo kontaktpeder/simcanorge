@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from "react";
-import { Mail, CheckCircle, ArrowRight, Loader2 } from "lucide-react";
+import { Mail, ArrowRight, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
@@ -14,55 +13,70 @@ interface StepVerifyProps {
 
 export function StepVerify({ email, carId, onSkip, onVerified }: StepVerifyProps) {
   const { toast } = useToast();
-  const [otpSent, setOtpSent] = useState(false);
-  const [otp, setOtp] = useState("");
+  const [linkSent, setLinkSent] = useState(false);
   const [isSending, setIsSending] = useState(false);
-  const [isVerifying, setIsVerifying] = useState(false);
   const [cooldown, setCooldown] = useState(0);
   const verifiedRef = useRef(false);
 
-  // Listen for magic link sign-in (user clicks the link in email)
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+    if (cooldown <= 0) return;
+    const timer = window.setTimeout(() => setCooldown(current => current - 1), 1000);
+    return () => window.clearTimeout(timer);
+  }, [cooldown]);
+
+  useEffect(() => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (verifiedRef.current) return;
-      if (event === "SIGNED_IN" && session?.user) {
-        verifiedRef.current = true;
-        // Link car to the authenticated user
-        await supabase
-          .from("cars")
-          .update({ created_by_user_id: session.user.id } as any)
-          .eq("id", carId);
+      if (event !== "SIGNED_IN" || !session?.user) return;
+
+      verifiedRef.current = true;
+
+      const { error } = await supabase
+        .from("cars")
+        .update({ created_by_user_id: session.user.id } as any)
+        .eq("id", carId);
+
+      if (error) {
+        verifiedRef.current = false;
         toast({
-          title: "Verifisert!",
-          description: "Bilen din er nå koblet til kontoen din.",
+          title: "Innlogging registrert, men bilen ble ikke koblet",
+          description: error.message || "Prøv igjen senere.",
+          variant: "destructive",
         });
-        onVerified();
+        return;
       }
+
+      toast({
+        title: "Verifisert!",
+        description: "Bilen din er nå koblet til kontoen din.",
+      });
+      onVerified();
     });
+
     return () => subscription.unsubscribe();
   }, [carId, onVerified, toast]);
 
-  // Cooldown timer
-  useEffect(() => {
-    if (cooldown <= 0) return;
-    const t = setTimeout(() => setCooldown(c => c - 1), 1000);
-    return () => clearTimeout(t);
-  }, [cooldown]);
-
-  const sendOtp = async () => {
+  const sendMagicLink = async () => {
     setIsSending(true);
+
     try {
+      const redirectTo = `${window.location.origin}/send-inn?claimCarId=${encodeURIComponent(carId)}`;
       const { error } = await supabase.auth.signInWithOtp({
         email,
         options: {
           shouldCreateUser: true,
+          emailRedirectTo: redirectTo,
         },
       });
+
       if (error) throw error;
-      setOtpSent(true);
+
+      setLinkSent(true);
       setCooldown(60);
       toast({
-        title: "E-post sendt!",
+        title: "Lenke sendt!",
         description: `Vi har sendt en innloggingslenke til ${email}.`,
       });
     } catch (err: any) {
@@ -76,132 +90,75 @@ export function StepVerify({ email, carId, onSkip, onVerified }: StepVerifyProps
     }
   };
 
-  const verifyOtp = async () => {
-    if (otp.length < 6) return;
-    setIsVerifying(true);
-    try {
-      const { data, error } = await supabase.auth.verifyOtp({
-        email,
-        token: otp,
-        type: "email",
-      });
-      if (error) throw error;
-
-      if (data.user && !verifiedRef.current) {
-        verifiedRef.current = true;
-        await supabase
-          .from("cars")
-          .update({ created_by_user_id: data.user.id } as any)
-          .eq("id", carId);
-      }
-
-      toast({
-        title: "Verifisert!",
-        description: "Bilen din er nå koblet til kontoen din.",
-      });
-      onVerified();
-    } catch (err: any) {
-      toast({
-        title: "Ugyldig kode",
-        description: err?.message || "Sjekk koden og prøv igjen.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsVerifying(false);
-    }
-  };
-
   return (
     <div className="space-y-6 text-center">
-      <div className="mx-auto w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
-        <Mail className="w-8 h-8 text-primary" />
+      <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
+        <Mail className="h-8 w-8 text-primary" />
       </div>
 
       <div className="space-y-2">
-        <h2 className="font-display text-2xl sm:text-3xl text-foreground">
+        <h2 className="font-display text-2xl text-foreground sm:text-3xl">
           Bilen er sendt inn!
         </h2>
-        <p className="text-muted-foreground text-sm sm:text-base max-w-md mx-auto">
+        <p className="mx-auto max-w-md text-sm text-muted-foreground sm:text-base">
           Vil du koble bilen til en konto? Da kan du redigere den selv senere.
           Vi sender en innloggingslenke til <strong className="text-foreground">{email}</strong>.
         </p>
       </div>
 
-      {!otpSent ? (
-        <div className="space-y-4 max-w-sm mx-auto">
+      {!linkSent ? (
+        <div className="mx-auto max-w-sm space-y-4">
           <Button
-            onClick={sendOtp}
+            onClick={sendMagicLink}
             disabled={isSending}
-            className="w-full btn-enamel-blue h-14 text-lg"
+            className="btn-enamel-blue h-14 w-full text-lg"
           >
             {isSending ? (
-              <><Loader2 className="w-5 h-5 mr-2 animate-spin" /> Sender…</>
+              <>
+                <Loader2 className="mr-2 h-5 w-5 animate-spin" /> Sender…
+              </>
             ) : (
-              <><Mail className="w-5 h-5 mr-2" /> Send innloggingslenke</>
+              <>
+                <Mail className="mr-2 h-5 w-5" /> Send innloggingslenke
+              </>
             )}
           </Button>
           <button
             type="button"
             onClick={onSkip}
-            className="text-sm text-muted-foreground hover:text-foreground transition-colors underline"
+            className="text-sm text-muted-foreground underline transition-colors hover:text-foreground"
           >
             Hopp over – jeg gjør dette senere
           </button>
         </div>
       ) : (
-        <div className="space-y-4 max-w-sm mx-auto">
-          <div className="p-4 rounded-lg bg-muted/50 border border-border text-sm text-muted-foreground space-y-2">
+        <div className="mx-auto max-w-sm space-y-4">
+          <div className="space-y-2 rounded-lg border border-border bg-muted/50 p-4 text-left text-sm text-muted-foreground">
             <p>
-              <strong className="text-foreground">Sjekk innboksen din</strong> (og spam-mappen).
+              <strong className="text-foreground">Du får ikke en 6-sifret kode</strong> i denne e-posten.
             </p>
             <p>
-              Klikk på <strong>«Logg inn»</strong>-knappen i e-posten for å koble bilen til kontoen din.
+              Klikk på <strong className="text-foreground">«Logg inn»</strong> i e-posten. Når innloggingen er fullført,
+              kobles bilen automatisk til kontoen din.
             </p>
-            <p className="text-xs">
-              Alternativt kan du skrive inn den 6-sifrede koden fra e-posten nedenfor.
-            </p>
+            <p className="text-xs">Sjekk også spam-mappen hvis du ikke ser e-posten med en gang.</p>
           </div>
-
-          <div className="space-y-2">
-            <Input
-              type="text"
-              inputMode="numeric"
-              autoComplete="one-time-code"
-              placeholder="Eventuell 6-sifret kode"
-              value={otp}
-              onChange={e => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
-              className="h-14 text-center text-2xl tracking-[0.3em] font-mono border-2 border-muted"
-              maxLength={6}
-            />
-          </div>
-
-          <Button
-            onClick={verifyOtp}
-            disabled={isVerifying || otp.length < 6}
-            className="w-full btn-enamel-blue h-14 text-lg"
-          >
-            {isVerifying ? (
-              <><Loader2 className="w-5 h-5 mr-2 animate-spin" /> Verifiserer…</>
-            ) : (
-              <><CheckCircle className="w-5 h-5 mr-2" /> Bekreft kode</>
-            )}
-          </Button>
 
           <div className="flex items-center justify-between text-sm">
             <button
               type="button"
-              onClick={sendOtp}
+              onClick={sendMagicLink}
               disabled={cooldown > 0 || isSending}
-              className="text-primary hover:text-primary/80 disabled:text-muted-foreground transition-colors"
+              className="text-primary transition-colors hover:text-primary/80 disabled:text-muted-foreground"
             >
               {cooldown > 0 ? `Send på nytt (${cooldown}s)` : "Send på nytt"}
             </button>
             <button
               type="button"
               onClick={onSkip}
-              className="text-muted-foreground hover:text-foreground transition-colors"
+              className="text-muted-foreground transition-colors hover:text-foreground"
             >
-              Hopp over <ArrowRight className="w-3 h-3 inline ml-1" />
+              Hopp over <ArrowRight className="ml-1 inline h-3 w-3" />
             </button>
           </div>
         </div>
