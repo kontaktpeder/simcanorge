@@ -6,12 +6,10 @@ import type { WizardData } from "./WizardTypes";
 interface StepBrandProps {
   data: WizardData;
   onChange: (patch: Partial<WizardData>) => void;
-  onNext: () => void;
-  onBack: () => void;
   errors: Record<string, string>;
 }
 
-export function StepBrand({ data, onChange, onNext, onBack, errors }: StepBrandProps) {
+export function StepBrand({ data, onChange, errors }: StepBrandProps) {
   const models = useMemo(() => getModelsForBrand(data.brand), [data.brand]);
 
   const set = (field: keyof WizardData, value: string) => {
@@ -47,19 +45,6 @@ export function StepBrand({ data, onChange, onNext, onBack, errors }: StepBrandP
             {models.map(m => <option key={m.name} value={m.name}>{m.name}</option>)}
           </select>
         </FormFieldWithTooltip>
-      </div>
-
-      <div className="flex justify-between pt-4">
-        <button type="button" onClick={onBack}
-          className="px-6 py-3 rounded-lg font-display text-sm uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors">
-          ← Tilbake
-        </button>
-        <button type="button" onClick={() => { if (data.brand && data.car_model) onNext(); }}
-          disabled={!data.brand || !data.car_model}
-          className="px-8 py-3 rounded-lg font-display text-base uppercase tracking-wider transition-all hover:brightness-110 disabled:opacity-40"
-          style={{ background: "linear-gradient(135deg, #1F66B5, #2B7BD4)", color: "#fff" }}>
-          Neste →
-        </button>
       </div>
     </div>
   );

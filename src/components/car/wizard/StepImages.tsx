@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useRef } from "react";
 import { Camera, X, ImagePlus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import type { WizardData } from "./WizardTypes";
@@ -6,10 +6,9 @@ import type { WizardData } from "./WizardTypes";
 interface StepImagesProps {
   data: WizardData;
   onChange: (patch: Partial<WizardData>) => void;
-  onNext: () => void;
 }
 
-export function StepImages({ data, onChange, onNext }: StepImagesProps) {
+export function StepImages({ data, onChange }: StepImagesProps) {
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -102,17 +101,6 @@ export function StepImages({ data, onChange, onNext }: StepImagesProps) {
       )}
 
       <p className="text-xs text-muted-foreground text-center">{data.images.length}/10 bilder valgt</p>
-
-      <div className="flex justify-end pt-4">
-        <button
-          type="button"
-          onClick={onNext}
-          className="px-8 py-3 rounded-lg font-display text-base uppercase tracking-wider transition-all hover:brightness-110"
-          style={{ background: "linear-gradient(135deg, #1F66B5, #2B7BD4)", color: "#fff" }}
-        >
-          {data.images.length === 0 ? "Hopp over bilder" : "Neste →"}
-        </button>
-      </div>
     </div>
   );
 }
