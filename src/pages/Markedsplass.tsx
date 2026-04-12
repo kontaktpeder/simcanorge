@@ -142,8 +142,8 @@ export default function Markedsplass() {
   return (
     <Layout hideFooter>
       <Helmet>
-        <title>{branchType ? `${branchType.label} | Markedsplass` : 'Markedsplass'} | Simca Norge</title>
-        <meta name="description" content="Kjøp og selg deler, tilbehør og biler fra Simca-entusiaster i Norge." />
+        <title>{branchType ? `${branchType.label} | Markedsplass` : 'Markedsplass'} | Bilgarasje.no</title>
+        <meta name="description" content="Kjøp og selg deler, tilbehør og biler fra entusiaster i hele Norge." />
       </Helmet>
 
 
@@ -211,7 +211,7 @@ export default function Markedsplass() {
           <div className="flex-1 min-w-0 lg:overflow-y-auto">
             <PageHeader
               title={branchType.label.toUpperCase()}
-              subtitle={branchType.description || "Bildeler, tilbehør og annonser fra Simca, Talbot og Matra-entusiaster"}
+              subtitle={branchType.description || "Bildeler, tilbehør og annonser fra entusiaster i hele Norge"}
             />
 
             {/* Mobile filter bar */}
@@ -286,7 +286,7 @@ export default function Markedsplass() {
               <div className="absolute top-0 left-0 right-0 h-1" style={{ background: "hsl(2, 85%, 40%)" }} />
               <div className="container mx-auto px-4 py-12 md:py-20 text-center relative z-10">
                 <p className="font-display text-[10px] md:text-xs uppercase tracking-[0.4em] text-white/40 mb-3">
-                  Simca · Talbot · Matra
+                  Bilgarasje.no
                 </p>
                 <h2 className="font-display text-3xl md:text-5xl lg:text-6xl text-white uppercase tracking-wider leading-none mb-4">
                   Fant du ikke<br />det du lette etter?
@@ -312,7 +312,7 @@ export default function Markedsplass() {
         <>
           <PageHeader
             title="MARKEDSPLASS"
-            subtitle="Bildeler, tilbehør og annonser fra Simca, Talbot og Matra-entusiaster"
+            subtitle="Bildeler, tilbehør og annonser fra entusiaster i hele Norge"
           />
 
           <section className="relative" style={{ background: "hsl(42, 30%, 95%)" }}>
@@ -327,7 +327,7 @@ export default function Markedsplass() {
             <div className="container mx-auto px-4 py-12 md:py-20 relative z-10">
               <div className="text-center mb-10">
                 <p className="font-display text-xs md:text-sm uppercase tracking-[0.4em] text-foreground/40 mb-2">
-                  Simca · Talbot · Matra
+                  Bilgarasje.no
                 </p>
                 <h2 className="font-display text-3xl md:text-5xl uppercase tracking-wider">
                   Velg kategori

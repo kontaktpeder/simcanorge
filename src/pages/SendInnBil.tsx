@@ -162,7 +162,7 @@ export default function SendInnBil() {
               DEL BILEN DIN
             </h1>
             <p className="mx-auto max-w-xl text-base text-muted-foreground sm:text-lg">
-              Har du en Simca, Talbot eller Matra? Legg den til på siden – det tar bare noen minutter.
+              Har du en bil med en historie å dele? Legg den til – det tar bare noen minutter.
             </p>
           </div>
 

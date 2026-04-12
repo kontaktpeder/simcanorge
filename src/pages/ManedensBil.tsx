@@ -191,9 +191,9 @@ const ManedensBil = () => {
       {/* CTA */}
       <section className="py-16 bg-accent">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="headline-md text-accent-foreground mb-4">Har du en Simca?</h2>
+          <h2 className="headline-md text-accent-foreground mb-4">Har du en bil å dele?</h2>
           <p className="font-serif text-xl text-accent-foreground/90 mb-8 max-w-xl mx-auto">
-            Kanskje blir din bil neste månedens bil! Send inn historien din og la oss løfte frem din Simca.
+            Kanskje blir din bil neste månedens bil! Send inn historien din og la oss løfte den frem.
           </p>
           <Link to="/send-inn" className="inline-flex items-center gap-2 bg-foreground text-background px-8 py-4 font-display uppercase text-lg border-2 border-foreground hover-lift">
             Send inn din bil
