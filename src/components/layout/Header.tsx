@@ -48,8 +48,8 @@ export function Header() {
             <img
               src={bilgarasjeLogo}
               alt="Bilgarasje.no"
-              className="h-28 md:h-32 w-auto transition-all duration-300 group-hover:opacity-100"
-              style={{ filter: 'brightness(2) invert(1)', opacity: 0.9 }}
+              className="h-28 md:h-32 w-auto transition-all duration-300 group-hover:opacity-80"
+              style={{ filter: 'brightness(1.8) invert(1)', opacity: 0.55 }}
             />
           </Link>
 
@@ -104,7 +104,7 @@ export function Header() {
             {user ? (
               <Link
                 to="/dashboard"
-                className="px-5 py-2 text-[13px] tracking-[0.1em] uppercase font-bold text-white/50 hover:text-white/80 border border-white/15 hover:border-white/30 transition-all duration-300 rounded"
+                className="px-4 py-1.5 text-[12px] tracking-[0.1em] uppercase font-bold text-white/30 hover:text-white/55 transition-all duration-300 rounded"
                 style={chakra}
               >
                 Min garasje
@@ -112,7 +112,7 @@ export function Header() {
             ) : (
               <Link
                 to="/login?returnUrl=/dashboard"
-                className="flex items-center gap-2 px-5 py-2 text-[13px] tracking-[0.1em] uppercase font-bold text-white/50 hover:text-white/80 border border-white/15 hover:border-white/30 transition-all duration-300 rounded"
+                className="flex items-center gap-2 px-4 py-1.5 text-[12px] tracking-[0.1em] uppercase font-bold text-white/35 hover:text-white/60 transition-all duration-300 rounded"
                 style={chakra}
               >
                 <LogIn className="w-3.5 h-3.5" />
@@ -121,8 +121,8 @@ export function Header() {
             )}
             <Link
               to="/dashboard/opprett-bil"
-              className="px-5 py-2 text-[13px] tracking-[0.1em] uppercase font-bold transition-all duration-300 hover:brightness-110 rounded text-[#0c1117]"
-              style={{ ...chakra, background: 'linear-gradient(135deg, #2dd4a8, #14b8a6)' }}
+              className="px-6 py-2.5 text-[13px] tracking-[0.12em] uppercase font-bold transition-all duration-300 hover:scale-[1.03] hover:brightness-115 rounded-lg text-[#0a0f14]"
+              style={{ ...chakra, background: 'linear-gradient(135deg, #34eab8 0%, #2dd4a8 40%, #1cb896 100%)', boxShadow: '0 0 24px rgba(45,212,168,0.35), 0 2px 8px rgba(0,0,0,0.3)' }}
             >
               Opprett bil
             </Link>

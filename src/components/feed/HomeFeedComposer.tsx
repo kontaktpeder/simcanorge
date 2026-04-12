@@ -17,7 +17,7 @@ export function HomeFeedComposer() {
 
   if (!user) {
     return (
-      <div className="rounded-xl border border-white/[0.08] bg-white/[0.03] px-4 py-6 sm:px-6 sm:py-10 text-center">
+      <div className="rounded-xl border border-white/[0.12] bg-white/[0.05] px-4 py-6 sm:px-6 sm:py-10 text-center">
         <p className="text-[0.85rem] sm:text-[1.15rem] uppercase tracking-[0.06em] font-bold text-white/50 leading-snug" style={chakra}>
           Del bilhistorier, oppdateringer<br className="hidden sm:block" /> og nyheter med fellesskapet
         </p>
@@ -45,7 +45,7 @@ export function HomeFeedComposer() {
   }
 
   return (
-    <div className="rounded-xl border border-white/[0.08] bg-white/[0.03] p-4 sm:p-6 transition-all focus-within:border-[#2dd4a8]/20 focus-within:shadow-[0_4px_24px_rgba(45,212,168,0.06)]">
+    <div className="rounded-xl border border-white/[0.12] bg-white/[0.05] p-4 sm:p-6 transition-all duration-300 hover:bg-white/[0.07] hover:border-white/[0.18] focus-within:border-[#34eab8]/30 focus-within:bg-white/[0.07] focus-within:shadow-[0_4px_24px_rgba(45,212,168,0.08)]">
       <div className="flex items-start gap-4">
         {profile?.avatar_url ? (
           <img src={profile.avatar_url} alt="" className="w-11 h-11 rounded-full object-cover ring-2 ring-[#2dd4a8]/20 flex-shrink-0 mt-0.5" />
