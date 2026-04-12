@@ -13,6 +13,21 @@ type PageState =
   | { step: "linking" }
   | { step: "verify"; carId: string; email: string };
 
+function getPendingClaimCarIdFromUrl() {
+  if (typeof window === "undefined") return null;
+  return new URLSearchParams(window.location.search).get("claimCarId");
+}
+
+function getPendingClaimCarId() {
+  if (typeof window === "undefined") return null;
+  return getPendingClaimCarIdFromUrl() ?? localStorage.getItem("pendingClaimCarId");
+}
+
+function clearPendingClaimCarId() {
+  if (typeof window === "undefined") return;
+  localStorage.removeItem("pendingClaimCarId");
+}
+
 async function navigateToCarDestination(
   carId: string,
   navigate: ReturnType<typeof useNavigate>,
@@ -43,7 +58,7 @@ export default function SendInnBil() {
   const navigate = useNavigate();
   const claimHandledRef = useRef(false);
   const [state, setState] = useState<PageState>(() => {
-    if (typeof window !== "undefined" && localStorage.getItem("pendingClaimCarId")) {
+    if (getPendingClaimCarId()) {
       return { step: "linking" };
     }
     return { step: "wizard" };
@@ -51,8 +66,10 @@ export default function SendInnBil() {
 
   // Handle car claim after magic link redirect
   useEffect(() => {
-    const pendingCarId = localStorage.getItem("pendingClaimCarId");
+    const pendingCarId = getPendingClaimCarId();
     if (!pendingCarId) return;
+
+    localStorage.setItem("pendingClaimCarId", pendingCarId);
 
     const linkCarToUser = async (userId: string) => {
       if (claimHandledRef.current) return;
@@ -64,7 +81,25 @@ export default function SendInnBil() {
         .eq("id", pendingCarId)
         .select("id");
 
-      localStorage.removeItem("pendingClaimCarId");
+      if (!error && updated?.length) {
+        clearPendingClaimCarId();
+        await navigateToCarDestination(pendingCarId, navigate, toast);
+        return;
+      }
+
+      const { data: existingCar } = await supabase
+        .from("cars")
+        .select("id")
+        .eq("id", pendingCarId)
+        .eq("created_by_user_id", userId)
+        .maybeSingle();
+
+      clearPendingClaimCarId();
+
+      if (existingCar) {
+        await navigateToCarDestination(pendingCarId, navigate, toast);
+        return;
+      }
 
       if (error || !updated?.length) {
         console.warn("Car claim failed:", error?.message ?? "0 rows updated");
@@ -77,8 +112,6 @@ export default function SendInnBil() {
         setState({ step: "wizard" });
         return;
       }
-
-      await navigateToCarDestination(pendingCarId, navigate, toast);
     };
 
     // If already signed in, link immediately
@@ -100,7 +133,7 @@ export default function SendInnBil() {
     // Fallback: if nothing happens within 8s, clear and show wizard
     const fallbackTimer = window.setTimeout(() => {
       if (claimHandledRef.current) return;
-      localStorage.removeItem("pendingClaimCarId");
+      clearPendingClaimCarId();
       setState({ step: "wizard" });
     }, 8000);
 

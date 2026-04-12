@@ -25,17 +25,10 @@ export function StepVerify({ email, carId, onSkip, onVerified }: StepVerifyProps
   }, [cooldown]);
 
   useEffect(() => {
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (verifiedRef.current) return;
-      if (event !== "SIGNED_IN" || !session?.user) return;
-
-      verifiedRef.current = true;
-
+    const linkCarToSignedInUser = async (userId: string) => {
       const { error } = await supabase
         .from("cars")
-        .update({ created_by_user_id: session.user.id } as any)
+        .update({ created_by_user_id: userId } as any)
         .eq("id", carId);
 
       if (error) {
@@ -53,6 +46,17 @@ export function StepVerify({ email, carId, onSkip, onVerified }: StepVerifyProps
         description: "Bilen din er nå koblet til kontoen din.",
       });
       onVerified();
+    };
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (verifiedRef.current) return;
+      if (event !== "SIGNED_IN" || !session?.user) return;
+
+      verifiedRef.current = true;
+
+      void linkCarToSignedInUser(session.user.id);
     });
 
     return () => subscription.unsubscribe();
@@ -64,12 +68,14 @@ export function StepVerify({ email, carId, onSkip, onVerified }: StepVerifyProps
     try {
       // Store carId in localStorage so we can retrieve it after the redirect
       localStorage.setItem("pendingClaimCarId", carId);
+      const redirectUrl = new URL("/send-inn", window.location.origin);
+      redirectUrl.searchParams.set("claimCarId", carId);
 
       const { error } = await supabase.auth.signInWithOtp({
         email,
         options: {
           shouldCreateUser: true,
-          emailRedirectTo: `${window.location.origin}/send-inn`,
+          emailRedirectTo: redirectUrl.toString(),
         },
       });
 
