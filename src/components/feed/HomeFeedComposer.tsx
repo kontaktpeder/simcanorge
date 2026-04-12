@@ -23,8 +23,8 @@ export function HomeFeedComposer() {
         </p>
         <Link
           to="/login"
-          className="inline-block mt-3 sm:mt-4 px-5 sm:px-6 py-2 sm:py-2.5 text-[11px] sm:text-[12px] uppercase tracking-[0.15em] font-bold text-[#0c1117] rounded-lg transition-all hover:brightness-110"
-          style={{ ...chakra, background: 'linear-gradient(135deg, #2dd4a8, #14b8a6)' }}
+          className="inline-block mt-3 sm:mt-4 px-5 sm:px-6 py-2 sm:py-2.5 text-[11px] sm:text-[12px] uppercase tracking-[0.15em] font-bold text-[#0c1117] rounded-lg transition-all hover:brightness-110 shadow-[0_0_20px_rgba(45,212,168,0.3)]"
+          style={{ ...chakra, background: 'linear-gradient(135deg, #34eab8, #2dd4a8)' }}
         >
           Logg inn for å starte
         </Link>
@@ -76,8 +76,8 @@ export function HomeFeedComposer() {
           <button
             onClick={handleSubmit}
             disabled={isPending || !body.trim()}
-            className="flex items-center gap-2 px-6 py-2.5 text-[#0c1117] text-[12px] uppercase tracking-[0.15em] font-bold rounded-lg transition-all disabled:opacity-25 hover:brightness-110"
-            style={{ ...chakra, background: 'linear-gradient(135deg, #2dd4a8, #14b8a6)' }}
+            className="flex items-center gap-2 px-6 py-2.5 text-[#0c1117] text-[12px] uppercase tracking-[0.15em] font-bold rounded-lg transition-all disabled:opacity-25 hover:brightness-110 shadow-[0_0_20px_rgba(45,212,168,0.3)]"
+            style={{ ...chakra, background: 'linear-gradient(135deg, #34eab8, #2dd4a8)' }}
           >
             <Send className="w-3.5 h-3.5" />
             {isPending ? "Publiserer…" : "Publiser"}
