@@ -43,11 +43,13 @@ export default function OpprettAnnonse() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const opprettAnnonsePath = `/dashboard/opprett-annonse${searchParams.toString() ? `?${searchParams.toString()}` : ""}`;
+
   useEffect(() => {
     if (!authLoading && !user) {
-      navigate('/login?returnUrl=/dashboard/opprett-annonse');
+      navigate(`/login?returnUrl=${encodeURIComponent(opprettAnnonsePath)}`);
     }
-  }, [user, authLoading, navigate]);
+  }, [user, authLoading, navigate, opprettAnnonsePath]);
 
   if (authLoading || profileLoading) {
     return (
@@ -60,6 +62,8 @@ export default function OpprettAnnonse() {
   }
 
   if (!user) return null;
+
+  const komIGangHref = `/kom-i-gang?returnUrl=${encodeURIComponent(opprettAnnonsePath)}`;
 
   if (!ownerProfile) {
     return (
@@ -80,14 +84,21 @@ export default function OpprettAnnonse() {
                 Opprett en Entusiastprofil først for å legge ut annonser på markedsplassen.
               </p>
               <Link
-                to="/dashboard"
+                to={komIGangHref}
                 className="group inline-flex items-center gap-3 px-10 py-4 font-display text-sm uppercase tracking-[0.2em] text-white border-2 border-white/30 hover:border-white transition-all"
                 style={{ background: 'hsl(2, 85%, 40%)' }}
               >
-                <ChevronLeft className="h-4 w-4" />
-                Til Dashboard
+                Opprett profil og fortsett
                 <ChevronRight className="w-4 h-4 opacity-50 group-hover:translate-x-1 transition-transform" />
               </Link>
+              <div className="mt-4">
+                <Link
+                  to="/dashboard"
+                  className="font-display text-xs uppercase tracking-[0.2em] text-foreground/40 hover:text-foreground/70 transition-colors"
+                >
+                  Til Dashboard
+                </Link>
+              </div>
             </div>
           </div>
         </section>
@@ -111,6 +122,7 @@ export default function OpprettAnnonse() {
               </p>
               <ContactEmailGate
                 ownerProfileId={ownerProfile.id}
+                loginEmail={user?.email ?? null}
                 onSuccess={() => queryClient.invalidateQueries({ queryKey: ["owner-profile", user?.id] })}
               />
             </div>
@@ -441,8 +453,8 @@ export default function OpprettAnnonse() {
   );
 }
 
-function ContactEmailGate({ ownerProfileId, onSuccess }: { ownerProfileId: string; onSuccess: () => void }) {
-  const [email, setEmail] = useState("");
+function ContactEmailGate({ ownerProfileId, loginEmail, onSuccess }: { ownerProfileId: string; loginEmail: string | null; onSuccess: () => void }) {
+  const [email, setEmail] = useState(() => loginEmail?.trim() ?? "");
   const [phone, setPhone] = useState("");
   const [saving, setSaving] = useState(false);
 
@@ -450,16 +462,30 @@ function ContactEmailGate({ ownerProfileId, onSuccess }: { ownerProfileId: strin
     e.preventDefault();
     if (!email.includes("@")) return;
     setSaving(true);
-    await supabase
+    const { error } = await supabase
       .from("person_profiles")
       .update({ contact_email: email, contact_phone: phone || null } as any)
       .eq("id", ownerProfileId);
     setSaving(false);
+    if (error) {
+      toast.error("Kunne ikke lagre kontaktinfo");
+      return;
+    }
+    toast.success("Kontaktinfo lagret");
     onSuccess();
   };
 
   return (
     <form onSubmit={handleSave} className="space-y-4 text-left max-w-sm mx-auto">
+      {loginEmail && email !== loginEmail && (
+        <button
+          type="button"
+          onClick={() => setEmail(loginEmail)}
+          className="w-full text-sm text-primary hover:text-primary/80 underline underline-offset-2 transition-colors text-center"
+        >
+          Bruk min innloggings-e-post ({loginEmail})
+        </button>
+      )}
       <div className="space-y-1">
         <label className="text-sm font-medium">E-post *</label>
         <input

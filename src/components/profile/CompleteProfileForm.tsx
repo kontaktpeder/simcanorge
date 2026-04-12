@@ -3,7 +3,8 @@ import { useForm } from "react-hook-form";
 import { useQueryClient } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { safeInternalPath } from "@/lib/navigation";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { useUpsertPersonProfile } from "@/hooks/useMyPersonProfile";
@@ -37,6 +38,8 @@ function toSlug(value: string) {
 
 export function CompleteProfileForm() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const returnPath = safeInternalPath(searchParams.get("returnUrl"), "/dashboard");
   const queryClient = useQueryClient();
   const { user } = useAuth();
   const { mutateAsync, isPending } = useUpsertPersonProfile();
@@ -76,10 +79,10 @@ export function CompleteProfileForm() {
   async function onSubmit(values: FormValues) {
     try {
       await mutateAsync({ display_name: values.display_name, slug: values.slug, bio: values.bio, location: values.location, is_public: values.is_public });
-      // Wait for cache to update before navigating so RequirePersonProfile sees the new profile
       await queryClient.invalidateQueries({ queryKey: ["person_profile", "me"] });
+      await queryClient.invalidateQueries({ queryKey: ["owner-profile", user?.id] });
       toast.success("Profil opprettet!");
-      navigate("/dashboard");
+      navigate(returnPath);
     } catch (err: any) {
       if (err?.code === "23505" || err?.message?.includes("unique")) {
         toast.error("Dette brukernavnet er allerede i bruk. Velg et annet.");
