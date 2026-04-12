@@ -61,6 +61,9 @@ export default function OpprettAnnonse() {
 
   if (!user) return null;
 
+  const opprettAnnonsePath = `/dashboard/opprett-annonse${searchParams.toString() ? `?${searchParams.toString()}` : ""}`;
+  const komIGangHref = `/kom-i-gang?returnUrl=${encodeURIComponent(opprettAnnonsePath)}`;
+
   if (!ownerProfile) {
     return (
       <Layout>
@@ -80,14 +83,21 @@ export default function OpprettAnnonse() {
                 Opprett en Entusiastprofil først for å legge ut annonser på markedsplassen.
               </p>
               <Link
-                to="/dashboard"
+                to={komIGangHref}
                 className="group inline-flex items-center gap-3 px-10 py-4 font-display text-sm uppercase tracking-[0.2em] text-white border-2 border-white/30 hover:border-white transition-all"
                 style={{ background: 'hsl(2, 85%, 40%)' }}
               >
-                <ChevronLeft className="h-4 w-4" />
-                Til Dashboard
+                Opprett profil og fortsett
                 <ChevronRight className="w-4 h-4 opacity-50 group-hover:translate-x-1 transition-transform" />
               </Link>
+              <div className="mt-4">
+                <Link
+                  to="/dashboard"
+                  className="font-display text-xs uppercase tracking-[0.2em] text-foreground/40 hover:text-foreground/70 transition-colors"
+                >
+                  Til Dashboard
+                </Link>
+              </div>
             </div>
           </div>
         </section>
