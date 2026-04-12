@@ -7,6 +7,8 @@ import { PasswordSetupStep } from "@/components/profile/PasswordSetupStep";
 export default function CompleteProfilePage() {
   const [searchParams] = useSearchParams();
   const skalSettePassord = searchParams.get("sett-passord") === "1";
+  const returnUrl = searchParams.get("returnUrl");
+  const fromCarClaim = skalSettePassord && returnUrl?.includes("/bil");
   const [passordSatt, setPassordSatt] = useState(false);
   const visPassordSteg = skalSettePassord && !passordSatt;
 
@@ -24,6 +26,11 @@ export default function CompleteProfilePage() {
                 ? "Velg et passord for kontoen din."
                 : "Sett opp profilen din for å komme i gang."}
             </p>
+            {fromCarClaim && (
+              <p className="text-sm text-primary">
+                Etter passord og profil sender vi deg til bilen din.
+              </p>
+            )}
           </div>
           {visPassordSteg ? (
             <PasswordSetupStep onSuccess={() => setPassordSatt(true)} />

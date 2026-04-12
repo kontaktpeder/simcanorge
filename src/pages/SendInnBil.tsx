@@ -28,29 +28,36 @@ function clearPendingClaimCarId() {
   localStorage.removeItem("pendingClaimCarId");
 }
 
-async function navigateToCarDestination(
-  carId: string,
-  navigate: ReturnType<typeof useNavigate>,
-  toast: ReturnType<typeof useToast>["toast"],
-) {
+async function resolvePostClaimPath(carId: string): Promise<string> {
   const { data: car } = await supabase
     .from("cars")
     .select("id, slug, status, published_at")
     .eq("id", carId)
     .single();
 
-  toast({
-    title: "Bilen er koblet til kontoen din",
-    description: "Du kan nå redigere bilen fra ditt eget bilrom.",
-  });
+  if (car?.published_at && car?.slug) return `/biler/${car.slug}`;
+  if (car) return `/dashboard/bil/${car.id}`;
+  return "/dashboard/mine-biler";
+}
 
-  if (car?.published_at) {
-    navigate(`/biler/${car.slug}`);
-  } else if (car) {
-    navigate(`/dashboard/bil/${car.id}`);
-  } else {
-    navigate("/dashboard/mine-biler");
-  }
+function navigateToOnboarding(
+  carId: string,
+  navigate: ReturnType<typeof useNavigate>,
+  toast: ReturnType<typeof useToast>["toast"],
+) {
+  void (async () => {
+    const returnUrl = await resolvePostClaimPath(carId);
+    const params = new URLSearchParams();
+    params.set("sett-passord", "1");
+    params.set("returnUrl", returnUrl);
+
+    toast({
+      title: "Bilen er koblet til kontoen din",
+      description: "Velg et passord og fullfør profilen for å åpne bilrommet.",
+    });
+
+    navigate(`/kom-i-gang?${params.toString()}`);
+  })();
 }
 
 export default function SendInnBil() {
@@ -83,7 +90,7 @@ export default function SendInnBil() {
 
       if (!error && res?.ok) {
         clearPendingClaimCarId();
-        await navigateToCarDestination(pendingCarId, navigate, toast);
+        navigateToOnboarding(pendingCarId, navigate, toast);
         return;
       }
 
@@ -163,7 +170,7 @@ export default function SendInnBil() {
                 navigate("/");
               }}
               onVerified={async () => {
-                await navigateToCarDestination(state.carId, navigate, toast);
+                navigateToOnboarding(state.carId, navigate, toast);
               }}
             />
           </div>
