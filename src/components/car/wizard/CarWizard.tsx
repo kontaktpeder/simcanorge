@@ -248,9 +248,9 @@ export function CarWizard({ onSuccess }: CarWizardProps) {
   };
 
   return (
-    <div className="max-w-5xl mx-auto">
+    <div className="max-w-5xl mx-auto flex flex-col h-full min-h-0">
       {/* Progress bar */}
-      <div className="flex items-center gap-1 mb-8">
+      <div className="flex items-center gap-1 mb-4 shrink-0">
         {STEP_LABELS.map((label, i) => (
           <div key={label} className="flex-1">
             <div className={`h-1.5 rounded-full transition-colors duration-300 ${
@@ -263,9 +263,9 @@ export function CarWizard({ onSuccess }: CarWizardProps) {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 flex-1 min-h-0">
         {/* Main form area */}
-        <div className="lg:col-span-3">
+        <div className="lg:col-span-3 overflow-y-auto min-h-0 pr-1 scrollbar-thin">
           {step === 0 && <StepImages data={data} onChange={onChange} onNext={goNext} />}
           {step === 1 && <StepInfo data={data} onChange={onChange} onNext={goNext} onBack={goBack} errors={errors} />}
           {step === 2 && <StepStory data={data} onChange={onChange} onNext={goNext} onBack={goBack} />}
@@ -276,10 +276,8 @@ export function CarWizard({ onSuccess }: CarWizardProps) {
         </div>
 
         {/* Live preview (sticky on desktop) */}
-        <div className="lg:col-span-2 hidden lg:block">
-          <div className="sticky top-24">
-            <CarWizardPreview data={data} />
-          </div>
+        <div className="lg:col-span-2 hidden lg:block overflow-y-auto min-h-0">
+          <CarWizardPreview data={data} />
         </div>
       </div>
 
