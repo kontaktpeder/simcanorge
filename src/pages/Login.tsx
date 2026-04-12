@@ -106,14 +106,15 @@ export default function Login() {
         <div className="relative z-10 w-full max-w-md mx-auto px-4 py-12">
           {/* Header */}
           <div className="text-center mb-8">
-            <p className="text-[10px] tracking-[0.3em] uppercase font-display mb-2"
-              style={{ background: 'linear-gradient(135deg, #34eab8, #2dd4a8)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+            <p className="text-[10px] tracking-[0.3em] uppercase mb-2"
+              style={{ ...oswald, fontWeight: 500, background: 'linear-gradient(135deg, #34eab8, #2dd4a8)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
               bilgarasje.no
             </p>
-            <h1 className="font-display text-3xl sm:text-4xl uppercase tracking-wide text-foreground font-bold">
+            <h1 className="text-3xl sm:text-4xl uppercase tracking-wide text-foreground font-bold italic"
+              style={chakra}>
               Logg inn
             </h1>
-            <p className="mt-2 text-sm text-muted-foreground">
+            <p className="mt-2 text-sm text-muted-foreground" style={oswald}>
               Få tilgang til din garasje
             </p>
           </div>
