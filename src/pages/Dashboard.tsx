@@ -17,6 +17,7 @@ import { useMyListings } from '@/hooks/useMarketplace';
 import { useMyPersonProfile } from '@/hooks/useMyPersonProfile';
 import { useMyPages } from '@/hooks/useMyPages';
 import { useMyEvents } from '@/hooks/useMyEvents';
+import { isSellerMinimumComplete } from '@/lib/sellerProfile';
 
 const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
 const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
@@ -224,9 +225,9 @@ export default function Dashboard() {
         <DashCard to="/dashboard/mine-annonser" icon={ShoppingBag} delay={0.15}>
           <DashTitle>Mine annonser</DashTitle>
           <DashDesc>
-            {ownerProfile?.approved_at
+            {isSellerMinimumComplete(ownerProfile)
               ? (myListings?.length ?? 0) === 0 ? 'Opprett din første annonse' : 'Se og rediger annonsene dine'
-              : ownerProfile ? 'Venter på godkjenning' : 'Opprett entusiastprofil for å selge'}
+              : ownerProfile ? 'Fullfør profilen for å selge' : 'Opprett entusiastprofil for å selge'}
           </DashDesc>
           <DashCount>{myListings?.length || 0}</DashCount>
         </DashCard>
