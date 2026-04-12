@@ -37,7 +37,7 @@ export default function OmOss() {
         <div className="max-w-[750px] mx-auto px-5 md:px-8 py-14 md:py-20">
           <AnimatedSection>
             <p className="font-serif text-xl sm:text-2xl md:text-[1.7rem] text-[#3a2e24]/85 leading-[1.7] italic">
-              Simca Norge er opprettet fordi disse bilene nesten forsvant – og fordi noen mente de fortjente bedre.
+              Bilgarasje.no startet med Simca-entusiastene – fordi disse bilene nesten forsvant, og fordi noen mente de fortjente bedre. I dag er plattformen åpen for alle bilentusiaster i Norge.
             </p>
           </AnimatedSection>
         </div>
@@ -97,7 +97,7 @@ export default function OmOss() {
               </h2>
             </div>
             <p className="text-[15px] sm:text-base text-[#3a2e24]/65 leading-[1.85]">
-              Simca Norge skal være et visuelt og levende arkiv der bilene får plass, historiene kan bevares, og entusiasmen kan vokse. Her kan både ferdig restaurerte biler og pågående prosjekter vises frem – til inspirasjon for andre.
+              Bilgarasje.no er et visuelt og levende arkiv der bilene får plass, historiene kan bevares, og entusiasmen kan vokse. Her kan både ferdig restaurerte biler og pågående prosjekter vises frem – til inspirasjon for andre.
             </p>
           </AnimatedSection>
 
@@ -113,7 +113,7 @@ export default function OmOss() {
               </h2>
             </div>
             <p className="text-[15px] sm:text-base text-[#3a2e24]/65 leading-[1.85]">
-              I takt med at flere biler nå restaureres, har også behovet for deler økt. Simca Norge har fått tilgang til et omfattende bildellager, som formidles gjennom denne siden. Målet er å gjøre det enklere for eiere å finne riktige deler, holde bilene på veien – og senke terskelen for å sette i gang med restaurering.
+              I takt med at flere biler nå restaureres, har også behovet for deler økt. Bilgarasje.no formidler et omfattende bildellager med røtter i Simca-miljøet. Målet er å gjøre det enklere for eiere å finne riktige deler, holde bilene på veien – og senke terskelen for å sette i gang med restaurering.
             </p>
           </AnimatedSection>
 
@@ -130,7 +130,7 @@ export default function OmOss() {
             </div>
             <div className="border-l-[3px] border-[#c4962c]/40 pl-5 space-y-3">
               <p className="text-[15px] sm:text-base text-[#3a2e24]/65 leading-[1.85]">
-                Simca Norge er ikke ment å erstatte fellesskapet på Facebook, men å utfylle det.
+                Bilgarasje.no er ikke ment å erstatte fellesskapet på Facebook, men å utfylle det.
               </p>
               <p className="font-serif text-lg md:text-xl text-[#3a2e24]/80 italic leading-relaxed">
                 Facebook er møteplassen. Denne siden er utstillingsrommet, verktøykassen og inspirasjonskilden.
