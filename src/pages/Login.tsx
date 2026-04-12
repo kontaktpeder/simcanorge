@@ -147,6 +147,7 @@ export default function Login() {
                   placeholder="din@epost.no"
                   required
                   className="h-12 text-base bg-background/50 border-border/60 focus:border-primary/60"
+                  style={oswald}
                 />
               </div>
 
@@ -163,11 +164,12 @@ export default function Login() {
                   required
                   minLength={6}
                   className="h-12 text-base bg-background/50 border-border/60 focus:border-primary/60"
+                  style={oswald}
                 />
               </div>
 
               <div className="text-right">
-                <Link to="/glemt-passord" className="text-xs text-muted-foreground hover:text-primary transition-colors">
+                <Link to="/glemt-passord" className="text-xs text-muted-foreground hover:text-primary transition-colors" style={oswald}>
                   Glemt passord?
                 </Link>
               </div>
@@ -192,7 +194,7 @@ export default function Login() {
             </form>
 
             <div className="mt-6 pt-5 border-t border-border/40 text-center">
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-muted-foreground" style={oswald}>
                 Ikke medlem ennå?{' '}
                 <Link to="/sok-om-tilgang" className="text-primary hover:underline font-medium inline-flex items-center gap-1">
                   Søk om tilgang <ArrowRight className="w-3 h-3" />
@@ -201,7 +203,7 @@ export default function Login() {
             </div>
           </div>
 
-          <p className="text-center text-xs text-muted-foreground/60 mt-6">
+          <p className="text-center text-xs text-muted-foreground/60 mt-6" style={oswald}>
             Ved å logge inn godtar du våre{' '}
             <Link to="/personvern" className="underline hover:text-muted-foreground transition-colors">personvernregler</Link>
           </p>
