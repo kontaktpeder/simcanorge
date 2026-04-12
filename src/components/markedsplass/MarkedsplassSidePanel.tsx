@@ -110,7 +110,7 @@ export function MarkedsplassSidePanel({
         >
           <div>
             <p className="font-display text-[10px] uppercase tracking-[0.4em] text-white/40">
-              Simca Norge
+              Bilgarasje.no
             </p>
             <h2 className="font-display text-lg uppercase tracking-wider text-white leading-none mt-0.5">
               Filter

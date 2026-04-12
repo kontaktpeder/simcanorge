@@ -65,7 +65,7 @@ export function useCreateAccountRequest() {
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["account-requests", variables.userId] });
-      toast.success("Forespørsel sendt til Simca Norge. Du vil bli kontaktet på e-post.");
+      toast.success("Forespørsel sendt til Bilgarasje.no. Du vil bli kontaktet på e-post.");
     },
     onError: (error) => {
       console.error("Error creating account request:", error);

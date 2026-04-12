@@ -80,7 +80,7 @@ export function HeroSection() {
             <div className="flex items-center justify-center mb-1 md:mb-4">
               <img 
                 src="/simca-badge.png" 
-                alt="Simca Norge" 
+                alt="Bilgarasje.no" 
                 className="h-32 md:h-44 lg:h-56 xl:h-64 w-auto" 
                 loading="eager"
                 fetchPriority="high"
