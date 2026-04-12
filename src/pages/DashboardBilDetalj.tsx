@@ -32,26 +32,26 @@ const CATEGORIES = [
 
 const statusLabel = (s: string) => {
   switch (s) {
-    case 'published': return { text: 'Publisert', color: 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/20' };
-    case 'draft': return { text: 'Kladd', color: 'bg-amber-500/15 text-amber-400 border border-amber-500/20' };
-    case 'submitted': return { text: 'Innsendt', color: 'bg-blue-500/15 text-blue-400 border border-blue-500/20' };
-    case 'archived': return { text: 'Arkivert', color: 'bg-muted text-muted-foreground border border-border' };
-    default: return { text: s, color: 'bg-muted text-muted-foreground border border-border' };
+    case 'published': return { text: 'Publisert', color: 'bg-emerald-50 text-emerald-700 border border-emerald-200' };
+    case 'draft': return { text: 'Kladd', color: 'bg-amber-50 text-amber-700 border border-amber-200' };
+    case 'submitted': return { text: 'Innsendt', color: 'bg-blue-50 text-blue-700 border border-blue-200' };
+    case 'archived': return { text: 'Arkivert', color: 'bg-stone-100 text-stone-500 border border-stone-200' };
+    default: return { text: s, color: 'bg-stone-100 text-stone-500 border border-stone-200' };
   }
 };
 
-/* ─── Minimal inline button ─── */
+/* ─── Workspace button ─── */
 function InlineBtn({ onClick, disabled, children, variant = 'ghost', className = '' }: {
   onClick?: () => void; disabled?: boolean; children: React.ReactNode;
   variant?: 'primary' | 'ghost' | 'outline' | 'destructive' | 'glow'; className?: string;
 }) {
   const base = 'inline-flex items-center gap-1.5 text-[11px] sm:text-[12px] uppercase tracking-[0.08em] font-bold px-3 py-2 rounded-lg transition-all duration-200 active:scale-95 disabled:opacity-40';
   const styles = {
-    primary: 'bg-primary text-primary-foreground hover:brightness-110',
-    ghost: 'text-muted-foreground/60 hover:text-foreground hover:bg-white/[0.04]',
-    outline: 'border border-border/60 text-muted-foreground/70 hover:border-primary/30 hover:text-foreground',
-    destructive: 'bg-destructive text-destructive-foreground hover:brightness-110',
-    glow: 'bg-primary text-primary-foreground hover:brightness-110 shadow-[0_0_24px_rgba(45,212,168,0.2)]',
+    primary: 'bg-stone-900 text-white hover:bg-stone-800',
+    ghost: 'text-stone-400 hover:text-stone-700 hover:bg-stone-100',
+    outline: 'border border-stone-200 text-stone-500 hover:border-stone-300 hover:text-stone-700',
+    destructive: 'bg-red-500 text-white hover:bg-red-600',
+    glow: 'bg-teal-600 text-white hover:bg-teal-700 shadow-md shadow-teal-600/20',
   };
   return (
     <button onClick={onClick} disabled={disabled} className={`${base} ${styles[variant]} ${className}`} style={oswald}>{children}</button>
@@ -111,7 +111,7 @@ export default function DashboardBilDetalj() {
     }
   }, [car]);
 
-  // ─── Actions ───
+  // ─── Actions (unchanged logic) ───
   const saveBasicInfo = async () => {
     if (!car) return;
     setIsSaving(true);
@@ -237,22 +237,22 @@ export default function DashboardBilDetalj() {
 
   // ─── Loading / error states ───
   if (authLoading || isLoading) {
-    return <Layout><div className="min-h-[60vh] flex items-center justify-center bg-background"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div></Layout>;
+    return <Layout><div className="min-h-[60vh] flex items-center justify-center" style={{ background: '#faf9f7' }}><Loader2 className="w-8 h-8 animate-spin text-teal-600" /></div></Layout>;
   }
   if (!user) return null;
   if (carData && !carData.hasAccess) {
     return (
       <Layout>
-        <div className="min-h-[60vh] flex flex-col items-center justify-center bg-background">
-          <XCircle className="w-14 h-14 text-destructive/50 mb-4" />
-          <p className="text-[1.1rem] uppercase font-bold text-muted-foreground tracking-[0.06em]" style={oswald}>Ingen tilgang</p>
-          <Link to="/dashboard/mine-biler" className="mt-4 text-[13px] uppercase tracking-[0.1em] text-primary hover:text-primary/80 font-bold border-b border-primary/30 pb-0.5" style={oswald}>← Tilbake til mine biler</Link>
+        <div className="min-h-[60vh] flex flex-col items-center justify-center" style={{ background: '#faf9f7' }}>
+          <XCircle className="w-14 h-14 text-red-300 mb-4" />
+          <p className="text-[1.1rem] uppercase font-bold text-stone-400 tracking-[0.06em]" style={oswald}>Ingen tilgang</p>
+          <Link to="/dashboard/mine-biler" className="mt-4 text-[13px] uppercase tracking-[0.1em] text-teal-600 hover:text-teal-700 font-bold border-b border-teal-600/30 pb-0.5" style={oswald}>← Tilbake til mine biler</Link>
         </div>
       </Layout>
     );
   }
   if (!car) {
-    return <Layout><div className="min-h-[60vh] flex flex-col items-center justify-center bg-background"><Car className="w-14 h-14 text-muted-foreground/30 mb-4" /><p className="text-[1.1rem] uppercase font-bold text-muted-foreground/50 tracking-[0.06em]" style={oswald}>Bilen finnes ikke</p></div></Layout>;
+    return <Layout><div className="min-h-[60vh] flex flex-col items-center justify-center" style={{ background: '#faf9f7' }}><Car className="w-14 h-14 text-stone-300 mb-4" /><p className="text-[1.1rem] uppercase font-bold text-stone-400 tracking-[0.06em]" style={oswald}>Bilen finnes ikke</p></div></Layout>;
   }
 
   const sortedImages = [...(car.car_images || [])].sort((a: any, b: any) => (a.sort_order || 0) - (b.sort_order || 0));
@@ -305,15 +305,18 @@ export default function DashboardBilDetalj() {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-background">
+      {/* Light workspace wrapper */}
+      <div className="min-h-screen" style={{ background: '#faf9f7' }}>
 
-        {/* ─── HERO – cleaner, let the car breathe ─── */}
-        <section className="relative overflow-hidden" style={{ background: 'linear-gradient(180deg, hsl(215 28% 6%) 0%, hsl(215 25% 8%) 100%)' }}>
+        {/* ─── HERO – warm light with photo bleed ─── */}
+        <section className="relative overflow-hidden">
+          {/* Dark photo band */}
+          <div className="absolute inset-0" style={{ background: 'linear-gradient(180deg, #1a1814 0%, #2a2620 100%)' }} />
           {mainImage && (
             <div className="absolute inset-0 pointer-events-none">
               <img src={mainImage.image_url} alt="" className="absolute inset-0 w-full h-full object-cover"
-                style={{ opacity: 0.18, filter: 'saturate(0.6) blur(1px)' }} />
-              <div className="absolute inset-0" style={{ background: 'linear-gradient(180deg, rgba(7,11,16,0.5) 0%, rgba(7,11,16,0.85) 60%, hsl(215 28% 6%) 100%)' }} />
+                style={{ opacity: 0.25, filter: 'saturate(0.5) blur(1px)' }} />
+              <div className="absolute inset-0" style={{ background: 'linear-gradient(180deg, rgba(26,24,20,0.6) 0%, rgba(26,24,20,0.9) 70%, rgba(26,24,20,1) 100%)' }} />
             </div>
           )}
 
@@ -325,7 +328,7 @@ export default function DashboardBilDetalj() {
               className="pt-8 pb-10 sm:pt-10 sm:pb-14"
             >
               <Link to="/dashboard/mine-biler"
-                className="inline-flex items-center gap-1.5 text-muted-foreground/40 hover:text-muted-foreground/70 mb-6 transition-colors text-[11px] uppercase tracking-[0.15em] font-semibold"
+                className="inline-flex items-center gap-1.5 text-white/30 hover:text-white/60 mb-6 transition-colors text-[11px] uppercase tracking-[0.15em] font-semibold"
                 style={oswald}>
                 <ArrowLeft className="w-3.5 h-3.5" /> Mine biler
               </Link>
@@ -333,29 +336,29 @@ export default function DashboardBilDetalj() {
               <div className="flex items-center gap-3 mb-3">
                 <span className={`text-[10px] uppercase tracking-[0.08em] font-bold px-2.5 py-1 rounded-full ${status.color}`} style={oswald}>{status.text}</span>
                 {car.overhauled && (
-                  <span className="inline-flex items-center gap-1 text-[10px] uppercase tracking-[0.08em] font-bold text-emerald-400/70" style={oswald}>
+                  <span className="inline-flex items-center gap-1 text-[10px] uppercase tracking-[0.08em] font-bold text-emerald-300/70" style={oswald}>
                     <Wrench className="w-3 h-3" /> Overhalt
                   </span>
                 )}
               </div>
 
               {car.year && (
-                <span className="text-[1.4rem] sm:text-[1.6rem] font-serif text-primary/25 leading-none block mb-0.5">{car.year}</span>
+                <span className="text-[1.4rem] sm:text-[1.6rem] font-serif text-white/20 leading-none block mb-0.5">{car.year}</span>
               )}
-              <h1 className="text-[1.3rem] sm:text-[1.7rem] md:text-[2rem] leading-[0.95] uppercase tracking-[0.01em] text-foreground font-bold"
+              <h1 className="text-[1.3rem] sm:text-[1.7rem] md:text-[2rem] leading-[0.95] uppercase tracking-[0.01em] text-white font-bold"
                 style={{ ...chakra }}>
                 {car.title}
               </h1>
 
-              {/* Progress line */}
-              <div className="mt-4 h-[1px] w-full max-w-[280px]" style={{
-                background: 'linear-gradient(90deg, hsl(168 60% 40% / 0.5) 0%, hsl(168 60% 40% / 0.1) 70%, transparent 100%)',
+              {/* Warm accent line */}
+              <div className="mt-4 h-[2px] w-full max-w-[200px] rounded-full" style={{
+                background: 'linear-gradient(90deg, #d4a574 0%, #c4956b 40%, transparent 100%)',
               }} />
 
               <div className="flex flex-wrap items-center gap-3 mt-4">
                 {isPublished && car.slug && (
                   <Link to={`/biler/${car.slug}`}
-                    className="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-[0.08em] font-bold text-primary/60 hover:text-primary transition-colors" style={oswald}>
+                    className="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-[0.08em] font-bold text-white/40 hover:text-white/70 transition-colors" style={oswald}>
                     <ExternalLink className="w-3.5 h-3.5" /> Se offentlig side
                   </Link>
                 )}
@@ -364,17 +367,15 @@ export default function DashboardBilDetalj() {
           </div>
         </section>
 
-        {/* ─── CONTENT FLOW ─── */}
+        {/* ─── CONTENT FLOW – light workspace ─── */}
         <div className="max-w-[900px] mx-auto px-4 sm:px-6 py-8 sm:py-12 space-y-12 sm:space-y-16">
 
-          {/* ──────────────────────────────────
-              1. PUBLISH STATUS (compact)
-          ────────────────────────────────── */}
+          {/* ── 1. PUBLISH STATUS ── */}
           {!isArchived && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.05 }}>
               {isPublished ? (
-                <div className="flex items-center justify-between py-3 px-4 rounded-lg border border-emerald-500/15 bg-emerald-500/[0.04]">
-                  <div className="flex items-center gap-2 text-emerald-400">
+                <div className="flex items-center justify-between py-3 px-4 rounded-xl border border-emerald-200 bg-emerald-50/60">
+                  <div className="flex items-center gap-2 text-emerald-700">
                     <CheckCircle2 className="w-4 h-4" />
                     <span className="text-[12px] uppercase tracking-[0.06em] font-bold" style={oswald}>Bilen er live</span>
                   </div>
@@ -385,9 +386,9 @@ export default function DashboardBilDetalj() {
               ) : (
                 <div className="space-y-3">
                   {openRequest && (
-                    <div className="flex items-center gap-3 bg-amber-500/[0.06] border border-amber-500/15 rounded-lg p-3">
-                      <Clock className="w-4 h-4 text-amber-400 shrink-0" />
-                      <p className="text-[12px] text-amber-400/70 flex-1" style={oswald}>Åpen forespørsel</p>
+                    <div className="flex items-center gap-3 bg-amber-50 border border-amber-200 rounded-xl p-3">
+                      <Clock className="w-4 h-4 text-amber-600 shrink-0" />
+                      <p className="text-[12px] text-amber-700 flex-1" style={oswald}>Åpen forespørsel</p>
                       <InlineBtn variant="ghost" onClick={cancelRequest}><X className="w-3 h-3" /> Avbryt</InlineBtn>
                     </div>
                   )}
@@ -398,7 +399,7 @@ export default function DashboardBilDetalj() {
                         { ok: modelOk, label: 'Modell' },
                         { ok: imagesOk, label: 'Bilde' },
                       ].map(({ ok, label }) => (
-                        <span key={label} className={`inline-flex items-center gap-1 text-[11px] uppercase tracking-[0.06em] font-bold ${ok ? 'text-emerald-400/70' : 'text-muted-foreground/30'}`} style={oswald}>
+                        <span key={label} className={`inline-flex items-center gap-1 text-[11px] uppercase tracking-[0.06em] font-bold ${ok ? 'text-emerald-600' : 'text-stone-300'}`} style={oswald}>
                           {ok ? <CheckCircle2 className="w-3.5 h-3.5" /> : <Circle className="w-3.5 h-3.5" />} {label}
                         </span>
                       ))}
@@ -412,18 +413,15 @@ export default function DashboardBilDetalj() {
             </motion.div>
           )}
 
-          {/* ──────────────────────────────────
-              2. GALLERY (editorial: 1 large + 2 stacked)
-          ────────────────────────────────── */}
+          {/* ── 2. GALLERY (editorial) ── */}
           <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
             <input type="file" ref={fileInputRef} onChange={handleImageUpload} accept="image/*" multiple className="hidden" />
 
             {sortedImages.length > 0 ? (
               <div className="space-y-3">
-                {/* Main gallery grid */}
                 <div className={`grid gap-2 sm:gap-3 ${sideImages.length > 0 ? 'grid-cols-1 sm:grid-cols-[1fr_0.42fr]' : 'grid-cols-1'}`}>
                   {/* Hero image */}
-                  <div className="relative group aspect-[16/10] rounded-xl overflow-hidden bg-secondary/30">
+                  <div className="relative group aspect-[16/10] rounded-2xl overflow-hidden bg-stone-100 shadow-sm">
                     <img src={mainImage.image_url} alt={mainImage.alt_text || car.title} className="w-full h-full object-cover" />
                     <div className="absolute top-3 left-3">
                       <span className="bg-black/50 backdrop-blur-sm text-white text-[10px] uppercase tracking-[0.08em] font-bold px-2.5 py-1 rounded-md inline-flex items-center gap-1" style={oswald}>
@@ -431,7 +429,7 @@ export default function DashboardBilDetalj() {
                       </span>
                     </div>
                     <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity bg-black/30 flex items-center justify-center gap-2">
-                      <button onClick={() => deleteImage(mainImage.id)} className="bg-white/15 hover:bg-white/25 backdrop-blur-sm text-white p-2.5 rounded-full active:scale-90 transition-all">
+                      <button onClick={() => deleteImage(mainImage.id)} className="bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white p-2.5 rounded-full active:scale-90 transition-all">
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
@@ -443,15 +441,15 @@ export default function DashboardBilDetalj() {
                       {sideImages.map((img: any, i: number) => {
                         const realIndex = i + 1;
                         return (
-                          <div key={img.id} className="relative group aspect-[4/3] sm:aspect-auto sm:h-full rounded-xl overflow-hidden bg-secondary/30">
+                          <div key={img.id} className="relative group aspect-[4/3] sm:aspect-auto sm:h-full rounded-2xl overflow-hidden bg-stone-100 shadow-sm">
                             <img src={img.image_url} alt={img.alt_text || car.title} className="w-full h-full object-cover" />
                             <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity bg-black/40 flex items-center justify-center gap-1.5">
                               <button onClick={() => setCarMainImage(realIndex)} disabled={isReorderingImages}
-                                className="bg-white/15 hover:bg-white/25 backdrop-blur-sm text-white p-2 rounded-full active:scale-90 transition-all" title="Sett som hovedbilde">
+                                className="bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white p-2 rounded-full active:scale-90 transition-all" title="Sett som hovedbilde">
                                 <Star className="w-3.5 h-3.5" />
                               </button>
                               <button onClick={() => deleteImage(img.id)}
-                                className="bg-white/15 hover:bg-white/25 backdrop-blur-sm text-white p-2 rounded-full active:scale-90 transition-all">
+                                className="bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white p-2 rounded-full active:scale-90 transition-all">
                                 <Trash2 className="w-3.5 h-3.5" />
                               </button>
                             </div>
@@ -468,27 +466,27 @@ export default function DashboardBilDetalj() {
                     {restImages.map((img: any, i: number) => {
                       const realIndex = i + 3;
                       return (
-                        <div key={img.id} className="relative group aspect-[4/3] rounded-lg overflow-hidden bg-secondary/30">
+                        <div key={img.id} className="relative group aspect-[4/3] rounded-xl overflow-hidden bg-stone-100 shadow-sm">
                           <img src={img.image_url} alt={img.alt_text || car.title} className="w-full h-full object-cover" />
                           <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity bg-black/40 flex items-center justify-center gap-1.5">
                             {realIndex > 0 && (
                               <button onClick={() => moveCarImageLeft(realIndex)} disabled={isReorderingImages}
-                                className="bg-white/15 hover:bg-white/25 backdrop-blur-sm text-white p-1.5 rounded-full active:scale-90 transition-all">
+                                className="bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white p-1.5 rounded-full active:scale-90 transition-all">
                                 <ChevronLeft className="w-3.5 h-3.5" />
                               </button>
                             )}
                             <button onClick={() => setCarMainImage(realIndex)} disabled={isReorderingImages}
-                              className="bg-white/15 hover:bg-white/25 backdrop-blur-sm text-white p-1.5 rounded-full active:scale-90 transition-all">
+                              className="bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white p-1.5 rounded-full active:scale-90 transition-all">
                               <Star className="w-3.5 h-3.5" />
                             </button>
                             {realIndex < sortedImages.length - 1 && (
                               <button onClick={() => moveCarImageRight(realIndex)} disabled={isReorderingImages}
-                                className="bg-white/15 hover:bg-white/25 backdrop-blur-sm text-white p-1.5 rounded-full active:scale-90 transition-all">
+                                className="bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white p-1.5 rounded-full active:scale-90 transition-all">
                                 <ChevronRight className="w-3.5 h-3.5" />
                               </button>
                             )}
                             <button onClick={() => deleteImage(img.id)}
-                              className="bg-white/15 hover:bg-white/25 backdrop-blur-sm text-white p-1.5 rounded-full active:scale-90 transition-all">
+                              className="bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white p-1.5 rounded-full active:scale-90 transition-all">
                               <Trash2 className="w-3.5 h-3.5" />
                             </button>
                           </div>
@@ -500,38 +498,34 @@ export default function DashboardBilDetalj() {
 
                 {/* Upload more */}
                 <button onClick={() => fileInputRef.current?.click()} disabled={isUploadingImages}
-                  className="text-[11px] uppercase tracking-[0.12em] text-muted-foreground/40 hover:text-primary/70 font-bold transition-colors" style={oswald}>
+                  className="text-[11px] uppercase tracking-[0.12em] text-stone-400 hover:text-teal-600 font-bold transition-colors" style={oswald}>
                   <Upload className="w-3.5 h-3.5 inline mr-1.5" />
                   {isUploadingImages ? 'Laster opp...' : 'Last opp flere bilder'}
                 </button>
               </div>
             ) : (
               /* Empty gallery */
-              <div className="relative border border-dashed border-border/40 rounded-xl py-16 text-center cursor-pointer hover:border-primary/30 transition-colors"
+              <div className="relative border-2 border-dashed border-stone-200 rounded-2xl py-16 text-center cursor-pointer hover:border-teal-400 hover:bg-teal-50/30 transition-all"
                 onClick={() => fileInputRef.current?.click()}>
-                <ImageIcon className="w-10 h-10 text-muted-foreground/20 mx-auto mb-3" strokeWidth={1.2} />
-                <p className="text-[13px] uppercase tracking-[0.08em] font-bold text-muted-foreground/30" style={oswald}>
+                <ImageIcon className="w-10 h-10 text-stone-300 mx-auto mb-3" strokeWidth={1.2} />
+                <p className="text-[13px] uppercase tracking-[0.08em] font-bold text-stone-400" style={oswald}>
                   {isUploadingImages ? 'Laster opp...' : 'Last opp bilder'}
                 </p>
-                <p className="text-[11px] text-muted-foreground/20 mt-1">Første bilde blir hovedbilde</p>
+                <p className="text-[11px] text-stone-300 mt-1">Første bilde blir hovedbilde</p>
               </div>
             )}
           </motion.section>
 
-          {/* ──────────────────────────────────
-              3. TIMELINE – the spine
-          ────────────────────────────────── */}
+          {/* ── 3. TIMELINE – the spine ── */}
           <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-            <CarEventsList carId={car.id} />
+            <CarEventsList carId={car.id} variant="light" />
           </motion.section>
 
-          {/* ──────────────────────────────────
-              4. STORY (editorial, narrow)
-          ────────────────────────────────── */}
+          {/* ── 4. STORY (editorial, narrow) ── */}
           <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}
             className="max-w-[640px]">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-[0.85rem] uppercase tracking-[0.12em] font-bold text-muted-foreground/40 flex items-center gap-2" style={oswald}>
+              <h2 className="text-[0.85rem] uppercase tracking-[0.12em] font-bold text-stone-400 flex items-center gap-2" style={oswald}>
                 <BookOpen className="w-4 h-4" /> Historien
               </h2>
               {!isEditingStory ? (
@@ -553,24 +547,22 @@ export default function DashboardBilDetalj() {
             {isEditingStory ? (
               <Textarea value={storyForm} onChange={(e) => setStoryForm(e.target.value)}
                 placeholder="Fortell historien om bilen din..." rows={10}
-                className="bg-transparent border-border/30 min-h-[200px] text-[1rem] leading-[1.85] focus:border-primary/30" />
+                className="bg-white border-stone-200 min-h-[200px] text-[1rem] leading-[1.85] text-stone-700 focus:border-teal-400 focus:ring-teal-400/20" />
             ) : (
               car.story ? (
-                <p className="text-foreground/55 whitespace-pre-wrap text-[1rem] leading-[1.85]">{car.story}</p>
+                <p className="text-stone-600 whitespace-pre-wrap text-[1rem] leading-[1.85]">{car.story}</p>
               ) : (
-                <p className="text-muted-foreground/25 italic text-[1rem] leading-[1.85]">
+                <p className="text-stone-300 italic text-[1rem] leading-[1.85]">
                   Ingen historie lagt til ennå. Trykk rediger for å fortelle historien om bilen din.
                 </p>
               )
             )}
           </motion.section>
 
-          {/* ──────────────────────────────────
-              5. BASIC INFO (toned down, grid)
-          ────────────────────────────────── */}
+          {/* ── 5. BASIC INFO (toned down) ── */}
           <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-[0.85rem] uppercase tracking-[0.12em] font-bold text-muted-foreground/40 flex items-center gap-2" style={oswald}>
+              <h2 className="text-[0.85rem] uppercase tracking-[0.12em] font-bold text-stone-400 flex items-center gap-2" style={oswald}>
                 <Info className="w-4 h-4" /> Grunninfo
               </h2>
               {!isEditingBasic ? (
@@ -596,52 +588,52 @@ export default function DashboardBilDetalj() {
               )}
             </div>
 
-            <div className="border-t border-border/20 pt-4">
+            <div className="border-t border-stone-200/80 pt-4">
               {isEditingBasic ? (
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                   {[
                     { label: 'Merke', content: (
                       <Select value={basicForm.brand} onValueChange={(v) => setBasicForm({ ...basicForm, brand: v, model: "" })}>
-                        <SelectTrigger className="h-10 bg-transparent border-border/30"><SelectValue placeholder="Velg" /></SelectTrigger>
+                        <SelectTrigger className="h-10 bg-white border-stone-200 text-stone-700"><SelectValue placeholder="Velg" /></SelectTrigger>
                         <SelectContent>{CAR_BRANDS.map(b => <SelectItem key={b.name} value={b.name}>{b.name}</SelectItem>)}</SelectContent>
                       </Select>
                     )},
                     { label: 'Modell', content: (
                       <Select value={basicForm.model} onValueChange={(v) => setBasicForm({ ...basicForm, model: v })}>
-                        <SelectTrigger className="h-10 bg-transparent border-border/30"><SelectValue placeholder="Velg" /></SelectTrigger>
+                        <SelectTrigger className="h-10 bg-white border-stone-200 text-stone-700"><SelectValue placeholder="Velg" /></SelectTrigger>
                         <SelectContent>{availableModels.map(m => <SelectItem key={m.name} value={m.name}>{m.name}</SelectItem>)}</SelectContent>
                       </Select>
                     )},
                     { label: 'Variant', content: (
                       <Input value={basicForm.variant} onChange={(e) => setBasicForm({ ...basicForm, variant: e.target.value })}
-                        placeholder="f.eks. GLS" className="h-10 bg-transparent border-border/30" />
+                        placeholder="f.eks. GLS" className="h-10 bg-white border-stone-200 text-stone-700" />
                     )},
                     { label: 'Karosseri', content: (
                       <Select value={basicForm.body_type} onValueChange={(v) => setBasicForm({ ...basicForm, body_type: v })}>
-                        <SelectTrigger className="h-10 bg-transparent border-border/30"><SelectValue placeholder="Velg" /></SelectTrigger>
+                        <SelectTrigger className="h-10 bg-white border-stone-200 text-stone-700"><SelectValue placeholder="Velg" /></SelectTrigger>
                         <SelectContent>{CAR_BODY_TYPES.map(t => <SelectItem key={t.id} value={t.id}>{t.label}</SelectItem>)}</SelectContent>
                       </Select>
                     )},
                     { label: 'Årsmodell', content: (
                       <Input type="number" value={basicForm.year} onChange={(e) => setBasicForm({ ...basicForm, year: e.target.value })}
-                        placeholder="1972" className="h-10 bg-transparent border-border/30" />
+                        placeholder="1972" className="h-10 bg-white border-stone-200 text-stone-700" />
                     )},
                     { label: 'Kategori', content: (
                       <Select value={basicForm.category} onValueChange={(v) => setBasicForm({ ...basicForm, category: v })}>
-                        <SelectTrigger className="h-10 bg-transparent border-border/30"><SelectValue /></SelectTrigger>
+                        <SelectTrigger className="h-10 bg-white border-stone-200 text-stone-700"><SelectValue /></SelectTrigger>
                         <SelectContent>{CATEGORIES.map(c => <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>)}</SelectContent>
                       </Select>
                     )},
                   ].map(({ label, content }) => (
                     <div key={label}>
-                      <label className="text-[10px] uppercase tracking-[0.12em] font-bold text-muted-foreground/40 block mb-1.5" style={oswald}>{label}</label>
+                      <label className="text-[10px] uppercase tracking-[0.12em] font-bold text-stone-400 block mb-1.5" style={oswald}>{label}</label>
                       {content}
                     </div>
                   ))}
                   <div className="col-span-2 sm:col-span-3">
-                    <label className="text-[10px] uppercase tracking-[0.12em] font-bold text-muted-foreground/40 block mb-1.5" style={oswald}>Tags</label>
+                    <label className="text-[10px] uppercase tracking-[0.12em] font-bold text-stone-400 block mb-1.5" style={oswald}>Tags</label>
                     <Input value={basicForm.tags} onChange={(e) => setBasicForm({ ...basicForm, tags: e.target.value })}
-                      placeholder="original, restaurert" className="h-10 bg-transparent border-border/30" />
+                      placeholder="original, restaurert" className="h-10 bg-white border-stone-200 text-stone-700" />
                   </div>
                 </div>
               ) : (
@@ -651,16 +643,16 @@ export default function DashboardBilDetalj() {
                     ['Karosseri', car.body_type], ['Årsmodell', car.year], ['Kategori', car.category],
                   ].map(([label, value]) => (
                     <div key={label as string}>
-                      <span className="text-[10px] uppercase tracking-[0.12em] font-bold text-muted-foreground/30 block mb-0.5" style={oswald}>{label}</span>
-                      <p className="text-[0.85rem] text-foreground/50 capitalize">{value || '—'}</p>
+                      <span className="text-[10px] uppercase tracking-[0.12em] font-bold text-stone-300 block mb-0.5" style={oswald}>{label}</span>
+                      <p className="text-[0.85rem] text-stone-600 capitalize">{value || '—'}</p>
                     </div>
                   ))}
                   {car.tags && car.tags.length > 0 && (
                     <div className="col-span-full mt-1">
-                      <span className="text-[10px] uppercase tracking-[0.12em] font-bold text-muted-foreground/30 block mb-1.5" style={oswald}>Tags</span>
+                      <span className="text-[10px] uppercase tracking-[0.12em] font-bold text-stone-300 block mb-1.5" style={oswald}>Tags</span>
                       <div className="flex flex-wrap gap-1.5">
                         {car.tags.map((tag: string) => (
-                          <span key={tag} className="text-[11px] text-muted-foreground/40 border border-border/20 px-2 py-0.5 rounded">{tag}</span>
+                          <span key={tag} className="text-[11px] text-stone-500 bg-stone-100 border border-stone-200 px-2 py-0.5 rounded">{tag}</span>
                         ))}
                       </div>
                     </div>
@@ -670,12 +662,10 @@ export default function DashboardBilDetalj() {
             </div>
           </motion.section>
 
-          {/* ──────────────────────────────────
-              6. FEED COMPOSER (subtle)
-          ────────────────────────────────── */}
+          {/* ── 6. FEED COMPOSER ── */}
           <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}
-            className="border-t border-border/15 pt-8">
-            <h2 className="text-[0.85rem] uppercase tracking-[0.12em] font-bold text-muted-foreground/40 flex items-center gap-2 mb-4" style={oswald}>
+            className="border-t border-stone-200/80 pt-8">
+            <h2 className="text-[0.85rem] uppercase tracking-[0.12em] font-bold text-stone-400 flex items-center gap-2 mb-4" style={oswald}>
               <Send className="w-4 h-4" /> Del i feeden
             </h2>
             <PostComposer compact postType="car_update" carId={car.id}
