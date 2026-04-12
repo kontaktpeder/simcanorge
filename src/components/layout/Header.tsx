@@ -103,7 +103,7 @@ export function Header() {
           <div className="hidden lg:flex items-center gap-3 flex-shrink-0">
             {user ? (
               <Link
-                to="/dashboard"
+                to="/garasje"
                 className="px-4 py-1.5 text-[12px] tracking-[0.1em] uppercase font-bold text-white/30 hover:text-white/55 transition-all duration-300 rounded"
                 style={chakra}
               >
@@ -111,7 +111,7 @@ export function Header() {
               </Link>
             ) : (
               <Link
-                to="/login?returnUrl=/dashboard"
+                to="/login?returnUrl=/garasje"
                 className="flex items-center gap-2 px-4 py-1.5 text-[12px] tracking-[0.1em] uppercase font-bold text-white/35 hover:text-white/60 transition-all duration-300 rounded"
                 style={chakra}
               >
@@ -172,13 +172,13 @@ export function Header() {
             })}
             <div className="flex flex-col gap-2 mt-3 pb-2">
               {user ? (
-                <Link to="/dashboard" onClick={() => setMobileMenuOpen(false)}
+                <Link to="/garasje" onClick={() => setMobileMenuOpen(false)}
                   className="py-2 text-center text-[11px] tracking-[0.12em] uppercase font-bold text-white/50 border border-white/15 rounded"
                   style={chakra}>
                   Min garasje
                 </Link>
               ) : (
-                <Link to="/login?returnUrl=/dashboard" onClick={() => setMobileMenuOpen(false)}
+                <Link to="/login?returnUrl=/garasje" onClick={() => setMobileMenuOpen(false)}
                   className="py-2 text-center text-[11px] tracking-[0.12em] uppercase font-bold text-white/50 border border-white/15 flex items-center justify-center gap-2 rounded"
                   style={chakra}>
                   <LogIn className="w-3.5 h-3.5" /> Logg inn
