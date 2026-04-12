@@ -121,6 +121,7 @@ export default function OpprettAnnonse() {
               </p>
               <ContactEmailGate
                 ownerProfileId={ownerProfile.id}
+                loginEmail={user?.email ?? null}
                 onSuccess={() => queryClient.invalidateQueries({ queryKey: ["owner-profile", user?.id] })}
               />
             </div>
