@@ -17,19 +17,17 @@ export default function SendInnBil() {
   const { toast } = useToast();
   const claimHandledRef = useRef(false);
   const [state, setState] = useState<PageState>(() => {
-    const hasClaimParam = typeof window !== "undefined" && new URLSearchParams(window.location.search).has("claimCarId");
-    return hasClaimParam ? { step: "linking" } : { step: "wizard" };
+    // Check if we have a pending car claim from localStorage (set before magic link was sent)
+    if (typeof window !== "undefined" && localStorage.getItem("pendingClaimCarId")) {
+      return { step: "linking" };
+    }
+    return { step: "wizard" };
   });
 
+  // Handle car claim after magic link redirect
   useEffect(() => {
-    const claimCarId = new URLSearchParams(window.location.search).get("claimCarId");
-    if (!claimCarId) return;
-
-    const cleanClaimUrl = () => {
-      const url = new URL(window.location.href);
-      url.searchParams.delete("claimCarId");
-      window.history.replaceState({}, "", `${url.pathname}${url.search}${url.hash}`);
-    };
+    const pendingCarId = localStorage.getItem("pendingClaimCarId");
+    if (!pendingCarId) return;
 
     const linkCarToUser = async (userId: string) => {
       if (claimHandledRef.current) return;
@@ -38,11 +36,12 @@ export default function SendInnBil() {
       const { error } = await supabase
         .from("cars")
         .update({ created_by_user_id: userId } as any)
-        .eq("id", claimCarId);
+        .eq("id", pendingCarId);
+
+      localStorage.removeItem("pendingClaimCarId");
 
       if (error) {
         claimHandledRef.current = false;
-        cleanClaimUrl();
         toast({
           title: "Innlogging registrert, men bilen ble ikke koblet",
           description: error.message || "Prøv igjen fra lenken i e-posten.",
@@ -52,7 +51,6 @@ export default function SendInnBil() {
         return;
       }
 
-      cleanClaimUrl();
       toast({
         title: "Bilen er koblet til kontoen din",
         description: "Du kan nå redigere bilen senere.",
@@ -60,12 +58,14 @@ export default function SendInnBil() {
       setState({ step: "done" });
     };
 
-    const fallbackTimer = window.setTimeout(() => {
-      if (claimHandledRef.current) return;
-      cleanClaimUrl();
-      setState({ step: "wizard" });
-    }, 5000);
+    // If already signed in, link immediately
+    void supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        void linkCarToUser(session.user.id);
+      }
+    });
 
+    // Also listen for auth state changes (magic link processing)
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -74,11 +74,12 @@ export default function SendInnBil() {
       }
     });
 
-    void supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user) {
-        void linkCarToUser(session.user.id);
-      }
-    });
+    // Fallback: if nothing happens within 8s, clear and show wizard
+    const fallbackTimer = window.setTimeout(() => {
+      if (claimHandledRef.current) return;
+      localStorage.removeItem("pendingClaimCarId");
+      setState({ step: "wizard" });
+    }, 8000);
 
     return () => {
       window.clearTimeout(fallbackTimer);

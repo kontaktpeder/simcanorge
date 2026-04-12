@@ -62,12 +62,14 @@ export function StepVerify({ email, carId, onSkip, onVerified }: StepVerifyProps
     setIsSending(true);
 
     try {
-      const redirectTo = `${window.location.origin}/send-inn?claimCarId=${encodeURIComponent(carId)}`;
+      // Store carId in localStorage so we can retrieve it after the redirect
+      localStorage.setItem("pendingClaimCarId", carId);
+
       const { error } = await supabase.auth.signInWithOtp({
         email,
         options: {
           shouldCreateUser: true,
-          emailRedirectTo: redirectTo,
+          emailRedirectTo: `${window.location.origin}/send-inn`,
         },
       });
 
