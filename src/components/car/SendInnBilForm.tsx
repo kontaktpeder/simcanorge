@@ -1,5 +1,5 @@
-import { useState, useRef, useMemo } from "react";
-import { Car, Send, Camera, X, ImagePlus, Users } from "lucide-react";
+import { useState, useRef, useMemo, useCallback } from "react";
+import { Car, Send, Camera, X, ImagePlus, Users, AlertTriangle, ExternalLink } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -32,8 +32,15 @@ const submissionSchema = z.object({
   phone: z.string().trim().max(20, "Telefonnummer kan ikke være mer enn 20 tegn").optional().or(z.literal("")),
   category: z.string().min(1, "Velg en kategori"),
   tags: z.string().max(500, "Tags kan ikke være mer enn 500 tegn").optional().or(z.literal("")),
-  car_story: z.string().trim().max(5000, "Historien kan ikke være mer enn 5000 tegn").optional().or(z.literal(""))
+  car_story: z.string().trim().max(5000, "Historien kan ikke være mer enn 5000 tegn").optional().or(z.literal("")),
+  registration_number: z.string().trim().max(10, "Maks 10 tegn").optional().or(z.literal("")),
 });
+
+function normalizeRegistrationNumber(raw: string): string {
+  return raw.replace(/[\s\-]/g, "").toUpperCase();
+}
+
+type DuplicateHit = { id: string; slug: string; title: string; published_at: string | null };
 
 const MIN_SUBMIT_INTERVAL = 2000;
 
@@ -71,6 +78,9 @@ export function SendInnBilForm({ onSuccess, onCancel, showCancelButton = false }
   const [clubPageId, setClubPageId] = useState("");
   const [clubMessage, setClubMessage] = useState("");
   const [lastSubmitTime, setLastSubmitTime] = useState<number>(0);
+  const [duplicateHits, setDuplicateHits] = useState<DuplicateHit[]>([]);
+  const [showDuplicateDialog, setShowDuplicateDialog] = useState(false);
+  const [duplicateChecked, setDuplicateChecked] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [formData, setFormData] = useState({
     brand: "",
@@ -83,7 +93,8 @@ export function SendInnBilForm({ onSuccess, onCancel, showCancelButton = false }
     car_year: "",
     category: "registrert",
     tags: "",
-    car_story: ""
+    car_story: "",
+    registration_number: "",
   });
 
   const availableModels = useMemo(() => {
@@ -125,7 +136,30 @@ export function SendInnBilForm({ onSuccess, onCancel, showCancelButton = false }
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: "" }));
     }
+    // Reset duplicate check if regnr changes
+    if (name === "registration_number") {
+      setDuplicateChecked(false);
+      setDuplicateHits([]);
+      setShowDuplicateDialog(false);
+    }
   };
+
+  const checkDuplicateRegnr = useCallback(async () => {
+    const normalized = normalizeRegistrationNumber(formData.registration_number).toLowerCase();
+    if (normalized.length < 2) return true; // skip check for very short input
+    try {
+      const { data } = await supabase.rpc("find_cars_by_registration_number", { p_normalized: normalized });
+      if (data && data.length > 0) {
+        setDuplicateHits(data as DuplicateHit[]);
+        setShowDuplicateDialog(true);
+        return false; // block submit until user decides
+      }
+    } catch (err) {
+      console.warn("Duplicate regnr check failed:", err);
+    }
+    setDuplicateChecked(true);
+    return true;
+  }, [formData.registration_number]);
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
@@ -234,6 +268,12 @@ export function SendInnBilForm({ onSuccess, onCancel, showCancelButton = false }
     }
     setLastSubmitTime(now);
     setErrors({});
+
+    // Duplicate regnr check (non-blocking dialog)
+    if (formData.registration_number.trim() && !duplicateChecked) {
+      const ok = await checkDuplicateRegnr();
+      if (!ok) return; // dialog will show – user picks action
+    }
     
     const dataToValidate = {
       ...formData,
@@ -242,7 +282,8 @@ export function SendInnBilForm({ onSuccess, onCancel, showCancelButton = false }
       variant: formData.variant || undefined,
       body_type: formData.body_type || undefined,
       tags: formData.tags || undefined,
-      car_story: formData.car_story || undefined
+      car_story: formData.car_story || undefined,
+      registration_number: formData.registration_number || undefined,
     };
     
     const result = submissionSchema.safeParse(dataToValidate);
@@ -349,7 +390,8 @@ export function SendInnBilForm({ onSuccess, onCancel, showCancelButton = false }
           approved_at: null,
           approved_by: null,
           allow_edits: allowEdits === true,
-        });
+          registration_number: result.data.registration_number?.trim() || null,
+        } as any);
       };
 
       const { error: carError } = await tryInsertCar(carSlug);
@@ -548,6 +590,22 @@ export function SendInnBilForm({ onSuccess, onCancel, showCancelButton = false }
                 <p className="text-base sm:text-lg font-display text-primary">{generatedTitle}</p>
               </div>
             )}
+          </div>
+
+          {/* Registration number */}
+          <div className="space-y-1.5 sm:space-y-2">
+            <FormFieldWithTooltip label="REGISTRERINGSNUMMER" tooltip="Valgfritt. Norsk skiltnummer, f.eks. AB 12345" htmlFor="registration_number" error={errors.registration_number}>
+              <Input
+                id="registration_number"
+                name="registration_number"
+                value={formData.registration_number}
+                onChange={handleChange}
+                placeholder="F.eks. AB 12345"
+                maxLength={10}
+                className={`text-base h-12 border-2 uppercase ${errors.registration_number ? 'border-destructive' : 'border-muted'}`}
+              />
+            </FormFieldWithTooltip>
+            <p className="text-xs text-muted-foreground">Valgfritt – brukes for å sjekke om bilen allerede finnes hos oss</p>
           </div>
 
           {/* Category */}
@@ -782,6 +840,65 @@ export function SendInnBilForm({ onSuccess, onCancel, showCancelButton = false }
           Alle innsendinger blir gjennomgått av Simca Norge
         </p>
       </div>
+
+      {/* Duplicate registration number dialog */}
+      {showDuplicateDialog && duplicateHits.length > 0 && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div className="bg-card border-2 border-amber-500/40 rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-4">
+            <div className="flex items-start gap-3">
+              <AlertTriangle className="w-6 h-6 text-amber-500 flex-shrink-0 mt-0.5" />
+              <div>
+                <h3 className="font-display text-lg text-foreground">Denne bilen kan allerede være lagt inn</h3>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Vi fant {duplicateHits.length === 1 ? 'en bil' : `${duplicateHits.length} biler`} med samme registreringsnummer.
+                </p>
+              </div>
+            </div>
+
+            <div className="space-y-2 max-h-48 overflow-y-auto">
+              {duplicateHits.map(hit => (
+                <a
+                  key={hit.id}
+                  href={`/biler/${hit.slug}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-between gap-2 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors group"
+                >
+                  <span className="text-sm font-medium text-foreground group-hover:text-primary truncate">{hit.title}</span>
+                  <ExternalLink className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                </a>
+              ))}
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-2 pt-2">
+              <Button
+                type="button"
+                variant="outline"
+                className="flex-1"
+                onClick={() => {
+                  setShowDuplicateDialog(false);
+                  setDuplicateHits([]);
+                }}
+              >
+                Avbryt
+              </Button>
+              <Button
+                type="button"
+                className="flex-1 btn-enamel-blue"
+                onClick={() => {
+                  setShowDuplicateDialog(false);
+                  setDuplicateChecked(true);
+                  // Re-trigger submit by clicking the form submit button
+                  const form = document.querySelector('form');
+                  if (form) form.requestSubmit();
+                }}
+              >
+                Fortsett likevel
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
