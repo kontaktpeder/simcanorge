@@ -10,6 +10,9 @@ import { toast } from 'sonner';
 import { z } from 'zod';
 import { getBrowserAuthSupport } from '@/lib/browserSupport';
 
+const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
+const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
+
 const loginSchema = z.object({
   email: z.string().email('Ugyldig e-postadresse'),
   password: z.string().min(6, 'Passord må være minst 6 tegn'),
