@@ -47,47 +47,52 @@ export default function Index() {
       <div className="min-h-[calc(100vh-4rem)]">
 
         {/* ─── HERO ─── */}
-        <section className="relative overflow-visible" style={{ background: 'linear-gradient(135deg, #0c1117 0%, #111820 40%, #0a1018 100%)' }}>
-          {/* Subtle teal glow */}
-          <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 30% 50%, transparent 50%, rgba(0,0,0,0.3) 100%)' }} />
-          <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(circle at 75% 50%, rgba(45,212,168,0.08) 0%, transparent 50%)' }} />
+        <section className="relative overflow-visible" style={{ background: 'linear-gradient(135deg, #070b10 0%, #0c1219 40%, #060a0f 100%)' }}>
+          {/* Vibrant teal glow — left */}
+          <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 900px 500px at 15% 60%, rgba(45,212,168,0.12) 0%, transparent 70%)' }} />
+          {/* Teal glow — right behind car */}
+          <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(circle 600px at 72% 40%, rgba(45,212,168,0.15) 0%, transparent 60%)' }} />
+          {/* Warm highlight kiss */}
+          <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(circle 400px at 60% 20%, rgba(255,255,255,0.04) 0%, transparent 60%)' }} />
+          {/* Bottom vignette */}
+          <div className="absolute inset-0 pointer-events-none" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.5) 0%, transparent 40%)' }} />
 
-          {/* Car image */}
+          {/* Car image — brighter, more visible */}
           <div className="absolute inset-0 pointer-events-none">
             <img
               src={heroCar}
               alt=""
-              className="absolute right-0 top-0 h-full w-full md:w-[58%] object-cover object-[60%_30%]"
+              className="absolute right-0 top-0 h-full w-full md:w-[62%] object-cover object-[60%_30%]"
               style={{
-                WebkitMaskImage: 'linear-gradient(to left, black 60%, transparent 100%)',
-                maskImage: 'linear-gradient(to left, black 60%, transparent 100%)',
-                opacity: 0.45,
+                WebkitMaskImage: 'linear-gradient(to left, black 50%, transparent 95%)',
+                maskImage: 'linear-gradient(to left, black 50%, transparent 95%)',
+                opacity: 0.6,
+                filter: 'contrast(1.1) saturate(1.15)',
               }}
             />
-            {/* Extra fade for mobile readability */}
-            <div className="absolute inset-0 md:hidden" style={{ background: 'linear-gradient(to right, rgba(12,17,23,0.9) 30%, rgba(12,17,23,0.3) 100%)' }} />
+            <div className="absolute inset-0 md:hidden" style={{ background: 'linear-gradient(to right, rgba(7,11,16,0.95) 25%, rgba(7,11,16,0.4) 100%)' }} />
           </div>
 
           <div className="relative z-10 max-w-[1200px] mx-auto px-4 sm:px-5 md:px-8">
-            <div className="flex flex-col justify-center min-h-[160px] sm:min-h-[230px] md:min-h-[280px] py-5 sm:py-8 md:py-10 md:max-w-[50%]">
-              <p className="text-[9px] sm:text-[11px] tracking-[0.3em] uppercase mb-1 sm:mb-1.5"
-                style={{ ...oswald, fontWeight: 500, background: 'linear-gradient(135deg, #2dd4a8, #5aedc4)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+            <div className="flex flex-col justify-center min-h-[180px] sm:min-h-[260px] md:min-h-[320px] py-6 sm:py-10 md:py-12 md:max-w-[50%]">
+              <p className="text-[9px] sm:text-[11px] tracking-[0.35em] uppercase mb-1.5 sm:mb-2"
+                style={{ ...oswald, fontWeight: 600, background: 'linear-gradient(135deg, #2dd4a8, #00ffc8)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', filter: 'drop-shadow(0 0 8px rgba(45,212,168,0.4))' }}>
                 bilgarasje.no
               </p>
               <h1
-                className="text-[1.3rem] sm:text-[1.9rem] md:text-[2.4rem] lg:text-[2.8rem] leading-[0.93] uppercase tracking-[0.02em] text-white font-bold italic"
-                style={{ ...chakra, textShadow: '0 2px 20px rgba(0,0,0,0.5)' }}
+                className="text-[1.4rem] sm:text-[2.1rem] md:text-[2.7rem] lg:text-[3.2rem] leading-[0.91] uppercase tracking-[0.01em] text-white font-bold italic"
+                style={{ ...chakra, textShadow: '0 2px 30px rgba(0,0,0,0.6), 0 0 60px rgba(45,212,168,0.08)' }}
               >
                 Hele Norges<br />bilsamfunn
               </h1>
               <p
-                className="text-[0.65rem] sm:text-[0.85rem] md:text-[1rem] uppercase tracking-[0.15em] text-white/40 font-bold italic mt-0.5"
-                style={chakra}
+                className="text-[0.65rem] sm:text-[0.85rem] md:text-[1rem] uppercase tracking-[0.18em] text-white/50 font-bold italic mt-1"
+                style={{ ...chakra, textShadow: '0 0 20px rgba(45,212,168,0.15)' }}
               >
                 — på nett
               </p>
 
-              <div className="mt-4 sm:mt-5 w-full max-w-[480px]">
+              <div className="mt-5 sm:mt-6 w-full max-w-[480px]">
                 <HeroSearch />
               </div>
             </div>
@@ -97,9 +102,12 @@ export default function Index() {
 
         {/* ─── CATEGORY NAV ─── */}
         <nav
-          className="border-b"
-          style={{ background: 'linear-gradient(180deg, #151c24 0%, #131a22 100%)', borderColor: 'rgba(255,255,255,0.06)' }}
+          className="border-b relative"
+          style={{ background: 'linear-gradient(180deg, #0e141b 0%, #0b1018 100%)', borderColor: 'rgba(45,212,168,0.08)' }}
         >
+          {/* Top accent line */}
+          <div className="absolute top-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(90deg, transparent 10%, rgba(45,212,168,0.25) 50%, transparent 90%)' }} />
+
           <div className="max-w-[1200px] mx-auto px-3 sm:px-5 md:px-8">
             {/* Mobile: wrapped grid */}
             <div className="grid grid-cols-3 gap-2 md:hidden py-3">
@@ -107,9 +115,11 @@ export default function Index() {
                 const ModIcon = mod.icon;
                 return (
                   <Link key={mod.title} to={mod.href} className="group">
-                    <div className="flex flex-col items-center gap-1 py-2.5 px-2 rounded-xl bg-white/[0.04] border border-white/[0.06] hover:border-[#2dd4a8]/20 active:scale-[0.97] transition-all">
-                      <ModIcon className="w-5 h-5 text-[#2dd4a8]" strokeWidth={1.6} />
-                      <span className="text-[10px] tracking-[0.06em] uppercase font-bold text-white/80" style={chakra}>
+                    <div className="flex flex-col items-center gap-1.5 py-3 px-2 rounded-xl bg-white/[0.03] border border-white/[0.06] hover:border-[#2dd4a8]/30 hover:bg-[#2dd4a8]/[0.04] active:scale-[0.97] transition-all duration-200"
+                      style={{ boxShadow: '0 0 0 0 transparent' }}
+                    >
+                      <ModIcon className="w-5 h-5 text-[#2dd4a8] group-hover:text-[#5aedc4] transition-colors" strokeWidth={1.8} style={{ filter: 'drop-shadow(0 0 4px rgba(45,212,168,0.3))' }} />
+                      <span className="text-[10px] tracking-[0.06em] uppercase font-bold text-white/80 group-hover:text-white transition-colors" style={chakra}>
                         {mod.title}
                       </span>
                     </div>
@@ -120,9 +130,9 @@ export default function Index() {
                 const ModIcon = mod.icon;
                 return (
                   <Link key={mod.title} to={mod.href} className="group">
-                    <div className="flex flex-col items-center gap-1 py-2.5 px-2 rounded-xl bg-white/[0.04] border border-white/[0.06] hover:border-[#2dd4a8]/20 active:scale-[0.97] transition-all">
-                      <ModIcon className="w-5 h-5 text-[#2dd4a8]" strokeWidth={1.6} />
-                      <span className="text-[10px] tracking-[0.06em] uppercase font-bold text-white/80" style={chakra}>
+                    <div className="flex flex-col items-center gap-1.5 py-3 px-2 rounded-xl bg-white/[0.03] border border-white/[0.06] hover:border-[#2dd4a8]/30 hover:bg-[#2dd4a8]/[0.04] active:scale-[0.97] transition-all duration-200">
+                      <ModIcon className="w-5 h-5 text-[#2dd4a8] group-hover:text-[#5aedc4] transition-colors" strokeWidth={1.8} style={{ filter: 'drop-shadow(0 0 4px rgba(45,212,168,0.3))' }} />
+                      <span className="text-[10px] tracking-[0.06em] uppercase font-bold text-white/80 group-hover:text-white transition-colors" style={chakra}>
                         {mod.title}
                       </span>
                     </div>
@@ -146,14 +156,14 @@ export default function Index() {
                   >
                     <Link
                       to={mod.href}
-                      className="flex items-center justify-center gap-3 py-4 hover:bg-white/[0.04] transition-colors duration-200"
+                      className="flex items-center justify-center gap-3 py-4.5 hover:bg-[#2dd4a8]/[0.04] transition-all duration-200"
                     >
-                      <ModIcon className="w-6 h-6 text-[#2dd4a8] group-hover:text-[#5aedc4] transition-colors" strokeWidth={1.6} />
+                      <ModIcon className="w-6 h-6 text-[#2dd4a8] group-hover:text-[#00ffc8] transition-colors duration-200" strokeWidth={1.6} style={{ filter: 'drop-shadow(0 0 6px rgba(45,212,168,0.35))' }} />
                       <div className="flex flex-col">
-                        <span className="text-[15px] lg:text-[16px] tracking-[0.05em] uppercase font-bold text-white/90 leading-tight" style={chakra}>
+                        <span className="text-[15px] lg:text-[16px] tracking-[0.05em] uppercase font-bold text-white/90 group-hover:text-white leading-tight transition-colors" style={chakra}>
                           {mod.title}
                         </span>
-                        <span className="text-[11px] lg:text-[12px] text-white/35 leading-tight" style={chakra}>
+                        <span className="text-[11px] lg:text-[12px] text-white/30 group-hover:text-white/50 leading-tight transition-colors" style={chakra}>
                           {mod.desc}
                         </span>
                       </div>
@@ -162,7 +172,7 @@ export default function Index() {
                     {/* Create chip on hover */}
                     <Link
                       to={createHref}
-                      className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center gap-0.5 px-1.5 py-0.5 bg-[#2dd4a8]/20 backdrop-blur-sm text-[#2dd4a8]/80 hover:text-[#2dd4a8] text-[8px] uppercase tracking-[0.12em] font-bold rounded"
+                      className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-all duration-200 flex items-center gap-0.5 px-1.5 py-0.5 bg-[#2dd4a8]/15 backdrop-blur-sm text-[#2dd4a8] hover:text-[#00ffc8] text-[8px] uppercase tracking-[0.12em] font-bold rounded border border-[#2dd4a8]/20"
                       style={chakra}
                     >
                       <Plus className="w-2.5 h-2.5" />
@@ -178,7 +188,7 @@ export default function Index() {
         {/* ─── FEED ─── */}
         <section
           className="relative pt-5 sm:pt-8 md:pt-10 pb-10 sm:pb-20 md:pb-32 overflow-hidden"
-          style={{ background: 'linear-gradient(180deg, #131a22 0%, #111820 40%, #0e151d 100%)' }}
+          style={{ background: 'linear-gradient(180deg, #0b1018 0%, #0a0e14 40%, #080c12 100%)' }}
         >
           {/* Car silhouette watermark */}
           <div className="absolute bottom-0 left-0 right-0 pointer-events-none hidden sm:flex justify-center overflow-hidden" style={{ opacity: 0.03 }}>
