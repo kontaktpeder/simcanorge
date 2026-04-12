@@ -4,13 +4,14 @@ import { useEffect } from 'react';
 import { GarageLayout } from '@/components/ui/garage/GarageLayout';
 import { EnamelCard } from '@/components/ui/garage/EnamelCard';
 import { BigActionButton } from '@/components/ui/garage/BigActionButton';
-import { ShoppingBag, Plus, Clock, Eye, Archive, Loader2, User, CheckCircle2, Pencil } from 'lucide-react';
+import { ShoppingBag, Plus, Clock, Eye, Archive, Loader2, User, CheckCircle2, Pencil, Circle } from 'lucide-react';
 import { Layout } from '@/components/layout/Layout';
 import { motion } from 'framer-motion';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useOwnerProfile } from '@/hooks/useOwnerProfile';
 import { useMyListings } from '@/hooks/useMarketplace';
+import { isSellerMinimumComplete, getSellerMinimumSteps } from '@/lib/sellerProfile';
 
 export default function DashboardMineAnnonser() {
   const { user, isLoading: authLoading } = useAuth();
@@ -19,7 +20,6 @@ export default function DashboardMineAnnonser() {
   const justSubmitted = (location.state as any)?.justSubmitted;
   const { data: ownerProfile, isLoading: profileLoading } = useOwnerProfile(user?.id);
   const { data: listings, isLoading: listingsLoading } = useMyListings(user?.id);
-  
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -39,14 +39,15 @@ export default function DashboardMineAnnonser() {
 
   if (!user) return null;
 
-  const canCreateListing = ownerProfile?.approved_at;
+  const canCreateListing = isSellerMinimumComplete(ownerProfile);
+  const sellerSteps = getSellerMinimumSteps(ownerProfile);
 
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'published':
         return <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"><Eye className="h-3 w-3 mr-1" />Publisert</Badge>;
       case 'submitted':
-        return <Badge variant="secondary" className="bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400"><Clock className="h-3 w-3 mr-1" />Venter</Badge>;
+        return <Badge variant="secondary" className="bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400"><Clock className="h-3 w-3 mr-1" />Venter på godkjenning</Badge>;
       case 'archived':
         return <Badge variant="secondary"><Archive className="h-3 w-3 mr-1" />Arkivert</Badge>;
       case 'sold':
@@ -70,14 +71,14 @@ export default function DashboardMineAnnonser() {
             <div>
               <p className="font-medium text-green-800 dark:text-green-300">Annonsen er sendt inn</p>
               <p className="text-sm text-muted-foreground mt-1">
-                Du ser annonsen din under. Den må godkjennes av admin før den vises på markedsplassen.
+                Annonsen din må godkjennes av admin før den vises på markedsplassen. Du kan følge status her.
               </p>
             </div>
           </div>
         </EnamelCard>
       )}
 
-      {/* Status messages */}
+      {/* No profile at all */}
       {!ownerProfile && (
         <EnamelCard className="mb-6">
           <div className="p-5 text-center">
@@ -89,23 +90,36 @@ export default function DashboardMineAnnonser() {
         </EnamelCard>
       )}
 
-      {ownerProfile && !ownerProfile.approved_at && (
+      {/* Profile exists but seller minimum not met */}
+      {ownerProfile && !canCreateListing && (
         <EnamelCard className="mb-6">
           <div className="p-5">
             <div className="flex items-start gap-3">
-              <Clock className="h-5 w-5 text-amber-600 mt-0.5 shrink-0" />
+              <User className="h-5 w-5 text-amber-600 mt-0.5 shrink-0" />
               <div className="flex-1">
-                <p className="font-medium">Entusiastprofil venter på godkjenning</p>
+                <p className="font-medium">Fullfør profilen din for å selge</p>
                 <p className="text-sm text-muted-foreground mt-1">
-                  Du kan opprette annonser når admin har godkjent Entusiastprofilen din.
+                  Du trenger noen få felter for å kunne opprette annonser:
                 </p>
+                <ul className="mt-3 space-y-1.5">
+                  {sellerSteps.map((step) => (
+                    <li key={step.key} className="flex items-center gap-2 text-sm">
+                      {step.done ? (
+                        <CheckCircle2 className="h-4 w-4 text-green-600 shrink-0" />
+                      ) : (
+                        <Circle className="h-4 w-4 text-muted-foreground/40 shrink-0" />
+                      )}
+                      <span className={step.done ? "text-muted-foreground line-through" : ""}>{step.label}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
             </div>
             <div className="flex flex-wrap gap-3 mt-4 ml-8">
-              <Link to="/dashboard/min-profil">
+              <Link to="/dashboard/min-profil?rediger=1">
                 <Button variant="outline" size="sm">
-                  <User className="h-4 w-4 mr-1.5" />
-                  Se min profil
+                  <Pencil className="h-4 w-4 mr-1.5" />
+                  Fullfør selgerprofil
                 </Button>
               </Link>
             </div>
@@ -160,7 +174,7 @@ export default function DashboardMineAnnonser() {
                       )}
                       {item.status === 'submitted' && (
                         <p className="text-xs text-amber-600 dark:text-amber-400 mt-1">
-                          Venter på godkjenning fra admin
+                          Annonsen venter på godkjenning fra admin
                         </p>
                       )}
                       <p className="text-xs text-muted-foreground mt-2">
@@ -190,12 +204,12 @@ export default function DashboardMineAnnonser() {
             );
           })}
         </div>
-      ) : ownerProfile?.approved_at ? (
+      ) : canCreateListing ? (
         <EnamelCard>
           <div className="text-center py-12">
             <ShoppingBag className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" />
             <p className="text-muted-foreground mb-2">Du er klar til å selge.</p>
-            <p className="text-xs text-muted-foreground mb-4">Alt som legges ut må godkjennes før publisering.</p>
+            <p className="text-xs text-muted-foreground mb-4">Annonser du oppretter sendes til godkjenning før publisering.</p>
             <Link to="/dashboard/opprett-annonse">
               <BigActionButton icon={<Plus className="w-4 h-4" />}>Opprett første annonse</BigActionButton>
             </Link>

@@ -1,0 +1,2 @@
+COMMENT ON COLUMN public.person_profiles.approved_at IS
+  'Legacy / fremtidig bruk (f.eks. verifisert selger). Vanlig salg på markedsplass krever ikke denne — selger-minimum sjekkes i app-kode (display_name + slug + contact_email).';
