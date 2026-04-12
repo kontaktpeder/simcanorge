@@ -136,7 +136,30 @@ export function SendInnBilForm({ onSuccess, onCancel, showCancelButton = false }
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: "" }));
     }
+    // Reset duplicate check if regnr changes
+    if (name === "registration_number") {
+      setDuplicateChecked(false);
+      setDuplicateHits([]);
+      setShowDuplicateDialog(false);
+    }
   };
+
+  const checkDuplicateRegnr = useCallback(async () => {
+    const normalized = normalizeRegistrationNumber(formData.registration_number).toLowerCase();
+    if (normalized.length < 2) return true; // skip check for very short input
+    try {
+      const { data } = await supabase.rpc("find_cars_by_registration_number", { p_normalized: normalized });
+      if (data && data.length > 0) {
+        setDuplicateHits(data as DuplicateHit[]);
+        setShowDuplicateDialog(true);
+        return false; // block submit until user decides
+      }
+    } catch (err) {
+      console.warn("Duplicate regnr check failed:", err);
+    }
+    setDuplicateChecked(true);
+    return true;
+  }, [formData.registration_number]);
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
