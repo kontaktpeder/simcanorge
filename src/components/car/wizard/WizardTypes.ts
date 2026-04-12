@@ -62,6 +62,6 @@ export const STEP_LABELS = [
   "Merke",
   "Detaljer",
   "Historikk",
-  "Kontakt",
+  "Din info",
   "Send inn",
 ] as const;
