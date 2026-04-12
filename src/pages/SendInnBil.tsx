@@ -66,7 +66,7 @@ export default function SendInnBil() {
 
       localStorage.removeItem("pendingClaimCarId");
 
-      if (error || count === 0) {
+      if (error || !updated?.length) {
         console.warn("Car claim failed:", error?.message ?? "0 rows updated");
         claimHandledRef.current = false;
         toast({
