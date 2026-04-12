@@ -64,19 +64,19 @@ export function StepDetails({ data, onChange }: StepDetailsProps) {
             </select>
           </FormFieldWithTooltip>
 
-          <FormFieldWithTooltip label="REGISTRERINGSNUMMER" tooltip="Valgfritt norsk skiltnummer" htmlFor="w-regnr">
-            <LicensePlateInput
-              value={data.registration_number}
-              onChange={(val) => onChange({ registration_number: val })}
-            />
+          <FormFieldWithTooltip label="KATEGORI" tooltip="Hva slags tilstand er bilen i?" required htmlFor="w-cat">
+            <select id="w-cat" value={data.category} onChange={e => set("category", e.target.value)}
+              className="w-full h-12 px-3 text-base rounded-md border-2 border-muted bg-background">
+              {CATEGORIES.map(c => <option key={c.id} value={c.id}>{c.label}</option>)}
+            </select>
           </FormFieldWithTooltip>
         </div>
 
-        <FormFieldWithTooltip label="KATEGORI" tooltip="Hva slags tilstand er bilen i?" required htmlFor="w-cat">
-          <select id="w-cat" value={data.category} onChange={e => set("category", e.target.value)}
-            className="w-full h-12 px-3 text-base rounded-md border-2 border-muted bg-background">
-            {CATEGORIES.map(c => <option key={c.id} value={c.id}>{c.label}</option>)}
-          </select>
+        <FormFieldWithTooltip label="REGISTRERINGSNUMMER" tooltip="Valgfritt norsk skiltnummer" htmlFor="w-regnr">
+          <LicensePlateInput
+            value={data.registration_number}
+            onChange={(val) => onChange({ registration_number: val })}
+          />
         </FormFieldWithTooltip>
       </div>
     </div>
