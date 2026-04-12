@@ -137,13 +137,9 @@ export function StepVerify({ email, carId, onSkip, onVerified }: StepVerifyProps
         <div className="mx-auto max-w-sm space-y-4">
           <div className="space-y-2 rounded-lg border border-border bg-muted/50 p-4 text-left text-sm text-muted-foreground">
             <p>
-              <strong className="text-foreground">Du får ikke en 6-sifret kode</strong> i denne e-posten.
+              Klikk på <strong className="text-foreground">«Logg inn»</strong> i e-posten du mottar. Bilen kobles automatisk til kontoen din.
             </p>
-            <p>
-              Klikk på <strong className="text-foreground">«Logg inn»</strong> i e-posten. Når innloggingen er fullført,
-              kobles bilen automatisk til kontoen din.
-            </p>
-            <p className="text-xs">Sjekk også spam-mappen hvis du ikke ser e-posten med en gang.</p>
+            <p className="text-xs">Sjekk også spam-mappen hvis du ikke ser e-posten.</p>
           </div>
 
           <div className="flex items-center justify-between text-sm">
