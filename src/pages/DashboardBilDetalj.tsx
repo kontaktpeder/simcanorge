@@ -8,7 +8,7 @@ import {
   Car, Wrench, Loader2, XCircle, 
   Pencil, Save, X, Eye, EyeOff, Upload, Trash2, Clock, Send,
   ChevronLeft, ChevronRight, Star, ImageIcon, BookOpen, Info, ArrowLeft,
-  CheckCircle2, Circle
+  CheckCircle2, Circle, ExternalLink, Sparkles
 } from 'lucide-react';
 import { useEffect, useState, useRef } from 'react';
 import { Input } from '@/components/ui/input';
@@ -20,7 +20,6 @@ import { CAR_BRANDS, getModelsForBrand } from '@/data/carBrands';
 import { CAR_BODY_TYPES } from '@/data/carBodyTypes';
 import { motion } from 'framer-motion';
 import { PostComposer } from '@/components/feed/PostComposer';
-import carSilhouette from '@/assets/car-silhouette.png';
 
 const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
 const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
@@ -31,13 +30,13 @@ const CATEGORIES = [
   { value: 'veteran', label: 'Veteranbil' },
 ];
 
-function SectionCard({ children, className = '', delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
+function GlassCard({ children, className = '', delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 16 }}
+      initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3, delay }}
-      className={`bg-white/70 backdrop-blur-sm border border-[#3a2e24]/[0.08] rounded-lg p-5 sm:p-6 ${className}`}
+      transition={{ duration: 0.4, delay, ease: [0.16, 1, 0.3, 1] }}
+      className={`bg-card/80 backdrop-blur-xl border border-border/60 rounded-xl p-5 sm:p-6 shadow-lg shadow-black/10 ${className}`}
     >
       {children}
     </motion.div>
@@ -48,24 +47,25 @@ function SectionTitle({ icon, title, description, action }: { icon: React.ReactN
   return (
     <div className="flex flex-wrap items-start justify-between gap-3 mb-4">
       <div className="flex-1 min-w-0">
-        <h2 className="text-[0.95rem] sm:text-[1.05rem] uppercase tracking-[0.08em] font-bold text-[#3a2e24] flex items-center gap-2" style={chakra}>
-          <span className="text-[#8b6914]">{icon}</span>
+        <h2 className="text-[0.95rem] sm:text-[1.05rem] uppercase tracking-[0.08em] font-bold text-foreground flex items-center gap-2.5" style={chakra}>
+          <span className="text-primary">{icon}</span>
           {title}
         </h2>
-        {description && <p className="text-[12px] sm:text-[13px] text-[#3a2e24]/40 mt-1">{description}</p>}
+        {description && <p className="text-[12px] sm:text-[13px] text-muted-foreground mt-1">{description}</p>}
       </div>
       {action && <div className="shrink-0">{action}</div>}
     </div>
   );
 }
 
-function ActionBtn({ onClick, disabled, children, variant = 'primary', className = '' }: { onClick?: () => void; disabled?: boolean; children: React.ReactNode; variant?: 'primary' | 'ghost' | 'outline' | 'destructive'; className?: string }) {
-  const base = 'inline-flex items-center gap-1.5 text-[12px] sm:text-[13px] uppercase tracking-[0.08em] font-bold px-3 sm:px-4 py-2 sm:py-2.5 rounded-md transition-all duration-200 active:scale-95 disabled:opacity-50';
+function ActionBtn({ onClick, disabled, children, variant = 'primary', className = '' }: { onClick?: () => void; disabled?: boolean; children: React.ReactNode; variant?: 'primary' | 'ghost' | 'outline' | 'destructive' | 'glow'; className?: string }) {
+  const base = 'inline-flex items-center gap-1.5 text-[12px] sm:text-[13px] uppercase tracking-[0.08em] font-bold px-3.5 sm:px-4.5 py-2.5 sm:py-3 rounded-lg transition-all duration-200 active:scale-95 disabled:opacity-40';
   const styles = {
-    primary: 'bg-[#3a2e24] text-white hover:bg-[#2a2118]',
-    ghost: 'text-[#3a2e24]/60 hover:text-[#3a2e24] hover:bg-[#3a2e24]/5',
-    outline: 'border border-[#3a2e24]/15 text-[#3a2e24]/70 hover:border-[#c4962c]/40 hover:text-[#3a2e24]',
-    destructive: 'bg-red-600 text-white hover:bg-red-700',
+    primary: 'bg-primary text-primary-foreground hover:brightness-110',
+    ghost: 'text-muted-foreground hover:text-foreground hover:bg-secondary/60',
+    outline: 'border border-border text-muted-foreground hover:border-primary/40 hover:text-foreground',
+    destructive: 'bg-destructive text-destructive-foreground hover:brightness-110',
+    glow: 'bg-primary text-primary-foreground hover:brightness-110 shadow-[0_0_20px_rgba(45,212,168,0.25)]',
   };
   return (
     <button onClick={onClick} disabled={disabled} className={`${base} ${styles[variant]} ${className}`} style={chakra}>
@@ -76,11 +76,11 @@ function ActionBtn({ onClick, disabled, children, variant = 'primary', className
 
 const statusLabel = (s: string) => {
   switch (s) {
-    case 'published': return { text: 'Publisert', color: 'bg-green-600/15 text-green-800' };
-    case 'draft': return { text: 'Kladd', color: 'bg-amber-500/15 text-amber-800' };
-    case 'submitted': return { text: 'Innsendt', color: 'bg-blue-500/15 text-blue-800' };
-    case 'archived': return { text: 'Arkivert', color: 'bg-gray-400/15 text-gray-600' };
-    default: return { text: s, color: 'bg-gray-400/15 text-gray-600' };
+    case 'published': return { text: 'Publisert', color: 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/20' };
+    case 'draft': return { text: 'Kladd', color: 'bg-amber-500/15 text-amber-400 border border-amber-500/20' };
+    case 'submitted': return { text: 'Innsendt', color: 'bg-blue-500/15 text-blue-400 border border-blue-500/20' };
+    case 'archived': return { text: 'Arkivert', color: 'bg-muted text-muted-foreground border border-border' };
+    default: return { text: s, color: 'bg-muted text-muted-foreground border border-border' };
   }
 };
 
@@ -267,8 +267,8 @@ export default function DashboardBilDetalj() {
   if (authLoading || isLoading) {
     return (
       <Layout>
-        <div className="min-h-[60vh] flex items-center justify-center" style={{ background: '#eee7dd' }}>
-          <Loader2 className="w-8 h-8 animate-spin text-[#c4962c]" />
+        <div className="min-h-[60vh] flex items-center justify-center bg-background">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
         </div>
       </Layout>
     );
@@ -279,10 +279,10 @@ export default function DashboardBilDetalj() {
   if (carData && !carData.hasAccess) {
     return (
       <Layout>
-        <div className="min-h-[60vh] flex flex-col items-center justify-center" style={{ background: '#eee7dd' }}>
-          <XCircle className="w-14 h-14 text-red-400 mb-4" />
-          <p className="text-[1.1rem] uppercase font-bold text-[#3a2e24]/50 tracking-[0.06em]" style={oswald}>Ingen tilgang</p>
-          <Link to="/dashboard/mine-biler" className="mt-4 text-[13px] uppercase tracking-[0.1em] text-[#c4962c] hover:text-[#a07820] font-bold border-b border-[#c4962c]/30 pb-0.5" style={oswald}>
+        <div className="min-h-[60vh] flex flex-col items-center justify-center bg-background">
+          <XCircle className="w-14 h-14 text-destructive/50 mb-4" />
+          <p className="text-[1.1rem] uppercase font-bold text-muted-foreground tracking-[0.06em]" style={oswald}>Ingen tilgang</p>
+          <Link to="/dashboard/mine-biler" className="mt-4 text-[13px] uppercase tracking-[0.1em] text-primary hover:text-primary/80 font-bold border-b border-primary/30 pb-0.5" style={oswald}>
             ← Tilbake til mine biler
           </Link>
         </div>
@@ -293,9 +293,9 @@ export default function DashboardBilDetalj() {
   if (!car) {
     return (
       <Layout>
-        <div className="min-h-[60vh] flex flex-col items-center justify-center" style={{ background: '#eee7dd' }}>
-          <Car className="w-14 h-14 text-[#3a2e24]/15 mb-4" />
-          <p className="text-[1.1rem] uppercase font-bold text-[#3a2e24]/30 tracking-[0.06em]" style={oswald}>Bilen finnes ikke</p>
+        <div className="min-h-[60vh] flex flex-col items-center justify-center bg-background">
+          <Car className="w-14 h-14 text-muted-foreground/30 mb-4" />
+          <p className="text-[1.1rem] uppercase font-bold text-muted-foreground/50 tracking-[0.06em]" style={oswald}>Bilen finnes ikke</p>
         </div>
       </Layout>
     );
@@ -343,83 +343,107 @@ export default function DashboardBilDetalj() {
 
   return (
     <Layout>
-      <div className="min-h-[calc(100vh-4rem)]">
+      <div className="min-h-[calc(100vh-4rem)] bg-background">
 
-        {/* ─── HERO with car image ─── */}
-        <section className="relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #4a3d30 0%, #3a2e24 40%, #2a2118 100%)' }}>
-          <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 70% 50%, rgba(196,150,44,0.10) 0%, transparent 60%)' }} />
+        {/* ─── CINEMATIC HERO ─── */}
+        <section className="relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #070b10 0%, #0c1219 40%, #060a0f 100%)' }}>
+          {/* Teal ambient glow */}
+          <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 800px 450px at 15% 70%, rgba(45,212,168,0.08) 0%, transparent 65%)' }} />
+          <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 500px 300px at 85% 20%, rgba(52,234,184,0.04) 0%, transparent 70%)' }} />
+
+          {/* Animated accent line */}
+          <div className="absolute top-0 left-0 right-0 h-[2px] pointer-events-none overflow-hidden">
+            <div className="h-full w-full" style={{
+              background: 'linear-gradient(90deg, transparent 0%, hsl(168 70% 42%) 20%, hsl(160 100% 49%) 50%, hsl(168 70% 42%) 80%, transparent 100%)',
+              animation: 'shimmer 4s ease-in-out infinite',
+            }} />
+          </div>
 
           {/* Hero car image */}
           {mainImage && (
-            <div className="absolute inset-0 pointer-events-none hidden md:block">
+            <div className="absolute inset-0 pointer-events-none">
               <img
                 src={mainImage.image_url}
                 alt=""
-                className="absolute right-0 top-0 h-full w-[50%] object-cover"
+                className="absolute right-0 top-0 h-full w-full md:w-[60%] object-cover"
                 style={{
-                  WebkitMaskImage: 'linear-gradient(to left, rgba(0,0,0,0.5) 30%, transparent 100%)',
-                  maskImage: 'linear-gradient(to left, rgba(0,0,0,0.5) 30%, transparent 100%)',
-                  opacity: 0.7,
+                  WebkitMaskImage: 'linear-gradient(to left, rgba(0,0,0,0.55) 20%, transparent 85%)',
+                  maskImage: 'linear-gradient(to left, rgba(0,0,0,0.55) 20%, transparent 85%)',
+                  opacity: 0.75,
+                  filter: 'contrast(1.1) saturate(1.15) brightness(0.95)',
                 }}
               />
+              {/* Teal light leak on car */}
+              <div className="absolute inset-0 pointer-events-none hidden md:block" style={{ background: 'radial-gradient(ellipse 400px 600px at 75% 80%, rgba(45,212,168,0.05) 0%, transparent 70%)' }} />
             </div>
           )}
 
-          <div className="relative z-10 max-w-[1200px] mx-auto px-4 sm:px-5 md:px-8">
-            <div className="flex flex-col justify-center min-h-[160px] sm:min-h-[190px] md:min-h-[220px] py-6 md:py-8 md:max-w-[55%]">
+          {/* Bottom fade */}
+          <div className="absolute bottom-0 left-0 right-0 h-24 pointer-events-none" style={{ background: 'linear-gradient(to bottom, transparent, hsl(215 28% 7%))' }} />
+
+          <div className="relative z-10 max-w-[1100px] mx-auto px-4 sm:px-6 md:px-8">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+              className="flex flex-col justify-center min-h-[200px] sm:min-h-[240px] md:min-h-[280px] py-8 md:py-10 md:max-w-[55%]"
+            >
               <Link
                 to="/dashboard/mine-biler"
-                className="inline-flex items-center gap-1.5 text-white/35 hover:text-white/60 mb-3 transition-colors text-[11px] uppercase tracking-[0.15em] font-semibold"
+                className="inline-flex items-center gap-1.5 text-muted-foreground/50 hover:text-muted-foreground mb-4 transition-colors text-[11px] uppercase tracking-[0.15em] font-semibold w-fit"
                 style={oswald}
               >
                 <ArrowLeft className="w-3.5 h-3.5" />
                 Mine biler
               </Link>
 
-              <p className="text-[10px] sm:text-[11px] tracking-[0.3em] uppercase mb-1"
-                style={{ ...oswald, fontWeight: 500, background: 'linear-gradient(135deg, #F5A623, #FFD166)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+              <p className="text-[10px] sm:text-[11px] tracking-[0.3em] uppercase mb-2"
+                style={{ ...oswald, fontWeight: 500, background: 'linear-gradient(135deg, hsl(168 70% 42%), hsl(160 100% 49%))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
                 bilgarasje.no
               </p>
 
               {car.year && (
-                <span className="text-[1.6rem] sm:text-[2rem] font-serif text-[#c4962c]/50 leading-none">
+                <span className="text-[2rem] sm:text-[2.5rem] md:text-[3rem] font-serif text-primary/30 leading-none -mb-1">
                   {car.year}
                 </span>
               )}
               <h1
-                className="text-[1.3rem] sm:text-[1.7rem] md:text-[2rem] leading-[0.95] uppercase tracking-[0.02em] text-white font-bold italic mt-0.5"
-                style={{ ...chakra, textShadow: '0 2px 20px rgba(0,0,0,0.4)' }}
+                className="text-[1.5rem] sm:text-[2rem] md:text-[2.5rem] leading-[0.92] uppercase tracking-[0.01em] text-foreground font-bold italic"
+                style={{ ...chakra, textShadow: '0 4px 30px rgba(0,0,0,0.5)' }}
               >
                 {car.title}
               </h1>
 
-              <div className="flex items-center gap-3 mt-3">
-                <span className={`text-[10px] sm:text-[11px] uppercase tracking-[0.08em] font-bold px-2.5 py-1 rounded-full ${status.color}`} style={oswald}>
+              <div className="flex flex-wrap items-center gap-3 mt-4">
+                <span className={`text-[10px] sm:text-[11px] uppercase tracking-[0.08em] font-bold px-3 py-1.5 rounded-full ${status.color}`} style={oswald}>
                   {status.text}
                 </span>
                 {car.overhauled && (
-                  <span className="inline-flex items-center gap-1 text-[11px] uppercase tracking-[0.08em] font-bold text-green-400/80" style={oswald}>
+                  <span className="inline-flex items-center gap-1 text-[11px] uppercase tracking-[0.08em] font-bold text-emerald-400/80" style={oswald}>
                     <Wrench className="w-3.5 h-3.5" /> Overhalt
                   </span>
                 )}
+                {car.status === 'published' && car.slug && (
+                  <Link
+                    to={`/biler/${car.slug}`}
+                    className="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-[0.08em] font-bold text-primary/70 hover:text-primary transition-colors"
+                    style={oswald}
+                  >
+                    <ExternalLink className="w-3.5 h-3.5" />
+                    Se offentlig side
+                  </Link>
+                )}
               </div>
-            </div>
+            </motion.div>
           </div>
         </section>
 
         {/* ─── CONTENT ─── */}
-        <section
-          className="relative pt-6 sm:pt-8 md:pt-10 pb-12 sm:pb-20 overflow-hidden"
-          style={{ background: 'linear-gradient(180deg, #eee7dd 0%, #ebe4da 40%, #e8e1d6 100%)' }}
-        >
-          <div className="absolute bottom-0 left-0 right-0 pointer-events-none flex justify-center overflow-hidden" style={{ opacity: 0.02 }}>
-            <img src={carSilhouette} alt="" className="w-[80%] max-w-[1000px] translate-y-[30%]" style={{ transform: 'scaleX(-1)', filter: 'brightness(0)' }} />
-          </div>
-
-          <div className="relative z-10 max-w-[800px] mx-auto px-4 sm:px-5 md:px-8 space-y-5 sm:space-y-6">
+        <section className="relative pt-6 sm:pt-8 md:pt-10 pb-16 sm:pb-24">
+          <div className="relative z-10 max-w-[850px] mx-auto px-4 sm:px-6 md:px-8 space-y-5 sm:space-y-6">
 
             {/* Publish actions */}
-            <SectionCard delay={0}>
+            <GlassCard delay={0}>
               {(() => {
                 const isPublished = car.status === 'published';
                 const isArchived = car.status === 'archived';
@@ -430,19 +454,12 @@ export default function DashboardBilDetalj() {
 
                 return (
                   <>
-                    {/* Published: show link + unpublish */}
                     {isPublished && (
                       <div className="flex flex-wrap items-center justify-between gap-3">
-                        {car.slug && (
-                          <Link
-                            to={`/biler/${car.slug}`}
-                            className="inline-flex items-center gap-1.5 text-[12px] uppercase tracking-[0.08em] font-bold text-[#c4962c] hover:text-[#a07820] transition-colors"
-                            style={chakra}
-                          >
-                            <Eye className="w-4 h-4" />
-                            Se offentlig side →
-                          </Link>
-                        )}
+                        <div className="flex items-center gap-2 text-emerald-400">
+                          <CheckCircle2 className="w-5 h-5" />
+                          <span className="text-[13px] uppercase tracking-[0.06em] font-bold" style={chakra}>Bilen er live</span>
+                        </div>
                         <ActionBtn variant="outline" onClick={handleUnpublish} disabled={isPublishing}>
                           <EyeOff className="w-4 h-4" />
                           {isPublishing ? 'Avpubliserer...' : 'Avpubliser'}
@@ -450,21 +467,15 @@ export default function DashboardBilDetalj() {
                       </div>
                     )}
 
-                    {/* Not published: show checklist + publish */}
                     {!isPublished && !isArchived && (
                       <div>
-                        {/* Old open request warning */}
                         {openRequest && (
-                          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full bg-amber-50 border border-amber-200 rounded-md p-4 mb-4">
+                          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full bg-amber-500/10 border border-amber-500/20 rounded-lg p-4 mb-4">
                             <div className="flex items-start gap-2 flex-1">
-                              <Clock className="w-5 h-5 text-amber-600 mt-0.5 shrink-0" />
+                              <Clock className="w-5 h-5 text-amber-400 mt-0.5 shrink-0" />
                               <div>
-                                <p className="text-[13px] font-bold text-amber-800" style={chakra}>
-                                  Du har en åpen forespørsel til admin fra før
-                                </p>
-                                <p className="text-[12px] text-amber-600">
-                                  Avbryt den hvis du heller vil publisere selv.
-                                </p>
+                                <p className="text-[13px] font-bold text-amber-300" style={chakra}>Åpen forespørsel til admin</p>
+                                <p className="text-[12px] text-amber-400/60">Avbryt den hvis du heller vil publisere selv.</p>
                               </div>
                             </div>
                             <ActionBtn variant="outline" onClick={cancelRequest}>
@@ -474,25 +485,24 @@ export default function DashboardBilDetalj() {
                         )}
 
                         <SectionTitle
-                          icon={<Send className="w-5 h-5" />}
+                          icon={<Sparkles className="w-5 h-5" />}
                           title="Publiser på bilgarasje.no"
                           description="Når du publiserer, vises bilen under Biler med offentlig lenke."
                         />
 
-                        {/* Checklist */}
-                        <div className="space-y-2 mb-4">
+                        <div className="space-y-2.5 mb-5">
                           {[
                             { ok: brandOk, label: 'Merke er satt' },
                             { ok: modelOk, label: 'Modell er satt' },
                             { ok: imagesOk, label: 'Minst ett bilde er lastet opp' },
                           ].map(({ ok, label }) => (
-                            <div key={label} className="flex items-center gap-2">
+                            <div key={label} className="flex items-center gap-2.5">
                               {ok ? (
-                                <CheckCircle2 className="w-4.5 h-4.5 text-green-600 shrink-0" />
+                                <CheckCircle2 className="w-[18px] h-[18px] text-emerald-400 shrink-0" />
                               ) : (
-                                <Circle className="w-4.5 h-4.5 text-[#3a2e24]/20 shrink-0" />
+                                <Circle className="w-[18px] h-[18px] text-muted-foreground/30 shrink-0" />
                               )}
-                              <span className={`text-[13px] ${ok ? 'text-[#3a2e24]/70' : 'text-[#3a2e24]/35'}`}>
+                              <span className={`text-[13px] ${ok ? 'text-foreground/70' : 'text-muted-foreground/40'}`}>
                                 {label}
                               </span>
                             </div>
@@ -500,31 +510,28 @@ export default function DashboardBilDetalj() {
                         </div>
 
                         {!canPublish && (
-                          <p className="text-[12px] text-[#3a2e24]/35 mb-4">
+                          <p className="text-[12px] text-muted-foreground/50 mb-4">
                             Fyll inn grunninfo og last opp bilder, så blir «Publiser» tilgjengelig.
                           </p>
                         )}
 
-                        <ActionBtn onClick={handlePublish} disabled={!canPublish || isPublishing}>
+                        <ActionBtn variant="glow" onClick={handlePublish} disabled={!canPublish || isPublishing}>
                           <Send className="w-4 h-4" />
                           {isPublishing ? 'Publiserer...' : 'Publiser'}
                         </ActionBtn>
                       </div>
                     )}
 
-                    {/* Archived */}
                     {isArchived && (
-                      <p className="text-[13px] text-[#3a2e24]/40" style={chakra}>
-                        Denne bilen er arkivert.
-                      </p>
+                      <p className="text-[13px] text-muted-foreground" style={chakra}>Denne bilen er arkivert.</p>
                     )}
                   </>
                 );
               })()}
-            </SectionCard>
+            </GlassCard>
 
             {/* Images */}
-            <SectionCard delay={0.08} className="!p-0 overflow-hidden">
+            <GlassCard delay={0.06} className="!p-0 overflow-hidden">
               <div className="p-5 sm:p-6 pb-0">
                 <SectionTitle
                   icon={<ImageIcon className="w-5 h-5" />}
@@ -543,56 +550,58 @@ export default function DashboardBilDetalj() {
               {sortedImages.length > 0 ? (
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3 p-3 sm:p-5">
                   {sortedImages.map((img: any, index: number) => (
-                    <div key={img.id} className="relative group aspect-video rounded-md overflow-hidden bg-[#3a2e24]/[0.06]">
+                    <div key={img.id} className="relative group aspect-video rounded-lg overflow-hidden bg-secondary/50 ring-1 ring-border/30">
                       <img src={img.image_url} alt={img.alt_text || car.title} className="w-full h-full object-cover" />
                       {index === 0 && (
-                        <span className="absolute top-1.5 left-1.5 bg-[#c4962c] text-white text-[10px] uppercase tracking-[0.08em] font-bold px-2 py-0.5 rounded inline-flex items-center gap-1" style={oswald}>
+                        <span className="absolute top-1.5 left-1.5 bg-primary text-primary-foreground text-[10px] uppercase tracking-[0.08em] font-bold px-2 py-0.5 rounded-md inline-flex items-center gap-1" style={oswald}>
                           <Star className="w-3 h-3 fill-current" />
                           <span className="hidden sm:inline">Hovedbilde</span>
                         </span>
                       )}
-                      <div className="absolute inset-0 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity bg-gradient-to-t from-black/60 via-transparent to-transparent sm:bg-black/40 flex items-end sm:items-center justify-center gap-1 sm:gap-2 p-2 sm:p-0">
+                      <div className="absolute inset-0 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity bg-gradient-to-t from-black/60 via-transparent to-transparent sm:bg-black/50 flex items-end sm:items-center justify-center gap-1.5 sm:gap-2 p-2 sm:p-0">
                         {index > 0 && (
                           <button onClick={() => moveCarImageLeft(index)} disabled={isReorderingImages}
-                            className="bg-white/20 hover:bg-white/30 text-white p-2 rounded-full min-h-[36px] min-w-[36px] flex items-center justify-center active:scale-90">
+                            className="bg-white/15 hover:bg-white/25 backdrop-blur-sm text-white p-2 rounded-full min-h-[36px] min-w-[36px] flex items-center justify-center active:scale-90 transition-all">
                             <ChevronLeft className="w-4 h-4" />
                           </button>
                         )}
                         {index !== 0 && (
                           <button onClick={() => setCarMainImage(index)} disabled={isReorderingImages}
-                            className="bg-white/20 hover:bg-white/30 text-white p-2 rounded-full min-h-[36px] min-w-[36px] flex items-center justify-center active:scale-90"
+                            className="bg-white/15 hover:bg-white/25 backdrop-blur-sm text-white p-2 rounded-full min-h-[36px] min-w-[36px] flex items-center justify-center active:scale-90 transition-all"
                             title="Sett som hovedbilde">
                             <Star className="w-4 h-4" />
                           </button>
                         )}
                         {index < sortedImages.length - 1 && (
                           <button onClick={() => moveCarImageRight(index)} disabled={isReorderingImages}
-                            className="bg-white/20 hover:bg-white/30 text-white p-2 rounded-full min-h-[36px] min-w-[36px] flex items-center justify-center active:scale-90">
+                            className="bg-white/15 hover:bg-white/25 backdrop-blur-sm text-white p-2 rounded-full min-h-[36px] min-w-[36px] flex items-center justify-center active:scale-90 transition-all">
                             <ChevronRight className="w-4 h-4" />
                           </button>
                         )}
                       </div>
                       <button onClick={() => deleteImage(img.id)}
-                        className="absolute top-1.5 right-1.5 bg-red-600 text-white p-1.5 rounded-full sm:opacity-0 sm:group-hover:opacity-100 transition-opacity min-h-[28px] min-w-[28px] flex items-center justify-center active:scale-90">
+                        className="absolute top-1.5 right-1.5 bg-destructive/80 hover:bg-destructive text-white p-1.5 rounded-full sm:opacity-0 sm:group-hover:opacity-100 transition-all min-h-[28px] min-w-[28px] flex items-center justify-center active:scale-90">
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
                     </div>
                   ))}
                 </div>
               ) : (
-                <div className="p-8 sm:p-12 text-center">
-                  <ImageIcon className="w-10 h-10 text-[#3a2e24]/15 mx-auto mb-3" strokeWidth={1.4} />
-                  <p className="text-[1rem] uppercase text-[#3a2e24]/30 font-bold tracking-[0.06em]" style={oswald}>Ingen bilder ennå</p>
+                <div className="p-10 sm:p-14 text-center">
+                  <div className="w-16 h-16 rounded-2xl bg-secondary/60 flex items-center justify-center mx-auto mb-4">
+                    <ImageIcon className="w-8 h-8 text-muted-foreground/30" strokeWidth={1.4} />
+                  </div>
+                  <p className="text-[1rem] uppercase text-muted-foreground/40 font-bold tracking-[0.06em]" style={oswald}>Ingen bilder ennå</p>
                   <button onClick={() => fileInputRef.current?.click()}
-                    className="mt-3 text-[12px] uppercase tracking-[0.12em] text-[#c4962c] hover:text-[#a07820] font-bold border-b border-[#c4962c]/30 pb-0.5 transition-colors" style={oswald}>
+                    className="mt-3 text-[12px] uppercase tracking-[0.12em] text-primary hover:text-primary/80 font-bold border-b border-primary/30 pb-0.5 transition-colors" style={oswald}>
                     Last opp ditt første bilde →
                   </button>
                 </div>
               )}
-            </SectionCard>
+            </GlassCard>
 
             {/* Basic info */}
-            <SectionCard delay={0.16}>
+            <GlassCard delay={0.12}>
               <SectionTitle
                 icon={<Info className="w-5 h-5" />}
                 title="Grunninfo"
@@ -624,76 +633,76 @@ export default function DashboardBilDetalj() {
               {isEditingBasic ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="text-[11px] uppercase tracking-[0.1em] font-bold text-[#3a2e24]/50 mb-1.5 block" style={oswald}>Merke</label>
+                    <label className="text-[11px] uppercase tracking-[0.1em] font-bold text-muted-foreground mb-1.5 block" style={oswald}>Merke</label>
                     <Select value={basicForm.brand} onValueChange={(v) => setBasicForm({ ...basicForm, brand: v, model: "" })}>
-                      <SelectTrigger className="h-11 bg-white border-[#3a2e24]/10"><SelectValue placeholder="Velg merke" /></SelectTrigger>
+                      <SelectTrigger className="h-11 bg-secondary/50 border-border"><SelectValue placeholder="Velg merke" /></SelectTrigger>
                       <SelectContent>{CAR_BRANDS.map(b => <SelectItem key={b.name} value={b.name}>{b.name}</SelectItem>)}</SelectContent>
                     </Select>
                   </div>
                   <div>
-                    <label className="text-[11px] uppercase tracking-[0.1em] font-bold text-[#3a2e24]/50 mb-1.5 block" style={oswald}>Modell</label>
+                    <label className="text-[11px] uppercase tracking-[0.1em] font-bold text-muted-foreground mb-1.5 block" style={oswald}>Modell</label>
                     <Select value={basicForm.model} onValueChange={(v) => setBasicForm({ ...basicForm, model: v })}>
-                      <SelectTrigger className="h-11 bg-white border-[#3a2e24]/10"><SelectValue placeholder="Velg modell" /></SelectTrigger>
+                      <SelectTrigger className="h-11 bg-secondary/50 border-border"><SelectValue placeholder="Velg modell" /></SelectTrigger>
                       <SelectContent>{availableModels.map(m => <SelectItem key={m.name} value={m.name}>{m.name}</SelectItem>)}</SelectContent>
                     </Select>
                   </div>
                   <div>
-                    <label className="text-[11px] uppercase tracking-[0.1em] font-bold text-[#3a2e24]/50 mb-1.5 block" style={oswald}>Variant</label>
+                    <label className="text-[11px] uppercase tracking-[0.1em] font-bold text-muted-foreground mb-1.5 block" style={oswald}>Variant</label>
                     <Input value={basicForm.variant} onChange={(e) => setBasicForm({ ...basicForm, variant: e.target.value })}
-                      placeholder="f.eks. GLS, LS" className="h-11 bg-white border-[#3a2e24]/10" />
+                      placeholder="f.eks. GLS, LS" className="h-11 bg-secondary/50 border-border" />
                   </div>
                   <div>
-                    <label className="text-[11px] uppercase tracking-[0.1em] font-bold text-[#3a2e24]/50 mb-1.5 block" style={oswald}>Karosseri</label>
+                    <label className="text-[11px] uppercase tracking-[0.1em] font-bold text-muted-foreground mb-1.5 block" style={oswald}>Karosseri</label>
                     <Select value={basicForm.body_type} onValueChange={(v) => setBasicForm({ ...basicForm, body_type: v })}>
-                      <SelectTrigger className="h-11 bg-white border-[#3a2e24]/10"><SelectValue placeholder="Velg karosseri" /></SelectTrigger>
+                      <SelectTrigger className="h-11 bg-secondary/50 border-border"><SelectValue placeholder="Velg karosseri" /></SelectTrigger>
                       <SelectContent>{CAR_BODY_TYPES.map(t => <SelectItem key={t.id} value={t.id}>{t.label}</SelectItem>)}</SelectContent>
                     </Select>
                   </div>
                   <div>
-                    <label className="text-[11px] uppercase tracking-[0.1em] font-bold text-[#3a2e24]/50 mb-1.5 block" style={oswald}>Årsmodell</label>
+                    <label className="text-[11px] uppercase tracking-[0.1em] font-bold text-muted-foreground mb-1.5 block" style={oswald}>Årsmodell</label>
                     <Input type="number" value={basicForm.year} onChange={(e) => setBasicForm({ ...basicForm, year: e.target.value })}
-                      placeholder="f.eks. 1972" className="h-11 bg-white border-[#3a2e24]/10" />
+                      placeholder="f.eks. 1972" className="h-11 bg-secondary/50 border-border" />
                   </div>
                   <div>
-                    <label className="text-[11px] uppercase tracking-[0.1em] font-bold text-[#3a2e24]/50 mb-1.5 block" style={oswald}>Kategori</label>
+                    <label className="text-[11px] uppercase tracking-[0.1em] font-bold text-muted-foreground mb-1.5 block" style={oswald}>Kategori</label>
                     <Select value={basicForm.category} onValueChange={(v) => setBasicForm({ ...basicForm, category: v })}>
-                      <SelectTrigger className="h-11 bg-white border-[#3a2e24]/10"><SelectValue /></SelectTrigger>
+                      <SelectTrigger className="h-11 bg-secondary/50 border-border"><SelectValue /></SelectTrigger>
                       <SelectContent>{CATEGORIES.map(c => <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>)}</SelectContent>
                     </Select>
                   </div>
                   <div className="sm:col-span-2">
-                    <label className="text-[11px] uppercase tracking-[0.1em] font-bold text-[#3a2e24]/50 mb-1.5 block" style={oswald}>Tags (kommaseparert)</label>
+                    <label className="text-[11px] uppercase tracking-[0.1em] font-bold text-muted-foreground mb-1.5 block" style={oswald}>Tags (kommaseparert)</label>
                     <Input value={basicForm.tags} onChange={(e) => setBasicForm({ ...basicForm, tags: e.target.value })}
-                      placeholder="f.eks. original, restaurert" className="h-11 bg-white border-[#3a2e24]/10" />
+                      placeholder="f.eks. original, restaurert" className="h-11 bg-secondary/50 border-border" />
                   </div>
                 </div>
               ) : (
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-3">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-5 gap-y-4">
                   {[
                     ['Merke', car.brand], ['Modell', car.model], ['Variant', car.variant],
                     ['Karosseri', car.body_type], ['Årsmodell', car.year], ['Kategori', car.category],
                   ].map(([label, value]) => (
                     <div key={label as string}>
-                      <span className="text-[11px] uppercase tracking-[0.1em] font-bold text-[#3a2e24]/35 block" style={oswald}>{label}</span>
-                      <p className="text-[0.95rem] font-medium text-[#3a2e24] capitalize">{value || '—'}</p>
+                      <span className="text-[11px] uppercase tracking-[0.1em] font-bold text-muted-foreground/60 block mb-0.5" style={oswald}>{label}</span>
+                      <p className="text-[0.95rem] font-medium text-foreground capitalize">{value || '—'}</p>
                     </div>
                   ))}
                   {car.tags && car.tags.length > 0 && (
                     <div className="col-span-full mt-1">
-                      <span className="text-[11px] uppercase tracking-[0.1em] font-bold text-[#3a2e24]/35 block mb-1.5" style={oswald}>Tags</span>
+                      <span className="text-[11px] uppercase tracking-[0.1em] font-bold text-muted-foreground/60 block mb-2" style={oswald}>Tags</span>
                       <div className="flex flex-wrap gap-1.5">
                         {car.tags.map((tag: string) => (
-                          <span key={tag} className="bg-[#3a2e24]/[0.06] text-[#3a2e24]/70 text-[12px] px-2.5 py-1 rounded-full">{tag}</span>
+                          <span key={tag} className="bg-secondary text-secondary-foreground text-[12px] px-2.5 py-1 rounded-md border border-border/40">{tag}</span>
                         ))}
                       </div>
                     </div>
                   )}
                 </div>
               )}
-            </SectionCard>
+            </GlassCard>
 
             {/* Story */}
-            <SectionCard delay={0.24}>
+            <GlassCard delay={0.18}>
               <SectionTitle
                 icon={<BookOpen className="w-5 h-5" />}
                 title="Historien"
@@ -719,18 +728,18 @@ export default function DashboardBilDetalj() {
               {isEditingStory ? (
                 <Textarea value={storyForm} onChange={(e) => setStoryForm(e.target.value)}
                   placeholder="Fortell historien om bilen din..." rows={8}
-                  className="bg-white border-[#3a2e24]/10 min-h-[180px]" />
+                  className="bg-secondary/50 border-border min-h-[180px]" />
               ) : (
                 car.story ? (
-                  <p className="text-[#3a2e24]/60 whitespace-pre-wrap leading-relaxed text-[0.95rem]">{car.story}</p>
+                  <p className="text-foreground/60 whitespace-pre-wrap leading-relaxed text-[0.95rem]">{car.story}</p>
                 ) : (
-                  <p className="text-[#3a2e24]/30 italic text-[0.95rem]">Ingen historie lagt til ennå.</p>
+                  <p className="text-muted-foreground/40 italic text-[0.95rem]">Ingen historie lagt til ennå.</p>
                 )
               )}
-            </SectionCard>
+            </GlassCard>
 
             {/* Feed composer */}
-            <SectionCard delay={0.32}>
+            <GlassCard delay={0.24}>
               <SectionTitle
                 icon={<Send className="w-5 h-5" />}
                 title="Del i feeden"
@@ -744,13 +753,13 @@ export default function DashboardBilDetalj() {
                 snapshotImageUrl={mainImage?.image_url}
                 snapshotEntityType="car"
               />
-            </SectionCard>
+            </GlassCard>
 
             {/* Timeline */}
             <motion.div
-              initial={{ opacity: 0, y: 16 }}
+              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: 0.4 }}
+              transition={{ duration: 0.4, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
             >
               <CarEventsList carId={car.id} />
             </motion.div>
