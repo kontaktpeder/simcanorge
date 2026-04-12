@@ -309,7 +309,7 @@ function AdminForesporslerContent() {
   };
 
   const getRecipientLabel = (inquiry: Inquiry) => {
-    if (!inquiry.recipient_owner_id) return "Simca Norge";
+    if (!inquiry.recipient_owner_id) return "Bilgarasje.no";
     const owner = ownersMap.get(inquiry.recipient_owner_id);
     return owner?.display_name || "Ukjent selger";
   };
@@ -613,7 +613,7 @@ function AdminForesporslerContent() {
                           <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
                             <Package className="w-5 h-5 text-primary" />
                           </div>
-                          <p className="font-display text-lg font-semibold">Simca Norge (admin)</p>
+                          <p className="font-display text-lg font-semibold">Bilgarasje.no (admin)</p>
                         </div>
                       )}
                     </div>
@@ -757,7 +757,7 @@ function AdminForesporslerContent() {
                     {/* Actions */}
                     <div className="pt-4 border-t flex flex-wrap gap-3">
                       <Button asChild>
-                        <a href={`mailto:${selectedInquiry.email}?subject=Re: Din forespørsel hos Simca Norge`}>
+                        <a href={`mailto:${selectedInquiry.email}?subject=Re: Din forespørsel hos Bilgarasje.no`}>
                           <Mail className="w-4 h-4 mr-2" />
                           Svar på e-post
                         </a>

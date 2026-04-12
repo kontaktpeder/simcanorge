@@ -441,7 +441,7 @@ export default function OpprettAnnonse() {
                 <div className="mt-10 text-center">
                   <div className="h-px bg-foreground/10 mb-6" />
                   <p className="font-display text-[10px] md:text-xs uppercase tracking-[0.4em] text-foreground/25">
-                    Markedsplass · Simca Norge
+                    Markedsplass · Bilgarasje.no
                   </p>
                 </div>
               </>

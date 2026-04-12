@@ -24,7 +24,7 @@ const Personvern = () => {
             <div className="border-chrome bg-card p-6 rounded-xl">
               <h2 className="headline-sm text-accent mb-4">1. Hvem vi er</h2>
               <ul className="space-y-2 text-foreground">
-                <li><strong>Nettside:</strong> Simca Norge</li>
+                <li><strong>Nettside:</strong> Bilgarasje.no</li>
                 <li><strong>Eier:</strong> Peter Arnt Halvorsen</li>
                 <li><strong>Teknisk ansvarlig:</strong> Peder August Halvorsen</li>
                 <li><strong>Sted:</strong> Grimstad, Norge</li>
@@ -32,7 +32,7 @@ const Personvern = () => {
                 <li><strong>Kontakt:</strong> <a href="mailto:p-ahalvo@online.no" className="text-primary hover:underline">p-ahalvo@online.no</a></li>
               </ul>
               <p className="mt-4 text-muted-foreground">
-                Simca Norge er en ideell formidlingsside for entusiaster av Simca, Talbot og Matra. 
+                Bilgarasje.no er en ideell formidlingsside for bilentusiaster i Norge, med røtter i Simca-miljøet. 
                 Nettsiden brukes til å dele bilhistorier, formidle bildeler og svare på henvendelser fra publikum.
               </p>
             </div>
@@ -96,7 +96,7 @@ const Personvern = () => {
             <div className="border-chrome bg-card p-6 rounded-xl">
               <h2 className="headline-sm text-accent mb-4">4. Redigering og publisering av innsendt innhold</h2>
               <p className="mb-4">
-                Ved innsending av bil/historie må du samtykke til at Simca Norge kan <strong>redigere og forbedre</strong> innholdet før publisering.
+                Ved innsending av bil/historie må du samtykke til at Bilgarasje.no kan <strong>redigere og forbedre</strong> innholdet før publisering.
               </p>
               <p className="mb-2">Dette innebærer:</p>
               <ul className="list-disc list-inside space-y-1 text-muted-foreground mb-4">

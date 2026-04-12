@@ -65,7 +65,7 @@ export function TimelineSection({ carId, createdAt, publishedAt }: TimelineSecti
             <div className="absolute left-2.5 top-1.5 w-3 h-3 rounded-full bg-primary border-2 border-background" />
             
             <div className="text-sm text-primary font-medium">{fallbackYear}</div>
-            <h4 className="font-semibold mt-1">Registrert på Simca Norge</h4>
+            <h4 className="font-semibold mt-1">Registrert på Bilgarasje.no</h4>
             <p className="text-muted-foreground text-sm mt-1">
               Historien bygges over tid av eier.
             </p>

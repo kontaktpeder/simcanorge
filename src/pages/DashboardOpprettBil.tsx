@@ -812,7 +812,7 @@ export default function DashboardOpprettBil() {
                     <label className="flex items-start gap-3 cursor-pointer p-2.5 rounded-sm transition-colors hover:bg-[#f0ebe3]">
                       <input type="radio" name="allowEdits" checked={allowEdits === true} onChange={() => setAllowEdits(true)} className="w-4 h-4 mt-0.5 accent-[#c4962c] flex-shrink-0" />
                       <span className="text-sm font-medium" style={{ color: '#3a2e24' }}>
-                        Ja, jeg godkjenner at Simca Norge kan redigere og forbedre innsendelsen min.
+                        Ja, jeg godkjenner at Bilgarasje.no kan redigere og forbedre innsendelsen min.
                       </span>
                     </label>
                     <label className="flex items-start gap-3 cursor-pointer p-2.5 rounded-sm transition-colors hover:bg-[#f0ebe3]">
@@ -894,7 +894,7 @@ export default function DashboardOpprettBil() {
                         className="w-4 h-4 mt-0.5 accent-[#c4962c] flex-shrink-0"
                       />
                       <span className="text-sm font-medium" style={{ color: '#3a2e24' }}>
-                        Jeg godkjenner at bilder og beskrivelse av bilen min deles på Simca Norge sin{' '}
+                        Jeg godkjenner at bilder og beskrivelse av bilen min deles på Bilgarasje.no sin{' '}
                         <a href="https://www.instagram.com/simcanorge/" target="_blank" rel="noopener noreferrer"
                           className="underline transition-colors"
                           style={{ color: '#c4962c' }}

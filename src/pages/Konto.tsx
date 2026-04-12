@@ -137,8 +137,8 @@ export default function Konto() {
   return (
     <Layout>
       <Helmet>
-        <title>Konto | Simca Norge</title>
-        <meta name="description" content="Administrer kontoen din hos Simca Norge" />
+        <title>Konto | Bilgarasje.no</title>
+        <meta name="description" content="Administrer kontoen din på Bilgarasje.no" />
       </Helmet>
 
       <div className="container max-w-2xl mx-auto py-8 px-4">
