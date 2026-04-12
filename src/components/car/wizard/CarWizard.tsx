@@ -20,7 +20,7 @@ function normalizeRegistrationNumber(raw: string): string {
 type DuplicateHit = { id: string; slug: string; title: string; published_at: string | null };
 
 interface CarWizardProps {
-  onSuccess?: () => void;
+  onSuccess?: (result: { carId: string; email: string }) => void;
 }
 
 export function CarWizard({ onSuccess }: CarWizardProps) {
@@ -206,7 +206,7 @@ export function CarWizard({ onSuccess }: CarWizardProps) {
       }
 
       toast({ title: "Takk for innsendingen!", description: "Vi har mottatt bilen din. Den blir synlig når admin har godkjent den." });
-      onSuccess?.();
+      onSuccess?.({ carId, email: data.email });
     } catch (error: any) {
       const isRls = error?.message?.toLowerCase().includes("row-level security");
       toast({
