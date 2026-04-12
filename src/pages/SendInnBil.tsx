@@ -71,47 +71,31 @@ export default function SendInnBil() {
 
     localStorage.setItem("pendingClaimCarId", pendingCarId);
 
-    const linkCarToUser = async (userId: string) => {
+    const linkCarToUser = async (_userId: string) => {
       if (claimHandledRef.current) return;
       claimHandledRef.current = true;
 
-      const { error, data: updated } = await supabase
-        .from("cars")
-        .update({ created_by_user_id: userId } as any)
-        .eq("id", pendingCarId)
-        .select("id");
+      const { data: result, error } = await supabase.rpc("claim_car_after_email_verify", {
+        p_car_id: pendingCarId,
+      });
 
-      if (!error && updated?.length) {
+      const res = result as any;
+
+      if (!error && res?.ok) {
         clearPendingClaimCarId();
         await navigateToCarDestination(pendingCarId, navigate, toast);
         return;
       }
 
-      const { data: existingCar } = await supabase
-        .from("cars")
-        .select("id")
-        .eq("id", pendingCarId)
-        .eq("created_by_user_id", userId)
-        .maybeSingle();
-
       clearPendingClaimCarId();
-
-      if (existingCar) {
-        await navigateToCarDestination(pendingCarId, navigate, toast);
-        return;
-      }
-
-      if (error || !updated?.length) {
-        console.warn("Car claim failed:", error?.message ?? "0 rows updated");
-        claimHandledRef.current = false;
-        toast({
-          title: "Innlogging registrert, men bilen ble ikke koblet",
-          description: error?.message || "Bilen finnes kanskje ikke eller er allerede koblet.",
-          variant: "destructive",
-        });
-        setState({ step: "wizard" });
-        return;
-      }
+      console.warn("Car claim failed:", error?.message ?? res?.error ?? "unknown");
+      claimHandledRef.current = false;
+      toast({
+        title: "Innlogging registrert, men bilen ble ikke koblet",
+        description: error?.message || "Bilen finnes kanskje ikke eller er allerede koblet.",
+        variant: "destructive",
+      });
+      setState({ step: "wizard" });
     };
 
     // If already signed in, link immediately
