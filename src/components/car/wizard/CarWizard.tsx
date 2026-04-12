@@ -1,10 +1,10 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { AlertTriangle, ExternalLink, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { generateCarTitle } from "@/data/carBrands";
-import { compressImages, generateImageId, getSubmissionImagePath, type CompressionProgress } from "@/lib/imageCompression";
+import { compressImages, generateImageId, getSubmissionImagePath, getCarImagePath, type CompressionProgress } from "@/lib/imageCompression";
 import { ImageUploadProgress } from "@/components/ui/image-upload-progress";
 import { StepImages } from "./StepImages";
 import { StepBrand } from "./StepBrand";
@@ -14,6 +14,7 @@ import { StepContact } from "./StepContact";
 import { StepConsent } from "./StepConsent";
 import { CarWizardPreview } from "./CarWizardPreview";
 import { INITIAL_WIZARD_DATA, STEP_LABELS, type WizardData, type WizardStep } from "./WizardTypes";
+import { useAuth } from "@/hooks/useAuth";
 
 function normalizeRegistrationNumber(raw: string): string {
   return raw.replace(/[\s\-]/g, "").toUpperCase();
@@ -22,7 +23,7 @@ function normalizeRegistrationNumber(raw: string): string {
 type DuplicateHit = { id: string; slug: string; title: string; published_at: string | null };
 
 interface CarWizardProps {
-  onSuccess?: (result: { carId: string; email: string }) => void;
+  onSuccess?: (result: { carId: string; email: string; flow: "guest" | "authenticated" }) => void;
 }
 
 export function CarWizard({ onSuccess }: CarWizardProps) {
