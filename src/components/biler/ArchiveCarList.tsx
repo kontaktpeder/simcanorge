@@ -71,7 +71,7 @@ function ArchiveCarItem({ car }: { car: CarData }) {
           
           {/* Model */}
           <span className="font-display text-sm text-muted-foreground uppercase tracking-wide">
-            {car.brand || 'Simca'} {car.model}
+            {car.brand ? `${car.brand} ${car.model}` : car.model}
           </span>
         </div>
         

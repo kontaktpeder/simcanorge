@@ -59,7 +59,7 @@ export function FeatureCarModule({ car, reverse = false }: FeatureCarModuleProps
           
           {/* Model / Brand */}
           <span className="font-display text-sm tracking-widest text-muted-foreground uppercase mb-2">
-            {car.brand || 'Simca'} · {car.model}
+            {car.brand ? `${car.brand} · ${car.model}` : car.model}
           </span>
           
           {/* Title */}

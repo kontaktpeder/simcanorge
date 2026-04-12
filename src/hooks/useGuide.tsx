@@ -153,7 +153,7 @@ export const GUIDE_STEPS: GuideStep[] = [
   {
     target: '[data-guide="owner-bio"]',
     title: 'Fortell om deg selv',
-    content: 'Skriv litt om deg som bileier. Hvorfor liker du Simca? Hvor lenge har du vært entusiast?',
+    content: 'Skriv litt om deg som bileier. Hva er din bilhistorie? Hvor lenge har du vært entusiast?',
     routeType: 'owner-profile',
     placement: 'top',
   },

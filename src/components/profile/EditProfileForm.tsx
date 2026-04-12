@@ -24,7 +24,7 @@ interface ProfileData {
   visible_public?: boolean;
 }
 
-const BRAND_OPTIONS = ['Simca', 'Talbot', 'Matra', 'Peugeot', 'Citroën', 'Annet'];
+const BRAND_OPTIONS = ['Volvo', 'Ford', 'Mercedes-Benz', 'BMW', 'Peugeot', 'Citroën', 'Simca', 'Talbot', 'Matra', 'Annet'];
 
 const schema = z.object({
   display_name: z.string().min(2, "Navn må være minst 2 tegn"),
