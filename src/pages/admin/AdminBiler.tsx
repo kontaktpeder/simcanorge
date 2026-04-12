@@ -638,7 +638,7 @@ const AdminBiler = () => {
                 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                   {/* Brand */}
-                  <FormFieldWithTooltip label="MERKE" tooltip="Bilprodusent. Eks: Simca" required>
+                  <FormFieldWithTooltip label="MERKE" <FormFieldWithTooltip label="MERKE" tooltip="Bilprodusent, f.eks. Volvo eller Ford" required> required>
                     <select
                       value={formData.brand}
                       onChange={(e) =>

@@ -88,7 +88,7 @@ export interface RouteConfig {
 export const routes: RouteConfig[] = [
   // Public routes with navigation
   { path: "/", element: Index, label: "Hjem", description: "Tilbake til forsiden", icon: Home, isPublic: true, showInNav: true },
-  { path: "/manedens-bil", element: ManedensBil, label: "Månedens bil", description: "Se denne månedens utvalgte Simca", icon: Star, glow: true, isPublic: true, showInNav: true },
+  { path: "/manedens-bil", element: ManedensBil, label: "Månedens bil", { path: "/manedens-bil", element: ManedensBil, label: "Månedens bil", description: "Se denne månedens utvalgte bil", icon: Star, glow: true, isPublic: true, showInNav: true },, icon: Star, glow: true, isPublic: true, showInNav: true },
   { path: "/biler", element: Biler, label: "Biler", description: "Utforsk biler og historier fra hele Norge", icon: Car, isPublic: true, showInNav: true },
   { path: "/markedsplass/:branch", element: Markedsplass, isPublic: true },
   { path: "/markedsplass", element: Markedsplass, label: "Markedsplass", description: "Deler, tilbehør og annonser", icon: ShoppingBag, isPublic: true, showInNav: true },

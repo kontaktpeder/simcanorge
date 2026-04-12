@@ -168,7 +168,7 @@ const AdminDashboard = () => {
       <div className="bg-card border border-border rounded-xl p-6 mb-6 flex items-center gap-6">
         <img 
           src={simcaSwallow} 
-          alt="Simca svale" 
+          alt="Bilgarasje logo" 
           className="w-16 h-16 object-contain opacity-80"
         />
         <div>

@@ -398,7 +398,7 @@ export default function Markedsplass() {
             <div className="absolute top-0 left-0 right-0 h-1" style={{ background: "hsl(2, 85%, 40%)" }} />
             <div className="container mx-auto px-4 py-12 md:py-20 text-center relative z-10">
               <p className="font-display text-[10px] md:text-xs uppercase tracking-[0.4em] text-white/40 mb-3">
-                Simca · Talbot · Matra
+                Bilgarasje.no
               </p>
               <h2 className="font-display text-3xl md:text-5xl lg:text-6xl text-white uppercase tracking-wider leading-none mb-4">
                 Fant du ikke<br />det du lette etter?

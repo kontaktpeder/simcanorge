@@ -120,7 +120,7 @@ export function PageForm({ defaultValues, onSubmit, isPending, submitLabel = "La
 
         <div className="space-y-1">
           <Label htmlFor="title">Navn *</Label>
-          <Input id="title" {...register("title")} placeholder="Simca Klubben Norge" />
+          <Input id="title" {...register("title")} <Input id="title" {...register("title")} placeholder="Veteranbilklubben Sør" /> />
           {errors.title && <p className="text-sm text-destructive">{errors.title.message}</p>}
         </div>
       </div>
@@ -138,7 +138,7 @@ export function PageForm({ defaultValues, onSubmit, isPending, submitLabel = "La
 
       <div className="space-y-1">
         <Label htmlFor="tagline">Slagord</Label>
-        <Input id="tagline" {...register("tagline")} placeholder="For alle som elsker Simca" />
+        <Input id="tagline" {...register("tagline")} <Input id="tagline" {...register("tagline")} placeholder="For alle som elsker biler" /> />
       </div>
 
       <div className="space-y-1">

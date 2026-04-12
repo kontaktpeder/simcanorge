@@ -73,7 +73,7 @@ export default function OpprettAnnonse() {
           <div className="container mx-auto px-4 py-16 md:py-24 relative z-10">
             <div className="max-w-lg mx-auto text-center">
               <p className="font-display text-[10px] uppercase tracking-[0.4em] text-foreground/40 mb-4">
-                Simca · Talbot · Matra
+                Bilgarasje.no
               </p>
               <Clock className="h-16 w-16 text-foreground/20 mx-auto mb-6" />
               <h2 className="font-display text-3xl md:text-4xl uppercase tracking-wider leading-none mb-4 text-foreground">
@@ -233,7 +233,7 @@ export default function OpprettAnnonse() {
             </Link>
 
             <p className="font-display text-[10px] md:text-xs uppercase tracking-[0.4em] text-foreground/40 mb-3">
-              Simca · Talbot · Matra
+               Bilgarasje.no
             </p>
             <h1 className="font-display text-4xl sm:text-5xl md:text-6xl uppercase tracking-wider leading-[0.9] text-foreground mb-4">
               Opprett annonse
@@ -287,7 +287,7 @@ export default function OpprettAnnonse() {
                 {/* Section header */}
                 <div className="text-center mb-10">
                   <p className="font-display text-xs md:text-sm uppercase tracking-[0.4em] text-foreground/40 mb-2">
-                    Simca · Talbot · Matra
+                    Bilgarasje.no
                   </p>
                   <h2 className="font-display text-3xl md:text-5xl uppercase tracking-wider">
                     Velg type

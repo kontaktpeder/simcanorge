@@ -288,7 +288,7 @@ ${senderInfo.email}`;
               id="carName"
               value={carName}
               onChange={(e) => setCarName(e.target.value)}
-              placeholder="Simca 1000 Rallye"
+              placeholder="f.eks. Volvo Amazon 1967"
             />
           </div>
           )}

@@ -39,7 +39,7 @@ export default function StartAnnonse() {
         <div className="container mx-auto px-4 py-16 md:py-24 relative z-10">
           <div className="max-w-lg mx-auto text-center">
             <p className="font-display text-[10px] md:text-xs uppercase tracking-[0.4em] text-white/40 mb-4">
-              Simca · Talbot · Matra
+              Bilgarasje.no
             </p>
 
             <h2 className="font-display text-3xl md:text-5xl text-white uppercase tracking-wider leading-none mb-4">

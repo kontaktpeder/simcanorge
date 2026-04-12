@@ -519,7 +519,7 @@ export function SendInnBilForm({ onSuccess, onCancel, showCancelButton = false }
             
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
               {/* Brand */}
-              <FormFieldWithTooltip label="MERKE" tooltip="Bilprodusent. Eks: Simca" required htmlFor="brand" error={errors.brand}>
+              <FormFieldWithTooltip label="MERKE" <FormFieldWithTooltip label="MERKE" tooltip="Bilprodusent, f.eks. Volvo eller Ford" required htmlFor="brand" error={errors.brand}> required htmlFor="brand" error={errors.brand}>
                 <select id="brand" name="brand" value={formData.brand} onChange={e => setFormData(prev => ({
                   ...prev,
                   brand: e.target.value,

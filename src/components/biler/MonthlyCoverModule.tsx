@@ -86,7 +86,7 @@ export function MonthlyCoverModule({ car }: MonthlyCoverModuleProps) {
               
               {/* Brand & model */}
               <span className="font-display text-xs md:text-sm tracking-[0.2em] text-background/60 uppercase block mb-3">
-                {car.brand || 'Simca'} · {car.model}
+                {car.brand ? `${car.brand} · ${car.model}` : car.model}
               </span>
               
               {/* Title - cover style */}
