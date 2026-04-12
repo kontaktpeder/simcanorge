@@ -191,9 +191,34 @@ export function CarWizard({ onSuccess }: CarWizardProps) {
         } else throw carError;
       }
 
-      // Insert images
+      // Insert images with error handling
+      const insertErrors: string[] = [];
+      let imagesSaved = 0;
       for (let i = 0; i < uploadedUrls.length; i++) {
-        await supabase.from("car_images").insert({ car_id: carId, image_url: uploadedUrls[i], sort_order: i });
+        const { error: insertError } = await supabase.from("car_images").insert({
+          car_id: carId,
+          image_url: uploadedUrls[i],
+          sort_order: i,
+        });
+        if (insertError) {
+          console.error("car_images insert error:", insertError);
+          insertErrors.push(insertError.message);
+        } else {
+          imagesSaved++;
+        }
+      }
+      const wanted = uploadedUrls.length;
+      if (wanted > 0 && imagesSaved === 0) {
+        throw new Error(
+          insertErrors[0] || "Kunne ikke knytte bildene til bilen. Teksten er lagret."
+        );
+      }
+      if (wanted > 0 && insertErrors.length > 0 && imagesSaved > 0) {
+        toast({
+          title: "Innsending delvis lagret",
+          description: `${imagesSaved} av ${wanted} bilde(r) ble knyttet. Noen feilet.`,
+          variant: "destructive",
+        });
       }
 
       // Club link request
