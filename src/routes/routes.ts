@@ -89,13 +89,13 @@ export const routes: RouteConfig[] = [
   // Public routes with navigation
   { path: "/", element: Index, label: "Hjem", description: "Tilbake til forsiden", icon: Home, isPublic: true, showInNav: true },
   { path: "/manedens-bil", element: ManedensBil, label: "Månedens bil", description: "Se denne månedens utvalgte Simca", icon: Star, glow: true, isPublic: true, showInNav: true },
-  { path: "/biler", element: Biler, label: "Biler", description: "Utforsk Simca-biler og historier", icon: Car, isPublic: true, showInNav: true },
+  { path: "/biler", element: Biler, label: "Biler", description: "Utforsk biler og historier fra hele Norge", icon: Car, isPublic: true, showInNav: true },
   { path: "/markedsplass/:branch", element: Markedsplass, isPublic: true },
   { path: "/markedsplass", element: Markedsplass, label: "Markedsplass", description: "Deler, tilbehør og annonser", icon: ShoppingBag, isPublic: true, showInNav: true },
   { path: "/arrangement", element: EventsPage, label: "Arrangement", description: "Kommende biltreff og events", icon: CalendarDays, isPublic: true, showInNav: true },
   { path: "/send-inn", element: SendInnBil, label: "Del din bil", description: "Del din bil med oss", icon: Send, isPublic: true, showInNav: true },
-  { path: "/historie", element: Historie, label: "Historie", description: "Lær om Simcas rike historie", icon: BookOpen, isPublic: true, showInNav: true },
-  { path: "/om-oss", element: OmOss, label: "Om oss", description: "Hvem står bak Simca Norge", icon: Users, isPublic: true, showInNav: true },
+  { path: "/historie", element: Historie, label: "Historie", description: "Lær om bilhistorien vår", icon: BookOpen, isPublic: true, showInNav: true },
+  { path: "/om-oss", element: OmOss, label: "Om oss", description: "Hvem står bak Bilgarasje.no", icon: Users, isPublic: true, showInNav: true },
   { path: "/kontakt", element: Kontakt, label: "Kontakt", description: "Ta kontakt med oss", icon: Mail, isPublic: true, showInNav: true },
 
   // Public routes without navigation

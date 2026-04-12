@@ -95,7 +95,7 @@ export function HeroSection() {
               />
             </div>
             <p className="text-sm md:text-lg lg:text-2xl font-light mb-2 md:mb-4 max-w-lg mx-auto lg:mx-0 text-white/90 font-serif">
-              Din kilde til Simca, Talbot og Matra klassikere. Bildeler og historier fra entusiaster i Norge.
+              Norges digitale bilgarasje – biler, historier og fellesskap på tvers av merker.
             </p>
             
             {/* Featured Car - Månedens bil - MOBILE ONLY above CTA */}

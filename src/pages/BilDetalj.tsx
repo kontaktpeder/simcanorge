@@ -314,12 +314,12 @@ const BilDetalj = () => {
 
   // Build OG meta data
   const displayYear = car.year != null ? ` (${car.year})` : "";
-  const ogTitle = `${car.title}${displayYear} – Bilhistorie fra Norge | Simca Norge`;
+  const ogTitle = `${car.title}${displayYear} – Bilhistorie fra Norge | Bilgarasje.no`;
   const yearLabel = car.year != null ? ` fra ${car.year}` : "";
   const storySnippet = car.story?.trim();
   const ogDescription = storySnippet
     ? `Les historien om ${car.title}${yearLabel}. ${storySnippet.slice(0, 150).trim()}${storySnippet.length > 150 ? "…" : ""}`
-    : `Les historien om ${car.title}${yearLabel} på Simca Norge.`;
+    : `Les historien om ${car.title}${yearLabel} på Bilgarasje.no.`;
   const functionsHost = (import.meta.env.VITE_SUPABASE_URL ?? "").replace(/\/$/, "");
   const ogImageFromEdge = functionsHost
     ? `${functionsHost}/functions/v1/og-bil?slug=${encodeURIComponent(car.slug)}${car.updated_at ? `&v=${encodeURIComponent(car.updated_at)}` : ""}`
@@ -360,7 +360,7 @@ const BilDetalj = () => {
         <meta property="og:image:height" content="630" />
         <meta property="og:url" content={canonicalUrl} />
         <meta property="og:type" content="article" />
-        <meta property="og:site_name" content="Simca Norge" />
+        <meta property="og:site_name" content="Bilgarasje.no" />
         
         {/* Twitter Card */}
         <meta name="twitter:card" content="summary_large_image" />
@@ -379,11 +379,11 @@ const BilDetalj = () => {
             "mainEntityOfPage": canonicalUrl,
             "author": {
               "@type": "Organization",
-              "name": "Simca Norge",
+              "name": "Bilgarasje.no",
             },
             "publisher": {
               "@type": "Organization",
-              "name": "Simca Norge",
+              "name": "Bilgarasje.no",
               "logo": {
                 "@type": "ImageObject",
                 "url": `${SITE_URL}/simca-norge-badge.png`,
@@ -857,9 +857,9 @@ const BilDetalj = () => {
       <section ref={ctaSectionRef} className="py-16 bg-accent">
         <div className="container mx-auto px-4 text-center">
           <AnimatedSection delay={700}>
-            <h2 className="headline-md text-accent-foreground mb-4">Har du en Simca?</h2>
+            <h2 className="headline-md text-accent-foreground mb-4">Har du en bil å dele?</h2>
             <p className="font-serif text-xl text-accent-foreground/90 mb-8 max-w-xl mx-auto">
-              Kanskje blir din bil neste månedens bil! Send inn historien din og la oss løfte frem din Simca.
+              Kanskje blir din bil neste månedens bil! Send inn historien din og la oss løfte den frem.
             </p>
             <Link 
               to="/send-inn" 

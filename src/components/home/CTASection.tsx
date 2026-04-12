@@ -23,10 +23,10 @@ export function CTASection() {
               </div>
               <div className="flex-1 min-w-0">
                 <h3 className="font-display text-base md:text-lg mb-1">
-                  HAR DU EN SIMCA?
+                  HAR DU EN BIL Å DELE?
                 </h3>
                 <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
-                  Del historien om din klassiker med Simca-miljøet i Norge.
+                  Del historien om din klassiker med bilentusiaster i Norge.
                 </p>
                 <Link to="/send-inn" className="inline-flex items-center gap-2 bg-accent text-accent-foreground px-4 py-2 rounded-full text-sm font-medium hover:opacity-90 transition-opacity">
                   Send inn din bil
