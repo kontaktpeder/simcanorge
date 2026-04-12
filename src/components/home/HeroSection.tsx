@@ -218,7 +218,7 @@ export function HeroSection() {
                         getMainImage(featuredCar)!.alt_text || featuredCar.title,
                         { sizes: IMAGE_SIZES.featured, priority: true }
                       )}
-                      className="w-full aspect-[4/3] object-cover shadow-lg group-hover:scale-105 transition-transform duration-500"
+                      className="w-full aspect-[16/10] object-cover shadow-lg group-hover:scale-105 transition-transform duration-500"
                     />
                     <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
                     <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
