@@ -1,16 +1,29 @@
 import { useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { CompleteProfileForm } from "@/components/profile/CompleteProfileForm";
 import { PasswordSetupStep } from "@/components/profile/PasswordSetupStep";
+import { safeInternalPath } from "@/lib/navigation";
 
 export default function CompleteProfilePage() {
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const skalSettePassord = searchParams.get("sett-passord") === "1";
-  const returnUrl = searchParams.get("returnUrl");
-  const fromCarClaim = skalSettePassord && returnUrl?.includes("/bil");
+  const returnUrlRaw = searchParams.get("returnUrl");
+  const hasCarReturn =
+    skalSettePassord && returnUrlRaw && returnUrlRaw.includes("/bil");
+
   const [passordSatt, setPassordSatt] = useState(false);
   const visPassordSteg = skalSettePassord && !passordSatt;
+
+  const handlePasswordSuccess = () => {
+    if (hasCarReturn) {
+      const path = safeInternalPath(returnUrlRaw, "/dashboard");
+      navigate(path, { replace: true });
+      return;
+    }
+    setPassordSatt(true);
+  };
 
   return (
     <>
@@ -26,14 +39,9 @@ export default function CompleteProfilePage() {
                 ? "Velg et passord for kontoen din."
                 : "Sett opp profilen din for å komme i gang."}
             </p>
-            {fromCarClaim && (
-              <p className="text-sm text-primary">
-                Etter passord og profil sender vi deg til bilen din.
-              </p>
-            )}
           </div>
           {visPassordSteg ? (
-            <PasswordSetupStep onSuccess={() => setPassordSatt(true)} />
+            <PasswordSetupStep onSuccess={handlePasswordSuccess} />
           ) : (
             <CompleteProfileForm />
           )}
