@@ -1869,6 +1869,10 @@ export type Database = {
         Args: { p_request_id: string }
         Returns: Json
       }
+      claim_car_after_email_verify: {
+        Args: { p_car_id: string }
+        Returns: Json
+      }
       cleanup_old_page_views: { Args: never; Returns: undefined }
       create_page_car_link_request: {
         Args: { p_car_id: string; p_message?: string; p_page_id: string }
