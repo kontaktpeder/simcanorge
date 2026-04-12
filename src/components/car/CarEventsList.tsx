@@ -1,22 +1,18 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { useCarEvents, useDeleteCarEvent, type CarEvent } from "@/hooks/useCarEvents";
 import { CarEventForm } from "./CarEventForm";
 import { getCategoryIcon, getCategoryLabel, getEventLabel, type EventCategory, type EventType } from "@/data/carEventCategories";
 import { CategoryIcon } from "./CategoryIcon";
-import { Plus, Pencil, Trash2, Calendar, Clock, Loader2 } from "lucide-react";
-import { EnamelCard, SectionHeader, EmptyState, BigActionButton } from "@/components/ui/garage";
+import { Plus, Pencil, Trash2, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
+
+const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
+const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
 
 interface CarEventsListProps {
   carId: string;
@@ -25,208 +21,174 @@ interface CarEventsListProps {
 export function CarEventsList({ carId }: CarEventsListProps) {
   const { data: events, isLoading } = useCarEvents(carId);
   const deleteMutation = useDeleteCarEvent();
-  
+
   const [showForm, setShowForm] = useState(false);
   const [editingEvent, setEditingEvent] = useState<CarEvent | null>(null);
   const [deleteEventId, setDeleteEventId] = useState<string | null>(null);
-  
-  const handleEdit = (event: CarEvent) => {
-    setEditingEvent(event);
-    setShowForm(true);
-  };
-  
-  const handleCloseForm = () => {
-    setShowForm(false);
-    setEditingEvent(null);
-  };
-  
+
+  const handleEdit = (event: CarEvent) => { setEditingEvent(event); setShowForm(true); };
+  const handleCloseForm = () => { setShowForm(false); setEditingEvent(null); };
   const handleDelete = async () => {
-    if (deleteEventId) {
-      await deleteMutation.mutateAsync({ eventId: deleteEventId, carId });
-      setDeleteEventId(null);
-    }
+    if (deleteEventId) { await deleteMutation.mutateAsync({ eventId: deleteEventId, carId }); setDeleteEventId(null); }
   };
-  
+
   const formatTimeDisplay = (event: CarEvent) => {
-    if (event.year) {
-      return event.year.toString();
-    }
-    if (event.year_from) {
-      if (event.year_to) {
-        return `${event.year_from}–${event.year_to}`;
-      }
-      return `${event.year_from}–nå`;
-    }
+    if (event.year) return event.year.toString();
+    if (event.year_from) return event.year_to ? `${event.year_from}–${event.year_to}` : `${event.year_from}–nå`;
     return "Ukjent";
   };
 
   if (isLoading) {
-    return (
-      <EnamelCard>
-        <div className="flex items-center justify-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-        </div>
-      </EnamelCard>
-    );
+    return <div className="flex justify-center py-16"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground/30" /></div>;
   }
 
   return (
-    <EnamelCard className="p-0 overflow-hidden">
-      {/* Header */}
-      <div className="p-4 sm:p-6 pb-3 sm:pb-4 border-b border-border/50">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
-          <SectionHeader
-            title="Bilens reise"
-            icon={<Clock className="w-5 h-5 sm:w-6 sm:h-6" />}
-            description="Dokumenter viktige hendelser i bilens historie"
-            className="mb-0"
-          />
-          <div data-guide="add-timeline-event">
-            <BigActionButton
-              icon={<Plus className="w-5 h-5" />}
-              onClick={() => setShowForm(true)}
-              className="w-full sm:w-auto"
-            >
-              Legg til hendelse
-            </BigActionButton>
-          </div>
-        </div>
+    <div>
+      {/* Section label + CTA */}
+      <div className="flex items-center justify-between mb-8">
+        <h2 className="text-[0.85rem] uppercase tracking-[0.12em] font-bold text-muted-foreground/40 flex items-center gap-2" style={oswald}>
+          Bilens reise
+        </h2>
+        <button
+          data-guide="add-timeline-event"
+          onClick={() => setShowForm(true)}
+          className="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-[0.08em] font-bold text-primary/70 hover:text-primary transition-colors px-3 py-2 rounded-lg hover:bg-primary/[0.06]"
+          style={oswald}
+        >
+          <Plus className="w-4 h-4" /> Legg til hendelse
+        </button>
       </div>
-      
-      <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
-        {showForm && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="border-2 border-primary/20 rounded-xl p-4 sm:p-6 bg-primary/5"
+
+      {/* Form */}
+      {showForm && (
+        <motion.div
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-10 border border-primary/15 rounded-xl p-5 sm:p-6 bg-primary/[0.03]"
+        >
+          <CarEventForm carId={carId} event={editingEvent || undefined} onClose={handleCloseForm} />
+        </motion.div>
+      )}
+
+      {/* Timeline */}
+      {!events || events.length === 0 ? (
+        /* ─── EMPTY STATE: "start the story" ─── */
+        <div className="flex flex-col items-center py-16 sm:py-24">
+          {/* Vertical line leading to icon */}
+          <div className="w-[1px] h-16 bg-gradient-to-b from-transparent to-border/40" />
+          <div className="w-10 h-10 rounded-full border border-border/30 flex items-center justify-center my-4">
+            <Plus className="w-4 h-4 text-muted-foreground/30" />
+          </div>
+          <div className="w-[1px] h-8 bg-gradient-to-b from-border/40 to-transparent mb-6" />
+
+          <p className="text-[1rem] uppercase tracking-[0.06em] font-bold text-muted-foreground/25 mb-2" style={chakra}>
+            Start historien
+          </p>
+          <p className="text-[13px] text-muted-foreground/20 max-w-xs text-center mb-5">
+            Legg til hendelser for å dokumentere bilens reise gjennom tid.
+          </p>
+          <button
+            onClick={() => setShowForm(true)}
+            className="text-[11px] uppercase tracking-[0.12em] font-bold text-primary/60 hover:text-primary border-b border-primary/20 pb-0.5 transition-colors"
+            style={oswald}
           >
-            <CarEventForm
-              carId={carId}
-              event={editingEvent || undefined}
-              onClose={handleCloseForm}
-            />
-          </motion.div>
-        )}
-        
-        {!events || events.length === 0 ? (
-          <EmptyState
-            icon={<Calendar className="w-16 h-16" />}
-            title="Ingen hendelser ennå"
-            description="Legg til hendelser for å dokumentere bilens historie. Når ble den produsert? Når skiftet den eier?"
-            action={{
-              label: "Legg til første hendelse",
-              onClick: () => setShowForm(true),
-            }}
-          />
-        ) : (
-          <div className="space-y-3 sm:space-y-4">
+            Legg til første hendelse →
+          </button>
+        </div>
+      ) : (
+        /* ─── TIMELINE with glowing vertical spine ─── */
+        <div className="relative">
+          {/* Glowing vertical line */}
+          <div className="absolute left-4 sm:left-6 top-0 bottom-0 w-[1px]"
+            style={{ background: 'linear-gradient(180deg, transparent 0%, hsl(168 50% 40% / 0.2) 10%, hsl(168 50% 40% / 0.15) 90%, transparent 100%)' }} />
+
+          <div className="space-y-10 sm:space-y-14">
             {events.map((event, index) => {
               const category = event.category as EventCategory;
               const eventType = event.event_type as EventType;
               const displayTitle = event.title || getEventLabel(category, eventType);
               const iconName = getCategoryIcon(category);
-              
+
               return (
                 <motion.div
                   key={event.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.05 }}
-                  className="group relative flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-4 p-4 sm:p-5 rounded-xl border-2 border-border bg-card hover:border-primary/30 hover:shadow-md transition-all duration-200"
+                  initial={{ opacity: 0, x: -12 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.06 }}
+                  className="relative pl-12 sm:pl-16 group"
                 >
-                  {/* Icon + Year on mobile */}
-                  <div className="flex items-center gap-3 sm:block">
-                    <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-primary/10 border-2 border-primary/20 flex items-center justify-center">
-                      <CategoryIcon iconName={iconName} size="md" className="text-primary sm:hidden" />
-                      <CategoryIcon iconName={iconName} size="lg" className="text-primary hidden sm:block" />
-                    </div>
-                    <span className="text-base sm:hidden font-bold text-primary font-display">
+                  {/* Dot on the line */}
+                  <div className="absolute left-2.5 sm:left-4.5 top-1 w-3 h-3 rounded-full border-2 border-primary/30 bg-background z-10">
+                    <div className="absolute inset-0 rounded-full bg-primary/20 animate-pulse" style={{ animationDuration: '3s' }} />
+                  </div>
+
+                  {/* Year – big visual anchor */}
+                  <div className="mb-1.5">
+                    <span className="text-[1.5rem] sm:text-[1.8rem] font-bold text-primary/35 leading-none" style={chakra}>
                       {formatTimeDisplay(event)}
                     </span>
                   </div>
-                  
-                  {/* Content */}
-                  <div className="flex-1 min-w-0">
-                    <div className="hidden sm:flex items-center gap-3 mb-2">
-                      <span className="text-lg font-bold text-primary font-display">
-                        {formatTimeDisplay(event)}
-                      </span>
-                      <span className="px-2 py-0.5 rounded-full bg-muted text-sm text-muted-foreground">
-                        {getCategoryLabel(category)}
-                      </span>
-                    </div>
-                    <div className="sm:hidden mb-1">
-                      <span className="px-2 py-0.5 rounded-full bg-muted text-xs text-muted-foreground">
-                        {getCategoryLabel(category)}
-                      </span>
-                    </div>
-                    <h4 className="text-base sm:text-xl font-semibold text-foreground mb-1">{displayTitle}</h4>
-                    {event.description && (
-                      <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-                        {event.description}
-                      </p>
-                    )}
-                    {event.car_event_images && event.car_event_images.length > 0 && (
-                      <div className="flex gap-2 sm:gap-3 mt-3 sm:mt-4 overflow-x-auto pb-1">
-                        {event.car_event_images
-                          .sort((a, b) => a.sort_order - b.sort_order)
-                          .map((img) => (
-                          <img
-                            key={img.id}
-                            src={img.image_url}
-                            alt={img.alt_text || ""}
-                            className="h-16 w-16 sm:h-20 sm:w-20 rounded-lg object-cover border-2 border-border hover:border-primary/50 transition-colors flex-shrink-0"
-                          />
+
+                  {/* Category chip */}
+                  <span className="text-[10px] uppercase tracking-[0.1em] font-bold text-muted-foreground/30 mb-1.5 block" style={oswald}>
+                    {getCategoryLabel(category)}
+                  </span>
+
+                  {/* Title */}
+                  <h4 className="text-[1rem] sm:text-[1.1rem] font-semibold text-foreground/80 mb-1">
+                    {displayTitle}
+                  </h4>
+
+                  {/* Description */}
+                  {event.description && (
+                    <p className="text-[0.9rem] text-muted-foreground/45 leading-[1.7] max-w-lg">
+                      {event.description}
+                    </p>
+                  )}
+
+                  {/* Images */}
+                  {event.car_event_images && event.car_event_images.length > 0 && (
+                    <div className="flex gap-2 mt-3 overflow-x-auto pb-1">
+                      {event.car_event_images
+                        .sort((a, b) => a.sort_order - b.sort_order)
+                        .map((img) => (
+                          <img key={img.id} src={img.image_url} alt={img.alt_text || ""}
+                            className="h-16 w-16 sm:h-20 sm:w-20 rounded-lg object-cover border border-border/20 flex-shrink-0" />
                         ))}
-                      </div>
-                    )}
-                  </div>
-                  
-                  {/* Actions */}
-                  <div className="flex gap-2 sm:opacity-60 sm:group-hover:opacity-100 transition-opacity self-end sm:self-start">
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      className="h-10 w-10 min-h-[44px] min-w-[44px] active:scale-95"
-                      onClick={() => handleEdit(event)}
-                    >
-                      <Pencil className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      className="h-10 w-10 min-h-[44px] min-w-[44px] text-destructive hover:text-destructive hover:bg-destructive/10 active:scale-95"
-                      onClick={() => setDeleteEventId(event.id)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+                    </div>
+                  )}
+
+                  {/* Edit / delete – subtle */}
+                  <div className="flex gap-1.5 mt-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button onClick={() => handleEdit(event)}
+                      className="text-muted-foreground/30 hover:text-foreground/60 p-1.5 rounded transition-colors">
+                      <Pencil className="w-3.5 h-3.5" />
+                    </button>
+                    <button onClick={() => setDeleteEventId(event.id)}
+                      className="text-muted-foreground/30 hover:text-destructive/60 p-1.5 rounded transition-colors">
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
                   </div>
                 </motion.div>
               );
             })}
           </div>
-        )}
-      </div>
-      
+        </div>
+      )}
+
+      {/* Delete dialog */}
       <AlertDialog open={!!deleteEventId} onOpenChange={() => setDeleteEventId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-xl">Slett hendelse?</AlertDialogTitle>
-            <AlertDialogDescription className="text-base">
-              Er du sikker på at du vil slette denne hendelsen? Dette kan ikke angres.
-            </AlertDialogDescription>
+            <AlertDialogTitle>Slett hendelse?</AlertDialogTitle>
+            <AlertDialogDescription>Er du sikker? Dette kan ikke angres.</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="min-h-[48px] text-base">Avbryt</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleDelete}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90 min-h-[48px] text-base"
-            >
-              Slett hendelse
-            </AlertDialogAction>
+            <AlertDialogCancel>Avbryt</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">Slett</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </EnamelCard>
+    </div>
   );
 }
