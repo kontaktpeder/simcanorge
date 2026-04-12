@@ -1,11 +1,13 @@
 export interface WizardData {
-  // Step 1: Images
+  // Step 0: Images
   images: File[];
   imagePreviews: string[];
 
-  // Step 2: Info
+  // Step 1: Brand/Model
   brand: string;
   car_model: string;
+
+  // Step 2: Details
   variant: string;
   body_type: string;
   car_year: string;
@@ -16,10 +18,12 @@ export interface WizardData {
   car_story: string;
   tags: string;
 
-  // Step 4: Save
+  // Step 4: Contact
   owner_name: string;
   email: string;
   phone: string;
+
+  // Step 5: Consent & submit
   allowEdits: boolean | null;
   allowInstagram: boolean;
   privacyAccepted: boolean;
@@ -51,11 +55,13 @@ export const INITIAL_WIZARD_DATA: WizardData = {
   clubMessage: "",
 };
 
-export type WizardStep = 0 | 1 | 2 | 3;
+export type WizardStep = 0 | 1 | 2 | 3 | 4 | 5;
 
 export const STEP_LABELS = [
   "Bilder",
-  "Bilinfo",
+  "Merke",
+  "Detaljer",
   "Historikk",
-  "Lagre",
+  "Kontakt",
+  "Send inn",
 ] as const;

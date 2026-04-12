@@ -1,0 +1,61 @@
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import type { WizardData } from "./WizardTypes";
+
+interface StepContactProps {
+  data: WizardData;
+  onChange: (patch: Partial<WizardData>) => void;
+  onNext: () => void;
+  onBack: () => void;
+  errors: Record<string, string>;
+}
+
+export function StepContact({ data, onChange, onNext, onBack, errors }: StepContactProps) {
+  const canProceed = data.owner_name.trim().length >= 2 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email);
+
+  return (
+    <div className="space-y-6">
+      <div className="text-center space-y-2">
+        <h2 className="font-display text-2xl sm:text-3xl text-foreground">Hvem er du?</h2>
+        <p className="text-muted-foreground text-sm sm:text-base">
+          Vi bruker e-posten til å sende deg en innloggingslenke.
+        </p>
+      </div>
+
+      <div className="space-y-4 p-4 bg-muted/30 rounded-xl border border-muted">
+        <div className="space-y-2">
+          <Label htmlFor="w-name" className="text-base font-display">DITT NAVN *</Label>
+          <Input id="w-name" value={data.owner_name} onChange={e => onChange({ owner_name: e.target.value })}
+            placeholder="Ola Nordmann" className={`h-12 text-base border-2 ${errors.owner_name ? "border-destructive" : "border-muted"}`} />
+          {errors.owner_name && <p className="text-sm text-destructive">{errors.owner_name}</p>}
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="w-email" className="text-base font-display">E-POST *</Label>
+          <Input id="w-email" type="email" value={data.email} onChange={e => onChange({ email: e.target.value })}
+            placeholder="ola@eksempel.no" className={`h-12 text-base border-2 ${errors.email ? "border-destructive" : "border-muted"}`} />
+          {errors.email && <p className="text-sm text-destructive">{errors.email}</p>}
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="w-phone" className="text-base font-display">TELEFON</Label>
+          <Input id="w-phone" type="tel" value={data.phone} onChange={e => onChange({ phone: e.target.value })}
+            placeholder="123 45 678" className="h-12 text-base border-2 border-muted" />
+        </div>
+      </div>
+
+      <div className="flex justify-between pt-4">
+        <button type="button" onClick={onBack}
+          className="px-6 py-3 rounded-lg font-display text-sm uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors">
+          ← Tilbake
+        </button>
+        <button type="button" onClick={() => { if (canProceed) onNext(); }}
+          disabled={!canProceed}
+          className="px-8 py-3 rounded-lg font-display text-base uppercase tracking-wider transition-all hover:brightness-110 disabled:opacity-40"
+          style={{ background: "linear-gradient(135deg, #1F66B5, #2B7BD4)", color: "#fff" }}>
+          Neste →
+        </button>
+      </div>
+    </div>
+  );
+}
