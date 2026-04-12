@@ -48,11 +48,10 @@ export default function Index() {
 
         {/* ─── HERO ─── */}
         <section className="relative overflow-visible" style={{ background: 'linear-gradient(135deg, #070b10 0%, #0c1219 40%, #060a0f 100%)' }}>
-          {/* Subtle teal ambient — reduced */}
-          <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 800px 400px at 15% 60%, rgba(45,212,168,0.06) 0%, transparent 70%)' }} />
-          <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(circle 500px at 72% 40%, rgba(45,212,168,0.07) 0%, transparent 60%)' }} />
-          {/* Bottom vignette */}
-          <div className="absolute inset-0 pointer-events-none" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.4) 0%, transparent 35%)' }} />
+          {/* Subtle teal ambient */}
+          <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 800px 400px at 15% 60%, rgba(45,212,168,0.05) 0%, transparent 70%)' }} />
+          {/* Bottom fade into nav — smooth transition */}
+          <div className="absolute bottom-0 left-0 right-0 h-24 pointer-events-none" style={{ background: 'linear-gradient(to bottom, transparent, #181f28)' }} />
 
           {/* Car image — brighter, more visible */}
           <div className="absolute inset-0 pointer-events-none">
@@ -182,8 +181,8 @@ export default function Index() {
 
         {/* ─── FEED ─── */}
         <section
-          className="relative pt-5 sm:pt-8 md:pt-10 pb-10 sm:pb-20 md:pb-32 overflow-hidden"
-          style={{ background: 'linear-gradient(180deg, #1c2530 0%, #18202a 15%, #151c24 40%)' }}
+          className="relative pt-8 sm:pt-12 md:pt-14 pb-10 sm:pb-20 md:pb-32 overflow-hidden"
+          style={{ background: 'linear-gradient(180deg, #1e2733 0%, #1a2230 8%, #171e28 25%, #151c24 50%)' }}
         >
           {/* Car silhouette — positioned below composer area */}
           <div className="absolute bottom-0 left-0 right-0 pointer-events-none hidden sm:flex justify-center overflow-hidden z-0" style={{ opacity: 0.025, top: '220px' }}>
