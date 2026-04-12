@@ -7,9 +7,11 @@ import { generateCarTitle } from "@/data/carBrands";
 import { compressImages, generateImageId, getSubmissionImagePath, type CompressionProgress } from "@/lib/imageCompression";
 import { ImageUploadProgress } from "@/components/ui/image-upload-progress";
 import { StepImages } from "./StepImages";
-import { StepInfo } from "./StepInfo";
+import { StepBrand } from "./StepBrand";
+import { StepDetails } from "./StepDetails";
 import { StepStory } from "./StepStory";
-import { StepSave } from "./StepSave";
+import { StepContact } from "./StepContact";
+import { StepConsent } from "./StepConsent";
 import { CarWizardPreview } from "./CarWizardPreview";
 import { INITIAL_WIZARD_DATA, STEP_LABELS, type WizardData, type WizardStep } from "./WizardTypes";
 
@@ -48,7 +50,7 @@ export function CarWizard({ onSuccess }: CarWizardProps) {
     }
   }, [errors]);
 
-  const goNext = () => setStep(s => Math.min(s + 1, 3) as WizardStep);
+  const goNext = () => setStep(s => Math.min(s + 1, 5) as WizardStep);
   const goBack = () => setStep(s => Math.max(s - 1, 0) as WizardStep);
 
   const generateSlug = (title: string) =>
@@ -68,8 +70,8 @@ export function CarWizard({ onSuccess }: CarWizardProps) {
 
     if (Object.keys(fieldErrors).length > 0) {
       setErrors(fieldErrors);
-      // Jump to the step with errors
       if (fieldErrors.brand || fieldErrors.car_model) setStep(1);
+      else if (fieldErrors.owner_name || fieldErrors.email) setStep(4);
       return;
     }
 
@@ -267,9 +269,11 @@ export function CarWizard({ onSuccess }: CarWizardProps) {
         {/* Main form area */}
         <div className="lg:col-span-3 overflow-y-auto min-h-0 pr-1 scrollbar-thin">
           {step === 0 && <StepImages data={data} onChange={onChange} onNext={goNext} />}
-          {step === 1 && <StepInfo data={data} onChange={onChange} onNext={goNext} onBack={goBack} errors={errors} />}
-          {step === 2 && <StepStory data={data} onChange={onChange} onNext={goNext} onBack={goBack} />}
-          {step === 3 && <StepSave data={data} onChange={onChange} onBack={goBack} onSubmit={handleSubmit} isSubmitting={isSubmitting} errors={errors} />}
+          {step === 1 && <StepBrand data={data} onChange={onChange} onNext={goNext} onBack={goBack} errors={errors} />}
+          {step === 2 && <StepDetails data={data} onChange={onChange} onNext={goNext} onBack={goBack} />}
+          {step === 3 && <StepStory data={data} onChange={onChange} onNext={goNext} onBack={goBack} />}
+          {step === 4 && <StepContact data={data} onChange={onChange} onNext={goNext} onBack={goBack} errors={errors} />}
+          {step === 5 && <StepConsent data={data} onChange={onChange} onBack={goBack} onSubmit={handleSubmit} isSubmitting={isSubmitting} errors={errors} />}
 
           {/* Upload progress */}
           {isSubmitting && uploadProgress && <div className="mt-4"><ImageUploadProgress progress={uploadProgress} compressionStats={compressionStats} /></div>}
