@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Mail, CheckCircle, ArrowRight, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,6 +19,28 @@ export function StepVerify({ email, carId, onSkip, onVerified }: StepVerifyProps
   const [isSending, setIsSending] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
   const [cooldown, setCooldown] = useState(0);
+  const verifiedRef = useRef(false);
+
+  // Listen for magic link sign-in (user clicks the link in email)
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (verifiedRef.current) return;
+      if (event === "SIGNED_IN" && session?.user) {
+        verifiedRef.current = true;
+        // Link car to the authenticated user
+        await supabase
+          .from("cars")
+          .update({ created_by_user_id: session.user.id } as any)
+          .eq("id", carId);
+        toast({
+          title: "Verifisert!",
+          description: "Bilen din er nå koblet til kontoen din.",
+        });
+        onVerified();
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [carId, onVerified, toast]);
 
   // Cooldown timer
   useEffect(() => {
@@ -40,12 +62,12 @@ export function StepVerify({ email, carId, onSkip, onVerified }: StepVerifyProps
       setOtpSent(true);
       setCooldown(60);
       toast({
-        title: "Kode sendt!",
-        description: `Vi har sendt en engangskode til ${email}.`,
+        title: "E-post sendt!",
+        description: `Vi har sendt en innloggingslenke til ${email}.`,
       });
     } catch (err: any) {
       toast({
-        title: "Kunne ikke sende kode",
+        title: "Kunne ikke sende e-post",
         description: err?.message || "Prøv igjen senere.",
         variant: "destructive",
       });
@@ -65,8 +87,8 @@ export function StepVerify({ email, carId, onSkip, onVerified }: StepVerifyProps
       });
       if (error) throw error;
 
-      // Link car to the authenticated user
-      if (data.user) {
+      if (data.user && !verifiedRef.current) {
+        verifiedRef.current = true;
         await supabase
           .from("cars")
           .update({ created_by_user_id: data.user.id } as any)
@@ -101,7 +123,7 @@ export function StepVerify({ email, carId, onSkip, onVerified }: StepVerifyProps
         </h2>
         <p className="text-muted-foreground text-sm sm:text-base max-w-md mx-auto">
           Vil du koble bilen til en konto? Da kan du redigere den selv senere.
-          Vi sender en engangskode til <strong className="text-foreground">{email}</strong>.
+          Vi sender en innloggingslenke til <strong className="text-foreground">{email}</strong>.
         </p>
       </div>
 
@@ -115,7 +137,7 @@ export function StepVerify({ email, carId, onSkip, onVerified }: StepVerifyProps
             {isSending ? (
               <><Loader2 className="w-5 h-5 mr-2 animate-spin" /> Sender…</>
             ) : (
-              <><Mail className="w-5 h-5 mr-2" /> Send engangskode</>
+              <><Mail className="w-5 h-5 mr-2" /> Send innloggingslenke</>
             )}
           </Button>
           <button
@@ -128,20 +150,29 @@ export function StepVerify({ email, carId, onSkip, onVerified }: StepVerifyProps
         </div>
       ) : (
         <div className="space-y-4 max-w-sm mx-auto">
+          <div className="p-4 rounded-lg bg-muted/50 border border-border text-sm text-muted-foreground space-y-2">
+            <p>
+              <strong className="text-foreground">Sjekk innboksen din</strong> (og spam-mappen).
+            </p>
+            <p>
+              Klikk på <strong>«Logg inn»</strong>-knappen i e-posten for å koble bilen til kontoen din.
+            </p>
+            <p className="text-xs">
+              Alternativt kan du skrive inn den 6-sifrede koden fra e-posten nedenfor.
+            </p>
+          </div>
+
           <div className="space-y-2">
             <Input
               type="text"
               inputMode="numeric"
               autoComplete="one-time-code"
-              placeholder="Skriv inn 6-sifret kode"
+              placeholder="Eventuell 6-sifret kode"
               value={otp}
               onChange={e => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
               className="h-14 text-center text-2xl tracking-[0.3em] font-mono border-2 border-muted"
               maxLength={6}
             />
-            <p className="text-xs text-muted-foreground">
-              Sjekk innboksen din (og spam-mappen).
-            </p>
           </div>
 
           <Button
@@ -152,7 +183,7 @@ export function StepVerify({ email, carId, onSkip, onVerified }: StepVerifyProps
             {isVerifying ? (
               <><Loader2 className="w-5 h-5 mr-2 animate-spin" /> Verifiserer…</>
             ) : (
-              <><CheckCircle className="w-5 h-5 mr-2" /> Bekreft</>
+              <><CheckCircle className="w-5 h-5 mr-2" /> Bekreft kode</>
             )}
           </Button>
 
@@ -163,7 +194,7 @@ export function StepVerify({ email, carId, onSkip, onVerified }: StepVerifyProps
               disabled={cooldown > 0 || isSending}
               className="text-primary hover:text-primary/80 disabled:text-muted-foreground transition-colors"
             >
-              {cooldown > 0 ? `Send på nytt (${cooldown}s)` : "Send kode på nytt"}
+              {cooldown > 0 ? `Send på nytt (${cooldown}s)` : "Send på nytt"}
             </button>
             <button
               type="button"
