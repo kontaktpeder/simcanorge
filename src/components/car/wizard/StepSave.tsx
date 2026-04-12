@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Send, Users } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Send, Users, ShieldCheck } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -121,6 +122,37 @@ export function StepSave({ data, onChange, onBack, onSubmit, isSubmitting, error
         </label>
       </div>
 
+      {/* Privacy & login info */}
+      <div className="p-4 bg-muted/30 rounded-xl border border-muted space-y-3">
+        <p className="font-display text-base flex items-center gap-2">
+          <ShieldCheck className="w-5 h-5" /> HVA SKJER ETTER INNSENDING?
+        </p>
+        <p className="text-sm text-muted-foreground leading-relaxed">
+          Du mottar en <strong>innloggingslenke på e-post</strong> til adressen du oppga.
+          Åpne lenken for å logge inn og jobbe videre med bilen din – redigere,
+          følge godkjenning og publisering. Du kan også gjøre det senere og
+          i mellomtiden utforske resten av Bilgarasjen.
+        </p>
+        <label className="flex items-start gap-3 cursor-pointer p-2 rounded-lg hover:bg-muted/50 transition-colors">
+          <input
+            type="checkbox"
+            checked={data.privacyAccepted}
+            onChange={e => onChange({ privacyAccepted: e.target.checked })}
+            className="w-5 h-5 mt-0.5 accent-primary flex-shrink-0"
+          />
+          <span className="text-sm font-medium">
+            Jeg har lest og godtar{" "}
+            <Link to="/personvern" target="_blank" rel="noopener noreferrer"
+              className="text-primary underline hover:text-accent">
+              personvernerklæringen
+            </Link>
+          </span>
+        </label>
+        {errors.privacyAccepted && (
+          <p className="text-xs text-destructive pl-8">{errors.privacyAccepted}</p>
+        )}
+      </div>
+
       {/* Buttons */}
       <div className="flex justify-between pt-4">
         <button type="button" onClick={onBack}
@@ -128,7 +160,7 @@ export function StepSave({ data, onChange, onBack, onSubmit, isSubmitting, error
           ← Tilbake
         </button>
         <Button type="button" onClick={onSubmit}
-          disabled={isSubmitting || data.allowEdits === null || !data.owner_name.trim() || !data.email.trim()}
+          disabled={isSubmitting || data.allowEdits === null || !data.owner_name.trim() || !data.email.trim() || !data.privacyAccepted}
           className="btn-enamel-blue text-lg h-14 px-8 disabled:opacity-40">
           {isSubmitting ? "Sender…" : <><Send className="w-5 h-5 mr-2" /> Send inn</>}
         </Button>
