@@ -70,8 +70,8 @@ export function CarWizard({ onSuccess }: CarWizardProps) {
 
     if (Object.keys(fieldErrors).length > 0) {
       setErrors(fieldErrors);
-      // Jump to the step with errors
       if (fieldErrors.brand || fieldErrors.car_model) setStep(1);
+      else if (fieldErrors.owner_name || fieldErrors.email) setStep(4);
       return;
     }
 
