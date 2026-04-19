@@ -606,7 +606,7 @@ function EditorialBlock({ block, index }: EditorialBlockProps): React.ReactNode 
       return (
         <article className={`${gridClasses} group`}>
           <LinkWrapper className="block">
-            <div className="relative aspect-[3/2] overflow-hidden bg-muted mb-4">
+            <div className="relative aspect-[3/2] overflow-hidden bg-white/5 mb-4">
               {primaryImage && (
                 <img
                   src={primaryImage}
@@ -619,32 +619,32 @@ function EditorialBlock({ block, index }: EditorialBlockProps): React.ReactNode 
               <div className="flex items-baseline gap-3">
                 {car.year && (
                   <span
-                    className="text-3xl md:text-4xl text-[#c4962c]/70"
-                    style={{ fontFamily: "'Playfair Display', serif" }}
+                    className="text-3xl md:text-4xl text-[#34eab8]/80"
+                    style={chakra}
                   >
                     {car.year}
                   </span>
                 )}
                 <span
-                  className="text-[10px] tracking-[0.15em] text-[#3a2e24]/35 uppercase"
+                  className="text-[10px] tracking-[0.15em] text-white/40 uppercase"
                   style={oswald}
                 >
                   {car.brand}
                 </span>
               </div>
               <h3
-                className="text-[14px] md:text-[16px] tracking-[0.03em] uppercase font-bold italic text-[#3a2e24]"
+                className="text-[14px] md:text-[16px] tracking-[0.03em] uppercase font-bold italic text-white group-hover:text-[#34eab8] transition-colors"
                 style={chakra}
               >
                 {car.title}
               </h3>
               {excerpt && (
-                <p className="text-[#3a2e24]/40 text-sm line-clamp-2">
+                <p className="text-white/50 text-sm line-clamp-2" style={oswald}>
                   {excerpt}
                 </p>
               )}
               <span
-                className="inline-block text-[10px] tracking-[0.15em] text-[#c4962c] uppercase pt-2"
+                className="inline-block text-[10px] tracking-[0.15em] text-[#34eab8] uppercase pt-2"
                 style={oswald}
               >
                 Les historien →
@@ -691,10 +691,10 @@ function EditorialBlock({ block, index }: EditorialBlockProps): React.ReactNode 
     case 'archive':
       return (
         <article className={`${gridClasses} group`}>
-          <LinkWrapper className="block p-5 md:p-6 bg-[#f5efe6]/60 border border-[#3a2e24]/[0.06] transition-all duration-500 hover:-translate-y-1 hover:shadow-md hover:border-[#3a2e24]/[0.12]">
+          <LinkWrapper className="block p-5 md:p-6 bg-white/[0.03] border border-white/[0.08] transition-all duration-500 hover:-translate-y-1 hover:bg-white/[0.05] hover:border-[#34eab8]/30 rounded-lg">
             <div className="flex gap-5 md:gap-6 items-start">
               {primaryImage && (
-                <div className="w-24 h-24 md:w-28 md:h-28 flex-shrink-0 overflow-hidden bg-muted transition-transform duration-500 group-hover:-translate-y-0.5">
+                <div className="w-24 h-24 md:w-28 md:h-28 flex-shrink-0 overflow-hidden bg-white/5 transition-transform duration-500 group-hover:-translate-y-0.5 rounded">
                   <img
                     src={primaryImage}
                     alt={imageAlt}
@@ -705,31 +705,31 @@ function EditorialBlock({ block, index }: EditorialBlockProps): React.ReactNode 
               <div className="flex-1 min-w-0 space-y-1.5">
                 {car.year && (
                   <span
-                    className="text-4xl md:text-5xl text-[#c4962c]/50 block leading-none"
-                    style={{ fontFamily: "'Playfair Display', serif" }}
+                    className="text-4xl md:text-5xl text-[#34eab8]/60 block leading-none"
+                    style={chakra}
                   >
                     {car.year}
                   </span>
                 )}
                 <span
-                  className="text-[10px] tracking-[0.15em] text-[#3a2e24]/30 uppercase block"
+                  className="text-[10px] tracking-[0.15em] text-white/35 uppercase block"
                   style={oswald}
                 >
                   {car.brand} · {car.model}
                 </span>
                 <h3
-                  className="text-[14px] md:text-[16px] tracking-[0.03em] uppercase leading-tight font-bold italic text-[#3a2e24]"
+                  className="text-[14px] md:text-[16px] tracking-[0.03em] uppercase leading-tight font-bold italic text-white group-hover:text-[#34eab8] transition-colors"
                   style={chakra}
                 >
                   {car.title}
                 </h3>
                 {excerpt && (
-                  <p className="text-[#3a2e24]/35 text-sm line-clamp-2 leading-relaxed">
+                  <p className="text-white/40 text-sm line-clamp-2 leading-relaxed" style={oswald}>
                     {excerpt}
                   </p>
                 )}
                 <span
-                  className="inline-block text-[10px] tracking-[0.15em] text-[#c4962c] uppercase pt-2"
+                  className="inline-block text-[10px] tracking-[0.15em] text-[#34eab8] uppercase pt-2"
                   style={oswald}
                 >
                   Les historien →
