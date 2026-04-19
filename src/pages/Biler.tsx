@@ -292,30 +292,23 @@ const Biler = () => {
                   </p>
                 </div>
                 <h1
-                  className="text-[3rem] sm:text-[4.5rem] md:text-[6rem] lg:text-[7rem] leading-[0.88] uppercase tracking-[0.01em] font-bold italic"
+                  className="text-[1.6rem] sm:text-[2.2rem] md:text-[2.8rem] lg:text-[3.2rem] leading-[1.05] tracking-[0.005em] font-bold"
                   style={{
                     ...chakra,
                     background: 'linear-gradient(180deg, #ffffff 0%, #ffffff 60%, rgba(52,234,184,0.85) 100%)',
                     WebkitBackgroundClip: 'text',
                     WebkitTextFillColor: 'transparent',
-                    filter: 'drop-shadow(0 0 30px rgba(52,234,184,0.15))',
+                    filter: 'drop-shadow(0 0 24px rgba(52,234,184,0.18))',
                   }}
                 >
-                  Arkivet
+                  Bilgarasjens dokumenterte biler
                 </h1>
-                <p className="text-[13px] sm:text-[15px] md:text-[17px] text-white/60 mt-4 max-w-xl leading-relaxed" style={oswald}>
-                  Historier om biler i Norge. Søk, filtrer og utforsk samlingen.
+                <p className="text-[13px] sm:text-[15px] md:text-[16px] text-white/65 mt-4 max-w-2xl leading-relaxed" style={oswald}>
+                  Les bilens unike historie, reisen den har hatt og hvem som eier den i dag.
                 </p>
-                <div className="flex items-center gap-5 sm:gap-8 mt-6 pt-5 border-t border-white/[0.08] max-w-md">
-                  <div>
-                    <p className="text-[1.6rem] sm:text-[2rem] font-bold text-[#34eab8] leading-none" style={chakra}>{totalCount}</p>
-                    <p className="text-[9px] sm:text-[10px] tracking-[0.2em] uppercase text-white/40 mt-1" style={oswald}>Biler dokumentert</p>
-                  </div>
-                  <div className="h-10 w-px bg-white/10" />
-                  <div>
-                    <p className="text-[1.6rem] sm:text-[2rem] font-bold text-[#34eab8] leading-none" style={chakra}>{Object.keys(categoryCounts).filter(k => k !== 'alle' && categoryCounts[k] > 0).length}</p>
-                    <p className="text-[9px] sm:text-[10px] tracking-[0.2em] uppercase text-white/40 mt-1" style={oswald}>Kategorier</p>
-                  </div>
+                <div className="flex items-center gap-3 mt-5 pt-4 border-t border-white/[0.08] max-w-md">
+                  <p className="text-[1.1rem] sm:text-[1.3rem] font-bold text-[#34eab8] leading-none" style={chakra}>{totalCount}</p>
+                  <p className="text-[9px] sm:text-[10px] tracking-[0.2em] uppercase text-white/40" style={oswald}>Biler dokumentert</p>
                 </div>
               </div>
             </div>
