@@ -19,7 +19,7 @@ import {
   FeatureCarModule,
   MonthlyCoverModule,
 } from "@/components/biler";
-import { NewsprintBackground } from "@/components/editorial/NewsprintBackground";
+// NewsprintBackground removed — Premium Dark theme uses solid dark background
 import { BilerSidePanel, EMPTY_BILER_FILTER, type BilerFilterState } from "@/components/biler/BilerSidePanel";
 import carSilhouette from "@/assets/car-silhouette.png";
 import BilgarasjeLoader from "@/components/ui/BilgarasjeLoader";
@@ -566,8 +566,8 @@ function EditorialBlock({ block, index }: EditorialBlockProps): React.ReactNode 
                 <div className="max-w-4xl">
                   {car.year && (
                     <span
-                      className="text-4xl md:text-6xl lg:text-8xl text-white/90 block mb-2 md:mb-4"
-                      style={{ fontFamily: "'Playfair Display', serif" }}
+                      className="text-4xl md:text-6xl lg:text-8xl text-white/95 block mb-2 md:mb-4 font-bold"
+                      style={chakra}
                     >
                       {car.year}
                     </span>
@@ -670,8 +670,8 @@ function EditorialBlock({ block, index }: EditorialBlockProps): React.ReactNode 
               <div className="absolute bottom-0 left-0 right-0 p-4 md:p-5">
                 {car.year && (
                   <span
-                    className="text-2xl md:text-3xl text-white/90 block"
-                    style={{ fontFamily: "'Playfair Display', serif" }}
+                    className="text-2xl md:text-3xl text-[#34eab8] block font-bold"
+                    style={chakra}
                   >
                     {car.year}
                   </span>
