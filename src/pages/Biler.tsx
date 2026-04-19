@@ -56,7 +56,7 @@ const Biler = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [categoryCounts, setCategoryCounts] = useState<Record<string, number>>({});
   const [sidePanelOpen, setSidePanelOpen] = useState(false);
-  const [panelExpanded, setPanelExpanded] = useState(true);
+  const [panelExpanded, setPanelExpanded] = useState(false);
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(0);
