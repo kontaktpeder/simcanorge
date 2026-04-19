@@ -96,31 +96,41 @@ export function BilerSidePanel({
     );
   }
 
-  // Desktop: collapsible sidebar (Premium Dark)
+  // Desktop: collapsible sidebar (Premium Dark — popping)
   return (
     <aside
       className={cn(
-        'shrink-0 z-40 overflow-y-auto static h-full transition-all duration-300 ease-in-out border-r border-[#34eab8]/10',
-        expanded ? 'w-[280px]' : 'w-[48px]',
+        'shrink-0 z-40 overflow-y-auto static h-full transition-all duration-300 ease-in-out border-r border-[#34eab8]/25 relative',
+        expanded ? 'w-[300px]' : 'w-[56px]',
       )}
-      style={{ background: 'linear-gradient(180deg, #0a1218 0%, #070b10 100%)' }}
+      style={{
+        background: 'linear-gradient(180deg, #0a1422 0%, #070b10 100%)',
+        boxShadow: expanded
+          ? 'inset -1px 0 0 rgba(52,234,184,0.15), 4px 0 24px -8px rgba(52,234,184,0.12)'
+          : 'inset -1px 0 0 rgba(52,234,184,0.2), 2px 0 16px -4px rgba(52,234,184,0.18)',
+      }}
     >
       {/* Ambient teal glow */}
-      <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 0% 30%, rgba(52,234,184,0.08) 0%, transparent 60%)' }} />
+      <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 70% 50% at 0% 25%, rgba(52,234,184,0.14) 0%, transparent 65%)' }} />
+      {/* Right-edge accent line */}
+      <div className="absolute top-0 bottom-0 right-0 w-[1px] pointer-events-none" style={{ background: 'linear-gradient(180deg, transparent 0%, rgba(52,234,184,0.5) 35%, rgba(52,234,184,0.5) 65%, transparent 100%)' }} />
 
       <div className="relative min-h-full flex flex-col">
         {/* Header with toggle */}
-        <div className="sticky top-0 z-10 flex items-center justify-between px-3 py-3 border-b border-[#34eab8]/10" style={{ background: 'rgba(7,11,16,0.85)', backdropFilter: 'blur(8px)' }}>
+        <div className="sticky top-0 z-10 flex items-center justify-between px-3 py-3 border-b border-[#34eab8]/15" style={{ background: 'rgba(7,11,16,0.92)', backdropFilter: 'blur(10px)' }}>
           {expanded && (
             <div className="min-w-0">
-              <p
-                className="text-[9px] tracking-[0.32em] uppercase"
-                style={{ ...oswald, fontWeight: 500, color: '#34eab8' }}
-              >
-                bilgarasje.no
-              </p>
+              <div className="flex items-center gap-1.5 mb-0.5">
+                <span className="w-1 h-1 rounded-full bg-[#34eab8] animate-pulse" style={{ boxShadow: '0 0 6px rgba(52,234,184,0.9)' }} />
+                <p
+                  className="text-[9px] tracking-[0.32em] uppercase"
+                  style={{ ...oswald, fontWeight: 600, color: '#34eab8' }}
+                >
+                  Filter
+                </p>
+              </div>
               <h2
-                className="text-[1.05rem] leading-[0.95] uppercase tracking-[0.02em] text-white font-bold italic mt-0.5"
+                className="text-[1.05rem] leading-[0.95] uppercase tracking-[0.02em] text-white font-bold italic"
                 style={chakra}
               >
                 Arkivet
@@ -129,8 +139,14 @@ export function BilerSidePanel({
           )}
           <button
             onClick={() => onExpandedChange(!expanded)}
-            className="p-1.5 rounded text-white/40 hover:text-[#34eab8] hover:bg-[#34eab8]/10 transition-colors shrink-0"
-            title={expanded ? 'Skjul panel' : 'Vis panel'}
+            className={cn(
+              'p-1.5 rounded transition-all shrink-0',
+              expanded
+                ? 'text-white/50 hover:text-[#34eab8] hover:bg-[#34eab8]/10'
+                : 'text-[#34eab8] hover:text-white bg-[#34eab8]/15 hover:bg-[#34eab8]/25 ring-1 ring-[#34eab8]/40',
+            )}
+            style={!expanded ? { boxShadow: '0 0 12px rgba(52,234,184,0.35)' } : undefined}
+            title={expanded ? 'Skjul filter' : 'Vis filter'}
           >
             {expanded ? <PanelLeftClose className="w-4 h-4" /> : <PanelLeft className="w-4 h-4" />}
           </button>
@@ -138,7 +154,7 @@ export function BilerSidePanel({
 
         {/* Collapsed: show icon-only category buttons */}
         {!expanded && (
-          <div className="flex flex-col items-center gap-1 py-3">
+          <div className="flex flex-col items-center gap-1.5 py-4">
             {CATEGORIES.map((cat) => {
               const Icon = cat.icon;
               const isActive = filterState.category === cat.id;
@@ -147,11 +163,12 @@ export function BilerSidePanel({
                   key={cat.id}
                   onClick={() => onFilterChange({ ...filterState, category: cat.id })}
                   className={cn(
-                    'w-8 h-8 flex items-center justify-center rounded transition-colors',
+                    'w-9 h-9 flex items-center justify-center rounded-md transition-all',
                     isActive
-                      ? 'bg-[#34eab8]/15 text-[#34eab8]'
-                      : 'text-white/30 hover:text-white/60 hover:bg-white/[0.04]',
+                      ? 'bg-[#34eab8]/20 text-[#34eab8] ring-1 ring-[#34eab8]/40'
+                      : 'text-white/40 hover:text-[#34eab8] hover:bg-[#34eab8]/10',
                   )}
+                  style={isActive ? { boxShadow: '0 0 10px rgba(52,234,184,0.3)' } : undefined}
                   title={cat.label}
                 >
                   <Icon className="w-4 h-4" />
