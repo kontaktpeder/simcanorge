@@ -590,7 +590,7 @@ function EditorialBlock({ block, index }: EditorialBlockProps): React.ReactNode 
                     </p>
                   )}
                   <span
-                    className="inline-block text-[11px] md:text-[12px] text-[#F5A623] tracking-[0.15em] uppercase group-hover:tracking-[0.25em] transition-all"
+                    className="inline-block text-[11px] md:text-[12px] text-[#34eab8] tracking-[0.15em] uppercase group-hover:tracking-[0.25em] transition-all"
                     style={oswald}
                   >
                     Les historien →
