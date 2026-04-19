@@ -79,10 +79,10 @@ export function BilerSidePanel({
   if (isMobile) {
     return (
       <Drawer open={open} onOpenChange={onOpenChange}>
-        <DrawerContent className="max-h-[85vh]" style={{ background: '#f5efe6' }}>
+        <DrawerContent className="max-h-[85vh] border-t border-[#34eab8]/20" style={{ background: 'linear-gradient(180deg, #0a1218 0%, #070b10 100%)' }}>
           <DrawerHeader className="pb-0">
             <DrawerTitle
-              className="text-[13px] uppercase tracking-[0.15em] font-bold text-[#3a2e24]"
+              className="text-[13px] uppercase tracking-[0.15em] font-bold text-white"
               style={oswald}
             >
               Filter
@@ -96,28 +96,31 @@ export function BilerSidePanel({
     );
   }
 
-  // Desktop: collapsible sidebar
+  // Desktop: collapsible sidebar (Premium Dark)
   return (
     <aside
       className={cn(
-        'shrink-0 z-40 overflow-y-auto static h-full transition-all duration-300 ease-in-out',
+        'shrink-0 z-40 overflow-y-auto static h-full transition-all duration-300 ease-in-out border-r border-[#34eab8]/10',
         expanded ? 'w-[280px]' : 'w-[48px]',
       )}
-      style={{ background: 'linear-gradient(180deg, #3a2e24 0%, #2a2118 100%)' }}
+      style={{ background: 'linear-gradient(180deg, #0a1218 0%, #070b10 100%)' }}
     >
-      <div className="min-h-full flex flex-col">
+      {/* Ambient teal glow */}
+      <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 0% 30%, rgba(52,234,184,0.08) 0%, transparent 60%)' }} />
+
+      <div className="relative min-h-full flex flex-col">
         {/* Header with toggle */}
-        <div className="sticky top-0 z-10 flex items-center justify-between px-3 py-3 border-b border-white/[0.06]">
+        <div className="sticky top-0 z-10 flex items-center justify-between px-3 py-3 border-b border-[#34eab8]/10" style={{ background: 'rgba(7,11,16,0.85)', backdropFilter: 'blur(8px)' }}>
           {expanded && (
             <div className="min-w-0">
               <p
-                className="text-[9px] tracking-[0.3em] uppercase"
-                style={{ ...oswald, fontWeight: 500, background: 'linear-gradient(135deg, #F5A623, #FFD166)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}
+                className="text-[9px] tracking-[0.32em] uppercase"
+                style={{ ...oswald, fontWeight: 500, color: '#34eab8' }}
               >
                 bilgarasje.no
               </p>
               <h2
-                className="text-[1rem] leading-[0.95] uppercase tracking-[0.02em] text-white font-bold italic mt-0.5"
+                className="text-[1.05rem] leading-[0.95] uppercase tracking-[0.02em] text-white font-bold italic mt-0.5"
                 style={chakra}
               >
                 Arkivet
@@ -126,7 +129,7 @@ export function BilerSidePanel({
           )}
           <button
             onClick={() => onExpandedChange(!expanded)}
-            className="p-1.5 rounded text-white/40 hover:text-white/80 hover:bg-white/[0.06] transition-colors shrink-0"
+            className="p-1.5 rounded text-white/40 hover:text-[#34eab8] hover:bg-[#34eab8]/10 transition-colors shrink-0"
             title={expanded ? 'Skjul panel' : 'Vis panel'}
           >
             {expanded ? <PanelLeftClose className="w-4 h-4" /> : <PanelLeft className="w-4 h-4" />}
@@ -146,7 +149,7 @@ export function BilerSidePanel({
                   className={cn(
                     'w-8 h-8 flex items-center justify-center rounded transition-colors',
                     isActive
-                      ? 'bg-[#c4962c]/20 text-[#F5A623]'
+                      ? 'bg-[#34eab8]/15 text-[#34eab8]'
                       : 'text-white/30 hover:text-white/60 hover:bg-white/[0.04]',
                   )}
                   title={cat.label}
@@ -190,39 +193,39 @@ function BilerFilterContent({
     pendingRef.current[field as keyof BilerFilterState] = value;
   };
 
-  // Color tokens based on mode
+  // Color tokens — both light/dark mode now use Premium Dark palette (teal accent)
   const c = lightMode
     ? {
-        searchIcon: 'text-[#3a2e24]/40',
-        searchInput: 'border-[#3a2e24]/15 focus:border-[#c4962c]/60 text-[#3a2e24] placeholder:text-[#3a2e24]/30',
+        searchIcon: 'text-white/40',
+        searchInput: 'border-white/15 focus:border-[#34eab8]/70 text-white placeholder:text-white/30',
         searchBg: 'bg-transparent',
-        countText: 'text-[#3a2e24]/40',
-        divider: 'border-[#3a2e24]/8',
-        labelText: 'text-[#3a2e24]/50',
-        catActive: 'bg-[#c4962c]/15 text-[#8b6914]',
-        catInactive: 'text-[#3a2e24]/50 hover:bg-[#3a2e24]/[0.04] hover:text-[#3a2e24]/70',
-        catCountActive: 'text-[#8b6914]/60',
-        catCountInactive: 'text-[#3a2e24]/20',
+        countText: 'text-white/40',
+        divider: 'border-white/10',
+        labelText: 'text-white/45',
+        catActive: 'bg-[#34eab8]/15 text-[#34eab8]',
+        catInactive: 'text-white/55 hover:bg-white/[0.05] hover:text-white/85',
+        catCountActive: 'text-[#34eab8]/70',
+        catCountInactive: 'text-white/25',
         catIcon: '',
         catLabel: '',
-        fieldOverrides: '[&_label]:text-[#3a2e24]/60 [&_select]:bg-white/70 [&_select]:border-[#3a2e24]/10 [&_select]:text-[#3a2e24] [&_input]:bg-white/70 [&_input]:border-[#3a2e24]/10 [&_input]:text-[#3a2e24]',
-        resetText: 'text-[#3a2e24]/40 hover:text-[#8b6914]',
+        fieldOverrides: '[&_label]:text-white/45 [&_select]:bg-white/[0.06] [&_select]:border-white/[0.1] [&_select]:text-white/85 [&_input]:bg-white/[0.06] [&_input]:border-white/[0.1] [&_input]:text-white/85',
+        resetText: 'text-white/40 hover:text-[#34eab8]',
       }
     : {
-        searchIcon: 'text-white/30',
-        searchInput: 'border-white/10 focus:border-[#c4962c]/50 text-white/80 placeholder:text-white/20',
+        searchIcon: 'text-white/35',
+        searchInput: 'border-white/10 focus:border-[#34eab8]/60 text-white placeholder:text-white/25',
         searchBg: 'bg-transparent',
-        countText: 'text-white/25',
-        divider: 'border-white/[0.06]',
-        labelText: 'text-white/25',
-        catActive: 'bg-[#c4962c]/15 text-[#F5A623]',
-        catInactive: 'text-white/40 hover:bg-white/[0.04] hover:text-white/60',
-        catCountActive: 'text-[#F5A623]/60',
-        catCountInactive: 'text-white/15',
+        countText: 'text-white/35',
+        divider: 'border-white/[0.08]',
+        labelText: 'text-white/35',
+        catActive: 'bg-[#34eab8]/15 text-[#34eab8]',
+        catInactive: 'text-white/50 hover:bg-white/[0.04] hover:text-white/80',
+        catCountActive: 'text-[#34eab8]/70',
+        catCountInactive: 'text-white/20',
         catIcon: '',
         catLabel: '',
-        fieldOverrides: '[&_label]:text-white/30 [&_select]:bg-white/[0.06] [&_select]:border-white/[0.08] [&_select]:text-white/70 [&_input]:bg-white/[0.06] [&_input]:border-white/[0.08] [&_input]:text-white/70',
-        resetText: 'text-white/30 hover:text-[#F5A623]',
+        fieldOverrides: '[&_label]:text-white/40 [&_select]:bg-white/[0.05] [&_select]:border-white/[0.1] [&_select]:text-white/80 [&_input]:bg-white/[0.05] [&_input]:border-white/[0.1] [&_input]:text-white/80',
+        resetText: 'text-white/35 hover:text-[#34eab8]',
       };
 
   return (
@@ -237,7 +240,7 @@ function BilerFilterContent({
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
             className={`w-full bg-transparent border-0 border-b ${c.searchInput} pl-6 pr-2 py-1.5 text-sm outline-none transition-colors`}
-            style={{ fontFamily: "'Playfair Display', serif", fontStyle: 'italic' }}
+            style={{ ...chakra, fontStyle: 'italic' }}
           />
         </div>
         <div className="flex items-center justify-between">

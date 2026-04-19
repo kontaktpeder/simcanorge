@@ -267,36 +267,60 @@ const Biler = () => {
         {/* Main content area */}
         <div className="flex-1 min-w-0 lg:overflow-y-auto">
 
-          {/* ─── HERO HEADER (Premium Dark) ─── */}
+          {/* ─── HERO HEADER (Premium Dark — popping) ─── */}
           <section
             className="relative overflow-hidden"
-            style={{ background: 'linear-gradient(180deg, #070b10 0%, #0a1218 100%)' }}
+            style={{ background: 'linear-gradient(180deg, #050810 0%, #0a1422 60%, #0a1218 100%)' }}
           >
-            {/* Ambient teal glow */}
-            <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 70% 40%, rgba(52,234,184,0.10) 0%, transparent 60%)' }} />
-            {/* Shimmer accent line */}
-            <div className="absolute bottom-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(90deg, transparent 0%, rgba(52,234,184,0.6) 50%, transparent 100%)' }} />
+            {/* Multi-layer ambient glow */}
+            <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 60% 80% at 75% 30%, rgba(52,234,184,0.18) 0%, transparent 60%)' }} />
+            <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 40% 60% at 15% 80%, rgba(52,234,184,0.10) 0%, transparent 60%)' }} />
+            {/* Diagonal stripe texture */}
+            <div className="absolute inset-0 pointer-events-none opacity-[0.04]" style={{ backgroundImage: 'repeating-linear-gradient(135deg, #34eab8 0px, #34eab8 1px, transparent 1px, transparent 14px)' }} />
+            {/* Shimmer accent line bottom */}
+            <div className="absolute bottom-0 left-0 right-0 h-[2px]" style={{ background: 'linear-gradient(90deg, transparent 0%, rgba(52,234,184,0.8) 50%, transparent 100%)', boxShadow: '0 0 12px rgba(52,234,184,0.4)' }} />
 
             <div className="relative z-10 max-w-[1200px] mx-auto px-4 sm:px-5 md:px-8">
-              <div className="flex flex-col justify-center min-h-[140px] sm:min-h-[170px] md:min-h-[200px] py-6 md:py-10">
-                <p
-                  className="text-[10px] sm:text-[11px] tracking-[0.32em] uppercase mb-2"
-                  style={{ ...oswald, fontWeight: 500, color: '#34eab8' }}
-                >
-                  bilgarasje.no
-                </p>
+              <div className="flex flex-col justify-center min-h-[200px] sm:min-h-[260px] md:min-h-[320px] py-8 md:py-14">
+                <div className="flex items-center gap-2.5 mb-3">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#34eab8] animate-pulse" style={{ boxShadow: '0 0 8px rgba(52,234,184,0.8)' }} />
+                  <p
+                    className="text-[10px] sm:text-[11px] tracking-[0.35em] uppercase"
+                    style={{ ...oswald, fontWeight: 600, color: '#34eab8' }}
+                  >
+                    bilgarasje.no — arkivet
+                  </p>
+                </div>
                 <h1
-                  className="text-[2rem] sm:text-[2.6rem] md:text-[3.4rem] leading-[0.93] uppercase tracking-[0.02em] text-white font-bold italic"
-                  style={{ ...chakra, textShadow: '0 2px 30px rgba(0,0,0,0.5)' }}
+                  className="text-[3rem] sm:text-[4.5rem] md:text-[6rem] lg:text-[7rem] leading-[0.88] uppercase tracking-[0.01em] font-bold italic"
+                  style={{
+                    ...chakra,
+                    background: 'linear-gradient(180deg, #ffffff 0%, #ffffff 60%, rgba(52,234,184,0.85) 100%)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    filter: 'drop-shadow(0 0 30px rgba(52,234,184,0.15))',
+                  }}
                 >
                   Arkivet
                 </h1>
-                <p className="text-[13px] sm:text-[14px] text-white/50 mt-3 max-w-md" style={oswald}>
-                  Historier om biler i Norge — søk, filtrer og utforsk.
+                <p className="text-[13px] sm:text-[15px] md:text-[17px] text-white/60 mt-4 max-w-xl leading-relaxed" style={oswald}>
+                  Historier om biler i Norge. Søk, filtrer og utforsk samlingen.
                 </p>
+                <div className="flex items-center gap-5 sm:gap-8 mt-6 pt-5 border-t border-white/[0.08] max-w-md">
+                  <div>
+                    <p className="text-[1.6rem] sm:text-[2rem] font-bold text-[#34eab8] leading-none" style={chakra}>{totalCount}</p>
+                    <p className="text-[9px] sm:text-[10px] tracking-[0.2em] uppercase text-white/40 mt-1" style={oswald}>Biler dokumentert</p>
+                  </div>
+                  <div className="h-10 w-px bg-white/10" />
+                  <div>
+                    <p className="text-[1.6rem] sm:text-[2rem] font-bold text-[#34eab8] leading-none" style={chakra}>{Object.keys(categoryCounts).filter(k => k !== 'alle' && categoryCounts[k] > 0).length}</p>
+                    <p className="text-[9px] sm:text-[10px] tracking-[0.2em] uppercase text-white/40 mt-1" style={oswald}>Kategorier</p>
+                  </div>
+                </div>
               </div>
             </div>
           </section>
+
 
           {/* Mobile filter bar */}
           <div
