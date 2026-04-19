@@ -19,7 +19,7 @@ import {
   FeatureCarModule,
   MonthlyCoverModule,
 } from "@/components/biler";
-import { NewsprintBackground } from "@/components/editorial/NewsprintBackground";
+// NewsprintBackground removed — Premium Dark theme uses solid dark background
 import { BilerSidePanel, EMPTY_BILER_FILTER, type BilerFilterState } from "@/components/biler/BilerSidePanel";
 import carSilhouette from "@/assets/car-silhouette.png";
 import BilgarasjeLoader from "@/components/ui/BilgarasjeLoader";
@@ -229,7 +229,7 @@ const Biler = () => {
         <meta name="description" content="Utforsk historier om biler i Norge. Søk etter merke, modell og årstall i bilarkivet." />
       </Helmet>
 
-      <div className="flex relative lg:h-[calc(100vh-4rem)] lg:overflow-hidden">
+      <div className="flex relative lg:h-[calc(100vh-4rem)] lg:overflow-hidden" style={{ background: '#070b10' }}>
         {/* Side Panel — desktop only, mobile uses drawer */}
         <div className="hidden lg:block shrink-0">
           <div className="lg:h-[calc(100vh-4rem)] lg:overflow-y-auto">
@@ -267,29 +267,32 @@ const Biler = () => {
         {/* Main content area */}
         <div className="flex-1 min-w-0 lg:overflow-y-auto">
 
-          {/* ─── HERO HEADER ─── */}
+          {/* ─── HERO HEADER (Premium Dark) ─── */}
           <section
             className="relative overflow-hidden"
-            style={{ background: 'linear-gradient(135deg, #4a3d30 0%, #3a2e24 40%, #2a2118 100%)' }}
+            style={{ background: 'linear-gradient(180deg, #070b10 0%, #0a1218 100%)' }}
           >
-            <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 70% 50%, rgba(196,150,44,0.08) 0%, transparent 60%)' }} />
+            {/* Ambient teal glow */}
+            <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 70% 40%, rgba(52,234,184,0.10) 0%, transparent 60%)' }} />
+            {/* Shimmer accent line */}
+            <div className="absolute bottom-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(90deg, transparent 0%, rgba(52,234,184,0.6) 50%, transparent 100%)' }} />
 
             <div className="relative z-10 max-w-[1200px] mx-auto px-4 sm:px-5 md:px-8">
-              <div className="flex flex-col justify-center min-h-[120px] sm:min-h-[140px] md:min-h-[170px] py-6 md:py-8">
+              <div className="flex flex-col justify-center min-h-[140px] sm:min-h-[170px] md:min-h-[200px] py-6 md:py-10">
                 <p
-                  className="text-[10px] sm:text-[11px] tracking-[0.3em] uppercase mb-1"
-                  style={{ ...oswald, fontWeight: 500, background: 'linear-gradient(135deg, #F5A623, #FFD166)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}
+                  className="text-[10px] sm:text-[11px] tracking-[0.32em] uppercase mb-2"
+                  style={{ ...oswald, fontWeight: 500, color: '#34eab8' }}
                 >
                   bilgarasje.no
                 </p>
                 <h1
-                  className="text-[1.4rem] sm:text-[1.8rem] md:text-[2.2rem] leading-[0.93] uppercase tracking-[0.02em] text-white font-bold italic"
-                  style={{ ...chakra, textShadow: '0 2px 20px rgba(0,0,0,0.4)' }}
+                  className="text-[2rem] sm:text-[2.6rem] md:text-[3.4rem] leading-[0.93] uppercase tracking-[0.02em] text-white font-bold italic"
+                  style={{ ...chakra, textShadow: '0 2px 30px rgba(0,0,0,0.5)' }}
                 >
                   Arkivet
                 </h1>
-                <p className="text-[12px] sm:text-[13px] text-white/30 mt-1.5 max-w-md">
-                  Historier om biler i Norge — søk, filtrer og utforsk
+                <p className="text-[13px] sm:text-[14px] text-white/50 mt-3 max-w-md" style={oswald}>
+                  Historier om biler i Norge — søk, filtrer og utforsk.
                 </p>
               </div>
             </div>
@@ -298,17 +301,17 @@ const Biler = () => {
           {/* Mobile filter bar */}
           <div
             className="lg:hidden flex items-center gap-3 px-4 py-3 border-b"
-            style={{ background: '#eee7dd', borderColor: 'rgba(58,46,36,0.08)' }}
+            style={{ background: '#0a1218', borderColor: 'rgba(52,234,184,0.12)' }}
           >
             <button
               onClick={() => setSidePanelOpen(true)}
-              className="flex items-center gap-2 text-[11px] uppercase tracking-[0.12em] font-bold px-3 py-2 rounded bg-[#3a2e24]/[0.06] hover:bg-[#3a2e24]/[0.1] transition-colors"
-              style={oswald}
+              className="flex items-center gap-2 text-[11px] uppercase tracking-[0.12em] font-bold px-3 py-2 rounded text-white/80 hover:text-white transition-colors"
+              style={{ ...oswald, background: 'rgba(52,234,184,0.08)', border: '1px solid rgba(52,234,184,0.2)' }}
             >
               <SlidersHorizontal className="w-4 h-4" />
               Filter
               {activeFilterCount > 0 && (
-                <span className="ml-0.5 px-1.5 py-0.5 text-[9px] bg-[#c4962c] text-white rounded-full">{activeFilterCount}</span>
+                <span className="ml-0.5 px-1.5 py-0.5 text-[9px] bg-[#34eab8] text-[#070b10] rounded-full font-bold">{activeFilterCount}</span>
               )}
             </button>
             {hasActiveFilters && (
@@ -317,7 +320,7 @@ const Biler = () => {
                   setFilterState(EMPTY_BILER_FILTER);
                   setSearchQuery('');
                 }}
-                className="flex items-center gap-1 text-[10px] uppercase tracking-[0.12em] text-[#c4962c] hover:text-[#a07820] transition-colors"
+                className="flex items-center gap-1 text-[10px] uppercase tracking-[0.12em] text-[#34eab8] hover:text-white transition-colors"
                 style={oswald}
               >
                 <X className="w-3 h-3" />
@@ -325,28 +328,26 @@ const Biler = () => {
               </button>
             )}
             <span
-              className="ml-auto text-[11px] text-[#3a2e24]/30"
+              className="ml-auto text-[11px] text-white/40"
               style={{ ...oswald, letterSpacing: '0.05em' }}
             >
               {totalCount} biler
             </span>
           </div>
 
-          {/* Newsprint background */}
-          <NewsprintBackground />
-
-          {/* Editorial Feed */}
+          {/* Editorial Feed (Premium Dark) */}
           <section
             className="relative py-8 md:py-12 lg:py-16"
-            style={{ background: 'transparent' }}
+            style={{ background: '#070b10' }}
           >
-            {/* Car silhouette watermark */}
-            <div className="absolute bottom-0 left-0 right-0 pointer-events-none flex justify-center overflow-hidden" style={{ opacity: 0.02 }}>
+            {/* Ambient teal glow watermark */}
+            <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(52,234,184,0.05) 0%, transparent 50%)' }} />
+            <div className="absolute bottom-0 left-0 right-0 pointer-events-none flex justify-center overflow-hidden" style={{ opacity: 0.04 }}>
               <img
                 src={carSilhouette}
                 alt=""
                 className="w-[80%] max-w-[1000px] translate-y-[30%]"
-                style={{ transform: 'scaleX(-1)', filter: 'brightness(0) opacity(1)' }}
+                style={{ transform: 'scaleX(-1)', filter: 'brightness(2) invert(1)' }}
               />
             </div>
 
@@ -357,20 +358,20 @@ const Biler = () => {
                 </div>
               ) : cars.length === 0 ? (
                 <div className="text-center py-20">
-                  <Car className="w-16 h-16 mx-auto mb-4 text-[#3a2e24]/15" />
+                  <Car className="w-16 h-16 mx-auto mb-4 text-white/20" />
                   <h2
-                    className="text-[1.2rem] uppercase text-[#3a2e24]/40 font-bold tracking-[0.08em] mb-2"
+                    className="text-[1.2rem] uppercase text-white/60 font-bold tracking-[0.08em] mb-2"
                     style={oswald}
                   >
                     Ingen biler funnet
                   </h2>
-                  <p className="text-[13px] text-[#3a2e24]/25 mb-4">
+                  <p className="text-[13px] text-white/35 mb-4">
                     {hasActiveFilters ? "Prøv å endre søket" : "Ingen biler er publisert ennå"}
                   </p>
                   {hasActiveFilters && (
                     <button
                       onClick={() => { setFilterState(EMPTY_BILER_FILTER); setSearchQuery(''); }}
-                      className="text-[12px] uppercase tracking-[0.15em] text-[#c4962c] hover:text-[#a07820] font-bold transition-colors border-b border-[#c4962c]/30 hover:border-[#c4962c]/60 pb-0.5"
+                      className="text-[12px] uppercase tracking-[0.15em] text-[#34eab8] hover:text-white font-bold transition-colors border-b border-[#34eab8]/30 hover:border-[#34eab8]/60 pb-0.5"
                       style={oswald}
                     >
                       Nullstill filter
@@ -431,9 +432,9 @@ const Biler = () => {
                                 onClick={() => handlePageChange(pageNum)}
                                 className="w-10 h-10 text-lg transition-colors"
                                 style={{
-                                  fontFamily: "'Playfair Display', serif",
-                                  color: currentPage === pageNum ? '#c4962c' : 'rgba(58,46,36,0.3)',
-                                  borderBottom: currentPage === pageNum ? '2px solid #c4962c' : '2px solid transparent',
+                                  ...chakra,
+                                  color: currentPage === pageNum ? '#34eab8' : 'rgba(255,255,255,0.4)',
+                                  borderBottom: currentPage === pageNum ? '2px solid #34eab8' : '2px solid transparent',
                                 }}
                               >
                                 {pageNum + 1}
@@ -448,7 +449,7 @@ const Biler = () => {
                           className="flex items-center gap-1.5 px-4 py-2 text-[12px] uppercase tracking-[0.15em] transition-colors"
                           style={{
                             ...oswald,
-                            color: currentPage >= totalPages - 1 ? 'rgba(58,46,36,0.2)' : 'rgba(58,46,36,0.6)',
+                            color: currentPage >= totalPages - 1 ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.7)',
                             cursor: currentPage >= totalPages - 1 ? 'not-allowed' : 'pointer',
                           }}
                         >
@@ -458,7 +459,7 @@ const Biler = () => {
                       </div>
 
                       <p
-                        className="text-[11px] text-[#3a2e24]/25 tracking-[0.08em] uppercase"
+                        className="text-[11px] text-white/30 tracking-[0.08em] uppercase"
                         style={oswald}
                       >
                         Side {currentPage + 1} av {totalPages} · {totalCount} {totalCount === 1 ? 'bil' : 'biler'} totalt
@@ -468,7 +469,7 @@ const Biler = () => {
 
                   {totalPages <= 1 && (
                     <p
-                      className="text-center mt-16 text-[11px] text-[#3a2e24]/25 tracking-[0.08em] uppercase"
+                      className="text-center mt-16 text-[11px] text-white/30 tracking-[0.08em] uppercase"
                       style={oswald}
                     >
                       {totalCount} {totalCount === 1 ? 'bil' : 'biler'} dokumentert
@@ -479,26 +480,31 @@ const Biler = () => {
             </div>
           </section>
 
-          {/* CTA */}
+          {/* CTA (Premium Dark) */}
           <section
-            className="py-16 md:py-24 border-t"
-            style={{ background: 'linear-gradient(180deg, #e8e1d6 0%, #eee7dd 100%)', borderColor: 'rgba(58,46,36,0.08)' }}
+            className="relative py-16 md:py-24 border-t overflow-hidden"
+            style={{ background: 'linear-gradient(180deg, #070b10 0%, #0a1218 100%)', borderColor: 'rgba(52,234,184,0.15)' }}
           >
-            <div className="container mx-auto px-4 text-center max-w-2xl">
+            <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 50% 50%, rgba(52,234,184,0.08) 0%, transparent 60%)' }} />
+            <div className="container mx-auto px-4 text-center max-w-2xl relative z-10">
               <h2
-                className="text-[1.4rem] md:text-[1.8rem] leading-[0.95] uppercase font-bold italic text-[#3a2e24] mb-4"
+                className="text-[1.6rem] md:text-[2.2rem] leading-[0.95] uppercase font-bold italic text-white mb-4"
                 style={chakra}
               >
                 Har du en historie å dele?
               </h2>
-              <p className="text-[14px] text-[#3a2e24]/40 mb-8 leading-relaxed">
+              <p className="text-[14px] text-white/50 mb-8 leading-relaxed" style={oswald}>
                 Vi dokumenterer biler i Norge.
                 Bidra med din bil og bli del av arkivet.
               </p>
               <Link
                 to="/send-inn"
-                className="inline-block text-[12px] uppercase tracking-[0.2em] text-[#c4962c] hover:text-[#a07820] font-bold transition-colors border-b border-[#c4962c]/30 hover:border-[#c4962c]/60 pb-0.5"
-                style={oswald}
+                className="inline-flex items-center gap-2 px-7 py-3 text-[12px] uppercase tracking-[0.2em] text-[#070b10] font-bold transition-all hover:scale-[1.03] rounded-full"
+                style={{
+                  ...chakra,
+                  background: 'linear-gradient(135deg, #34eab8 0%, #2dd4a8 100%)',
+                  boxShadow: '0 8px 24px rgba(52,234,184,0.3), inset 0 1px 0 rgba(255,255,255,0.3)',
+                }}
               >
                 Send inn din bil →
               </Link>
@@ -560,8 +566,8 @@ function EditorialBlock({ block, index }: EditorialBlockProps): React.ReactNode 
                 <div className="max-w-4xl">
                   {car.year && (
                     <span
-                      className="text-4xl md:text-6xl lg:text-8xl text-white/90 block mb-2 md:mb-4"
-                      style={{ fontFamily: "'Playfair Display', serif" }}
+                      className="text-4xl md:text-6xl lg:text-8xl text-white/95 block mb-2 md:mb-4 font-bold"
+                      style={chakra}
                     >
                       {car.year}
                     </span>
@@ -584,7 +590,7 @@ function EditorialBlock({ block, index }: EditorialBlockProps): React.ReactNode 
                     </p>
                   )}
                   <span
-                    className="inline-block text-[11px] md:text-[12px] text-[#F5A623] tracking-[0.15em] uppercase group-hover:tracking-[0.25em] transition-all"
+                    className="inline-block text-[11px] md:text-[12px] text-[#34eab8] tracking-[0.15em] uppercase group-hover:tracking-[0.25em] transition-all"
                     style={oswald}
                   >
                     Les historien →
@@ -600,7 +606,7 @@ function EditorialBlock({ block, index }: EditorialBlockProps): React.ReactNode 
       return (
         <article className={`${gridClasses} group`}>
           <LinkWrapper className="block">
-            <div className="relative aspect-[3/2] overflow-hidden bg-muted mb-4">
+            <div className="relative aspect-[3/2] overflow-hidden bg-white/5 mb-4">
               {primaryImage && (
                 <img
                   src={primaryImage}
@@ -613,32 +619,32 @@ function EditorialBlock({ block, index }: EditorialBlockProps): React.ReactNode 
               <div className="flex items-baseline gap-3">
                 {car.year && (
                   <span
-                    className="text-3xl md:text-4xl text-[#c4962c]/70"
-                    style={{ fontFamily: "'Playfair Display', serif" }}
+                    className="text-3xl md:text-4xl text-[#34eab8]/80"
+                    style={chakra}
                   >
                     {car.year}
                   </span>
                 )}
                 <span
-                  className="text-[10px] tracking-[0.15em] text-[#3a2e24]/35 uppercase"
+                  className="text-[10px] tracking-[0.15em] text-white/40 uppercase"
                   style={oswald}
                 >
                   {car.brand}
                 </span>
               </div>
               <h3
-                className="text-[14px] md:text-[16px] tracking-[0.03em] uppercase font-bold italic text-[#3a2e24]"
+                className="text-[14px] md:text-[16px] tracking-[0.03em] uppercase font-bold italic text-white group-hover:text-[#34eab8] transition-colors"
                 style={chakra}
               >
                 {car.title}
               </h3>
               {excerpt && (
-                <p className="text-[#3a2e24]/40 text-sm line-clamp-2">
+                <p className="text-white/50 text-sm line-clamp-2" style={oswald}>
                   {excerpt}
                 </p>
               )}
               <span
-                className="inline-block text-[10px] tracking-[0.15em] text-[#c4962c] uppercase pt-2"
+                className="inline-block text-[10px] tracking-[0.15em] text-[#34eab8] uppercase pt-2"
                 style={oswald}
               >
                 Les historien →
@@ -664,8 +670,8 @@ function EditorialBlock({ block, index }: EditorialBlockProps): React.ReactNode 
               <div className="absolute bottom-0 left-0 right-0 p-4 md:p-5">
                 {car.year && (
                   <span
-                    className="text-2xl md:text-3xl text-white/90 block"
-                    style={{ fontFamily: "'Playfair Display', serif" }}
+                    className="text-2xl md:text-3xl text-[#34eab8] block font-bold"
+                    style={chakra}
                   >
                     {car.year}
                   </span>
@@ -685,10 +691,10 @@ function EditorialBlock({ block, index }: EditorialBlockProps): React.ReactNode 
     case 'archive':
       return (
         <article className={`${gridClasses} group`}>
-          <LinkWrapper className="block p-5 md:p-6 bg-[#f5efe6]/60 border border-[#3a2e24]/[0.06] transition-all duration-500 hover:-translate-y-1 hover:shadow-md hover:border-[#3a2e24]/[0.12]">
+          <LinkWrapper className="block p-5 md:p-6 bg-white/[0.03] border border-white/[0.08] transition-all duration-500 hover:-translate-y-1 hover:bg-white/[0.05] hover:border-[#34eab8]/30 rounded-lg">
             <div className="flex gap-5 md:gap-6 items-start">
               {primaryImage && (
-                <div className="w-24 h-24 md:w-28 md:h-28 flex-shrink-0 overflow-hidden bg-muted transition-transform duration-500 group-hover:-translate-y-0.5">
+                <div className="w-24 h-24 md:w-28 md:h-28 flex-shrink-0 overflow-hidden bg-white/5 transition-transform duration-500 group-hover:-translate-y-0.5 rounded">
                   <img
                     src={primaryImage}
                     alt={imageAlt}
@@ -699,31 +705,31 @@ function EditorialBlock({ block, index }: EditorialBlockProps): React.ReactNode 
               <div className="flex-1 min-w-0 space-y-1.5">
                 {car.year && (
                   <span
-                    className="text-4xl md:text-5xl text-[#c4962c]/50 block leading-none"
-                    style={{ fontFamily: "'Playfair Display', serif" }}
+                    className="text-4xl md:text-5xl text-[#34eab8]/60 block leading-none"
+                    style={chakra}
                   >
                     {car.year}
                   </span>
                 )}
                 <span
-                  className="text-[10px] tracking-[0.15em] text-[#3a2e24]/30 uppercase block"
+                  className="text-[10px] tracking-[0.15em] text-white/35 uppercase block"
                   style={oswald}
                 >
                   {car.brand} · {car.model}
                 </span>
                 <h3
-                  className="text-[14px] md:text-[16px] tracking-[0.03em] uppercase leading-tight font-bold italic text-[#3a2e24]"
+                  className="text-[14px] md:text-[16px] tracking-[0.03em] uppercase leading-tight font-bold italic text-white group-hover:text-[#34eab8] transition-colors"
                   style={chakra}
                 >
                   {car.title}
                 </h3>
                 {excerpt && (
-                  <p className="text-[#3a2e24]/35 text-sm line-clamp-2 leading-relaxed">
+                  <p className="text-white/40 text-sm line-clamp-2 leading-relaxed" style={oswald}>
                     {excerpt}
                   </p>
                 )}
                 <span
-                  className="inline-block text-[10px] tracking-[0.15em] text-[#c4962c] uppercase pt-2"
+                  className="inline-block text-[10px] tracking-[0.15em] text-[#34eab8] uppercase pt-2"
                   style={oswald}
                 >
                   Les historien →
