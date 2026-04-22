@@ -614,7 +614,7 @@ const BilDetalj = () => {
 
       {/* Quick Facts Section */}
       {quickFacts.length > 0 && (
-        <section className="py-8 md:py-12 bg-gradient-to-b from-transparent via-white/[0.02] to-transparent border-y border-white/[0.06]">
+        <section className="py-10 md:py-14 bg-gradient-to-b from-transparent via-white/[0.02] to-transparent border-y border-white/[0.06]">
           <div className="container mx-auto px-4">
             <AnimatedSection delay={200}>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4 stagger-children">
@@ -623,16 +623,30 @@ const BilDetalj = () => {
                   return (
                     <div 
                       key={fact.label}
-                      className="relative bg-white/[0.04] border border-white/[0.10] p-4 rounded-lg hover:border-[#34eab8]/30 hover:bg-white/[0.06] transition-all overflow-hidden group"
+                      className="relative bg-gradient-to-br from-white/[0.06] via-white/[0.03] to-transparent border border-white/[0.10] p-5 hover:border-[#34eab8]/40 hover:from-[#34eab8]/[0.08] transition-all overflow-hidden group"
                       style={{ animationDelay: `${index * 100}ms` }}
                     >
-                      {/* subtle sheen */}
-                      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-60" />
-                      <dt className="text-[11px] font-sans font-bold uppercase tracking-[0.16em] text-[#34eab8] mb-1.5 flex items-center gap-1.5">
-                        <Icon className="w-3 h-3" />
+                      {/* Top sheen line */}
+                      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent" />
+                      {/* Left teal marker */}
+                      <div className="absolute left-0 top-4 bottom-4 w-[2px] bg-[#34eab8]/0 group-hover:bg-[#34eab8] transition-colors" />
+                      {/* Corner notch */}
+                      <div className="absolute top-0 right-0 w-3 h-3 border-t border-r border-[#34eab8]/40" />
+                      <div className="absolute bottom-0 left-0 w-3 h-3 border-b border-l border-white/15" />
+
+                      <dt
+                        className="text-[10px] uppercase tracking-[0.22em] text-[#34eab8] mb-2 flex items-center gap-1.5 font-bold"
+                        style={{ fontFamily: "'Chakra Petch', sans-serif" }}
+                      >
+                        <Icon className="w-3 h-3" strokeWidth={2.5} />
                         {fact.label}
                       </dt>
-                      <dd className="font-sans font-semibold text-[16px] md:text-[17px] text-white capitalize leading-tight">{fact.value}</dd>
+                      <dd
+                        className="text-[20px] md:text-[22px] text-white capitalize leading-[1.1] font-bold"
+                        style={{ fontFamily: "'Chakra Petch', 'Bebas Neue', sans-serif", letterSpacing: "0.01em" }}
+                      >
+                        {fact.value}
+                      </dd>
                     </div>
                   );
                 })}
