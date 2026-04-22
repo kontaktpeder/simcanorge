@@ -110,11 +110,11 @@ export function ImageUploadWithOrder({
         className="hidden"
       />
 
-      <div className="flex gap-3 overflow-x-auto pb-2">
+      <div className="flex flex-wrap gap-3">
         {sorted.map((img, index) => (
           <div
             key={img.id}
-            className="relative group flex-shrink-0 w-28 h-28 sm:w-32 sm:h-32 rounded-lg overflow-hidden border-2 border-border bg-muted"
+            className="relative group w-[calc(33.333%-0.5rem)] sm:w-32 aspect-square rounded-lg overflow-hidden border-2 border-border bg-muted"
           >
             <img
               src={img.image_url}
