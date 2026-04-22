@@ -26,21 +26,27 @@ type DuplicateHit = { id: string; slug: string; title: string; published_at: str
 
 interface CarWizardProps {
   onSuccess?: (result: { carId: string; email: string; flow: "guest" | "authenticated" }) => void;
+  initialRegistrationNumber?: string;
+  /** When true, skip the in-wizard duplicate-regnr check (already handled upstream by RegNrGate). */
+  skipDuplicateCheck?: boolean;
 }
 
-export function CarWizard({ onSuccess }: CarWizardProps) {
+export function CarWizard({ onSuccess, initialRegistrationNumber, skipDuplicateCheck }: CarWizardProps) {
   const { toast } = useToast();
   const { user } = useAuth();
   const { data: personProfile } = useMyPersonProfile();
   const [step, setStep] = useState<WizardStep>(0);
-  const [data, setData] = useState<WizardData>(INITIAL_WIZARD_DATA);
+  const [data, setData] = useState<WizardData>(() => ({
+    ...INITIAL_WIZARD_DATA,
+    registration_number: initialRegistrationNumber ?? "",
+  }));
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [uploadProgress, setUploadProgress] = useState<CompressionProgress | null>(null);
   const [compressionStats, setCompressionStats] = useState<{ originalSize: number; compressedSize: number; reduction: number } | null>(null);
   const [duplicateHits, setDuplicateHits] = useState<DuplicateHit[]>([]);
   const [showDuplicateDialog, setShowDuplicateDialog] = useState(false);
-  const [duplicateChecked, setDuplicateChecked] = useState(false);
+  const [duplicateChecked, setDuplicateChecked] = useState(!!skipDuplicateCheck);
 
   // Prefill email and name for authenticated users
   useEffect(() => {

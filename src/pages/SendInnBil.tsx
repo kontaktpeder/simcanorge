@@ -1,17 +1,19 @@
 import { Layout } from "@/components/layout/Layout";
-import { AnimatedSection } from "@/components/layout/AnimatedSection";
 import { CarWizard } from "@/components/car/wizard";
+import { RegNrGate } from "@/components/car/wizard/RegNrGate";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, Mail, Home, ArrowRight, AlertTriangle, LogOut, RotateCcw } from "lucide-react";
+import { Loader2, Mail, Home, ArrowRight, AlertTriangle, LogOut } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useQueryClient } from "@tanstack/react-query";
+import { FEATURES } from "@/config/features";
 
 type PageState =
-  | { step: "wizard" }
+  | { step: "gate" }
+  | { step: "wizard"; registrationNumber: string }
   | { step: "linking" }
   | { step: "success"; email: string }
   | { step: "mismatch"; carId: string; signedInEmail: string | null };
@@ -67,7 +69,7 @@ export default function SendInnBil() {
     if (getPendingClaimCarId()) {
       return { step: "linking" };
     }
-    return { step: "wizard" };
+    return FEATURES.earlyRegnrGate ? { step: "gate" } : { step: "wizard", registrationNumber: "" };
   });
 
   // Handle car claim after magic link redirect
@@ -124,7 +126,7 @@ export default function SendInnBil() {
     const fallbackTimer = window.setTimeout(() => {
       if (claimHandledRef.current) return;
       clearPendingClaimCarId();
-      setState({ step: "wizard" });
+      setState(FEATURES.earlyRegnrGate ? { step: "gate" } : { step: "wizard", registrationNumber: "" });
     }, 8000);
 
     return () => {
@@ -162,7 +164,7 @@ export default function SendInnBil() {
   const handleSignOutAndRetry = async (carId: string) => {
     await supabase.auth.signOut();
     localStorage.setItem("pendingClaimCarId", carId);
-    setState({ step: "wizard" });
+    setState(FEATURES.earlyRegnrGate ? { step: "gate" } : { step: "wizard", registrationNumber: "" });
     toast({
       title: "Logget ut",
       description: "Send ny lenke til e-posten du brukte ved innsending.",
@@ -282,6 +284,30 @@ export default function SendInnBil() {
     );
   }
 
+  if (state.step === "gate") {
+    return (
+      <Layout contained>
+        <section className="py-8 sm:py-12">
+          <div className="container mx-auto px-4">
+            <div className="mb-6 text-center">
+              <h1 className="mb-1 font-display text-2xl text-foreground sm:text-3xl md:text-4xl">
+                DEL BILEN DIN
+              </h1>
+              <p className="mx-auto max-w-xl text-sm text-muted-foreground sm:text-base">
+                Først sjekker vi om bilen din allerede ligger i Bilgarasje.
+              </p>
+            </div>
+            <RegNrGate
+              onContinue={(registrationNumber) =>
+                setState({ step: "wizard", registrationNumber })
+              }
+            />
+          </div>
+        </section>
+      </Layout>
+    );
+  }
+
   return (
     <Layout contained fillHeight>
       <section className="flex flex-col flex-1 min-h-0 py-4 sm:py-6">
@@ -296,7 +322,11 @@ export default function SendInnBil() {
           </div>
 
           <div className="flex-1 min-h-0">
-            <CarWizard onSuccess={handleWizardSuccess} />
+            <CarWizard
+              onSuccess={handleWizardSuccess}
+              initialRegistrationNumber={state.registrationNumber}
+              skipDuplicateCheck={FEATURES.earlyRegnrGate}
+            />
           </div>
         </div>
       </section>
