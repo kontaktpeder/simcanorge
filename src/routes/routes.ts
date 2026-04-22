@@ -89,7 +89,8 @@ export interface RouteConfig {
 
 export const routes: RouteConfig[] = [
   // Public routes with navigation
-  { path: "/", element: Index, label: "Hjem", description: "Tilbake til forsiden", icon: Home, isPublic: true, showInNav: true },
+  { path: "/", element: RegistrerBil, label: "Hjem", description: "Legg inn bilen din", icon: Home, isPublic: true, showInNav: true },
+  { path: "/hjem", element: Index, label: "Utforsk", description: "Forsiden med biler og historier", icon: Home, isPublic: true, showInNav: false },
   { path: "/manedens-bil", element: ManedensBil, label: "Månedens bil", description: "Se denne månedens utvalgte bil", icon: Star, glow: true, isPublic: true, showInNav: true },
   { path: "/biler", element: Biler, label: "Biler", description: "Utforsk biler og historier fra hele Norge", icon: Car, isPublic: true, showInNav: true },
   { path: "/markedsplass/:branch", element: Markedsplass, isPublic: true },
@@ -114,7 +115,7 @@ export const routes: RouteConfig[] = [
   { path: "/nytt-passord", element: NyttPassord, isPublic: true },
   { path: "/sok-om-tilgang", element: SokOmTilgang, isPublic: true },
   { path: "/start-annonse", element: StartAnnonse, isPublic: true },
-  { path: "/registrer-bil", element: RegistrerBil, label: "Registrer bil", description: "Legg inn bilen din – ny launch-side", icon: Plus, isPublic: true, showInNav: true, glow: true },
+  { path: "/registrer-bil", element: RegistrerBil, isPublic: true },
   { path: "/s/:slug", element: PublicPagePage, isPublic: true },
   { path: "/e/:slug", element: PublicEventPage, isPublic: true },
   { path: "/aktoerer", element: AktoererPage, label: "Aktører", description: "Verksteder, forhandlere og andre aktører", isPublic: true, showInNav: false },
