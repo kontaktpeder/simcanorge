@@ -102,23 +102,27 @@ export function AppRoutes() {
   return (
     <Suspense fallback={<RouteLoadingFallback />}>
       <Routes>
-        {routes.map((route) => (
-          <Route
-            key={route.path}
-            path={route.path}
-            element={
-              route.requiresAuth || route.requiresAdmin ? (
-                <ProtectedRoute 
-                  Component={route.element}
-                  requiresAuth={route.requiresAuth} 
-                  requiresAdmin={route.requiresAdmin}
-                />
-              ) : (
-                <LazyComponentWrapper Component={route.element} />
-              )
-            }
-          />
-        ))}
+        {/* Permanent redirect: /dashboard → /garasje */}
+        <Route path="/dashboard" element={<Navigate to="/garasje" replace />} />
+        {routes
+          .filter((route) => route.path !== "/dashboard")
+          .map((route) => (
+            <Route
+              key={route.path}
+              path={route.path}
+              element={
+                route.requiresAuth || route.requiresAdmin ? (
+                  <ProtectedRoute
+                    Component={route.element}
+                    requiresAuth={route.requiresAuth}
+                    requiresAdmin={route.requiresAdmin}
+                  />
+                ) : (
+                  <LazyComponentWrapper Component={route.element} />
+                )
+              }
+            />
+          ))}
       </Routes>
     </Suspense>
   );
