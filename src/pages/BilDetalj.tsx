@@ -522,18 +522,23 @@ const BilDetalj = () => {
             {/* Content */}
             <AnimatedSection delay={100}>
               <div>
-                <h1 className="headline-md mb-3">{car.title}{car.year != null ? ` (${car.year})` : ""}</h1>
+                {/* Subtle teal accent line */}
+                <div className="h-[2px] w-16 bg-gradient-to-r from-[#34eab8] to-transparent mb-5" />
+
+                <h1 className="headline-md mb-3 text-white drop-shadow-[0_1px_0_rgba(255,255,255,0.04)]">
+                  {car.title}{car.year != null ? ` (${car.year})` : ""}
+                </h1>
                 
                 {/* Subtitle line */}
-                <p className="font-display text-xl text-accent mb-4">
+                <p className="font-display text-xl text-[#34eab8] mb-4 tracking-wide">
                   {[car.brand, car.model, car.variant].filter(Boolean).join(' ')}
-                  {car.year && <span className="text-muted-foreground"> • {car.year}</span>}
+                  {car.year && <span className="text-white/55"> • {car.year}</span>}
                 </p>
 
                 {/* Status badges */}
                 <div className="flex flex-wrap items-center gap-3 mb-6">
                   {car.overhauled && (
-                    <span className="flex items-center gap-1.5 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 px-3 py-1.5 font-display text-sm border-2 border-green-600">
+                    <span className="flex items-center gap-1.5 bg-[#34eab8]/12 text-[#7ff4cd] px-3 py-1.5 font-sans font-semibold text-sm border border-[#34eab8]/30 rounded-md">
                       <Wrench className="w-4 h-4" />
                       Overhalt
                     </span>
@@ -546,7 +551,7 @@ const BilDetalj = () => {
                     {car.tags.map((tag, index) => (
                       <span 
                         key={index} 
-                        className="bg-secondary text-secondary-foreground px-3 py-1.5 text-sm font-display uppercase border border-border hover:scale-105 transition-transform cursor-default"
+                        className="bg-white/[0.06] text-white/85 px-3 py-1.5 text-sm font-sans font-medium uppercase tracking-wide border border-white/[0.12] rounded-md hover:bg-white/[0.10] hover:border-white/20 transition cursor-default"
                         style={{ animationDelay: `${index * 50}ms` }}
                       >
                         {tag}
@@ -558,12 +563,12 @@ const BilDetalj = () => {
                 {/* Story excerpt */}
                 {car.story && (
                   <div className="mb-6">
-                    <h2 className="font-display text-sm uppercase text-muted-foreground mb-3 flex items-center gap-2">
+                    <h2 className="font-sans font-bold text-[12px] uppercase tracking-[0.18em] text-[#34eab8] mb-3 flex items-center gap-2">
                       <FileText className="w-4 h-4" />
                       Historien
                     </h2>
-                    <div className="prose prose-lg">
-                      <p className="font-serif text-lg leading-relaxed whitespace-pre-wrap">
+                    <div>
+                      <p className="font-sans text-[17px] md:text-[18px] leading-[1.65] text-white/90 whitespace-pre-wrap">
                         {isExpanded ? car.story : storyExcerpt}
                       </p>
                     </div>
@@ -573,7 +578,7 @@ const BilDetalj = () => {
                 {hasMoreStory && !isExpanded && (
                   <button 
                     onClick={() => setIsExpanded(true)}
-                    className="inline-flex items-center gap-2 bg-accent text-accent-foreground px-6 py-3 font-display uppercase text-lg border-2 border-foreground shadow-brutal hover-lift mb-6"
+                    className="inline-flex items-center gap-2 bg-[#34eab8] text-[#062018] px-6 py-3 font-sans font-bold uppercase tracking-[0.14em] text-sm rounded-lg shadow-[0_10px_40px_-10px_rgba(52,234,184,0.5)] hover:brightness-110 active:scale-[0.98] transition mb-6"
                   >
                     Les hele historien
                     <ArrowRight className="w-5 h-5" />
