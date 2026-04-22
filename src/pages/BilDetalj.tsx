@@ -580,6 +580,10 @@ const BilDetalj = () => {
                   </button>
                 )}
 
+                {/* Comments under story */}
+                <div className="mt-2">
+                  <CommentSection carId={car.id} variant="light" />
+                </div>
 
               </div>
             </AnimatedSection>
@@ -912,14 +916,7 @@ const BilDetalj = () => {
         </div>
       </section>
 
-      {/* Comments */}
-      <section className="bg-[#f5f4f0] py-8">
-        <div className="container mx-auto px-4">
-          <div className="max-w-2xl mx-auto">
-            <CommentSection carId={car.id} variant="light" />
-          </div>
-        </div>
-      </section>
+      {/* Comments moved under story */}
 
       {!user && (
         <div className="max-w-2xl mx-auto px-4 py-6">
