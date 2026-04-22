@@ -126,7 +126,7 @@ export const routes: RouteConfig[] = [
   { path: "/garasje", element: Garasje, requiresAuth: true },
   { path: "/konto", element: Konto, requiresAuth: true },
   { path: "/kom-i-gang", element: CompleteProfilePage, requiresAuth: true },
-  { path: "/dashboard", element: Dashboard, requiresAuth: true },
+  { path: "/dashboard", element: lazy(() => import("@/pages/Garasje")), requiresAuth: true },
   { path: "/dashboard/mine-biler", element: DashboardMineBiler, requiresAuth: true },
   { path: "/dashboard/opprett-bil", element: DashboardOpprettBil, requiresAuth: true },
   { path: "/dashboard/bil/:carId", element: DashboardBilDetalj, requiresAuth: true },
