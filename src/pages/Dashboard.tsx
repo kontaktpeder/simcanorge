@@ -217,8 +217,8 @@ export default function Dashboard() {
       <SectionLabel label="Garasje & Marked" delay={0.05} />
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
         <DashCard to="/dashboard/mine-biler" icon={Car} delay={0.1} data-guide="my-cars-card">
-          <DashTitle>Mine biler</DashTitle>
-          <DashDesc>Se og rediger bilene dine</DashDesc>
+          <DashTitle>Mine biler og historier</DashTitle>
+          <DashDesc>Se og rediger bilene du har en relasjon til</DashDesc>
           <DashCount>{carsLoading ? '—' : carCount || 0}</DashCount>
         </DashCard>
 
