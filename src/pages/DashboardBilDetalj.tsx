@@ -20,6 +20,10 @@ import { CAR_BRANDS, getModelsForBrand } from '@/data/carBrands';
 import { CAR_BODY_TYPES } from '@/data/carBodyTypes';
 import { motion } from 'framer-motion';
 import { PostComposer } from '@/components/feed/PostComposer';
+import { FEATURES } from '@/config/features';
+import { RelationshipTypeField } from '@/components/car/RelationshipTypeField';
+import { RELATIONSHIP_LABELS, type RelationshipType } from '@/lib/relationshipTypes';
+import { useUpdateCarRelationship } from '@/hooks/useUpdateCarRelationship';
 
 const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
 const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
