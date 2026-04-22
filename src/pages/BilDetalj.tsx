@@ -525,12 +525,18 @@ const BilDetalj = () => {
                 {/* Subtle teal accent line */}
                 <div className="h-[2px] w-16 bg-gradient-to-r from-[#34eab8] to-transparent mb-5" />
 
-                <h1 className="headline-md mb-3 text-white drop-shadow-[0_1px_0_rgba(255,255,255,0.04)]">
+                <h1
+                  className="headline-md mb-3 text-white"
+                  style={{ fontFamily: "'Chakra Petch', 'Bebas Neue', sans-serif" }}
+                >
                   {car.title}{car.year != null ? ` (${car.year})` : ""}
                 </h1>
                 
                 {/* Subtitle line */}
-                <p className="font-display text-xl text-[#34eab8] mb-4 tracking-wide">
+                <p
+                  className="text-xl text-[#34eab8] mb-4 tracking-wide font-bold uppercase"
+                  style={{ fontFamily: "'Chakra Petch', sans-serif" }}
+                >
                   {[car.brand, car.model, car.variant].filter(Boolean).join(' ')}
                   {car.year && <span className="text-white/55"> • {car.year}</span>}
                 </p>
@@ -538,7 +544,10 @@ const BilDetalj = () => {
                 {/* Status badges */}
                 <div className="flex flex-wrap items-center gap-3 mb-6">
                   {car.overhauled && (
-                    <span className="flex items-center gap-1.5 bg-[#34eab8]/12 text-[#7ff4cd] px-3 py-1.5 font-sans font-semibold text-sm border border-[#34eab8]/30 rounded-md">
+                    <span
+                      className="flex items-center gap-1.5 bg-[#34eab8]/12 text-[#7ff4cd] px-3 py-1.5 text-sm border border-[#34eab8]/30 rounded-md uppercase tracking-wider font-bold"
+                      style={{ fontFamily: "'Chakra Petch', sans-serif" }}
+                    >
                       <Wrench className="w-4 h-4" />
                       Overhalt
                     </span>
@@ -551,8 +560,8 @@ const BilDetalj = () => {
                     {car.tags.map((tag, index) => (
                       <span 
                         key={index} 
-                        className="bg-white/[0.06] text-white/85 px-3 py-1.5 text-sm font-sans font-medium uppercase tracking-wide border border-white/[0.12] rounded-md hover:bg-white/[0.10] hover:border-white/20 transition cursor-default"
-                        style={{ animationDelay: `${index * 50}ms` }}
+                        className="bg-white/[0.06] text-white/85 px-3 py-1.5 text-sm uppercase tracking-wide border border-white/[0.12] rounded-md hover:bg-white/[0.10] hover:border-white/20 transition cursor-default font-bold"
+                        style={{ animationDelay: `${index * 50}ms`, fontFamily: "'Chakra Petch', sans-serif" }}
                       >
                         {tag}
                       </span>
@@ -563,12 +572,18 @@ const BilDetalj = () => {
                 {/* Story excerpt */}
                 {car.story && (
                   <div className="mb-6">
-                    <h2 className="font-sans font-bold text-[12px] uppercase tracking-[0.18em] text-[#34eab8] mb-3 flex items-center gap-2">
+                    <h2
+                      className="text-[12px] uppercase tracking-[0.18em] text-[#34eab8] mb-3 flex items-center gap-2 font-bold"
+                      style={{ fontFamily: "'Chakra Petch', sans-serif" }}
+                    >
                       <FileText className="w-4 h-4" />
                       Historien
                     </h2>
                     <div>
-                      <p className="font-sans text-[17px] md:text-[18px] leading-[1.65] text-white/90 whitespace-pre-wrap">
+                      <p
+                        className="text-[18px] md:text-[19px] leading-[1.6] text-white/90 whitespace-pre-wrap"
+                        style={{ fontFamily: "'Oswald', sans-serif", fontWeight: 400, letterSpacing: "0.005em" }}
+                      >
                         {isExpanded ? car.story : storyExcerpt}
                       </p>
                     </div>
@@ -578,7 +593,8 @@ const BilDetalj = () => {
                 {hasMoreStory && !isExpanded && (
                   <button 
                     onClick={() => setIsExpanded(true)}
-                    className="inline-flex items-center gap-2 bg-[#34eab8] text-[#062018] px-6 py-3 font-sans font-bold uppercase tracking-[0.14em] text-sm rounded-lg shadow-[0_10px_40px_-10px_rgba(52,234,184,0.5)] hover:brightness-110 active:scale-[0.98] transition mb-6"
+                    className="inline-flex items-center gap-2 bg-[#34eab8] text-[#062018] px-6 py-3 uppercase tracking-[0.14em] text-sm rounded-lg shadow-[0_10px_40px_-10px_rgba(52,234,184,0.5)] hover:brightness-110 active:scale-[0.98] transition mb-6 font-bold"
+                    style={{ fontFamily: "'Chakra Petch', sans-serif" }}
                   >
                     Les hele historien
                     <ArrowRight className="w-5 h-5" />
@@ -598,7 +614,7 @@ const BilDetalj = () => {
 
       {/* Quick Facts Section */}
       {quickFacts.length > 0 && (
-        <section className="py-8 md:py-12 bg-gradient-to-b from-transparent via-white/[0.02] to-transparent border-y border-white/[0.06]">
+        <section className="py-10 md:py-14 bg-gradient-to-b from-transparent via-white/[0.02] to-transparent border-y border-white/[0.06]">
           <div className="container mx-auto px-4">
             <AnimatedSection delay={200}>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4 stagger-children">
@@ -607,16 +623,30 @@ const BilDetalj = () => {
                   return (
                     <div 
                       key={fact.label}
-                      className="relative bg-white/[0.04] border border-white/[0.10] p-4 rounded-lg hover:border-[#34eab8]/30 hover:bg-white/[0.06] transition-all overflow-hidden group"
+                      className="relative bg-gradient-to-br from-white/[0.06] via-white/[0.03] to-transparent border border-white/[0.10] p-5 hover:border-[#34eab8]/40 hover:from-[#34eab8]/[0.08] transition-all overflow-hidden group"
                       style={{ animationDelay: `${index * 100}ms` }}
                     >
-                      {/* subtle sheen */}
-                      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-60" />
-                      <dt className="text-[11px] font-sans font-bold uppercase tracking-[0.16em] text-[#34eab8] mb-1.5 flex items-center gap-1.5">
-                        <Icon className="w-3 h-3" />
+                      {/* Top sheen line */}
+                      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent" />
+                      {/* Left teal marker */}
+                      <div className="absolute left-0 top-4 bottom-4 w-[2px] bg-[#34eab8]/0 group-hover:bg-[#34eab8] transition-colors" />
+                      {/* Corner notch */}
+                      <div className="absolute top-0 right-0 w-3 h-3 border-t border-r border-[#34eab8]/40" />
+                      <div className="absolute bottom-0 left-0 w-3 h-3 border-b border-l border-white/15" />
+
+                      <dt
+                        className="text-[10px] uppercase tracking-[0.22em] text-[#34eab8] mb-2 flex items-center gap-1.5 font-bold"
+                        style={{ fontFamily: "'Chakra Petch', sans-serif" }}
+                      >
+                        <Icon className="w-3 h-3" strokeWidth={2.5} />
                         {fact.label}
                       </dt>
-                      <dd className="font-sans font-semibold text-[16px] md:text-[17px] text-white capitalize leading-tight">{fact.value}</dd>
+                      <dd
+                        className="text-[20px] md:text-[22px] text-white capitalize leading-[1.1] font-bold"
+                        style={{ fontFamily: "'Chakra Petch', 'Bebas Neue', sans-serif", letterSpacing: "0.01em" }}
+                      >
+                        {fact.value}
+                      </dd>
                     </div>
                   );
                 })}
