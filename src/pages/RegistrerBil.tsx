@@ -179,26 +179,22 @@ export default function RegistrerBil() {
             </h2>
           </div>
 
-          <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-5">
+          <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-white/[0.06] border-y border-white/[0.06]">
             {BENEFITS.map((b) => {
               const Icon = b.icon;
               return (
                 <li
                   key={b.title}
-                  className="flex items-start gap-4 p-4 rounded-2xl bg-white/[0.03] border border-white/[0.08] hover:border-[#34eab8]/30 transition"
+                  className="group relative bg-[#070b10] p-6 lg:p-8 hover:bg-white/[0.02] transition-colors"
                 >
-                  <div className="w-10 h-10 rounded-xl bg-[#34eab8]/10 border border-[#34eab8]/20 flex items-center justify-center flex-shrink-0">
-                    <Icon className="w-4 h-4 text-[#34eab8]" />
-                  </div>
-                  <div className="min-w-0">
-                    <p
-                      className="text-[14px] font-bold text-white mb-0.5"
-                      style={{ fontFamily: "'Chakra Petch', sans-serif" }}
-                    >
-                      {b.title}
-                    </p>
-                    <p className="text-[13px] text-white/60 leading-relaxed">{b.text}</p>
-                  </div>
+                  <Icon className="w-5 h-5 text-[#34eab8] mb-5" strokeWidth={1.5} />
+                  <p
+                    className="text-[15px] lg:text-[16px] font-bold text-white mb-2 tracking-tight"
+                    style={{ fontFamily: "'Chakra Petch', sans-serif" }}
+                  >
+                    {b.title}
+                  </p>
+                  <p className="text-[13px] lg:text-[14px] text-white/50 leading-relaxed">{b.text}</p>
                 </li>
               );
             })}
