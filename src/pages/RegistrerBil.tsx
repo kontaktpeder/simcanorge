@@ -3,6 +3,7 @@ import { Helmet } from "react-helmet-async";
 import { ArrowRight, Car, Share2, Image as ImageIcon, Sparkles } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { SITE_NAME } from "@/config/site";
+import bilgarasjeLogo from "@/assets/bilgarasje-logo.png";
 
 const BENEFITS = [
   { icon: Car, title: "Profesjonell bilside", text: "En egen side bilen din fortjener." },
@@ -70,11 +71,15 @@ export default function RegistrerBil() {
           <div className="flex items-center justify-between">
             <Link
               to="/"
-              className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.2em] font-bold text-white/90"
-              style={{ fontFamily: "'Chakra Petch', 'Oswald', sans-serif" }}
+              className="inline-flex items-center group -my-2"
+              aria-label="Bilgarasje.no"
             >
-              <span className="w-1.5 h-1.5 rounded-full bg-[#34eab8] shadow-[0_0_10px_rgba(52,234,184,0.8)]" />
-              Bilgarasje.no
+              <img
+                src={bilgarasjeLogo}
+                alt="Bilgarasje.no"
+                className="h-24 w-auto transition-all duration-300 group-hover:opacity-80"
+                style={{ filter: 'brightness(1.8) invert(1)', opacity: 0.7 }}
+              />
             </Link>
             <Link
               to="/biler"
