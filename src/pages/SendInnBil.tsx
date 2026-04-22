@@ -69,7 +69,7 @@ export default function SendInnBil() {
     if (getPendingClaimCarId()) {
       return { step: "linking" };
     }
-    return { step: "wizard" };
+    return FEATURES.earlyRegnrGate ? { step: "gate" } : { step: "wizard", registrationNumber: "" };
   });
 
   // Handle car claim after magic link redirect
@@ -126,7 +126,7 @@ export default function SendInnBil() {
     const fallbackTimer = window.setTimeout(() => {
       if (claimHandledRef.current) return;
       clearPendingClaimCarId();
-      setState({ step: "wizard" });
+      setState(FEATURES.earlyRegnrGate ? { step: "gate" } : { step: "wizard", registrationNumber: "" });
     }, 8000);
 
     return () => {
