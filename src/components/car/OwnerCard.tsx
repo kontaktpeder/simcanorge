@@ -19,7 +19,7 @@ interface OwnerCardProps {
   heading?: string;
 }
 
-export function OwnerCard({ carId, owner: ownerProp, heading = 'Selges av' }: OwnerCardProps) {
+export function OwnerCard({ carId, owner: ownerProp, heading = 'Relasjon' }: OwnerCardProps) {
   const { data: fetchedOwner, isLoading } = useCarOwnerProfile(carId);
 
   const owner: OwnerData | null = ownerProp || (fetchedOwner as OwnerData | null);
