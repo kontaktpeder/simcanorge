@@ -1,7 +1,6 @@
 import { useMemo } from "react";
 import { Input } from "@/components/ui/input";
 import { FormFieldWithTooltip } from "@/components/ui/form-field-with-tooltip";
-import { LicensePlateInput } from "./LicensePlateInput";
 import { CAR_BODY_TYPES } from "@/data/carBodyTypes";
 import { useCarModels, formatYearRange } from "@/hooks/useCarCatalog";
 import type { WizardData } from "./WizardTypes";
@@ -89,13 +88,14 @@ export function StepDetails({ data, onChange }: StepDetailsProps) {
           </FormFieldWithTooltip>
         </div>
 
-        <FormFieldWithTooltip label="REGISTRERINGSNUMMER" tooltip="Valgfritt norsk skiltnummer" htmlFor="w-regnr">
-          <LicensePlateInput
-            value={data.registration_number}
-            onChange={(val) => onChange({ registration_number: val })}
-          />
-        </FormFieldWithTooltip>
       </div>
+
+      {data.registration_number && (
+        <p className="text-xs text-muted-foreground text-center">
+          Reg.nr: <span className="font-mono font-semibold text-foreground">{data.registration_number}</span>
+          {" "}— hentet fra forrige steg.
+        </p>
+      )}
     </div>
   );
 }
