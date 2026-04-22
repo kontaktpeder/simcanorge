@@ -1,5 +1,5 @@
 import { lazy, ComponentType } from "react";
-import { Home, Star, Car, Wrench, Send, BookOpen, Users, Mail, ShoppingBag, User, LayoutDashboard, CalendarDays } from "lucide-react";
+import { Home, Star, Car, Wrench, Send, BookOpen, Users, Mail, ShoppingBag, User, LayoutDashboard, CalendarDays, Plus } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 // Lazy load all pages
@@ -114,7 +114,7 @@ export const routes: RouteConfig[] = [
   { path: "/nytt-passord", element: NyttPassord, isPublic: true },
   { path: "/sok-om-tilgang", element: SokOmTilgang, isPublic: true },
   { path: "/start-annonse", element: StartAnnonse, isPublic: true },
-  { path: "/registrer-bil", element: RegistrerBil, isPublic: true },
+  { path: "/registrer-bil", element: RegistrerBil, label: "Registrer bil", description: "Legg inn bilen din – ny launch-side", icon: Plus, isPublic: true, showInNav: true, glow: true },
   { path: "/s/:slug", element: PublicPagePage, isPublic: true },
   { path: "/e/:slug", element: PublicEventPage, isPublic: true },
   { path: "/aktoerer", element: AktoererPage, label: "Aktører", description: "Verksteder, forhandlere og andre aktører", isPublic: true, showInNav: false },
