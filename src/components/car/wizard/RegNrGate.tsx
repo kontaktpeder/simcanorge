@@ -21,6 +21,7 @@ export function RegNrGate({ onContinue }: RegNrGateProps) {
   const { toast } = useToast();
   const [regnr, setRegnr] = useState("");
   const [hits, setHits] = useState<Hit[]>([]);
+  const [thumbs, setThumbs] = useState<Record<string, string>>({});
   const [searching, setSearching] = useState(false);
   const [searched, setSearched] = useState(false);
 
@@ -29,6 +30,7 @@ export function RegNrGate({ onContinue }: RegNrGateProps) {
     const norm = normalize(regnr).toLowerCase();
     if (norm.length < 4) {
       setHits([]);
+      setThumbs({});
       setSearched(false);
       return;
     }
@@ -36,10 +38,29 @@ export function RegNrGate({ onContinue }: RegNrGateProps) {
       setSearching(true);
       try {
         const { data } = await supabase.rpc("find_cars_by_registration_number", { p_normalized: norm });
-        setHits((data as Hit[]) || []);
+        const found = (data as Hit[]) || [];
+        setHits(found);
+
+        // Fetch first image per hit (best-effort, public bucket)
+        if (found.length > 0) {
+          const ids = found.map(h => h.id);
+          const { data: imgs } = await supabase
+            .from("car_images")
+            .select("car_id, image_url, sort_order")
+            .in("car_id", ids)
+            .order("sort_order", { ascending: true });
+          const map: Record<string, string> = {};
+          (imgs || []).forEach((row: any) => {
+            if (!map[row.car_id]) map[row.car_id] = row.image_url;
+          });
+          setThumbs(map);
+        } else {
+          setThumbs({});
+        }
       } catch (err) {
         console.warn("regnr lookup failed", err);
         setHits([]);
+        setThumbs({});
       } finally {
         setSearching(false);
         setSearched(true);
@@ -109,17 +130,31 @@ export function RegNrGate({ onContinue }: RegNrGateProps) {
 
             <div className="space-y-2">
               {hits.map(hit => (
-                <div key={hit.id} className="flex items-center justify-between gap-2 p-3 rounded-lg bg-background border border-border">
-                  <span className="text-sm font-medium truncate">{hit.title}</span>
-                  <a
-                    href={`/biler/${hit.slug}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 text-xs text-primary hover:underline shrink-0"
-                  >
-                    Se profil <ExternalLink className="h-3 w-3" />
-                  </a>
-                </div>
+                <a
+                  key={hit.id}
+                  href={`/biler/${hit.slug}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-3 p-2 rounded-lg bg-background border border-border hover:border-primary/40 hover:bg-muted/50 transition-colors group"
+                >
+                  <div className="h-14 w-20 shrink-0 rounded-md overflow-hidden bg-muted flex items-center justify-center">
+                    {thumbs[hit.id] ? (
+                      <img
+                        src={thumbs[hit.id]}
+                        alt={hit.title}
+                        loading="lazy"
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      <span className="text-[10px] text-muted-foreground uppercase tracking-wider">Ingen bilde</span>
+                    )}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-medium truncate group-hover:text-primary">{hit.title}</p>
+                    <p className="text-xs text-muted-foreground">Se profil</p>
+                  </div>
+                  <ExternalLink className="h-4 w-4 text-muted-foreground shrink-0" />
+                </a>
               ))}
             </div>
 
