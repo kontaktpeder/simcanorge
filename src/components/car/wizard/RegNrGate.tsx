@@ -119,23 +119,19 @@ export function RegNrGate({ onContinue }: RegNrGateProps) {
               <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
               <div>
                 <h3 className="font-display text-base text-foreground">
-                  Vi fant bilen i Bilgarasje
+                  Vi fant bilen din i Bilgarasje
                 </h3>
                 <p className="text-sm text-muted-foreground mt-0.5">
-                  Hvis dette ser ut som riktig bil, kan du åpne profilen.
-                  Hvis det ikke stemmer, kan du fortsette med ny registrering.
+                  Denne bilen finnes allerede. Velg hva du vil gjøre videre.
                 </p>
               </div>
             </div>
 
             <div className="space-y-2">
               {hits.map(hit => (
-                <a
+                <div
                   key={hit.id}
-                  href={`/biler/${hit.slug}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-3 p-2 rounded-lg bg-background border border-border hover:border-primary/40 hover:bg-muted/50 transition-colors group"
+                  className="flex items-center gap-3 p-2 rounded-lg bg-background border border-border"
                 >
                   <div className="h-14 w-20 shrink-0 rounded-md overflow-hidden bg-muted flex items-center justify-center">
                     {thumbs[hit.id] ? (
@@ -150,40 +146,40 @@ export function RegNrGate({ onContinue }: RegNrGateProps) {
                     )}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium truncate group-hover:text-primary">{hit.title}</p>
-                    <p className="text-xs text-muted-foreground">Se profil</p>
+                    <p className="text-sm font-medium truncate">{hit.title}</p>
+                    <a
+                      href={`/biler/${hit.slug}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
+                    >
+                      Se profil <ExternalLink className="h-3 w-3" />
+                    </a>
                   </div>
-                  <ExternalLink className="h-4 w-4 text-muted-foreground shrink-0" />
-                </a>
+                </div>
               ))}
             </div>
 
             <div className="flex flex-col gap-2 pt-1">
-              {user ? (
-                <>
-                  <Button
-                    className="btn-enamel-blue h-11 w-full"
-                    onClick={() => handleClaimIntent(hits[0])}
-                  >
-                    <Mail className="mr-2 h-4 w-4" /> Knytt meg til denne bilen
-                  </Button>
-                  <Button variant="outline" className="h-11 w-full" onClick={() => onContinue(norm)}>
-                    Dette er ikke riktig bil – fortsett <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
-                </>
-              ) : (
-                <>
-                  <Button
-                    className="btn-enamel-blue h-11 w-full"
-                    onClick={() => onContinue(norm)}
-                  >
-                    Fortsett – knytt med e-postlenke senere <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
-                  <p className="text-xs text-muted-foreground text-center">
-                    Du registrerer bilen og bekrefter eierskap via e-posten din.
-                  </p>
-                </>
-              )}
+              <Button
+                className="btn-enamel-blue h-12 w-full text-base"
+                onClick={() => (user ? handleClaimIntent(hits[0]) : onContinue(norm))}
+              >
+                {user ? <Mail className="mr-2 h-4 w-4" /> : null}
+                Dette er bilen min
+              </Button>
+              <p className="text-xs text-muted-foreground text-center -mt-1">
+                {user
+                  ? "Vi kobler deg til bilen etter en kort bekreftelse."
+                  : "Vi sender deg en lenke for å koble bilen til kontoen din."}
+              </p>
+              <Button
+                variant="outline"
+                className="h-11 w-full"
+                onClick={() => onContinue(norm)}
+              >
+                Dette er en annen bil
+              </Button>
             </div>
           </div>
         )}
