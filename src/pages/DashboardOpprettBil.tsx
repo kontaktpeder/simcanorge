@@ -61,26 +61,24 @@ export default function DashboardOpprettBil() {
 
   return (
     <Layout contained fillHeight>
-      <section className="flex flex-col flex-1 min-h-0 py-4 sm:py-6">
-        <div className="container mx-auto px-4 flex flex-col flex-1 min-h-0">
-          <div className="mb-4 shrink-0">
+      <section className="flex flex-col flex-1 min-h-0 py-2 sm:py-4">
+        <div className="container mx-auto px-3 sm:px-4 flex flex-col flex-1 min-h-0">
+          {/* Compact header – fixed, doesn't shrink */}
+          <div className="shrink-0 mb-2 sm:mb-3 flex items-center justify-between gap-3">
             <Link
               to="/dashboard/mine-biler"
-              className="inline-flex items-center gap-1.5 text-[11px] tracking-[0.15em] uppercase font-semibold mb-4 text-muted-foreground hover:text-foreground transition-colors"
+              className="inline-flex items-center gap-1.5 text-[10px] sm:text-[11px] tracking-[0.15em] uppercase font-semibold text-muted-foreground hover:text-foreground transition-colors"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
-              Tilbake til bilgarasjen
+              <span className="hidden xs:inline">Tilbake til garasjen</span>
+              <span className="xs:hidden">Tilbake</span>
             </Link>
-            <div className="text-center">
-              <h1 className="mb-1 font-display text-2xl text-foreground sm:text-3xl md:text-4xl">
-                LEGG INN BIL
-              </h1>
-              <p className="mx-auto max-w-xl text-sm text-muted-foreground sm:text-base">
-                Bygg opp bilsiden din steg for steg – du kan alltid komme tilbake og legge til mer.
-              </p>
-            </div>
+            <h1 className="font-display text-sm sm:text-base uppercase tracking-[0.15em] text-foreground">
+              Legg inn bil
+            </h1>
           </div>
 
+          {/* Wizard fills remaining height – internal scroll only when needed */}
           <div className="flex-1 min-h-0">
             <CarWizard onSuccess={handleWizardSuccess} />
           </div>
