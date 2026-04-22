@@ -13,6 +13,9 @@ import { CAR_BODY_TYPES } from "@/data/carBodyTypes";
 import { FormFieldWithTooltip } from "@/components/ui/form-field-with-tooltip";
 import { compressImages, generateImageId, getSubmissionImagePath, type CompressionProgress } from "@/lib/imageCompression";
 import { ImageUploadProgress } from "@/components/ui/image-upload-progress";
+import { FEATURES } from "@/config/features";
+import { RelationshipTypeField } from "@/components/car/RelationshipTypeField";
+import type { RelationshipType } from "@/lib/relationshipTypes";
 
 const CATEGORIES = [
   { id: "registrert", label: "Registrerte biler" },
@@ -77,6 +80,8 @@ export function SendInnBilForm({ onSuccess, onCancel, showCancelButton = false }
   const [clubLinkRequested, setClubLinkRequested] = useState(false);
   const [clubPageId, setClubPageId] = useState("");
   const [clubMessage, setClubMessage] = useState("");
+  const [relationshipType, setRelationshipType] = useState<RelationshipType | "">("current_owner");
+  const [relationshipNote, setRelationshipNote] = useState("");
   const [lastSubmitTime, setLastSubmitTime] = useState<number>(0);
   const [duplicateHits, setDuplicateHits] = useState<DuplicateHit[]>([]);
   const [showDuplicateDialog, setShowDuplicateDialog] = useState(false);
