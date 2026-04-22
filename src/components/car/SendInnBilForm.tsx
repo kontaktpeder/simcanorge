@@ -13,6 +13,9 @@ import { CAR_BODY_TYPES } from "@/data/carBodyTypes";
 import { FormFieldWithTooltip } from "@/components/ui/form-field-with-tooltip";
 import { compressImages, generateImageId, getSubmissionImagePath, type CompressionProgress } from "@/lib/imageCompression";
 import { ImageUploadProgress } from "@/components/ui/image-upload-progress";
+import { FEATURES } from "@/config/features";
+import { RelationshipTypeField } from "@/components/car/RelationshipTypeField";
+import type { RelationshipType } from "@/lib/relationshipTypes";
 
 const CATEGORIES = [
   { id: "registrert", label: "Registrerte biler" },
@@ -77,6 +80,8 @@ export function SendInnBilForm({ onSuccess, onCancel, showCancelButton = false }
   const [clubLinkRequested, setClubLinkRequested] = useState(false);
   const [clubPageId, setClubPageId] = useState("");
   const [clubMessage, setClubMessage] = useState("");
+  const [relationshipType, setRelationshipType] = useState<RelationshipType | "">("current_owner");
+  const [relationshipNote, setRelationshipNote] = useState("");
   const [lastSubmitTime, setLastSubmitTime] = useState<number>(0);
   const [duplicateHits, setDuplicateHits] = useState<DuplicateHit[]>([]);
   const [showDuplicateDialog, setShowDuplicateDialog] = useState(false);
@@ -300,7 +305,12 @@ export function SendInnBilForm({ onSuccess, onCancel, showCancelButton = false }
       setErrors(prev => ({ ...prev, club_page: "Velg ønsket klubb" }));
       return;
     }
-    
+
+    if (FEATURES.relationshipModelV1 && !relationshipType) {
+      setErrors(prev => ({ ...prev, relationship_type: "Velg relasjon" }));
+      return;
+    }
+
     setIsSubmitting(true);
     setUploadProgress(null);
     setCompressionStats(null);
@@ -338,6 +348,9 @@ export function SendInnBilForm({ onSuccess, onCancel, showCancelButton = false }
         images_uploaded: uploadResult.urls.length,
       });
 
+      const relationshipNoteClean =
+        relationshipType === "other" ? (relationshipNote.trim() || null) : null;
+
       const submissionPayload = {
         submitted_at: new Date().toISOString(),
         owner_name: result.data.owner_name,
@@ -362,6 +375,12 @@ export function SendInnBilForm({ onSuccess, onCancel, showCancelButton = false }
               message: clubMessage.trim() || null,
             }
           : { requested: false, page_id: null, page_title: null, page_slug: null, message: null },
+        relationship: FEATURES.relationshipModelV1
+          ? {
+              type: relationshipType || "current_owner",
+              note: relationshipNoteClean,
+            }
+          : null,
         image_count: uploadResult.urls.length,
         images_selected: images.length,
       };
@@ -789,6 +808,22 @@ export function SendInnBilForm({ onSuccess, onCancel, showCancelButton = false }
               </div>
             )}
           </div>
+
+          {/* Relationship type (v1, behind feature flag) */}
+          {FEATURES.relationshipModelV1 && (
+            <div className="p-3 sm:p-4 bg-muted/30 rounded-lg border-2 border-muted">
+              <RelationshipTypeField
+                value={relationshipType}
+                note={relationshipNote}
+                onChange={({ value, note }) => {
+                  setRelationshipType(value);
+                  setRelationshipNote(note);
+                  if (errors.relationship_type) setErrors(prev => ({ ...prev, relationship_type: "" }));
+                }}
+                error={errors.relationship_type}
+              />
+            </div>
+          )}
 
           {/* Instagram consent */}
           <div className="p-3 sm:p-4 bg-muted/30 rounded-lg border-2 border-muted">

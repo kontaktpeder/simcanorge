@@ -8,7 +8,7 @@ import {
   Car, Wrench, Loader2, XCircle,
   Pencil, Save, X, Upload, Trash2, Clock, Send,
   ChevronLeft, ChevronRight, Star, ImageIcon, BookOpen, Info, ArrowLeft,
-  CheckCircle2, Circle, ExternalLink
+  CheckCircle2, Circle, ExternalLink, User
 } from 'lucide-react';
 import { useEffect, useState, useRef } from 'react';
 import { Input } from '@/components/ui/input';
@@ -20,6 +20,10 @@ import { CAR_BRANDS, getModelsForBrand } from '@/data/carBrands';
 import { CAR_BODY_TYPES } from '@/data/carBodyTypes';
 import { motion } from 'framer-motion';
 import { PostComposer } from '@/components/feed/PostComposer';
+import { FEATURES } from '@/config/features';
+import { RelationshipTypeField } from '@/components/car/RelationshipTypeField';
+import { RELATIONSHIP_LABELS, type RelationshipType } from '@/lib/relationshipTypes';
+import { useUpdateCarRelationship } from '@/hooks/useUpdateCarRelationship';
 
 const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
 const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
@@ -58,6 +62,11 @@ export default function DashboardBilDetalj() {
     brand: "", model: "", variant: "", body_type: "", year: "", category: "registrert", tags: "",
   });
   const [storyForm, setStoryForm] = useState("");
+  const [isEditingRelationship, setIsEditingRelationship] = useState(false);
+  const [relationshipType, setRelationshipType] = useState<RelationshipType | "">("current_owner");
+  const [relationshipNote, setRelationshipNote] = useState("");
+  const [relationshipIsPublic, setRelationshipIsPublic] = useState(true);
+  const updateRelationship = useUpdateCarRelationship();
 
   useEffect(() => {
     if (!authLoading && !user) navigate('/login?returnUrl=/dashboard');
@@ -133,6 +142,52 @@ export default function DashboardBilDetalj() {
     },
     enabled: !!carId && !!user
   });
+
+  // My relationship row for this car (v1, behind feature flag)
+  const { data: myRelationship } = useQuery({
+    queryKey: ['my-car-relationship', carId, user?.id],
+    queryFn: async () => {
+      if (!carId || !user) return null;
+      const { data } = await supabase
+        .from('car_owners')
+        .select('relationship_type, relationship_note, relationship_is_public')
+        .eq('car_id', carId)
+        .eq('user_id', user.id)
+        .maybeSingle();
+      return data as {
+        relationship_type: RelationshipType | null;
+        relationship_note: string | null;
+        relationship_is_public: boolean | null;
+      } | null;
+    },
+    enabled: !!carId && !!user && FEATURES.relationshipModelV1,
+  });
+
+  useEffect(() => {
+    if (myRelationship) {
+      setRelationshipType(myRelationship.relationship_type ?? "current_owner");
+      setRelationshipNote(myRelationship.relationship_note ?? "");
+      setRelationshipIsPublic(myRelationship.relationship_is_public ?? true);
+    }
+  }, [myRelationship]);
+
+  const saveRelationship = async () => {
+    if (!user || !carId || !relationshipType) return;
+    try {
+      await updateRelationship.mutateAsync({
+        carId,
+        userId: user.id,
+        relationshipType: relationshipType as RelationshipType,
+        relationshipNote,
+        isPublic: relationshipIsPublic,
+      });
+      toast.success('Relasjonen er oppdatert');
+      setIsEditingRelationship(false);
+      queryClient.invalidateQueries({ queryKey: ['my-car-relationship', carId, user.id] });
+    } catch (err: any) {
+      toast.error(err?.message || 'Kunne ikke lagre');
+    }
+  };
 
   const clearOpenPublicationRequests = async (cid: string) => {
     await supabase.from('car_publication_requests').delete().eq('car_id', cid).eq('status', 'open');
@@ -538,6 +593,66 @@ export default function DashboardBilDetalj() {
               )}
             </div>
           </motion.section>
+          {FEATURES.relationshipModelV1 && (
+            <motion.section initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.28 }}>
+              <div className="flex items-center justify-between mb-4">
+                <SectionHeading icon={<User />} title="MIN RELASJON TIL BILEN" />
+                {!isEditingRelationship ? (
+                  <ActionBtn onClick={() => setIsEditingRelationship(true)}><Pencil className="w-3.5 h-3.5" /> Rediger</ActionBtn>
+                ) : (
+                  <div className="flex gap-2">
+                    <ActionBtn variant="primary" onClick={saveRelationship} disabled={updateRelationship.isPending}>
+                      <Save className="w-3.5 h-3.5" /> {updateRelationship.isPending ? '...' : 'Lagre'}
+                    </ActionBtn>
+                    <ActionBtn onClick={() => {
+                      setIsEditingRelationship(false);
+                      setRelationshipType(myRelationship?.relationship_type ?? "current_owner");
+                      setRelationshipNote(myRelationship?.relationship_note ?? "");
+                      setRelationshipIsPublic(myRelationship?.relationship_is_public ?? true);
+                    }}><X className="w-3.5 h-3.5" /> Avbryt</ActionBtn>
+                  </div>
+                )}
+              </div>
+              <div className="rounded-xl border border-border/40 bg-card/50 p-5 sm:p-6 max-w-[660px]">
+                {isEditingRelationship ? (
+                  <div className="space-y-4">
+                    <RelationshipTypeField
+                      value={relationshipType}
+                      note={relationshipNote}
+                      onChange={({ value, note }) => {
+                        setRelationshipType(value);
+                        setRelationshipNote(note);
+                      }}
+                    />
+                    <label className="flex items-start gap-3 cursor-pointer p-2 rounded-lg hover:bg-muted/50 transition-colors">
+                      <input
+                        type="checkbox"
+                        checked={relationshipIsPublic}
+                        onChange={(e) => setRelationshipIsPublic(e.target.checked)}
+                        className="w-5 h-5 mt-0.5 accent-primary flex-shrink-0"
+                      />
+                      <span className="text-sm text-foreground/70">
+                        Vis denne relasjonen offentlig på bilens side
+                      </span>
+                    </label>
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    <p className="text-[12px] uppercase tracking-[0.12em] font-bold text-muted-foreground/30" style={oswald}>Relasjon</p>
+                    <p className="text-[15px] text-foreground/70 font-medium">
+                      {relationshipType ? RELATIONSHIP_LABELS[relationshipType as RelationshipType] : '—'}
+                    </p>
+                    {relationshipType === 'other' && relationshipNote && (
+                      <p className="text-[14px] text-muted-foreground italic">"{relationshipNote}"</p>
+                    )}
+                    <p className="text-[12px] text-muted-foreground/40 mt-2">
+                      {relationshipIsPublic ? 'Vises offentlig på bilens side' : 'Skjult fra offentlig visning'}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </motion.section>
+          )}
           <motion.section initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
             <SectionHeading icon={<Send />} title="DEL I FEEDEN" />
             <PostComposer compact postType="car_update" carId={car.id}
