@@ -27,7 +27,6 @@ const Foresporsel = lazy(() => import("@/pages/Foresporsel"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
 
 // Dashboard pages
-const Dashboard = lazy(() => import("@/pages/Dashboard"));
 const Garasje = lazy(() => import("@/pages/Garasje"));
 const DashboardMineBiler = lazy(() => import("@/pages/DashboardMineBiler"));
 const DashboardOpprettBil = lazy(() => import("@/pages/DashboardOpprettBil"));
