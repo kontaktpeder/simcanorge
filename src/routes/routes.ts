@@ -21,6 +21,7 @@ const GlemtPassord = lazy(() => import("@/pages/GlemtPassord"));
 const NyttPassord = lazy(() => import("@/pages/NyttPassord"));
 const SokOmTilgang = lazy(() => import("@/pages/SokOmTilgang"));
 const StartAnnonse = lazy(() => import("@/pages/StartAnnonse"));
+const RegistrerBil = lazy(() => import("@/pages/RegistrerBil"));
 const Konto = lazy(() => import("@/pages/Konto"));
 const Foresporsel = lazy(() => import("@/pages/Foresporsel"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
@@ -113,6 +114,7 @@ export const routes: RouteConfig[] = [
   { path: "/nytt-passord", element: NyttPassord, isPublic: true },
   { path: "/sok-om-tilgang", element: SokOmTilgang, isPublic: true },
   { path: "/start-annonse", element: StartAnnonse, isPublic: true },
+  { path: "/registrer-bil", element: RegistrerBil, isPublic: true },
   { path: "/s/:slug", element: PublicPagePage, isPublic: true },
   { path: "/e/:slug", element: PublicEventPage, isPublic: true },
   { path: "/aktoerer", element: AktoererPage, label: "Aktører", description: "Verksteder, forhandlere og andre aktører", isPublic: true, showInNav: false },
