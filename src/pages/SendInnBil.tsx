@@ -1,17 +1,19 @@
 import { Layout } from "@/components/layout/Layout";
-import { AnimatedSection } from "@/components/layout/AnimatedSection";
 import { CarWizard } from "@/components/car/wizard";
+import { RegNrGate } from "@/components/car/wizard/RegNrGate";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, Mail, Home, ArrowRight, AlertTriangle, LogOut, RotateCcw } from "lucide-react";
+import { Loader2, Mail, Home, ArrowRight, AlertTriangle, LogOut } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useQueryClient } from "@tanstack/react-query";
+import { FEATURES } from "@/config/features";
 
 type PageState =
-  | { step: "wizard" }
+  | { step: "gate" }
+  | { step: "wizard"; registrationNumber: string }
   | { step: "linking" }
   | { step: "success"; email: string }
   | { step: "mismatch"; carId: string; signedInEmail: string | null };
