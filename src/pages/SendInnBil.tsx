@@ -131,7 +131,44 @@ export default function SendInnBil() {
       window.clearTimeout(fallbackTimer);
       subscription.unsubscribe();
     };
-  }, [toast, navigate]);
+  }, [toast, navigate, queryClient]);
+
+  const handleResendToCorrectEmail = async (carId: string, email: string) => {
+    const trimmed = email.trim().toLowerCase();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
+      toast({ title: "Ugyldig e-postadresse", variant: "destructive" });
+      return;
+    }
+    try {
+      await supabase.auth.signOut();
+      localStorage.setItem("pendingClaimCarId", carId);
+      const redirectUrl = new URL("/send-inn", window.location.origin);
+      redirectUrl.searchParams.set("claimCarId", carId);
+      const { error } = await supabase.auth.signInWithOtp({
+        email: trimmed,
+        options: { shouldCreateUser: true, emailRedirectTo: redirectUrl.toString() },
+      });
+      if (error) throw error;
+      setState({ step: "success", email: trimmed });
+    } catch (err: any) {
+      toast({
+        title: "Kunne ikke sende e-post",
+        description: err?.message || "Prøv igjen senere.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleSignOutAndRetry = async (carId: string) => {
+    await supabase.auth.signOut();
+    localStorage.setItem("pendingClaimCarId", carId);
+    setState({ step: "wizard" });
+    toast({
+      title: "Logget ut",
+      description: "Send ny lenke til e-posten du brukte ved innsending.",
+    });
+  };
+
 
   const handleWizardSuccess = async ({ carId, email, flow }: { carId: string; email: string; flow: "guest" | "authenticated" }) => {
     if (flow === "authenticated") {
