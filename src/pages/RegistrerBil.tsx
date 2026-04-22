@@ -34,17 +34,33 @@ export default function RegistrerBil() {
 
       {/* HERO */}
       <section className="relative w-full h-[100svh] min-h-[100svh] overflow-hidden">
-        {/* Video bg */}
-        <div className="absolute inset-0">
+        {/* Video bg — portrait på mobil, landscape på desktop */}
+        <div className="absolute inset-0 md:hidden">
           <iframe
             src="https://player.vimeo.com/video/1185602288?background=1&autoplay=1&loop=1&muted=1&autopause=0&controls=0&title=0&byline=0&portrait=0&badge=0&app_id=58479"
-            title="Bilgarasje hero"
+            title="Bilgarasje hero (mobil)"
             allow="autoplay; fullscreen; picture-in-picture"
             referrerPolicy="strict-origin-when-cross-origin"
             className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
             style={{
               width: "max(100vw, 177.78vh)",
               height: "max(56.25vw, 100vh)",
+              minWidth: "100%",
+              minHeight: "100%",
+            }}
+            loading="eager"
+          />
+        </div>
+        <div className="absolute inset-0 hidden md:block">
+          <iframe
+            src="https://player.vimeo.com/video/1185628010?background=1&autoplay=1&loop=1&muted=1&autopause=0&controls=0&title=0&byline=0&portrait=0&badge=0&app_id=58479"
+            title="Bilgarasje hero (desktop)"
+            allow="autoplay; fullscreen; picture-in-picture"
+            referrerPolicy="strict-origin-when-cross-origin"
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+            style={{
+              width: "max(100vw, 133.33vh)",
+              height: "max(75vw, 100vh)",
               minWidth: "100%",
               minHeight: "100%",
             }}
