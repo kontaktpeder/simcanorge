@@ -303,3 +303,122 @@ export default function SendInnBil() {
     </Layout>
   );
 }
+
+function MismatchView({
+  carId,
+  signedInEmail,
+  onResend,
+  onSignOut,
+}: {
+  carId: string;
+  signedInEmail: string | null;
+  onResend: (carId: string, email: string) => Promise<void>;
+  onSignOut: (carId: string) => Promise<void>;
+}) {
+  const [showChange, setShowChange] = useState(false);
+  const [newEmail, setNewEmail] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  return (
+    <Layout contained>
+      <section className="py-8 sm:py-12 md:py-16">
+        <div className="container mx-auto max-w-xl px-4">
+          <div className="space-y-6 rounded-2xl border border-destructive/30 bg-card p-6 sm:p-8 shadow-sm">
+            <div className="flex items-start gap-4">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-destructive/10">
+                <AlertTriangle className="h-6 w-6 text-destructive" />
+              </div>
+              <div className="space-y-1">
+                <h1 className="font-display text-xl text-foreground sm:text-2xl">
+                  Bilen ble ikke koblet til kontoen din
+                </h1>
+                <p className="text-sm text-muted-foreground sm:text-base">
+                  {signedInEmail ? (
+                    <>
+                      Du er logget inn som <strong className="text-foreground">{signedInEmail}</strong>,
+                      men bilen ble sendt inn med en annen e-postadresse. Bilen kobles kun til samme
+                      e-post som ble brukt ved innsending.
+                    </>
+                  ) : (
+                    <>Bilen kobles kun til samme e-post som ble brukt ved innsending.</>
+                  )}
+                </p>
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              {!showChange ? (
+                <Button
+                  className="btn-enamel-blue h-12 w-full text-base"
+                  onClick={() => setShowChange(true)}
+                  disabled={busy}
+                >
+                  <Mail className="mr-2 h-5 w-5" /> Send ny lenke til riktig e-post
+                </Button>
+              ) : (
+                <div className="space-y-2 rounded-lg border border-border bg-muted/30 p-3">
+                  <p className="text-xs text-muted-foreground">
+                    Skriv inn e-posten du brukte da du sendte inn bilen:
+                  </p>
+                  <Input
+                    type="email"
+                    value={newEmail}
+                    onChange={(e) => setNewEmail(e.target.value)}
+                    placeholder="din@epost.no"
+                    className="h-10 text-sm"
+                  />
+                  <div className="flex gap-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => { setShowChange(false); setNewEmail(""); }}
+                      className="flex-1"
+                      disabled={busy}
+                    >
+                      Avbryt
+                    </Button>
+                    <Button
+                      size="sm"
+                      onClick={async () => {
+                        setBusy(true);
+                        await onResend(carId, newEmail);
+                        setBusy(false);
+                      }}
+                      disabled={busy || !newEmail.trim()}
+                      className="flex-1"
+                    >
+                      {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : "Send lenke"}
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              <Button
+                variant="outline"
+                className="h-12 w-full text-base"
+                onClick={async () => {
+                  setBusy(true);
+                  await onSignOut(carId);
+                  setBusy(false);
+                }}
+                disabled={busy}
+              >
+                <LogOut className="mr-2 h-5 w-5" /> Logg ut og prøv igjen
+              </Button>
+
+              <Button asChild variant="ghost" className="h-12 w-full text-base">
+                <Link to="/">
+                  <Home className="mr-2 h-5 w-5" /> Til forsiden
+                </Link>
+              </Button>
+            </div>
+
+            <p className="text-xs text-muted-foreground">
+              Tips: e-posten brukes som nøkkel for å kjenne igjen at bilen er din. Den må matche eksakt.
+            </p>
+          </div>
+        </div>
+      </section>
+    </Layout>
+  );
+}
