@@ -3,16 +3,18 @@ import { AnimatedSection } from "@/components/layout/AnimatedSection";
 import { CarWizard } from "@/components/car/wizard";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, Mail, Home, ArrowRight } from "lucide-react";
+import { Loader2, Mail, Home, ArrowRight, AlertTriangle, LogOut, RotateCcw } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useQueryClient } from "@tanstack/react-query";
 
 type PageState =
   | { step: "wizard" }
   | { step: "linking" }
-  | { step: "success"; email: string };
+  | { step: "success"; email: string }
+  | { step: "mismatch"; carId: string; signedInEmail: string | null };
 
 function getPendingClaimCarIdFromUrl() {
   if (typeof window === "undefined") return null;
