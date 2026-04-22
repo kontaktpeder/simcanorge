@@ -164,7 +164,7 @@ export default function SendInnBil() {
   const handleSignOutAndRetry = async (carId: string) => {
     await supabase.auth.signOut();
     localStorage.setItem("pendingClaimCarId", carId);
-    setState({ step: "wizard" });
+    setState(FEATURES.earlyRegnrGate ? { step: "gate" } : { step: "wizard", registrationNumber: "" });
     toast({
       title: "Logget ut",
       description: "Send ny lenke til e-posten du brukte ved innsending.",
@@ -284,6 +284,30 @@ export default function SendInnBil() {
     );
   }
 
+  if (state.step === "gate") {
+    return (
+      <Layout contained>
+        <section className="py-8 sm:py-12">
+          <div className="container mx-auto px-4">
+            <div className="mb-6 text-center">
+              <h1 className="mb-1 font-display text-2xl text-foreground sm:text-3xl md:text-4xl">
+                DEL BILEN DIN
+              </h1>
+              <p className="mx-auto max-w-xl text-sm text-muted-foreground sm:text-base">
+                Først sjekker vi om bilen din allerede ligger i Bilgarasje.
+              </p>
+            </div>
+            <RegNrGate
+              onContinue={(registrationNumber) =>
+                setState({ step: "wizard", registrationNumber })
+              }
+            />
+          </div>
+        </section>
+      </Layout>
+    );
+  }
+
   return (
     <Layout contained fillHeight>
       <section className="flex flex-col flex-1 min-h-0 py-4 sm:py-6">
@@ -298,7 +322,11 @@ export default function SendInnBil() {
           </div>
 
           <div className="flex-1 min-h-0">
-            <CarWizard onSuccess={handleWizardSuccess} />
+            <CarWizard
+              onSuccess={handleWizardSuccess}
+              initialRegistrationNumber={state.registrationNumber}
+              skipDuplicateCheck={FEATURES.earlyRegnrGate}
+            />
           </div>
         </div>
       </section>
