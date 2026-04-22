@@ -526,20 +526,14 @@ const BilDetalj = () => {
                 <div className="h-[2px] w-16 bg-gradient-to-r from-[#34eab8] to-transparent mb-5" />
 
                 <h1
-                  className="headline-md mb-3 text-white"
+                  className="headline-md mb-4 text-white"
                   style={{ fontFamily: "'Chakra Petch', 'Bebas Neue', sans-serif" }}
                 >
-                  {car.title}{car.year != null ? ` (${car.year})` : ""}
+                  {[car.brand, car.model, car.variant].filter(Boolean).join(' ') || car.model}
+                  {car.year != null && (
+                    <span className="text-[#34eab8]"> {car.year}</span>
+                  )}
                 </h1>
-                
-                {/* Subtitle line */}
-                <p
-                  className="text-xl text-[#34eab8] mb-4 tracking-wide font-bold uppercase"
-                  style={{ fontFamily: "'Chakra Petch', sans-serif" }}
-                >
-                  {[car.brand, car.model, car.variant].filter(Boolean).join(' ')}
-                  {car.year && <span className="text-white/55"> • {car.year}</span>}
-                </p>
 
                 {/* Status badges */}
                 <div className="flex flex-wrap items-center gap-3 mb-6">
