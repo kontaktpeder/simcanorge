@@ -169,7 +169,7 @@ export default function Garasje() {
                 })}
                 {/* Add car tile */}
                 <Link
-                  to="/send-inn"
+                  to="/legg-til-bil"
                   className="group flex flex-col items-center justify-center rounded-xl border border-dashed border-white/[0.06] hover:border-[#2dd4a8]/30 transition-all aspect-[16/10]"
                 >
                   <Plus className="w-5 h-5 text-white/15 group-hover:text-[#2dd4a8]/60 transition-colors mb-1" />
@@ -305,7 +305,7 @@ function HeroCarSection({ car, profile }: { car: CarData; profile: any }) {
         ) : (
           <>
             <ActionButton to={`/dashboard/bil/${car.id}`} icon={<Pencil className="w-4 h-4" />} label="Legg til flere detaljer om bilen" primary />
-            <ActionButton to="/send-inn" icon={<Plus className="w-4 h-4" />} label="Legg til ny bil" />
+            <ActionButton to="/legg-til-bil" icon={<Plus className="w-4 h-4" />} label="Legg inn ny bil" />
           </>
         )}
       </div>
@@ -340,12 +340,12 @@ function EmptyGarageHero() {
         <p className="text-[13px] text-white/40 mb-1" style={oswald}>Garasjen er tom — foreløpig.</p>
         <p className="text-[11px] text-white/20 mb-8" style={oswald}>Legg til din første bil og start historien.</p>
         <Link
-          to="/send-inn"
+          to="/legg-til-bil"
           className="inline-flex items-center gap-2 px-8 py-3.5 rounded-lg text-[13px] tracking-[0.1em] uppercase font-bold text-[#070b10] transition-all hover:scale-[1.03]"
           style={{ ...chakra, background: 'linear-gradient(135deg, #34eab8 0%, #2ab89a 100%)', boxShadow: '0 0 24px rgba(45,212,168,0.3)' }}
         >
           <Plus className="w-4 h-4" />
-          Legg til bil
+          Legg inn bilen din
         </Link>
       </div>
     </motion.section>

@@ -266,8 +266,8 @@ export default function Kontakt() {
             <Link to="/markedsplass" className="btn-enamel-red">
               Markedsplass
             </Link>
-            <Link to="/send-inn" className="inline-flex items-center gap-2 font-display text-lg uppercase tracking-wide text-foreground hover:text-accent transition-colors border-2 border-foreground px-6 py-3 rounded-lg hover:bg-foreground hover:text-background">
-              Send inn din bil
+            <Link to="/legg-til-bil" className="inline-flex items-center gap-2 font-display text-lg uppercase tracking-wide text-foreground hover:text-accent transition-colors border-2 border-foreground px-6 py-3 rounded-lg hover:bg-foreground hover:text-background">
+              Legg inn bilen din
             </Link>
           </div>
         </div>

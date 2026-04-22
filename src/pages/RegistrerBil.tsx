@@ -15,7 +15,7 @@ const BENEFITS = [
 
 export default function RegistrerBil() {
   const { user } = useAuth();
-  const primaryHref = user ? "/dashboard/opprett-bil" : "/send-inn";
+  const primaryHref = "/legg-til-bil";
 
   // Decide video variant synchronously to avoid loading both iframes
   const [isDesktop, setIsDesktop] = useState<boolean>(() =>

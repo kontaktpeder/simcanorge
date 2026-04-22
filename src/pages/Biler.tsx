@@ -515,7 +515,7 @@ const Biler = () => {
                 Bidra med din bil og bli del av arkivet.
               </p>
               <Link
-                to="/send-inn"
+                to="/legg-til-bil"
                 className="inline-flex items-center gap-2 px-7 py-3 text-[12px] uppercase tracking-[0.2em] text-[#070b10] font-bold transition-all hover:scale-[1.03] rounded-full"
                 style={{
                   ...chakra,

@@ -56,7 +56,7 @@ export function Footer() {
             <div>
               <h3 className="text-[10px] tracking-[0.2em] uppercase text-[#2dd4a8]/50 font-bold mb-3" style={chakra}>Delta</h3>
               <nav className="flex flex-col gap-1.5 text-[12px]" style={chakra}>
-                <Link to={user ? "/dashboard/opprett-bil" : "/send-inn"} className="text-white/40 hover:text-[#2dd4a8] transition-colors">Legg til bil +</Link>
+                <Link to="/legg-til-bil" className="text-white/40 hover:text-[#2dd4a8] transition-colors">Legg inn bilen din</Link>
                 {!FEATURES.simpleLaunchMode && (
                   <Link to="/start-annonse" className="text-white/40 hover:text-[#2dd4a8] transition-colors">Opprett annonse</Link>
                 )}

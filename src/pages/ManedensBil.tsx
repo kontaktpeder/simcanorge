@@ -195,8 +195,8 @@ const ManedensBil = () => {
           <p className="font-serif text-xl text-accent-foreground/90 mb-8 max-w-xl mx-auto">
             Kanskje blir din bil neste månedens bil! Send inn historien din og la oss løfte den frem.
           </p>
-          <Link to="/send-inn" className="inline-flex items-center gap-2 bg-foreground text-background px-8 py-4 font-display uppercase text-lg border-2 border-foreground hover-lift">
-            Send inn din bil
+          <Link to="/legg-til-bil" className="inline-flex items-center gap-2 bg-foreground text-background px-8 py-4 font-display uppercase text-lg border-2 border-foreground hover-lift">
+            Legg inn bilen din
             <ArrowRight className="w-5 h-5" />
           </Link>
         </div>

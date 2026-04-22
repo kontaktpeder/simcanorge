@@ -120,11 +120,11 @@ export function Header() {
               </Link>
             )}
             <Link
-              to={user ? "/dashboard/opprett-bil" : "/send-inn"}
+              to="/legg-til-bil"
               className="px-6 py-2.5 text-[13px] tracking-[0.12em] uppercase font-bold transition-all duration-300 hover:scale-[1.03] hover:brightness-115 rounded-lg text-[#0a0f14]"
               style={{ ...chakra, background: 'linear-gradient(135deg, #34eab8 0%, #2dd4a8 40%, #1cb896 100%)', boxShadow: '0 0 24px rgba(45,212,168,0.35), 0 2px 8px rgba(0,0,0,0.3)' }}
             >
-              Del bilen din +
+              Legg inn bilen din
             </Link>
           </div>
 
@@ -184,10 +184,10 @@ export function Header() {
                   <LogIn className="w-3.5 h-3.5" /> Logg inn
                 </Link>
               )}
-              <Link to={user ? "/dashboard/opprett-bil" : "/send-inn"} onClick={() => setMobileMenuOpen(false)}
+              <Link to="/legg-til-bil" onClick={() => setMobileMenuOpen(false)}
                 className="py-2 text-center text-[11px] tracking-[0.12em] uppercase font-bold rounded text-[#0c1117]"
                 style={{ ...chakra, background: 'linear-gradient(135deg, #2dd4a8, #14b8a6)' }}>
-                Legg til bil +
+                Legg inn bilen din
               </Link>
             </div>
           </div>
