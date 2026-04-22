@@ -39,10 +39,13 @@ export function StepVerify({ email, carId, onSkip, onVerified }: StepVerifyProps
 
       if (error || !(data as any)?.ok) {
         verifiedRef.current = false;
-        const errMsg = error?.message || (data as any)?.error || "Prøv igjen senere.";
+        const reason = (data as any)?.error || error?.message || "";
+        const isMismatch = reason === "car_not_claimable";
         toast({
-          title: "Innlogging registrert, men bilen ble ikke koblet",
-          description: errMsg,
+          title: isMismatch ? "Bilen ble ikke koblet til kontoen" : "Innlogging registrert, men bilen ble ikke koblet",
+          description: isMismatch
+            ? "Du logget inn med en annen e-post enn den du brukte ved innsending. Bruk samme e-post for å koble bilen."
+            : reason || "Prøv igjen senere.",
           variant: "destructive",
         });
         return;
