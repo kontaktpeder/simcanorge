@@ -89,19 +89,22 @@ export default function SendInnBil() {
 
       if (!error && res?.ok) {
         clearPendingClaimCarId();
-        navigateToOnboarding(pendingCarId, navigate, toast);
+        queryClient.invalidateQueries({ queryKey: ["my-cars"] });
+        queryClient.invalidateQueries({ queryKey: ["my-cars-count"] });
+        navigateToCarAfterClaim(pendingCarId, navigate, toast);
         return;
       }
 
+      // Mismatch: user logged in with a different email than the one used at submission
+      const reason = res?.error ?? error?.message ?? "unknown";
+      console.warn("Car claim failed:", reason);
       clearPendingClaimCarId();
-      console.warn("Car claim failed:", error?.message ?? res?.error ?? "unknown");
       claimHandledRef.current = false;
-      toast({
-        title: "Innlogging registrert, men bilen ble ikke koblet",
-        description: error?.message || "Bilen finnes kanskje ikke eller er allerede koblet.",
-        variant: "destructive",
-      });
-      setState({ step: "wizard" });
+
+      const { data: { user: signedInUser } } = await supabase.auth.getUser();
+      const signedInEmail = signedInUser?.email ?? null;
+
+      setState({ step: "mismatch", carId: pendingCarId, signedInEmail });
     };
 
     void supabase.auth.getSession().then(({ data: { session } }) => {
