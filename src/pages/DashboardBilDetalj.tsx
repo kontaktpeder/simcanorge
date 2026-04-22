@@ -289,9 +289,6 @@ export default function DashboardBilDetalj() {
               <ArrowLeft className="w-4 h-4" /> Mine biler
             </Link>
             <div className="flex items-center gap-3 mb-3">
-              <span className={`text-[11px] uppercase tracking-[0.1em] font-bold px-3 py-1 rounded-full border ${status.cls}`} style={oswald}>
-                {status.text}
-              </span>
               {car.overhauled && (
                 <span className="inline-flex items-center gap-1 text-[11px] uppercase tracking-[0.1em] font-bold text-emerald-400/70" style={oswald}>
                   <Wrench className="w-3.5 h-3.5" /> Overhalt
