@@ -143,6 +143,52 @@ export default function DashboardBilDetalj() {
     enabled: !!carId && !!user
   });
 
+  // My relationship row for this car (v1, behind feature flag)
+  const { data: myRelationship } = useQuery({
+    queryKey: ['my-car-relationship', carId, user?.id],
+    queryFn: async () => {
+      if (!carId || !user) return null;
+      const { data } = await supabase
+        .from('car_owners')
+        .select('relationship_type, relationship_note, relationship_is_public')
+        .eq('car_id', carId)
+        .eq('user_id', user.id)
+        .maybeSingle();
+      return data as {
+        relationship_type: RelationshipType | null;
+        relationship_note: string | null;
+        relationship_is_public: boolean | null;
+      } | null;
+    },
+    enabled: !!carId && !!user && FEATURES.relationshipModelV1,
+  });
+
+  useEffect(() => {
+    if (myRelationship) {
+      setRelationshipType(myRelationship.relationship_type ?? "current_owner");
+      setRelationshipNote(myRelationship.relationship_note ?? "");
+      setRelationshipIsPublic(myRelationship.relationship_is_public ?? true);
+    }
+  }, [myRelationship]);
+
+  const saveRelationship = async () => {
+    if (!user || !carId || !relationshipType) return;
+    try {
+      await updateRelationship.mutateAsync({
+        carId,
+        userId: user.id,
+        relationshipType: relationshipType as RelationshipType,
+        relationshipNote,
+        isPublic: relationshipIsPublic,
+      });
+      toast.success('Relasjonen er oppdatert');
+      setIsEditingRelationship(false);
+      queryClient.invalidateQueries({ queryKey: ['my-car-relationship', carId, user.id] });
+    } catch (err: any) {
+      toast.error(err?.message || 'Kunne ikke lagre');
+    }
+  };
+
   const clearOpenPublicationRequests = async (cid: string) => {
     await supabase.from('car_publication_requests').delete().eq('car_id', cid).eq('status', 'open');
     queryClient.invalidateQueries({ queryKey: ['publication-request', carId, user?.id] });
