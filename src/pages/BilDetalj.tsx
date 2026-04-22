@@ -23,10 +23,14 @@ import { toast } from "sonner";
 import { CreateCTA } from "@/components/ui/CreateCTA";
 import BilgarasjeLoader from "@/components/ui/BilgarasjeLoader";
 
-const SITE_URL =
-  typeof window !== "undefined" && window.location.hostname.includes("simcanorge.no")
-    ? "https://simcanorge.no"
-    : "https://simcanorge.lovable.app";
+const SITE_URL = (() => {
+  if (typeof window !== "undefined") {
+    const host = window.location.hostname;
+    if (host.includes("bilgarasje.no")) return "https://bilgarasje.no";
+    if (host.includes("simcanorge.no")) return "https://simcanorge.no";
+  }
+  return "https://bilgarasje.no";
+})();
 interface CarImage {
   id: string;
   image_url: string;
