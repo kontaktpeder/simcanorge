@@ -1,5 +1,7 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { FEATURES } from "@/config/features";
+import { RelationshipTypeField } from "@/components/car/RelationshipTypeField";
 import type { WizardData } from "./WizardTypes";
 
 interface StepContactProps {
@@ -48,6 +50,19 @@ export function StepContact({ data, onChange, errors, emailLocked, nameLocked }:
           <Input id="w-phone" type="tel" value={data.phone} onChange={e => onChange({ phone: e.target.value })}
             placeholder="123 45 678" className="h-12 text-base border-2 border-muted" />
         </div>
+
+        {FEATURES.relationshipModelV1 && (
+          <div className="pt-2 border-t border-muted">
+            <RelationshipTypeField
+              value={data.relationship_type}
+              note={data.relationship_note}
+              onChange={({ value, note }) =>
+                onChange({ relationship_type: value, relationship_note: note })
+              }
+              error={errors.relationship_type}
+            />
+          </div>
+        )}
       </div>
     </div>
   );

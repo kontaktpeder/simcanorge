@@ -1,3 +1,5 @@
+import type { RelationshipType } from "@/lib/relationshipTypes";
+
 export interface WizardData {
   // Step 0: Images
   images: File[];
@@ -25,6 +27,10 @@ export interface WizardData {
   email: string;
   phone: string;
 
+  // Step 4b: Relationship (v1, behind feature flag)
+  relationship_type: RelationshipType | "";
+  relationship_note: string;
+
   // Step 5: Consent & submit
   allowEdits: boolean | null;
   allowInstagram: boolean;
@@ -49,6 +55,8 @@ export const INITIAL_WIZARD_DATA: WizardData = {
   owner_name: "",
   email: "",
   phone: "",
+  relationship_type: "current_owner",
+  relationship_note: "",
   allowEdits: null,
   allowInstagram: false,
   privacyAccepted: false,
