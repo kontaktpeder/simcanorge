@@ -81,21 +81,6 @@ export default function RegistrerBil() {
 
         {/* Content */}
         <div
-          className="relative z-10 h-full flex flex-col px-5 pt-[max(env(safe-area-inset-top),1.25rem)] pb-[max(env(safe-area-inset-bottom),1.5rem)]"
-        >
-          {/* Top label */}
-          <div className="flex items-center justify-between">
-            <Link
-              to="/"
-              className="inline-flex items-center group -my-2"
-              aria-label="Bilgarasje.no"
-            >
-              <img
-                src={bilgarasjeLogo}
-                alt="Bilgarasje.no"
-                className="h-24 w-auto transition-all duration-300 group-hover:opacity-80"
-        {/* Content */}
-        <div
           className="relative z-10 h-full flex flex-col px-5 sm:px-10 lg:px-16 pt-[max(env(safe-area-inset-top),1.25rem)] pb-[max(env(safe-area-inset-bottom),1.5rem)] max-w-[1400px] mx-auto w-full"
         >
           {/* Top label */}
