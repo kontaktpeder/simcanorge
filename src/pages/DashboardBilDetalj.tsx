@@ -272,7 +272,7 @@ export default function DashboardBilDetalj() {
   };
 
   if (authLoading || isLoading) {
-    return <Layout><div className="min-h-[60vh] flex items-center justify-center bg-background"><Loader2 className="w-7 h-7 animate-spin text-primary/40" /></div></Layout>;
+    return <Layout><div className="min-h-[60vh] flex items-center justify-center bg-background"><Loader2 className="w-7 h-7 animate-spin text-primary/80" /></div></Layout>;
   }
   if (!user) return null;
   if (carData && !carData.hasAccess) {
@@ -287,7 +287,7 @@ export default function DashboardBilDetalj() {
     );
   }
   if (!car) {
-    return <Layout><div className="min-h-[60vh] flex flex-col items-center justify-center bg-background"><Car className="w-12 h-12 text-muted-foreground/20 mb-4" /><p className="text-lg font-bold uppercase tracking-wider text-muted-foreground/40" style={oswald}>Bilen finnes ikke</p></div></Layout>;
+    return <Layout><div className="min-h-[60vh] flex flex-col items-center justify-center bg-background"><Car className="w-12 h-12 text-muted-foreground/70 mb-4" /><p className="text-lg font-bold uppercase tracking-wider text-muted-foreground/80" style={oswald}>Bilen finnes ikke</p></div></Layout>;
   }
 
   const sortedImages = [...(car.car_images || [])].sort((a: any, b: any) => (a.sort_order || 0) - (b.sort_order || 0));
@@ -378,7 +378,7 @@ export default function DashboardBilDetalj() {
                     <span className="text-[13px] uppercase tracking-[0.08em] font-bold" style={oswald}>Bilen er live</span>
                   </div>
                   <button onClick={handleUnpublish} disabled={isPublishing}
-                    className="text-[13px] uppercase tracking-[0.08em] font-bold text-muted-foreground/40 hover:text-muted-foreground transition-colors" style={oswald}>
+                    className="text-[13px] uppercase tracking-[0.08em] font-bold text-muted-foreground/80 hover:text-muted-foreground transition-colors" style={oswald}>
                     {isPublishing ? '...' : 'Avpubliser'}
                   </button>
                 </div>
@@ -388,17 +388,17 @@ export default function DashboardBilDetalj() {
                     <div className="flex items-center gap-3 bg-amber-500/[0.08] border border-amber-500/20 rounded-lg p-3">
                       <Clock className="w-5 h-5 text-amber-400 shrink-0" />
                       <p className="text-[13px] text-amber-400/80 flex-1 font-semibold uppercase tracking-wide" style={oswald}>Åpen forespørsel</p>
-                      <button onClick={cancelRequest} className="text-[12px] uppercase tracking-wider font-bold text-muted-foreground/40 hover:text-muted-foreground" style={oswald}>Avbryt</button>
+                      <button onClick={cancelRequest} className="text-[12px] uppercase tracking-wider font-bold text-muted-foreground/80 hover:text-muted-foreground" style={oswald}>Avbryt</button>
                     </div>
                   )}
-                  <p className="text-[14px] uppercase tracking-[0.08em] font-bold text-foreground/70" style={oswald}>Klar for publisering?</p>
+                  <p className="text-[14px] uppercase tracking-[0.08em] font-bold text-foreground/90" style={oswald}>Klar for publisering?</p>
                   <div className="flex items-center gap-4">
                     {[
                       { ok: brandOk, label: 'Merke' },
                       { ok: modelOk, label: 'Modell' },
                       { ok: imagesOk, label: 'Minst 1 bilde' },
                     ].map(({ ok, label }) => (
-                      <span key={label} className={`inline-flex items-center gap-1.5 text-[13px] uppercase tracking-[0.06em] font-semibold ${ok ? 'text-emerald-400' : 'text-muted-foreground/25'}`} style={oswald}>
+                      <span key={label} className={`inline-flex items-center gap-1.5 text-[13px] uppercase tracking-[0.06em] font-semibold ${ok ? 'text-emerald-400' : 'text-muted-foreground/70'}`} style={oswald}>
                         {ok ? <CheckCircle2 className="w-4 h-4" /> : <Circle className="w-4 h-4" />} {label}
                       </span>
                     ))}
@@ -465,7 +465,7 @@ export default function DashboardBilDetalj() {
                   </div>
                 )}
                 <button onClick={() => fileInputRef.current?.click()} disabled={isUploadingImages}
-                  className="inline-flex items-center gap-2 text-[13px] uppercase tracking-[0.1em] font-bold text-muted-foreground/30 hover:text-primary transition-colors mt-1" style={oswald}>
+                  className="inline-flex items-center gap-2 text-[13px] uppercase tracking-[0.1em] font-bold text-muted-foreground/80 hover:text-primary transition-colors mt-1" style={oswald}>
                   <Upload className="w-4 h-4" />
                   {isUploadingImages ? 'Laster opp...' : 'Last opp flere bilder'}
                 </button>
@@ -473,11 +473,11 @@ export default function DashboardBilDetalj() {
             ) : (
               <div className="border-2 border-dashed border-border/40 rounded-xl py-14 text-center cursor-pointer hover:border-primary/40 hover:bg-primary/[0.03] transition-all"
                 onClick={() => fileInputRef.current?.click()}>
-                <ImageIcon className="w-10 h-10 text-muted-foreground/15 mx-auto mb-3" strokeWidth={1.2} />
-                <p className="text-[14px] uppercase tracking-[0.08em] font-bold text-muted-foreground/30" style={oswald}>
+                <ImageIcon className="w-10 h-10 text-muted-foreground/60 mx-auto mb-3" strokeWidth={1.2} />
+                <p className="text-[14px] uppercase tracking-[0.08em] font-bold text-muted-foreground/80" style={oswald}>
                   {isUploadingImages ? 'Laster opp...' : 'Last opp bilder'}
                 </p>
-                <p className="text-[13px] text-muted-foreground/20 mt-1" style={oswald}>Første bilde blir hovedbilde</p>
+                <p className="text-[13px] text-muted-foreground/70 mt-1" style={oswald}>Første bilde blir hovedbilde</p>
               </div>
             )}
           </motion.section>
@@ -501,11 +501,11 @@ export default function DashboardBilDetalj() {
                 <Textarea value={storyForm} onChange={(e) => setStoryForm(e.target.value)}
                   placeholder="Fortell historien om bilen din..."
                   rows={8}
-                  className="bg-card border-border text-[15px] text-foreground/80 leading-[1.8] focus:border-primary/40 focus:ring-primary/20 rounded-lg min-h-[180px]" />
+                  className="bg-card border-border text-[15px] text-foreground leading-[1.8] focus:border-primary/40 focus:ring-primary/20 rounded-lg min-h-[180px]" />
               ) : car.story ? (
-                <p className="text-[15px] text-foreground/50 whitespace-pre-wrap leading-[1.8]">{car.story}</p>
+                <p className="text-[15px] text-foreground/90 whitespace-pre-wrap leading-[1.8]">{car.story}</p>
               ) : (
-                <p className="text-[15px] text-muted-foreground/25 italic leading-[1.8]">
+                <p className="text-[15px] text-muted-foreground/70 italic leading-[1.8]">
                   Ingen historie lagt til ennå. Trykk «Rediger» for å fortelle historien om bilen din.
                 </p>
               )}
@@ -531,40 +531,40 @@ export default function DashboardBilDetalj() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                   <FieldLabel label="Merke">
                     <Select value={basicForm.brand} onValueChange={(v) => setBasicForm({ ...basicForm, brand: v, model: "" })}>
-                      <SelectTrigger className="h-11 bg-card border-border text-[15px] text-foreground/80"><SelectValue placeholder="Velg merke" /></SelectTrigger>
+                      <SelectTrigger className="h-11 bg-card border-border text-[15px] text-foreground"><SelectValue placeholder="Velg merke" /></SelectTrigger>
                       <SelectContent>{CAR_BRANDS.map(b => <SelectItem key={b.name} value={b.name}>{b.name}</SelectItem>)}</SelectContent>
                     </Select>
                   </FieldLabel>
                   <FieldLabel label="Modell">
                     <Select value={basicForm.model} onValueChange={(v) => setBasicForm({ ...basicForm, model: v })}>
-                      <SelectTrigger className="h-11 bg-card border-border text-[15px] text-foreground/80"><SelectValue placeholder="Velg modell" /></SelectTrigger>
+                      <SelectTrigger className="h-11 bg-card border-border text-[15px] text-foreground"><SelectValue placeholder="Velg modell" /></SelectTrigger>
                       <SelectContent>{availableModels.map(m => <SelectItem key={m.name} value={m.name}>{m.name}</SelectItem>)}</SelectContent>
                     </Select>
                   </FieldLabel>
                   <FieldLabel label="Variant">
                     <Input value={basicForm.variant} onChange={(e) => setBasicForm({ ...basicForm, variant: e.target.value })}
-                      placeholder="f.eks. GLS" className="h-11 bg-card border-border text-[15px] text-foreground/80" />
+                      placeholder="f.eks. GLS" className="h-11 bg-card border-border text-[15px] text-foreground" />
                   </FieldLabel>
                   <FieldLabel label="Karosseri">
                     <Select value={basicForm.body_type} onValueChange={(v) => setBasicForm({ ...basicForm, body_type: v })}>
-                      <SelectTrigger className="h-11 bg-card border-border text-[15px] text-foreground/80"><SelectValue placeholder="Velg type" /></SelectTrigger>
+                      <SelectTrigger className="h-11 bg-card border-border text-[15px] text-foreground"><SelectValue placeholder="Velg type" /></SelectTrigger>
                       <SelectContent>{CAR_BODY_TYPES.map(t => <SelectItem key={t.id} value={t.id}>{t.label}</SelectItem>)}</SelectContent>
                     </Select>
                   </FieldLabel>
                   <FieldLabel label="Årsmodell">
                     <Input type="number" value={basicForm.year} onChange={(e) => setBasicForm({ ...basicForm, year: e.target.value })}
-                      placeholder="1972" className="h-11 bg-card border-border text-[15px] text-foreground/80" />
+                      placeholder="1972" className="h-11 bg-card border-border text-[15px] text-foreground" />
                   </FieldLabel>
                   <FieldLabel label="Kategori">
                     <Select value={basicForm.category} onValueChange={(v) => setBasicForm({ ...basicForm, category: v })}>
-                      <SelectTrigger className="h-11 bg-card border-border text-[15px] text-foreground/80"><SelectValue /></SelectTrigger>
+                      <SelectTrigger className="h-11 bg-card border-border text-[15px] text-foreground"><SelectValue /></SelectTrigger>
                       <SelectContent>{CATEGORIES.map(c => <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>)}</SelectContent>
                     </Select>
                   </FieldLabel>
                   <div className="sm:col-span-2 lg:col-span-3">
                     <FieldLabel label="Tags (kommaseparert)">
                       <Input value={basicForm.tags} onChange={(e) => setBasicForm({ ...basicForm, tags: e.target.value })}
-                        placeholder="original, restaurert, rallye" className="h-11 bg-card border-border text-[15px] text-foreground/80" />
+                        placeholder="original, restaurert, rallye" className="h-11 bg-card border-border text-[15px] text-foreground" />
                     </FieldLabel>
                   </div>
                 </div>
@@ -575,16 +575,16 @@ export default function DashboardBilDetalj() {
                     ['Karosseri', car.body_type], ['Årsmodell', car.year], ['Kategori', car.category],
                   ].map(([label, value]) => (
                     <div key={label as string}>
-                      <span className="text-[12px] uppercase tracking-[0.12em] font-bold text-muted-foreground/30 block mb-1" style={oswald}>{label}</span>
-                      <p className="text-[15px] text-foreground/60 capitalize font-medium">{value || '—'}</p>
+                      <span className="text-[12px] uppercase tracking-[0.12em] font-bold text-muted-foreground/80 block mb-1" style={oswald}>{label}</span>
+                      <p className="text-[15px] text-foreground/90 capitalize font-medium">{value || '—'}</p>
                     </div>
                   ))}
                   {car.tags && car.tags.length > 0 && (
                     <div className="col-span-full mt-2">
-                      <span className="text-[12px] uppercase tracking-[0.12em] font-bold text-muted-foreground/30 block mb-2" style={oswald}>Tags</span>
+                      <span className="text-[12px] uppercase tracking-[0.12em] font-bold text-muted-foreground/80 block mb-2" style={oswald}>Tags</span>
                       <div className="flex flex-wrap gap-2">
                         {car.tags.map((tag: string) => (
-                          <span key={tag} className="text-[13px] text-foreground/40 bg-secondary border border-border px-2.5 py-1 rounded-md font-medium">{tag}</span>
+                          <span key={tag} className="text-[13px] text-foreground/85 bg-secondary border border-border px-2.5 py-1 rounded-md font-medium">{tag}</span>
                         ))}
                       </div>
                     </div>
@@ -631,21 +631,21 @@ export default function DashboardBilDetalj() {
                         onChange={(e) => setRelationshipIsPublic(e.target.checked)}
                         className="w-5 h-5 mt-0.5 accent-primary flex-shrink-0"
                       />
-                      <span className="text-sm text-foreground/70">
+                      <span className="text-sm text-foreground/90">
                         Vis denne relasjonen offentlig på bilens side
                       </span>
                     </label>
                   </div>
                 ) : (
                   <div className="space-y-2">
-                    <p className="text-[12px] uppercase tracking-[0.12em] font-bold text-muted-foreground/30" style={oswald}>Relasjon</p>
-                    <p className="text-[15px] text-foreground/70 font-medium">
+                    <p className="text-[12px] uppercase tracking-[0.12em] font-bold text-muted-foreground/80" style={oswald}>Relasjon</p>
+                    <p className="text-[15px] text-foreground/90 font-medium">
                       {relationshipType ? RELATIONSHIP_LABELS[relationshipType as RelationshipType] : '—'}
                     </p>
                     {relationshipType === 'other' && relationshipNote && (
                       <p className="text-[14px] text-muted-foreground italic">"{relationshipNote}"</p>
                     )}
-                    <p className="text-[12px] text-muted-foreground/40 mt-2">
+                    <p className="text-[12px] text-muted-foreground/80 mt-2">
                       {relationshipIsPublic ? 'Vises offentlig på bilens side' : 'Skjult fra offentlig visning'}
                     </p>
                   </div>
@@ -668,8 +668,8 @@ const sectionOswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
 
 function SectionHeading({ icon, title }: { icon: React.ReactNode; title: string }) {
   return (
-    <h2 className="flex items-center gap-2 text-[14px] uppercase tracking-[0.12em] font-bold text-muted-foreground/40" style={sectionOswald}>
-      <span className="text-primary/40 [&>svg]:w-[18px] [&>svg]:h-[18px]">{icon}</span>
+    <h2 className="flex items-center gap-2 text-[14px] uppercase tracking-[0.12em] font-bold text-muted-foreground/80" style={sectionOswald}>
+      <span className="text-primary/80 [&>svg]:w-[18px] [&>svg]:h-[18px]">{icon}</span>
       {title}
     </h2>
   );
@@ -678,7 +678,7 @@ function SectionHeading({ icon, title }: { icon: React.ReactNode; title: string 
 function FieldLabel({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div>
-      <label className="text-[13px] uppercase tracking-[0.08em] font-bold text-muted-foreground/40 block mb-2" style={sectionOswald}>{label}</label>
+      <label className="text-[13px] uppercase tracking-[0.08em] font-bold text-muted-foreground/80 block mb-2" style={sectionOswald}>{label}</label>
       {children}
     </div>
   );
@@ -689,7 +689,7 @@ function ActionBtn({ onClick, disabled, children, variant = 'ghost' }: {
 }) {
   const cls = variant === 'primary'
     ? 'bg-primary text-primary-foreground hover:brightness-110'
-    : 'text-muted-foreground/40 hover:text-foreground hover:bg-white/[0.04]';
+    : 'text-muted-foreground/80 hover:text-foreground hover:bg-white/[0.04]';
   return (
     <button onClick={onClick} disabled={disabled}
       className={`inline-flex items-center gap-1.5 text-[12px] uppercase tracking-[0.08em] font-bold px-3 py-2 rounded-lg transition-all active:scale-95 disabled:opacity-40 ${cls}`}
