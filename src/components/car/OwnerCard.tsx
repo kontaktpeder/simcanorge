@@ -74,6 +74,11 @@ export function OwnerCard({
               <h3 className="text-lg sm:text-xl font-semibold">
                 {owner.display_name}
               </h3>
+              {FEATURES.relationshipModelV1 && relationshipType && (
+                <p className="text-xs uppercase tracking-wide text-primary font-semibold mt-0.5">
+                  {RELATIONSHIP_LABELS[relationshipType]}
+                </p>
+              )}
               {owner.location && (
                 <p className="text-sm text-muted-foreground flex items-center gap-1.5">
                   <MapPin className="h-3.5 w-3.5" />
@@ -82,8 +87,17 @@ export function OwnerCard({
               )}
             </div>
           </div>
-          
-          
+
+          {/* Relationship note (only when public + present) */}
+          {FEATURES.relationshipModelV1 &&
+            relationshipIsPublic &&
+            relationshipNote &&
+            relationshipNote.trim().length > 0 && (
+              <p className="text-sm text-muted-foreground mb-3">
+                {relationshipNote}
+              </p>
+            )}
+
           {/* Bio */}
           {bioPreview && (
             <blockquote className="text-base sm:text-lg leading-relaxed text-foreground/90 italic border-l-4 border-primary/30 pl-4 my-4">
