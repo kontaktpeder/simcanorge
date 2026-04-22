@@ -92,6 +92,27 @@ export type Database = {
         }
         Relationships: []
       }
+      car_brands: {
+        Row: {
+          country: string | null
+          id: number
+          name: string
+          slug: string
+        }
+        Insert: {
+          country?: string | null
+          id?: number
+          name: string
+          slug: string
+        }
+        Update: {
+          country?: string | null
+          id?: number
+          name?: string
+          slug?: string
+        }
+        Relationships: []
+      }
       car_event_images: {
         Row: {
           alt_text: string | null
@@ -258,6 +279,41 @@ export type Database = {
             columns: ["car_id"]
             isOneToOne: false
             referencedRelation: "cars"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      car_models: {
+        Row: {
+          brand_id: number | null
+          id: number
+          name: string
+          slug: string
+          year_from: number | null
+          year_to: number | null
+        }
+        Insert: {
+          brand_id?: number | null
+          id?: number
+          name: string
+          slug: string
+          year_from?: number | null
+          year_to?: number | null
+        }
+        Update: {
+          brand_id?: number | null
+          id?: number
+          name?: string
+          slug?: string
+          year_from?: number | null
+          year_to?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "car_models_brand_id_fkey"
+            columns: ["brand_id"]
+            isOneToOne: false
+            referencedRelation: "car_brands"
             referencedColumns: ["id"]
           },
         ]

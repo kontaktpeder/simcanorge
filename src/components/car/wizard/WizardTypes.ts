@@ -6,6 +6,8 @@ export interface WizardData {
   // Step 1: Brand/Model
   brand: string;
   car_model: string;
+  brand_id?: number | null;
+  model_id?: number | null;
 
   // Step 2: Details
   variant: string;
