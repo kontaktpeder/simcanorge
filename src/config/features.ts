@@ -10,5 +10,5 @@ export const FEATURES = {
    * Enables the relationship-type field on car submission flows.
    * Off until DB migration + UI integration is complete.
    */
-  relationshipModelV1: import.meta.env.VITE_FEATURE_RELATIONSHIP_MODEL_V1 === "true",
+  relationshipModelV1: import.meta.env.VITE_FEATURE_RELATIONSHIP_MODEL_V1 !== "false",
 };
