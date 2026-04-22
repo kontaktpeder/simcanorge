@@ -809,6 +809,22 @@ export function SendInnBilForm({ onSuccess, onCancel, showCancelButton = false }
             )}
           </div>
 
+          {/* Relationship type (v1, behind feature flag) */}
+          {FEATURES.relationshipModelV1 && (
+            <div className="p-3 sm:p-4 bg-muted/30 rounded-lg border-2 border-muted">
+              <RelationshipTypeField
+                value={relationshipType}
+                note={relationshipNote}
+                onChange={({ value, note }) => {
+                  setRelationshipType(value);
+                  setRelationshipNote(note);
+                  if (errors.relationship_type) setErrors(prev => ({ ...prev, relationship_type: "" }));
+                }}
+                error={errors.relationship_type}
+              />
+            </div>
+          )}
+
           {/* Instagram consent */}
           <div className="p-3 sm:p-4 bg-muted/30 rounded-lg border-2 border-muted">
             <p className="font-display text-base sm:text-lg mb-2 sm:mb-3">DELING PÅ INSTAGRAM</p>
