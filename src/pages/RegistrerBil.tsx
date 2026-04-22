@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { ArrowRight, Car, Share2, Image as ImageIcon, Sparkles } from "lucide-react";
@@ -16,6 +17,25 @@ export default function RegistrerBil() {
   const { user } = useAuth();
   const primaryHref = user ? "/dashboard/opprett-bil" : "/send-inn";
 
+  // Decide video variant synchronously to avoid loading both iframes
+  const [isDesktop, setIsDesktop] = useState<boolean>(() =>
+    typeof window !== "undefined" ? window.innerWidth >= 768 : true
+  );
+  const [videoLoaded, setVideoLoaded] = useState(false);
+
+  useEffect(() => {
+    const mql = window.matchMedia("(min-width: 768px)");
+    const onChange = () => setIsDesktop(mql.matches);
+    mql.addEventListener("change", onChange);
+    return () => mql.removeEventListener("change", onChange);
+  }, []);
+
+  const videoId = isDesktop ? "1185630100" : "1185602288";
+  const videoSize = isDesktop
+    ? { width: "max(100vw, 133.33vh)", height: "max(75vw, 100vh)" }
+    : { width: "max(100vw, 177.78vh)", height: "max(56.25vw, 100vh)" };
+
+
   return (
     <div className="min-h-[100svh] bg-[#070b10] text-white">
       <Helmet>
@@ -30,43 +50,39 @@ export default function RegistrerBil() {
           property="og:description"
           content="Gi bilen din en skikkelig plass på nett. Profesjonell bilside du kan dele."
         />
+        {/* Speed up Vimeo background video load */}
+        <link rel="preconnect" href="https://player.vimeo.com" crossOrigin="" />
+        <link rel="preconnect" href="https://i.vimeocdn.com" crossOrigin="" />
+        <link rel="preconnect" href="https://f.vimeocdn.com" crossOrigin="" />
+        <link rel="dns-prefetch" href="https://player.vimeo.com" />
+        <link rel="dns-prefetch" href="https://i.vimeocdn.com" />
+        <link rel="dns-prefetch" href="https://f.vimeocdn.com" />
       </Helmet>
 
       {/* HERO */}
       <section className="relative w-full h-[100svh] min-h-[100svh] overflow-hidden">
-        {/* Video bg — portrait på mobil, landscape på desktop */}
-        <div className="absolute inset-0 md:hidden">
+        {/* Video bg — last kun riktig variant for å spare båndbredde */}
+        <div className="absolute inset-0 bg-[#070b10]">
           <iframe
-            src="https://player.vimeo.com/video/1185602288?background=1&autoplay=1&loop=1&muted=1&autopause=0&controls=0&title=0&byline=0&portrait=0&badge=0&app_id=58479"
-            title="Bilgarasje hero (mobil)"
+            key={videoId}
+            src={`https://player.vimeo.com/video/${videoId}?background=1&autoplay=1&loop=1&muted=1&autopause=0&controls=0&title=0&byline=0&portrait=0&badge=0&dnt=1&quality=720p&app_id=58479`}
+            title="Bilgarasje hero"
             allow="autoplay; fullscreen; picture-in-picture"
             referrerPolicy="strict-origin-when-cross-origin"
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+            onLoad={() => setVideoLoaded(true)}
+            className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none transition-opacity duration-500 ${
+              videoLoaded ? "opacity-100" : "opacity-0"
+            }`}
             style={{
-              width: "max(100vw, 177.78vh)",
-              height: "max(56.25vw, 100vh)",
+              width: videoSize.width,
+              height: videoSize.height,
               minWidth: "100%",
               minHeight: "100%",
             }}
             loading="eager"
           />
         </div>
-        <div className="absolute inset-0 hidden md:block">
-          <iframe
-            src="https://player.vimeo.com/video/1185630100?background=1&autoplay=1&loop=1&muted=1&autopause=0&controls=0&title=0&byline=0&portrait=0&badge=0&app_id=58479"
-            title="Bilgarasje hero (desktop)"
-            allow="autoplay; fullscreen; picture-in-picture"
-            referrerPolicy="strict-origin-when-cross-origin"
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
-            style={{
-              width: "max(100vw, 133.33vh)",
-              height: "max(75vw, 100vh)",
-              minWidth: "100%",
-              minHeight: "100%",
-            }}
-            loading="eager"
-          />
-        </div>
+
 
         {/* Overlays */}
         <div className="absolute inset-0 bg-black/55" />
