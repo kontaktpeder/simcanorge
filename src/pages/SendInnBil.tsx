@@ -3,16 +3,18 @@ import { AnimatedSection } from "@/components/layout/AnimatedSection";
 import { CarWizard } from "@/components/car/wizard";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, Mail, Home, ArrowRight } from "lucide-react";
+import { Loader2, Mail, Home, ArrowRight, AlertTriangle, LogOut, RotateCcw } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useQueryClient } from "@tanstack/react-query";
 
 type PageState =
   | { step: "wizard" }
   | { step: "linking" }
-  | { step: "success"; email: string };
+  | { step: "success"; email: string }
+  | { step: "mismatch"; carId: string; signedInEmail: string | null };
 
 function getPendingClaimCarIdFromUrl() {
   if (typeof window === "undefined") return null;
@@ -41,23 +43,18 @@ async function resolvePostClaimPath(carId: string): Promise<string> {
   return "/dashboard/mine-biler";
 }
 
-function navigateToOnboarding(
+function navigateToCarAfterClaim(
   carId: string,
   navigate: ReturnType<typeof useNavigate>,
   toast: ReturnType<typeof useToast>["toast"],
 ) {
   void (async () => {
-    const returnUrl = await resolvePostClaimPath(carId);
-    const params = new URLSearchParams();
-    params.set("sett-passord", "1");
-    params.set("returnUrl", returnUrl);
-
+    const path = await resolvePostClaimPath(carId);
     toast({
-      title: "Bilen er koblet til kontoen din",
-      description: "Velg et passord og fullfør profilen for å åpne bilrommet.",
+      title: "Bilen er din",
+      description: "Du kan sette passord senere fra profilen din.",
     });
-
-    navigate(`/kom-i-gang?${params.toString()}`);
+    navigate(path);
   })();
 }
 
@@ -92,19 +89,22 @@ export default function SendInnBil() {
 
       if (!error && res?.ok) {
         clearPendingClaimCarId();
-        navigateToOnboarding(pendingCarId, navigate, toast);
+        queryClient.invalidateQueries({ queryKey: ["my-cars"] });
+        queryClient.invalidateQueries({ queryKey: ["my-cars-count"] });
+        navigateToCarAfterClaim(pendingCarId, navigate, toast);
         return;
       }
 
+      // Mismatch: user logged in with a different email than the one used at submission
+      const reason = res?.error ?? error?.message ?? "unknown";
+      console.warn("Car claim failed:", reason);
       clearPendingClaimCarId();
-      console.warn("Car claim failed:", error?.message ?? res?.error ?? "unknown");
       claimHandledRef.current = false;
-      toast({
-        title: "Innlogging registrert, men bilen ble ikke koblet",
-        description: error?.message || "Bilen finnes kanskje ikke eller er allerede koblet.",
-        variant: "destructive",
-      });
-      setState({ step: "wizard" });
+
+      const { data: { user: signedInUser } } = await supabase.auth.getUser();
+      const signedInEmail = signedInUser?.email ?? null;
+
+      setState({ step: "mismatch", carId: pendingCarId, signedInEmail });
     };
 
     void supabase.auth.getSession().then(({ data: { session } }) => {
@@ -131,7 +131,44 @@ export default function SendInnBil() {
       window.clearTimeout(fallbackTimer);
       subscription.unsubscribe();
     };
-  }, [toast, navigate]);
+  }, [toast, navigate, queryClient]);
+
+  const handleResendToCorrectEmail = async (carId: string, email: string) => {
+    const trimmed = email.trim().toLowerCase();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
+      toast({ title: "Ugyldig e-postadresse", variant: "destructive" });
+      return;
+    }
+    try {
+      await supabase.auth.signOut();
+      localStorage.setItem("pendingClaimCarId", carId);
+      const redirectUrl = new URL("/send-inn", window.location.origin);
+      redirectUrl.searchParams.set("claimCarId", carId);
+      const { error } = await supabase.auth.signInWithOtp({
+        email: trimmed,
+        options: { shouldCreateUser: true, emailRedirectTo: redirectUrl.toString() },
+      });
+      if (error) throw error;
+      setState({ step: "success", email: trimmed });
+    } catch (err: any) {
+      toast({
+        title: "Kunne ikke sende e-post",
+        description: err?.message || "Prøv igjen senere.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleSignOutAndRetry = async (carId: string) => {
+    await supabase.auth.signOut();
+    localStorage.setItem("pendingClaimCarId", carId);
+    setState({ step: "wizard" });
+    toast({
+      title: "Logget ut",
+      description: "Send ny lenke til e-posten du brukte ved innsending.",
+    });
+  };
+
 
   const handleWizardSuccess = async ({ carId, email, flow }: { carId: string; email: string; flow: "guest" | "authenticated" }) => {
     if (flow === "authenticated") {
@@ -163,6 +200,17 @@ export default function SendInnBil() {
 
     setState({ step: "success", email });
   };
+
+  if (state.step === "mismatch") {
+    return (
+      <MismatchView
+        carId={state.carId}
+        signedInEmail={state.signedInEmail}
+        onResend={handleResendToCorrectEmail}
+        onSignOut={handleSignOutAndRetry}
+      />
+    );
+  }
 
   if (state.step === "linking") {
     return (
@@ -249,6 +297,125 @@ export default function SendInnBil() {
 
           <div className="flex-1 min-h-0">
             <CarWizard onSuccess={handleWizardSuccess} />
+          </div>
+        </div>
+      </section>
+    </Layout>
+  );
+}
+
+function MismatchView({
+  carId,
+  signedInEmail,
+  onResend,
+  onSignOut,
+}: {
+  carId: string;
+  signedInEmail: string | null;
+  onResend: (carId: string, email: string) => Promise<void>;
+  onSignOut: (carId: string) => Promise<void>;
+}) {
+  const [showChange, setShowChange] = useState(false);
+  const [newEmail, setNewEmail] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  return (
+    <Layout contained>
+      <section className="py-8 sm:py-12 md:py-16">
+        <div className="container mx-auto max-w-xl px-4">
+          <div className="space-y-6 rounded-2xl border border-destructive/30 bg-card p-6 sm:p-8 shadow-sm">
+            <div className="flex items-start gap-4">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-destructive/10">
+                <AlertTriangle className="h-6 w-6 text-destructive" />
+              </div>
+              <div className="space-y-1">
+                <h1 className="font-display text-xl text-foreground sm:text-2xl">
+                  Bilen ble ikke koblet til kontoen din
+                </h1>
+                <p className="text-sm text-muted-foreground sm:text-base">
+                  {signedInEmail ? (
+                    <>
+                      Du er logget inn som <strong className="text-foreground">{signedInEmail}</strong>,
+                      men bilen ble sendt inn med en annen e-postadresse. Bilen kobles kun til samme
+                      e-post som ble brukt ved innsending.
+                    </>
+                  ) : (
+                    <>Bilen kobles kun til samme e-post som ble brukt ved innsending.</>
+                  )}
+                </p>
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              {!showChange ? (
+                <Button
+                  className="btn-enamel-blue h-12 w-full text-base"
+                  onClick={() => setShowChange(true)}
+                  disabled={busy}
+                >
+                  <Mail className="mr-2 h-5 w-5" /> Send ny lenke til riktig e-post
+                </Button>
+              ) : (
+                <div className="space-y-2 rounded-lg border border-border bg-muted/30 p-3">
+                  <p className="text-xs text-muted-foreground">
+                    Skriv inn e-posten du brukte da du sendte inn bilen:
+                  </p>
+                  <Input
+                    type="email"
+                    value={newEmail}
+                    onChange={(e) => setNewEmail(e.target.value)}
+                    placeholder="din@epost.no"
+                    className="h-10 text-sm"
+                  />
+                  <div className="flex gap-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => { setShowChange(false); setNewEmail(""); }}
+                      className="flex-1"
+                      disabled={busy}
+                    >
+                      Avbryt
+                    </Button>
+                    <Button
+                      size="sm"
+                      onClick={async () => {
+                        setBusy(true);
+                        await onResend(carId, newEmail);
+                        setBusy(false);
+                      }}
+                      disabled={busy || !newEmail.trim()}
+                      className="flex-1"
+                    >
+                      {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : "Send lenke"}
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              <Button
+                variant="outline"
+                className="h-12 w-full text-base"
+                onClick={async () => {
+                  setBusy(true);
+                  await onSignOut(carId);
+                  setBusy(false);
+                }}
+                disabled={busy}
+              >
+                <LogOut className="mr-2 h-5 w-5" /> Logg ut og prøv igjen
+              </Button>
+
+              <Button asChild variant="ghost" className="h-12 w-full text-base">
+                <Link to="/">
+                  <Home className="mr-2 h-5 w-5" /> Til forsiden
+                </Link>
+              </Button>
+            </div>
+
+            <p className="text-xs text-muted-foreground">
+              Tips: e-posten brukes som nøkkel for å kjenne igjen at bilen er din. Den må matche eksakt.
+            </p>
           </div>
         </div>
       </section>

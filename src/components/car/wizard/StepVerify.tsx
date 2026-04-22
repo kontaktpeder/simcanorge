@@ -39,10 +39,13 @@ export function StepVerify({ email, carId, onSkip, onVerified }: StepVerifyProps
 
       if (error || !(data as any)?.ok) {
         verifiedRef.current = false;
-        const errMsg = error?.message || (data as any)?.error || "Prøv igjen senere.";
+        const reason = (data as any)?.error || error?.message || "";
+        const isMismatch = reason === "car_not_claimable";
         toast({
-          title: "Innlogging registrert, men bilen ble ikke koblet",
-          description: errMsg,
+          title: isMismatch ? "Bilen ble ikke koblet til kontoen" : "Innlogging registrert, men bilen ble ikke koblet",
+          description: isMismatch
+            ? "Du logget inn med en annen e-post enn den du brukte ved innsending. Bruk samme e-post for å koble bilen."
+            : reason || "Prøv igjen senere.",
           variant: "destructive",
         });
         return;
@@ -125,6 +128,9 @@ export function StepVerify({ email, carId, onSkip, onVerified }: StepVerifyProps
         <p className="mx-auto max-w-md text-sm text-muted-foreground sm:text-base">
           Vil du koble bilen til en konto? Da kan du redigere den selv senere.
           Vi sender en innloggingslenke til <strong className="text-foreground">{activeEmail}</strong>.
+        </p>
+        <p className="mx-auto max-w-md rounded-md border border-border bg-muted/40 px-3 py-2 text-xs text-muted-foreground">
+          Viktig: bruk samme e-post som du vil logge inn med. E-posten brukes som nøkkel for å koble bilen til kontoen din.
         </p>
       </div>
 
