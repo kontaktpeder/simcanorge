@@ -53,7 +53,7 @@ export default function RegistrerBil() {
         </div>
         <div className="absolute inset-0 hidden md:block">
           <iframe
-            src="https://player.vimeo.com/video/1185628010?background=1&autoplay=1&loop=1&muted=1&autopause=0&controls=0&title=0&byline=0&portrait=0&badge=0&app_id=58479"
+            src="https://player.vimeo.com/video/1185630100?background=1&autoplay=1&loop=1&muted=1&autopause=0&controls=0&title=0&byline=0&portrait=0&badge=0&app_id=58479"
             title="Bilgarasje hero (desktop)"
             allow="autoplay; fullscreen; picture-in-picture"
             referrerPolicy="strict-origin-when-cross-origin"
