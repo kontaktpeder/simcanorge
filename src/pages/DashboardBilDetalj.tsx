@@ -62,6 +62,11 @@ export default function DashboardBilDetalj() {
     brand: "", model: "", variant: "", body_type: "", year: "", category: "registrert", tags: "",
   });
   const [storyForm, setStoryForm] = useState("");
+  const [isEditingRelationship, setIsEditingRelationship] = useState(false);
+  const [relationshipType, setRelationshipType] = useState<RelationshipType | "">("current_owner");
+  const [relationshipNote, setRelationshipNote] = useState("");
+  const [relationshipIsPublic, setRelationshipIsPublic] = useState(true);
+  const updateRelationship = useUpdateCarRelationship();
 
   useEffect(() => {
     if (!authLoading && !user) navigate('/login?returnUrl=/dashboard');
