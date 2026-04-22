@@ -338,10 +338,10 @@ export default function DashboardBilDetalj() {
             }} />
           </div>
           <div className="relative z-10 max-w-[900px] mx-auto px-5 sm:px-8 pt-8 pb-10 sm:pt-10 sm:pb-14">
-            <Link to="/dashboard/mine-biler"
+            <Link to="/garasje"
               className="inline-flex items-center gap-1.5 text-white/30 hover:text-white/60 mb-6 transition-colors text-[13px] uppercase tracking-[0.15em] font-semibold"
               style={oswald}>
-              <ArrowLeft className="w-4 h-4" /> Mine biler og historier
+              <ArrowLeft className="w-4 h-4" /> Garasje
             </Link>
             <div className="flex items-center gap-3 mb-3">
               {car.overhauled && (
