@@ -598,23 +598,25 @@ const BilDetalj = () => {
 
       {/* Quick Facts Section */}
       {quickFacts.length > 0 && (
-        <section className="py-8 md:py-12 bg-muted/50">
+        <section className="py-8 md:py-12 bg-gradient-to-b from-transparent via-white/[0.02] to-transparent border-y border-white/[0.06]">
           <div className="container mx-auto px-4">
             <AnimatedSection delay={200}>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 stagger-children">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4 stagger-children">
                 {quickFacts.map((fact, index) => {
                   const Icon = fact.icon;
                   return (
                     <div 
                       key={fact.label}
-                      className="bg-card border-4 border-foreground shadow-brutal p-4 hover-lift"
+                      className="relative bg-white/[0.04] border border-white/[0.10] p-4 rounded-lg hover:border-[#34eab8]/30 hover:bg-white/[0.06] transition-all overflow-hidden group"
                       style={{ animationDelay: `${index * 100}ms` }}
                     >
-                      <dt className="text-xs font-display uppercase text-muted-foreground mb-1 flex items-center gap-1.5">
+                      {/* subtle sheen */}
+                      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-60" />
+                      <dt className="text-[11px] font-sans font-bold uppercase tracking-[0.16em] text-[#34eab8] mb-1.5 flex items-center gap-1.5">
                         <Icon className="w-3 h-3" />
                         {fact.label}
                       </dt>
-                      <dd className="font-serif text-lg capitalize">{fact.value}</dd>
+                      <dd className="font-sans font-semibold text-[16px] md:text-[17px] text-white capitalize leading-tight">{fact.value}</dd>
                     </div>
                   );
                 })}
