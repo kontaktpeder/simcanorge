@@ -184,7 +184,7 @@ export function Header() {
                   <LogIn className="w-3.5 h-3.5" /> Logg inn
                 </Link>
               )}
-              <Link to="/send-inn" onClick={() => setMobileMenuOpen(false)}
+              <Link to={user ? "/dashboard/opprett-bil" : "/send-inn"} onClick={() => setMobileMenuOpen(false)}
                 className="py-2 text-center text-[11px] tracking-[0.12em] uppercase font-bold rounded text-[#0c1117]"
                 style={{ ...chakra, background: 'linear-gradient(135deg, #2dd4a8, #14b8a6)' }}>
                 Legg til bil +
