@@ -2,6 +2,8 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { User, MapPin, ChevronRight, Mail, Phone } from 'lucide-react';
 import { useCarOwnerProfile } from '@/hooks/useOwnerProfile';
+import { FEATURES } from '@/config/features';
+import { RELATIONSHIP_LABELS, type RelationshipType } from '@/lib/relationshipTypes';
 
 interface OwnerData {
   display_name: string;
@@ -17,9 +19,19 @@ interface OwnerCardProps {
   carId?: string;
   owner?: OwnerData | null;
   heading?: string;
+  relationshipType?: RelationshipType | null;
+  relationshipNote?: string | null;
+  relationshipIsPublic?: boolean;
 }
 
-export function OwnerCard({ carId, owner: ownerProp, heading = 'Relasjon' }: OwnerCardProps) {
+export function OwnerCard({
+  carId,
+  owner: ownerProp,
+  heading = 'Relasjon',
+  relationshipType,
+  relationshipNote,
+  relationshipIsPublic = true,
+}: OwnerCardProps) {
   const { data: fetchedOwner, isLoading } = useCarOwnerProfile(carId);
 
   const owner: OwnerData | null = ownerProp || (fetchedOwner as OwnerData | null);
