@@ -119,7 +119,7 @@ export default function DashboardMineBiler() {
                 className="text-[1.4rem] sm:text-[1.8rem] md:text-[2.2rem] leading-[0.93] uppercase tracking-[0.02em] text-white font-bold italic"
                 style={{ ...chakra, textShadow: '0 2px 20px rgba(0,0,0,0.4)' }}
               >
-                Mine biler
+                Mine biler og historier
               </h1>
               <p className="text-[12px] sm:text-[13px] text-white/35 mt-1.5 max-w-md">
                 Trykk på en bil for å legge til bilder og historie.

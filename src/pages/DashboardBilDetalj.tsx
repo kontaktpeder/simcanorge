@@ -286,7 +286,7 @@ export default function DashboardBilDetalj() {
             <Link to="/dashboard/mine-biler"
               className="inline-flex items-center gap-1.5 text-white/30 hover:text-white/60 mb-6 transition-colors text-[13px] uppercase tracking-[0.15em] font-semibold"
               style={oswald}>
-              <ArrowLeft className="w-4 h-4" /> Mine biler
+              <ArrowLeft className="w-4 h-4" /> Mine biler og historier
             </Link>
             <div className="flex items-center gap-3 mb-3">
               {car.overhauled && (
