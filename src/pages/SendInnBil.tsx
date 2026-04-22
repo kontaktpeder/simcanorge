@@ -43,23 +43,18 @@ async function resolvePostClaimPath(carId: string): Promise<string> {
   return "/dashboard/mine-biler";
 }
 
-function navigateToOnboarding(
+function navigateToCarAfterClaim(
   carId: string,
   navigate: ReturnType<typeof useNavigate>,
   toast: ReturnType<typeof useToast>["toast"],
 ) {
   void (async () => {
-    const returnUrl = await resolvePostClaimPath(carId);
-    const params = new URLSearchParams();
-    params.set("sett-passord", "1");
-    params.set("returnUrl", returnUrl);
-
+    const path = await resolvePostClaimPath(carId);
     toast({
-      title: "Bilen er koblet til kontoen din",
-      description: "Velg et passord og fullfør profilen for å åpne bilrommet.",
+      title: "Bilen er din",
+      description: "Du kan sette passord senere fra profilen din.",
     });
-
-    navigate(`/kom-i-gang?${params.toString()}`);
+    navigate(path);
   })();
 }
 
