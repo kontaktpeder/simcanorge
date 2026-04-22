@@ -16,6 +16,7 @@ import { CarWizardPreview } from "./CarWizardPreview";
 import { INITIAL_WIZARD_DATA, STEP_LABELS, type WizardData, type WizardStep } from "./WizardTypes";
 import { useAuth } from "@/hooks/useAuth";
 import { useMyPersonProfile } from "@/hooks/useMyPersonProfile";
+import { FEATURES } from "@/config/features";
 
 function normalizeRegistrationNumber(raw: string): string {
   return raw.replace(/[\s\-]/g, "").toUpperCase();
@@ -83,6 +84,7 @@ export function CarWizard({ onSuccess }: CarWizardProps) {
     if (data.clubLinkRequested && !data.clubPageId) fieldErrors.club_page = "Velg klubb";
     if (!data.brand) fieldErrors.brand = "Velg merke";
     if (!data.car_model) fieldErrors.car_model = "Velg modell";
+    if (FEATURES.relationshipModelV1 && !data.relationship_type) fieldErrors.relationship_type = "Velg relasjon";
 
     if (Object.keys(fieldErrors).length > 0) {
       setErrors(fieldErrors);
@@ -161,6 +163,11 @@ export function CarWizard({ onSuccess }: CarWizardProps) {
       const selectedClub = data.clubLinkRequested && data.clubPageId
         ? { id: data.clubPageId } : null;
 
+      const relationshipNote =
+        data.relationship_type === "other"
+          ? (data.relationship_note?.trim() || null)
+          : null;
+
       const submissionPayload = {
         submitted_at: new Date().toISOString(),
         owner_name: data.owner_name,
@@ -179,6 +186,12 @@ export function CarWizard({ onSuccess }: CarWizardProps) {
         club_join_request: selectedClub
           ? { requested: true, page_id: selectedClub.id, page_title: null, page_slug: null, message: data.clubMessage.trim() || null }
           : { requested: false, page_id: null, page_title: null, page_slug: null, message: null },
+        relationship: FEATURES.relationshipModelV1
+          ? {
+              type: data.relationship_type || "current_owner",
+              note: relationshipNote,
+            }
+          : null,
         image_count: uploadedUrls.length,
         images_selected: data.images.length,
       };
@@ -211,13 +224,23 @@ export function CarWizard({ onSuccess }: CarWizardProps) {
 
         if (carError) throw carError;
 
-        // Create car_owners row
-        const { error: ownerError } = await supabase.from("car_owners").insert({
+        // Create car_owners row (with relationship fields when flag is on)
+        const ownerInsert: Record<string, unknown> = {
           car_id: carId,
           user_id: authUser.id,
           email: authUser.email || data.email.trim().toLowerCase(),
           role: "owner",
-        });
+        };
+        if (FEATURES.relationshipModelV1) {
+          const relType = data.relationship_type || "current_owner";
+          ownerInsert.relationship_type = relType;
+          ownerInsert.relationship_note = relType === "other" ? relationshipNote : null;
+          ownerInsert.relationship_is_verified = relType === "current_owner";
+          ownerInsert.relationship_is_public = true;
+        }
+        const { error: ownerError } = await supabase
+          .from("car_owners")
+          .insert(ownerInsert as never);
         if (ownerError) console.error("car_owners insert error:", ownerError);
 
         // Insert images
