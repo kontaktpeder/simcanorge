@@ -10,6 +10,7 @@ import { Layout } from '@/components/layout/Layout';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { SendInnBilForm } from '@/components/car/SendInnBilForm';
+import { FEATURES } from '@/config/features';
 
 import { useOwnerProfile, useLegacyOwnerId } from '@/hooks/useOwnerProfile';
 import { useGuide } from '@/hooks/useGuide';
@@ -215,28 +216,30 @@ export default function Dashboard() {
           SEKSJON 1 — Garasje & Marked
           ═══════════════════════════════════════════════ */}
       <SectionLabel label="Garasje & Marked" delay={0.05} />
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+      <div className={`grid grid-cols-1 ${FEATURES.simpleLaunchMode ? '' : 'sm:grid-cols-2'} gap-4 mb-8`}>
         <DashCard to="/dashboard/mine-biler" icon={Car} delay={0.1} data-guide="my-cars-card">
           <DashTitle>Mine biler og historier</DashTitle>
           <DashDesc>Se og rediger bilene du har en relasjon til</DashDesc>
           <DashCount>{carsLoading ? '—' : carCount || 0}</DashCount>
         </DashCard>
 
-        <DashCard to="/dashboard/mine-annonser" icon={ShoppingBag} delay={0.15}>
-          <DashTitle>Mine annonser</DashTitle>
-          <DashDesc>
-            {isSellerMinimumComplete(ownerProfile)
-              ? (myListings?.length ?? 0) === 0 ? 'Opprett din første annonse' : 'Se og rediger annonsene dine'
-              : ownerProfile ? 'Fullfør profilen for å selge' : 'Opprett entusiastprofil for å selge'}
-          </DashDesc>
-          <DashCount>{myListings?.length || 0}</DashCount>
-        </DashCard>
+        {!FEATURES.simpleLaunchMode && (
+          <DashCard to="/dashboard/mine-annonser" icon={ShoppingBag} delay={0.15}>
+            <DashTitle>Mine annonser</DashTitle>
+            <DashDesc>
+              {isSellerMinimumComplete(ownerProfile)
+                ? (myListings?.length ?? 0) === 0 ? 'Opprett din første annonse' : 'Se og rediger annonsene dine'
+                : ownerProfile ? 'Fullfør profilen for å selge' : 'Opprett entusiastprofil for å selge'}
+            </DashDesc>
+            <DashCount>{myListings?.length || 0}</DashCount>
+          </DashCard>
+        )}
       </div>
 
       {/* ═══════════════════════════════════════════════
           SEKSJON 2 — Sider & Arrangementer
           ═══════════════════════════════════════════════ */}
-      {personProfile && (
+      {personProfile && !FEATURES.simpleLaunchMode && (
         <>
           <SectionLabel label="Sider & Arrangementer" delay={0.2} />
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
@@ -288,9 +291,9 @@ export default function Dashboard() {
           STOR CTA — Send inn bil
           ═══════════════════════════════════════════════ */}
       <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.45 }}>
-        <div
-          onClick={handleOpenForm}
-          className="cursor-pointer rounded-sm border border-[#c4962c]/20 hover:border-[#c4962c]/40 transition-all duration-300 overflow-hidden group hover:shadow-[0_8px_30px_-10px_rgba(196,150,44,0.15)]"
+        <Link
+          to="/dashboard/opprett-bil"
+          className="block cursor-pointer rounded-sm border border-[#c4962c]/20 hover:border-[#c4962c]/40 transition-all duration-300 overflow-hidden group hover:shadow-[0_8px_30px_-10px_rgba(196,150,44,0.15)]"
           style={{ background: 'linear-gradient(135deg, #f5efe6 0%, #ede5d8 100%)' }}
         >
           <div className="flex items-center justify-between px-6 sm:px-8 py-6 sm:py-8">
@@ -309,7 +312,7 @@ export default function Dashboard() {
             </div>
             <ChevronRight className="w-5 h-5 text-[#c4962c]/40 group-hover:text-[#c4962c] group-hover:translate-x-1 transition-all flex-shrink-0" />
           </div>
-        </div>
+        </Link>
       </motion.div>
 
       {/* Send inn bil skjema */}
