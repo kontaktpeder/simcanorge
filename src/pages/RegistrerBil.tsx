@@ -30,6 +30,13 @@ export default function RegistrerBil() {
           property="og:description"
           content="Gi bilen din en skikkelig plass på nett. Profesjonell bilside du kan dele."
         />
+        {/* Speed up Vimeo background video load */}
+        <link rel="preconnect" href="https://player.vimeo.com" crossOrigin="" />
+        <link rel="preconnect" href="https://i.vimeocdn.com" crossOrigin="" />
+        <link rel="preconnect" href="https://f.vimeocdn.com" crossOrigin="" />
+        <link rel="dns-prefetch" href="https://player.vimeo.com" />
+        <link rel="dns-prefetch" href="https://i.vimeocdn.com" />
+        <link rel="dns-prefetch" href="https://f.vimeocdn.com" />
       </Helmet>
 
       {/* HERO */}
