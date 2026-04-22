@@ -16,97 +16,71 @@ interface MonthlyCoverModuleProps {
 }
 
 /**
- * MonthlyCoverModule - Premium "cover" layout for månedens bil
- * 
- * Distinct from TopStory/Hero:
- * - Full-width with split layout (image left, cover panel right)
- * - Dark panel with accent highlights
- * - "Månedens bil" badge
- * - More prominent, cover-like typography
+ * MonthlyCoverModule – magazine-style cover matching /biler look & feel
+ * Light bg, font-serif year, font-display title, accent badge.
  */
 export function MonthlyCoverModule({ car }: MonthlyCoverModuleProps) {
   const mainImage = car.car_images?.[0];
-  
-  // Longer excerpt for cover
-  const excerpt = car.story 
-    ? car.story.slice(0, 280).trim() + (car.story.length > 280 ? '…' : '')
+
+  const excerpt = car.story
+    ? car.story.slice(0, 240).trim() + (car.story.length > 240 ? '…' : '')
     : null;
 
   return (
-    <article className="relative w-full mb-8 md:mb-12 lg:mb-16">
-      <Link 
-        to={`/biler/${car.slug}`}
-        className="group block"
-      >
-        {/* Cover layout: image + panel */}
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr,380px] xl:grid-cols-[1fr,420px]">
-          
-          {/* Main image - clean, no overlay */}
-          <div className="relative aspect-[4/3] lg:aspect-auto lg:min-h-[500px] xl:min-h-[560px] overflow-hidden bg-muted">
+    <article className="relative w-full mb-12 md:mb-20">
+      <Link to={`/biler/${car.slug}`} className="group block">
+        {/* Section label – matches grid headers */}
+        <div className="flex items-center gap-3 mb-4 md:mb-6">
+          <span className="font-display uppercase tracking-[0.2em] text-[11px] md:text-xs text-accent">
+            Månedens bil
+          </span>
+          <span className="flex-1 h-px bg-foreground/15" />
+        </div>
+
+        {/* Two-column magazine cover */}
+        <div className="grid grid-cols-1 lg:grid-cols-[1.4fr,1fr] gap-4 md:gap-8 items-stretch">
+          {/* Image */}
+          <div className="relative aspect-[4/3] lg:aspect-auto lg:min-h-[480px] overflow-hidden bg-muted">
             {mainImage ? (
               <img
                 {...getResponsiveImageProps(
                   mainImage.image_url,
                   mainImage.alt_text || car.title,
-                  { sizes: '100vw', priority: true }
+                  { sizes: '(min-width: 1024px) 60vw, 100vw', priority: true },
                 )}
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.02]"
               />
             ) : (
-              <div className="w-full h-full bg-gradient-to-br from-muted to-muted-foreground/20" />
+              <div className="w-full h-full bg-gradient-to-br from-muted to-muted-foreground/10" />
             )}
-            
-            {/* "Månedens bil" badge - positioned on image */}
-            <div className="absolute top-4 left-4 md:top-6 md:left-6 lg:top-8 lg:left-8">
-              <div className="bg-accent text-accent-foreground px-4 py-2 md:px-5 md:py-2.5 font-display uppercase text-xs md:text-sm tracking-[0.15em] border-2 border-foreground shadow-[3px_3px_0_0_hsl(var(--foreground))]">
-                Månedens bil
-              </div>
-            </div>
           </div>
-          
-          {/* Cover panel - dark with accent details */}
-          <div className="bg-foreground text-background p-6 md:p-8 lg:p-10 xl:p-12 flex flex-col justify-center relative overflow-hidden">
-            {/* Decorative line accent */}
-            <div className="absolute top-0 left-0 w-1 h-full bg-accent" />
-            
-            {/* Year - dominant display */}
+
+          {/* Text panel – light, serif year, display title */}
+          <div className="flex flex-col justify-center px-1 md:px-2 lg:pl-4">
             {car.year && (
-              <span className="font-serif text-6xl md:text-7xl lg:text-8xl xl:text-9xl text-background/20 absolute -top-4 -right-4 select-none pointer-events-none">
+              <span className="font-serif text-5xl md:text-6xl lg:text-7xl text-primary/80 leading-none mb-3 md:mb-4">
                 {car.year}
               </span>
             )}
-            
-            <div className="relative z-10">
-              {/* Year - readable version */}
-              {car.year && (
-                <span className="font-serif text-4xl md:text-5xl lg:text-6xl text-accent block mb-3">
-                  {car.year}
-                </span>
-              )}
-              
-              {/* Brand & model */}
-              <span className="font-display text-xs md:text-sm tracking-[0.2em] text-background/60 uppercase block mb-3">
-                {car.brand ? `${car.brand} · ${car.model}` : car.model}
-              </span>
-              
-              {/* Title - cover style */}
-              <h2 className="font-display text-2xl md:text-3xl lg:text-4xl text-background tracking-wide uppercase leading-tight mb-4 lg:mb-6">
-                {car.title}
-              </h2>
-              
-              {/* Excerpt */}
-              {excerpt && (
-                <p className="text-background/70 text-sm md:text-base leading-relaxed mb-6 lg:mb-8 line-clamp-4 lg:line-clamp-5">
-                  {excerpt}
-                </p>
-              )}
-              
-              {/* CTA with hover animation */}
-              <span className="inline-flex items-center gap-2 font-display text-sm tracking-[0.15em] text-accent uppercase transition-all group-hover:tracking-[0.25em] group-hover:gap-3">
-                Les historien
-                <span className="transition-transform group-hover:translate-x-1">→</span>
-              </span>
-            </div>
+
+            <span className="font-display uppercase tracking-[0.18em] text-xs md:text-sm text-muted-foreground mb-2 md:mb-3">
+              {car.brand ? `${car.brand} · ${car.model}` : car.model}
+            </span>
+
+            <h2 className="font-display text-2xl md:text-3xl lg:text-4xl xl:text-5xl text-foreground leading-[1.05] mb-4 md:mb-6 group-hover:text-primary transition-colors">
+              {car.title}
+            </h2>
+
+            {excerpt && (
+              <p className="text-foreground/70 text-base md:text-lg leading-relaxed mb-6 md:mb-8 line-clamp-4 md:line-clamp-5 max-w-prose">
+                {excerpt}
+              </p>
+            )}
+
+            <span className="inline-flex items-center gap-2 font-display text-xs md:text-sm uppercase tracking-[0.2em] text-accent transition-all group-hover:gap-3">
+              Les historien
+              <span className="transition-transform group-hover:translate-x-1">→</span>
+            </span>
           </div>
         </div>
       </Link>
