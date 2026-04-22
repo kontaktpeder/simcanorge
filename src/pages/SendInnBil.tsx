@@ -201,6 +201,17 @@ export default function SendInnBil() {
     setState({ step: "success", email });
   };
 
+  if (state.step === "mismatch") {
+    return (
+      <MismatchView
+        carId={state.carId}
+        signedInEmail={state.signedInEmail}
+        onResend={handleResendToCorrectEmail}
+        onSignOut={handleSignOutAndRetry}
+      />
+    );
+  }
+
   if (state.step === "linking") {
     return (
       <Layout contained>
