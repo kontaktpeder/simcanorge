@@ -916,7 +916,7 @@ const BilDetalj = () => {
       <section className="bg-[#f5f4f0] py-8">
         <div className="container mx-auto px-4">
           <div className="max-w-2xl mx-auto">
-            <CommentSection carId={car.id} />
+            <CommentSection carId={car.id} variant="light" />
           </div>
         </div>
       </section>
