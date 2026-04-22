@@ -13,6 +13,23 @@
   display: none;
 }
 
+/* Prevent iOS Safari zoom-on-focus for form fields (requires >=16px font-size).
+   Native feel: inputs should never trigger viewport zoom on focus. */
+@media (max-width: 767px) {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]),
+  textarea,
+  select,
+  [contenteditable="true"] {
+    font-size: 16px !important;
+  }
+}
+
+/* Give focused fields breathing room so the browser doesn't snap-scroll harshly. */
+input, textarea, select, [contenteditable="true"] {
+  scroll-margin-top: 96px;
+  scroll-margin-bottom: 120px;
+}
+
 /* Simca Norge Design System - Metallic Badge/Enamel Sign Aesthetic
    Inspired by classic French car badges: chrome frames, metallic blue lacquer, enamel red
    All colors MUST be HSL for semantic tokens, hex for gradients.
