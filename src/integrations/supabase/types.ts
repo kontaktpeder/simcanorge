@@ -324,6 +324,14 @@ export type Database = {
           created_at: string
           email: string
           id: string
+          relationship_end_year: number | null
+          relationship_is_public: boolean
+          relationship_is_verified: boolean
+          relationship_note: string | null
+          relationship_start_year: number | null
+          relationship_type:
+            | Database["public"]["Enums"]["car_relationship_type"]
+            | null
           role: string
           user_id: string
         }
@@ -332,6 +340,14 @@ export type Database = {
           created_at?: string
           email: string
           id?: string
+          relationship_end_year?: number | null
+          relationship_is_public?: boolean
+          relationship_is_verified?: boolean
+          relationship_note?: string | null
+          relationship_start_year?: number | null
+          relationship_type?:
+            | Database["public"]["Enums"]["car_relationship_type"]
+            | null
           role?: string
           user_id: string
         }
@@ -340,6 +356,14 @@ export type Database = {
           created_at?: string
           email?: string
           id?: string
+          relationship_end_year?: number | null
+          relationship_is_public?: boolean
+          relationship_is_verified?: boolean
+          relationship_note?: string | null
+          relationship_start_year?: number | null
+          relationship_type?:
+            | Database["public"]["Enums"]["car_relationship_type"]
+            | null
           role?: string
           user_id?: string
         }
@@ -2001,6 +2025,13 @@ export type Database = {
     }
     Enums: {
       app_role: "admin"
+      car_relationship_type:
+        | "current_owner"
+        | "former_owner"
+        | "restorer"
+        | "storyteller"
+        | "contributor"
+        | "other"
       car_source: "manual" | "submission" | "owner_self"
       car_status: "submitted" | "draft" | "published" | "archived"
     }
@@ -2131,6 +2162,14 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin"],
+      car_relationship_type: [
+        "current_owner",
+        "former_owner",
+        "restorer",
+        "storyteller",
+        "contributor",
+        "other",
+      ],
       car_source: ["manual", "submission", "owner_self"],
       car_status: ["submitted", "draft", "published", "archived"],
     },
