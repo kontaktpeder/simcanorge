@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { ArrowRight, Car, Share2, Image as ImageIcon, Sparkles } from "lucide-react";
@@ -15,6 +16,25 @@ const BENEFITS = [
 export default function RegistrerBil() {
   const { user } = useAuth();
   const primaryHref = user ? "/dashboard/opprett-bil" : "/send-inn";
+
+  // Decide video variant synchronously to avoid loading both iframes
+  const [isDesktop, setIsDesktop] = useState<boolean>(() =>
+    typeof window !== "undefined" ? window.innerWidth >= 768 : true
+  );
+  const [videoLoaded, setVideoLoaded] = useState(false);
+
+  useEffect(() => {
+    const mql = window.matchMedia("(min-width: 768px)");
+    const onChange = () => setIsDesktop(mql.matches);
+    mql.addEventListener("change", onChange);
+    return () => mql.removeEventListener("change", onChange);
+  }, []);
+
+  const videoId = isDesktop ? "1185630100" : "1185602288";
+  const videoSize = isDesktop
+    ? { width: "max(100vw, 133.33vh)", height: "max(75vw, 100vh)" }
+    : { width: "max(100vw, 177.78vh)", height: "max(56.25vw, 100vh)" };
+
 
   return (
     <div className="min-h-[100svh] bg-[#070b10] text-white">
