@@ -13,6 +13,7 @@ const AnnonseDetalj = lazy(() => import("@/pages/AnnonseDetalj"));
 const OmOss = lazy(() => import("@/pages/OmOss"));
 const Historie = lazy(() => import("@/pages/Historie"));
 const SendInnBil = lazy(() => import("@/pages/SendInnBil"));
+const LeggTilBil = lazy(() => import("@/pages/LeggTilBil"));
 const Kontakt = lazy(() => import("@/pages/Kontakt"));
 const Personvern = lazy(() => import("@/pages/Personvern"));
 const AcceptInvitation = lazy(() => import("@/pages/AcceptInvitation"));
@@ -95,7 +96,8 @@ export const routes: RouteConfig[] = [
   { path: "/markedsplass/:branch", element: Markedsplass, isPublic: true },
   { path: "/markedsplass", element: Markedsplass, label: "Markedsplass", description: "Deler, tilbehør og annonser", icon: ShoppingBag, isPublic: true, showInNav: true },
   { path: "/arrangement", element: EventsPage, label: "Arrangement", description: "Kommende biltreff og events", icon: CalendarDays, isPublic: true, showInNav: true },
-  { path: "/send-inn", element: SendInnBil, label: "Del din bil", description: "Del din bil med oss", icon: Send, isPublic: true, showInNav: true },
+  { path: "/send-inn", element: SendInnBil, isPublic: true, showInNav: false },
+  { path: "/legg-til-bil", element: LeggTilBil, isPublic: true, showInNav: false },
   { path: "/historie", element: Historie, label: "Historie", description: "Lær om bilhistorien vår", icon: BookOpen, isPublic: true, showInNav: true },
   { path: "/om-oss", element: OmOss, label: "Om oss", description: "Hvem står bak Bilgarasje.no", icon: Users, isPublic: true, showInNav: true },
   { path: "/kontakt", element: Kontakt, label: "Kontakt", description: "Ta kontakt med oss", icon: Mail, isPublic: true, showInNav: true },
