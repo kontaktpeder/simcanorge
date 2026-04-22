@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { ReportProblemModal } from "@/components/support";
 import { useAuth } from "@/hooks/useAuth";
+import { FEATURES } from "@/config/features";
 import carSilhouette from "@/assets/car-silhouette.png";
 
 const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
@@ -41,8 +42,12 @@ export function Footer() {
               <h3 className="text-[10px] tracking-[0.2em] uppercase text-[#2dd4a8]/50 font-bold mb-3" style={chakra}>Utforsk</h3>
               <nav className="flex flex-col gap-1.5 text-[12px]" style={chakra}>
                 <Link to="/biler" className="text-white/40 hover:text-[#2dd4a8] transition-colors">Biler</Link>
-                <Link to="/markedsplass" className="text-white/40 hover:text-[#2dd4a8] transition-colors">Markedsplass</Link>
-                <Link to="/arrangement" className="text-white/40 hover:text-[#2dd4a8] transition-colors">Arrangementer</Link>
+                {!FEATURES.simpleLaunchMode && (
+                  <>
+                    <Link to="/markedsplass" className="text-white/40 hover:text-[#2dd4a8] transition-colors">Markedsplass</Link>
+                    <Link to="/arrangement" className="text-white/40 hover:text-[#2dd4a8] transition-colors">Arrangementer</Link>
+                  </>
+                )}
                 <Link to="/historie" className="text-white/40 hover:text-[#2dd4a8] transition-colors">Historie</Link>
               </nav>
             </div>
@@ -51,8 +56,10 @@ export function Footer() {
             <div>
               <h3 className="text-[10px] tracking-[0.2em] uppercase text-[#2dd4a8]/50 font-bold mb-3" style={chakra}>Delta</h3>
               <nav className="flex flex-col gap-1.5 text-[12px]" style={chakra}>
-                <Link to="/send-inn" className="text-white/40 hover:text-[#2dd4a8] transition-colors">Legg til bil +</Link>
-                <Link to="/start-annonse" className="text-white/40 hover:text-[#2dd4a8] transition-colors">Opprett annonse</Link>
+                <Link to={user ? "/dashboard/opprett-bil" : "/send-inn"} className="text-white/40 hover:text-[#2dd4a8] transition-colors">Legg til bil +</Link>
+                {!FEATURES.simpleLaunchMode && (
+                  <Link to="/start-annonse" className="text-white/40 hover:text-[#2dd4a8] transition-colors">Opprett annonse</Link>
+                )}
                 <Link to="/kontakt" className="text-white/40 hover:text-[#2dd4a8] transition-colors">Kontakt oss</Link>
                 <button
                   onClick={() => setReportModalOpen(true)}

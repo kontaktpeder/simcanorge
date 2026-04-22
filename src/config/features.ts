@@ -5,7 +5,7 @@ export const FEATURES = {
    * Hides/de-prioritises secondary modules (marketplace, clubs, events, aktører)
    * to focus the launch on the core "share your car" flow.
    */
-  simpleLaunchMode: import.meta.env.VITE_FEATURE_SIMPLE_LAUNCH_MODE === "true",
+  simpleLaunchMode: import.meta.env.VITE_FEATURE_SIMPLE_LAUNCH_MODE !== "false",
   /**
    * Enables the relationship-type field on car submission flows.
    * Off until DB migration + UI integration is complete.
