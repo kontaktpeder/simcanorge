@@ -126,6 +126,9 @@ export function StepVerify({ email, carId, onSkip, onVerified }: StepVerifyProps
           Vil du koble bilen til en konto? Da kan du redigere den selv senere.
           Vi sender en innloggingslenke til <strong className="text-foreground">{activeEmail}</strong>.
         </p>
+        <p className="mx-auto max-w-md rounded-md border border-border bg-muted/40 px-3 py-2 text-xs text-muted-foreground">
+          Viktig: bruk samme e-post som du vil logge inn med. E-posten brukes som nøkkel for å koble bilen til kontoen din.
+        </p>
       </div>
 
       {!linkSent ? (
