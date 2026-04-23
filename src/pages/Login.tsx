@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { z } from 'zod';
 import { getBrowserAuthSupport } from '@/lib/browserSupport';
+import { safeInternalPath } from '@/lib/navigation';
 
 const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
 const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
