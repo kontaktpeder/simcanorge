@@ -93,7 +93,7 @@ export default function AdminCarRelationshipRequests() {
   const sorted = useMemo(() => rows, [rows]);
 
   return (
-    <AdminLayout>
+    <AdminLayout title="Relasjonsforespørsler">
       <div className="space-y-6">
         <div className="flex items-center justify-between gap-3">
           <div>
