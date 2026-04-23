@@ -259,8 +259,15 @@ export function RegNrGate({ onContinue }: RegNrGateProps) {
               <Button
                 className="btn-enamel-blue h-12 w-full text-base"
                 onClick={() => handleClaimIntent(hits[0])}
+                disabled={checkingLink}
               >
-                Dette er bilen min
+                {checkingLink ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Sjekker…
+                  </>
+                ) : (
+                  "Dette er bilen min"
+                )}
               </Button>
               <p className="text-xs text-muted-foreground text-center -mt-1">
                 {user
@@ -271,6 +278,7 @@ export function RegNrGate({ onContinue }: RegNrGateProps) {
                 variant="outline"
                 className="h-11 w-full"
                 onClick={() => onContinue(norm)}
+                disabled={checkingLink}
               >
                 Dette er en annen bil
               </Button>
