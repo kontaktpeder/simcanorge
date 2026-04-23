@@ -187,9 +187,11 @@ export default function RelasjonSendt() {
                     {isPublished ? "Forespørsel mottatt" : "Venter på behandling"}
                   </p>
                   <p className="text-muted-foreground text-xs sm:text-sm mt-0.5">
-                    {isPublished
-                      ? "En ansvarlig vurderer forespørselen. Du får beskjed her og i innboksen når den er behandlet."
-                      : "Bilen er ikke offentlig ennå. Vi varsler deg så snart relasjonen er godkjent."}
+                    En ansvarlig vurderer forespørselen. Når den er behandlet, dukker oppdateringen opp under{" "}
+                    <Link to="/garasje" className="underline underline-offset-2 hover:text-foreground">
+                      Min garasje
+                    </Link>
+                    .
                   </p>
                 </div>
               </div>
