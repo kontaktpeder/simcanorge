@@ -210,6 +210,16 @@ export function RegNrGate({ onContinue }: RegNrGateProps) {
           </Button>
         </div>
       </div>
+
+      <RelationshipRequestDialog
+        open={!!requestDialogFor}
+        onOpenChange={(open) => {
+          if (!open) setRequestDialogFor(null);
+        }}
+        carId={requestDialogFor?.id ?? ""}
+        carTitle={requestDialogFor?.title}
+        defaultRelationship="current_owner"
+      />
     </div>
   );
 }
