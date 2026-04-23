@@ -317,6 +317,72 @@ export function RegNrGate({ onContinue }: RegNrGateProps) {
         carTitle={requestDialogFor?.title}
         defaultRelationship="current_owner"
       />
+
+      <AlreadyLinkedDialog
+        state={alreadyLinked}
+        onClose={() => setAlreadyLinked(null)}
+        onNavigate={(to) => {
+          setAlreadyLinked(null);
+          navigate(to);
+        }}
+      />
     </div>
+  );
+}
+
+function AlreadyLinkedDialog({
+  state,
+  onClose,
+  onNavigate,
+}: {
+  state: AlreadyLinkedState | null;
+  onClose: () => void;
+  onNavigate: (to: string) => void;
+}) {
+  const open = !!state;
+
+  let title = "";
+  let description = "";
+  let primaryLabel = "";
+  let primaryTo = "";
+  let primaryIcon = <Home className="mr-2 h-4 w-4" />;
+
+  if (state?.kind === "owner") {
+    title = "Du er allerede koblet til denne bilen";
+    description = `«${state.hit.title}» ligger allerede i garasjen din. Du kan åpne den i dashbordet for å redigere historie, bilder og tidslinje.`;
+    primaryLabel = "Åpne bilen";
+    primaryTo = `/dashboard/bil/${state.hit.id}`;
+  } else if (state?.kind === "viewer") {
+    title = "Du er allerede knyttet til bilen";
+    description = state.hit.published_at
+      ? `Du har en relasjon til «${state.hit.title}». Du kan se den offentlige profilen, men eierskapet ligger hos noen andre.`
+      : `Du har en relasjon til «${state.hit.title}». Bilen er ikke offentlig ennå — følg med i garasjen din for oppdateringer.`;
+    primaryLabel = state.hit.published_at ? "Se bilen" : "Til min garasje";
+    primaryTo = state.hit.published_at ? `/biler/${state.hit.slug}` : "/garasje";
+    primaryIcon = state.hit.published_at ? <Eye className="mr-2 h-4 w-4" /> : <Home className="mr-2 h-4 w-4" />;
+  } else if (state?.kind === "pending") {
+    title = "Du har allerede en forespørsel på vei";
+    description = `Forespørselen din om «${state.hit.title}» venter på behandling. Du trenger ikke sende den på nytt.`;
+    primaryLabel = "Se status";
+    primaryTo = `/relasjon-sendt/${state.requestId}`;
+    primaryIcon = <ArrowRight className="mr-2 h-4 w-4" />;
+  }
+
+  return (
+    <AlertDialog open={open} onOpenChange={(o) => { if (!o) onClose(); }}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>{title}</AlertDialogTitle>
+          <AlertDialogDescription>{description}</AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Lukk</AlertDialogCancel>
+          <AlertDialogAction onClick={() => onNavigate(primaryTo)}>
+            {primaryIcon}
+            {primaryLabel}
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }
