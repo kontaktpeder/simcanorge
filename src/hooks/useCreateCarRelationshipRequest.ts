@@ -38,9 +38,10 @@ export function useCreateCarRelationshipRequest() {
       return data;
     },
     onSuccess: () => {
+      // Belønningen ligger nå på success-siden — hold toasten kort og lavmælt
+      // for å unngå dobbel "vi har sendt"-støy.
       toast({
         title: "Forespørselen er sendt",
-        description: "Du får beskjed når den er behandlet.",
       });
     },
     onError: (err: any) => {
