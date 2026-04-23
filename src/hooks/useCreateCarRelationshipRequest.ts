@@ -52,6 +52,12 @@ export function useCreateCarRelationshipRequest() {
           description: "Logg inn for å sende en forespørsel.",
           variant: "destructive",
         });
+      } else if (msg.includes("allerede_koblet")) {
+        toast({
+          title: "Du er allerede koblet til denne bilen",
+          description: "Du trenger ikke sende en ny forespørsel — bilen ligger i garasjen din.",
+          variant: "destructive",
+        });
       } else if (msg.includes("uniq_car_relationship_requests_pending") || err?.code === "23505") {
         toast({
           title: "Allerede sendt",

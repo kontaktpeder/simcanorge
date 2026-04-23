@@ -1,29 +1,15 @@
 import { useEffect, useRef, useState } from "react";
-import { Loader2, ExternalLink, ArrowRight, CheckCircle2, Eye, Home } from "lucide-react";
+import { Loader2, ExternalLink, ArrowRight, CheckCircle2, KeyRound, Eye, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { LicensePlateInput } from "./LicensePlateInput";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { FEATURES } from "@/config/features";
 import { RelationshipRequestDialog } from "@/components/car/relationship/RelationshipRequestDialog";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+import { useCarRelationshipGate, type GateOwnership } from "@/hooks/useCarRelationshipGate";
 
 type Hit = { id: string; slug: string; title: string; published_at: string | null };
-
-type AlreadyLinkedState =
-  | { kind: "owner"; hit: Hit }
-  | { kind: "viewer"; hit: Hit }
-  | { kind: "pending"; hit: Hit; requestId: string };
 
 interface RegNrGateProps {
   onContinue: (registrationNumber: string) => void;
@@ -32,6 +18,8 @@ interface RegNrGateProps {
 function normalize(raw: string): string {
   return raw.replace(/[\s\-]/g, "").toUpperCase();
 }
+
+type AlreadyConnected = { hit: Hit; ownership: GateOwnership };
 
 export function RegNrGate({ onContinue }: RegNrGateProps) {
   const { user } = useAuth();
@@ -43,9 +31,10 @@ export function RegNrGate({ onContinue }: RegNrGateProps) {
   const [searching, setSearching] = useState(false);
   const [searched, setSearched] = useState(false);
   const [requestDialogFor, setRequestDialogFor] = useState<Hit | null>(null);
-  const [checkingLink, setCheckingLink] = useState(false);
-  const [alreadyLinked, setAlreadyLinked] = useState<AlreadyLinkedState | null>(null);
+  const [alreadyConnected, setAlreadyConnected] = useState<AlreadyConnected | null>(null);
+  const [gateChecking, setGateChecking] = useState(false);
   const autoOpenedRef = useRef(false);
+  const { resolve: resolveGate } = useCarRelationshipGate();
 
   // Debounced auto-search
   useEffect(() => {
@@ -54,6 +43,7 @@ export function RegNrGate({ onContinue }: RegNrGateProps) {
       setHits([]);
       setThumbs({});
       setSearched(false);
+      setAlreadyConnected(null);
       return;
     }
     const t = setTimeout(async () => {
@@ -63,7 +53,6 @@ export function RegNrGate({ onContinue }: RegNrGateProps) {
         const found = (data as Hit[]) || [];
         setHits(found);
 
-        // Fetch first image per hit (best-effort, public bucket)
         if (found.length > 0) {
           const ids = found.map(h => h.id);
           const { data: imgs } = await supabase
@@ -95,7 +84,32 @@ export function RegNrGate({ onContinue }: RegNrGateProps) {
   const hasHits = searched && hits.length > 0;
   const noHits = searched && hits.length === 0 && norm.length >= 4 && !searching;
 
-  // Auto-open relationship dialog after login redirect (URL-driven rehydration)
+  // Sentral A/B/C-routing for et hit (etter login eller direkte klikk).
+  // A: allerede koblet → vis "Du er allerede koblet"-boks
+  // B: pending request  → naviger til /relasjon-sendt/:id
+  // C: åpne dialog
+  const routeForHit = async (hit: Hit) => {
+    setGateChecking(true);
+    try {
+      const { ownership, pendingRequestId } = await resolveGate(hit.id);
+      if (ownership) {
+        setAlreadyConnected({ hit, ownership });
+        return;
+      }
+      if (pendingRequestId) {
+        navigate(`/relasjon-sendt/${pendingRequestId}`);
+        return;
+      }
+      setRequestDialogFor(hit);
+    } catch (err) {
+      console.warn("gate check failed, opening dialog as fallback", err);
+      setRequestDialogFor(hit);
+    } finally {
+      setGateChecking(false);
+    }
+  };
+
+  // Auto-rehydrer etter login (URL: intent=rel&carId=…) — bruk samme A/B/C-logikk
   useEffect(() => {
     if (autoOpenedRef.current) return;
     if (!user) return;
@@ -106,64 +120,19 @@ export function RegNrGate({ onContinue }: RegNrGateProps) {
     const hit = hits.find(h => h.id === carId);
     if (!hit) return;
     autoOpenedRef.current = true;
-    // Strip intent + carId so refresh doesn't re-trigger; keep reg for context.
+
+    // Strip intent + carId med en gang så refresh ikke re-trigger
     const next = new URLSearchParams(searchParams);
     next.delete("intent");
     next.delete("carId");
     setSearchParams(next, { replace: true });
-    // Run through the same gate as a manual click so existing-link cases route correctly.
-    void resolveClaim(hit);
+
+    void routeForHit(hit);
   }, [user, searching, searched, hits, searchParams, setSearchParams]);
 
-  // Three-way gate: existing owner → dashboard, existing viewer → public/garage,
-  // pending request → success page, else → open relationship dialog.
-  async function resolveClaim(hit: Hit) {
-    if (!user) return;
-    setCheckingLink(true);
-    try {
-      const [{ data: ownerRow }, { data: pendingRow }] = await Promise.all([
-        supabase
-          .from("car_owners")
-          .select("id, role")
-          .eq("car_id", hit.id)
-          .eq("user_id", user.id)
-          .maybeSingle(),
-        supabase
-          .from("car_relationship_requests" as any)
-          .select("id")
-          .eq("car_id", hit.id)
-          .eq("requester_id", user.id)
-          .eq("status", "pending")
-          .maybeSingle(),
-      ]);
-
-      if (ownerRow?.role === "owner") {
-        setAlreadyLinked({ kind: "owner", hit });
-        return;
-      }
-      if (ownerRow) {
-        // Any non-owner row (e.g. viewer) — relationship already exists.
-        setAlreadyLinked({ kind: "viewer", hit });
-        return;
-      }
-      if (pendingRow && (pendingRow as any).id) {
-        setAlreadyLinked({ kind: "pending", hit, requestId: (pendingRow as any).id });
-        return;
-      }
-      setRequestDialogFor(hit);
-    } catch (err) {
-      console.warn("resolveClaim failed", err);
-      // Fall back to opening the dialog so the user isn't blocked.
-      setRequestDialogFor(hit);
-    } finally {
-      setCheckingLink(false);
-    }
-  }
-
-  const handleClaimIntent = (hit: Hit) => {
+  const handleClaimIntent = async (hit: Hit) => {
     if (FEATURES.relationshipRequestsV1) {
       if (!user) {
-        // Write intent into URL so returnUrl carries everything we need to rehydrate.
         const next = new URLSearchParams(window.location.search);
         next.set("reg", norm);
         next.set("intent", "rel");
@@ -172,7 +141,7 @@ export function RegNrGate({ onContinue }: RegNrGateProps) {
         navigate(`/login?returnUrl=${encodeURIComponent(here)}`);
         return;
       }
-      void resolveClaim(hit);
+      await routeForHit(hit);
       return;
     }
     // Fallback: mailto intent
@@ -255,34 +224,40 @@ export function RegNrGate({ onContinue }: RegNrGateProps) {
               ))}
             </div>
 
-            <div className="flex flex-col gap-2 pt-1">
-              <Button
-                className="btn-enamel-blue h-12 w-full text-base"
-                onClick={() => handleClaimIntent(hits[0])}
-                disabled={checkingLink}
-              >
-                {checkingLink ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Sjekker…
-                  </>
-                ) : (
-                  "Dette er bilen min"
-                )}
-              </Button>
-              <p className="text-xs text-muted-foreground text-center -mt-1">
-                {user
-                  ? "Vi kobler deg til bilen etter en kort bekreftelse."
-                  : "Vi sender deg en lenke for å koble bilen til kontoen din."}
-              </p>
-              <Button
-                variant="outline"
-                className="h-11 w-full"
-                onClick={() => onContinue(norm)}
-                disabled={checkingLink}
-              >
-                Dette er en annen bil
-              </Button>
-            </div>
+            {alreadyConnected ? (
+              <AlreadyConnectedCard
+                hit={alreadyConnected.hit}
+                ownership={alreadyConnected.ownership}
+                onDismiss={() => setAlreadyConnected(null)}
+              />
+            ) : (
+              <div className="flex flex-col gap-2 pt-1">
+                <Button
+                  className="btn-enamel-blue h-12 w-full text-base"
+                  onClick={() => handleClaimIntent(hits[0])}
+                  disabled={gateChecking}
+                >
+                  {gateChecking ? (
+                    <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Sjekker…</>
+                  ) : (
+                    "Dette er bilen min"
+                  )}
+                </Button>
+                <p className="text-xs text-muted-foreground text-center -mt-1">
+                  {user
+                    ? "Vi sjekker først om du allerede er koblet til bilen."
+                    : "Vi sender deg en lenke for å koble bilen til kontoen din."}
+                </p>
+                <Button
+                  variant="outline"
+                  className="h-11 w-full"
+                  onClick={() => onContinue(norm)}
+                  disabled={gateChecking}
+                >
+                  Dette er en annen bil
+                </Button>
+              </div>
+            )}
           </div>
         )}
 
@@ -317,72 +292,75 @@ export function RegNrGate({ onContinue }: RegNrGateProps) {
         carTitle={requestDialogFor?.title}
         defaultRelationship="current_owner"
       />
-
-      <AlreadyLinkedDialog
-        state={alreadyLinked}
-        onClose={() => setAlreadyLinked(null)}
-        onNavigate={(to) => {
-          setAlreadyLinked(null);
-          navigate(to);
-        }}
-      />
     </div>
   );
 }
 
-function AlreadyLinkedDialog({
-  state,
-  onClose,
-  onNavigate,
+function AlreadyConnectedCard({
+  hit,
+  ownership,
+  onDismiss,
 }: {
-  state: AlreadyLinkedState | null;
-  onClose: () => void;
-  onNavigate: (to: string) => void;
+  hit: Hit;
+  ownership: GateOwnership;
+  onDismiss: () => void;
 }) {
-  const open = !!state;
-
-  let title = "";
-  let description = "";
-  let primaryLabel = "";
-  let primaryTo = "";
-  let primaryIcon = <Home className="mr-2 h-4 w-4" />;
-
-  if (state?.kind === "owner") {
-    title = "Du er allerede koblet til denne bilen";
-    description = `«${state.hit.title}» ligger allerede i garasjen din. Du kan åpne den i dashbordet for å redigere historie, bilder og tidslinje.`;
-    primaryLabel = "Åpne bilen";
-    primaryTo = `/dashboard/bil/${state.hit.id}`;
-  } else if (state?.kind === "viewer") {
-    title = "Du er allerede knyttet til bilen";
-    description = state.hit.published_at
-      ? `Du har en relasjon til «${state.hit.title}». Du kan se den offentlige profilen, men eierskapet ligger hos noen andre.`
-      : `Du har en relasjon til «${state.hit.title}». Bilen er ikke offentlig ennå — følg med i garasjen din for oppdateringer.`;
-    primaryLabel = state.hit.published_at ? "Se bilen" : "Til min garasje";
-    primaryTo = state.hit.published_at ? `/biler/${state.hit.slug}` : "/garasje";
-    primaryIcon = state.hit.published_at ? <Eye className="mr-2 h-4 w-4" /> : <Home className="mr-2 h-4 w-4" />;
-  } else if (state?.kind === "pending") {
-    title = "Du har allerede en forespørsel på vei";
-    description = `Forespørselen din om «${state.hit.title}» venter på behandling. Du trenger ikke sende den på nytt.`;
-    primaryLabel = "Se status";
-    primaryTo = `/relasjon-sendt/${state.requestId}`;
-    primaryIcon = <ArrowRight className="mr-2 h-4 w-4" />;
-  }
-
+  const isOwner = ownership.role === "owner";
   return (
-    <AlertDialog open={open} onOpenChange={(o) => { if (!o) onClose(); }}>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>{title}</AlertDialogTitle>
-          <AlertDialogDescription>{description}</AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel>Lukk</AlertDialogCancel>
-          <AlertDialogAction onClick={() => onNavigate(primaryTo)}>
-            {primaryIcon}
-            {primaryLabel}
-          </AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
+    <div className="rounded-xl border border-primary/40 bg-background p-4 space-y-3">
+      <div className="flex items-start gap-3">
+        {isOwner ? (
+          <KeyRound className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+        ) : (
+          <Eye className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+        )}
+        <div className="min-w-0">
+          <h4 className="font-display text-base text-foreground">
+            {isOwner
+              ? "Du er allerede koblet til denne bilen i Bilgarasje."
+              : "Du har allerede tilgang til denne bilen."}
+          </h4>
+          <p className="text-sm text-muted-foreground mt-0.5">
+            {isOwner
+              ? "Du står som eier — ingen ny forespørsel trengs."
+              : "Du er knyttet som leser. Du kan se bilen, men ikke redigere."}
+          </p>
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        {isOwner ? (
+          <>
+            <Button asChild className="btn-enamel-blue h-11 w-full">
+              <Link to={`/dashboard/bil/${hit.id}`}>Åpne i garasje</Link>
+            </Button>
+            <Button asChild variant="outline" className="h-10 w-full">
+              <Link to="/garasje">Til min garasje</Link>
+            </Button>
+          </>
+        ) : (
+          <>
+            {hit.published_at ? (
+              <Button asChild className="btn-enamel-blue h-11 w-full">
+                <Link to={`/biler/${hit.slug}`}>Se offentlig profil</Link>
+              </Button>
+            ) : null}
+            <Button asChild variant="outline" className="h-10 w-full">
+              <Link to="/garasje">Til min garasje</Link>
+            </Button>
+          </>
+        )}
+        <button
+          type="button"
+          onClick={onDismiss}
+          className="text-xs text-muted-foreground hover:text-foreground transition-colors mt-1"
+        >
+          Lukk
+        </button>
+      </div>
+    </div>
   );
 }
+
+// Markert i import for fremtidig bruk om vi vil vise pending-status inline.
+void Clock;

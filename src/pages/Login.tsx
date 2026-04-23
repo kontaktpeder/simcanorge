@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { z } from 'zod';
 import { getBrowserAuthSupport } from '@/lib/browserSupport';
+import { safeInternalPath } from '@/lib/navigation';
 
 const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
 const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
@@ -29,7 +30,7 @@ export default function Login() {
   const [error, setError] = useState('');
   const [compatWarning, setCompatWarning] = useState<string | null>(null);
 
-  const returnUrl = searchParams.get('returnUrl') || '/dashboard';
+  const returnUrl = safeInternalPath(searchParams.get('returnUrl'), '/dashboard');
   const prefillEmail = searchParams.get('email');
 
   useEffect(() => {
