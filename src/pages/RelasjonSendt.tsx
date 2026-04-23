@@ -34,7 +34,7 @@ interface ThumbRow {
 export default function RelasjonSendt() {
   const { requestId } = useParams<{ requestId: string }>();
   const navigate = useNavigate();
-  const { user, loading: authLoading } = useAuth();
+  const { user, isLoading: authLoading } = useAuth();
 
   useEffect(() => {
     if (!authLoading && !user) {
