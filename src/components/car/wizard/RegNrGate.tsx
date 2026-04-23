@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
-import { Loader2, ExternalLink, ArrowRight, CheckCircle2, Mail } from "lucide-react";
+import { Loader2, ExternalLink, ArrowRight, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { LicensePlateInput } from "./LicensePlateInput";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
+import { FEATURES } from "@/config/features";
+import { RelationshipRequestDialog } from "@/components/car/relationship/RelationshipRequestDialog";
 
 type Hit = { id: string; slug: string; title: string; published_at: string | null };
 
@@ -18,12 +20,13 @@ function normalize(raw: string): string {
 
 export function RegNrGate({ onContinue }: RegNrGateProps) {
   const { user } = useAuth();
-  const { toast } = useToast();
+  const navigate = useNavigate();
   const [regnr, setRegnr] = useState("");
   const [hits, setHits] = useState<Hit[]>([]);
   const [thumbs, setThumbs] = useState<Record<string, string>>({});
   const [searching, setSearching] = useState(false);
   const [searched, setSearched] = useState(false);
+  const [requestDialogFor, setRequestDialogFor] = useState<Hit | null>(null);
 
   // Debounced auto-search
   useEffect(() => {
@@ -74,19 +77,22 @@ export function RegNrGate({ onContinue }: RegNrGateProps) {
   const noHits = searched && hits.length === 0 && norm.length >= 4 && !searching;
 
   const handleClaimIntent = (hit: Hit) => {
+    if (FEATURES.relationshipRequestsV1) {
+      if (!user) {
+        const here = window.location.pathname + window.location.search;
+        navigate(`/login?returnUrl=${encodeURIComponent(here)}`);
+        return;
+      }
+      setRequestDialogFor(hit);
+      return;
+    }
+    // Fallback: mailto intent
     const subject = encodeURIComponent(`Knytt meg til bil: ${hit.title}`);
     const body = encodeURIComponent(
-      `Hei,\n\nJeg ønsker å bli koblet til denne bilen i Bilgarasje:\n\n` +
-      `Bil: ${hit.title}\nReg.nr: ${norm}\nProfil: https://bilgarasje.no/biler/${hit.slug}\n` +
-      `Bil-ID: ${hit.id}\n` +
-      (user?.email ? `Min e-post: ${user.email}\nBruker-ID: ${user.id}\n` : "") +
-      `\nMvh.`
+      `Bil: ${hit.title}\nReg.nr: ${norm}\nBil-ID: ${hit.id}\n` +
+      (user?.email ? `Min e-post: ${user.email}\n` : "")
     );
     window.location.href = `mailto:hei@bilgarasje.no?subject=${subject}&body=${body}`;
-    toast({
-      title: "Forespørsel klargjort",
-      description: "Vi behandler den manuelt og kobler deg til bilen.",
-    });
   };
 
   return (
