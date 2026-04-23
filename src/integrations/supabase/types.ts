@@ -424,6 +424,65 @@ export type Database = {
           },
         ]
       }
+      car_relationship_requests: {
+        Row: {
+          car_id: string
+          created_at: string
+          id: string
+          note: string | null
+          relationship_end_year: number | null
+          relationship_start_year: number | null
+          relationship_type: Database["public"]["Enums"]["car_relationship_type"]
+          requester_id: string
+          reviewed_at: string | null
+          reviewer_id: string | null
+          reviewer_note: string | null
+          status: string
+          updated_at: string
+          wants_stewardship: boolean
+        }
+        Insert: {
+          car_id: string
+          created_at?: string
+          id?: string
+          note?: string | null
+          relationship_end_year?: number | null
+          relationship_start_year?: number | null
+          relationship_type: Database["public"]["Enums"]["car_relationship_type"]
+          requester_id: string
+          reviewed_at?: string | null
+          reviewer_id?: string | null
+          reviewer_note?: string | null
+          status?: string
+          updated_at?: string
+          wants_stewardship?: boolean
+        }
+        Update: {
+          car_id?: string
+          created_at?: string
+          id?: string
+          note?: string | null
+          relationship_end_year?: number | null
+          relationship_start_year?: number | null
+          relationship_type?: Database["public"]["Enums"]["car_relationship_type"]
+          requester_id?: string
+          reviewed_at?: string | null
+          reviewer_id?: string | null
+          reviewer_note?: string | null
+          status?: string
+          updated_at?: string
+          wants_stewardship?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "car_relationship_requests_car_id_fkey"
+            columns: ["car_id"]
+            isOneToOne: false
+            referencedRelation: "cars"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       car_submissions: {
         Row: {
           admin_notes: string | null
@@ -1945,6 +2004,10 @@ export type Database = {
           slug: string
         }[]
       }
+      approve_car_relationship_request: {
+        Args: { p_request_id: string }
+        Returns: Json
+      }
       approve_page_car_link_request: {
         Args: { p_request_id: string }
         Returns: Json
@@ -2016,6 +2079,10 @@ export type Database = {
       purge_user_data_before_auth_delete: {
         Args: { _user_id: string }
         Returns: undefined
+      }
+      reject_car_relationship_request: {
+        Args: { p_note?: string; p_request_id: string }
+        Returns: Json
       }
       reject_page_car_link_request: {
         Args: { p_request_id: string }
