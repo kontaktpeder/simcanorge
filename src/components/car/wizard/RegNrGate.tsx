@@ -169,9 +169,8 @@ export function RegNrGate({ onContinue }: RegNrGateProps) {
             <div className="flex flex-col gap-2 pt-1">
               <Button
                 className="btn-enamel-blue h-12 w-full text-base"
-                onClick={() => (user ? handleClaimIntent(hits[0]) : onContinue(norm))}
+                onClick={() => handleClaimIntent(hits[0])}
               >
-                {user ? <Mail className="mr-2 h-4 w-4" /> : null}
                 Dette er bilen min
               </Button>
               <p className="text-xs text-muted-foreground text-center -mt-1">
