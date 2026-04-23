@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Loader2, ExternalLink, ArrowRight, CheckCircle2 } from "lucide-react";
+import { Loader2, ExternalLink, ArrowRight, CheckCircle2, Eye, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { LicensePlateInput } from "./LicensePlateInput";
 import { supabase } from "@/integrations/supabase/client";
@@ -7,8 +7,23 @@ import { useAuth } from "@/hooks/useAuth";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { FEATURES } from "@/config/features";
 import { RelationshipRequestDialog } from "@/components/car/relationship/RelationshipRequestDialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 type Hit = { id: string; slug: string; title: string; published_at: string | null };
+
+type AlreadyLinkedState =
+  | { kind: "owner"; hit: Hit }
+  | { kind: "viewer"; hit: Hit }
+  | { kind: "pending"; hit: Hit; requestId: string };
 
 interface RegNrGateProps {
   onContinue: (registrationNumber: string) => void;
