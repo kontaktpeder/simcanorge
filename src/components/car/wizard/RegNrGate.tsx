@@ -106,13 +106,59 @@ export function RegNrGate({ onContinue }: RegNrGateProps) {
     const hit = hits.find(h => h.id === carId);
     if (!hit) return;
     autoOpenedRef.current = true;
-    setRequestDialogFor(hit);
     // Strip intent + carId so refresh doesn't re-trigger; keep reg for context.
     const next = new URLSearchParams(searchParams);
     next.delete("intent");
     next.delete("carId");
     setSearchParams(next, { replace: true });
+    // Run through the same gate as a manual click so existing-link cases route correctly.
+    void resolveClaim(hit);
   }, [user, searching, searched, hits, searchParams, setSearchParams]);
+
+  // Three-way gate: existing owner → dashboard, existing viewer → public/garage,
+  // pending request → success page, else → open relationship dialog.
+  async function resolveClaim(hit: Hit) {
+    if (!user) return;
+    setCheckingLink(true);
+    try {
+      const [{ data: ownerRow }, { data: pendingRow }] = await Promise.all([
+        supabase
+          .from("car_owners")
+          .select("id, role")
+          .eq("car_id", hit.id)
+          .eq("user_id", user.id)
+          .maybeSingle(),
+        supabase
+          .from("car_relationship_requests" as any)
+          .select("id")
+          .eq("car_id", hit.id)
+          .eq("requester_id", user.id)
+          .eq("status", "pending")
+          .maybeSingle(),
+      ]);
+
+      if (ownerRow?.role === "owner") {
+        setAlreadyLinked({ kind: "owner", hit });
+        return;
+      }
+      if (ownerRow) {
+        // Any non-owner row (e.g. viewer) — relationship already exists.
+        setAlreadyLinked({ kind: "viewer", hit });
+        return;
+      }
+      if (pendingRow && (pendingRow as any).id) {
+        setAlreadyLinked({ kind: "pending", hit, requestId: (pendingRow as any).id });
+        return;
+      }
+      setRequestDialogFor(hit);
+    } catch (err) {
+      console.warn("resolveClaim failed", err);
+      // Fall back to opening the dialog so the user isn't blocked.
+      setRequestDialogFor(hit);
+    } finally {
+      setCheckingLink(false);
+    }
+  }
 
   const handleClaimIntent = (hit: Hit) => {
     if (FEATURES.relationshipRequestsV1) {
@@ -126,7 +172,7 @@ export function RegNrGate({ onContinue }: RegNrGateProps) {
         navigate(`/login?returnUrl=${encodeURIComponent(here)}`);
         return;
       }
-      setRequestDialogFor(hit);
+      void resolveClaim(hit);
       return;
     }
     // Fallback: mailto intent
