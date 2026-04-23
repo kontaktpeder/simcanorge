@@ -43,6 +43,8 @@ export function RegNrGate({ onContinue }: RegNrGateProps) {
   const [searching, setSearching] = useState(false);
   const [searched, setSearched] = useState(false);
   const [requestDialogFor, setRequestDialogFor] = useState<Hit | null>(null);
+  const [checkingLink, setCheckingLink] = useState(false);
+  const [alreadyLinked, setAlreadyLinked] = useState<AlreadyLinkedState | null>(null);
   const autoOpenedRef = useRef(false);
 
   // Debounced auto-search
