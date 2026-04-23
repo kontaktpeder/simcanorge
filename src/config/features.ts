@@ -16,4 +16,11 @@ export const FEATURES = {
    * surface existing cars in Bilgarasje up-front ("sannhet før investering").
    */
   earlyRegnrGate: import.meta.env.VITE_FEATURE_EARLY_REGNR_GATE !== "false",
+  /**
+   * Phase 1 of relationship requests: when a user finds an existing car they
+   * recognise, they can submit a structured request (former owner, restorer,
+   * storyteller, ...) which is queued for admin/owner review. No edit rights
+   * are granted automatically.
+   */
+  relationshipRequestsV1: import.meta.env.VITE_FEATURE_RELATIONSHIP_REQUESTS_V1 !== "false",
 };
