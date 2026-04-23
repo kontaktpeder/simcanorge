@@ -25,6 +25,7 @@ const StartAnnonse = lazy(() => import("@/pages/StartAnnonse"));
 const RegistrerBil = lazy(() => import("@/pages/RegistrerBil"));
 const Konto = lazy(() => import("@/pages/Konto"));
 const Foresporsel = lazy(() => import("@/pages/Foresporsel"));
+const RelasjonSendt = lazy(() => import("@/pages/RelasjonSendt"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
 
 // Dashboard pages
@@ -146,6 +147,7 @@ export const routes: RouteConfig[] = [
   { path: "/dashboard/events", element: DashboardEventsPage, requiresAuth: true },
   { path: "/dashboard/events/ny", element: CreateEventPage, requiresAuth: true },
   { path: "/dashboard/events/:eventId", element: EditEventPage, requiresAuth: true },
+  { path: "/relasjon-sendt/:requestId", element: RelasjonSendt, requiresAuth: true },
 
   // Admin
   { path: "/admin/login", element: AdminLogin, isPublic: true },

@@ -65,7 +65,7 @@ export function RelationshipRequestDialog({
       return;
     }
 
-    await mutation.mutateAsync({
+    const created = await mutation.mutateAsync({
       carId,
       relationshipType: relType,
       note,
@@ -77,6 +77,11 @@ export function RelationshipRequestDialog({
     reset();
     onOpenChange(false);
     onSubmitted?.();
+
+    const newId = (created as any)?.id as string | undefined;
+    if (newId) {
+      navigate(`/relasjon-sendt/${newId}`);
+    }
   };
 
   return (

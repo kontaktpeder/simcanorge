@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Loader2, ExternalLink, ArrowRight, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { LicensePlateInput } from "./LicensePlateInput";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { FEATURES } from "@/config/features";
 import { RelationshipRequestDialog } from "@/components/car/relationship/RelationshipRequestDialog";
 
@@ -21,12 +21,14 @@ function normalize(raw: string): string {
 export function RegNrGate({ onContinue }: RegNrGateProps) {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [regnr, setRegnr] = useState("");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [regnr, setRegnr] = useState(() => searchParams.get("reg") ?? "");
   const [hits, setHits] = useState<Hit[]>([]);
   const [thumbs, setThumbs] = useState<Record<string, string>>({});
   const [searching, setSearching] = useState(false);
   const [searched, setSearched] = useState(false);
   const [requestDialogFor, setRequestDialogFor] = useState<Hit | null>(null);
+  const autoOpenedRef = useRef(false);
 
   // Debounced auto-search
   useEffect(() => {
@@ -76,10 +78,34 @@ export function RegNrGate({ onContinue }: RegNrGateProps) {
   const hasHits = searched && hits.length > 0;
   const noHits = searched && hits.length === 0 && norm.length >= 4 && !searching;
 
+  // Auto-open relationship dialog after login redirect (URL-driven rehydration)
+  useEffect(() => {
+    if (autoOpenedRef.current) return;
+    if (!user) return;
+    if (searching || !searched) return;
+    const intent = searchParams.get("intent");
+    const carId = searchParams.get("carId");
+    if (intent !== "rel" || !carId) return;
+    const hit = hits.find(h => h.id === carId);
+    if (!hit) return;
+    autoOpenedRef.current = true;
+    setRequestDialogFor(hit);
+    // Strip intent + carId so refresh doesn't re-trigger; keep reg for context.
+    const next = new URLSearchParams(searchParams);
+    next.delete("intent");
+    next.delete("carId");
+    setSearchParams(next, { replace: true });
+  }, [user, searching, searched, hits, searchParams, setSearchParams]);
+
   const handleClaimIntent = (hit: Hit) => {
     if (FEATURES.relationshipRequestsV1) {
       if (!user) {
-        const here = window.location.pathname + window.location.search;
+        // Write intent into URL so returnUrl carries everything we need to rehydrate.
+        const next = new URLSearchParams(window.location.search);
+        next.set("reg", norm);
+        next.set("intent", "rel");
+        next.set("carId", hit.id);
+        const here = window.location.pathname + "?" + next.toString();
         navigate(`/login?returnUrl=${encodeURIComponent(here)}`);
         return;
       }
