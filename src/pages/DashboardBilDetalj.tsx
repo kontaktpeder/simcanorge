@@ -24,6 +24,10 @@ import { FEATURES } from '@/config/features';
 import { RelationshipTypeField } from '@/components/car/RelationshipTypeField';
 import { RELATIONSHIP_LABELS, type RelationshipType } from '@/lib/relationshipTypes';
 import { useUpdateCarRelationship } from '@/hooks/useUpdateCarRelationship';
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
 const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
@@ -57,6 +61,7 @@ export default function DashboardBilDetalj() {
   const [isUploadingImages, setIsUploadingImages] = useState(false);
   const [isReorderingImages, setIsReorderingImages] = useState(false);
   const [isPublishing, setIsPublishing] = useState(false);
+  const [showUnpublishDialog, setShowUnpublishDialog] = useState(false);
 
   const [basicForm, setBasicForm] = useState({
     brand: "", model: "", variant: "", body_type: "", year: "", category: "registrert", tags: "",
@@ -218,12 +223,12 @@ export default function DashboardBilDetalj() {
 
   const handleUnpublish = async () => {
     if (!car || !user) return;
-    if (!confirm('Er du sikker på at du vil avpublisere bilen?')) return;
+    setShowUnpublishDialog(false);
     setIsPublishing(true);
     try {
       const { error } = await supabase.from('cars').update({ published_at: null, status: 'draft' as any }).eq('id', car.id);
-      if (error) { toast.error(`Kunne ikke avpublisere: ${error.message}`); return; }
-      toast.success('Bilen er avpublisert');
+      if (error) { toast.error(`Kunne ikke skjule bilen: ${error.message}`); return; }
+      toast.success('Bilen er skjult fra Bilgarasjen');
       queryClient.invalidateQueries({ queryKey: ['my-car', carId, user?.id] });
     } catch { toast.error('Uventet feil'); }
     finally { setIsPublishing(false); }
@@ -377,9 +382,9 @@ export default function DashboardBilDetalj() {
                     <CheckCircle2 className="w-5 h-5" />
                     <span className="text-[13px] uppercase tracking-[0.08em] font-bold" style={oswald}>Bilen er live</span>
                   </div>
-                  <button onClick={handleUnpublish} disabled={isPublishing}
+                  <button onClick={() => setShowUnpublishDialog(true)} disabled={isPublishing}
                     className="text-[13px] uppercase tracking-[0.08em] font-bold text-muted-foreground/80 hover:text-muted-foreground transition-colors" style={oswald}>
-                    {isPublishing ? '...' : 'Avpubliser'}
+                    {isPublishing ? '...' : 'Skjul midlertidig'}
                   </button>
                 </div>
               ) : (
@@ -391,8 +396,11 @@ export default function DashboardBilDetalj() {
                       <button onClick={cancelRequest} className="text-[12px] uppercase tracking-wider font-bold text-muted-foreground/80 hover:text-muted-foreground" style={oswald}>Avbryt</button>
                     </div>
                   )}
-                  <p className="text-[14px] uppercase tracking-[0.08em] font-bold text-foreground/90" style={oswald}>Klar for publisering?</p>
-                  <div className="flex items-center gap-4">
+                  <div>
+                    <p className="text-[14px] uppercase tracking-[0.08em] font-bold text-foreground/90" style={oswald}>Bilen din ligger og venter</p>
+                    <p className="text-[13px] text-muted-foreground mt-1">Klar til å la andre som er glad i bil få se den?</p>
+                  </div>
+                  <div className="flex items-center gap-4 flex-wrap">
                     {[
                       { ok: brandOk, label: 'Merke' },
                       { ok: modelOk, label: 'Modell' },
@@ -403,11 +411,14 @@ export default function DashboardBilDetalj() {
                       </span>
                     ))}
                   </div>
-                  <button onClick={handlePublish} disabled={!canPublish || isPublishing}
-                    className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-bold text-[13px] uppercase tracking-[0.1em] px-6 py-3 rounded-lg transition-all hover:brightness-110 disabled:opacity-40 shadow-[0_0_20px_rgba(45,212,168,0.15)]"
-                    style={chakra}>
-                    <Send className="w-4 h-4" /> {isPublishing ? 'Publiserer...' : 'Publiser bilen'}
-                  </button>
+                  <div className="space-y-2">
+                    <button onClick={handlePublish} disabled={!canPublish || isPublishing}
+                      className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-bold text-[13px] uppercase tracking-[0.1em] px-6 py-3 rounded-lg transition-all hover:brightness-110 disabled:opacity-40 shadow-[0_0_20px_rgba(45,212,168,0.15)]"
+                      style={chakra}>
+                      <Send className="w-4 h-4" /> {isPublishing ? 'Publiserer...' : 'Publiser bilen'}
+                    </button>
+                    <p className="text-[11px] text-muted-foreground/70">Du kan alltid skjule den igjen.</p>
+                  </div>
                 </div>
               )}
             </motion.div>
@@ -660,6 +671,21 @@ export default function DashboardBilDetalj() {
           </motion.section>
         </div>
       </div>
+
+      <AlertDialog open={showUnpublishDialog} onOpenChange={setShowUnpublishDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Skjul bilen midlertidig?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Bilen forsvinner fra Bilgarasjen og blir liggende trygt i garasjen din. Du kan vise den frem igjen når som helst.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Avbryt</AlertDialogCancel>
+            <AlertDialogAction onClick={handleUnpublish}>Skjul midlertidig</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Layout>
   );
 }

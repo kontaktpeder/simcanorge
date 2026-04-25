@@ -38,6 +38,8 @@ export interface WizardData {
   clubLinkRequested: boolean;
   clubPageId: string;
   clubMessage: string;
+  /** Innlogget bruker: vil de publisere nå (true) eller lagre som kladd (false)? */
+  publishImmediately: boolean | null;
 }
 
 export const INITIAL_WIZARD_DATA: WizardData = {
@@ -63,6 +65,7 @@ export const INITIAL_WIZARD_DATA: WizardData = {
   clubLinkRequested: false,
   clubPageId: "",
   clubMessage: "",
+  publishImmediately: null,
 };
 
 export type WizardStep = 0 | 1 | 2 | 3 | 4 | 5;
