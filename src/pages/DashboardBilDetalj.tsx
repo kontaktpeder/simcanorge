@@ -24,6 +24,10 @@ import { FEATURES } from '@/config/features';
 import { RelationshipTypeField } from '@/components/car/RelationshipTypeField';
 import { RELATIONSHIP_LABELS, type RelationshipType } from '@/lib/relationshipTypes';
 import { useUpdateCarRelationship } from '@/hooks/useUpdateCarRelationship';
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
 const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
