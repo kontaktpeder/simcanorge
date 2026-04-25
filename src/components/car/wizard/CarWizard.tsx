@@ -25,7 +25,7 @@ function normalizeRegistrationNumber(raw: string): string {
 type DuplicateHit = { id: string; slug: string; title: string; published_at: string | null };
 
 interface CarWizardProps {
-  onSuccess?: (result: { carId: string; email: string; flow: "guest" | "authenticated" }) => void;
+  onSuccess?: (result: { carId: string; email: string; flow: "guest" | "authenticated"; publishedNow?: boolean; slug?: string }) => void;
   initialRegistrationNumber?: string;
   /** When true, skip the in-wizard duplicate-regnr check (already handled upstream by RegNrGate). */
   skipDuplicateCheck?: boolean;
@@ -203,9 +203,15 @@ export function CarWizard({ onSuccess, initialRegistrationNumber, skipDuplicateC
       };
 
       if (isAuthenticated) {
-        // ── Authenticated flow: create as owner_self draft ──
+        // ── Authenticated flow: publish now or save as draft ──
         const authUser = session!.user;
         const slug = `${baseSlug}-${Date.now().toString(36)}`;
+
+        const wantsToPublish = data.publishImmediately === true;
+        const hasImages = uploadedUrls.length > 0;
+        const canPublishNow = wantsToPublish && hasImages && !!data.brand && !!data.car_model;
+        const carStatus = canPublishNow ? "published" : "draft";
+        const publishedAt = canPublishNow ? new Date().toISOString() : null;
 
         const { error: carError } = await supabase.from("cars").insert({
           id: carId,
@@ -219,8 +225,8 @@ export function CarWizard({ onSuccess, initialRegistrationNumber, skipDuplicateC
           category: data.category,
           tags: tagsArray,
           story: data.car_story || null,
-          status: "draft" as const,
-          published_at: null,
+          status: carStatus as any,
+          published_at: publishedAt,
           source: "owner_self" as const,
           created_by_user_id: authUser.id,
           allow_edits: data.allowEdits === true,
@@ -267,8 +273,12 @@ export function CarWizard({ onSuccess, initialRegistrationNumber, skipDuplicateC
           } catch (err) { console.error("Club link failed:", err); }
         }
 
-        toast({ title: "Bilen er lagt til!", description: "Du finner den i garasjen din." });
-        onSuccess?.({ carId, email: data.email, flow: "authenticated" });
+        if (canPublishNow) {
+          toast({ title: "Bilen er live! 🎉", description: "Andre kan nå se historien din." });
+        } else {
+          toast({ title: "Lagret i garasjen din", description: "Publiser når du er klar." });
+        }
+        onSuccess?.({ carId, email: data.email, flow: "authenticated", publishedNow: canPublishNow, slug });
 
       } else {
         // ── Guest flow: anonymous submission ──
