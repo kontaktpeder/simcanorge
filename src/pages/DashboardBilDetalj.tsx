@@ -61,6 +61,7 @@ export default function DashboardBilDetalj() {
   const [isUploadingImages, setIsUploadingImages] = useState(false);
   const [isReorderingImages, setIsReorderingImages] = useState(false);
   const [isPublishing, setIsPublishing] = useState(false);
+  const [showUnpublishDialog, setShowUnpublishDialog] = useState(false);
 
   const [basicForm, setBasicForm] = useState({
     brand: "", model: "", variant: "", body_type: "", year: "", category: "registrert", tags: "",
@@ -222,12 +223,12 @@ export default function DashboardBilDetalj() {
 
   const handleUnpublish = async () => {
     if (!car || !user) return;
-    if (!confirm('Er du sikker på at du vil avpublisere bilen?')) return;
+    setShowUnpublishDialog(false);
     setIsPublishing(true);
     try {
       const { error } = await supabase.from('cars').update({ published_at: null, status: 'draft' as any }).eq('id', car.id);
-      if (error) { toast.error(`Kunne ikke avpublisere: ${error.message}`); return; }
-      toast.success('Bilen er avpublisert');
+      if (error) { toast.error(`Kunne ikke skjule bilen: ${error.message}`); return; }
+      toast.success('Bilen er skjult fra Bilgarasjen');
       queryClient.invalidateQueries({ queryKey: ['my-car', carId, user?.id] });
     } catch { toast.error('Uventet feil'); }
     finally { setIsPublishing(false); }
