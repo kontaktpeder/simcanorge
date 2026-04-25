@@ -396,8 +396,11 @@ export default function DashboardBilDetalj() {
                       <button onClick={cancelRequest} className="text-[12px] uppercase tracking-wider font-bold text-muted-foreground/80 hover:text-muted-foreground" style={oswald}>Avbryt</button>
                     </div>
                   )}
-                  <p className="text-[14px] uppercase tracking-[0.08em] font-bold text-foreground/90" style={oswald}>Klar for publisering?</p>
-                  <div className="flex items-center gap-4">
+                  <div>
+                    <p className="text-[14px] uppercase tracking-[0.08em] font-bold text-foreground/90" style={oswald}>Bilen din ligger og venter</p>
+                    <p className="text-[13px] text-muted-foreground mt-1">Klar til å la andre som er glad i bil få se den?</p>
+                  </div>
+                  <div className="flex items-center gap-4 flex-wrap">
                     {[
                       { ok: brandOk, label: 'Merke' },
                       { ok: modelOk, label: 'Modell' },
@@ -408,11 +411,14 @@ export default function DashboardBilDetalj() {
                       </span>
                     ))}
                   </div>
-                  <button onClick={handlePublish} disabled={!canPublish || isPublishing}
-                    className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-bold text-[13px] uppercase tracking-[0.1em] px-6 py-3 rounded-lg transition-all hover:brightness-110 disabled:opacity-40 shadow-[0_0_20px_rgba(45,212,168,0.15)]"
-                    style={chakra}>
-                    <Send className="w-4 h-4" /> {isPublishing ? 'Publiserer...' : 'Publiser bilen'}
-                  </button>
+                  <div className="space-y-2">
+                    <button onClick={handlePublish} disabled={!canPublish || isPublishing}
+                      className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-bold text-[13px] uppercase tracking-[0.1em] px-6 py-3 rounded-lg transition-all hover:brightness-110 disabled:opacity-40 shadow-[0_0_20px_rgba(45,212,168,0.15)]"
+                      style={chakra}>
+                      <Send className="w-4 h-4" /> {isPublishing ? 'Publiserer...' : 'Publiser bilen'}
+                    </button>
+                    <p className="text-[11px] text-muted-foreground/70">Du kan alltid skjule den igjen.</p>
+                  </div>
                 </div>
               )}
             </motion.div>
