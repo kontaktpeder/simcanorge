@@ -44,14 +44,18 @@ export default function DashboardOpprettBil() {
 
   if (!user) return null;
 
-  const handleWizardSuccess = async ({ carId, flow }: { carId: string; email: string; flow: "guest" | "authenticated" }) => {
+  const handleWizardSuccess = async ({ carId, flow, publishedNow, slug }: { carId: string; email: string; flow: "guest" | "authenticated"; publishedNow?: boolean; slug?: string }) => {
     queryClient.invalidateQueries({ queryKey: ["my-cars"] });
     queryClient.invalidateQueries({ queryKey: ["my-cars-count"] });
 
     if (flow === "authenticated") {
-      const path = await resolvePostClaimPath(carId);
-      toast({ title: "Bilen er lagt til", description: "Du finner den i garasjen din." });
-      navigate(path);
+      if (publishedNow && slug) {
+        // Belønning: send brukeren til den offentlige siden av sin egen bil
+        navigate(`/biler/${slug}`);
+        return;
+      }
+      // Kladd: send til dashbord-detalj med tydelig "publiser nå"-mulighet
+      navigate(`/dashboard/bil/${carId}`);
       return;
     }
 
