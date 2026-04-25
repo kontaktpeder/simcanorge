@@ -382,9 +382,9 @@ export default function DashboardBilDetalj() {
                     <CheckCircle2 className="w-5 h-5" />
                     <span className="text-[13px] uppercase tracking-[0.08em] font-bold" style={oswald}>Bilen er live</span>
                   </div>
-                  <button onClick={handleUnpublish} disabled={isPublishing}
+                  <button onClick={() => setShowUnpublishDialog(true)} disabled={isPublishing}
                     className="text-[13px] uppercase tracking-[0.08em] font-bold text-muted-foreground/80 hover:text-muted-foreground transition-colors" style={oswald}>
-                    {isPublishing ? '...' : 'Avpubliser'}
+                    {isPublishing ? '...' : 'Skjul midlertidig'}
                   </button>
                 </div>
               ) : (
