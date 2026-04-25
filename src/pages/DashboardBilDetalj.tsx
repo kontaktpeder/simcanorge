@@ -671,6 +671,21 @@ export default function DashboardBilDetalj() {
           </motion.section>
         </div>
       </div>
+
+      <AlertDialog open={showUnpublishDialog} onOpenChange={setShowUnpublishDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Skjul bilen midlertidig?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Bilen forsvinner fra Bilgarasjen og blir liggende trygt i garasjen din. Du kan vise den frem igjen når som helst.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Avbryt</AlertDialogCancel>
+            <AlertDialogAction onClick={handleUnpublish}>Skjul midlertidig</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Layout>
   );
 }
