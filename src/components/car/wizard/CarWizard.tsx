@@ -399,6 +399,7 @@ export function CarWizard({ onSuccess, initialRegistrationNumber, skipDuplicateC
         }
 
         toast({ title: "Takk for innsendingen!", description: "Vi har mottatt bilen din. Den blir synlig når admin har godkjent den." });
+        try { sessionStorage.removeItem(DRAFT_KEY); } catch {}
         onSuccess?.({ carId, email: data.email, flow: "guest" });
       }
     } catch (error: any) {
