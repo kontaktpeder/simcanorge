@@ -3,13 +3,32 @@ import { CarWizard } from "@/components/car/wizard";
 import { RegNrGate } from "@/components/car/wizard/RegNrGate";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, Mail, Home, ArrowRight, AlertTriangle, LogOut } from "lucide-react";
+import { Loader2, Mail, Home, ArrowRight, AlertTriangle, LogOut, LogIn } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useQueryClient } from "@tanstack/react-query";
 import { FEATURES } from "@/config/features";
+import { useAuth } from "@/hooks/useAuth";
+
+function ExistingUserLoginBanner() {
+  return (
+    <div className="mx-auto mb-4 max-w-xl rounded-xl border border-primary/30 bg-primary/[0.06] px-4 py-3 flex items-center justify-center gap-3">
+      <LogIn className="w-4 h-4 text-primary shrink-0" />
+      <p className="text-sm text-foreground/90 leading-snug text-center">
+        Har du allerede en bruker?{" "}
+        <Link
+          to={`/login?returnUrl=${encodeURIComponent("/legg-til-bil")}`}
+          className="font-semibold text-primary underline-offset-2 hover:underline"
+        >
+          Logg inn
+        </Link>{" "}
+        <span className="text-muted-foreground">så husker vi hvem du er.</span>
+      </p>
+    </div>
+  );
+}
 
 type PageState =
   | { step: "gate" }
@@ -64,6 +83,7 @@ export default function SendInnBil() {
   const { toast } = useToast();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { user } = useAuth();
   const claimHandledRef = useRef(false);
   const [state, setState] = useState<PageState>(() => {
     if (getPendingClaimCarId()) {
@@ -297,6 +317,7 @@ export default function SendInnBil() {
                 Først sjekker vi om bilen din allerede ligger i Bilgarasje.
               </p>
             </div>
+            {!user && <ExistingUserLoginBanner />}
             <RegNrGate
               onContinue={(registrationNumber) =>
                 setState({ step: "wizard", registrationNumber })
@@ -320,6 +341,8 @@ export default function SendInnBil() {
               Har du en bil med en historie å dele? Legg den til – du kan bygge på med flere detaljer senere når du har fått tilgang til garasjen din.
             </p>
           </div>
+
+          {!user && <ExistingUserLoginBanner />}
 
           <div className="flex-1 min-h-0">
             <CarWizard

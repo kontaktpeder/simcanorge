@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+import { LogIn } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FEATURES } from "@/config/features";
@@ -10,9 +12,10 @@ interface StepContactProps {
   errors: Record<string, string>;
   emailLocked?: boolean;
   nameLocked?: boolean;
+  showLoginHint?: boolean;
 }
 
-export function StepContact({ data, onChange, errors, emailLocked, nameLocked }: StepContactProps) {
+export function StepContact({ data, onChange, errors, emailLocked, nameLocked, showLoginHint }: StepContactProps) {
   return (
     <div className="space-y-6">
       <div className="text-center space-y-2">
@@ -23,6 +26,22 @@ export function StepContact({ data, onChange, errors, emailLocked, nameLocked }:
             : "Vi bruker e-posten til å sende deg en innloggingslenke."}
         </p>
       </div>
+
+      {showLoginHint && !emailLocked && (
+        <div className="rounded-xl border border-primary/30 bg-primary/[0.06] p-3 sm:p-4 flex items-center gap-3">
+          <LogIn className="w-4 h-4 text-primary shrink-0" />
+          <p className="text-sm text-foreground/90 leading-snug">
+            Har du allerede en konto?{" "}
+            <Link
+              to={`/login?returnUrl=${encodeURIComponent("/legg-til-bil")}`}
+              className="font-semibold text-primary underline-offset-2 hover:underline"
+            >
+              Logg inn
+            </Link>{" "}
+            <span className="text-muted-foreground">– vi husker det du har skrevet så langt.</span>
+          </p>
+        </div>
+      )}
 
       <div className="space-y-4 p-4 bg-muted/30 rounded-xl border border-muted">
         <div className="space-y-2">

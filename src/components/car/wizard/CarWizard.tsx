@@ -35,11 +35,43 @@ export function CarWizard({ onSuccess, initialRegistrationNumber, skipDuplicateC
   const { toast } = useToast();
   const { user } = useAuth();
   const { data: personProfile } = useMyPersonProfile();
-  const [step, setStep] = useState<WizardStep>(0);
-  const [data, setData] = useState<WizardData>(() => ({
-    ...INITIAL_WIZARD_DATA,
-    registration_number: initialRegistrationNumber ?? "",
-  }));
+  const DRAFT_KEY = "wizard:draft:guest";
+
+  type PersistedDraft = { data: Omit<WizardData, "images" | "imagePreviews">; step: WizardStep };
+
+  const loadDraft = (): PersistedDraft | null => {
+    try {
+      const raw = sessionStorage.getItem(DRAFT_KEY);
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      if (!parsed || typeof parsed !== "object" || !parsed.data) return null;
+      return parsed as PersistedDraft;
+    } catch {
+      return null;
+    }
+  };
+
+  const [step, setStep] = useState<WizardStep>(() => {
+    const draft = loadDraft();
+    return (draft?.step ?? 0) as WizardStep;
+  });
+  const [data, setData] = useState<WizardData>(() => {
+    const draft = loadDraft();
+    if (draft) {
+      return {
+        ...INITIAL_WIZARD_DATA,
+        ...draft.data,
+        images: [],
+        imagePreviews: [],
+        registration_number:
+          draft.data.registration_number || initialRegistrationNumber || "",
+      };
+    }
+    return {
+      ...INITIAL_WIZARD_DATA,
+      registration_number: initialRegistrationNumber ?? "",
+    };
+  });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [uploadProgress, setUploadProgress] = useState<CompressionProgress | null>(null);
@@ -47,6 +79,20 @@ export function CarWizard({ onSuccess, initialRegistrationNumber, skipDuplicateC
   const [duplicateHits, setDuplicateHits] = useState<DuplicateHit[]>([]);
   const [showDuplicateDialog, setShowDuplicateDialog] = useState(false);
   const [duplicateChecked, setDuplicateChecked] = useState(!!skipDuplicateCheck);
+
+  // Persist draft to sessionStorage so login round-trip doesn't wipe progress.
+  // We exclude File objects (images) — they can't be serialized.
+  useEffect(() => {
+    try {
+      const { images: _i, imagePreviews: _p, ...persistable } = data;
+      sessionStorage.setItem(
+        DRAFT_KEY,
+        JSON.stringify({ data: persistable, step }),
+      );
+    } catch {
+      // ignore (quota / disabled storage)
+    }
+  }, [data, step]);
 
   // Prefill email and name for authenticated users
   useEffect(() => {
@@ -275,6 +321,7 @@ export function CarWizard({ onSuccess, initialRegistrationNumber, skipDuplicateC
         }
 
         toast({ title: "Bilen er klar 🚗", description: "Velg hva du vil gjøre videre." });
+        try { sessionStorage.removeItem(DRAFT_KEY); } catch {}
         onSuccess?.({ carId, email: data.email, flow: "authenticated", publishedNow: canPublishNow, slug });
 
       } else {
@@ -352,6 +399,7 @@ export function CarWizard({ onSuccess, initialRegistrationNumber, skipDuplicateC
         }
 
         toast({ title: "Takk for innsendingen!", description: "Vi har mottatt bilen din. Den blir synlig når admin har godkjent den." });
+        try { sessionStorage.removeItem(DRAFT_KEY); } catch {}
         onSuccess?.({ carId, email: data.email, flow: "guest" });
       }
     } catch (error: any) {
@@ -392,7 +440,7 @@ export function CarWizard({ onSuccess, initialRegistrationNumber, skipDuplicateC
             {step === 1 && <StepBrand data={data} onChange={onChange} errors={errors} />}
             {step === 2 && <StepDetails data={data} onChange={onChange} />}
             {step === 3 && <StepStory data={data} onChange={onChange} />}
-            {step === 4 && <StepContact data={data} onChange={onChange} errors={errors} emailLocked={!!user} nameLocked={!!personProfile?.display_name} />}
+            {step === 4 && <StepContact data={data} onChange={onChange} errors={errors} emailLocked={!!user} nameLocked={!!personProfile?.display_name} showLoginHint={!user} />}
             {step === 5 && <StepConsent data={data} onChange={onChange} onSubmit={handleSubmit} isSubmitting={isSubmitting} errors={errors} />}
 
             {/* Upload progress */}

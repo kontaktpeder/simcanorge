@@ -1,139 +1,70 @@
-## Problemet
 
-Kompisen din trykte "send inn" i wizarden og trodde han publiserte. Han gjorde det ikke – fordi:
+## Problem
 
-1. **Publiser-valget i `StepConsent` er gjemt** mellom klubb-tilknytning, Instagram-godkjenning og personvern. Det ser ut som en innstilling, ikke en handling.
-2. **Ingen forhåndsvalg** – `publishImmediately = null` → defaulter til `draft`.
-3. **Etter "Send inn" havner draft-brukere på `/dashboard/bil/:id`** – en lang redigeringsside hvor "Publiser bilen"-knappen er en av mange elementer.
-4. **`PostPublishOnboardingOverlay` finnes** og er fin – men vises kun etter publisering. De som havnet i draft får ingen feiring, ingen veileder, ingen tydelig vei videre.
+På `/send-inn` (og `/legg-til-bil` som routes hit når du er utlogget) får eksisterende brukere ingen tydelig "jeg har konto"-vei. Wizarden ber om navn + e-post + telefon på `StepContact` ("HVEM ER DU?"), og bruker en **auth-last magic link**-flyt: vi sender en innloggingslenke etter innsending og kobler bilen til kontoen som matcher e-posten.
 
-Du har rett: **publisering må flyttes ut av wizard-skjemaet og bli sin egen tydelige beslutning rett etter at bilen er lagret.**
+For en helt ny bruker funker dette. For en eksisterende bruker er det forvirrende:
 
----
+- Det *ser ut* som hen lager en ny konto.
+- Hvis hen åpner `/login` i en annen fane for å logge inn, mister hen alt hen har skrevet inn i wizarden (state lever i `CarWizard`, ikke i localStorage).
+- Hvis hen fyller inn feil e-post (f.eks. en privat i stedet for kontoens), havner bilen i "mismatch"-flyten **etterpå** — dårlig opplevelse.
+
+`CarWizard` har allerede prefill når brukeren *er* logget inn (`useEffect` på `user?.email`), så hvis vi får hen logget inn *før* eller *underveis i* wizarden, faller resten på plass automatisk: e-post + navn fylles, lås-flagget i `StepContact` (`emailLocked`/`nameLocked`) slår inn, og `handleSubmit` går rett inn i den autentiserte grenen (skip OTP, rett til garasje + PostCreateActionOverlay).
 
 ## Løsning
 
-### A. Fjern publish-valget fra wizarden helt
+Tre små, sammenhengende grep — ingen endringer i datamodellen.
 
-**Fil: `src/components/car/wizard/StepConsent.tsx`**
+### 1. "Har du allerede konto? Logg inn" – øverst på `/send-inn`-gate-siden
 
-- Fjern hele "Publiser nå / Lagre som kladd"-blokken (linje 51-114). 
-- Wizarden ender med ren "Lagre bilen"-intensjon – ingen forvirring om hva knappen gjør.
-- Tittelen endres tilbake til noe enklere: *"Klar til å lagre bilen?"* med undertittel: *"Du bestemmer hva som skal skje videre om litt."*
+I `SendInnBil.tsx` (både `gate`- og `wizard`-stegene) viser vi en diskré, men tydelig stripe over hovedinnholdet **kun når brukeren er utlogget**:
 
-**Fil: `src/components/car/wizard/CarWizard.tsx`** (linje 210-214)
+> **Har du allerede en bruker?** [Logg inn] — så husker vi hvem du er.
 
-- `wantsToPublish`-logikken erstattes av: bilen lagres **alltid** som draft for innloggede brukere.
-- Vi sender fortsatt `publishedNow: false` og `slug` videre til `onSuccess` for kompatibilitet.
-- Toast oppdateres: *"Bilen er klar 🚗"* / *"Velg hva du vil gjøre videre."* (ikke "Lagret i garasjen din" – for nøytralt).
+- Lenke til `/login?returnUrl=/legg-til-bil` (ikke `/send-inn`, fordi `LeggTilBil` redirecter innloggede brukere rett til `/dashboard/opprett-bil` der wizarden kjører i den autentiserte flyten med PostCreateActionOverlay).
+- Bruker premium-dark + teal-aksent, samme stil som resten av wizard-headeren.
+- Rendrer kun når `!user` (les via ny `useAuth()`-hook i `SendInnBil`).
 
-**Fil: `src/components/car/wizard/WizardTypes.ts`**
+### 2. Inline "Logg inn"-knapp i `StepContact` ("HVEM ER DU?")
 
-- Vi *kan* la `publishImmediately`-feltet stå urørt (uskadelig), eller fjerne det hvis vi vil rydde. Anbefaling: la det stå for nå – ingen kostnad, og hvis vi senere vil tilby "ekspress-publiser" i wizarden er feltet der.
+Dette er stedet i flyten der forvirringen treffer hardest (skjermbildet ditt). Vi legger en liten linje **rett under undertittelen** når `emailLocked` er `false` (= utlogget):
 
----
+> Har du allerede en konto? **Logg inn** så slipper du å skrive på nytt.
 
-### B. Nytt "Hva vil du nå?"-vindu (kjernen av endringen)
+- "Logg inn" er en `<Link>` til `/login?returnUrl=/legg-til-bil`.
+- Vi viser den **ikke** når `emailLocked` er true (innlogget bruker — da er feltet allerede låst og prefilt).
+- Krever ny prop `showLoginHint?: boolean` på `StepContact`, satt fra `CarWizard` basert på `!user`.
 
-**Ny fil: `src/components/car/PostCreateActionOverlay.tsx`**
+### 3. Bevar utkastet i sessionStorage så "logg inn og kom tilbake" ikke nullstiller wizarden
 
-Vises rett etter at wizarden lukker, FØR brukeren havner på en side. Inspirert av `PostPublishOnboardingOverlay` (samme estetikk – Premium Dark, Chakra Petch, teal-glow), men med et helt annet budskap:
+Dette er den viktige delen som gjør #1 og #2 *trygge* å bruke. I dag mister man alt skrevet hvis man navigerer til `/login`.
 
-**Tittel:** *"Bilen er lagret 🎉"*  
-**Undertittel:** *"`{title}` ligger trygt i garasjen din. Hva vil du nå?"*
+I `CarWizard.tsx`:
 
-**Hero-preview:** Første bilde (hvis lastet opp) – samme som `PostPublishOnboardingOverlay` har.
+- Når brukeren er **utlogget**, persist `data` + `step` til `sessionStorage` under nøkkel `wizard:draft:guest` på hver `setData`/`setStep`. Bilder (`File`-objekter) **ekskluderes** — de kan ikke serialiseres trygt; vi behåller bare `imagePreviews`-URLene som hint, og lar brukeren re-velge filer hvis nødvendig (vi viser en liten note: "Last opp bildene på nytt – resten husker vi").
+- Ved mount: hvis `sessionStorage` har et utkast og brukeren er **utlogget**, restore `data` (uten `images`) + `step`.
+- Ved mount **innlogget** og det finnes et guest-utkast: restore det også (slik at "logg inn → tilbake til wizard" sømløst fortsetter, med e-post + navn nå låst og prefilt fra kontoen via det eksisterende `useEffect`). Slett utkastet etter vellykket `handleSubmit`.
 
-**Status-stripe under bildet:** En liten, ærlig melding:
-- ✅ "Bilen er synlig i din garasje"
-- 🔒 "Den er ikke synlig for andre ennå"
+Dette krever ingen DB-endringer og ingen nye routes.
 
-Dette gir kontekst – kompisen din ville ha *sett* at den ikke var publisert, ikke trodd det skjedde automatisk.
+### 4. (Bonus, lite scope) `returnUrl`-respekt fra `LeggTilBil`
 
-**Tre tydelige handlinger** (i prioritert rekkefølge):
-
-1. **Primær (stor, teal-glow CTA, Chakra Petch):** *"Publiser nå – la andre se den"*  
-   Underbeskrivelse: *"Bilen blir synlig i Bilgarasjen. Du kan skjule den igjen når som helst."*  
-   Disabled hvis krav ikke er oppfylt (mangler bilde / merke / modell), med en liten forklaring under: *"Trenger minst ett bilde først."*  
-   Ved klikk: kjører samme `handlePublish`-logikk som finnes i `DashboardBilDetalj` (`update cars set status='published', published_at=now()`), så lukker overlayet og navigerer til `/biler/{slug}` – med `PostPublishOnboardingOverlay` som vises der.
-
-2. **Sekundær (outline):** *"Rediger mer først"*  
-   Underbeskrivelse: *"Legg til historie, flere bilder, eller endre detaljer."*  
-   Ved klikk: lukker overlayet og navigerer til `/dashboard/bil/{carId}`.
-
-3. **Tertiær (ghost / link):** *"Utforsk Bilgarasjen"*  
-   Underbeskrivelse: *"Se hva andre deler. Du kan publisere bilen din senere."*  
-   Ved klikk: navigerer til `/biler` (oversikt over publiserte biler).
-
-**Lukk-knapp** øverst til høyre – men *ikke* en "X som lukker uten konsekvens". Hvis brukeren lukker med X, defaulter den til samme som *"Rediger mer først"* (sender til dashboard-detalj). Dette er bevisst: vi vil ikke at de skal kunne klikke seg bort fra valget uten å gjøre noe.
-
-**Ingen `localStorage`-flagg** – overlayet vises kun én gang per opprettelse, så ingen "har sett før"-logikk trengs.
-
----
-
-### C. Kobler det sammen
-
-**Fil: `src/pages/DashboardOpprettBil.tsx`**
-
-`handleWizardSuccess` endres fra direkte `navigate(...)` til å sette state som vises overlayet:
-
-```ts
-const [postCreate, setPostCreate] = useState<{ carId: string; slug: string; title: string; firstImageUrl: string | null } | null>(null);
-
-const handleWizardSuccess = async ({ carId, slug }: ...) => {
-  queryClient.invalidateQueries({ queryKey: ["my-cars"] });
-  queryClient.invalidateQueries({ queryKey: ["my-cars-count"] });
-  
-  // Hent det vi trenger for overlay (tittel, første bilde)
-  const { data: car } = await supabase
-    .from("cars")
-    .select("title, slug, car_images(image_url, sort_order)")
-    .eq("id", carId)
-    .single();
-  
-  const firstImage = car?.car_images?.sort((a,b) => a.sort_order - b.sort_order)[0]?.image_url ?? null;
-  setPostCreate({ carId, slug: car?.slug ?? slug ?? "", title: car?.title ?? "Bilen din", firstImageUrl: firstImage });
-};
-```
-
-Render `<PostCreateActionOverlay ... />` når `postCreate` er satt.
-
----
-
-### D. Liten polering på sidesporene
-
-**`DashboardBilDetalj.tsx`:** Behold dagens "Bilen din ligger og venter"-banner – den er fortsatt verdifull for brukere som velger "Rediger mer først" eller kommer tilbake senere. Ingen endring her.
-
-**`SendInnBil.tsx` (gjest-flyt):** Uendret. Gjester går via admin-godkjenning – overlayet gjelder kun innloggede brukere som lagrer rett til `cars`-tabellen.
-
----
-
-## Hva dette løser
-
-| Før | Etter |
-|---|---|
-| Publish-valg gjemt mellom klubb/Instagram/personvern | Publish er en egen, dedikert beslutning etter lagring |
-| `publishImmediately` defaulter til null → draft | Brukeren *må* aktivt velge: publiser, rediger, eller utforsk |
-| "Bilen er lagret"-toast forsvinner på 4 sek | Tydelig overlay som krever et valg |
-| Etter draft: lang redigeringsside uten klar kontekst | Overlay som forklarer status og viser veien videre |
-| Kompisen din tror han publiserte → bilen forblir usynlig | Han ser eksplisitt "🔒 Ikke synlig for andre ennå" + tydelig "Publiser nå"-knapp |
-
----
+`LeggTilBil` er i dag en ren `<Navigate>`-redirect. Den er allerede riktig: utlogget → `/send-inn`, innlogget → `/dashboard/opprett-bil`. Når vi sender innlogget bruker fra `/login?returnUrl=/legg-til-bil` lander de på `LeggTilBil`, som så redirecter videre til `/dashboard/opprett-bil` med en gang. Det fungerer som vi vil — men sessionStorage-utkastet (#3) gjør at wizarden i `/dashboard/opprett-bil` plukker opp draften og fortsetter der brukeren slapp. Ingen kodeendring nødvendig her, men dette er hvorfor `returnUrl` peker til `/legg-til-bil` og ikke `/dashboard/opprett-bil` direkte (slik at utloggede med utløpt sesjon ikke ender på en route som krever auth).
 
 ## Filer som endres
 
-- **Ny:** `src/components/car/PostCreateActionOverlay.tsx`
-- `src/components/car/wizard/StepConsent.tsx` – fjern publish-blokk, oppdater copy
-- `src/components/car/wizard/CarWizard.tsx` – alltid draft, oppdater toast
-- `src/pages/DashboardOpprettBil.tsx` – render overlay i stedet for direkte navigate
+- `src/pages/SendInnBil.tsx` — legg til "Har du konto?"-stripe i `gate`- og `wizard`-stegene når utlogget.
+- `src/components/car/wizard/StepContact.tsx` — legg til `showLoginHint`-prop og rendre inline "Logg inn"-lenke når true.
+- `src/components/car/wizard/CarWizard.tsx` — send `showLoginHint={!user}` til `StepContact`; legg til sessionStorage persist + restore (ekskluder `images`).
 
-Ingen DB-endringer. Ingen endringer i `WizardTypes.ts` (med mindre vi vil rydde – kan tas senere).
+## Hva dette løser konkret
 
----
+- Eksisterende bruker som lander på `/send-inn` ser umiddelbart at det finnes en innloggings-vei.
+- Når hen klikker "Logg inn" og kommer tilbake, er wizarden der hen slapp, og navn + e-post er låst og prefilt fra kontoen.
+- "Mismatch"-flyten i `SendInnBil` blir mye sjeldnere triggert, fordi brukere med konto ikke lenger trenger å gjette riktig e-post i wizard-skjemaet.
+- Helt nye brukere merker ingen forskjell — magic-link-flyten er uendret.
 
-## Hva jeg IKKE rører
+## Hva dette *ikke* løser (med vilje, for å holde scope)
 
-- Gjest-flyten (`SendInnBil.tsx`) – admin-godkjenning står
-- `PostPublishOnboardingOverlay` – fortsetter å vises etter publisering, uendret
-- `DashboardBilDetalj` "Bilen din ligger og venter"-banner – fortsatt nyttig som backup
-- `useCarRelationshipGate` og relasjons-flyten fra forrige iterasjon
+- Vi auto-detekterer ikke "denne e-posten finnes allerede som bruker" mens brukeren skriver i `StepContact`. Det krever en ny RPC og er en separat forbedring.
+- Bilder må re-velges hvis man logger inn midt i wizarden. Å persiste `File`-objekter krever IndexedDB og er overkill her.
