@@ -321,6 +321,7 @@ export function CarWizard({ onSuccess, initialRegistrationNumber, skipDuplicateC
         }
 
         toast({ title: "Bilen er klar 🚗", description: "Velg hva du vil gjøre videre." });
+        try { sessionStorage.removeItem(DRAFT_KEY); } catch {}
         onSuccess?.({ carId, email: data.email, flow: "authenticated", publishedNow: canPublishNow, slug });
 
       } else {
