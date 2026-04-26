@@ -207,11 +207,12 @@ export function CarWizard({ onSuccess, initialRegistrationNumber, skipDuplicateC
         const authUser = session!.user;
         const slug = `${baseSlug}-${Date.now().toString(36)}`;
 
-        const wantsToPublish = data.publishImmediately === true;
-        const hasImages = uploadedUrls.length > 0;
-        const canPublishNow = wantsToPublish && hasImages && !!data.brand && !!data.car_model;
-        const carStatus = canPublishNow ? "published" : "draft";
-        const publishedAt = canPublishNow ? new Date().toISOString() : null;
+        // Bilen lagres alltid som draft fra wizarden. Brukeren får et eget
+        // "Hva vil du nå?"-vindu rett etter (PostCreateActionOverlay) der
+        // publisering er den primære, tydelige handlingen.
+        const carStatus: "draft" = "draft";
+        const publishedAt: string | null = null;
+        const canPublishNow = false;
 
         const { error: carError } = await supabase.from("cars").insert({
           id: carId,
