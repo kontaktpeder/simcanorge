@@ -1,94 +1,110 @@
-## Hva som faktisk skjedde med kompisen din
+## Problemet
 
-Jeg leste gjennom `CarWizard.tsx` og `DashboardBilDetalj.tsx`, og bekreftet:
+Kompisen din trykte "send inn" i wizarden og trodde han publiserte. Han gjorde det ikke – fordi:
 
-1. **Wizarden har INGEN publisering.** Innlogget bruker setter alltid `status: "draft"` (linje 222 i `CarWizard.tsx`). Selv om kompisen din "trykket publiser" et eller annet sted, så *kunne* han ikke publisert fra wizarden.
-2. **Eneste måte å publisere på i dag er via en liten "Publiser bilen"-knapp dypt inne i `/dashboard/bil/:id`**, som han sannsynligvis aldri åpnet etter å ha lagd bruker.
-3. **Hva han kan ha trykket:** "Send inn"-knappen i wizarden — som *føles* som publisering ("Send inn" = jeg er ferdig), men teknisk lagrer som draft i hans private garasje.
+1. **Publiser-valget i `StepConsent` er gjemt** mellom klubb-tilknytning, Instagram-godkjenning og personvern. Det ser ut som en innstilling, ikke en handling.
+2. **Ingen forhåndsvalg** – `publishImmediately = null` → defaulter til `draft`.
+3. **Etter "Send inn" havner draft-brukere på `/dashboard/bil/:id`** – en lang redigeringsside hvor "Publiser bilen"-knappen er en av mange elementer.
+4. **`PostPublishOnboardingOverlay` finnes** og er fin – men vises kun etter publisering. De som havnet i draft får ingen feiring, ingen veileder, ingen tydelig vei videre.
 
-**Dette er ikke en UI-bug, det er en løftesvik.** Han trodde han delte bilen med fellesskapet. Resultatet: bilen ligger i en privat skuff, usynlig for alle.
-
----
-
-## Den emosjonelle innsikten
-
-Bilgarasje handler ikke om å registrere data. Det handler om **stolthet** — å vise frem en bil man er glad i, til andre som forstår hva den betyr. Hver gang vi sier "Send inn" eller "Lagre som utkast" i stedet for **"Vis den frem"**, mister vi grunnen brukeren faktisk er her.
-
-Plan: **Fjern "draft som default" for innloggede brukere. Gjør publisering til hovedhandlingen, og pakk den inn i språk som matcher følelsen.**
+Du har rett: **publisering må flyttes ut av wizard-skjemaet og bli sin egen tydelige beslutning rett etter at bilen er lagret.**
 
 ---
 
-## Endringer
+## Løsning
 
-### 1. `StepSave.tsx` — Bytt tone og gi to tydelige veier (innlogget bruker)
+### A. Fjern publish-valget fra wizarden helt
 
-**Fra dette:**
-> *Nesten ferdig! Fortell oss hvem du er, så tar vi vare på bilen din.*
-> [Send inn]
+**Fil: `src/components/car/wizard/StepConsent.tsx`**
 
-**Til dette (innlogget bruker, har minst 1 bilde):**
-> # Klar til å vise den frem?
-> *Bilen din havner i Bilgarasjen — der andre som er glad i bil kan se den, kommentere, og oppdage historien bak.*
->
-> [**Publiser nå** — primær, stor, grønn knapp]
-> *Lagre som kladd og publiser senere* — sekundær tekstlenke
+- Fjern hele "Publiser nå / Lagre som kladd"-blokken (linje 51-114). 
+- Wizarden ender med ren "Lagre bilen"-intensjon – ingen forvirring om hva knappen gjør.
+- Tittelen endres tilbake til noe enklere: *"Klar til å lagre bilen?"* med undertittel: *"Du bestemmer hva som skal skje videre om litt."*
 
-Microcopy under primærknappen:
-> Du kan alltid skjule den igjen. Registreringsnummer vises aldri offentlig.
+**Fil: `src/components/car/wizard/CarWizard.tsx`** (linje 210-214)
 
-**Hvorfor to knapper, ikke én med checkbox:**
-Et valg mellom **"Vis den frem"** og **"Vent litt"** er en emosjonell beslutning. En checkbox er en byråkratisk en. Ifølge minnet (`mem://design/visual-identity`) bruker dere "Premium Dark" med Chakra Petch på CTA — denne knappen *skal* føles som et høydepunkt.
+- `wantsToPublish`-logikken erstattes av: bilen lagres **alltid** som draft for innloggede brukere.
+- Vi sender fortsatt `publishedNow: false` og `slug` videre til `onSuccess` for kompatibilitet.
+- Toast oppdateres: *"Bilen er klar 🚗"* / *"Velg hva du vil gjøre videre."* (ikke "Lagret i garasjen din" – for nøytralt).
 
-**Hvis < 1 bilde:** vis bare "Lagre som kladd" + en hint om at minst 1 bilde trengs for publisering, med en "Tilbake til bilder"-lenke. Ikke straff — guide.
+**Fil: `src/components/car/wizard/WizardTypes.ts`**
 
-**Innlogget vs. gjest:** Sjekk `useAuth().user`. For gjest beholder vi dagens flyt (de har ikke konto, så draft-i-garasje gir ikke mening — de går via submission-flyten uansett).
+- Vi *kan* la `publishImmediately`-feltet stå urørt (uskadelig), eller fjerne det hvis vi vil rydde. Anbefaling: la det stå for nå – ingen kostnad, og hvis vi senere vil tilby "ekspress-publiser" i wizarden er feltet der.
 
-### 2. `WizardTypes.ts` — Legg til feltet
+---
+
+### B. Nytt "Hva vil du nå?"-vindu (kjernen av endringen)
+
+**Ny fil: `src/components/car/PostCreateActionOverlay.tsx`**
+
+Vises rett etter at wizarden lukker, FØR brukeren havner på en side. Inspirert av `PostPublishOnboardingOverlay` (samme estetikk – Premium Dark, Chakra Petch, teal-glow), men med et helt annet budskap:
+
+**Tittel:** *"Bilen er lagret 🎉"*  
+**Undertittel:** *"`{title}` ligger trygt i garasjen din. Hva vil du nå?"*
+
+**Hero-preview:** Første bilde (hvis lastet opp) – samme som `PostPublishOnboardingOverlay` har.
+
+**Status-stripe under bildet:** En liten, ærlig melding:
+- ✅ "Bilen er synlig i din garasje"
+- 🔒 "Den er ikke synlig for andre ennå"
+
+Dette gir kontekst – kompisen din ville ha *sett* at den ikke var publisert, ikke trodd det skjedde automatisk.
+
+**Tre tydelige handlinger** (i prioritert rekkefølge):
+
+1. **Primær (stor, teal-glow CTA, Chakra Petch):** *"Publiser nå – la andre se den"*  
+   Underbeskrivelse: *"Bilen blir synlig i Bilgarasjen. Du kan skjule den igjen når som helst."*  
+   Disabled hvis krav ikke er oppfylt (mangler bilde / merke / modell), med en liten forklaring under: *"Trenger minst ett bilde først."*  
+   Ved klikk: kjører samme `handlePublish`-logikk som finnes i `DashboardBilDetalj` (`update cars set status='published', published_at=now()`), så lukker overlayet og navigerer til `/biler/{slug}` – med `PostPublishOnboardingOverlay` som vises der.
+
+2. **Sekundær (outline):** *"Rediger mer først"*  
+   Underbeskrivelse: *"Legg til historie, flere bilder, eller endre detaljer."*  
+   Ved klikk: lukker overlayet og navigerer til `/dashboard/bil/{carId}`.
+
+3. **Tertiær (ghost / link):** *"Utforsk Bilgarasjen"*  
+   Underbeskrivelse: *"Se hva andre deler. Du kan publisere bilen din senere."*  
+   Ved klikk: navigerer til `/biler` (oversikt over publiserte biler).
+
+**Lukk-knapp** øverst til høyre – men *ikke* en "X som lukker uten konsekvens". Hvis brukeren lukker med X, defaulter den til samme som *"Rediger mer først"* (sender til dashboard-detalj). Dette er bevisst: vi vil ikke at de skal kunne klikke seg bort fra valget uten å gjøre noe.
+
+**Ingen `localStorage`-flagg** – overlayet vises kun én gang per opprettelse, så ingen "har sett før"-logikk trengs.
+
+---
+
+### C. Kobler det sammen
+
+**Fil: `src/pages/DashboardOpprettBil.tsx`**
+
+`handleWizardSuccess` endres fra direkte `navigate(...)` til å sette state som vises overlayet:
 
 ```ts
-publishImmediately: boolean | null; // null = ikke valgt enda; brukes bare i innlogget gren
+const [postCreate, setPostCreate] = useState<{ carId: string; slug: string; title: string; firstImageUrl: string | null } | null>(null);
+
+const handleWizardSuccess = async ({ carId, slug }: ...) => {
+  queryClient.invalidateQueries({ queryKey: ["my-cars"] });
+  queryClient.invalidateQueries({ queryKey: ["my-cars-count"] });
+  
+  // Hent det vi trenger for overlay (tittel, første bilde)
+  const { data: car } = await supabase
+    .from("cars")
+    .select("title, slug, car_images(image_url, sort_order)")
+    .eq("id", carId)
+    .single();
+  
+  const firstImage = car?.car_images?.sort((a,b) => a.sort_order - b.sort_order)[0]?.image_url ?? null;
+  setPostCreate({ carId, slug: car?.slug ?? slug ?? "", title: car?.title ?? "Bilen din", firstImageUrl: firstImage });
+};
 ```
-`INITIAL_WIZARD_DATA`: `publishImmediately: null`
 
-### 3. `CarWizard.tsx` — Bruk feltet i innlogget gren (linje 205-229)
+Render `<PostCreateActionOverlay ... />` når `postCreate` er satt.
 
-```ts
-const wantsToPublish = data.publishImmediately === true;
-const hasImages = uploadedUrls.length > 0;
-const canPublishNow = wantsToPublish && hasImages && !!data.brand && !!data.car_model;
+---
 
-const status = canPublishNow ? "published" : "draft";
-const published_at = canPublishNow ? new Date().toISOString() : null;
-```
+### D. Liten polering på sidesporene
 
-Bruk `status` og `published_at` i `cars.insert(...)`. Send `publishedNow: canPublishNow` videre i `onSuccess`-callbacken.
+**`DashboardBilDetalj.tsx`:** Behold dagens "Bilen din ligger og venter"-banner – den er fortsatt verdifull for brukere som velger "Rediger mer først" eller kommer tilbake senere. Ingen endring her.
 
-**Toast må matche følelsen:**
-- Publisert: `"Bilen er live! 🎉"` *"Andre kan nå se historien din."*
-- Kladd: `"Lagret i garasjen din"` *"Publiser når du er klar."*
-
-### 4. `DashboardOpprettBil.tsx` — Smartere redirect etter suksess
-
-`handleWizardSuccess` mottar nå `publishedNow`:
-- **Publisert:** redirect til `/biler/{slug}` (offentlig profil) — *belønningen er å se bilen sin live*. Eventuelt vis `PostPublishOnboardingOverlay` der med "Del lenken med kompisen din"-CTA.
-- **Kladd:** redirect til `/dashboard/bil/{carId}` med en banner som sier *"Bilen din venter på å bli sett"* + ett-klikks "Publiser nå"-knapp øverst.
-
-### 5. `DashboardBilDetalj.tsx` — Fix det som er ekkelt i dag
-
-**a)** Erstatt `confirm('Er du sikker på at du vil avpublisere bilen?')` (linje 221) med en ordentlig `AlertDialog`. Mykere språk: **"Skjul midlertidig"** i stedet for "Avpubliser". Forklaring: *"Bilen forsvinner fra Bilgarasjen og blir liggende trygt i garasjen din. Du kan vise den frem igjen når som helst."*
-
-**b)** For draft-biler: gjør "Klar for publisering?"-boksen mer emosjonell. I stedet for bare en sjekkliste, legg til en linje øverst:
-> *Bilen din ligger og venter. Klar til å la andre se den?*
-
-Knappen heter fortsatt "Publiser bilen", men ledsages av microcopy:
-> Du kan alltid skjule den igjen.
-
-**c)** Hvis `canPublish` er `false` på grunn av manglende bilde: vis tydelig hvorfor med en direktelenke til bildebehandling i samme kort. Ikke bare en grå knapp.
-
-### 6. `SendInnBil.tsx` (gjest-flyt) — uendret logikk, lett microcopy-justering
-
-Gjester går via `submission` → admin-godkjenning, så her endrer vi ikke flyten. Men `StepSave`-tonen ("Klar til å vise den frem?") gjelder uansett — for gjest er undertittelen bare litt annerledes:
-> *Vi tar imot bilen og hjelper deg å vise den frem så snart vi har sjekket den.*
+**`SendInnBil.tsx` (gjest-flyt):** Uendret. Gjester går via admin-godkjenning – overlayet gjelder kun innloggede brukere som lagrer rett til `cars`-tabellen.
 
 ---
 
@@ -96,28 +112,28 @@ Gjester går via `submission` → admin-godkjenning, så her endrer vi ikke flyt
 
 | Før | Etter |
 |---|---|
-| "Send inn" føles som publisering, men er ikke det | Eksplisitt "Publiser nå" — ingen tvil |
-| Publiserings-knapp gjemt på dashbord-side de aldri besøker | Publisering er hovedhandlingen i wizarden |
-| Default = draft (skummelt og usynlig) | Default-handling = del bilen med fellesskapet |
-| Tone: data-innsamling | Tone: stolthet og deling |
-| Etter "send inn": ender på dashbord uten kontekst | Etter publisering: ender på offentlig profil — belønning |
-| `confirm()` ved avpublisering | `AlertDialog` med mykere "skjul midlertidig"-språk |
+| Publish-valg gjemt mellom klubb/Instagram/personvern | Publish er en egen, dedikert beslutning etter lagring |
+| `publishImmediately` defaulter til null → draft | Brukeren *må* aktivt velge: publiser, rediger, eller utforsk |
+| "Bilen er lagret"-toast forsvinner på 4 sek | Tydelig overlay som krever et valg |
+| Etter draft: lang redigeringsside uten klar kontekst | Overlay som forklarer status og viser veien videre |
+| Kompisen din tror han publiserte → bilen forblir usynlig | Han ser eksplisitt "🔒 Ikke synlig for andre ennå" + tydelig "Publiser nå"-knapp |
 
 ---
 
 ## Filer som endres
 
-- `src/components/car/wizard/WizardTypes.ts` — nytt felt
-- `src/components/car/wizard/CarWizard.tsx` — bruk `publishImmediately` for innlogget; sende `publishedNow` til `onSuccess`
-- `src/components/car/wizard/StepSave.tsx` — ny tone, to-veis CTA, conditional på `useAuth`
-- `src/pages/DashboardOpprettBil.tsx` — smartere redirect basert på `publishedNow`
-- `src/pages/DashboardBilDetalj.tsx` — `AlertDialog` i stedet for `confirm`, varmere microcopy på draft-banner
-- `src/pages/SendInnBil.tsx` — kun toneoppdatering i wizard-tittel via `StepSave`
+- **Ny:** `src/components/car/PostCreateActionOverlay.tsx`
+- `src/components/car/wizard/StepConsent.tsx` – fjern publish-blokk, oppdater copy
+- `src/components/car/wizard/CarWizard.tsx` – alltid draft, oppdater toast
+- `src/pages/DashboardOpprettBil.tsx` – render overlay i stedet for direkte navigate
 
-Ingen DB-endringer — `cars` har allerede `status` og `published_at`. RLS tillater allerede eier å sette `published_at` (se "Owners can update their cars"-policy).
+Ingen DB-endringer. Ingen endringer i `WizardTypes.ts` (med mindre vi vil rydde – kan tas senere).
+
+---
 
 ## Hva jeg IKKE rører
 
-- Gjest-submission-flyten (admin-godkjenning beholdes — det er en helt egen tillitsmekanikk)
-- Publication-request-systemet for biler eid av andre
-- `RegNrGate`, relasjonsforespørsler, success-side — alt fra forrige iterasjon står
+- Gjest-flyten (`SendInnBil.tsx`) – admin-godkjenning står
+- `PostPublishOnboardingOverlay` – fortsetter å vises etter publisering, uendret
+- `DashboardBilDetalj` "Bilen din ligger og venter"-banner – fortsatt nyttig som backup
+- `useCarRelationshipGate` og relasjons-flyten fra forrige iterasjon

@@ -1,30 +1,26 @@
 import { Layout } from "@/components/layout/Layout";
 import { CarWizard } from "@/components/car/wizard";
-import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { Loader2, ArrowLeft } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
+import { PostCreateActionOverlay } from "@/components/car/PostCreateActionOverlay";
 
-async function resolvePostClaimPath(carId: string): Promise<string> {
-  const { data: car } = await supabase
-    .from("cars")
-    .select("id, slug, status, published_at")
-    .eq("id", carId)
-    .single();
-
-  if (car?.published_at && car?.slug) return `/biler/${car.slug}`;
-  if (car) return `/dashboard/bil/${car.id}`;
-  return "/dashboard/mine-biler";
+interface PostCreateState {
+  carId: string;
+  carSlug: string;
+  carTitle: string;
+  firstImageUrl: string | null;
+  canPublish: boolean;
 }
 
 export default function DashboardOpprettBil() {
   const { user, isLoading: authLoading } = useAuth();
-  const { toast } = useToast();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const [postCreate, setPostCreate] = useState<PostCreateState | null>(null);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -44,23 +40,58 @@ export default function DashboardOpprettBil() {
 
   if (!user) return null;
 
-  const handleWizardSuccess = async ({ carId, flow, publishedNow, slug }: { carId: string; email: string; flow: "guest" | "authenticated"; publishedNow?: boolean; slug?: string }) => {
+  const handleWizardSuccess = async ({
+    carId,
+    flow,
+    slug,
+  }: {
+    carId: string;
+    email: string;
+    flow: "guest" | "authenticated";
+    publishedNow?: boolean;
+    slug?: string;
+  }) => {
     queryClient.invalidateQueries({ queryKey: ["my-cars"] });
     queryClient.invalidateQueries({ queryKey: ["my-cars-count"] });
 
-    if (flow === "authenticated") {
-      if (publishedNow && slug) {
-        // Belønning: send brukeren til den offentlige siden av sin egen bil
-        navigate(`/biler/${slug}`);
-        return;
-      }
-      // Kladd: send til dashbord-detalj med tydelig "publiser nå"-mulighet
-      navigate(`/dashboard/bil/${carId}`);
+    if (flow !== "authenticated") {
+      navigate("/dashboard/mine-biler");
       return;
     }
 
-    // Fallback (shouldn't happen here since user is logged in)
-    navigate("/dashboard/mine-biler");
+    // Hent det vi trenger for å vise "Hva vil du nå?"-overlay
+    try {
+      const { data: car } = await supabase
+        .from("cars")
+        .select("title, slug, brand, model, car_images(image_url, sort_order)")
+        .eq("id", carId)
+        .single();
+
+      const sortedImages = (car?.car_images ?? [])
+        .slice()
+        .sort((a: any, b: any) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
+      const firstImage = sortedImages[0]?.image_url ?? null;
+      const canPublish =
+        sortedImages.length > 0 && !!car?.brand && !!car?.model;
+
+      setPostCreate({
+        carId,
+        carSlug: car?.slug ?? slug ?? "",
+        carTitle: car?.title ?? "Bilen din",
+        firstImageUrl: firstImage,
+        canPublish,
+      });
+    } catch {
+      // Hvis vi ikke får hentet bilen, send dem direkte til detaljsiden
+      navigate(`/dashboard/bil/${carId}`);
+    }
+  };
+
+  const handleOverlayClose = () => {
+    if (!postCreate) return;
+    const { carId } = postCreate;
+    setPostCreate(null);
+    navigate(`/dashboard/bil/${carId}`);
   };
 
   return (
@@ -88,6 +119,17 @@ export default function DashboardOpprettBil() {
           </div>
         </div>
       </section>
+
+      {postCreate && (
+        <PostCreateActionOverlay
+          carId={postCreate.carId}
+          carSlug={postCreate.carSlug}
+          carTitle={postCreate.carTitle}
+          firstImageUrl={postCreate.firstImageUrl}
+          canPublish={postCreate.canPublish}
+          onClose={handleOverlayClose}
+        />
+      )}
     </Layout>
   );
 }
