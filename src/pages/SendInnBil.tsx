@@ -317,6 +317,7 @@ export default function SendInnBil() {
                 Først sjekker vi om bilen din allerede ligger i Bilgarasje.
               </p>
             </div>
+            {!user && <ExistingUserLoginBanner />}
             <RegNrGate
               onContinue={(registrationNumber) =>
                 setState({ step: "wizard", registrationNumber })
