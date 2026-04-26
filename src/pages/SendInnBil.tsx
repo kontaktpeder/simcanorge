@@ -342,6 +342,8 @@ export default function SendInnBil() {
             </p>
           </div>
 
+          {!user && <ExistingUserLoginBanner />}
+
           <div className="flex-1 min-h-0">
             <CarWizard
               onSuccess={handleWizardSuccess}
