@@ -83,6 +83,7 @@ export default function SendInnBil() {
   const { toast } = useToast();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { user } = useAuth();
   const claimHandledRef = useRef(false);
   const [state, setState] = useState<PageState>(() => {
     if (getPendingClaimCarId()) {
