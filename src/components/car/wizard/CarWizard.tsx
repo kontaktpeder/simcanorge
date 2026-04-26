@@ -274,11 +274,7 @@ export function CarWizard({ onSuccess, initialRegistrationNumber, skipDuplicateC
           } catch (err) { console.error("Club link failed:", err); }
         }
 
-        if (canPublishNow) {
-          toast({ title: "Bilen er live! 🎉", description: "Andre kan nå se historien din." });
-        } else {
-          toast({ title: "Lagret i garasjen din", description: "Publiser når du er klar." });
-        }
+        toast({ title: "Bilen er klar 🚗", description: "Velg hva du vil gjøre videre." });
         onSuccess?.({ carId, email: data.email, flow: "authenticated", publishedNow: canPublishNow, slug });
 
       } else {
