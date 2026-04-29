@@ -70,7 +70,7 @@ export function normalizePart(part: any, categories: any[]): FeedItem {
 
 export function normalizeListing(item: any): FeedItem {
   const cat = item.categories as any;
-  const owner = item.owners as any;
+  const owner = (item.public_person_profiles || item.person_profiles || item.owners) as any;
   return {
     type: "listing",
     id: item.id,

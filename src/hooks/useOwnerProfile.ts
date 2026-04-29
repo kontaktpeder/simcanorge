@@ -42,6 +42,30 @@ export interface OwnerProfile {
   updated_at: string;
 }
 
+export interface PublicOwnerProfile {
+  id: string;
+  user_id: string;
+  display_name: string;
+  slug: string;
+  bio: string | null;
+  location: string | null;
+  avatar_url: string | null;
+  cover_url: string | null;
+  is_public: boolean | null;
+  can_create_pages: boolean | null;
+  favorite_brands: string[] | null;
+  visible_public: boolean | null;
+  approved_at: string | null;
+  created_at: string | null;
+  updated_at: string | null;
+}
+
+const OWNER_PROFILE_COLUMNS =
+  'id, user_id, display_name, slug, bio, location, avatar_url, cover_url, is_public, can_create_pages, contact_email, contact_phone, favorite_brands, visible_public, approved_at, requested_approval_at, created_at, updated_at';
+
+const PUBLIC_PERSON_PROFILE_COLUMNS =
+  'id, user_id, display_name, slug, bio, avatar_url, cover_url, location, favorite_brands, is_public, can_create_pages, visible_public, approved_at, created_at, updated_at';
+
 interface OwnerProfileInsert {
   user_id: string;
   display_name: string;
@@ -71,7 +95,7 @@ export function useOwnerProfile(userId: string | undefined) {
 
       const { data, error } = await supabase
         .from('person_profiles')
-        .select('*')
+        .select(OWNER_PROFILE_COLUMNS)
         .eq('user_id', userId)
         .maybeSingle();
 
@@ -89,14 +113,13 @@ export function useOwnerProfileBySlug(slug: string | undefined) {
       if (!slug) return null;
 
       const { data, error } = await supabase
-        .from('person_profiles')
-        .select('*')
+        .from('public_person_profiles')
+        .select(PUBLIC_PERSON_PROFILE_COLUMNS)
         .eq('slug', slug)
-        .eq('is_public', true)
         .maybeSingle();
 
       if (error) throw error;
-      return data as OwnerProfile | null;
+      return data as PublicOwnerProfile | null;
     },
     enabled: !!slug,
   });
@@ -153,15 +176,14 @@ export function useCarOwnerProfile(carId: string | undefined) {
       const userIds = carOwners.map(co => co.user_id);
 
       const { data: profile, error: profileError } = await supabase
-        .from('person_profiles')
-        .select('*')
+        .from('public_person_profiles')
+        .select(PUBLIC_PERSON_PROFILE_COLUMNS)
         .in('user_id', userIds)
-        .eq('is_public', true)
         .limit(1)
         .maybeSingle();
 
       if (profileError) throw profileError;
-      return profile as OwnerProfile | null;
+      return profile as PublicOwnerProfile | null;
     },
     enabled: !!carId,
   });
@@ -177,7 +199,7 @@ export function useUpdateOwnerProfile() {
         .from('person_profiles')
         .update(updates as any)
         .eq('id', id)
-        .select()
+        .select(OWNER_PROFILE_COLUMNS)
         .single();
 
       if (error) throw error;
@@ -221,7 +243,7 @@ export function useCreateOwnerProfile() {
           visible_public: profile.visible_public ?? false,
         } as any)
         .eq('user_id', profile.user_id)
-        .select()
+        .select(OWNER_PROFILE_COLUMNS)
         .single();
 
       if (error) throw error;
@@ -252,7 +274,7 @@ export function useAllOwnerProfiles() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('person_profiles')
-        .select('*')
+        .select(OWNER_PROFILE_COLUMNS)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
