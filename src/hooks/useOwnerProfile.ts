@@ -42,6 +42,30 @@ export interface OwnerProfile {
   updated_at: string;
 }
 
+export interface PublicOwnerProfile {
+  id: string;
+  user_id: string;
+  display_name: string;
+  slug: string;
+  bio: string | null;
+  location: string | null;
+  avatar_url: string | null;
+  cover_url: string | null;
+  is_public: boolean | null;
+  can_create_pages: boolean | null;
+  favorite_brands: string[] | null;
+  visible_public: boolean | null;
+  approved_at: string | null;
+  created_at: string | null;
+  updated_at: string | null;
+}
+
+const OWNER_PROFILE_COLUMNS =
+  'id, user_id, display_name, slug, bio, location, avatar_url, cover_url, is_public, can_create_pages, contact_email, contact_phone, favorite_brands, visible_public, approved_at, requested_approval_at, created_at, updated_at';
+
+const PUBLIC_PERSON_PROFILE_COLUMNS =
+  'id, user_id, display_name, slug, bio, avatar_url, cover_url, location, favorite_brands, is_public, can_create_pages, visible_public, approved_at, created_at, updated_at';
+
 interface OwnerProfileInsert {
   user_id: string;
   display_name: string;
