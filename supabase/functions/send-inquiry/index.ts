@@ -32,6 +32,22 @@ interface InquiryRequest {
   items?: InquiryItemInput[];
 }
 
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+function jsonResponse(body: unknown, status: number) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "Content-Type": "application/json", ...corsHeaders },
+  });
+}
+
+function genericError(status = 500) {
+  return jsonResponse(
+    { error: "Noe gikk galt. Prøv igjen senere." },
+    status,
+  );
+}
+
 /** Legacy fallback: group flat items by recipient via DB lookup */
 async function groupItemsByRecipient(supabase: any, items: InquiryItemInput[]) {
   const adminItems: InquiryItemInput[] = [];
@@ -64,43 +80,98 @@ const handler = async (req: Request): Promise<Response> => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  const requestId = crypto.randomUUID();
+  console.log(`[send-inquiry ${requestId}] request received`);
+
   try {
     const data: InquiryRequest = await req.json();
-    console.log("Received inquiry:", JSON.stringify(data, null, 2));
 
-    if (!data.customer_name || !data.email) {
-      return new Response(
-        JSON.stringify({ error: "Mangler navn eller e-post" }),
-        { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
-      );
+    // Basic validation (no payload logging)
+    if (
+      !data?.customer_name ||
+      typeof data.customer_name !== "string" ||
+      !data.email ||
+      typeof data.email !== "string" ||
+      !EMAIL_RE.test(data.email.trim())
+    ) {
+      return jsonResponse({ error: "Mangler navn eller gyldig e-post" }, 400);
+    }
+
+    const hasNewFormat =
+      Array.isArray(data.items_by_recipient) && data.items_by_recipient.length > 0;
+    const hasLegacy = Array.isArray(data.items) && data.items.length > 0;
+    if (!hasNewFormat && !hasLegacy) {
+      return jsonResponse({ error: "Mangler varer" }, 400);
     }
 
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
     );
+
+    // ---- Rate limiting (5 / 10 min per IP+email) ----
+    const ip =
+      req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+      req.headers.get("cf-connecting-ip") ||
+      "unknown";
+    const emailKey = data.email.trim().toLowerCase();
+    const rateKey = `inquiry:${ip}:${emailKey}`;
+
+    const { data: rl, error: rlError } = await supabase.rpc(
+      "check_inquiry_rate_limit",
+      { p_key: rateKey, p_max: 5, p_window_minutes: 10 },
+    );
+
+    if (rlError) {
+      console.error(`[send-inquiry ${requestId}] rate-limit check failed`);
+      // Fail closed on rate-limit infrastructure errors? Fail open to avoid breaking UX.
+    } else if (rl && rl.allowed === false) {
+      console.warn(`[send-inquiry ${requestId}] rate-limited`);
+      return new Response(
+        JSON.stringify({
+          error: "For mange forespørsler. Prøv igjen senere.",
+          retry_after_seconds: rl.retry_after_seconds ?? 600,
+        }),
+        {
+          status: 429,
+          headers: {
+            "Content-Type": "application/json",
+            "Retry-After": String(rl.retry_after_seconds ?? 600),
+            ...corsHeaders,
+          },
+        },
+      );
+    }
 
     // Build recipient groups
     let groups: RecipientGroup[];
 
-    if (data.items_by_recipient && data.items_by_recipient.length > 0) {
-      // New format: already grouped by recipient with per-recipient messages
-      groups = data.items_by_recipient.filter((g) => g.items.length > 0);
-    } else if (data.items && data.items.length > 0) {
-      // Legacy format: flat items list, group server-side
-      const { adminItems, byOwnerId } = await groupItemsByRecipient(supabase, data.items);
+    if (hasNewFormat) {
+      groups = data.items_by_recipient!.filter((g) => g.items.length > 0);
+    } else {
+      const { adminItems, byOwnerId } = await groupItemsByRecipient(
+        supabase,
+        data.items!,
+      );
       groups = [];
       if (adminItems.length > 0) {
-        groups.push({ recipient_owner_id: null, message: data.message || "", items: adminItems });
+        groups.push({
+          recipient_owner_id: null,
+          message: data.message || "",
+          items: adminItems,
+        });
       }
       for (const [ownerId, ownerItems] of byOwnerId) {
-        groups.push({ recipient_owner_id: ownerId, message: data.message || "", items: ownerItems });
+        groups.push({
+          recipient_owner_id: ownerId,
+          message: data.message || "",
+          items: ownerItems,
+        });
       }
-    } else {
-      return new Response(
-        JSON.stringify({ error: "Mangler varer" }),
-        { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
-      );
+    }
+
+    if (groups.length === 0) {
+      return jsonResponse({ error: "Mangler varer" }, 400);
     }
 
     const base = {
@@ -126,8 +197,8 @@ const handler = async (req: Request): Promise<Response> => {
         .single();
 
       if (inquiryError) {
-        console.error("Error inserting inquiry:", inquiryError);
-        throw inquiryError;
+        console.error(`[send-inquiry ${requestId}] insert inquiry failed`);
+        return genericError();
       }
 
       const inquiryItems = g.items.map((it) => ({
@@ -142,28 +213,27 @@ const handler = async (req: Request): Promise<Response> => {
         .insert(inquiryItems);
 
       if (itemsError) {
-        console.error("Error inserting inquiry items:", itemsError);
+        console.error(`[send-inquiry ${requestId}] insert items failed`);
       }
 
       ids.push(inquiry.id);
     }
 
-    console.log("Inquiries created:", ids);
+    console.log(
+      `[send-inquiry ${requestId}] ok groups=${groups.length} inquiries=${ids.length}`,
+    );
 
-    return new Response(
-      JSON.stringify({
+    return jsonResponse(
+      {
         success: true,
         message: "Forespørsel mottatt! Selger tar kontakt.",
         inquiry_ids: ids,
-      }),
-      { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      },
+      200,
     );
-  } catch (error: any) {
-    console.error("Error in send-inquiry function:", error);
-    return new Response(
-      JSON.stringify({ error: error.message }),
-      { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } }
-    );
+  } catch (_error) {
+    console.error(`[send-inquiry ${requestId}] unhandled error`);
+    return genericError();
   }
 };
 
