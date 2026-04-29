@@ -182,7 +182,7 @@ const BilDetalj = () => {
           // Look up person_profile by user_id
           const ownerUserId = (data as any).car_owners[0].user_id;
           const { data: pp } = await supabase
-            .from("person_profiles")
+            .from("public_person_profiles")
             .select("id")
             .eq("user_id", ownerUserId)
             .maybeSingle();
