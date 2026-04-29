@@ -770,6 +770,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "comments_author_profile_id_fkey"
+            columns: ["author_profile_id"]
+            isOneToOne: false
+            referencedRelation: "public_person_profiles"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "comments_car_id_fkey"
             columns: ["car_id"]
             isOneToOne: false
@@ -841,6 +848,13 @@ export type Database = {
             columns: ["profile_id"]
             isOneToOne: false
             referencedRelation: "person_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_attendees_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "public_person_profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -959,6 +973,13 @@ export type Database = {
             referencedRelation: "person_profiles"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "events_owner_profile_id_fkey"
+            columns: ["owner_profile_id"]
+            isOneToOne: false
+            referencedRelation: "public_person_profiles"
+            referencedColumns: ["id"]
+          },
         ]
       }
       feed_post_likes: {
@@ -1048,6 +1069,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "feed_posts_author_profile_id_fkey"
+            columns: ["author_profile_id"]
+            isOneToOne: false
+            referencedRelation: "public_person_profiles"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "feed_posts_car_id_fkey"
             columns: ["car_id"]
             isOneToOne: false
@@ -1128,6 +1156,13 @@ export type Database = {
             referencedRelation: "owners"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "inquiries_recipient_owner_id_fkey"
+            columns: ["recipient_owner_id"]
+            isOneToOne: false
+            referencedRelation: "public_owner_profiles"
+            referencedColumns: ["id"]
+          },
         ]
       }
       inquiry_items: {
@@ -1178,6 +1213,27 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      inquiry_rate_limits: {
+        Row: {
+          count: number
+          key: string
+          updated_at: string
+          window_start: string
+        }
+        Insert: {
+          count?: number
+          key: string
+          updated_at?: string
+          window_start?: string
+        }
+        Update: {
+          count?: number
+          key?: string
+          updated_at?: string
+          window_start?: string
+        }
+        Relationships: []
       }
       marketplace_categories: {
         Row: {
@@ -1317,10 +1373,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "marketplace_items_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "public_owner_profiles"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "marketplace_items_person_profile_id_fkey"
             columns: ["person_profile_id"]
             isOneToOne: false
             referencedRelation: "person_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "marketplace_items_person_profile_id_fkey"
+            columns: ["person_profile_id"]
+            isOneToOne: false
+            referencedRelation: "public_person_profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -1501,6 +1571,13 @@ export type Database = {
             referencedRelation: "person_profiles"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "page_access_requests_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: true
+            referencedRelation: "public_person_profiles"
+            referencedColumns: ["id"]
+          },
         ]
       }
       page_car_link_requests: {
@@ -1621,6 +1698,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "page_memberships_invited_by_fkey"
+            columns: ["invited_by"]
+            isOneToOne: false
+            referencedRelation: "public_person_profiles"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "page_memberships_page_id_fkey"
             columns: ["page_id"]
             isOneToOne: false
@@ -1632,6 +1716,13 @@ export type Database = {
             columns: ["person_profile_id"]
             isOneToOne: false
             referencedRelation: "person_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "page_memberships_person_profile_id_fkey"
+            columns: ["person_profile_id"]
+            isOneToOne: false
+            referencedRelation: "public_person_profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -1736,6 +1827,13 @@ export type Database = {
             columns: ["created_by"]
             isOneToOne: false
             referencedRelation: "person_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pages_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "public_person_profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -1989,7 +2087,99 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      public_owner_profiles: {
+        Row: {
+          approved_at: string | null
+          avatar_url: string | null
+          bio: string | null
+          created_at: string | null
+          display_name: string | null
+          favorite_brands: string[] | null
+          id: string | null
+          location: string | null
+          slug: string | null
+          visible_public: boolean | null
+        }
+        Insert: {
+          approved_at?: string | null
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string | null
+          display_name?: string | null
+          favorite_brands?: string[] | null
+          id?: string | null
+          location?: string | null
+          slug?: string | null
+          visible_public?: boolean | null
+        }
+        Update: {
+          approved_at?: string | null
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string | null
+          display_name?: string | null
+          favorite_brands?: string[] | null
+          id?: string | null
+          location?: string | null
+          slug?: string | null
+          visible_public?: boolean | null
+        }
+        Relationships: []
+      }
+      public_person_profiles: {
+        Row: {
+          approved_at: string | null
+          avatar_url: string | null
+          bio: string | null
+          can_create_pages: boolean | null
+          cover_url: string | null
+          created_at: string | null
+          display_name: string | null
+          favorite_brands: string[] | null
+          id: string | null
+          is_public: boolean | null
+          location: string | null
+          slug: string | null
+          updated_at: string | null
+          user_id: string | null
+          visible_public: boolean | null
+        }
+        Insert: {
+          approved_at?: string | null
+          avatar_url?: string | null
+          bio?: string | null
+          can_create_pages?: boolean | null
+          cover_url?: string | null
+          created_at?: string | null
+          display_name?: string | null
+          favorite_brands?: string[] | null
+          id?: string | null
+          is_public?: boolean | null
+          location?: string | null
+          slug?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+          visible_public?: boolean | null
+        }
+        Update: {
+          approved_at?: string | null
+          avatar_url?: string | null
+          bio?: string | null
+          can_create_pages?: boolean | null
+          cover_url?: string | null
+          created_at?: string | null
+          display_name?: string | null
+          favorite_brands?: string[] | null
+          id?: string | null
+          is_public?: boolean | null
+          location?: string | null
+          slug?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+          visible_public?: boolean | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       admin_search_profiles: {
@@ -2016,10 +2206,15 @@ export type Database = {
         Args: { _car_id: string }
         Returns: boolean
       }
+      check_inquiry_rate_limit: {
+        Args: { p_key: string; p_max?: number; p_window_minutes?: number }
+        Returns: Json
+      }
       claim_car_after_email_verify: {
         Args: { p_car_id: string }
         Returns: Json
       }
+      cleanup_old_inquiry_rate_limits: { Args: never; Returns: undefined }
       cleanup_old_page_views: { Args: never; Returns: undefined }
       create_page_car_link_request: {
         Args: { p_car_id: string; p_message?: string; p_page_id: string }
