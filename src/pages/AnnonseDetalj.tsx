@@ -238,7 +238,7 @@ function MarketplaceDetailView({ item }: { item: any }) {
   const images = [...(item.marketplace_images || [])].sort((a: any, b: any) => (a.sort_order || 0) - (b.sort_order || 0));
   const allImages = images.map((img: any) => img.image_url);
   const category = item.categories as any;
-  const owner = (item as any).person_profiles || (item as any).owners;
+  const owner = (item as any).public_person_profiles || (item as any).person_profiles || (item as any).owners;
   const priceDisplay = item.price != null ? `${Number(item.price).toLocaleString("nb-NO")} kr` : null;
   const inCart = isInCart("listing", item.id);
 
