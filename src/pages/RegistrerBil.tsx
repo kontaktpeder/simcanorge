@@ -113,13 +113,22 @@ export default function RegistrerBil() {
                 style={{ filter: 'brightness(1.8) invert(1)', opacity: 0.7 }}
               />
             </Link>
-            <Link
-              to="/biler"
-              className="text-[11px] lg:text-[12px] uppercase tracking-[0.18em] text-white/60 hover:text-white transition"
-              style={{ fontFamily: "'Chakra Petch', 'Oswald', sans-serif" }}
-            >
-              Utforsk
-            </Link>
+            <div className="flex items-center gap-4 lg:gap-5">
+              <Link
+                to="/biler"
+                className="text-[11px] lg:text-[12px] uppercase tracking-[0.18em] text-white/60 hover:text-white transition"
+                style={{ fontFamily: "'Chakra Petch', 'Oswald', sans-serif" }}
+              >
+                Utforsk
+              </Link>
+              <Link
+                to="/login"
+                className="inline-flex items-center px-3.5 py-1.5 rounded-full border border-white/25 bg-white/5 hover:bg-white/10 hover:border-white/40 text-[11px] lg:text-[12px] uppercase tracking-[0.18em] text-white/90 transition backdrop-blur-sm"
+                style={{ fontFamily: "'Chakra Petch', 'Oswald', sans-serif" }}
+              >
+                Logg inn
+              </Link>
+            </div>
           </div>
 
           {/* Spacer */}
