@@ -95,7 +95,7 @@ export function useOwnerProfile(userId: string | undefined) {
 
       const { data, error } = await supabase
         .from('person_profiles')
-        .select('*')
+        .select(OWNER_PROFILE_COLUMNS)
         .eq('user_id', userId)
         .maybeSingle();
 
@@ -113,14 +113,13 @@ export function useOwnerProfileBySlug(slug: string | undefined) {
       if (!slug) return null;
 
       const { data, error } = await supabase
-        .from('person_profiles')
-        .select('*')
+        .from('public_person_profiles')
+        .select(PUBLIC_PERSON_PROFILE_COLUMNS)
         .eq('slug', slug)
-        .eq('is_public', true)
         .maybeSingle();
 
       if (error) throw error;
-      return data as OwnerProfile | null;
+      return data as PublicOwnerProfile | null;
     },
     enabled: !!slug,
   });
@@ -177,15 +176,14 @@ export function useCarOwnerProfile(carId: string | undefined) {
       const userIds = carOwners.map(co => co.user_id);
 
       const { data: profile, error: profileError } = await supabase
-        .from('person_profiles')
-        .select('*')
+        .from('public_person_profiles')
+        .select(PUBLIC_PERSON_PROFILE_COLUMNS)
         .in('user_id', userIds)
-        .eq('is_public', true)
         .limit(1)
         .maybeSingle();
 
       if (profileError) throw profileError;
-      return profile as OwnerProfile | null;
+      return profile as PublicOwnerProfile | null;
     },
     enabled: !!carId,
   });
