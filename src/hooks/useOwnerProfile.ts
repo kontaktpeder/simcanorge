@@ -274,7 +274,7 @@ export function useAllOwnerProfiles() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('person_profiles')
-        .select('*')
+        .select(OWNER_PROFILE_COLUMNS)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
