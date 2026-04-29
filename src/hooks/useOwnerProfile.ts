@@ -199,7 +199,7 @@ export function useUpdateOwnerProfile() {
         .from('person_profiles')
         .update(updates as any)
         .eq('id', id)
-        .select()
+        .select(OWNER_PROFILE_COLUMNS)
         .single();
 
       if (error) throw error;
@@ -243,7 +243,7 @@ export function useCreateOwnerProfile() {
           visible_public: profile.visible_public ?? false,
         } as any)
         .eq('user_id', profile.user_id)
-        .select()
+        .select(OWNER_PROFILE_COLUMNS)
         .single();
 
       if (error) throw error;
