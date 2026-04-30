@@ -2,6 +2,7 @@ import { Layout } from "@/components/layout/Layout";
 import { AnimatedSection } from "@/components/layout/AnimatedSection";
 import { Facebook, Heart, Users, Car, Wrench, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
+import { FEATURES } from "@/config/features";
 
 const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
 
