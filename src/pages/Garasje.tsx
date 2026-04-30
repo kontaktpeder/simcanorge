@@ -185,10 +185,20 @@ export default function Garasje() {
               Snarveier
             </h2>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-              <ShortcutTile to="/dashboard/events/opprett" icon={<CalendarPlus className="w-5 h-5" />} label="Opprett arrangement" />
-              <ShortcutTile to="/dashboard/sider" icon={<Users className="w-5 h-5" />} label="Klubber & sider" />
+              {!FEATURES.simpleLaunchMode && (
+                <>
+                  <ShortcutTile to="/dashboard/events/opprett" icon={<CalendarPlus className="w-5 h-5" />} label="Opprett arrangement" />
+                  <ShortcutTile to="/dashboard/sider" icon={<Users className="w-5 h-5" />} label="Klubber & sider" />
+                </>
+              )}
               <ShortcutTile to="/dashboard/min-profil" icon={<UserCircle className="w-5 h-5" />} label="Min profil" />
               <ShortcutTile to="/konto" icon={<Settings className="w-5 h-5" />} label="Konto" />
+              {FEATURES.simpleLaunchMode && (
+                <>
+                  <ComingSoonTile icon={<CalendarPlus className="w-5 h-5" />} label="Arrangementer" />
+                  <ComingSoonTile icon={<Users className="w-5 h-5" />} label="Klubber & sider" />
+                </>
+              )}
             </div>
           </section>
 
@@ -197,7 +207,12 @@ export default function Garasje() {
             <h2 className="text-[12px] tracking-[0.2em] uppercase text-white/30 mb-4" style={oswald}>
               Oppdateringer
             </h2>
-            {(!notifications || notifications.length === 0) ? (
+            {FEATURES.simpleLaunchMode ? (
+              <div className="rounded-xl border border-white/[0.06] p-6 text-center" style={{ background: 'hsl(215 25% 10%)' }}>
+                <p className="text-[12px] text-[#2dd4a8]/70 uppercase tracking-[0.2em] mb-1" style={oswald}>Kommer snart</p>
+                <p className="text-[11px] text-white/30" style={oswald}>Varsler og innboks åpner ved full lansering.</p>
+              </div>
+            ) : (!notifications || notifications.length === 0) ? (
               <div className="rounded-xl border border-white/[0.06] p-6 text-center" style={{ background: 'hsl(215 25% 10%)' }}>
                 <p className="text-[12px] text-white/25" style={oswald}>Ingen oppdateringer ennå. Aktivitet rundt bilene dine vises her.</p>
               </div>
