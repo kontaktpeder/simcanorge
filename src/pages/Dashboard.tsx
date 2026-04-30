@@ -276,15 +276,22 @@ export default function Dashboard() {
           </DashDesc>
         </DashCard>
 
-        <DashCard to="/dashboard/innboks" icon={Inbox} delay={0.4}>
-          <DashTitle>Innboks</DashTitle>
-          <DashDesc>
-            {(myInquiries?.pending ?? 0) > 0
-              ? `${myInquiries!.pending} venter på svar`
-              : 'Forespørsler og klubbtilknytning'}
-          </DashDesc>
-          <DashCount>{myInquiries?.total || 0}</DashCount>
-        </DashCard>
+        {FEATURES.simpleLaunchMode ? (
+          <DashCard to="/dashboard/innboks" icon={Inbox} delay={0.4}>
+            <DashTitle>Innboks</DashTitle>
+            <DashDesc>Kommer snart</DashDesc>
+          </DashCard>
+        ) : (
+          <DashCard to="/dashboard/innboks" icon={Inbox} delay={0.4}>
+            <DashTitle>Innboks</DashTitle>
+            <DashDesc>
+              {(myInquiries?.pending ?? 0) > 0
+                ? `${myInquiries!.pending} venter på svar`
+                : 'Forespørsler og klubbtilknytning'}
+            </DashDesc>
+            <DashCount>{myInquiries?.total || 0}</DashCount>
+          </DashCard>
+        )}
       </div>
 
       {/* ═══════════════════════════════════════════════
