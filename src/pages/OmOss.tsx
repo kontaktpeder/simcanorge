@@ -163,13 +163,23 @@ export default function OmOss() {
               Se alle biler
               <ArrowRight className="w-4 h-4" />
             </Link>
-            <Link
-              to="/markedsplass"
-              className="inline-flex items-center gap-2 border border-white/15 text-white/70 hover:text-white hover:border-white/30 font-bold uppercase tracking-[0.1em] text-sm px-6 py-3 rounded-lg transition-colors"
-              style={chakra}
-            >
-              Markedsplass
-            </Link>
+            {FEATURES.simpleLaunchMode ? (
+              <span
+                className="inline-flex items-center gap-2 border border-white/10 text-white/40 font-bold uppercase tracking-[0.1em] text-sm px-6 py-3 rounded-lg cursor-not-allowed select-none"
+                style={chakra}
+                aria-disabled="true"
+              >
+                Markedsplass kommer snart
+              </span>
+            ) : (
+              <Link
+                to="/markedsplass"
+                className="inline-flex items-center gap-2 border border-white/15 text-white/70 hover:text-white hover:border-white/30 font-bold uppercase tracking-[0.1em] text-sm px-6 py-3 rounded-lg transition-colors"
+                style={chakra}
+              >
+                Markedsplass
+              </Link>
+            )}
             <a
               href="https://www.facebook.com/groups/1569119639997670"
               target="_blank"
