@@ -400,3 +400,19 @@ function ShortcutTile({ to, icon, label }: { to: string; icon: React.ReactNode; 
     </Link>
   );
 }
+
+/* ─── Coming Soon Tile (locked) ─── */
+function ComingSoonTile({ icon, label }: { icon: React.ReactNode; label: string }) {
+  return (
+    <div
+      aria-disabled="true"
+      title="Kommer snart"
+      className="relative flex flex-col items-center gap-2 py-4 rounded-xl border border-dashed border-white/[0.08] text-center cursor-not-allowed select-none"
+      style={{ background: 'hsl(215 25% 9%)' }}
+    >
+      <span className="text-white/15">{icon}</span>
+      <span className="text-[10px] sm:text-[11px] uppercase tracking-[0.1em] text-white/25" style={oswald}>{label}</span>
+      <span className="absolute top-1.5 right-1.5 px-1.5 py-0.5 rounded text-[8px] uppercase tracking-[0.15em] font-bold text-[#2dd4a8]/80" style={{ ...oswald, background: 'rgba(45,212,168,0.1)' }}>Snart</span>
+    </div>
+  );
+}
