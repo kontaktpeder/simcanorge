@@ -195,6 +195,8 @@ const rawRoutes: RouteConfig[] = [
   { path: "*", element: NotFound, isPublic: true },
 ];
 
+export const routes: RouteConfig[] = rawRoutes.map(lockRoute);
+
 export const getNavItems = () => {
   return routes
     .filter(route => route.showInNav && route.label && route.icon)
