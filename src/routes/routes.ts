@@ -17,6 +17,12 @@ const LOCKED_PATHS = new Set<string>([
   "/dashboard/sider/ny",
   "/dashboard/sider/:pageId",
   "/dashboard/innboks",
+  "/markedsplass",
+  "/markedsplass/:branch",
+  "/dashboard/mine-annonser",
+  "/dashboard/opprett-annonse",
+  "/dashboard/annonse/:itemId/rediger",
+  "/dashboard/annonse/:itemId/forhandsvis",
 ]);
 
 const lockRoute = <T extends { path: string; element: ComponentType }>(route: T): T => {
