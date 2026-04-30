@@ -113,7 +113,7 @@ export interface RouteConfig {
   showInNav?: boolean;
 }
 
-export const routes: RouteConfig[] = [
+const rawRoutes: RouteConfig[] = [
   // Public routes with navigation
   { path: "/", element: RegistrerBil, label: "Hjem", description: "Legg inn bilen din", icon: Home, isPublic: true, showInNav: true },
   { path: "/hjem", element: Index, label: "Utforsk", description: "Forsiden med biler og historier", icon: Home, isPublic: true, showInNav: false },
