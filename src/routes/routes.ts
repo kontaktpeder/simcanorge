@@ -1,6 +1,30 @@
 import { lazy, ComponentType } from "react";
 import { Home, Star, Car, Wrench, Send, BookOpen, Users, Mail, ShoppingBag, User, LayoutDashboard, CalendarDays, Plus } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import { FEATURES } from "@/config/features";
+
+const ComingSoon = lazy(() => import("@/pages/ComingSoon"));
+
+// In simpleLaunchMode, route locked paths to ComingSoon teaser.
+const LOCKED_PATHS = new Set<string>([
+  "/arrangement",
+  "/klubber",
+  "/aktoerer",
+  "/dashboard/events",
+  "/dashboard/events/ny",
+  "/dashboard/events/:eventId",
+  "/dashboard/sider",
+  "/dashboard/sider/ny",
+  "/dashboard/sider/:pageId",
+  "/dashboard/innboks",
+]);
+
+const lockRoute = <T extends { path: string; element: ComponentType }>(route: T): T => {
+  if (FEATURES.simpleLaunchMode && LOCKED_PATHS.has(route.path)) {
+    return { ...route, element: ComingSoon, requiresAuth: false, requiresAdmin: false, isPublic: true } as T;
+  }
+  return route;
+};
 
 // Lazy load all pages
 const Index = lazy(() => import("@/pages/Index"));
