@@ -9,6 +9,7 @@ import { Helmet } from 'react-helmet-async';
 import { Loader2, Plus, Car, Eye, Pencil, Upload, BookOpen, User, ChevronRight, MapPin, CalendarPlus, Users, Settings, UserCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import garageBackground from '@/assets/garage-background.jpg';
+import { FEATURES } from '@/config/features';
 
 const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
 const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
@@ -185,10 +186,20 @@ export default function Garasje() {
               Snarveier
             </h2>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-              <ShortcutTile to="/dashboard/events/opprett" icon={<CalendarPlus className="w-5 h-5" />} label="Opprett arrangement" />
-              <ShortcutTile to="/dashboard/sider" icon={<Users className="w-5 h-5" />} label="Klubber & sider" />
+              {!FEATURES.simpleLaunchMode && (
+                <>
+                  <ShortcutTile to="/dashboard/events/opprett" icon={<CalendarPlus className="w-5 h-5" />} label="Opprett arrangement" />
+                  <ShortcutTile to="/dashboard/sider" icon={<Users className="w-5 h-5" />} label="Klubber & sider" />
+                </>
+              )}
               <ShortcutTile to="/dashboard/min-profil" icon={<UserCircle className="w-5 h-5" />} label="Min profil" />
               <ShortcutTile to="/konto" icon={<Settings className="w-5 h-5" />} label="Konto" />
+              {FEATURES.simpleLaunchMode && (
+                <>
+                  <ComingSoonTile icon={<CalendarPlus className="w-5 h-5" />} label="Arrangementer" />
+                  <ComingSoonTile icon={<Users className="w-5 h-5" />} label="Klubber & sider" />
+                </>
+              )}
             </div>
           </section>
 
@@ -197,7 +208,12 @@ export default function Garasje() {
             <h2 className="text-[12px] tracking-[0.2em] uppercase text-white/30 mb-4" style={oswald}>
               Oppdateringer
             </h2>
-            {(!notifications || notifications.length === 0) ? (
+            {FEATURES.simpleLaunchMode ? (
+              <div className="rounded-xl border border-white/[0.06] p-6 text-center" style={{ background: 'hsl(215 25% 10%)' }}>
+                <p className="text-[12px] text-[#2dd4a8]/70 uppercase tracking-[0.2em] mb-1" style={oswald}>Kommer snart</p>
+                <p className="text-[11px] text-white/30" style={oswald}>Varsler og innboks åpner ved full lansering.</p>
+              </div>
+            ) : (!notifications || notifications.length === 0) ? (
               <div className="rounded-xl border border-white/[0.06] p-6 text-center" style={{ background: 'hsl(215 25% 10%)' }}>
                 <p className="text-[12px] text-white/25" style={oswald}>Ingen oppdateringer ennå. Aktivitet rundt bilene dine vises her.</p>
               </div>
@@ -382,5 +398,21 @@ function ShortcutTile({ to, icon, label }: { to: string; icon: React.ReactNode; 
       <span className="text-white/30 group-hover:text-[#2dd4a8]/70 transition-colors">{icon}</span>
       <span className="text-[10px] sm:text-[11px] uppercase tracking-[0.1em] text-white/40 group-hover:text-white/60 transition-colors" style={oswald}>{label}</span>
     </Link>
+  );
+}
+
+/* ─── Coming Soon Tile (locked) ─── */
+function ComingSoonTile({ icon, label }: { icon: React.ReactNode; label: string }) {
+  return (
+    <div
+      aria-disabled="true"
+      title="Kommer snart"
+      className="relative flex flex-col items-center gap-2 py-4 rounded-xl border border-dashed border-white/[0.08] text-center cursor-not-allowed select-none"
+      style={{ background: 'hsl(215 25% 9%)' }}
+    >
+      <span className="text-white/15">{icon}</span>
+      <span className="text-[10px] sm:text-[11px] uppercase tracking-[0.1em] text-white/25" style={oswald}>{label}</span>
+      <span className="absolute top-1.5 right-1.5 px-1.5 py-0.5 rounded text-[8px] uppercase tracking-[0.15em] font-bold text-[#2dd4a8]/80" style={{ ...oswald, background: 'rgba(45,212,168,0.1)' }}>Snart</span>
+    </div>
   );
 }
