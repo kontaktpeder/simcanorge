@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Camera, Loader2, X } from "lucide-react";
 import { useActivityMoments } from "@/hooks/useActivityMoments";
+import { LicensePlateInput } from "@/components/car/wizard/LicensePlateInput";
 
 const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
 const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
@@ -94,14 +94,10 @@ export function AddMomentDialog({
             <Label className="text-[11px] uppercase tracking-[0.15em] text-white/40" style={oswald}>
               Regnr (valgfri)
             </Label>
-            <Input
-              placeholder="F.eks. AB12345"
-              value={regnr}
-              onChange={(e) => setRegnr(e.target.value)}
-              className="mt-1.5 bg-[hsl(215_25%_8%)] border-white/10 text-white placeholder:text-white/30 uppercase tracking-wider"
-              autoCapitalize="characters"
-            />
-            <p className="text-[10px] text-white/30 mt-1" style={oswald}>
+            <div className="mt-1.5">
+              <LicensePlateInput value={regnr} onChange={setRegnr} />
+            </div>
+            <p className="text-[10px] text-white/30 mt-1.5" style={oswald}>
               Kobles til bil i garasjen. Vises aldri offentlig.
             </p>
           </div>
