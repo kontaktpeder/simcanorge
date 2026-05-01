@@ -38,7 +38,13 @@ export function StopSessionDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="border-white/10" style={{ background: "hsl(215 25% 10%)" }}>
+      <DialogContent
+        className="border-white/10 p-5 sm:rounded-2xl rounded-t-2xl rounded-b-none sm:rounded-b-2xl bottom-0 top-auto sm:top-[50%] translate-y-0 sm:translate-y-[-50%] data-[state=open]:slide-in-from-bottom-4 sm:data-[state=open]:slide-in-from-top-[48%]"
+        style={{
+          background: "linear-gradient(180deg, hsl(215 30% 11%) 0%, hsl(215 30% 8%) 100%)",
+          boxShadow: "0 -20px 60px rgba(0,0,0,0.6), 0 0 40px rgba(232,74,74,0.08)",
+        }}
+      >
         <DialogHeader>
           <DialogTitle className="text-white" style={chakra}>Avslutt tur</DialogTitle>
         </DialogHeader>
