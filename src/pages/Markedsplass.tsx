@@ -304,7 +304,7 @@ export default function Markedsplass() {
               </div>
             </section>
 
-            <Footer />
+            
           </div>
         </div>
       ) : (
