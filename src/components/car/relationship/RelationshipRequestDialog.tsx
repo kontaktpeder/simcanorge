@@ -19,7 +19,7 @@ import {
   RELATIONSHIP_NOTE_MAX,
   type RelationshipType,
 } from "@/lib/relationshipTypes";
-import { useCreateCarRelationshipRequest } from "@/hooks/useCreateCarRelationshipRequest";
+import { useCreateCarRelationshipRequest, type RelationshipRequestSource } from "@/hooks/useCreateCarRelationshipRequest";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 
@@ -29,6 +29,8 @@ interface RelationshipRequestDialogProps {
   carId: string;
   carTitle?: string;
   defaultRelationship?: RelationshipType;
+  source?: RelationshipRequestSource;
+  sourceEventId?: string | null;
   onSubmitted?: () => void;
 }
 
@@ -38,6 +40,8 @@ export function RelationshipRequestDialog({
   carId,
   carTitle,
   defaultRelationship = "current_owner",
+  source = "manual",
+  sourceEventId = null,
   onSubmitted,
 }: RelationshipRequestDialogProps) {
   const { user } = useAuth();
@@ -65,22 +69,24 @@ export function RelationshipRequestDialog({
       return;
     }
 
-    const created = await mutation.mutateAsync({
+    const result = await mutation.mutateAsync({
       carId,
       relationshipType: relType,
       note,
       startYear: startYear ? parseInt(startYear, 10) : null,
       endYear: endYear ? parseInt(endYear, 10) : null,
       wantsStewardship: relType === "current_owner" ? wantsStewardship : false,
+      source,
+      sourceEventId,
     });
 
     reset();
     onOpenChange(false);
     onSubmitted?.();
 
-    const newId = (created as any)?.id as string | undefined;
-    if (newId) {
-      navigate(`/relasjon-sendt/${newId}`);
+    // Naviger kun når en NY forespørsel ble opprettet — eller en eksisterende ventende ble funnet.
+    if ((result.code === "created" || result.code === "already_pending") && result.id) {
+      navigate(`/relasjon-sendt/${result.id}`);
     }
   };
 
