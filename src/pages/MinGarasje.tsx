@@ -99,6 +99,7 @@ export default function MinGarasje() {
               </h1>
               <Link
                 to="/legg-til-bil"
+                onClick={() => void track("garage_intent_click", "start", { intent: "add_car", source: "header" })}
                 className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg text-[11px] tracking-[0.1em] uppercase font-bold text-[#070b10]"
                 style={{
                   ...chakra,
