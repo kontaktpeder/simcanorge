@@ -112,6 +112,7 @@ function SpotCarDialogInner({ trigger, onSpotted }: SpotCarDialogProps) {
       note: note.trim() || undefined,
     });
     if (result) {
+      void track("spotting_submitted", "start", { car_id: result.carId, source: "start_intent" });
       setOpen(false);
       resetForm();
       onSpotted?.(result.carId);
