@@ -23,4 +23,21 @@ export const FEATURES = {
    * are granted automatically.
    */
   relationshipRequestsV1: import.meta.env.VITE_FEATURE_RELATIONSHIP_REQUESTS_V1 !== "false",
+  /**
+   * "Save car" — bookmark cars to a personal list. Built but hidden behind flag
+   * during the focused launch (Utforsk biler + Legg inn bil only).
+   * Default: OFF. Enable with VITE_FEATURE_SAVED_CARS=true.
+   */
+  savedCars: import.meta.env.VITE_FEATURE_SAVED_CARS === "true",
+  /**
+   * "Drive mode" — start/stop a private drive session that produces a private
+   * car_event with duration. localStorage-backed for MVP.
+   * Default: OFF. Enable with VITE_FEATURE_DRIVE_MODE=true.
+   */
+  driveMode: import.meta.env.VITE_FEATURE_DRIVE_MODE === "true",
+  /**
+   * "Spotting" — share a public car_event for a car you've seen in the wild.
+   * Default: OFF. Enable with VITE_FEATURE_SPOTTING=true.
+   */
+  spotting: import.meta.env.VITE_FEATURE_SPOTTING === "true",
 };
