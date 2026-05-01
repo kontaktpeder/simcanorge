@@ -14,6 +14,26 @@ interface State {
 const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
 const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
 
+// Local-storage keys that, when stale or corrupt, can drive an infinite
+// "bounce back to /app -> crash -> ErrorBoundary" loop. The reset button
+// clears these so the user always has a way out.
+const TRIP_CACHE_KEYS = [
+  'active_activity_session_id_v1',
+  'active_drive_session_v1',
+  'activity_focus_minimized_v1',
+];
+
+function clearTripCaches() {
+  if (typeof window === 'undefined') return;
+  for (const key of TRIP_CACHE_KEYS) {
+    try {
+      window.localStorage.removeItem(key);
+    } catch {
+      /* ignore */
+    }
+  }
+}
+
 export class ErrorBoundary extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
@@ -30,9 +50,17 @@ export class ErrorBoundary extends React.Component<Props, State> {
     }
   }
 
-  handleReset = () => {
-    this.setState({ hasError: false, error: null });
-    window.location.href = '/';
+  handleGoHome = () => {
+    clearTripCaches();
+    // Send to /app — the smart root will redirect to /login if signed out.
+    window.location.assign('/app');
+  };
+
+  handleReload = () => {
+    // Most common cause of repeated crashes here is a stale/corrupt active
+    // trip in localStorage. Clear it before reloading.
+    clearTripCaches();
+    window.location.reload();
   };
 
   render() {
@@ -82,7 +110,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
             {/* Buttons */}
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Button
-                onClick={this.handleReset}
+                onClick={this.handleGoHome}
                 className="gap-2 min-h-[44px] px-6 text-sm font-semibold uppercase tracking-wider rounded-lg"
                 style={{
                   ...oswald,
@@ -92,10 +120,10 @@ export class ErrorBoundary extends React.Component<Props, State> {
                 }}
               >
                 <Home className="w-4 h-4" />
-                Gå til forsiden
+                Gå til appen
               </Button>
               <Button
-                onClick={() => window.location.reload()}
+                onClick={this.handleReload}
                 variant="outline"
                 className="gap-2 min-h-[44px] px-6 text-sm font-semibold uppercase tracking-wider rounded-lg"
                 style={{

@@ -1,63 +1,60 @@
-# Smart auth-ruting for bilgarasje.no og /app
+## Problem
 
-## Mål
+Når du har en aktiv tur og refresher (eller logger inn på nytt) på `/app`, vises ErrorBoundary-skjermen «Noe gikk galt» og knappene gjør ingenting nyttig.
 
-1. **Førstegangsbesøkende** på `bilgarasje.no` skal se onboarding (`RegistrerBil`) — som i dag.
-2. **Innloggede brukere** som besøker `bilgarasje.no` skal automatisk sendes inn i appen (`/app`) — ikke se onboarding.
-3. **/app** skal *alltid* føles som appen: innlogget = dashboard, utlogget = sendes til `/login`. Ingen blank skjerm.
-4. **Logg ut** skal sende brukeren til `/login` (ikke til onboarding eller blank `/app`).
+## Hva som skjer
 
-## Hva som er feil i dag
+1. `/app` (`AppEntry`) venter på `useAuth().isLoading`. Bra.
+2. Men `Layout`, `BottomNav`, `FocusModeOverlay` og `Start` kaller alle `useActivitySession()` med en gang `Start` rendres.
+3. `useActivitySession` leser cache fra `localStorage` (`active_activity_session_id_v1`) og kjører `fetchActiveSession(user.id)` så snart `user` finnes.
+4. Ved refresh kan `user` være satt før Supabase-sesjonen er fullt restorert i klienten — eller `getUser()` kan kort feile pga. nettverk/JWT-rotasjon. Da kaster `react-query`-spørringen, eller `LastTripCard`/`ActiveSessionBanner` får uventet form på data.
+5. Den ufangede feilen propagerer opp i React-treet og treffer `<ErrorBoundary>` rundt `<AppRoutes/>` i `App.tsx`. Hele appen erstattes med «Noe gikk galt». «Gå til forsiden» går til `/` (som med ny smart-routing redirecter logget-inn bruker rett tilbake til `/app` → samme krasj igjen). «Last inn på nytt» gjør samme.
 
-- `src/pages/Hjem.tsx` returnerer alltid `RegistrerBil`, også for innloggede. Da må de manuelt navigere til `/app`.
-- `src/pages/AppEntry.tsx` har riktig logikk (utlogget → `/login?returnUrl=/app`), men `useAuth` har en race der `isLoading` aldri settes til `false` for *utloggede* brukere som har en stale session i localStorage som feiler `getUser()`. Resultat: evig BrandLoader = "blank skjerm".
-- `Konto.tsx` `handleSignOut` navigerer til `/` (= onboarding) etter logout. Bør gå til `/login`.
+I tillegg: `ErrorBoundary` rundt **hele** appen er for grovkornet — én tur-feil tar ned alt.
 
 ## Endringer
 
-### 1. `src/pages/Hjem.tsx` — smart root
-Bruk `useAuth`. Mens auth lastes, vis `BrandLoader`. Når klar:
-- Innlogget → `<Navigate to="/app" replace />`
-- Utlogget → `<RegistrerBil />` (onboarding som i dag)
+### 1) `src/components/ErrorBoundary.tsx` — gjenopprett uten full reload-loop
+- Fjern hardkodet `window.location.href = '/'` (sender innloggede rett tilbake til feil-siden). Bytt til:
+  - «Last inn på nytt» → `window.location.reload()` (beholdes).
+  - «Gå til forsiden» → `window.location.assign('/app')` for innloggede, `'/'` ellers. Enklest: bruk `'/app'` siden ErrorBoundary uansett oftest treffer der.
+- La «Last inn»-knappen først tømme localStorage-nøklene som kan trigge looping: `active_activity_session_id_v1`, `active_drive_session_v1`, `activity_focus_minimized_v1`. Det gir brukeren en vei ut av en korrupt tur-cache.
 
-Dette gir SEO/førsteinntrykk for nye besøkende, og null friksjon for innloggede.
+### 2) `src/hooks/useActivitySession.ts` — robust mot transient feil
+- Vent til auth er klar: bytt `enabled: !!user` til å også sjekke `!isLoading` fra `useAuth` (legg til `isLoading` i destruct).
+- `fetchActiveSession`: omslutt i try/catch og returner `null` ved feil i stedet for å kaste — vi vil aldri at en feilet «hent aktiv tur»-spørring skal velte hele appen.
+- Legg til `retry: 1` og `refetchOnWindowFocus: false` i `useQuery`.
+- Hvis cached id finnes men `select` returnerer 0 rader (ikke bare `data === null`), fjern cache-id'en (allerede gjort), og logg én gang.
 
-### 2. `src/hooks/useAuth.tsx` — fiks `isLoading`-race
-I `getSession().then(...)`-blokken: i grenen der `getUser()` feiler og vi gjør `signOut()`, settes `isLoading` til `false` (det gjøres allerede). Men det finnes ingen `isLoading=false`-vei dersom `getSession()` selv kaster. Pakk hele blokken i `try/finally` slik at `setIsLoading(false)` alltid kjører til slutt. Dette eliminerer "evig loader" på `/app`.
+### 3) `src/hooks/useActivityMoments.ts` — samme robusthet
+- Samme: `enabled: !!sessionId && !!user`, fang feil i `queryFn` og returner `[]` i stedet for å kaste, så `LastTripCard`/`AktivTur` aldri får undefined.
 
-### 3. `src/pages/AppEntry.tsx` — uendret logikk, men verifisér
-Beholder dagens redirect til `/login?returnUrl=/app&reason=app` for utloggede. Med fiksen i useAuth vil dette nå alltid trigge i stedet for å henge.
+### 4) `src/hooks/useLatestCompletedSession.ts` — samme
+- Fang feil og returner `null` i `queryFn`.
 
-### 4. `src/pages/Konto.tsx` — logg ut → /login
-Endre `handleSignOut` og `handleDeleteAccount` til å navigere til `/login` i stedet for `/` etter signOut. Bruker som logger ut skal lande på en innloggings-skjerm, ikke på onboarding-flyten for nye brukere.
+### 5) `src/App.tsx` — finkornet ErrorBoundary
+- Behold den ytre `ErrorBoundary` som siste forsvarslinje.
+- I `routes/index.tsx` (eller direkte i `Start.tsx`/`Layout.tsx`): wrap `LastTripCard`-blokken i `Start.tsx` og `FocusModeOverlay` i `Layout.tsx` med en lokal lite-error-boundary (eller bare `try/catch`-aktig fallback ved at hooks returnerer trygge default-verdier — punkt 2–4 dekker det meste).
 
-### 5. `src/pages/Login.tsx` — smart returnUrl-default
-`returnUrl` defaulter i dag til `/`. For brukere som logger inn fra root (uten returnUrl) skal vi sende til `/app` i stedet. Endre default fra `'/'` til `'/app'` i `safeInternalPath(searchParams.get('returnUrl'), '/app')`.
+### 6) `src/pages/AppEntry.tsx` — ikke last `Start` før admin-check er ferdig
+- Vis loader så lenge `isLoading` er `true` (allerede gjort). Ekstra: hvis `user` finnes men `session` mangler kort, vent én tick før vi rendrer `Start` (forhindrer race der RLS-spørringer kjører uten gyldig JWT).
+- Konkret: `if (isLoading || (user && !session)) return <Loader />`.
 
-## Resulterende flyt
+### 7) Liten polering
+- I `useAuth.tsx`: ved `getUserError` gjør vi nå `signOut()`. Det kan være for aggressivt ved transient nettverksfeil og kan «ulogge» brukere som blir flaket. Bytt til: kun `signOut()` hvis `getUserError?.status === 401`/`403`, ellers behold lokal sesjon og la `onAuthStateChange` håndtere det. Dette løser «refresh logger meg ut»-tilfellet.
 
-```text
-Førstegangsbesøkende (utlogget)
-  bilgarasje.no/  →  RegistrerBil (onboarding)
-  → "Logg inn"     →  /login  →  /app (dashboard)
+## Forventet resultat
 
-Innlogget bruker
-  bilgarasje.no/   →  redirect til /app (Start/dashboard)
-  bilgarasje.no/app → Start/dashboard direkte
-
-Utlogget bruker som åpner /app direkte
-  /app  →  redirect til /login?returnUrl=/app
-  → logger inn  →  tilbake til /app
-
-Logg ut fra /konto
-  signOut()  →  navigate("/login")  (ikke onboarding, ikke blank app)
-```
+- Refresh på `/app` med aktiv tur → siden lastes normalt, FocusModePill vises, tur-data laster (eller faller stille tilbake til ingen aktiv tur hvis serveren ikke svarer).
+- En enkelt feilet tur-spørring krasjer ikke lenger hele appen.
+- Hvis ErrorBoundary likevel slår inn: «Last inn»-knappen tømmer korrupt tur-cache slik at brukeren kommer videre.
+- Transient nett-feil ulogger ikke brukeren.
 
 ## Filer som endres
 
-- `src/pages/Hjem.tsx` — smart redirect for innloggede
-- `src/hooks/useAuth.tsx` — try/finally rundt session-init for å garantere `isLoading=false`
-- `src/pages/Konto.tsx` — logout/delete navigerer til `/login`
-- `src/pages/Login.tsx` — default returnUrl `/app`
-
-Ingen DB-endringer, ingen nye routes, ingen pakkeendringer.
+- `src/components/ErrorBoundary.tsx`
+- `src/hooks/useActivitySession.ts`
+- `src/hooks/useActivityMoments.ts`
+- `src/hooks/useLatestCompletedSession.ts`
+- `src/hooks/useAuth.tsx`
+- `src/pages/AppEntry.tsx`
