@@ -97,12 +97,11 @@ export function HeroSearch({ compact = false }: { compact?: boolean }) {
 
   const dropdown = showDropdown && typeof document !== "undefined"
     ? createPortal(
-        <>
-          <div className="fixed inset-0 bg-black/20 z-[9998]" onMouseDown={() => setOpen(false)} />
-          <div
-            className="fixed rounded-lg border border-white/10 bg-[#151c24] shadow-[0_18px_60px_rgba(0,0,0,0.5)] z-[9999] overflow-hidden"
-            style={dropdownStyle}
-          >
+        <div
+          ref={dropdownRef}
+          className="fixed rounded-lg border border-white/10 bg-[#151c24] shadow-[0_18px_60px_rgba(0,0,0,0.5)] z-[9999] overflow-hidden"
+          style={dropdownStyle}
+        >
             <div className="pointer-events-none absolute inset-x-0 top-0 h-12 bg-gradient-to-b from-[#1a2332] via-[#1a2332]/85 to-transparent z-10" />
             <div className="overflow-y-auto" style={{ maxHeight: dropdownStyle.maxHeight }}>
               {isSearching && (
