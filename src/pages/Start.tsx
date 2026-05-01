@@ -1,18 +1,19 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import { Car, Eye, Warehouse, ChevronRight, Plus } from "lucide-react";
+import { Car, Eye, Warehouse, ChevronRight, Plus, Footprints, Users } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useFeatures } from "@/hooks/useFeatures";
 import { Layout } from "@/components/layout/Layout";
 import { BrandLoader } from "@/components/brand/BrandLoader";
-import { StartSessionButton } from "@/components/activity/StartSessionButton";
 import { LastTripCard } from "@/components/activity/LastTripCard";
 import { SpotCarDialog } from "@/components/car/SpotCarDialog";
 import { useLatestCompletedSession } from "@/hooks/useLatestCompletedSession";
+import { useActivitySession, type ActivityType } from "@/hooks/useActivitySession";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { track, trackScreenViewOnce } from "@/lib/analytics";
 
 const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
