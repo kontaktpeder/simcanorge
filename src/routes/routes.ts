@@ -166,6 +166,7 @@ const rawRoutes: RouteConfig[] = [
   { path: "/garasje", element: Garasje, requiresAuth: true },
   { path: "/aktiv", element: AktivTur, requiresAuth: true },
   { path: "/turer", element: MineTurer, requiresAuth: true },
+  { path: "/tur/:id", element: TurDetalj, requiresAuth: true },
   { path: "/min-garasje", element: MinGarasje, requiresAuth: true },
   { path: "/konto", element: Konto, requiresAuth: true },
   { path: "/kom-i-gang", element: CompleteProfilePage, requiresAuth: true },
