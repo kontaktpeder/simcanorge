@@ -202,8 +202,9 @@ function SessionCard({ s }: { s: SessionRow }) {
   const Icon = meta.Icon;
   const ongoing = !s.ended_at;
   return (
-    <div
-      className="rounded-xl border border-white/[0.06] p-4 transition-colors hover:border-white/[0.12]"
+    <Link
+      to={`/tur/${s.id}`}
+      className="block rounded-xl border border-white/[0.06] p-4 transition-colors hover:border-white/[0.18] focus:outline-none focus:border-[#34eab8]/40"
       style={{ background: "hsl(215 25% 9%)" }}
     >
       <div className="flex items-start gap-3">
@@ -247,7 +248,7 @@ function SessionCard({ s }: { s: SessionRow }) {
           </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }
 
