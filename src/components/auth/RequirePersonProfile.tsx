@@ -1,5 +1,6 @@
 import { useAuth } from "@/hooks/useAuth";
 import { useMyPersonProfile } from "@/hooks/useMyPersonProfile";
+import { BrandLoader } from "@/components/brand/BrandLoader";
 
 interface Props {
   children: React.ReactNode;
@@ -12,7 +13,7 @@ export function RequirePersonProfile({ children }: Props) {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <p className="text-muted-foreground">Laster profil…</p>
+        <BrandLoader label="Laster profil…" />
       </div>
     );
   }
