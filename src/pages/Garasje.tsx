@@ -6,7 +6,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { useMyPersonProfile } from '@/hooks/useMyPersonProfile';
 import { Layout } from '@/components/layout/Layout';
 import { Helmet } from 'react-helmet-async';
-import { Loader2, Plus, Car, Eye, Pencil, Upload, BookOpen, User, ChevronRight, MapPin, CalendarPlus, Users, Settings, UserCircle } from 'lucide-react';
+import { Plus, Car, Eye, Pencil, Upload, BookOpen, User, ChevronRight, MapPin, CalendarPlus, Users, Settings, UserCircle } from 'lucide-react';
+import { BrandLoader } from '@/components/brand/BrandLoader';
 import { motion } from 'framer-motion';
 import garageBackground from '@/assets/garage-background.jpg';
 import { useFeatures } from '@/hooks/useFeatures';
@@ -100,7 +101,7 @@ export default function Garasje() {
     return (
       <Layout>
         <div className="min-h-[60vh] flex items-center justify-center" style={{ background: '#070b10' }}>
-          <Loader2 className="w-8 h-8 animate-spin text-[#2dd4a8]" />
+          <BrandLoader />
         </div>
       </Layout>
     );

@@ -3,10 +3,11 @@ import { Link, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import { Car, Plus, Loader2 } from "lucide-react";
+import { Car, Plus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { Layout } from "@/components/layout/Layout";
+import { BrandLoader } from "@/components/brand/BrandLoader";
 
 const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
 const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
@@ -65,7 +66,7 @@ export default function MinGarasje() {
     return (
       <Layout>
         <div className="min-h-[60vh] flex items-center justify-center bg-[#070b10]">
-          <Loader2 className="w-7 h-7 animate-spin text-[#2dd4a8]" />
+          <BrandLoader />
         </div>
       </Layout>
     );

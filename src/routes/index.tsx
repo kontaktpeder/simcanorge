@@ -4,25 +4,13 @@ import { routes } from "./routes";
 import { useAuth } from "@/hooks/useAuth";
 import { RequirePersonProfile } from "@/components/auth/RequirePersonProfile";
 import type { ComponentType } from "react";
-import { CarLineMark } from "@/components/brand/CarLineMark";
+import { BrandLoader } from "@/components/brand/BrandLoader";
 
 // Loading fallback – Bilgarasje line-art that draws itself on loop.
 function RouteLoadingFallback() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-[60vh] gap-5 px-6">
-      <CarLineMark
-        animated
-        color="#34eab8"
-        strokeWidth={2.6}
-        className="w-[180px] h-auto"
-        style={{ filter: "drop-shadow(0 0 14px rgba(52,234,184,0.35))" }}
-      />
-      <p
-        className="text-[10px] uppercase tracking-[0.32em] text-white/45"
-        style={{ fontFamily: "'Chakra Petch', 'Oswald', sans-serif" }}
-      >
-        Laster…
-      </p>
+    <div className="flex items-center justify-center min-h-[60vh] px-6">
+      <BrandLoader />
     </div>
   );
 }

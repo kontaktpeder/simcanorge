@@ -1,10 +1,9 @@
 import { CSSProperties } from "react";
 
 /**
- * Bilgarasje car silhouette as a single-stroke SVG, traced from the logo mark.
- * Designed to be animated with strokeDasharray/strokeDashoffset.
- *
- * Use `animated` to play the draw-in loop (used by the route loader).
+ * Bilgarasje car silhouette — minimal flowing line-art (matches the brand mark).
+ * Three continuous strokes: roof/body, lower body, and two subtle wheel hints.
+ * Animate by passing `animated` (uses `.car-line-draw` keyframes in index.css).
  */
 export function CarLineMark({
   className,
@@ -21,7 +20,7 @@ export function CarLineMark({
 }) {
   return (
     <svg
-      viewBox="0 0 320 120"
+      viewBox="0 0 320 110"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className={className}
@@ -36,18 +35,16 @@ export function CarLineMark({
         fill="none"
         className={animated ? "car-line-draw" : undefined}
       >
-        {/* Roof + body silhouette (one continuous flowing stroke) */}
-        <path d="M22 78 C 70 70, 110 60, 140 50 C 170 40, 200 38, 224 50 C 250 62, 280 70, 308 78" />
-        {/* Lower body line under the roof */}
-        <path d="M118 56 C 150 48, 200 50, 226 60" />
-        {/* Side accent line (door cut) */}
-        <path d="M70 86 C 110 78, 170 76, 210 84" />
-        {/* Front wheel arch */}
-        <path d="M78 92 C 92 82, 116 82, 130 92" />
-        {/* Rear wheel arch */}
-        <path d="M236 90 C 250 80, 274 80, 288 90" />
-        {/* Window slit hint */}
-        <path d="M158 50 L 168 56" strokeWidth={strokeWidth * 0.8} />
+        {/* Roof + body — one elegant flowing curve */}
+        <path d="M96 62 C 130 30, 190 30, 224 56 L 232 60" />
+        {/* Underbody / ground line — long sweeping stroke */}
+        <path d="M30 78 C 90 70, 230 70, 300 78" />
+        {/* Front wheel hint */}
+        <path d="M70 82 C 86 74, 110 74, 124 82" />
+        {/* Rear wheel hint */}
+        <path d="M222 82 C 238 74, 262 74, 276 82" />
+        {/* Window slit */}
+        <path d="M150 44 L 158 52" strokeWidth={strokeWidth * 0.85} />
       </g>
     </svg>
   );
