@@ -3,11 +3,17 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Camera, Loader2, X, Car as CarIcon, Link2 } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { Camera, Loader2, X, Car as CarIcon, CheckCircle2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useActivityMoments } from "@/hooks/useActivityMoments";
 import { LicensePlateInput } from "@/components/car/wizard/LicensePlateInput";
-import { RelationshipRequestDialog } from "@/components/car/relationship/RelationshipRequestDialog";
+import { useCreateCarRelationshipRequest } from "@/hooks/useCreateCarRelationshipRequest";
+import {
+  RELATIONSHIP_OPTIONS,
+  RELATIONSHIP_NOTE_MAX,
+  type RelationshipType,
+} from "@/lib/relationshipTypes";
 
 const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
 const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
@@ -33,20 +39,31 @@ export function AddMomentDialog({
   onOpenChange: (v: boolean) => void;
 }) {
   const { addMoment, isAdding } = useActivityMoments(sessionId);
+  const relMutation = useCreateCarRelationshipRequest();
+
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [note, setNote] = useState("");
   const [regnr, setRegnr] = useState("");
   const [match, setMatch] = useState<CarMatch | null>(null);
   const [isLookingUp, setIsLookingUp] = useState(false);
-  const [relOpen, setRelOpen] = useState(false);
 
-  // Debounced regnr lookup (samme som i SpotCarDialog)
+  // Inline relasjons-state
+  const [showRelForm, setShowRelForm] = useState(false);
+  const [relType, setRelType] = useState<RelationshipType>("current_owner");
+  const [relNote, setRelNote] = useState("");
+  const [wantsStewardship, setWantsStewardship] = useState(false);
+  const [relSent, setRelSent] = useState(false);
+
+  // Debounced regnr lookup
   useEffect(() => {
     const normalized = normalizeRegnr(regnr);
     if (normalized.length < 2) {
       setMatch(null);
       setIsLookingUp(false);
+      // reset rel-state hvis regnr endres bort fra match
+      setShowRelForm(false);
+      setRelSent(false);
       return;
     }
     let cancelled = false;
@@ -58,8 +75,12 @@ export function AddMomentDialog({
       );
       if (cancelled) return;
       const list = Array.isArray(data) ? (data as CarMatch[]) : [];
-      setMatch(list.length > 0 ? list[0] : null);
+      const next = list.length > 0 ? list[0] : null;
+      setMatch(next);
       setIsLookingUp(false);
+      // Hvis ny match (annen bil), nullstill rel-state
+      setShowRelForm(false);
+      setRelSent(false);
     }, 350);
     return () => {
       cancelled = true;
@@ -75,6 +96,11 @@ export function AddMomentDialog({
     setMatch(null);
     if (previewUrl) URL.revokeObjectURL(previewUrl);
     setPreviewUrl(null);
+    setShowRelForm(false);
+    setRelType("current_owner");
+    setRelNote("");
+    setWantsStewardship(false);
+    setRelSent(false);
   };
 
   const handleFile = (f: File | null) => {
@@ -100,8 +126,26 @@ export function AddMomentDialog({
     onOpenChange(false);
   };
 
+  const handleSendRelationship = async () => {
+    if (!match) return;
+    const result = await relMutation.mutateAsync({
+      carId: match.id,
+      relationshipType: relType,
+      note: relNote,
+      wantsStewardship: relType === "current_owner" ? wantsStewardship : false,
+      source: "activity_moment",
+    });
+    // Hold bruker i samme modal — ingen navigering.
+    if (result.code === "created" || result.code === "already_pending") {
+      setRelSent(true);
+      setShowRelForm(false);
+    } else if (result.code === "already_linked") {
+      // Allerede koblet — skjul form, ikke vis "sendt"
+      setShowRelForm(false);
+    }
+  };
+
   return (
-    <>
     <Dialog open={open} onOpenChange={(v) => { onOpenChange(v); if (!v) reset(); }}>
       <DialogContent className="border-white/10 max-h-[90vh] overflow-y-auto" style={{ background: "hsl(215 25% 10%)" }}>
         <DialogHeader>
@@ -135,6 +179,7 @@ export function AddMomentDialog({
               />
             </label>
           )}
+
           <div>
             <Label className="text-[11px] uppercase tracking-[0.15em] text-white/40" style={oswald}>
               Regnr (valgfri)
@@ -153,40 +198,146 @@ export function AddMomentDialog({
               Søker etter bil…
             </div>
           )}
-          {!isLookingUp && match && (
+
+          {/* Match-kort + inline CTA */}
+          {!isLookingUp && match && !relSent && !showRelForm && (
             <div className="rounded-lg border border-[#2dd4a8]/30 bg-[#2dd4a8]/[0.06] p-3">
               <div className="flex items-start gap-3">
                 <div className="mt-0.5 rounded-md bg-[#2dd4a8]/10 p-1.5 text-[#2dd4a8]">
                   <CarIcon className="w-3.5 h-3.5" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-[10px] uppercase tracking-[0.15em] text-[#2dd4a8]/80" style={oswald}>
-                    Denne bilen finnes allerede
-                  </p>
                   <p className="text-[13px] font-semibold text-white truncate" style={chakra}>
                     {match.title}
+                  </p>
+                  <p className="text-[12px] text-white/70 mt-1" style={oswald}>
+                    Kjenner du denne bilen?
+                  </p>
+                  <p className="text-[11px] text-white/50 mt-1" style={oswald}>
+                    Be om å bli knyttet til bilen og bidra med bilder eller historie.
                   </p>
                   <Button
                     type="button"
                     size="sm"
-                    onClick={() => setRelOpen(true)}
-                    className="mt-2 bg-[#2dd4a8] text-[#070b10] hover:bg-[#34eab8] h-8"
+                    onClick={() => setShowRelForm(true)}
+                    className="mt-2 bg-[#2dd4a8] text-[#070b10] hover:bg-[#34eab8] h-9 w-full sm:w-auto"
                   >
-                    <Link2 className="mr-1.5 h-3 w-3" />
-                    Jeg har forhold til denne bilen
+                    Kjenner du denne bilen?
                   </Button>
                 </div>
               </div>
             </div>
           )}
+
+          {/* Inline relasjons-form (mobil først) */}
+          {!isLookingUp && match && showRelForm && !relSent && (
+            <div className="rounded-lg border border-[#2dd4a8]/30 bg-[#2dd4a8]/[0.06] p-3 space-y-3">
+              <div>
+                <p className="text-[13px] font-semibold text-white" style={chakra}>
+                  {match.title}
+                </p>
+                <p className="text-[11px] text-white/50 mt-0.5" style={oswald}>
+                  Be om å bli knyttet til bilen og bidra med bilder eller historie.
+                </p>
+              </div>
+
+              <div className="space-y-1.5">
+                <Label className="text-[11px] uppercase tracking-[0.15em] text-white/50" style={oswald}>
+                  Din relasjon
+                </Label>
+                <select
+                  value={relType}
+                  onChange={(e) => setRelType(e.target.value as RelationshipType)}
+                  className="w-full h-11 px-3 text-[14px] rounded-md border border-white/15 bg-[hsl(215_25%_8%)] text-white"
+                >
+                  {RELATIONSHIP_OPTIONS.map((opt) => (
+                    <option key={opt.value} value={opt.value}>{opt.label}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="space-y-1.5">
+                <Label className="text-[11px] uppercase tracking-[0.15em] text-white/50" style={oswald}>
+                  Beskjed (valgfri)
+                </Label>
+                <Textarea
+                  value={relNote}
+                  onChange={(e) => setRelNote(e.target.value.slice(0, RELATIONSHIP_NOTE_MAX))}
+                  rows={2}
+                  placeholder="Hvorfor kjenner du denne bilen?"
+                  className="bg-[hsl(215_25%_8%)] border-white/15 text-white placeholder:text-white/30"
+                />
+              </div>
+
+              {relType === "current_owner" && (
+                <label className="flex items-start gap-3 rounded-md border border-white/10 bg-[hsl(215_25%_8%)] p-3 cursor-pointer">
+                  <Switch
+                    checked={wantsStewardship}
+                    onCheckedChange={setWantsStewardship}
+                    className="mt-0.5"
+                  />
+                  <div className="flex-1">
+                    <div className="text-[13px] font-medium text-white" style={oswald}>
+                      Jeg vil bidra med bilder og historie
+                    </div>
+                    <div className="text-[11px] text-white/50 mt-0.5" style={oswald}>
+                      Krever godkjenning før du kan redigere bilen.
+                    </div>
+                  </div>
+                </label>
+              )}
+
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={() => setShowRelForm(false)}
+                  className="text-white/60 hover:text-white h-10 flex-1"
+                  disabled={relMutation.isPending}
+                >
+                  Avbryt
+                </Button>
+                <Button
+                  type="button"
+                  onClick={handleSendRelationship}
+                  disabled={relMutation.isPending}
+                  className="bg-[#2dd4a8] text-[#070b10] hover:bg-[#34eab8] h-10 flex-1"
+                >
+                  {relMutation.isPending ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    "Send forespørsel"
+                  )}
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {/* Suksess-kort */}
+          {relSent && match && (
+            <div className="rounded-lg border border-[#2dd4a8]/40 bg-[#2dd4a8]/[0.10] p-3">
+              <div className="flex items-start gap-3">
+                <CheckCircle2 className="w-5 h-5 text-[#2dd4a8] mt-0.5 shrink-0" />
+                <div className="flex-1">
+                  <p className="text-[13px] font-semibold text-white" style={chakra}>
+                    Forespørsel sendt — gøy at du kjenner bilen!
+                  </p>
+                  <p className="text-[11px] text-white/60 mt-1" style={oswald}>
+                    Du kan fortsatt lagre øyeblikket ditt.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
           <Textarea
-            placeholder="Notat (valgfri)"
+            placeholder="Skriv notat (valgfritt)"
             value={note}
             onChange={(e) => setNote(e.target.value)}
             rows={3}
             className="bg-[hsl(215_25%_8%)] border-white/10 text-white placeholder:text-white/30"
           />
-          <div className="flex gap-2 justify-end">
+          <div className="flex gap-2 justify-end sticky bottom-0 pt-2" style={{ background: "hsl(215 25% 10%)" }}>
             <Button
               type="button"
               variant="ghost"
@@ -201,27 +352,11 @@ export function AddMomentDialog({
               disabled={isAdding || (!imageFile && !note.trim() && !regnr.trim())}
               className="bg-[#2dd4a8] text-[#070b10] hover:bg-[#34eab8]"
             >
-              {isAdding ? <Loader2 className="w-4 h-4 animate-spin" /> : "Lagre øyeblikk"}
+              {isAdding ? <Loader2 className="w-4 h-4 animate-spin" /> : "Lagre"}
             </Button>
           </div>
         </div>
       </DialogContent>
     </Dialog>
-
-    {match && (
-      <RelationshipRequestDialog
-        open={relOpen}
-        onOpenChange={setRelOpen}
-        carId={match.id}
-        carTitle={match.title}
-        source="activity_moment"
-        onSubmitted={() => {
-          // Lukk øyeblikks-dialogen — relasjonen er sendt
-          reset();
-          onOpenChange(false);
-        }}
-      />
-    )}
-    </>
   );
 }
