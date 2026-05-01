@@ -87,6 +87,9 @@ function SpotCarDialogInner({ trigger, onSpotted }: SpotCarDialogProps) {
   }, [regnr]);
 
   const handleOpenChange = (next: boolean) => {
+    if (next) {
+      void track("spot_intent_click", "start", { intent: "spot" });
+    }
     if (next && !user) {
       navigate(`/login?returnUrl=${encodeURIComponent(location.pathname)}`);
       return;
