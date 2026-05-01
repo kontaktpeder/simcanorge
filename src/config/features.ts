@@ -40,4 +40,10 @@ export const FEATURES = {
    * Default: OFF. Enable with VITE_FEATURE_SPOTTING=true.
    */
   spotting: import.meta.env.VITE_FEATURE_SPOTTING === "true",
+  /**
+   * "Activity sessions" — unified Start tur MVP (drive/walk_spotting/meetup)
+   * with image+note moments stored in car_events. DB-first with localStorage cache.
+   * Default: OFF. Enable with VITE_FEATURE_ACTIVITY_SESSIONS=true.
+   */
+  activitySessions: import.meta.env.VITE_FEATURE_ACTIVITY_SESSIONS === "true",
 };

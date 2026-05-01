@@ -13,6 +13,8 @@ import { FEATURES } from '@/config/features';
 import { DriveControls } from '@/components/car/DriveControls';
 import { SaveCarButton } from '@/components/car/SaveCarButton';
 import { SpotCarDialog } from '@/components/car/SpotCarDialog';
+import { StartSessionButton, ActiveSessionBanner } from '@/components/activity';
+import { useActivitySession } from '@/hooks/useActivitySession';
 
 const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
 const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
@@ -128,6 +130,11 @@ export default function Garasje() {
             <HeroCarSection car={firstCar.cars} profile={profile} />
           ) : (
             <EmptyGarageHero />
+          )}
+
+          {/* ─── ACTIVITY SESSION ─── */}
+          {FEATURES.activitySessions && !FEATURES.simpleLaunchMode && (
+            <ActivitySection />
           )}
 
           {/* ─── OTHER CARS ─── */}
@@ -399,7 +406,32 @@ function EmptyGarageHero() {
   );
 }
 
-/* ─── Action Button ─── */
+/* ─── Activity Section ─── */
+function ActivitySection() {
+  const { activeSession, isLoading } = useActivitySession();
+  if (isLoading) return null;
+  return (
+    <section className="mt-8">
+      <h2 className="text-[12px] tracking-[0.2em] uppercase text-white/30 mb-4" style={oswald}>
+        Aktivitet
+      </h2>
+      {activeSession ? (
+        <ActiveSessionBanner />
+      ) : (
+        <div
+          className="rounded-2xl border border-white/[0.06] p-5 flex flex-col sm:flex-row sm:items-center gap-3"
+          style={{ background: 'hsl(215 25% 10%)' }}
+        >
+          <div className="flex-1 min-w-0">
+            <p className="text-[13px] text-white/70 font-semibold" style={chakra}>Ute med bilen?</p>
+            <p className="text-[11px] text-white/30 mt-0.5" style={oswald}>Start en tur og samle øyeblikk underveis.</p>
+          </div>
+          <StartSessionButton />
+        </div>
+      )}
+    </section>
+  );
+}
 function ActionButton({ to, icon, label, primary = false }: { to: string; icon: React.ReactNode; label: string; primary?: boolean }) {
   return (
     <Link
