@@ -472,19 +472,16 @@ export function CarWizard({ onSuccess, initialRegistrationNumber, skipDuplicateC
               </button>
             ) : (
               <Button type="button" onClick={handleSubmit}
-                disabled={
+                 disabled={
                   isSubmitting ||
                   data.allowEdits === null ||
-                  !data.privacyAccepted ||
-                  (!!user && data.publishImmediately === null)
+                  !data.privacyAccepted
                 }
                 className="btn-enamel-blue text-sm sm:text-base h-10 sm:h-12 px-5 sm:px-8 disabled:opacity-40">
                 {isSubmitting ? "Sender…" : (
                   <>
                     <Send className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
-                    {user
-                      ? (data.publishImmediately === true ? "Publiser bilen" : data.publishImmediately === false ? "Lagre kladd" : "Velg over")
-                      : "Send inn"}
+                    {user ? "Lagre bil" : "Send inn"}
                   </>
                 )}
               </Button>
