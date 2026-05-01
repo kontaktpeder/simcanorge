@@ -7,3 +7,6 @@ export { TimelineSection } from './TimelineSection';
 export { SendInnBilForm } from './SendInnBilForm';
 export { OwnerProfileSection } from './OwnerProfileSection';
 export { OwnerCard } from './OwnerCard';
+export { SaveCarButton } from './SaveCarButton';
+export { DriveControls } from './DriveControls';
+export { SpotCarDialog } from './SpotCarDialog';
