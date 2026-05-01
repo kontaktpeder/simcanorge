@@ -274,6 +274,7 @@ export default function Garasje() {
 function HeroCarSection({ car, profile }: { car: CarData; profile: any }) {
   const img = car.car_images?.sort((a, b) => (a.sort_order ?? 99) - (b.sort_order ?? 99))[0];
   const isPublished = !!car.published_at;
+  const features = useFeatures();
 
   return (
     <motion.section
