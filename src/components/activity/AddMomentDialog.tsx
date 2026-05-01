@@ -40,6 +40,7 @@ export function AddMomentDialog({
   onOpenChange: (v: boolean) => void;
 }) {
   const { addMoment, isAdding } = useActivityMoments(sessionId);
+  const { user } = useAuth();
   const relMutation = useCreateCarRelationshipRequest();
 
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -48,6 +49,10 @@ export function AddMomentDialog({
   const [regnr, setRegnr] = useState("");
   const [match, setMatch] = useState<CarMatch | null>(null);
   const [isLookingUp, setIsLookingUp] = useState(false);
+
+  // Status mot innlogget bruker for matchet bil
+  type MatchStatus = "none" | "owned" | "pending" | "available";
+  const [matchStatus, setMatchStatus] = useState<MatchStatus>("none");
 
   // Inline relasjons-state
   const [showRelForm, setShowRelForm] = useState(false);
@@ -62,6 +67,7 @@ export function AddMomentDialog({
     if (normalized.length < 2) {
       setMatch(null);
       setIsLookingUp(false);
+      setMatchStatus("none");
       // reset rel-state hvis regnr endres bort fra match
       setShowRelForm(false);
       setRelSent(false);
@@ -79,9 +85,9 @@ export function AddMomentDialog({
       const next = list.length > 0 ? list[0] : null;
       setMatch(next);
       setIsLookingUp(false);
-      // Hvis ny match (annen bil), nullstill rel-state
       setShowRelForm(false);
       setRelSent(false);
+      setMatchStatus(next ? "available" : "none");
     }, 350);
     return () => {
       cancelled = true;
@@ -89,6 +95,37 @@ export function AddMomentDialog({
       setIsLookingUp(false);
     };
   }, [regnr]);
+
+  // Sjekk om innlogget bruker allerede eier eller har pending forespørsel på matchet bil
+  useEffect(() => {
+    if (!match || !user) return;
+    let cancelled = false;
+    (async () => {
+      const [ownerRes, pendingRes] = await Promise.all([
+        supabase
+          .from("car_owners")
+          .select("id")
+          .eq("car_id", match.id)
+          .eq("user_id", user.id)
+          .maybeSingle(),
+        supabase
+          .from("car_relationship_requests")
+          .select("id")
+          .eq("car_id", match.id)
+          .eq("requester_id", user.id)
+          .eq("status", "pending")
+          .maybeSingle(),
+      ]);
+      if (cancelled) return;
+      if (ownerRes.data) setMatchStatus("owned");
+      else if (pendingRes.data) setMatchStatus("pending");
+      else setMatchStatus("available");
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [match, user]);
+
 
   const reset = () => {
     setImageFile(null);
