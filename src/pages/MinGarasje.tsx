@@ -160,6 +160,7 @@ function CarTile({ car, index }: { car: CarData; index: number }) {
     >
       <Link
         to={to}
+        onClick={() => void track("start_car_preview_click", "start", { car_id: car.id, published: isPublished })}
         className="group block rounded-xl overflow-hidden border border-white/[0.06] hover:border-[#2dd4a8]/40 transition-all"
         style={{ background: "hsl(215 25% 10%)" }}
       >
