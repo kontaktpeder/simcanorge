@@ -160,7 +160,6 @@ export default function Start() {
   }
 
   const carsTotal = myCarsCount ?? myCars?.length ?? 0;
-  const activitiesEnabled = !!features.activitySessions;
 
   return (
     <Layout>
