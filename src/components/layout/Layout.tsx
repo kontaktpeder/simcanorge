@@ -34,10 +34,17 @@ function SubpageSilhouette() {
   );
 }
 
+function useActiveSessionSafe() {
+  const features = useFeatures();
+  const enabled = !!features.activitySessions;
+  const { activeSession } = useActivitySession();
+  return enabled ? activeSession : null;
+}
+
 export function Layout({ children, contained = false, hideFooter = false, shortPage = false, fillHeight = false }: LayoutProps) {
   const { pathname } = useLocation();
   const { user } = useAuth();
-  const { activeSession } = useActivitySession();
+  const activeSession = useActiveSessionSafe();
   const isIndex = pathname === "/";
 
   // Reserve space at the bottom on mobile when the BottomNav is shown
