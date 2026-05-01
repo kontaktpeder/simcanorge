@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Garage, Search, Users, User, Play, Car, Footprints } from "lucide-react";
-import { Garage as GarageIconFallback } from "lucide-react";
+import { Warehouse, Search, Users, User, Play, Car, Footprints } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useAuth } from "@/hooks/useAuth";
 import { useFeatures } from "@/hooks/useFeatures";
