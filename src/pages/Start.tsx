@@ -19,6 +19,17 @@ import { track, trackScreenViewOnce } from "@/lib/analytics";
 const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
 const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
 
+const ACTIVITY_TYPES: {
+  value: ActivityType;
+  label: string;
+  desc: string;
+  Icon: React.ComponentType<{ className?: string }>;
+}[] = [
+  { value: "drive", label: "Kjøretur", desc: "Du kjører en bil", Icon: Car },
+  { value: "walk_spotting", label: "Spotting", desc: "Til fots, ser biler", Icon: Footprints },
+  { value: "meetup", label: "Treff", desc: "Du er på et arrangement", Icon: Users },
+];
+
 interface CarImageMini {
   id: string;
   image_url: string;
