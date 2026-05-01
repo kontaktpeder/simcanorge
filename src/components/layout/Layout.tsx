@@ -66,7 +66,6 @@ export function Layout({ children, contained = false, hideFooter = false, shortP
         <main className="min-h-full relative z-10">
           {children}
         </main>
-        {!hideFooter && <Footer />}
       </div>
       <BottomNav />
       <FocusModeOverlay />
@@ -81,7 +80,6 @@ export function Layout({ children, contained = false, hideFooter = false, shortP
       <main className={`${shortPage ? '' : 'flex-1'} overflow-x-hidden pt-14 md:pt-16 relative z-10 ${bottomPadClass}`}>
         {children}
       </main>
-      {!hideFooter && <Footer />}
       <BottomNav />
       <FocusModeOverlay />
     </div>
