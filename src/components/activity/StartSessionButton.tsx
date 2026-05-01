@@ -3,6 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Button } from "@/components/ui/button";
 import { Car, Footprints, Users, Play } from "lucide-react";
 import { useActivitySession, type ActivityType } from "@/hooks/useActivitySession";
+import { track } from "@/lib/analytics";
 
 const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
 const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
