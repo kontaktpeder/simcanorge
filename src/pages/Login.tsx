@@ -30,7 +30,7 @@ export default function Login() {
   const [error, setError] = useState('');
   const [compatWarning, setCompatWarning] = useState<string | null>(null);
 
-  const returnUrl = safeInternalPath(searchParams.get('returnUrl'), '/');
+  const returnUrl = safeInternalPath(searchParams.get('returnUrl'), '/app');
   const prefillEmail = searchParams.get('email');
   const fromApp = searchParams.get('reason') === 'app' || returnUrl === '/app';
 

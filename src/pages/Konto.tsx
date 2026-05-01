@@ -79,7 +79,7 @@ export default function Konto() {
 
   const handleSignOut = async () => {
     await signOut();
-    navigate("/");
+    navigate("/login");
     toast.success("Du er nå logget ut");
   };
 
@@ -109,7 +109,7 @@ export default function Konto() {
       // Small delay so the toast is visible
       setTimeout(() => {
         signOut();
-        navigate("/");
+        navigate("/login");
       }, 1500);
     } catch (err: unknown) {
       console.error("Delete account error:", err);

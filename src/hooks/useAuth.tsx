@@ -58,31 +58,47 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     );
 
-    // THEN check for existing session
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      if (!session?.user) {
-        setIsLoading(false);
-        return;
-      }
+    // THEN check for existing session.
+    // Wrapped so isLoading is ALWAYS resolved — otherwise pages like /app hang
+    // on a blank loader if any step throws (stale session, network error, etc).
+    (async () => {
+      let adminCheckPending = false;
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
 
-      const { data: { user: serverUser }, error: getUserError } = await supabase.auth.getUser();
+        if (!session?.user) {
+          return;
+        }
 
-      if (getUserError || !serverUser) {
-        await supabase.auth.signOut();
+        const { data: { user: serverUser }, error: getUserError } = await supabase.auth.getUser();
+
+        if (getUserError || !serverUser) {
+          await supabase.auth.signOut();
+          setSession(null);
+          setUser(null);
+          setIsAdmin(false);
+          return;
+        }
+
+        setSession(session);
+        setUser(serverUser);
+        adminCheckPending = true;
+        checkAdminRole(serverUser.id).then((admin) => {
+          setIsAdmin(admin);
+          setIsLoading(false);
+        });
+      } catch (err) {
+        console.error("Auth init failed:", err);
         setSession(null);
         setUser(null);
         setIsAdmin(false);
-        setIsLoading(false);
-        return;
+      } finally {
+        // Only resolve loading here if we're not waiting on the async admin check.
+        if (!adminCheckPending) {
+          setIsLoading(false);
+        }
       }
-
-      setSession(session);
-      setUser(serverUser);
-      checkAdminRole(serverUser.id).then((admin) => {
-        setIsAdmin(admin);
-        setIsLoading(false);
-      });
-    });
+    })();
 
     return () => subscription.unsubscribe();
   }, []);
