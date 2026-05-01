@@ -22,6 +22,8 @@ import {
 // NewsprintBackground removed — Premium Dark theme uses solid dark background
 import { BilerSidePanel, EMPTY_BILER_FILTER, type BilerFilterState } from "@/components/biler/BilerSidePanel";
 import { SpotCarDialog } from "@/components/car/SpotCarDialog";
+import { SaveCarButton } from "@/components/car/SaveCarButton";
+import { FEATURES } from "@/config/features";
 import carSilhouette from "@/assets/car-silhouette.png";
 import BilgarasjeLoader from "@/components/ui/BilgarasjeLoader";
 
