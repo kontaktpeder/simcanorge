@@ -19,6 +19,7 @@ export function HeroSearch({ compact = false }: { compact?: boolean }) {
   const [dropdownStyle, setDropdownStyle] = useState<CSSProperties>({});
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
