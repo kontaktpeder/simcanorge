@@ -410,30 +410,6 @@ function IntentBody({
   );
 }
 
-function IntentTile({
-  icon,
-  label,
-  onTrigger,
-  onClick,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  onTrigger?: React.ReactNode;
-  onClick?: () => void;
-}) {
-  // Wraps StartSessionButton's own dialog trigger inside our tile look.
-  // We just bubble click for analytics; the inner button still controls behaviour.
-  return (
-    <div onClick={onClick} className="relative">
-      <IntentBody icon={icon} label={label} />
-      {onTrigger && (
-        <div className="absolute inset-0 opacity-0 [&>*]:w-full [&>*]:h-full">
-          {onTrigger}
-        </div>
-      )}
-    </div>
-  );
-}
 
 function DisabledIntentTile({
   icon,
