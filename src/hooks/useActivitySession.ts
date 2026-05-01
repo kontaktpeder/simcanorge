@@ -36,35 +36,42 @@ function writeCache(id: string | null) {
 }
 
 async function fetchActiveSession(userId: string): Promise<ActiveSession | null> {
-  const cachedId = readCache();
-  if (cachedId) {
-    const { data } = await supabase
+  // Wrapped in try/catch so a transient failure (e.g. just-restored auth
+  // session, brief network blip) never bubbles up and crashes the whole app.
+  try {
+    const cachedId = readCache();
+    if (cachedId) {
+      const { data } = await supabase
+        .from("activity_sessions")
+        .select("*")
+        .eq("id", cachedId)
+        .eq("user_id", userId)
+        .is("ended_at", null)
+        .maybeSingle();
+      if (data) return data as ActiveSession;
+      writeCache(null);
+    }
+    const { data: latest } = await supabase
       .from("activity_sessions")
       .select("*")
-      .eq("id", cachedId)
       .eq("user_id", userId)
       .is("ended_at", null)
+      .order("started_at", { ascending: false })
+      .limit(1)
       .maybeSingle();
-    if (data) return data as ActiveSession;
-    writeCache(null);
+    if (latest) {
+      writeCache(latest.id);
+      return latest as ActiveSession;
+    }
+    return null;
+  } catch (err) {
+    console.warn("fetchActiveSession failed (returning null):", err);
+    return null;
   }
-  const { data: latest } = await supabase
-    .from("activity_sessions")
-    .select("*")
-    .eq("user_id", userId)
-    .is("ended_at", null)
-    .order("started_at", { ascending: false })
-    .limit(1)
-    .maybeSingle();
-  if (latest) {
-    writeCache(latest.id);
-    return latest as ActiveSession;
-  }
-  return null;
 }
 
 export function useActivitySession() {
-  const { user } = useAuth();
+  const { user, isLoading: authLoading } = useAuth();
   const queryClient = useQueryClient();
   const [isStarting, setIsStarting] = useState(false);
   const [isStopping, setIsStopping] = useState(false);
@@ -73,8 +80,12 @@ export function useActivitySession() {
   const { data: activeSession = null, isLoading } = useQuery({
     queryKey: sessionKey(user?.id),
     queryFn: () => (user ? fetchActiveSession(user.id) : Promise.resolve(null)),
-    enabled: !!user,
+    // Wait until auth has settled — otherwise we may query before the JWT is
+    // attached and crash during refresh on /app.
+    enabled: !!user && !authLoading,
     staleTime: 30_000,
+    retry: 1,
+    refetchOnWindowFocus: false,
   });
 
   // Tick elapsed minutes
