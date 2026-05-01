@@ -13,6 +13,7 @@ type Item = {
   href: string;
   label: string;
   Icon: React.ComponentType<{ className?: string }>;
+  badge?: string;
 };
 
 const TYPES: { value: ActivityType; label: string; desc: string; Icon: React.ComponentType<{ className?: string }> }[] = [
@@ -26,15 +27,29 @@ function NavBtn({ item, active }: { item: Item; active: boolean }) {
   return (
     <Link
       to={item.href}
-      className="flex flex-col items-center justify-center gap-1 flex-1 h-full transition-colors group"
+      className="flex flex-col items-center justify-center gap-1 flex-1 h-full transition-colors group relative"
       aria-label={item.label}
       aria-current={active ? "page" : undefined}
     >
-      <Icon
-        className={`w-[22px] h-[22px] transition-all ${
-          active ? "text-[#34eab8]" : "text-white/45 group-hover:text-white/75"
-        }`}
-      />
+      <span className="relative">
+        <Icon
+          className={`w-[22px] h-[22px] transition-all ${
+            active ? "text-[#34eab8]" : "text-white/45 group-hover:text-white/75"
+          }`}
+        />
+        {item.badge && (
+          <span
+            className="absolute -top-1.5 -right-3 px-1.5 py-[1px] rounded-full text-[8px] font-bold uppercase tracking-[0.08em] leading-none text-[#070b10]"
+            style={{
+              ...chakra,
+              background: "linear-gradient(135deg,#34eab8,#2ab89a)",
+              boxShadow: "0 0 8px rgba(52,234,184,0.5)",
+            }}
+          >
+            {item.badge}
+          </span>
+        )}
+      </span>
       <span
         className={`text-[10px] tracking-[0.08em] uppercase font-bold transition-colors ${
           active ? "text-white" : "text-white/45 group-hover:text-white/70"
@@ -72,7 +87,7 @@ export function BottomNav() {
     { href: "/biler", label: "Biler", Icon: Search },
   ];
   const right: Item[] = [
-    { href: "/turer", label: "Turer", Icon: Route },
+    { href: "/turer", label: "Turer", Icon: Route, badge: "Ny" },
     { href: "/konto", label: "Profil", Icon: User },
   ];
 
