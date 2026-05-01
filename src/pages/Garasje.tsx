@@ -13,8 +13,10 @@ import { useFeatures } from '@/hooks/useFeatures';
 import { DriveControls } from '@/components/car/DriveControls';
 import { SaveCarButton } from '@/components/car/SaveCarButton';
 import { SpotCarDialog } from '@/components/car/SpotCarDialog';
-import { StartSessionButton, ActiveSessionBanner } from '@/components/activity';
+import { StartSessionButton, ActiveSessionBanner, TripSummaryDialog, LastTripCard } from '@/components/activity';
 import { useActivitySession } from '@/hooks/useActivitySession';
+import { useLatestCompletedSession } from '@/hooks/useLatestCompletedSession';
+import { useState } from 'react';
 
 const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
 const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
@@ -411,6 +413,9 @@ function EmptyGarageHero() {
 /* ─── Activity Section ─── */
 function ActivitySection() {
   const { activeSession, isLoading } = useActivitySession();
+  const { data: lastTrip } = useLatestCompletedSession();
+  const [summaryOpen, setSummaryOpen] = useState(false);
+
   if (isLoading) return null;
   return (
     <section className="mt-8">
@@ -418,7 +423,7 @@ function ActivitySection() {
         Aktivitet
       </h2>
       {activeSession ? (
-        <ActiveSessionBanner />
+        <ActiveSessionBanner onStopped={() => setSummaryOpen(true)} />
       ) : (
         <div
           className="rounded-2xl border border-white/[0.06] p-5 flex flex-col sm:flex-row sm:items-center gap-3"
@@ -431,6 +436,18 @@ function ActivitySection() {
           <StartSessionButton />
         </div>
       )}
+
+      {!activeSession && lastTrip && (
+        <div className="mt-3">
+          <LastTripCard summary={lastTrip} onOpen={() => setSummaryOpen(true)} />
+        </div>
+      )}
+
+      <TripSummaryDialog
+        summary={lastTrip ?? null}
+        open={summaryOpen}
+        onOpenChange={setSummaryOpen}
+      />
     </section>
   );
 }
