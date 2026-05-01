@@ -3,6 +3,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import type { RelationshipType } from "@/lib/relationshipTypes";
 
+export type RelationshipRequestSource =
+  | "manual"
+  | "regnr_gate"
+  | "spotting"
+  | "activity_moment";
+
 export interface CreateRelationshipRequestInput {
   carId: string;
   relationshipType: RelationshipType;
@@ -10,39 +16,83 @@ export interface CreateRelationshipRequestInput {
   startYear?: number | null;
   endYear?: number | null;
   wantsStewardship?: boolean;
+  source?: RelationshipRequestSource;
+  sourceEventId?: string | null;
+}
+
+export type RelationshipRequestResultCode =
+  | "created"
+  | "already_pending"
+  | "already_linked"
+  | "not_authenticated";
+
+export interface CreateRelationshipRequestResult {
+  success: boolean;
+  code: RelationshipRequestResultCode;
+  /** Present for created / already_pending */
+  id?: string;
+  /** Present for already_linked */
+  role?: string;
 }
 
 export function useCreateCarRelationshipRequest() {
   const { toast } = useToast();
 
-  return useMutation({
-    mutationFn: async (input: CreateRelationshipRequestInput) => {
+  return useMutation<CreateRelationshipRequestResult, Error, CreateRelationshipRequestInput>({
+    mutationFn: async (input) => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("not_authenticated");
 
-      const { data, error } = await supabase
-        .from("car_relationship_requests" as any)
-        .insert({
-          car_id: input.carId,
-          requester_id: user.id,
-          relationship_type: input.relationshipType,
-          note: input.note?.trim() || null,
-          relationship_start_year: input.startYear ?? null,
-          relationship_end_year: input.endYear ?? null,
-          wants_stewardship: input.wantsStewardship ?? false,
-        })
-        .select()
-        .single();
+      const { data, error } = await supabase.rpc(
+        "create_car_relationship_request_safe" as never,
+        {
+          p_car_id: input.carId,
+          p_relationship_type: input.relationshipType,
+          p_note: input.note?.trim() || null,
+          p_start_year: input.startYear ?? null,
+          p_end_year: input.endYear ?? null,
+          p_wants_stewardship: input.wantsStewardship ?? false,
+          p_source: input.source ?? "manual",
+          p_source_event_id: input.sourceEventId ?? null,
+        } as never,
+      );
 
       if (error) throw error;
-      return data;
+
+      const payload = (data ?? {}) as {
+        success?: boolean;
+        code?: RelationshipRequestResultCode;
+        request_id?: string;
+        role?: string;
+      };
+
+      const code = (payload.code ?? "created") as RelationshipRequestResultCode;
+
+      if (code === "not_authenticated") {
+        throw new Error("not_authenticated");
+      }
+
+      return {
+        success: payload.success ?? code !== "already_linked",
+        code,
+        id: payload.request_id,
+        role: payload.role,
+      };
     },
-    onSuccess: () => {
-      // Belønningen ligger nå på success-siden — hold toasten kort og lavmælt
-      // for å unngå dobbel "vi har sendt"-støy.
-      toast({
-        title: "Forespørselen er sendt",
-      });
+    onSuccess: (result) => {
+      if (result.code === "created") {
+        toast({ title: "Forespørselen er sendt" });
+      } else if (result.code === "already_pending") {
+        toast({
+          title: "Du har allerede en pågående forespørsel",
+          description: "Vi tar kontakt så snart en ansvarlig har vurdert den.",
+        });
+      } else if (result.code === "already_linked") {
+        toast({
+          title: "Du er allerede koblet til denne bilen",
+          description: "Bilen ligger allerede i garasjen din.",
+        });
+      }
     },
     onError: (err: any) => {
       const msg = err?.message || "";
@@ -50,18 +100,6 @@ export function useCreateCarRelationshipRequest() {
         toast({
           title: "Du må være logget inn",
           description: "Logg inn for å sende en forespørsel.",
-          variant: "destructive",
-        });
-      } else if (msg.includes("allerede_koblet")) {
-        toast({
-          title: "Du er allerede koblet til denne bilen",
-          description: "Du trenger ikke sende en ny forespørsel — bilen ligger i garasjen din.",
-          variant: "destructive",
-        });
-      } else if (msg.includes("uniq_car_relationship_requests_pending") || err?.code === "23505") {
-        toast({
-          title: "Allerede sendt",
-          description: "Du har allerede en pågående forespørsel for denne bilen.",
           variant: "destructive",
         });
       } else {

@@ -492,6 +492,8 @@ export type Database = {
           reviewed_at: string | null
           reviewer_id: string | null
           reviewer_note: string | null
+          source: string
+          source_event_id: string | null
           status: string
           updated_at: string
           wants_stewardship: boolean
@@ -508,6 +510,8 @@ export type Database = {
           reviewed_at?: string | null
           reviewer_id?: string | null
           reviewer_note?: string | null
+          source?: string
+          source_event_id?: string | null
           status?: string
           updated_at?: string
           wants_stewardship?: boolean
@@ -524,6 +528,8 @@ export type Database = {
           reviewed_at?: string | null
           reviewer_id?: string | null
           reviewer_note?: string | null
+          source?: string
+          source_event_id?: string | null
           status?: string
           updated_at?: string
           wants_stewardship?: boolean
@@ -534,6 +540,13 @@ export type Database = {
             columns: ["car_id"]
             isOneToOne: false
             referencedRelation: "cars"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "car_relationship_requests_source_event_id_fkey"
+            columns: ["source_event_id"]
+            isOneToOne: false
+            referencedRelation: "car_events"
             referencedColumns: ["id"]
           },
         ]
@@ -2300,6 +2313,19 @@ export type Database = {
       }
       cleanup_old_inquiry_rate_limits: { Args: never; Returns: undefined }
       cleanup_old_page_views: { Args: never; Returns: undefined }
+      create_car_relationship_request_safe: {
+        Args: {
+          p_car_id: string
+          p_end_year?: number
+          p_note?: string
+          p_relationship_type?: Database["public"]["Enums"]["car_relationship_type"]
+          p_source?: string
+          p_source_event_id?: string
+          p_start_year?: number
+          p_wants_stewardship?: boolean
+        }
+        Returns: Json
+      }
       create_page_car_link_request: {
         Args: { p_car_id: string; p_message?: string; p_page_id: string }
         Returns: Json
