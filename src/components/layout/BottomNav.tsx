@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Warehouse, Search, Users, User, Play, Car, Footprints } from "lucide-react";
+import { Warehouse, Search, Users, User, Play, Car, Footprints, Route } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useAuth } from "@/hooks/useAuth";
 import { useFeatures } from "@/hooks/useFeatures";
@@ -72,7 +72,7 @@ export function BottomNav() {
     { href: "/biler", label: "Søk", Icon: Search },
   ];
   const right: Item[] = [
-    { href: "/klubber", label: "Klubber", Icon: Users },
+    { href: "/turer", label: "Turer", Icon: Route },
     { href: "/konto", label: "Profil", Icon: User },
   ];
 
