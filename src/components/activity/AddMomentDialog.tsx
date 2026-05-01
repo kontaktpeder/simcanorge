@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Camera, Loader2, X } from "lucide-react";
 import { useActivityMoments } from "@/hooks/useActivityMoments";
@@ -21,10 +23,12 @@ export function AddMomentDialog({
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [note, setNote] = useState("");
+  const [regnr, setRegnr] = useState("");
 
   const reset = () => {
     setImageFile(null);
     setNote("");
+    setRegnr("");
     if (previewUrl) URL.revokeObjectURL(previewUrl);
     setPreviewUrl(null);
   };
@@ -41,8 +45,13 @@ export function AddMomentDialog({
   };
 
   const handleSubmit = async () => {
-    if (!imageFile && !note.trim()) return;
-    await addMoment({ sessionId, imageFile, note: note.trim() || null });
+    if (!imageFile && !note.trim() && !regnr.trim()) return;
+    await addMoment({
+      sessionId,
+      imageFile,
+      note: note.trim() || null,
+      registrationNumber: regnr.trim() || null,
+    });
     reset();
     onOpenChange(false);
   };
@@ -81,6 +90,21 @@ export function AddMomentDialog({
               />
             </label>
           )}
+          <div>
+            <Label className="text-[11px] uppercase tracking-[0.15em] text-white/40" style={oswald}>
+              Regnr (valgfri)
+            </Label>
+            <Input
+              placeholder="F.eks. AB12345"
+              value={regnr}
+              onChange={(e) => setRegnr(e.target.value)}
+              className="mt-1.5 bg-[hsl(215_25%_8%)] border-white/10 text-white placeholder:text-white/30 uppercase tracking-wider"
+              autoCapitalize="characters"
+            />
+            <p className="text-[10px] text-white/30 mt-1" style={oswald}>
+              Kobles til bil i garasjen. Vises aldri offentlig.
+            </p>
+          </div>
           <Textarea
             placeholder="Notat (valgfri)"
             value={note}
@@ -100,7 +124,7 @@ export function AddMomentDialog({
             <Button
               type="button"
               onClick={handleSubmit}
-              disabled={isAdding || (!imageFile && !note.trim())}
+              disabled={isAdding || (!imageFile && !note.trim() && !regnr.trim())}
               className="bg-[#2dd4a8] text-[#070b10] hover:bg-[#34eab8]"
             >
               {isAdding ? <Loader2 className="w-4 h-4 animate-spin" /> : "Lagre øyeblikk"}

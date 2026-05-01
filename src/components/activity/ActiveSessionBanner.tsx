@@ -14,7 +14,7 @@ const TYPE_LABEL = {
   meetup: { label: "Treff", icon: <Users className="w-4 h-4" /> },
 } as const;
 
-export function ActiveSessionBanner() {
+export function ActiveSessionBanner({ onStopped }: { onStopped?: () => void } = {}) {
   const { activeSession, elapsedMinutes } = useActivitySession();
   const { moments } = useActivityMoments(activeSession?.id);
   const [momentOpen, setMomentOpen] = useState(false);
@@ -71,7 +71,7 @@ export function ActiveSessionBanner() {
         </div>
       </div>
       <AddMomentDialog sessionId={activeSession.id} open={momentOpen} onOpenChange={setMomentOpen} />
-      <StopSessionDialog open={stopOpen} onOpenChange={setStopOpen} />
+      <StopSessionDialog open={stopOpen} onOpenChange={setStopOpen} onStopped={onStopped} />
     </>
   );
 }
