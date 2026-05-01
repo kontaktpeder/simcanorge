@@ -4,8 +4,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
-import { Camera, Loader2, X, Car as CarIcon, CheckCircle2 } from "lucide-react";
+import { Camera, Loader2, X, Car as CarIcon, CheckCircle2, Clock, ShieldCheck } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 import { useActivityMoments } from "@/hooks/useActivityMoments";
 import { LicensePlateInput } from "@/components/car/wizard/LicensePlateInput";
 import { useCreateCarRelationshipRequest } from "@/hooks/useCreateCarRelationshipRequest";
@@ -39,6 +40,7 @@ export function AddMomentDialog({
   onOpenChange: (v: boolean) => void;
 }) {
   const { addMoment, isAdding } = useActivityMoments(sessionId);
+  const { user } = useAuth();
   const relMutation = useCreateCarRelationshipRequest();
 
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -47,6 +49,10 @@ export function AddMomentDialog({
   const [regnr, setRegnr] = useState("");
   const [match, setMatch] = useState<CarMatch | null>(null);
   const [isLookingUp, setIsLookingUp] = useState(false);
+
+  // Status mot innlogget bruker for matchet bil
+  type MatchStatus = "none" | "owned" | "pending" | "available";
+  const [matchStatus, setMatchStatus] = useState<MatchStatus>("none");
 
   // Inline relasjons-state
   const [showRelForm, setShowRelForm] = useState(false);
@@ -61,6 +67,7 @@ export function AddMomentDialog({
     if (normalized.length < 2) {
       setMatch(null);
       setIsLookingUp(false);
+      setMatchStatus("none");
       // reset rel-state hvis regnr endres bort fra match
       setShowRelForm(false);
       setRelSent(false);
@@ -78,9 +85,9 @@ export function AddMomentDialog({
       const next = list.length > 0 ? list[0] : null;
       setMatch(next);
       setIsLookingUp(false);
-      // Hvis ny match (annen bil), nullstill rel-state
       setShowRelForm(false);
       setRelSent(false);
+      setMatchStatus(next ? "available" : "none");
     }, 350);
     return () => {
       cancelled = true;
@@ -88,6 +95,37 @@ export function AddMomentDialog({
       setIsLookingUp(false);
     };
   }, [regnr]);
+
+  // Sjekk om innlogget bruker allerede eier eller har pending forespørsel på matchet bil
+  useEffect(() => {
+    if (!match || !user) return;
+    let cancelled = false;
+    (async () => {
+      const [ownerRes, pendingRes] = await Promise.all([
+        supabase
+          .from("car_owners")
+          .select("id")
+          .eq("car_id", match.id)
+          .eq("user_id", user.id)
+          .maybeSingle(),
+        supabase
+          .from("car_relationship_requests")
+          .select("id")
+          .eq("car_id", match.id)
+          .eq("requester_id", user.id)
+          .eq("status", "pending")
+          .maybeSingle(),
+      ]);
+      if (cancelled) return;
+      if (ownerRes.data) setMatchStatus("owned");
+      else if (pendingRes.data) setMatchStatus("pending");
+      else setMatchStatus("available");
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [match, user]);
+
 
   const reset = () => {
     setImageFile(null);
@@ -199,31 +237,64 @@ export function AddMomentDialog({
             </div>
           )}
 
-          {/* Match-kort + inline CTA */}
+          {/* Match-kort: viser status mot innlogget bruker */}
           {!isLookingUp && match && !relSent && !showRelForm && (
             <div className="rounded-lg border border-[#2dd4a8]/30 bg-[#2dd4a8]/[0.06] p-3">
               <div className="flex items-start gap-3">
                 <div className="mt-0.5 rounded-md bg-[#2dd4a8]/10 p-1.5 text-[#2dd4a8]">
-                  <CarIcon className="w-3.5 h-3.5" />
+                  {matchStatus === "owned" ? (
+                    <ShieldCheck className="w-3.5 h-3.5" />
+                  ) : matchStatus === "pending" ? (
+                    <Clock className="w-3.5 h-3.5" />
+                  ) : (
+                    <CarIcon className="w-3.5 h-3.5" />
+                  )}
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-[13px] font-semibold text-white truncate" style={chakra}>
                     {match.title}
                   </p>
-                  <p className="text-[12px] text-white/70 mt-1" style={oswald}>
-                    Kjenner du denne bilen?
-                  </p>
-                  <p className="text-[11px] text-white/50 mt-1" style={oswald}>
-                    Be om å bli knyttet til bilen og bidra med bilder eller historie.
-                  </p>
-                  <Button
-                    type="button"
-                    size="sm"
-                    onClick={() => setShowRelForm(true)}
-                    className="mt-2 bg-[#2dd4a8] text-[#070b10] hover:bg-[#34eab8] h-9 w-full sm:w-auto"
-                  >
-                    Kjenner du denne bilen?
-                  </Button>
+
+                  {matchStatus === "owned" && (
+                    <>
+                      <p className="text-[12px] text-white/80 mt-1" style={oswald}>
+                        Denne bilen er allerede i garasjen din
+                      </p>
+                      <p className="text-[11px] text-white/50 mt-1" style={oswald}>
+                        Øyeblikket kobles automatisk til bilen.
+                      </p>
+                    </>
+                  )}
+
+                  {matchStatus === "pending" && (
+                    <>
+                      <p className="text-[12px] text-white/80 mt-1" style={oswald}>
+                        Du har allerede sendt forespørsel
+                      </p>
+                      <p className="text-[11px] text-white/50 mt-1" style={oswald}>
+                        En ansvarlig vurderer den. Du kan fortsatt lagre øyeblikket.
+                      </p>
+                    </>
+                  )}
+
+                  {matchStatus !== "owned" && matchStatus !== "pending" && (
+                    <>
+                      <p className="text-[12px] text-white/70 mt-1" style={oswald}>
+                        Kjenner du denne bilen?
+                      </p>
+                      <p className="text-[11px] text-white/50 mt-1" style={oswald}>
+                        Be om å bli knyttet til bilen og bidra med bilder eller historie.
+                      </p>
+                      <Button
+                        type="button"
+                        size="sm"
+                        onClick={() => setShowRelForm(true)}
+                        className="mt-2 bg-[#2dd4a8] text-[#070b10] hover:bg-[#34eab8] h-9 w-full sm:w-auto"
+                      >
+                        Kjenner du denne bilen?
+                      </Button>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
