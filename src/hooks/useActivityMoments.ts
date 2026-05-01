@@ -9,10 +9,26 @@ import type { ActivityVisibility } from "./useActivitySession";
 export interface ActivityMoment {
   id: string;
   occurred_at: string;
-  data: { image_url?: string | null; note?: string | null } | null;
+  data: { image_url?: string | null; note?: string | null; registration_number_internal?: string | null } | null;
   visibility: string;
   activity_session_id: string | null;
   car_id: string | null;
+}
+
+function normalizeRegnr(regnr: string): string {
+  return regnr.toLowerCase().replace(/\s|-/g, "").trim();
+}
+
+function slugify(input: string): string {
+  return (
+    input
+      .toLowerCase()
+      .replace(/[æÆ]/g, "ae")
+      .replace(/[øØ]/g, "o")
+      .replace(/[åÅ]/g, "a")
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "") || "moment"
+  );
 }
 
 export function useActivityMoments(sessionId?: string) {
@@ -41,8 +57,42 @@ export function useActivityMoments(sessionId?: string) {
       note?: string | null;
       visibility?: ActivityVisibility;
       carId?: string | null;
+      registrationNumber?: string | null;
     }) => {
       if (!user) throw new Error("not_authenticated");
+
+      // 1) Resolve car_id via regnr if provided and no explicit carId
+      let carId: string | null = input.carId ?? null;
+      const regnrNormalized = input.registrationNumber ? normalizeRegnr(input.registrationNumber) : "";
+      if (!carId && regnrNormalized.length >= 2) {
+        const { data: matches } = await supabase.rpc("find_cars_by_registration_number", {
+          p_normalized: regnrNormalized,
+        });
+        if (matches && Array.isArray(matches) && matches.length > 0) {
+          carId = (matches[0] as { id: string }).id;
+        } else {
+          // Create minimal unclaimed car
+          const titleBase = "Bil sett underveis";
+          const baseSlug = slugify(`${titleBase}-${Date.now()}`);
+          const { data: created, error: createErr } = await supabase
+            .from("cars")
+            .insert({
+              title: titleBase,
+              model: "Ukjent",
+              slug: baseSlug,
+              source: "activity_moment",
+              status: "submitted",
+              category: "registrert",
+              created_by_user_id: user.id,
+            })
+            .select("id")
+            .single();
+          if (createErr || !created) throw createErr ?? new Error("Kunne ikke opprette bil");
+          carId = (created as { id: string }).id;
+        }
+      }
+
+      // 2) Upload optional image
       let imageUrl: string | null = null;
       if (input.imageFile) {
         const { file } = await compressImage(input.imageFile);
@@ -54,9 +104,11 @@ export function useActivityMoments(sessionId?: string) {
         const { data: pub } = supabase.storage.from("simca-images").getPublicUrl(path);
         imageUrl = pub.publicUrl;
       }
+
+      // 3) Insert car_event
       const now = new Date();
       const { error } = await supabase.from("car_events").insert({
-        car_id: input.carId ?? null,
+        car_id: carId,
         activity_session_id: input.sessionId,
         category: "bruk",
         event_type: "moment",
@@ -66,7 +118,12 @@ export function useActivityMoments(sessionId?: string) {
         year: now.getFullYear(),
         description: input.note ?? null,
         created_by: user.id,
-        data: { image_url: imageUrl, note: input.note ?? null },
+        data: {
+          image_url: imageUrl,
+          note: input.note ?? null,
+          // Internal only — never rendered publicly
+          registration_number_internal: regnrNormalized || null,
+        },
       });
       if (error) throw error;
     },

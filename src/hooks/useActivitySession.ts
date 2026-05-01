@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
@@ -17,6 +18,7 @@ export interface ActiveSession {
 }
 
 const CACHE_KEY = "active_activity_session_id_v1";
+const sessionKey = (userId: string | undefined) => ["active-activity-session", userId ?? "anon"] as const;
 
 function readCache(): string | null {
   if (typeof window === "undefined") return null;
@@ -33,15 +35,49 @@ function writeCache(id: string | null) {
   else localStorage.removeItem(CACHE_KEY);
 }
 
+async function fetchActiveSession(userId: string): Promise<ActiveSession | null> {
+  const cachedId = readCache();
+  if (cachedId) {
+    const { data } = await supabase
+      .from("activity_sessions")
+      .select("*")
+      .eq("id", cachedId)
+      .eq("user_id", userId)
+      .is("ended_at", null)
+      .maybeSingle();
+    if (data) return data as ActiveSession;
+    writeCache(null);
+  }
+  const { data: latest } = await supabase
+    .from("activity_sessions")
+    .select("*")
+    .eq("user_id", userId)
+    .is("ended_at", null)
+    .order("started_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (latest) {
+    writeCache(latest.id);
+    return latest as ActiveSession;
+  }
+  return null;
+}
+
 export function useActivitySession() {
   const { user } = useAuth();
-  const [activeSession, setActiveSession] = useState<ActiveSession | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const queryClient = useQueryClient();
   const [isStarting, setIsStarting] = useState(false);
   const [isStopping, setIsStopping] = useState(false);
   const [elapsedMinutes, setElapsedMinutes] = useState(0);
 
-  // Tick elapsed
+  const { data: activeSession = null, isLoading } = useQuery({
+    queryKey: sessionKey(user?.id),
+    queryFn: () => (user ? fetchActiveSession(user.id) : Promise.resolve(null)),
+    enabled: !!user,
+    staleTime: 30_000,
+  });
+
+  // Tick elapsed minutes
   useEffect(() => {
     if (!activeSession || activeSession.ended_at) {
       setElapsedMinutes(0);
@@ -56,71 +92,22 @@ export function useActivitySession() {
     return () => window.clearInterval(id);
   }, [activeSession]);
 
-  const recoverSession = useCallback(async () => {
-    if (!user) {
-      setActiveSession(null);
-      setIsLoading(false);
-      return;
-    }
-    setIsLoading(true);
-    try {
-      const cachedId = readCache();
-      if (cachedId) {
-        const { data } = await supabase
-          .from("activity_sessions")
-          .select("*")
-          .eq("id", cachedId)
-          .eq("user_id", user.id)
-          .is("ended_at", null)
-          .maybeSingle();
-        if (data) {
-          setActiveSession(data as ActiveSession);
-          setIsLoading(false);
-          return;
-        }
-        writeCache(null);
-      }
-      // DB fallback: latest open session for user
-      const { data: latest } = await supabase
-        .from("activity_sessions")
-        .select("*")
-        .eq("user_id", user.id)
-        .is("ended_at", null)
-        .order("started_at", { ascending: false })
-        .limit(1)
-        .maybeSingle();
-      if (latest) {
-        writeCache(latest.id);
-        setActiveSession(latest as ActiveSession);
-      } else {
-        setActiveSession(null);
-      }
-    } catch (err) {
-      console.error("recoverSession error", err);
-      setActiveSession(null);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [user]);
-
-  useEffect(() => {
-    void recoverSession();
-  }, [recoverSession]);
-
   // Sync across tabs
   useEffect(() => {
     const onStorage = (e: StorageEvent) => {
-      if (e.key === CACHE_KEY) void recoverSession();
+      if (e.key === CACHE_KEY) {
+        queryClient.invalidateQueries({ queryKey: sessionKey(user?.id) });
+      }
     };
     window.addEventListener("storage", onStorage);
     return () => window.removeEventListener("storage", onStorage);
-  }, [recoverSession]);
+  }, [queryClient, user?.id]);
 
   const startSession = useCallback(
     async (type: ActivityType, visibility: ActivityVisibility = "private") => {
       if (!user) {
         toast.error("Logg inn for å starte tur");
-        return;
+        return null;
       }
       setIsStarting(true);
       try {
@@ -136,25 +123,28 @@ export function useActivitySession() {
           .single();
         if (error) throw error;
         writeCache(data.id);
-        setActiveSession(data as ActiveSession);
+        // Update shared cache immediately so all consumers re-render NOW
+        queryClient.setQueryData(sessionKey(user.id), data as ActiveSession);
         toast.success("Tur startet");
+        return data as ActiveSession;
       } catch (err) {
         console.error("startSession error", err);
         toast.error("Kunne ikke starte tur");
+        return null;
       } finally {
         setIsStarting(false);
       }
     },
-    [user]
+    [user, queryClient]
   );
 
   const stopSession = useCallback(
     async (opts?: { summaryNote?: string; visibility?: ActivityVisibility }) => {
       const current = activeSession;
-      if (!current || !user) return;
+      if (!current || !user) return null;
       setIsStopping(true);
       try {
-        const { error } = await supabase
+        const { data, error } = await supabase
           .from("activity_sessions")
           .update({
             ended_at: new Date().toISOString(),
@@ -162,20 +152,30 @@ export function useActivitySession() {
             visibility: opts?.visibility ?? current.visibility,
           })
           .eq("id", current.id)
-          .eq("user_id", user.id);
+          .eq("user_id", user.id)
+          .select("*")
+          .single();
         if (error) throw error;
         writeCache(null);
-        setActiveSession(null);
+        // Clear active session immediately for all consumers
+        queryClient.setQueryData(sessionKey(user.id), null);
+        queryClient.invalidateQueries({ queryKey: ["latest-completed-session", user.id] });
         toast.success("Tur avsluttet");
+        return data as ActiveSession;
       } catch (err) {
         console.error("stopSession error", err);
         toast.error("Kunne ikke avslutte tur");
+        return null;
       } finally {
         setIsStopping(false);
       }
     },
-    [activeSession, user]
+    [activeSession, user, queryClient]
   );
+
+  const recoverSession = useCallback(async () => {
+    await queryClient.invalidateQueries({ queryKey: sessionKey(user?.id) });
+  }, [queryClient, user?.id]);
 
   return {
     activeSession,
