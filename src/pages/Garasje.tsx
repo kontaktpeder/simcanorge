@@ -9,7 +9,7 @@ import { Helmet } from 'react-helmet-async';
 import { Loader2, Plus, Car, Eye, Pencil, Upload, BookOpen, User, ChevronRight, MapPin, CalendarPlus, Users, Settings, UserCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import garageBackground from '@/assets/garage-background.jpg';
-import { FEATURES } from '@/config/features';
+import { useFeatures } from '@/hooks/useFeatures';
 import { DriveControls } from '@/components/car/DriveControls';
 import { SaveCarButton } from '@/components/car/SaveCarButton';
 import { SpotCarDialog } from '@/components/car/SpotCarDialog';
@@ -47,6 +47,7 @@ export default function Garasje() {
   const { user, isLoading: authLoading } = useAuth();
   const navigate = useNavigate();
   const { data: profile } = useMyPersonProfile();
+  const features = useFeatures();
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -133,7 +134,7 @@ export default function Garasje() {
           )}
 
           {/* ─── ACTIVITY SESSION ─── */}
-          {FEATURES.activitySessions && !FEATURES.simpleLaunchMode && (
+          {features.activitySessions && !features.simpleLaunchMode && (
             <ActivitySection />
           )}
 
@@ -196,7 +197,7 @@ export default function Garasje() {
               Snarveier
             </h2>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-              {!FEATURES.simpleLaunchMode && (
+              {!features.simpleLaunchMode && (
                 <>
                   <ShortcutTile to="/dashboard/events/opprett" icon={<CalendarPlus className="w-5 h-5" />} label="Opprett arrangement" />
                   <ShortcutTile to="/dashboard/sider" icon={<Users className="w-5 h-5" />} label="Klubber & sider" />
@@ -204,7 +205,7 @@ export default function Garasje() {
               )}
               <ShortcutTile to="/dashboard/min-profil" icon={<UserCircle className="w-5 h-5" />} label="Min profil" />
               <ShortcutTile to="/konto" icon={<Settings className="w-5 h-5" />} label="Konto" />
-              {FEATURES.spotting && !FEATURES.simpleLaunchMode && (
+              {features.spotting && !features.simpleLaunchMode && (
                 <div className="contents">
                   <SpotCarDialog
                     trigger={
@@ -220,7 +221,7 @@ export default function Garasje() {
                   />
                 </div>
               )}
-              {FEATURES.simpleLaunchMode && (
+              {features.simpleLaunchMode && (
                 <>
                   <ComingSoonTile icon={<CalendarPlus className="w-5 h-5" />} label="Arrangementer" />
                   <ComingSoonTile icon={<Users className="w-5 h-5" />} label="Klubber & sider" />
@@ -234,7 +235,7 @@ export default function Garasje() {
             <h2 className="text-[12px] tracking-[0.2em] uppercase text-white/30 mb-4" style={oswald}>
               Oppdateringer
             </h2>
-            {FEATURES.simpleLaunchMode ? (
+            {features.simpleLaunchMode ? (
               <div className="rounded-xl border border-white/[0.06] p-6 text-center" style={{ background: 'hsl(215 25% 10%)' }}>
                 <p className="text-[12px] text-[#2dd4a8]/70 uppercase tracking-[0.2em] mb-1" style={oswald}>Kommer snart</p>
                 <p className="text-[11px] text-white/30" style={oswald}>Varsler og innboks åpner ved full lansering.</p>
@@ -272,6 +273,7 @@ export default function Garasje() {
 function HeroCarSection({ car, profile }: { car: CarData; profile: any }) {
   const img = car.car_images?.sort((a, b) => (a.sort_order ?? 99) - (b.sort_order ?? 99))[0];
   const isPublished = !!car.published_at;
+  const features = useFeatures();
 
   return (
     <motion.section
@@ -353,12 +355,12 @@ function HeroCarSection({ car, profile }: { car: CarData; profile: any }) {
       </div>
 
       {/* Activity MVP — hidden behind flags during simple launch */}
-      {FEATURES.savedCars && !FEATURES.simpleLaunchMode && (
+      {features.savedCars && !features.simpleLaunchMode && (
         <div className="mt-3">
           <SaveCarButton carId={car.id} variant="full" />
         </div>
       )}
-      {FEATURES.driveMode && !FEATURES.simpleLaunchMode && (
+      {features.driveMode && !features.simpleLaunchMode && (
         <div className="mt-3">
           <DriveControls carId={car.id} />
         </div>
