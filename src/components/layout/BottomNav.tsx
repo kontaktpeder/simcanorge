@@ -69,7 +69,7 @@ export function BottomNav() {
   const { user } = useAuth();
   const features = useFeatures();
   const activitiesEnabled = !!features.activitySessions;
-  const { activeSession, startSession, isStarting } = useActivitySession();
+  const { activeSession, startSession, isStarting } = useActivitySession({ enabled: activitiesEnabled });
   const effectiveActiveSession = activitiesEnabled ? activeSession : null;
   const [pickerOpen, setPickerOpen] = useState(false);
   const visible = useHideOnScroll(10);
