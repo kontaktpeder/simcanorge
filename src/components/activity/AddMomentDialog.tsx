@@ -207,5 +207,21 @@ export function AddMomentDialog({
         </div>
       </DialogContent>
     </Dialog>
+
+    {match && (
+      <RelationshipRequestDialog
+        open={relOpen}
+        onOpenChange={setRelOpen}
+        carId={match.id}
+        carTitle={match.title}
+        source="activity_moment"
+        onSubmitted={() => {
+          // Lukk øyeblikks-dialogen — relasjonen er sendt
+          reset();
+          onOpenChange(false);
+        }}
+      />
+    )}
+    </>
   );
 }
