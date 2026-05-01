@@ -68,7 +68,7 @@ export function BottomNav() {
   const activitiesEnabled = !!features.activitySessions;
 
   const left: Item[] = [
-    { href: "/garasje", label: "Garasje", Icon: GarageIconFallback as any },
+    { href: "/garasje", label: "Garasje", Icon: Warehouse },
     { href: "/utforsk", label: "Søk", Icon: Search },
   ];
   const right: Item[] = [
