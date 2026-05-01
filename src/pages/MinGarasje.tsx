@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { Layout } from "@/components/layout/Layout";
 import { BrandLoader } from "@/components/brand/BrandLoader";
+import { track, trackScreenViewOnce } from "@/lib/analytics";
 
 const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
 const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
@@ -41,6 +42,10 @@ export default function MinGarasje() {
   useEffect(() => {
     if (!authLoading && !user) navigate("/login?returnUrl=/min-garasje");
   }, [user, authLoading, navigate]);
+
+  useEffect(() => {
+    trackScreenViewOnce("start");
+  }, []);
 
   const { data: myCars, isLoading } = useQuery({
     queryKey: ["my-cars-min-garasje", user?.id],
@@ -94,6 +99,7 @@ export default function MinGarasje() {
               </h1>
               <Link
                 to="/legg-til-bil"
+                onClick={() => void track("garage_intent_click", "start", { intent: "add_car", source: "header" })}
                 className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg text-[11px] tracking-[0.1em] uppercase font-bold text-[#070b10]"
                 style={{
                   ...chakra,
@@ -122,6 +128,7 @@ export default function MinGarasje() {
               ))}
               <Link
                 to="/legg-til-bil"
+                onClick={() => void track("garage_intent_click", "start", { intent: "add_car", source: "tile" })}
                 className="group flex flex-col items-center justify-center rounded-xl border border-dashed border-white/[0.08] hover:border-[#2dd4a8]/40 transition-all aspect-[16/11]"
               >
                 <Plus className="w-5 h-5 text-white/20 group-hover:text-[#2dd4a8]/70 mb-1 transition-colors" />
@@ -153,6 +160,7 @@ function CarTile({ car, index }: { car: CarData; index: number }) {
     >
       <Link
         to={to}
+        onClick={() => void track("start_car_preview_click", "start", { car_id: car.id, published: isPublished })}
         className="group block rounded-xl overflow-hidden border border-white/[0.06] hover:border-[#2dd4a8]/40 transition-all"
         style={{ background: "hsl(215 25% 10%)" }}
       >
@@ -207,6 +215,7 @@ function EmptyState() {
       </p>
       <Link
         to="/legg-til-bil"
+        onClick={() => void track("garage_intent_click", "start", { intent: "add_car", source: "empty_state" })}
         className="inline-flex items-center gap-2 px-6 py-3 rounded-lg text-[12px] tracking-[0.1em] uppercase font-bold text-[#070b10]"
         style={{
           ...chakra,

@@ -2057,6 +2057,33 @@ export type Database = {
         }
         Relationships: []
       }
+      product_events: {
+        Row: {
+          created_at: string
+          event_name: string
+          id: string
+          payload: Json
+          screen: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          event_name: string
+          id?: string
+          payload?: Json
+          screen?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          event_name?: string
+          id?: string
+          payload?: Json
+          screen?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       saved_cars: {
         Row: {
           car_id: string
@@ -2368,6 +2395,10 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      log_product_event: {
+        Args: { p_event_name: string; p_payload?: Json; p_screen?: string }
+        Returns: undefined
       }
       notify_admins_images_added: {
         Args: { _car_id: string; _car_title: string }

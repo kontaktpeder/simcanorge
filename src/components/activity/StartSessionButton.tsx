@@ -3,6 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Button } from "@/components/ui/button";
 import { Car, Footprints, Users, Play } from "lucide-react";
 import { useActivitySession, type ActivityType } from "@/hooks/useActivitySession";
+import { track } from "@/lib/analytics";
 
 const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
 const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
@@ -18,7 +19,12 @@ export function StartSessionButton({ className }: { className?: string }) {
   const [open, setOpen] = useState(false);
 
   const handleStart = async (type: ActivityType) => {
-    await startSession(type);
+    const intent = type === "drive" ? "drive" : type === "walk_spotting" ? "spot" : "meetup";
+    void track(`${intent}_intent_click`, "start", { intent, activity_type: type });
+    const result = await startSession(type);
+    if (result) {
+      void track("session_started", "start", { activity_type: type, source: "start_intent" });
+    }
     setOpen(false);
   };
 

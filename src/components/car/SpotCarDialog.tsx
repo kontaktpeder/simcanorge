@@ -19,6 +19,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { FEATURES } from "@/config/features";
 import { LicensePlateInput } from "@/components/car/wizard/LicensePlateInput";
 import { RelationshipRequestDialog } from "@/components/car/relationship/RelationshipRequestDialog";
+import { track } from "@/lib/analytics";
 
 interface SpotCarDialogProps {
   trigger?: React.ReactNode;
@@ -86,6 +87,9 @@ function SpotCarDialogInner({ trigger, onSpotted }: SpotCarDialogProps) {
   }, [regnr]);
 
   const handleOpenChange = (next: boolean) => {
+    if (next) {
+      void track("spot_intent_click", "start", { intent: "spot" });
+    }
     if (next && !user) {
       navigate(`/login?returnUrl=${encodeURIComponent(location.pathname)}`);
       return;
@@ -111,6 +115,7 @@ function SpotCarDialogInner({ trigger, onSpotted }: SpotCarDialogProps) {
       note: note.trim() || undefined,
     });
     if (result) {
+      void track("spotting_submitted", "start", { car_id: result.carId, source: "start_intent" });
       setOpen(false);
       resetForm();
       onSpotted?.(result.carId);
