@@ -19,6 +19,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { FEATURES } from "@/config/features";
 import { LicensePlateInput } from "@/components/car/wizard/LicensePlateInput";
 import { RelationshipRequestDialog } from "@/components/car/relationship/RelationshipRequestDialog";
+import { track } from "@/lib/analytics";
 
 interface SpotCarDialogProps {
   trigger?: React.ReactNode;
