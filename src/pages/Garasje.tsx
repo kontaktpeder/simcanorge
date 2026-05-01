@@ -48,6 +48,7 @@ export default function Garasje() {
   const { user, isLoading: authLoading } = useAuth();
   const navigate = useNavigate();
   const { data: profile } = useMyPersonProfile();
+  const features = useFeatures();
 
   useEffect(() => {
     if (!authLoading && !user) {
