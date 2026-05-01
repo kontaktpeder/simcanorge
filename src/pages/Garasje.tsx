@@ -1,6 +1,6 @@
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate, Link } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useMyPersonProfile } from '@/hooks/useMyPersonProfile';
@@ -16,7 +16,7 @@ import { SpotCarDialog } from '@/components/car/SpotCarDialog';
 import { StartSessionButton, ActiveSessionBanner, TripSummaryDialog, LastTripCard } from '@/components/activity';
 import { useActivitySession } from '@/hooks/useActivitySession';
 import { useLatestCompletedSession } from '@/hooks/useLatestCompletedSession';
-import { useState } from 'react';
+
 
 const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
 const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
