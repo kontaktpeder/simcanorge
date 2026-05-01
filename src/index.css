@@ -961,22 +961,22 @@ input, textarea, select, [contenteditable="true"] {
     stroke-dasharray: 900;
     stroke-dashoffset: 900;
     filter: drop-shadow(0 0 6px rgba(52, 234, 184, 0.35));
-    animation: carLineDraw 4.2s cubic-bezier(0.77, 0, 0.18, 1) infinite;
+    animation: carLineDraw 2.4s cubic-bezier(0.77, 0, 0.18, 1) infinite;
     will-change: stroke-dashoffset, opacity, filter;
   }
   /* Stagger each stroke so the car "builds" itself */
   .car-line-draw > path:nth-child(1) { animation-delay: 0s; }
-  .car-line-draw > path:nth-child(2) { animation-delay: 0.18s; }
-  .car-line-draw > path:nth-child(3) { animation-delay: 0.34s; }
-  .car-line-draw > path:nth-child(4) { animation-delay: 0.52s; }
-  .car-line-draw > path:nth-child(5) { animation-delay: 0.66s; }
-  .car-line-draw > path:nth-child(6) { animation-delay: 0.80s; }
+  .car-line-draw > path:nth-child(2) { animation-delay: 0.08s; }
+  .car-line-draw > path:nth-child(3) { animation-delay: 0.16s; }
+  .car-line-draw > path:nth-child(4) { animation-delay: 0.24s; }
+  .car-line-draw > path:nth-child(5) { animation-delay: 0.32s; }
+  .car-line-draw > path:nth-child(6) { animation-delay: 0.40s; }
 
   @keyframes carLineDraw {
     0%   { stroke-dashoffset: 900; opacity: 0; filter: drop-shadow(0 0 0px rgba(52,234,184,0)); }
-    14%  { opacity: 1; }
-    48%  { stroke-dashoffset: 0; opacity: 1; filter: drop-shadow(0 0 10px rgba(52,234,184,0.55)); }
-    72%  { stroke-dashoffset: 0; opacity: 1; filter: drop-shadow(0 0 14px rgba(52,234,184,0.7)); }
+    12%  { opacity: 1; }
+    45%  { stroke-dashoffset: 0; opacity: 1; filter: drop-shadow(0 0 10px rgba(52,234,184,0.55)); }
+    70%  { stroke-dashoffset: 0; opacity: 1; filter: drop-shadow(0 0 14px rgba(52,234,184,0.7)); }
     100% { stroke-dashoffset: -900; opacity: 0; filter: drop-shadow(0 0 0px rgba(52,234,184,0)); }
   }
 

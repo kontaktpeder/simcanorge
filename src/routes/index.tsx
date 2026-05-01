@@ -6,13 +6,22 @@ import { RequirePersonProfile } from "@/components/auth/RequirePersonProfile";
 import type { ComponentType } from "react";
 import { BrandLoader } from "@/components/brand/BrandLoader";
 
-// Loading fallback – Bilgarasje line-art that draws itself on loop.
+// Loading fallback for protected/auth checks – uses BrandLoader.
+// NOTE: We intentionally do NOT show this for the Suspense (lazy-load) fallback,
+// because pages render their own BrandLoader while fetching data, and showing
+// two loaders back-to-back caused a "flash" of an extra loader right before
+// content appeared.
 function RouteLoadingFallback() {
   return (
     <div className="flex items-center justify-center min-h-[60vh] px-6">
       <BrandLoader />
     </div>
   );
+}
+
+// Empty Suspense fallback — avoids the double-loader flash on lazy routes.
+function SuspenseFallback() {
+  return <div className="min-h-[60vh] bg-[#070b10]" />;
 }
 
 // Wrapper for lazy-loaded components (prevents ref warnings)
@@ -66,7 +75,7 @@ function ProtectedRoute({
 
 export function AppRoutes() {
   return (
-    <Suspense fallback={<RouteLoadingFallback />}>
+    <Suspense fallback={<SuspenseFallback />}>
       <Routes>
         {/* Permanent redirect: /dashboard → /garasje */}
         <Route path="/dashboard" element={<Navigate to="/garasje" replace />} />
