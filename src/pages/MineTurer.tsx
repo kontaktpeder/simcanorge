@@ -20,7 +20,7 @@ interface SessionRow {
   moments: number;
 }
 
-const META: Record<ActivityType, { label: string; Icon: React.ComponentType<{ className?: string }>; tone: string }> = {
+const META: Record<ActivityType, { label: string; Icon: React.ComponentType<{ className?: string; style?: React.CSSProperties }>; tone: string }> = {
   drive: { label: "Kjøretur", Icon: Car, tone: "#34eab8" },
   walk_spotting: { label: "Spotting", Icon: Footprints, tone: "#7dd3fc" },
   meetup: { label: "Treff", Icon: Users, tone: "#fbbf24" },
