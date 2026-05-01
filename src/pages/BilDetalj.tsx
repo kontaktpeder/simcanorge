@@ -800,6 +800,9 @@ const BilDetalj = () => {
                   >
                     {copied ? <Check className="w-5 h-5" /> : <LinkIcon className="w-5 h-5" />}
                   </button>
+
+                  {/* Lagre bil — gated by FEATURES.savedCars */}
+                  <SaveCarButton carId={car.id} className="w-12 h-12 bg-muted hover:bg-muted/80" />
                 </div>
                 
                 {typeof navigator !== 'undefined' && navigator.share && (
