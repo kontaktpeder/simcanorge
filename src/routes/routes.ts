@@ -60,6 +60,7 @@ const RelasjonSendt = lazy(() => import("@/pages/RelasjonSendt"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
 const AktivTur = lazy(() => import("@/pages/AktivTur"));
 const MineTurer = lazy(() => import("@/pages/MineTurer"));
+const TurDetalj = lazy(() => import("@/pages/TurDetalj"));
 const MinGarasje = lazy(() => import("@/pages/MinGarasje"));
 
 // Dashboard pages
@@ -165,6 +166,7 @@ const rawRoutes: RouteConfig[] = [
   { path: "/garasje", element: Garasje, requiresAuth: true },
   { path: "/aktiv", element: AktivTur, requiresAuth: true },
   { path: "/turer", element: MineTurer, requiresAuth: true },
+  { path: "/tur/:id", element: TurDetalj, requiresAuth: true },
   { path: "/min-garasje", element: MinGarasje, requiresAuth: true },
   { path: "/konto", element: Konto, requiresAuth: true },
   { path: "/kom-i-gang", element: CompleteProfilePage, requiresAuth: true },
