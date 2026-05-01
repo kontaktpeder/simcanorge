@@ -1,14 +1,27 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Camera, Loader2, X } from "lucide-react";
+import { Camera, Loader2, X, Car as CarIcon, Link2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 import { useActivityMoments } from "@/hooks/useActivityMoments";
 import { LicensePlateInput } from "@/components/car/wizard/LicensePlateInput";
+import { RelationshipRequestDialog } from "@/components/car/relationship/RelationshipRequestDialog";
 
 const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
 const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
+
+interface CarMatch {
+  id: string;
+  slug: string | null;
+  title: string;
+  published_at: string | null;
+}
+
+function normalizeRegnr(regnr: string): string {
+  return regnr.toLowerCase().replace(/\s|-/g, "").trim();
+}
 
 export function AddMomentDialog({
   sessionId,
@@ -24,11 +37,42 @@ export function AddMomentDialog({
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [note, setNote] = useState("");
   const [regnr, setRegnr] = useState("");
+  const [match, setMatch] = useState<CarMatch | null>(null);
+  const [isLookingUp, setIsLookingUp] = useState(false);
+  const [relOpen, setRelOpen] = useState(false);
+
+  // Debounced regnr lookup (samme som i SpotCarDialog)
+  useEffect(() => {
+    const normalized = normalizeRegnr(regnr);
+    if (normalized.length < 2) {
+      setMatch(null);
+      setIsLookingUp(false);
+      return;
+    }
+    let cancelled = false;
+    setIsLookingUp(true);
+    const handle = window.setTimeout(async () => {
+      const { data } = await supabase.rpc(
+        "find_cars_by_registration_number" as never,
+        { p_normalized: normalized } as never,
+      );
+      if (cancelled) return;
+      const list = Array.isArray(data) ? (data as CarMatch[]) : [];
+      setMatch(list.length > 0 ? list[0] : null);
+      setIsLookingUp(false);
+    }, 350);
+    return () => {
+      cancelled = true;
+      window.clearTimeout(handle);
+      setIsLookingUp(false);
+    };
+  }, [regnr]);
 
   const reset = () => {
     setImageFile(null);
     setNote("");
     setRegnr("");
+    setMatch(null);
     if (previewUrl) URL.revokeObjectURL(previewUrl);
     setPreviewUrl(null);
   };
