@@ -5,6 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { useAuth } from "@/hooks/useAuth";
 import { useFeatures } from "@/hooks/useFeatures";
 import { useActivitySession, type ActivityType } from "@/hooks/useActivitySession";
+import { useHideOnScroll } from "@/hooks/useHideOnScroll";
 
 const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
 const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
@@ -68,6 +69,7 @@ export function BottomNav() {
   const features = useFeatures();
   const { activeSession, startSession, isStarting } = useActivitySession();
   const [pickerOpen, setPickerOpen] = useState(false);
+  const visible = useHideOnScroll(10);
 
   // Hide entirely when no user, on auth/onboarding routes, or in focus mode (active session)
   const hidden =
@@ -104,13 +106,15 @@ export function BottomNav() {
   return (
     <>
       <nav
-        className="md:hidden fixed bottom-0 left-0 right-0 z-40 backdrop-blur-xl border-t border-white/[0.06]"
+        className="md:hidden fixed bottom-0 left-0 right-0 z-40 backdrop-blur-xl border-t border-white/[0.06] transition-transform duration-300 ease-out will-change-transform"
         style={{
           background: "rgba(8,12,17,0.92)",
           paddingBottom: "env(safe-area-inset-bottom, 0px)",
           boxShadow: "0 -2px 20px rgba(0,0,0,0.4)",
+          transform: visible || pickerOpen ? "translateY(0)" : "translateY(110%)",
         }}
         aria-label="Hovednavigasjon"
+        aria-hidden={!visible && !pickerOpen}
       >
         <div className="relative flex items-stretch h-16">
           <div className="flex flex-1">
