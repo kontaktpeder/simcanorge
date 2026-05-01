@@ -46,7 +46,7 @@ export default function MinGarasje() {
   }, [user, authLoading, navigate]);
 
   useEffect(() => {
-    trackScreenViewOnce("start");
+    trackScreenViewOnce(SCREEN);
   }, []);
 
   const { data: myCars, isLoading } = useQuery({
