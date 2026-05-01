@@ -40,7 +40,7 @@ function formatDuration(totalMinutes: number) {
  * the previous browsing context (a small pill stays via FocusModeOverlay).
  */
 export default function AktivTur() {
-  const { activeSession, elapsedMinutes } = useActivitySession();
+  const { activeSession, elapsedMinutes, isLoading } = useActivitySession();
   const { moments } = useActivityMoments(activeSession?.id);
   const navigate = useNavigate();
 
@@ -78,9 +78,15 @@ export default function AktivTur() {
     };
   }, []);
 
-  // If there is no session, this page has no purpose — bounce home.
+  // Wait for the session lookup before deciding — otherwise a refresh of /aktiv
+  // bounces away before the active session is restored.
+  if (isLoading) {
+    return <div className="fixed inset-0 z-[60] bg-[#070b10]" />;
+  }
+
+  // If there is no session, this page has no purpose — bounce back to the app.
   if (!activeSession) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/app" replace />;
   }
 
   const meta = META[activeSession.type];
