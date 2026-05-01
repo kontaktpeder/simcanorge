@@ -45,9 +45,8 @@ export class ErrorBoundary extends React.Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    if (import.meta.env.DEV) {
-      console.error('Error caught by boundary:', error, errorInfo);
-    }
+    // Always log so the message shows up in support payloads.
+    console.error('ErrorBoundary caught:', error?.message ?? error, errorInfo?.componentStack);
   }
 
   handleGoHome = () => {
