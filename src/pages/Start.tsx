@@ -178,16 +178,18 @@ export default function Start() {
           {/* ── 1. Intensjon ───────────────────────────────────── */}
           <section aria-label="Hva vil du gjøre">
             <div className="grid grid-cols-3 gap-2.5">
-              {/* Kjør tur — bruker eksisterende StartSessionButton via wrapper */}
+              {/* Kjør tur — åpner aktivitets-picker */}
               {activitiesEnabled ? (
-                <IntentTile
-                  icon={<Car className="w-5 h-5" />}
-                  label="Kjør tur"
-                  onTrigger={
-                    <StartSessionButton className="w-full !p-0 !bg-transparent !shadow-none" />
-                  }
-                  onClick={() => void track("drive_intent_click", "start", { intent: "drive" })}
-                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    void track("drive_intent_click", "start", { intent: "drive" });
+                    setDrivePickerOpen(true);
+                  }}
+                  className="block w-full"
+                >
+                  <IntentBody icon={<Car className="w-5 h-5" />} label="Kjør tur" />
+                </button>
               ) : (
                 <DisabledIntentTile icon={<Car className="w-5 h-5" />} label="Kjør tur" />
               )}
@@ -196,13 +198,7 @@ export default function Start() {
               {activitiesEnabled ? (
                 <SpotCarDialog
                   trigger={
-                    <button
-                      type="button"
-                      onClick={() =>
-                        void track("spot_intent_click", "start", { intent: "spot" })
-                      }
-                      className="w-full"
-                    >
+                    <button type="button" className="block w-full">
                       <IntentBody icon={<Eye className="w-5 h-5" />} label="Spot bil" />
                     </button>
                   }
@@ -223,6 +219,45 @@ export default function Start() {
               </Link>
             </div>
           </section>
+
+          {/* Aktivitets-picker (drive / walk_spotting / meetup) */}
+          <Dialog open={drivePickerOpen} onOpenChange={setDrivePickerOpen}>
+            <DialogContent className="border-white/10" style={{ background: "hsl(215 25% 10%)" }}>
+              <DialogHeader>
+                <DialogTitle className="text-white" style={chakra}>
+                  Hva gjør du nå?
+                </DialogTitle>
+              </DialogHeader>
+              <div className="space-y-2 mt-2">
+                {ACTIVITY_TYPES.map((t) => {
+                  const Icon = t.Icon;
+                  return (
+                    <button
+                      key={t.value}
+                      type="button"
+                      disabled={isStarting}
+                      onClick={() => handleStartActivity(t.value)}
+                      className="w-full flex items-center gap-3 p-4 rounded-lg border border-white/[0.08] hover:border-[#2dd4a8]/40 transition-all text-left disabled:opacity-50"
+                      style={{ background: "hsl(215 25% 8%)" }}
+                    >
+                      <Icon className="w-5 h-5 text-[#2dd4a8]" />
+                      <div>
+                        <div
+                          className="text-[13px] text-white font-bold uppercase tracking-[0.05em]"
+                          style={chakra}
+                        >
+                          {t.label}
+                        </div>
+                        <div className="text-[11px] text-white/40" style={oswald}>
+                          {t.desc}
+                        </div>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </DialogContent>
+          </Dialog>
 
           {/* ── 2. Siste aktivitet ─────────────────────────────── */}
           {lastSession && (
