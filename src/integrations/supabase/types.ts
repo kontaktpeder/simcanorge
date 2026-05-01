@@ -92,6 +92,42 @@ export type Database = {
         }
         Relationships: []
       }
+      activity_sessions: {
+        Row: {
+          created_at: string
+          ended_at: string | null
+          id: string
+          started_at: string
+          summary_note: string | null
+          type: Database["public"]["Enums"]["activity_type"]
+          updated_at: string
+          user_id: string
+          visibility: Database["public"]["Enums"]["activity_visibility"]
+        }
+        Insert: {
+          created_at?: string
+          ended_at?: string | null
+          id?: string
+          started_at?: string
+          summary_note?: string | null
+          type: Database["public"]["Enums"]["activity_type"]
+          updated_at?: string
+          user_id: string
+          visibility?: Database["public"]["Enums"]["activity_visibility"]
+        }
+        Update: {
+          created_at?: string
+          ended_at?: string | null
+          id?: string
+          started_at?: string
+          summary_note?: string | null
+          type?: Database["public"]["Enums"]["activity_type"]
+          updated_at?: string
+          user_id?: string
+          visibility?: Database["public"]["Enums"]["activity_visibility"]
+        }
+        Relationships: []
+      }
       car_brands: {
         Row: {
           country: string | null
@@ -150,7 +186,8 @@ export type Database = {
       }
       car_events: {
         Row: {
-          car_id: string
+          activity_session_id: string | null
+          car_id: string | null
           category: string
           created_at: string
           created_by: string | null
@@ -167,7 +204,8 @@ export type Database = {
           year_to: number | null
         }
         Insert: {
-          car_id: string
+          activity_session_id?: string | null
+          car_id?: string | null
           category: string
           created_at?: string
           created_by?: string | null
@@ -184,7 +222,8 @@ export type Database = {
           year_to?: number | null
         }
         Update: {
-          car_id?: string
+          activity_session_id?: string | null
+          car_id?: string | null
           category?: string
           created_at?: string
           created_by?: string | null
@@ -201,6 +240,13 @@ export type Database = {
           year_to?: number | null
         }
         Relationships: [
+          {
+            foreignKeyName: "car_events_activity_session_id_fkey"
+            columns: ["activity_session_id"]
+            isOneToOne: false
+            referencedRelation: "activity_sessions"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "car_events_car_id_fkey"
             columns: ["car_id"]
@@ -2324,6 +2370,8 @@ export type Database = {
       request_seller_approval: { Args: never; Returns: Json }
     }
     Enums: {
+      activity_type: "drive" | "walk_spotting" | "meetup"
+      activity_visibility: "private" | "public" | "link_only"
       app_role: "admin"
       car_relationship_type:
         | "current_owner"
@@ -2461,6 +2509,8 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      activity_type: ["drive", "walk_spotting", "meetup"],
+      activity_visibility: ["private", "public", "link_only"],
       app_role: ["admin"],
       car_relationship_type: [
         "current_owner",
