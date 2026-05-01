@@ -356,12 +356,12 @@ function HeroCarSection({ car, profile }: { car: CarData; profile: any }) {
       </div>
 
       {/* Activity MVP — hidden behind flags during simple launch */}
-      {FEATURES.savedCars && !FEATURES.simpleLaunchMode && (
+      {features.savedCars && !features.simpleLaunchMode && (
         <div className="mt-3">
           <SaveCarButton carId={car.id} variant="full" />
         </div>
       )}
-      {FEATURES.driveMode && !FEATURES.simpleLaunchMode && (
+      {features.driveMode && !features.simpleLaunchMode && (
         <div className="mt-3">
           <DriveControls carId={car.id} />
         </div>
