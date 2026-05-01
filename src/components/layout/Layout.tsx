@@ -2,6 +2,10 @@ import { ReactNode } from "react";
 import { useLocation } from "react-router-dom";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
+import { BottomNav } from "./BottomNav";
+import { FocusModePill } from "./FocusModePill";
+import { useAuth } from "@/hooks/useAuth";
+import { useActivitySession } from "@/hooks/useActivitySession";
 import carSilhouette from "@/assets/car-silhouette.png";
 
 interface LayoutProps {
@@ -31,7 +35,14 @@ function SubpageSilhouette() {
 
 export function Layout({ children, contained = false, hideFooter = false, shortPage = false, fillHeight = false }: LayoutProps) {
   const { pathname } = useLocation();
+  const { user } = useAuth();
+  const { activeSession } = useActivitySession();
   const isIndex = pathname === "/";
+
+  // Reserve space at the bottom on mobile when the BottomNav is shown
+  // (i.e. user is signed in and not in focus mode).
+  const showBottomNav = !!user && !activeSession;
+  const bottomPadClass = showBottomNav ? "pb-[calc(4rem+env(safe-area-inset-bottom,0px))] md:pb-0" : "";
 
   if (contained) {
     if (fillHeight) {
@@ -39,9 +50,11 @@ export function Layout({ children, contained = false, hideFooter = false, shortP
         <div className="h-screen min-h-[100dvh] flex flex-col overflow-hidden">
           <Header />
           {!isIndex && <SubpageSilhouette />}
-          <main className="flex-1 min-h-0 flex flex-col relative z-10 pt-14 md:pt-16">
+          <main className={`flex-1 min-h-0 flex flex-col relative z-10 pt-14 md:pt-16 ${bottomPadClass}`}>
             {children}
           </main>
+          <BottomNav />
+          <FocusModePill />
         </div>
       );
     }
@@ -49,12 +62,14 @@ export function Layout({ children, contained = false, hideFooter = false, shortP
     <div className="h-screen min-h-[100dvh] flex flex-col overflow-hidden">
       <Header />
       {!isIndex && <SubpageSilhouette />}
-      <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden pt-14 md:pt-16">
+      <div className={`flex-1 min-h-0 overflow-y-auto overflow-x-hidden pt-14 md:pt-16 ${bottomPadClass}`}>
         <main className="min-h-full relative z-10">
           {children}
         </main>
         {!hideFooter && <Footer />}
       </div>
+      <BottomNav />
+      <FocusModePill />
     </div>
     );
   }
@@ -63,10 +78,12 @@ export function Layout({ children, contained = false, hideFooter = false, shortP
     <div className="min-h-screen flex flex-col overflow-x-hidden">
       <Header />
       {!isIndex && <SubpageSilhouette />}
-      <main className={`${shortPage ? '' : 'flex-1'} overflow-x-hidden pt-14 md:pt-16 relative z-10`}>
+      <main className={`${shortPage ? '' : 'flex-1'} overflow-x-hidden pt-14 md:pt-16 relative z-10 ${bottomPadClass}`}>
         {children}
       </main>
       {!hideFooter && <Footer />}
+      <BottomNav />
+      <FocusModePill />
     </div>
   );
 }
