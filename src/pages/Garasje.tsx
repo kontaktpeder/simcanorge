@@ -13,6 +13,8 @@ import { FEATURES } from '@/config/features';
 import { DriveControls } from '@/components/car/DriveControls';
 import { SaveCarButton } from '@/components/car/SaveCarButton';
 import { SpotCarDialog } from '@/components/car/SpotCarDialog';
+import { StartSessionButton, ActiveSessionBanner } from '@/components/activity';
+import { useActivitySession } from '@/hooks/useActivitySession';
 
 const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
 const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
