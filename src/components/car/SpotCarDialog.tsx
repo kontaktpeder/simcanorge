@@ -86,9 +86,11 @@ function SpotCarDialogInner({ trigger, onSpotted }: SpotCarDialogProps) {
     };
   }, [regnr]);
 
+  const screen = location.pathname === "/" ? "start" : "other";
+
   const handleOpenChange = (next: boolean) => {
     if (next) {
-      void track("spot_intent_click", "start", { intent: "spot" });
+      void track("spot_intent_click", screen, { intent: "spot", path: location.pathname });
     }
     if (next && !user) {
       navigate(`/login?returnUrl=${encodeURIComponent(location.pathname)}`);
@@ -115,7 +117,7 @@ function SpotCarDialogInner({ trigger, onSpotted }: SpotCarDialogProps) {
       note: note.trim() || undefined,
     });
     if (result) {
-      void track("spotting_submitted", "start", { car_id: result.carId, source: "start_intent" });
+      void track("spotting_submitted", screen, { car_id: result.carId, path: location.pathname });
       setOpen(false);
       resetForm();
       onSpotted?.(result.carId);
