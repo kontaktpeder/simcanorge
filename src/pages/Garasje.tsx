@@ -236,7 +236,7 @@ export default function Garasje() {
             <h2 className="text-[12px] tracking-[0.2em] uppercase text-white/30 mb-4" style={oswald}>
               Oppdateringer
             </h2>
-            {FEATURES.simpleLaunchMode ? (
+            {features.simpleLaunchMode ? (
               <div className="rounded-xl border border-white/[0.06] p-6 text-center" style={{ background: 'hsl(215 25% 10%)' }}>
                 <p className="text-[12px] text-[#2dd4a8]/70 uppercase tracking-[0.2em] mb-1" style={oswald}>Kommer snart</p>
                 <p className="text-[11px] text-white/30" style={oswald}>Varsler og innboks åpner ved full lansering.</p>
