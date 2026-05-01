@@ -84,14 +84,14 @@ export function BottomNav() {
 
   const activitiesEnabled = !!features.activitySessions;
 
-  // New layout: Profil (far left) · Hjem · [Start] · Garasje · Biler
+  // Layout: Hjem · Biler · [Start] · Turer · Garasje
   const left: Item[] = [
-    { href: "/konto", label: "Profil", Icon: User },
     { href: "/", label: "Hjem", Icon: Home },
+    { href: "/biler", label: "Biler", Icon: Search },
   ];
   const right: Item[] = [
+    { href: "/turer", label: "Turer", Icon: Route, badge: "Ny" },
     { href: "/min-garasje", label: "Garasje", Icon: Warehouse },
-    { href: "/biler", label: "Biler", Icon: Search },
   ];
 
   const isActive = (href: string) =>
