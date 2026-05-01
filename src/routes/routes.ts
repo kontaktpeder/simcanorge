@@ -53,6 +53,7 @@ const NyttPassord = lazy(() => import("@/pages/NyttPassord"));
 const SokOmTilgang = lazy(() => import("@/pages/SokOmTilgang"));
 const StartAnnonse = lazy(() => import("@/pages/StartAnnonse"));
 const RegistrerBil = lazy(() => import("@/pages/RegistrerBil"));
+const Hjem = lazy(() => import("@/pages/Hjem"));
 const Konto = lazy(() => import("@/pages/Konto"));
 const Foresporsel = lazy(() => import("@/pages/Foresporsel"));
 const RelasjonSendt = lazy(() => import("@/pages/RelasjonSendt"));
@@ -124,7 +125,8 @@ export interface RouteConfig {
 
 const rawRoutes: RouteConfig[] = [
   // Public routes with navigation
-  { path: "/", element: RegistrerBil, label: "Hjem", description: "Legg inn bilen din", icon: Home, isPublic: true, showInNav: true },
+  { path: "/", element: Hjem, label: "Hjem", description: "Min garasje", icon: Home, isPublic: true, showInNav: false },
+  { path: "/legg-inn-bil", element: RegistrerBil, label: "Legg inn bil", description: "Legg inn bilen din", icon: Home, isPublic: true, showInNav: true },
   { path: "/hjem", element: Index, label: "Utforsk", description: "Forsiden med biler og historier", icon: Home, isPublic: true, showInNav: false },
   { path: "/manedens-bil", element: ManedensBil, label: "Månedens bil", description: "Se denne månedens utvalgte bil", icon: Star, glow: true, isPublic: true, showInNav: true },
   { path: "/biler", element: Biler, label: "Biler", description: "Utforsk biler og historier fra hele Norge", icon: Car, isPublic: true, showInNav: true },
