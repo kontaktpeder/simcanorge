@@ -135,7 +135,7 @@ export default function Garasje() {
           )}
 
           {/* ─── ACTIVITY SESSION ─── */}
-          {FEATURES.activitySessions && !FEATURES.simpleLaunchMode && (
+          {features.activitySessions && !features.simpleLaunchMode && (
             <ActivitySection />
           )}
 
