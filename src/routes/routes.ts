@@ -57,6 +57,7 @@ const Konto = lazy(() => import("@/pages/Konto"));
 const Foresporsel = lazy(() => import("@/pages/Foresporsel"));
 const RelasjonSendt = lazy(() => import("@/pages/RelasjonSendt"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
+const AktivTur = lazy(() => import("@/pages/AktivTur"));
 
 // Dashboard pages
 const Garasje = lazy(() => import("@/pages/Garasje"));
@@ -158,6 +159,7 @@ const rawRoutes: RouteConfig[] = [
 
   // Auth required
   { path: "/garasje", element: Garasje, requiresAuth: true },
+  { path: "/aktiv", element: AktivTur, requiresAuth: true },
   { path: "/konto", element: Konto, requiresAuth: true },
   { path: "/kom-i-gang", element: CompleteProfilePage, requiresAuth: true },
   { path: "/dashboard", element: lazy(() => import("@/pages/Garasje")), requiresAuth: true },
