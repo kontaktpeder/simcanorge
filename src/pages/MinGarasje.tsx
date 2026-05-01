@@ -128,6 +128,7 @@ export default function MinGarasje() {
               ))}
               <Link
                 to="/legg-til-bil"
+                onClick={() => void track("garage_intent_click", "start", { intent: "add_car", source: "tile" })}
                 className="group flex flex-col items-center justify-center rounded-xl border border-dashed border-white/[0.08] hover:border-[#2dd4a8]/40 transition-all aspect-[16/11]"
               >
                 <Plus className="w-5 h-5 text-white/20 group-hover:text-[#2dd4a8]/70 mb-1 transition-colors" />
