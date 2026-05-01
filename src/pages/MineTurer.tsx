@@ -110,71 +110,74 @@ export default function MineTurer() {
   const grouped = useMemo(() => groupByMonth(sessions ?? []), [sessions]);
 
   return (
-    <div className="min-h-screen bg-[#070b10] pb-32">
-      {/* Header */}
-      <header className="border-b border-white/[0.06] bg-[#070b10]/80 backdrop-blur-md sticky top-0 z-30">
-        <div className="max-w-3xl mx-auto px-4 py-5">
-          <div className="text-[10px] uppercase tracking-[0.2em] text-white/40" style={oswald}>
-            Aktivitet
-          </div>
-          <h1 className="text-2xl text-white font-bold mt-1" style={chakra}>
-            Mine turer
-          </h1>
-          <p className="text-[13px] text-white/50 mt-1" style={oswald}>
-            Alt du har kjørt, spottet og opplevd. Kun synlig for deg.
-          </p>
-        </div>
-      </header>
+    <Layout>
+      <Helmet>
+        <title>Mine turer — Bilgarasje.no</title>
+      </Helmet>
 
-      <div className="max-w-3xl mx-auto px-4 pt-5 space-y-5">
-        {/* Summary stats */}
-        <div className="grid grid-cols-3 gap-2">
-          <Stat label="Turer" value={String(totals.count)} />
-          <Stat label="Minutter" value={String(totals.minutes)} />
-          <Stat label="Øyeblikk" value={String(totals.moments)} />
-        </div>
+      <div className="min-h-screen bg-[#070b10]">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 pt-6">
+          {/* In-page heading — Layout already renders the top header + bottom nav */}
+          <div className="mb-5">
+            <div className="text-[10px] uppercase tracking-[0.22em] text-white/40" style={oswald}>
+              Aktivitet
+            </div>
+            <h1 className="text-2xl sm:text-3xl text-white font-bold mt-1" style={chakra}>
+              Mine turer
+            </h1>
+            <p className="text-[13px] text-white/50 mt-1.5" style={oswald}>
+              Alt du har kjørt, spottet og opplevd. Kun synlig for deg.
+            </p>
+          </div>
 
-        {/* Privacy notice */}
-        <div
-          className="rounded-lg border border-white/[0.06] p-3 flex items-center gap-3"
-          style={{ background: "hsl(215 25% 8%)" }}
-        >
-          <Lock className="w-3.5 h-3.5 text-[#34eab8]" />
-          <div className="text-[11px] text-white/55" style={oswald}>
-            Alt lagres privat. Deling kommer snart.
+          <div className="space-y-5">
+            <div className="grid grid-cols-3 gap-2">
+              <Stat label="Turer" value={String(totals.count)} />
+              <Stat label="Minutter" value={String(totals.minutes)} />
+              <Stat label="Øyeblikk" value={String(totals.moments)} />
+            </div>
+
+            <div
+              className="rounded-lg border border-white/[0.06] p-3 flex items-center gap-3"
+              style={{ background: "hsl(215 25% 8%)" }}
+            >
+              <Lock className="w-3.5 h-3.5 text-[#34eab8]" />
+              <div className="text-[11px] text-white/55" style={oswald}>
+                Alt lagres privat. Deling kommer snart.
+              </div>
+            </div>
+
+            {sessions === null ? (
+              <div className="space-y-3">
+                {[0, 1, 2].map((i) => (
+                  <Skeleton key={i} className="h-20 w-full bg-white/[0.04]" />
+                ))}
+              </div>
+            ) : sessions.length === 0 ? (
+              <EmptyState />
+            ) : (
+              <div className="space-y-6">
+                {grouped.map(([month, list]) => (
+                  <section key={month}>
+                    <div
+                      className="text-[10px] uppercase tracking-[0.2em] text-white/35 mb-2 px-1"
+                      style={oswald}
+                    >
+                      {month}
+                    </div>
+                    <div className="space-y-2">
+                      {list.map((s) => (
+                        <SessionCard key={s.id} s={s} />
+                      ))}
+                    </div>
+                  </section>
+                ))}
+              </div>
+            )}
           </div>
         </div>
-
-        {/* List */}
-        {sessions === null ? (
-          <div className="space-y-3">
-            {[0, 1, 2].map((i) => (
-              <Skeleton key={i} className="h-20 w-full bg-white/[0.04]" />
-            ))}
-          </div>
-        ) : sessions.length === 0 ? (
-          <EmptyState />
-        ) : (
-          <div className="space-y-6">
-            {grouped.map(([month, list]) => (
-              <section key={month}>
-                <div
-                  className="text-[10px] uppercase tracking-[0.2em] text-white/35 mb-2 px-1"
-                  style={oswald}
-                >
-                  {month}
-                </div>
-                <div className="space-y-2">
-                  {list.map((s) => (
-                    <SessionCard key={s.id} s={s} />
-                  ))}
-                </div>
-              </section>
-            ))}
-          </div>
-        )}
       </div>
-    </div>
+    </Layout>
   );
 }
 
