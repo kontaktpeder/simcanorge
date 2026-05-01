@@ -71,7 +71,7 @@ export function ActiveSessionBanner({ onStopped }: { onStopped?: () => void } = 
         </div>
       </div>
       <AddMomentDialog sessionId={activeSession.id} open={momentOpen} onOpenChange={setMomentOpen} />
-      <StopSessionDialog open={stopOpen} onOpenChange={setStopOpen} />
+      <StopSessionDialog open={stopOpen} onOpenChange={setStopOpen} onStopped={onStopped} />
     </>
   );
 }
