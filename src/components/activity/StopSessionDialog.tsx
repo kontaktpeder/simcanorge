@@ -14,9 +14,11 @@ const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
 export function StopSessionDialog({
   open,
   onOpenChange,
+  onStopped,
 }: {
   open: boolean;
   onOpenChange: (v: boolean) => void;
+  onStopped?: () => void;
 }) {
   const { activeSession, stopSession, isStopping, elapsedMinutes } = useActivitySession();
   const { moments } = useActivityMoments(activeSession?.id);
@@ -28,9 +30,10 @@ export function StopSessionDialog({
   if (!activeSession) return null;
 
   const handleStop = async () => {
-    await stopSession({ summaryNote: summaryNote.trim() || undefined, visibility });
+    const result = await stopSession({ summaryNote: summaryNote.trim() || undefined, visibility });
     setSummaryNote("");
     onOpenChange(false);
+    if (result) onStopped?.();
   };
 
   return (
