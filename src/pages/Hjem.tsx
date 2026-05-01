@@ -27,7 +27,8 @@ export default function Hjem() {
     );
   }
 
-  if (user) return <Start />;
+  // Logged-in users get the real app entry. "/" stays as the public web/onboarding entry.
+  if (user) return <Navigate to="/app" replace />;
   return <RegistrerBil />;
 }
 

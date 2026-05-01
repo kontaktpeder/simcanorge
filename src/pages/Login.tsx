@@ -32,6 +32,7 @@ export default function Login() {
 
   const returnUrl = safeInternalPath(searchParams.get('returnUrl'), '/');
   const prefillEmail = searchParams.get('email');
+  const fromApp = searchParams.get('reason') === 'app' || returnUrl === '/app';
 
   useEffect(() => {
     const support = getBrowserAuthSupport();
@@ -116,7 +117,7 @@ export default function Login() {
               Logg inn
             </h1>
             <p className="mt-2 text-sm text-muted-foreground" style={oswald}>
-              Få tilgang til din garasje
+              {fromApp ? 'Logg inn for å fortsette til garasjen din' : 'Få tilgang til din garasje'}
             </p>
           </div>
 
