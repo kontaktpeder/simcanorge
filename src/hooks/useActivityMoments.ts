@@ -39,15 +39,22 @@ export function useActivityMoments(sessionId?: string) {
     queryKey: ["activity-moments", sessionId],
     queryFn: async (): Promise<ActivityMoment[]> => {
       if (!sessionId) return [];
-      const { data, error } = await supabase
-        .from("car_events")
-        .select("id, occurred_at, data, visibility, activity_session_id, car_id")
-        .eq("activity_session_id", sessionId)
-        .order("occurred_at", { ascending: false });
-      if (error) throw error;
-      return (data ?? []) as ActivityMoment[];
+      try {
+        const { data, error } = await supabase
+          .from("car_events")
+          .select("id, occurred_at, data, visibility, activity_session_id, car_id")
+          .eq("activity_session_id", sessionId)
+          .order("occurred_at", { ascending: false });
+        if (error) throw error;
+        return (data ?? []) as ActivityMoment[];
+      } catch (err) {
+        console.warn("useActivityMoments fetch failed (returning []):", err);
+        return [];
+      }
     },
-    enabled: !!sessionId,
+    enabled: !!sessionId && !!user,
+    retry: 1,
+    refetchOnWindowFocus: false,
   });
 
   const addMutation = useMutation({

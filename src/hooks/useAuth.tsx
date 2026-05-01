@@ -72,7 +72,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
         const { data: { user: serverUser }, error: getUserError } = await supabase.auth.getUser();
 
-        if (getUserError || !serverUser) {
+        if (getUserError) {
+          // Only force sign-out for definitive auth failures (401/403).
+          // For transient errors (network, 5xx), keep the local session and
+          // let onAuthStateChange / next call recover — otherwise refreshing
+          // on a flaky network silently logs users out.
+          const status = (getUserError as { status?: number }).status;
+          if (status === 401 || status === 403) {
+            await supabase.auth.signOut();
+            setSession(null);
+            setUser(null);
+            setIsAdmin(false);
+          } else {
+            console.warn("Auth getUser transient error, keeping session:", getUserError);
+            setSession(session);
+            setUser(session.user);
+          }
+          return;
+        }
+
+        if (!serverUser) {
           await supabase.auth.signOut();
           setSession(null);
           setUser(null);
