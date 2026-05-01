@@ -9,7 +9,6 @@ import { Helmet } from 'react-helmet-async';
 import { Loader2, Plus, Car, Eye, Pencil, Upload, BookOpen, User, ChevronRight, MapPin, CalendarPlus, Users, Settings, UserCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import garageBackground from '@/assets/garage-background.jpg';
-import { FEATURES } from '@/config/features';
 import { useFeatures } from '@/hooks/useFeatures';
 import { DriveControls } from '@/components/car/DriveControls';
 import { SaveCarButton } from '@/components/car/SaveCarButton';
