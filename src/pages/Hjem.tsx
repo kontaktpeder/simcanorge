@@ -1,21 +1,21 @@
 import { useEffect } from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
-import MinGarasje from "@/pages/MinGarasje";
+import Start from "@/pages/Start";
 import RegistrerBil from "@/pages/RegistrerBil";
 import { BrandLoader } from "@/components/brand/BrandLoader";
 
 /**
  * Root entry "/" for bilgarasje.no.
  *
- * - Signed-in users land in their garage (Min garasje) — this is "where it starts".
- * - Visitors are routed to the onboarding/registrer-flow at /legg-inn-bil.
+ * - Signed-in users land on Start (Hjem) — intent + last activity + previews.
+ * - Visitors are routed to onboarding/registrer-flow.
  */
 export default function Hjem() {
   const { user, isLoading } = useAuth();
 
   useEffect(() => {
-    if (!isLoading) return;
+    if (isLoading) return;
     document.title = "Bilgarasje.no";
   }, [isLoading]);
 
@@ -27,7 +27,7 @@ export default function Hjem() {
     );
   }
 
-  if (user) return <MinGarasje />;
+  if (user) return <Start />;
   return <RegistrerBil />;
 }
 
