@@ -12,7 +12,8 @@ interface TimelineSectionProps {
 }
 
 export function TimelineSection({ carId, createdAt, publishedAt }: TimelineSectionProps) {
-  const { data: events, isLoading } = useCarEvents(carId);
+  // Public timeline: only public events. Private drives must never leak here.
+  const { data: events, isLoading } = useCarEvents(carId, { includePrivate: false });
   const [lightboxImages, setLightboxImages] = useState<{ url: string; alt?: string }[]>([]);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
