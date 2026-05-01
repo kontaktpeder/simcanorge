@@ -80,7 +80,7 @@ export function useActivityMoments(sessionId?: string) {
               title: titleBase,
               model: "Ukjent",
               slug: baseSlug,
-              source: "activity_moment",
+              source: "spotting",
               status: "submitted",
               category: "registrert",
               created_by_user_id: user.id,
