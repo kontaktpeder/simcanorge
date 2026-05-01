@@ -956,25 +956,23 @@ input, textarea, select, [contenteditable="true"] {
     }
   }
 
-  /* Bilgarasje line-art "draw-in" loop — used by the route loader.
-     Each path inside `.car-line-draw` traces itself, holds, then fades to retrace. */
+  /* Bilgarasje line-art "draw-in" loop — smooth, classy, infinite. */
   .car-line-draw > path {
-    stroke-dasharray: 600;
-    stroke-dashoffset: 600;
-    animation: carLineDraw 2.6s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+    stroke-dasharray: 520;
+    stroke-dashoffset: 520;
+    animation: carLineDraw 3.2s cubic-bezier(0.77, 0, 0.18, 1) infinite;
   }
-  .car-line-draw > path:nth-child(2) { animation-delay: 0.18s; }
-  .car-line-draw > path:nth-child(3) { animation-delay: 0.32s; }
-  .car-line-draw > path:nth-child(4) { animation-delay: 0.48s; }
-  .car-line-draw > path:nth-child(5) { animation-delay: 0.56s; }
-  .car-line-draw > path:nth-child(6) { animation-delay: 0.7s; }
+  .car-line-draw > path:nth-child(2) { animation-delay: 0.12s; }
+  .car-line-draw > path:nth-child(3) { animation-delay: 0.34s; }
+  .car-line-draw > path:nth-child(4) { animation-delay: 0.42s; }
+  .car-line-draw > path:nth-child(5) { animation-delay: 0.55s; }
 
   @keyframes carLineDraw {
-    0%   { stroke-dashoffset: 600; opacity: 0.0; }
-    20%  { opacity: 1; }
+    0%   { stroke-dashoffset: 520; opacity: 0; }
+    18%  { opacity: 1; }
     55%  { stroke-dashoffset: 0;   opacity: 1; }
-    80%  { stroke-dashoffset: 0;   opacity: 1; }
-    100% { stroke-dashoffset: -600; opacity: 0; }
+    78%  { stroke-dashoffset: 0;   opacity: 1; }
+    100% { stroke-dashoffset: -520; opacity: 0; }
   }
 
   .animate-car-bump-subtle {
