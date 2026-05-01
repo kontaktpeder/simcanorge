@@ -75,11 +75,11 @@ export function useSpotCar() {
             title: titleBase,
             model: input.titleOrModel?.trim() || "Ukjent",
             slug: baseSlug,
-            source: "spotting" as never,
-            status: "submitted" as never,
+            source: "spotting",
+            status: "submitted",
             category: "registrert",
             created_by_user_id: user.id,
-          } as never)
+          })
           .select("id")
           .single();
         if (createErr || !created) throw createErr ?? new Error("Kunne ikke opprette bil");
