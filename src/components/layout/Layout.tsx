@@ -3,7 +3,7 @@ import { useLocation } from "react-router-dom";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
 import { BottomNav } from "./BottomNav";
-import { FocusModePill } from "./FocusModePill";
+import { FocusModeOverlay } from "./FocusModeOverlay";
 import { useAuth } from "@/hooks/useAuth";
 import { useActivitySession } from "@/hooks/useActivitySession";
 import carSilhouette from "@/assets/car-silhouette.png";
