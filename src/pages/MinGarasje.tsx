@@ -43,6 +43,10 @@ export default function MinGarasje() {
     if (!authLoading && !user) navigate("/login?returnUrl=/min-garasje");
   }, [user, authLoading, navigate]);
 
+  useEffect(() => {
+    trackScreenViewOnce("start");
+  }, []);
+
   const { data: myCars, isLoading } = useQuery({
     queryKey: ["my-cars-min-garasje", user?.id],
     queryFn: async () => {
