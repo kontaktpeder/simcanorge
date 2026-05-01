@@ -69,11 +69,11 @@ export function BottomNav() {
 
   const left: Item[] = [
     { href: "/garasje", label: "Garasje", Icon: Warehouse },
-    { href: "/utforsk", label: "Søk", Icon: Search },
+    { href: "/biler", label: "Søk", Icon: Search },
   ];
   const right: Item[] = [
     { href: "/klubber", label: "Klubber", Icon: Users },
-    { href: "/profil", label: "Profil", Icon: User },
+    { href: "/konto", label: "Profil", Icon: User },
   ];
 
   const isActive = (href: string) =>
