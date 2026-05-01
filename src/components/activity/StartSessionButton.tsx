@@ -19,7 +19,12 @@ export function StartSessionButton({ className }: { className?: string }) {
   const [open, setOpen] = useState(false);
 
   const handleStart = async (type: ActivityType) => {
-    await startSession(type);
+    const intent = type === "drive" ? "drive" : type === "walk_spotting" ? "spot" : "meetup";
+    void track(`${intent}_intent_click`, "start", { intent, activity_type: type });
+    const result = await startSession(type);
+    if (result) {
+      void track("session_started", "start", { activity_type: type, source: "start_intent" });
+    }
     setOpen(false);
   };
 
