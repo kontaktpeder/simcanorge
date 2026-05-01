@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Warehouse, Search, Users, User, Play, Car, Footprints } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useAuth } from "@/hooks/useAuth";
@@ -79,8 +79,10 @@ export function BottomNav() {
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(href + "/");
 
+  const navigate = useNavigate();
   const handleStart = async (type: ActivityType) => {
-    await startSession(type);
+    const result = await startSession(type);
+    if (result) navigate("/aktiv");
     setPickerOpen(false);
   };
 
