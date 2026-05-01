@@ -54,7 +54,7 @@ export function Layout({ children, contained = false, hideFooter = false, shortP
             {children}
           </main>
           <BottomNav />
-          <FocusModePill />
+          <FocusModeOverlay />
         </div>
       );
     }
@@ -69,7 +69,7 @@ export function Layout({ children, contained = false, hideFooter = false, shortP
         {!hideFooter && <Footer />}
       </div>
       <BottomNav />
-      <FocusModePill />
+      <FocusModeOverlay />
     </div>
     );
   }
@@ -83,7 +83,7 @@ export function Layout({ children, contained = false, hideFooter = false, shortP
       </main>
       {!hideFooter && <Footer />}
       <BottomNav />
-      <FocusModePill />
+      <FocusModeOverlay />
     </div>
   );
 }
