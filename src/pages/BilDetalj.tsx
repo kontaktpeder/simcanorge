@@ -483,6 +483,10 @@ const BilDetalj = () => {
               />
             </div>
           )}
+          {/* Drive controls — gated by FEATURES.driveMode */}
+          <div className="container mx-auto px-4 pb-4">
+            <DriveControls carId={car.id} />
+          </div>
         </div>
       )}
 
