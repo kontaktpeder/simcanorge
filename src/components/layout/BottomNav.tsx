@@ -65,6 +65,7 @@ function NavBtn({ item, active }: { item: Item; active: boolean }) {
 
 export function BottomNav() {
   const { pathname } = useLocation();
+  const navigate = useNavigate();
   const { user } = useAuth();
   const features = useFeatures();
   const activitiesEnabled = !!features.activitySessions;
@@ -97,7 +98,6 @@ export function BottomNav() {
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(href + "/");
 
-  const navigate = useNavigate();
   const handleStart = async (type: ActivityType) => {
     const result = await startSession(type);
     if (result) navigate("/aktiv");
