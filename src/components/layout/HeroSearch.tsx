@@ -163,9 +163,8 @@ export function HeroSearch({ compact = false }: { compact?: boolean }) {
                   ))}
                 </div>
               )}
-            </div>
           </div>
-        </>,
+        </div>,
         document.body
       )
     : null;
