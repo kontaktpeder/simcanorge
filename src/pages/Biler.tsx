@@ -21,6 +21,7 @@ import {
 } from "@/components/biler";
 // NewsprintBackground removed — Premium Dark theme uses solid dark background
 import { BilerSidePanel, EMPTY_BILER_FILTER, type BilerFilterState } from "@/components/biler/BilerSidePanel";
+import { SpotCarDialog } from "@/components/car/SpotCarDialog";
 import carSilhouette from "@/assets/car-silhouette.png";
 import BilgarasjeLoader from "@/components/ui/BilgarasjeLoader";
 
@@ -331,6 +332,7 @@ const Biler = () => {
                 <span className="ml-0.5 px-1.5 py-0.5 text-[9px] bg-[#34eab8] text-[#070b10] rounded-full font-bold">{activeFilterCount}</span>
               )}
             </button>
+            <SpotCarDialog />
             {hasActiveFilters && (
               <button
                 onClick={() => {

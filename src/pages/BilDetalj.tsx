@@ -6,6 +6,8 @@ import { PageHeader } from "@/components/layout/PageHeader";
 import { AnimatedSection } from "@/components/layout/AnimatedSection";
 import { TimelineSection } from "@/components/car/TimelineSection";
 import { OwnerCard } from "@/components/car/OwnerCard";
+import { SaveCarButton } from "@/components/car/SaveCarButton";
+import { DriveControls } from "@/components/car/DriveControls";
 import { useCarOwnerProfile } from "@/hooks/useOwnerProfile";
 import { useAuth } from "@/hooks/useAuth";
 import { useMyPersonProfile } from "@/hooks/useMyPersonProfile";
@@ -481,6 +483,10 @@ const BilDetalj = () => {
               />
             </div>
           )}
+          {/* Drive controls — gated by FEATURES.driveMode */}
+          <div className="container mx-auto px-4 pb-4">
+            <DriveControls carId={car.id} />
+          </div>
         </div>
       )}
 
@@ -798,6 +804,9 @@ const BilDetalj = () => {
                   >
                     {copied ? <Check className="w-5 h-5" /> : <LinkIcon className="w-5 h-5" />}
                   </button>
+
+                  {/* Lagre bil — gated by FEATURES.savedCars */}
+                  <SaveCarButton carId={car.id} className="w-12 h-12 bg-muted hover:bg-muted/80" />
                 </div>
                 
                 {typeof navigator !== 'undefined' && navigator.share && (

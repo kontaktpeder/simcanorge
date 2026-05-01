@@ -154,11 +154,14 @@ export type Database = {
           category: string
           created_at: string
           created_by: string | null
+          data: Json
           description: string | null
           event_type: string
           id: string
+          occurred_at: string
           title: string | null
           updated_at: string
+          visibility: string
           year: number | null
           year_from: number | null
           year_to: number | null
@@ -168,11 +171,14 @@ export type Database = {
           category: string
           created_at?: string
           created_by?: string | null
+          data?: Json
           description?: string | null
           event_type: string
           id?: string
+          occurred_at?: string
           title?: string | null
           updated_at?: string
+          visibility?: string
           year?: number | null
           year_from?: number | null
           year_to?: number | null
@@ -182,11 +188,14 @@ export type Database = {
           category?: string
           created_at?: string
           created_by?: string | null
+          data?: Json
           description?: string | null
           event_type?: string
           id?: string
+          occurred_at?: string
           title?: string | null
           updated_at?: string
+          visibility?: string
           year?: number | null
           year_from?: number | null
           year_to?: number | null
@@ -1989,6 +1998,35 @@ export type Database = {
         }
         Relationships: []
       }
+      saved_cars: {
+        Row: {
+          car_id: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          car_id: string
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          car_id?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "saved_cars_car_id_fkey"
+            columns: ["car_id"]
+            isOneToOne: false
+            referencedRelation: "cars"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       support_tickets: {
         Row: {
           action_text: string | null
@@ -2294,7 +2332,7 @@ export type Database = {
         | "storyteller"
         | "contributor"
         | "other"
-      car_source: "manual" | "submission" | "owner_self"
+      car_source: "manual" | "submission" | "owner_self" | "spotting"
       car_status: "submitted" | "draft" | "published" | "archived"
     }
     CompositeTypes: {
@@ -2432,7 +2470,7 @@ export const Constants = {
         "contributor",
         "other",
       ],
-      car_source: ["manual", "submission", "owner_self"],
+      car_source: ["manual", "submission", "owner_self", "spotting"],
       car_status: ["submitted", "draft", "published", "archived"],
     },
   },

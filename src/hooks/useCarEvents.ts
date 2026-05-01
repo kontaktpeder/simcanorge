@@ -2,6 +2,8 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
+export type CarEventVisibility = "private" | "public" | "link_only";
+
 export interface CarEvent {
   id: string;
   car_id: string;
@@ -15,6 +17,9 @@ export interface CarEvent {
   created_by: string | null;
   created_at: string;
   updated_at: string;
+  visibility?: CarEventVisibility;
+  occurred_at?: string | null;
+  data?: Record<string, unknown> | null;
   car_event_images?: CarEventImage[];
 }
 
