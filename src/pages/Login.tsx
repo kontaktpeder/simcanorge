@@ -30,7 +30,7 @@ export default function Login() {
   const [error, setError] = useState('');
   const [compatWarning, setCompatWarning] = useState<string | null>(null);
 
-  const returnUrl = safeInternalPath(searchParams.get('returnUrl'), '/dashboard');
+  const returnUrl = safeInternalPath(searchParams.get('returnUrl'), '/min-garasje');
   const prefillEmail = searchParams.get('email');
 
   useEffect(() => {
