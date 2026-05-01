@@ -60,6 +60,7 @@ const RelasjonSendt = lazy(() => import("@/pages/RelasjonSendt"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
 const AktivTur = lazy(() => import("@/pages/AktivTur"));
 const MineTurer = lazy(() => import("@/pages/MineTurer"));
+const TurDetalj = lazy(() => import("@/pages/TurDetalj"));
 const MinGarasje = lazy(() => import("@/pages/MinGarasje"));
 
 // Dashboard pages
