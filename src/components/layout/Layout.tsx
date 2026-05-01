@@ -3,7 +3,7 @@ import { useLocation } from "react-router-dom";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
 import { BottomNav } from "./BottomNav";
-import { FocusModePill } from "./FocusModePill";
+import { FocusModeOverlay } from "./FocusModeOverlay";
 import { useAuth } from "@/hooks/useAuth";
 import { useActivitySession } from "@/hooks/useActivitySession";
 import carSilhouette from "@/assets/car-silhouette.png";
@@ -54,7 +54,7 @@ export function Layout({ children, contained = false, hideFooter = false, shortP
             {children}
           </main>
           <BottomNav />
-          <FocusModePill />
+          <FocusModeOverlay />
         </div>
       );
     }
@@ -69,7 +69,7 @@ export function Layout({ children, contained = false, hideFooter = false, shortP
         {!hideFooter && <Footer />}
       </div>
       <BottomNav />
-      <FocusModePill />
+      <FocusModeOverlay />
     </div>
     );
   }
@@ -83,7 +83,7 @@ export function Layout({ children, contained = false, hideFooter = false, shortP
       </main>
       {!hideFooter && <Footer />}
       <BottomNav />
-      <FocusModePill />
+      <FocusModeOverlay />
     </div>
   );
 }
