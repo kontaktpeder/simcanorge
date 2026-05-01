@@ -2,6 +2,7 @@ import { Link, useLocation } from "react-router-dom";
 import { Camera, Flag, Car, Footprints, Users, Maximize2 } from "lucide-react";
 import { useActivitySession } from "@/hooks/useActivitySession";
 import { useActivityMoments } from "@/hooks/useActivityMoments";
+import { useFeatures } from "@/hooks/useFeatures";
 
 const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
 
@@ -24,10 +25,12 @@ function formatDuration(totalMinutes: number) {
  * The actual fullscreen focus view lives at /aktiv (AktivTur page).
  */
 export function FocusModeOverlay() {
+  const features = useFeatures();
   const { activeSession, elapsedMinutes } = useActivitySession();
   const { moments } = useActivityMoments(activeSession?.id);
   const { pathname } = useLocation();
 
+  if (!features.activitySessions) return null;
   if (!activeSession) return null;
   // Don't show on the focus page itself or auth pages.
   if (pathname.startsWith("/aktiv")) return null;

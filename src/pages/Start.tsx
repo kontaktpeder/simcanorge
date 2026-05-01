@@ -59,12 +59,13 @@ interface CarMini {
 export default function Start() {
   const { user, isAdmin, isLoading: authLoading } = useAuth();
   const features = useFeatures();
+  const activitiesEnabled = !!features.activitySessions;
   const navigate = useNavigate();
   const { startSession, isStarting } = useActivitySession();
   const [drivePickerOpen, setDrivePickerOpen] = useState(false);
 
   useEffect(() => {
-    if (!authLoading && !user) navigate("/legg-inn-bil", { replace: true });
+    if (!authLoading && !user) navigate("/login?returnUrl=%2Fapp", { replace: true });
   }, [user, authLoading, navigate]);
 
   useEffect(() => {
@@ -159,7 +160,6 @@ export default function Start() {
   }
 
   const carsTotal = myCarsCount ?? myCars?.length ?? 0;
-  const activitiesEnabled = !!features.activitySessions;
 
   return (
     <Layout>

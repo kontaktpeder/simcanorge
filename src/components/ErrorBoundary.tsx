@@ -45,9 +45,8 @@ export class ErrorBoundary extends React.Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    if (import.meta.env.DEV) {
-      console.error('Error caught by boundary:', error, errorInfo);
-    }
+    // Always log so the message shows up in support payloads.
+    console.error('ErrorBoundary caught:', error?.message ?? error, errorInfo?.componentStack);
   }
 
   handleGoHome = () => {
@@ -99,13 +98,25 @@ export class ErrorBoundary extends React.Component<Props, State> {
               Noe gikk galt
             </h1>
             <p
-              className="text-[13px] sm:text-[14px] leading-relaxed mb-8"
+              className="text-[13px] sm:text-[14px] leading-relaxed mb-4"
               style={{ color: 'rgba(255,255,255,0.4)' }}
             >
               Vi beklager, men noe uventet skjedde.
               <br />
               Prøv å laste inn siden på nytt.
             </p>
+            {import.meta.env.DEV && this.state.error?.message && (
+              <pre
+                className="text-left text-[11px] mb-6 p-3 rounded-lg overflow-auto max-h-40"
+                style={{
+                  background: 'rgba(0,0,0,0.4)',
+                  color: 'rgba(255,180,180,0.8)',
+                  border: '1px solid rgba(255,255,255,0.06)',
+                }}
+              >
+                {this.state.error.message}
+              </pre>
+            )}
 
             {/* Buttons */}
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
