@@ -79,8 +79,10 @@ export function BottomNav() {
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(href + "/");
 
+  const navigate = useNavigate();
   const handleStart = async (type: ActivityType) => {
-    await startSession(type);
+    const result = await startSession(type);
+    if (result) navigate("/aktiv");
     setPickerOpen(false);
   };
 
