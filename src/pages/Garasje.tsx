@@ -197,6 +197,22 @@ export default function Garasje() {
               )}
               <ShortcutTile to="/dashboard/min-profil" icon={<UserCircle className="w-5 h-5" />} label="Min profil" />
               <ShortcutTile to="/konto" icon={<Settings className="w-5 h-5" />} label="Konto" />
+              {FEATURES.spotting && !FEATURES.simpleLaunchMode && (
+                <div className="contents">
+                  <SpotCarDialog
+                    trigger={
+                      <button
+                        type="button"
+                        className="group flex flex-col items-center gap-2 py-4 rounded-xl border border-white/[0.06] hover:border-[#2dd4a8]/30 transition-all text-center"
+                        style={{ background: 'hsl(215 25% 10%)' }}
+                      >
+                        <Eye className="w-5 h-5 text-white/30 group-hover:text-[#2dd4a8]/70 transition-colors" />
+                        <span className="text-[10px] sm:text-[11px] uppercase tracking-[0.1em] text-white/40 group-hover:text-white/60 transition-colors" style={oswald}>Spot bil</span>
+                      </button>
+                    }
+                  />
+                </div>
+              )}
               {FEATURES.simpleLaunchMode && (
                 <>
                   <ComingSoonTile icon={<CalendarPlus className="w-5 h-5" />} label="Arrangementer" />
@@ -328,6 +344,18 @@ function HeroCarSection({ car, profile }: { car: CarData; profile: any }) {
           </>
         )}
       </div>
+
+      {/* Activity MVP — hidden behind flags during simple launch */}
+      {FEATURES.savedCars && !FEATURES.simpleLaunchMode && (
+        <div className="mt-3">
+          <SaveCarButton carId={car.id} variant="full" />
+        </div>
+      )}
+      {FEATURES.driveMode && !FEATURES.simpleLaunchMode && (
+        <div className="mt-3">
+          <DriveControls carId={car.id} />
+        </div>
+      )}
 
       {/* Contextual nudge */}
       <p className="text-[11px] text-white/20 mt-4" style={oswald}>
