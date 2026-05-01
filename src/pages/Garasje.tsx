@@ -132,6 +132,11 @@ export default function Garasje() {
             <EmptyGarageHero />
           )}
 
+          {/* ─── ACTIVITY SESSION ─── */}
+          {FEATURES.activitySessions && !FEATURES.simpleLaunchMode && (
+            <ActivitySection />
+          )}
+
           {/* ─── OTHER CARS ─── */}
           {otherCars.length > 0 && (
             <section className="mt-10">
