@@ -198,7 +198,7 @@ export default function Garasje() {
               Snarveier
             </h2>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-              {!FEATURES.simpleLaunchMode && (
+              {!features.simpleLaunchMode && (
                 <>
                   <ShortcutTile to="/dashboard/events/opprett" icon={<CalendarPlus className="w-5 h-5" />} label="Opprett arrangement" />
                   <ShortcutTile to="/dashboard/sider" icon={<Users className="w-5 h-5" />} label="Klubber & sider" />
@@ -206,7 +206,7 @@ export default function Garasje() {
               )}
               <ShortcutTile to="/dashboard/min-profil" icon={<UserCircle className="w-5 h-5" />} label="Min profil" />
               <ShortcutTile to="/konto" icon={<Settings className="w-5 h-5" />} label="Konto" />
-              {FEATURES.spotting && !FEATURES.simpleLaunchMode && (
+              {features.spotting && !features.simpleLaunchMode && (
                 <div className="contents">
                   <SpotCarDialog
                     trigger={
@@ -222,7 +222,7 @@ export default function Garasje() {
                   />
                 </div>
               )}
-              {FEATURES.simpleLaunchMode && (
+              {features.simpleLaunchMode && (
                 <>
                   <ComingSoonTile icon={<CalendarPlus className="w-5 h-5" />} label="Arrangementer" />
                   <ComingSoonTile icon={<Users className="w-5 h-5" />} label="Klubber & sider" />
