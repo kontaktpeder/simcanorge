@@ -101,8 +101,9 @@ export function AddMomentDialog({
   };
 
   return (
+    <>
     <Dialog open={open} onOpenChange={(v) => { onOpenChange(v); if (!v) reset(); }}>
-      <DialogContent className="border-white/10" style={{ background: "hsl(215 25% 10%)" }}>
+      <DialogContent className="border-white/10 max-h-[90vh] overflow-y-auto" style={{ background: "hsl(215 25% 10%)" }}>
         <DialogHeader>
           <DialogTitle className="text-white" style={chakra}>Legg til øyeblikk</DialogTitle>
         </DialogHeader>
@@ -145,6 +146,39 @@ export function AddMomentDialog({
               Kobles til bil i garasjen. Vises aldri offentlig.
             </p>
           </div>
+
+          {isLookingUp && (
+            <div className="flex items-center gap-2 text-[11px] text-white/40">
+              <Loader2 className="w-3 h-3 animate-spin" />
+              Søker etter bil…
+            </div>
+          )}
+          {!isLookingUp && match && (
+            <div className="rounded-lg border border-[#2dd4a8]/30 bg-[#2dd4a8]/[0.06] p-3">
+              <div className="flex items-start gap-3">
+                <div className="mt-0.5 rounded-md bg-[#2dd4a8]/10 p-1.5 text-[#2dd4a8]">
+                  <CarIcon className="w-3.5 h-3.5" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-[10px] uppercase tracking-[0.15em] text-[#2dd4a8]/80" style={oswald}>
+                    Denne bilen finnes allerede
+                  </p>
+                  <p className="text-[13px] font-semibold text-white truncate" style={chakra}>
+                    {match.title}
+                  </p>
+                  <Button
+                    type="button"
+                    size="sm"
+                    onClick={() => setRelOpen(true)}
+                    className="mt-2 bg-[#2dd4a8] text-[#070b10] hover:bg-[#34eab8] h-8"
+                  >
+                    <Link2 className="mr-1.5 h-3 w-3" />
+                    Jeg har forhold til denne bilen
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
           <Textarea
             placeholder="Notat (valgfri)"
             value={note}
