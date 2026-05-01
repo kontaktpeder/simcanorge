@@ -10,6 +10,8 @@ import { Layout } from "@/components/layout/Layout";
 import { BrandLoader } from "@/components/brand/BrandLoader";
 import { track, trackScreenViewOnce } from "@/lib/analytics";
 
+const SCREEN = "garage";
+
 const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
 const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
 
