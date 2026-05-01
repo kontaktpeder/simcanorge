@@ -36,8 +36,11 @@ export function Header() {
 
   return (
     <header
-      className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md shadow-[0_1px_3px_rgba(0,0,0,0.3)]"
-      style={{ background: "rgba(12,17,23,0.92)" }}
+      className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md shadow-[0_1px_3px_rgba(0,0,0,0.3)] transition-transform duration-300 ease-out will-change-transform"
+      style={{
+        background: "rgba(12,17,23,0.92)",
+        transform: navVisible || mobileSearchOpen ? "translateY(0)" : "translateY(-110%)",
+      }}
     >
       <div className="max-w-[1400px] mx-auto px-5 md:px-8">
         <div className="flex items-center h-14 md:h-16 gap-4">
