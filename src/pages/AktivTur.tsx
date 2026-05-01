@@ -289,7 +289,7 @@ export default function AktivTur() {
       <StopSessionDialog
         open={stopOpen}
         onOpenChange={setStopOpen}
-        onStopped={() => navigate("/", { replace: true })}
+        onStopped={() => navigate("/turer", { replace: true })}
       />
     </>
   );
