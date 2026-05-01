@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Search as SearchIcon, X } from "lucide-react";
 import { HeroSearch } from "@/components/layout/HeroSearch";
+import { useHideOnScroll } from "@/hooks/useHideOnScroll";
 import bilgarasjeLogo from "@/assets/bilgarasje-logo.png";
 
 export function Header() {
@@ -9,6 +10,7 @@ export function Header() {
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const [navSearchOpen, setNavSearchOpen] = useState(false);
   const [heroVisible, setHeroVisible] = useState(true);
+  const navVisible = useHideOnScroll(10);
 
   const isHome = location.pathname === "/";
 
