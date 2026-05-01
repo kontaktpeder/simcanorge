@@ -215,6 +215,7 @@ function EmptyState() {
       </p>
       <Link
         to="/legg-til-bil"
+        onClick={() => void track("garage_intent_click", "start", { intent: "add_car", source: "empty_state" })}
         className="inline-flex items-center gap-2 px-6 py-3 rounded-lg text-[12px] tracking-[0.1em] uppercase font-bold text-[#070b10]"
         style={{
           ...chakra,
