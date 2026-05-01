@@ -5,6 +5,7 @@ import { Footer } from "./Footer";
 import { BottomNav } from "./BottomNav";
 import { FocusModeOverlay } from "./FocusModeOverlay";
 import { useAuth } from "@/hooks/useAuth";
+import { useFeatures } from "@/hooks/useFeatures";
 import { useActivitySession } from "@/hooks/useActivitySession";
 import carSilhouette from "@/assets/car-silhouette.png";
 
