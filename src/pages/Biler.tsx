@@ -25,7 +25,7 @@ import { SpotCarDialog } from "@/components/car/SpotCarDialog";
 import { SaveCarButton } from "@/components/car/SaveCarButton";
 import { FEATURES } from "@/config/features";
 import carSilhouette from "@/assets/car-silhouette.png";
-import BilgarasjeLoader from "@/components/ui/BilgarasjeLoader";
+import { BrandLoader } from "@/components/brand/BrandLoader";
 
 const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
 const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
@@ -375,7 +375,7 @@ const Biler = () => {
             <div className="w-full px-3 md:px-6 lg:px-8 xl:px-12 relative z-10">
               {isLoading ? (
                 <div className="flex items-center justify-center py-16">
-                  <BilgarasjeLoader size={220} />
+                  <BrandLoader size={220} />
                 </div>
               ) : cars.length === 0 ? (
                 <div className="text-center py-20">

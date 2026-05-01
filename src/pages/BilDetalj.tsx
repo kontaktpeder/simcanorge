@@ -23,7 +23,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { CreateCTA } from "@/components/ui/CreateCTA";
-import BilgarasjeLoader from "@/components/ui/BilgarasjeLoader";
+import { BrandLoader } from "@/components/brand/BrandLoader";
 
 const SITE_URL = (() => {
   if (typeof window !== "undefined") {
@@ -271,7 +271,7 @@ const BilDetalj = () => {
     return (
       <Layout>
         <div className="min-h-[60vh] flex items-center justify-center">
-          <BilgarasjeLoader size={220} />
+          <BrandLoader size={220} />
         </div>
       </Layout>
     );
