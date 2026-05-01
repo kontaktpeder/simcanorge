@@ -26,11 +26,12 @@ function formatDuration(totalMinutes: number) {
  */
 export function FocusModeOverlay() {
   const features = useFeatures();
-  const { activeSession, elapsedMinutes } = useActivitySession();
+  const activitiesEnabled = !!features.activitySessions;
+  const { activeSession, elapsedMinutes } = useActivitySession({ enabled: activitiesEnabled });
   const { moments } = useActivityMoments(activeSession?.id);
   const { pathname } = useLocation();
 
-  if (!features.activitySessions) return null;
+  if (!activitiesEnabled) return null;
   if (!activeSession) return null;
   // Don't show on the focus page itself or auth pages.
   if (pathname.startsWith("/aktiv")) return null;

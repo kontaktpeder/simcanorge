@@ -37,7 +37,7 @@ function SubpageSilhouette() {
 function useActiveSessionSafe() {
   const features = useFeatures();
   const enabled = !!features.activitySessions;
-  const { activeSession } = useActivitySession();
+  const { activeSession } = useActivitySession({ enabled });
   return enabled ? activeSession : null;
 }
 

@@ -61,7 +61,7 @@ export default function Start() {
   const features = useFeatures();
   const activitiesEnabled = !!features.activitySessions;
   const navigate = useNavigate();
-  const { startSession, isStarting } = useActivitySession();
+  const { startSession, isStarting } = useActivitySession({ enabled: activitiesEnabled });
   const [drivePickerOpen, setDrivePickerOpen] = useState(false);
 
   useEffect(() => {

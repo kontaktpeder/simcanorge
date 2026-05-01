@@ -70,7 +70,8 @@ async function fetchActiveSession(userId: string): Promise<ActiveSession | null>
   }
 }
 
-export function useActivitySession() {
+export function useActivitySession(options: { enabled?: boolean } = {}) {
+  const hookEnabled = options.enabled ?? true;
   const { user, isLoading: authLoading } = useAuth();
   const queryClient = useQueryClient();
   const [isStarting, setIsStarting] = useState(false);
@@ -82,7 +83,7 @@ export function useActivitySession() {
     queryFn: () => (user ? fetchActiveSession(user.id) : Promise.resolve(null)),
     // Wait until auth has settled — otherwise we may query before the JWT is
     // attached and crash during refresh on /app.
-    enabled: !!user && !authLoading,
+    enabled: hookEnabled && !!user && !authLoading,
     staleTime: 30_000,
     retry: 1,
     refetchOnWindowFocus: false,
@@ -116,6 +117,10 @@ export function useActivitySession() {
 
   const startSession = useCallback(
     async (type: ActivityType, visibility: ActivityVisibility = "private") => {
+      if (!hookEnabled) {
+        toast.error("Tur-funksjonen er ikke tilgjengelig ennå");
+        return null;
+      }
       if (!user) {
         toast.error("Logg inn for å starte tur");
         return null;
@@ -146,7 +151,7 @@ export function useActivitySession() {
         setIsStarting(false);
       }
     },
-    [user, queryClient]
+    [hookEnabled, user, queryClient]
   );
 
   const stopSession = useCallback(
