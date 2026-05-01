@@ -237,31 +237,64 @@ export function AddMomentDialog({
             </div>
           )}
 
-          {/* Match-kort + inline CTA */}
+          {/* Match-kort: viser status mot innlogget bruker */}
           {!isLookingUp && match && !relSent && !showRelForm && (
             <div className="rounded-lg border border-[#2dd4a8]/30 bg-[#2dd4a8]/[0.06] p-3">
               <div className="flex items-start gap-3">
                 <div className="mt-0.5 rounded-md bg-[#2dd4a8]/10 p-1.5 text-[#2dd4a8]">
-                  <CarIcon className="w-3.5 h-3.5" />
+                  {matchStatus === "owned" ? (
+                    <ShieldCheck className="w-3.5 h-3.5" />
+                  ) : matchStatus === "pending" ? (
+                    <Clock className="w-3.5 h-3.5" />
+                  ) : (
+                    <CarIcon className="w-3.5 h-3.5" />
+                  )}
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-[13px] font-semibold text-white truncate" style={chakra}>
                     {match.title}
                   </p>
-                  <p className="text-[12px] text-white/70 mt-1" style={oswald}>
-                    Kjenner du denne bilen?
-                  </p>
-                  <p className="text-[11px] text-white/50 mt-1" style={oswald}>
-                    Be om å bli knyttet til bilen og bidra med bilder eller historie.
-                  </p>
-                  <Button
-                    type="button"
-                    size="sm"
-                    onClick={() => setShowRelForm(true)}
-                    className="mt-2 bg-[#2dd4a8] text-[#070b10] hover:bg-[#34eab8] h-9 w-full sm:w-auto"
-                  >
-                    Kjenner du denne bilen?
-                  </Button>
+
+                  {matchStatus === "owned" && (
+                    <>
+                      <p className="text-[12px] text-white/80 mt-1" style={oswald}>
+                        Denne bilen er allerede i garasjen din
+                      </p>
+                      <p className="text-[11px] text-white/50 mt-1" style={oswald}>
+                        Øyeblikket kobles automatisk til bilen.
+                      </p>
+                    </>
+                  )}
+
+                  {matchStatus === "pending" && (
+                    <>
+                      <p className="text-[12px] text-white/80 mt-1" style={oswald}>
+                        Du har allerede sendt forespørsel
+                      </p>
+                      <p className="text-[11px] text-white/50 mt-1" style={oswald}>
+                        En ansvarlig vurderer den. Du kan fortsatt lagre øyeblikket.
+                      </p>
+                    </>
+                  )}
+
+                  {matchStatus !== "owned" && matchStatus !== "pending" && (
+                    <>
+                      <p className="text-[12px] text-white/70 mt-1" style={oswald}>
+                        Kjenner du denne bilen?
+                      </p>
+                      <p className="text-[11px] text-white/50 mt-1" style={oswald}>
+                        Be om å bli knyttet til bilen og bidra med bilder eller historie.
+                      </p>
+                      <Button
+                        type="button"
+                        size="sm"
+                        onClick={() => setShowRelForm(true)}
+                        className="mt-2 bg-[#2dd4a8] text-[#070b10] hover:bg-[#34eab8] h-9 w-full sm:w-auto"
+                      >
+                        Kjenner du denne bilen?
+                      </Button>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
