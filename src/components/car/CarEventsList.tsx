@@ -190,3 +190,28 @@ export function CarEventsList({ carId }: CarEventsListProps) {
     </div>
   );
 }
+
+function VisibilityBadge({ visibility }: { visibility?: string }) {
+  if (!visibility || visibility === "public") {
+    return (
+      <span className="text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-primary/10 text-primary/80 font-bold" style={oswald}>
+        Offentlig
+      </span>
+    );
+  }
+  if (visibility === "private") {
+    return (
+      <span className="text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-muted/40 text-muted-foreground font-bold" style={oswald}>
+        Privat
+      </span>
+    );
+  }
+  if (visibility === "link_only") {
+    return (
+      <span className="text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-400 font-bold" style={oswald}>
+        Kun lenke
+      </span>
+    );
+  }
+  return null;
+}
