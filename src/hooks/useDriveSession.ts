@@ -92,7 +92,7 @@ export function useDriveSession() {
           duration_minutes: durationMinutes,
           note: current.note ?? null,
         },
-      } as never);
+      });
 
       if (error) throw error;
 

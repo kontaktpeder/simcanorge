@@ -107,7 +107,7 @@ export function useSpotCar() {
             // Stored internally only — never rendered publicly
             registration_number_internal: regnrNormalized || null,
           },
-        } as never)
+        })
         .select("id")
         .single();
       if (eventErr || !eventRow) throw eventErr ?? new Error("Kunne ikke lagre spotting");
