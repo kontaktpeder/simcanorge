@@ -10,6 +10,9 @@ import { Loader2, Plus, Car, Eye, Pencil, Upload, BookOpen, User, ChevronRight, 
 import { motion } from 'framer-motion';
 import garageBackground from '@/assets/garage-background.jpg';
 import { FEATURES } from '@/config/features';
+import { DriveControls } from '@/components/car/DriveControls';
+import { SaveCarButton } from '@/components/car/SaveCarButton';
+import { SpotCarDialog } from '@/components/car/SpotCarDialog';
 
 const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
 const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
