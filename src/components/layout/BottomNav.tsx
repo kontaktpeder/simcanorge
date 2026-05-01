@@ -67,22 +67,22 @@ export function BottomNav() {
   const { pathname } = useLocation();
   const { user } = useAuth();
   const features = useFeatures();
+  const activitiesEnabled = !!features.activitySessions;
   const { activeSession, startSession, isStarting } = useActivitySession();
+  const effectiveActiveSession = activitiesEnabled ? activeSession : null;
   const [pickerOpen, setPickerOpen] = useState(false);
   const visible = useHideOnScroll(10);
 
   // Hide entirely when no user, on auth/onboarding routes, or in focus mode (active session)
   const hidden =
     !user ||
-    activeSession ||
+    effectiveActiveSession ||
     pathname.startsWith("/login") ||
     pathname.startsWith("/registrer") ||
     pathname.startsWith("/auth") ||
     pathname.startsWith("/onboarding");
 
   if (hidden) return null;
-
-  const activitiesEnabled = !!features.activitySessions;
 
   // Layout: Hjem · Biler · [Start] · Turer · Garasje
   const left: Item[] = [
