@@ -409,12 +409,12 @@ function IntentBody({
 }) {
   return (
     <div
-      className="flex flex-col items-center justify-center gap-1.5 rounded-xl border border-white/[0.08] hover:border-[#2dd4a8]/40 transition-all aspect-square p-3"
+      className="flex flex-col items-center justify-center gap-1 rounded-xl border border-white/[0.08] hover:border-[#2dd4a8]/40 hover:bg-white/[0.02] transition-all h-[68px] px-2 py-2"
       style={{ background: "hsl(215 25% 10%)" }}
     >
       <span className="text-[#34eab8]">{icon}</span>
       <span
-        className="text-[10.5px] uppercase tracking-[0.1em] text-white/85 font-bold text-center"
+        className="text-[10px] uppercase tracking-[0.08em] text-white/85 font-bold text-center leading-tight"
         style={chakra}
       >
         {label}
@@ -433,14 +433,14 @@ function DisabledIntentTile({
 }) {
   return (
     <div
-      className="flex flex-col items-center justify-center gap-1.5 rounded-xl border border-white/[0.04] aspect-square p-3 opacity-40 cursor-not-allowed"
+      className="flex flex-col items-center justify-center gap-1 rounded-xl border border-white/[0.04] h-[68px] px-2 py-2 opacity-40 cursor-not-allowed"
       style={{ background: "hsl(215 25% 9%)" }}
       aria-disabled="true"
       title="Kommer snart"
     >
       <span className="text-white/40">{icon}</span>
       <span
-        className="text-[10.5px] uppercase tracking-[0.1em] text-white/40 font-bold text-center"
+        className="text-[10px] uppercase tracking-[0.08em] text-white/40 font-bold text-center leading-tight"
         style={chakra}
       >
         {label}
