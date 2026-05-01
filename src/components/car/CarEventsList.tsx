@@ -17,7 +17,8 @@ interface CarEventsListProps {
 }
 
 export function CarEventsList({ carId }: CarEventsListProps) {
-  const { data: events, isLoading } = useCarEvents(carId);
+  // Owner/editor view — include private events (drives, etc.)
+  const { data: events, isLoading } = useCarEvents(carId, { includePrivate: true });
   const deleteMutation = useDeleteCarEvent();
 
   const [showForm, setShowForm] = useState(false);
@@ -123,10 +124,13 @@ export function CarEventsList({ carId }: CarEventsListProps) {
                     </span>
                   </div>
 
-                  {/* Category */}
-                  <span className="text-[11px] uppercase tracking-[0.1em] font-bold text-muted-foreground/30 mb-1.5 block" style={oswald}>
-                    {getCategoryLabel(category)}
-                  </span>
+                  {/* Category + visibility */}
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <span className="text-[11px] uppercase tracking-[0.1em] font-bold text-muted-foreground/30" style={oswald}>
+                      {getCategoryLabel(category)}
+                    </span>
+                    <VisibilityBadge visibility={event.visibility} />
+                  </div>
 
                   {/* Title */}
                   <h4 className="text-[1rem] sm:text-[1.1rem] font-semibold text-foreground/80 mb-1">
@@ -185,4 +189,29 @@ export function CarEventsList({ carId }: CarEventsListProps) {
       </AlertDialog>
     </div>
   );
+}
+
+function VisibilityBadge({ visibility }: { visibility?: string }) {
+  if (!visibility || visibility === "public") {
+    return (
+      <span className="text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-primary/10 text-primary/80 font-bold" style={oswald}>
+        Offentlig
+      </span>
+    );
+  }
+  if (visibility === "private") {
+    return (
+      <span className="text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-muted/40 text-muted-foreground font-bold" style={oswald}>
+        Privat
+      </span>
+    );
+  }
+  if (visibility === "link_only") {
+    return (
+      <span className="text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-400 font-bold" style={oswald}>
+        Kun lenke
+      </span>
+    );
+  }
+  return null;
 }

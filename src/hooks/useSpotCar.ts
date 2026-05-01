@@ -92,8 +92,8 @@ export function useSpotCar() {
         .from("car_events")
         .insert({
           car_id: carId,
-          category: "ownership",
-          event_type: "spotting",
+          category: "gjenoppdagelse",
+          event_type: "dokumentert",
           title: "Spotting",
           visibility: "public",
           occurred_at: new Date().toISOString(),

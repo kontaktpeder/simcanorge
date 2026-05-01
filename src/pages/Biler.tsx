@@ -22,6 +22,8 @@ import {
 // NewsprintBackground removed — Premium Dark theme uses solid dark background
 import { BilerSidePanel, EMPTY_BILER_FILTER, type BilerFilterState } from "@/components/biler/BilerSidePanel";
 import { SpotCarDialog } from "@/components/car/SpotCarDialog";
+import { SaveCarButton } from "@/components/car/SaveCarButton";
+import { FEATURES } from "@/config/features";
 import carSilhouette from "@/assets/car-silhouette.png";
 import BilgarasjeLoader from "@/components/ui/BilgarasjeLoader";
 
@@ -567,10 +569,21 @@ function EditorialBlock({ block, index }: EditorialBlockProps): React.ReactNode 
     return <Link to={carLink} className={className}>{children}</Link>;
   };
 
+  const showSave = FEATURES.savedCars && !FEATURES.simpleLaunchMode;
+  const saveOverlay = showSave ? (
+    <div className="absolute top-2 right-2 z-20">
+      <SaveCarButton
+        carId={car.id}
+        className="bg-black/40 hover:bg-black/60 backdrop-blur-sm rounded-full !min-h-[36px] !min-w-[36px] text-white"
+      />
+    </div>
+  ) : null;
+
   switch (module) {
     case 'hero':
       return (
         <article className={`${gridClasses} relative group`}>
+          {saveOverlay}
           <LinkWrapper className="block">
             <div className="relative aspect-[16/9] md:aspect-[21/9] overflow-hidden bg-muted">
               {primaryImage && (
@@ -623,7 +636,8 @@ function EditorialBlock({ block, index }: EditorialBlockProps): React.ReactNode 
 
     case 'feature':
       return (
-        <article className={`${gridClasses} group`}>
+        <article className={`${gridClasses} group relative`}>
+          {saveOverlay}
           <LinkWrapper className="block">
             <div className="relative aspect-[3/2] overflow-hidden bg-white/5 mb-4">
               {primaryImage && (
@@ -675,7 +689,8 @@ function EditorialBlock({ block, index }: EditorialBlockProps): React.ReactNode 
 
     case 'standard':
       return (
-        <article className={`${gridClasses} group`}>
+        <article className={`${gridClasses} group relative`}>
+          {saveOverlay}
           <LinkWrapper className="block">
             <div className="relative aspect-[4/3] overflow-hidden bg-muted transition-all duration-500 group-hover:-translate-y-1 group-hover:shadow-lg">
               {primaryImage && (
@@ -709,7 +724,8 @@ function EditorialBlock({ block, index }: EditorialBlockProps): React.ReactNode 
 
     case 'archive':
       return (
-        <article className={`${gridClasses} group`}>
+        <article className={`${gridClasses} group relative`}>
+          {saveOverlay}
           <LinkWrapper className="block p-5 md:p-6 bg-white/[0.03] border border-white/[0.08] transition-all duration-500 hover:-translate-y-1 hover:bg-white/[0.05] hover:border-[#34eab8]/30 rounded-lg">
             <div className="flex gap-5 md:gap-6 items-start">
               {primaryImage && (

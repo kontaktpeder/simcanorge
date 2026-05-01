@@ -54,22 +54,40 @@ export interface UpdateCarEventInput {
   description?: string | null;
 }
 
-export function useCarEvents(carId: string | undefined) {
+export interface UseCarEventsOptions {
+  /**
+   * If true, fetch all events the current user is allowed to see (RLS-driven).
+   * If false (default), restrict to public events only — safe for anonymous /
+   * non-owner viewers so private drives never leak.
+   */
+  includePrivate?: boolean;
+}
+
+export function useCarEvents(carId: string | undefined, options: UseCarEventsOptions = {}) {
+  const includePrivate = options.includePrivate ?? false;
   return useQuery({
-    queryKey: ["car-events", carId],
+    queryKey: ["car-events", carId, includePrivate ? "all" : "public"],
     queryFn: async () => {
       if (!carId) return [];
-      
-      const { data, error } = await supabase
+
+      let query = supabase
         .from("car_events")
         .select(`
           *,
           car_event_images (*)
         `)
         .eq("car_id", carId);
-      
+
+      if (!includePrivate) {
+        // Public viewers: only public events. RLS will further restrict, but
+        // we filter explicitly so private drives never appear in public UI.
+        query = query.eq("visibility", "public");
+      }
+
+      const { data, error } = await query;
+
       if (error) throw error;
-      
+
       // Sort by year or year_from (oldest first)
       return (data as CarEvent[]).sort((a, b) => {
         const yearA = a.year ?? a.year_from ?? 0;
