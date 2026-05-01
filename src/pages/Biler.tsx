@@ -532,7 +532,7 @@ const Biler = () => {
             </div>
           </section>
 
-          <Footer />
+          
         </div>
       </div>
     </Layout>
