@@ -40,19 +40,42 @@ export function Header() {
 
   return (
     <header
-      className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md shadow-[0_1px_3px_rgba(0,0,0,0.3)] transition-transform duration-300 ease-out will-change-transform"
+      className="fixed top-0 left-0 right-0 z-50 backdrop-blur-2xl transition-transform duration-300 ease-out will-change-transform"
       style={{
-        background: "rgba(12,17,23,0.92)",
+        background:
+          "linear-gradient(180deg, rgba(14,20,28,0.96) 0%, rgba(10,14,20,0.92) 60%, rgba(8,12,17,0.88) 100%)",
+        boxShadow:
+          "0 8px 32px rgba(0,0,0,0.55), 0 1px 0 rgba(255,255,255,0.04) inset, 0 -1px 0 rgba(52,234,184,0.18)",
         transform: navVisible || mobileSearchOpen ? "translateY(0)" : "translateY(-110%)",
       }}
     >
-      <div className="max-w-[1400px] mx-auto px-5 md:px-8">
+      {/* Glassy top sheen */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 top-0 h-[60%]"
+        style={{
+          background:
+            "linear-gradient(180deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.015) 50%, transparent 100%)",
+        }}
+      />
+      {/* Soft teal aura behind logo */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(ellipse 420px 80px at 50% 0%, rgba(52,234,184,0.18) 0%, rgba(52,234,184,0.06) 40%, transparent 70%)",
+        }}
+      />
+
+      <div className="relative max-w-[1400px] mx-auto px-5 md:px-8">
         <div className="grid grid-cols-[auto_1fr_auto] items-center h-14 md:h-16 gap-3">
           {/* LEFT — Profile icon only */}
           <Link
             to={profileHref}
-            className="p-2 -ml-2 text-white/55 hover:text-white transition-colors flex-shrink-0"
+            className="relative p-2 -ml-2 text-white/65 hover:text-[#34eab8] transition-all flex-shrink-0 rounded-full hover:bg-white/[0.04]"
             aria-label={user ? "Min profil" : "Logg inn"}
+            style={{ filter: "drop-shadow(0 1px 2px rgba(0,0,0,0.5))" }}
           >
             <User className="w-5 h-5 md:w-[22px] md:h-[22px]" />
           </Link>
@@ -66,8 +89,12 @@ export function Header() {
             <img
               src={bilgarasjeLogo}
               alt="Bilgarasje.no"
-              className="h-24 md:h-28 w-auto transition-all duration-300 group-hover:opacity-80"
-              style={{ filter: "brightness(1.8) invert(1)", opacity: 0.55 }}
+              className="h-24 md:h-28 w-auto transition-all duration-300 group-hover:opacity-90"
+              style={{
+                filter:
+                  "brightness(1.9) invert(1) drop-shadow(0 0 14px rgba(52,234,184,0.35)) drop-shadow(0 2px 6px rgba(0,0,0,0.5))",
+                opacity: 0.7,
+              }}
             />
           </Link>
 
@@ -84,8 +111,9 @@ export function Header() {
                 {showCompactIcon && (
                   <button
                     onClick={() => setNavSearchOpen((v) => !v)}
-                    className="p-2 text-white/55 hover:text-white transition-colors"
+                    className="p-2 text-white/65 hover:text-[#34eab8] transition-all rounded-full hover:bg-white/[0.04]"
                     aria-label="Søk"
+                    style={{ filter: "drop-shadow(0 1px 2px rgba(0,0,0,0.5))" }}
                   >
                     <SearchIcon className="w-5 h-5" />
                   </button>
@@ -96,8 +124,9 @@ export function Header() {
             {/* Mobile search toggle */}
             <button
               onClick={() => setMobileSearchOpen((v) => !v)}
-              className="md:hidden p-2 -mr-2 text-white/55 hover:text-white transition-colors"
+              className="md:hidden p-2 -mr-2 text-white/65 hover:text-[#34eab8] transition-all rounded-full hover:bg-white/[0.04]"
               aria-label={mobileSearchOpen ? "Lukk søk" : "Søk"}
+              style={{ filter: "drop-shadow(0 1px 2px rgba(0,0,0,0.5))" }}
             >
               {mobileSearchOpen ? <X className="w-5 h-5" /> : <SearchIcon className="w-5 h-5" />}
             </button>
@@ -105,7 +134,15 @@ export function Header() {
         </div>
       </div>
 
-      <div className="h-px bg-[#2dd4a8]/10" />
+      {/* Glowing teal underline */}
+      <div
+        className="relative h-[2px] overflow-hidden"
+        style={{
+          background:
+            "linear-gradient(90deg, transparent 0%, rgba(52,234,184,0.55) 30%, rgba(52,234,184,0.85) 50%, rgba(52,234,184,0.55) 70%, transparent 100%)",
+          boxShadow: "0 0 12px rgba(52,234,184,0.45)",
+        }}
+      />
 
       {/* Desktop compact-icon expanded panel */}
       {navSearchOpen && showCompactIcon && (
