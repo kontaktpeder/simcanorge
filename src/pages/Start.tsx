@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import { Car, Eye, Warehouse, ChevronRight, Plus, Footprints, Users } from "lucide-react";
+import { Car, Eye, Warehouse, ChevronRight, Plus, Footprints, Users, Shield } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useFeatures } from "@/hooks/useFeatures";
@@ -57,7 +57,7 @@ interface CarMini {
  * Selve garasjen ligger på /min-garasje (egen side, urørt).
  */
 export default function Start() {
-  const { user, isLoading: authLoading } = useAuth();
+  const { user, isAdmin, isLoading: authLoading } = useAuth();
   const features = useFeatures();
   const navigate = useNavigate();
   const { startSession, isStarting } = useActivitySession();
@@ -188,7 +188,7 @@ export default function Start() {
 
           {/* ── 1. Intensjon ───────────────────────────────────── */}
           <section aria-label="Hva vil du gjøre">
-            <div className="grid grid-cols-3 gap-2.5">
+            <div className={`grid ${isAdmin ? "grid-cols-2 sm:grid-cols-4" : "grid-cols-3"} gap-2.5`}>
               {/* Kjør tur — åpner aktivitets-picker */}
               {activitiesEnabled ? (
                 <button
@@ -228,6 +228,19 @@ export default function Start() {
               >
                 <IntentBody icon={<Warehouse className="w-5 h-5" />} label="Garasje" />
               </Link>
+
+              {/* Admin-snarvei (kun for admins) */}
+              {isAdmin && (
+                <Link
+                  to="/admin/dashboard"
+                  onClick={() =>
+                    void track("admin_intent_click", "start", { intent: "admin" })
+                  }
+                  className="block"
+                >
+                  <IntentBody icon={<Shield className="w-5 h-5" />} label="Admin" />
+                </Link>
+              )}
             </div>
           </section>
 
