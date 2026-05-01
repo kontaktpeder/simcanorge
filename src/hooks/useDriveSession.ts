@@ -78,8 +78,8 @@ export function useDriveSession() {
 
       const { error } = await supabase.from("car_events").insert({
         car_id: current.carId,
-        category: "ownership",
-        event_type: "drive",
+        category: "bruk",
+        event_type: "daglig_brukt",
         title: "Kjøretur",
         visibility: "private",
         occurred_at: current.startedAt,
