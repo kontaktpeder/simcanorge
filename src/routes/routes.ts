@@ -1,5 +1,5 @@
 import { lazy, ComponentType } from "react";
-import { Home, Star, Car, Wrench, Send, BookOpen, Users, Mail, ShoppingBag, User, LayoutDashboard, CalendarDays, Plus } from "lucide-react";
+import { Home, Star, Car, Wrench, Send, BookOpen, Users, Mail, ShoppingBag, User, LayoutDashboard, CalendarDays, Plus, HelpCircle } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { FEATURES } from "@/config/features";
 
