@@ -63,6 +63,7 @@ const AktivTur = lazy(() => import("@/pages/AktivTur"));
 const MineTurer = lazy(() => import("@/pages/MineTurer"));
 const TurDetalj = lazy(() => import("@/pages/TurDetalj"));
 const MinGarasje = lazy(() => import("@/pages/MinGarasje"));
+const UkjenteBiler = lazy(() => import("@/pages/UkjenteBiler"));
 
 // Dashboard pages
 const Garasje = lazy(() => import("@/pages/Garasje"));
