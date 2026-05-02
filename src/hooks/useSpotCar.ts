@@ -81,19 +81,22 @@ export function useSpotCar() {
       // 2) If no match, create minimal "spotting" car
       if (!carId) {
         const titleTrimmed = input.titleOrModel?.trim() || "";
-        const titleBase = titleTrimmed || "Spottet bil";
-        const baseSlug = slugify(`${titleBase}-${Date.now()}`);
-
-        // Mark as "unknown" identification when we have neither regnr nor a meaningful title
-        const isUnknown =
-          regnrNormalized.length < 2 &&
-          (titleTrimmed === "" || titleTrimmed.toLowerCase() === "spottet bil");
+        const hasRegnr = regnrNormalized.length >= 2;
+        const hasTitle = titleTrimmed.length > 0;
+        // Kun bilde → ukjent. Regnr og/eller modell/tittel → identifisert observert bil.
+        const isUnknown = !hasRegnr && !hasTitle;
+        const displayTitle = isUnknown
+          ? "Ukjent bil"
+          : titleTrimmed || "Observert bil";
+        const displayModel = isUnknown ? "Ukjent" : titleTrimmed || "Ukjent";
+        const baseSlug = slugify(`${displayTitle}-${Date.now()}`);
+        const regForCar = hasRegnr ? (input.registrationNumber ?? "").replace(/\s+/g, " ").trim() : null;
 
         const { data: created, error: createErr } = await supabase
           .from("cars")
           .insert({
-            title: titleBase,
-            model: titleTrimmed || "Ukjent",
+            title: displayTitle,
+            model: displayModel,
             slug: baseSlug,
             source: "spotting",
             status: "submitted",
@@ -101,6 +104,7 @@ export function useSpotCar() {
             created_by_user_id: user.id,
             identification_status: isUnknown ? "unknown" : "identified",
             published_at: new Date().toISOString(),
+            ...(regForCar ? { registration_number: regForCar } : {}),
           })
           .select("id, slug, identification_status")
           .single();
