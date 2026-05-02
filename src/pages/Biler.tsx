@@ -43,14 +43,22 @@ interface CarPost {
   published_at: string | null;
   category: string;
   editorial_status: string | null;
+  source?: string | null;
+  identification_status?: string | null;
   car_images: {
     image_url: string;
     alt_text: string | null;
     sort_order?: number | null;
   }[];
+  car_events?: {
+    visibility: string;
+    occurred_at: string;
+    car_event_images: { image_url: string; sort_order: number; alt_text?: string | null }[] | null;
+  }[] | null;
   image_count?: number;
   event_count?: number;
 }
+
 
 const ITEMS_PER_PAGE = 20;
 
@@ -89,8 +97,9 @@ const Biler = () => {
       .from("cars")
       .select(`
         id, title, slug, brand, model, year, story, tags, featured, 
-        published_at, category, editorial_status,
-        car_images(image_url, alt_text, sort_order)
+        published_at, category, editorial_status, source, identification_status,
+        car_images(image_url, alt_text, sort_order),
+        car_events(visibility, occurred_at, car_event_images(image_url, sort_order))
       `, { count: 'exact' })
       .not("published_at", "is", null)
       .lte("published_at", new Date().toISOString())
