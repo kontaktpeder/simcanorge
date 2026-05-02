@@ -241,6 +241,21 @@ export function AddMomentDialog({
             </p>
           </div>
 
+          <div>
+            <Label className="text-[11px] uppercase tracking-[0.15em] text-white/40" style={oswald}>
+              Modell / tittel (valgfri)
+            </Label>
+            <Input
+              value={titleOrModel}
+              onChange={(e) => setTitleOrModel(e.target.value.slice(0, 80))}
+              placeholder="Volvo 240"
+              className="mt-1.5 bg-[hsl(215_25%_8%)] border-white/10 text-white placeholder:text-white/30"
+            />
+            <p className="text-[10px] text-white/30 mt-1.5" style={oswald}>
+              Brukes som navn hvis vi oppretter en ny bil for øyeblikket.
+            </p>
+          </div>
+
           {isLookingUp && (
             <div className="flex items-center gap-2 text-[11px] text-white/40">
               <Loader2 className="w-3 h-3 animate-spin" />
