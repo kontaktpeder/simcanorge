@@ -70,6 +70,7 @@ const Biler = () => {
   const [categoryCounts, setCategoryCounts] = useState<Record<string, number>>({});
   const [sidePanelOpen, setSidePanelOpen] = useState(false);
   const [panelExpanded, setPanelExpanded] = useState(false);
+  const [relationshipTarget, setRelationshipTarget] = useState<{ id: string; title: string } | null>(null);
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(0);
