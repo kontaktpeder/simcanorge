@@ -3,6 +3,7 @@ import { Link, useParams, Navigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import {
   ArrowLeft,
+  ArrowRight,
   Car as CarIcon,
   Footprints,
   Users,
@@ -45,6 +46,9 @@ interface CarInfo {
   title: string | null;
   brand: string | null;
   model: string | null;
+  slug: string | null;
+  source: string | null;
+  identification_status: string | null;
 }
 
 const META: Record<ActivityType, { label: string; Icon: React.ComponentType<{ className?: string; style?: React.CSSProperties }>; tone: string }> = {
@@ -113,7 +117,7 @@ export default function TurDetalj() {
       if (carIds.length > 0) {
         const { data: cs } = await supabase
           .from("cars")
-          .select("id, title, brand, model")
+          .select("id, title, brand, model, slug, source, identification_status")
           .in("id", carIds);
         if (cancelled) return;
         const map: Record<string, CarInfo> = {};
@@ -373,24 +377,59 @@ function CarGroup({
   const subtitle = car && car.title && (car.brand || car.model)
     ? [car.brand, car.model].filter(Boolean).join(" ")
     : null;
+  const slug = car?.slug?.trim() || null;
+  const showObservedBadge =
+    !!car &&
+    (car.source === "spotting" || car.identification_status === "unknown");
 
   const images = moments.filter((m) => m.data?.image_url).map((m) => m.data!.image_url as string);
   const notes = moments.filter((m) => !m.data?.image_url && m.data?.note);
 
+  const titleEl = (
+    <div className="text-white font-bold text-[15px] truncate" style={chakra}>
+      {title}
+    </div>
+  );
+
   return (
     <section>
-      <div className="flex items-end justify-between mb-2 px-0.5">
-        <div className="min-w-0">
-          <div className="text-white font-bold text-[15px] truncate" style={chakra}>
-            {title}
-          </div>
+      <div className="flex items-end justify-between mb-2 px-0.5 gap-3">
+        <div className="min-w-0 flex-1">
+          {slug ? (
+            <Link
+              to={`/biler/${slug}`}
+              className="block min-w-0 rounded-sm hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#34eab8]/50"
+            >
+              {titleEl}
+            </Link>
+          ) : (
+            titleEl
+          )}
           {subtitle && (
             <div className="text-[11px] text-white/45 truncate" style={oswald}>
               {subtitle}
             </div>
           )}
+          {showObservedBadge && (
+            <div
+              className="mt-1.5 inline-flex text-[10px] uppercase tracking-[0.12em] px-2 py-0.5 rounded border border-white/15 text-white/60"
+              style={oswald}
+            >
+              Observert · uverifisert
+            </div>
+          )}
+          {slug && (
+            <Link
+              to={`/biler/${slug}`}
+              className="mt-2 inline-flex items-center gap-1 text-[12px] font-semibold text-[#34eab8] hover:text-[#7ff4cd] transition-colors"
+              style={oswald}
+            >
+              Se bilen
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          )}
         </div>
-        <div className="text-[10px] uppercase tracking-[0.18em] text-white/35" style={oswald}>
+        <div className="text-[10px] uppercase tracking-[0.18em] text-white/35 flex-shrink-0" style={oswald}>
           {moments.length} {moments.length === 1 ? "øyeblikk" : "øyeblikk"}
         </div>
       </div>
@@ -402,6 +441,7 @@ function CarGroup({
             return (
               <button
                 key={i}
+                type="button"
                 onClick={() => onOpenImage(url)}
                 className="relative aspect-square overflow-hidden rounded-md bg-white/[0.04]"
               >
