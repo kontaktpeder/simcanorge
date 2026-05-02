@@ -63,7 +63,10 @@ export function FeedCard({ post }: { post: FeedPost }) {
   const event = (post as any).event;
   const isOwn = !!(myProfile && author?.id === myProfile.id);
 
-  const entityTitle = car?.title ?? marketItem?.title ?? event?.title ?? post.snapshot_title ?? null;
+  const isUnknownSpotting =
+    car?.source === "spotting" &&
+    (car?.identification_status === "unknown" || car?.identification_status === "needs_review");
+  const entityTitle = isUnknownSpotting ? "Ukjent bil" : (car?.title ?? marketItem?.title ?? event?.title ?? post.snapshot_title ?? null);
   const allImages = getAllImages(post);
   const heroImage = allImages[0]?.url ?? null;
   const entityLink =
