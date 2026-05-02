@@ -99,24 +99,30 @@ export function StopSessionDialog({
             </div>
           </div>
 
-          <div className="flex gap-2 justify-end pt-1">
-            <Button
-              type="button"
-              variant="ghost"
-              onClick={() => onOpenChange(false)}
-              className="text-white/60 hover:text-white"
-            >
-              Lukk
-            </Button>
-            <Button
-              type="button"
-              onClick={handleStop}
-              disabled={isStopping}
-              className="bg-[#2dd4a8] text-[#070b10] hover:bg-[#34eab8]"
-            >
-              {isStopping ? <Loader2 className="w-4 h-4 animate-spin" /> : "Avslutt tur"}
-            </Button>
-          </div>
+        </div>
+        <div
+          className="flex gap-2 justify-end px-5 py-3 border-t border-white/[0.06] shrink-0"
+          style={{
+            background: "hsl(215 30% 9%)",
+            paddingBottom: "calc(0.75rem + env(safe-area-inset-bottom))",
+          }}
+        >
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={() => onOpenChange(false)}
+            className="text-white/60 hover:text-white"
+          >
+            Lukk
+          </Button>
+          <Button
+            type="button"
+            onClick={handleStop}
+            disabled={isStopping}
+            className="bg-[#2dd4a8] text-[#070b10] hover:bg-[#34eab8]"
+          >
+            {isStopping ? <Loader2 className="w-4 h-4 animate-spin" /> : "Avslutt tur"}
+          </Button>
         </div>
       </DialogContent>
     </Dialog>
