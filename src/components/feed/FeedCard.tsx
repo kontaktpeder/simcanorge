@@ -12,6 +12,7 @@ import { useDeleteFeedPost } from "@/hooks/useDeleteFeedPost";
 import { ImageLightbox } from "@/components/ui/image-lightbox";
 import { CommentSection } from "@/components/comments/CommentSection";
 import type { FeedPost } from "@/hooks/useFeedPosts";
+import { resolveSpottingCoverFromRow } from "@/lib/spottingMedia";
 
 const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
 
@@ -27,11 +28,15 @@ function getAllImages(post: FeedPost) {
   const car = (post as any).car;
   const marketItem = (post as any).marketplace_item;
   const event = (post as any).event;
-  const imgs =
-    car?.car_images?.sort((a: any, b: any) => (a.sort_order ?? 0) - (b.sort_order ?? 0)).map((i: any) => ({ url: i.image_url })) ??
-    marketItem?.marketplace_images?.sort((a: any, b: any) => (a.sort_order ?? 0) - (b.sort_order ?? 0)).map((i: any) => ({ url: i.image_url })) ??
-    event?.event_images?.sort((a: any, b: any) => (a.sort_order ?? 0) - (b.sort_order ?? 0)).map((i: any) => ({ url: i.image_url })) ??
+  let imgs =
+    car?.car_images?.slice().sort((a: any, b: any) => (a.sort_order ?? 0) - (b.sort_order ?? 0)).map((i: any) => ({ url: i.image_url })) ??
+    marketItem?.marketplace_images?.slice().sort((a: any, b: any) => (a.sort_order ?? 0) - (b.sort_order ?? 0)).map((i: any) => ({ url: i.image_url })) ??
+    event?.event_images?.slice().sort((a: any, b: any) => (a.sort_order ?? 0) - (b.sort_order ?? 0)).map((i: any) => ({ url: i.image_url })) ??
     [];
+  if (imgs.length === 0 && car) {
+    const cover = resolveSpottingCoverFromRow(car);
+    if (cover?.image_url) imgs = [{ url: cover.image_url }];
+  }
   if (imgs.length === 0 && post.snapshot_image_url) return [{ url: post.snapshot_image_url }];
   return imgs as { url: string; alt?: string }[];
 }
