@@ -638,9 +638,14 @@ function EditorialBlock({ block, index }: EditorialBlockProps): React.ReactNode 
                     className="text-[1.2rem] md:text-[1.8rem] lg:text-[2.2rem] text-white leading-tight mb-3 md:mb-4 uppercase font-bold italic"
                     style={chakra}
                   >
-                    {car.title}
+                    {displayTitle}
                   </h2>
-                  {excerpt && (
+                  {displaySubtitle && (
+                    <p className="text-[#34eab8] text-[12px] md:text-[13px] uppercase tracking-[0.15em] mb-3" style={oswald}>
+                      {displaySubtitle}
+                    </p>
+                  )}
+                  {!isUnknownSpotting && excerpt && (
                     <p className="hidden md:block text-white/70 text-sm lg:text-base max-w-2xl leading-relaxed mb-4 line-clamp-2">
                       {excerpt}
                     </p>
@@ -693,9 +698,11 @@ function EditorialBlock({ block, index }: EditorialBlockProps): React.ReactNode 
                 className="text-[14px] md:text-[16px] tracking-[0.03em] uppercase font-bold italic text-white group-hover:text-[#34eab8] transition-colors"
                 style={chakra}
               >
-                {car.title}
+                {displayTitle}
               </h3>
-              {excerpt && (
+              {displaySubtitle ? (
+                <p className="text-[#34eab8] text-[11px] uppercase tracking-[0.12em]" style={oswald}>{displaySubtitle}</p>
+              ) : excerpt && (
                 <p className="text-white/50 text-sm line-clamp-2" style={oswald}>
                   {excerpt}
                 </p>
@@ -738,8 +745,11 @@ function EditorialBlock({ block, index }: EditorialBlockProps): React.ReactNode 
                   className="text-[12px] md:text-[13px] tracking-[0.03em] text-white uppercase font-bold italic"
                   style={chakra}
                 >
-                  {car.model}
+                  {isUnknownSpotting ? "Ukjent bil" : car.model}
                 </h3>
+                {displaySubtitle && (
+                  <p className="text-[#34eab8] text-[10px] uppercase tracking-[0.12em] mt-1" style={oswald}>{displaySubtitle}</p>
+                )}
               </div>
             </div>
           </LinkWrapper>
@@ -780,9 +790,11 @@ function EditorialBlock({ block, index }: EditorialBlockProps): React.ReactNode 
                   className="text-[14px] md:text-[16px] tracking-[0.03em] uppercase leading-tight font-bold italic text-white group-hover:text-[#34eab8] transition-colors"
                   style={chakra}
                 >
-                  {car.title}
+                  {displayTitle}
                 </h3>
-                {excerpt && (
+                {displaySubtitle ? (
+                  <p className="text-[#34eab8] text-[11px] uppercase tracking-[0.12em]" style={oswald}>{displaySubtitle}</p>
+                ) : excerpt && (
                   <p className="text-white/40 text-sm line-clamp-2 leading-relaxed" style={oswald}>
                     {excerpt}
                   </p>
