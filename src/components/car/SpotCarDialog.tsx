@@ -114,23 +114,66 @@ function SpotCarDialogInner({ trigger, onSpotted }: SpotCarDialogProps) {
     setOpen(false);
   };
 
+  const successVariant: "matched" | "unknown" | "new_identified" | null = successResult
+    ? successResult.matchedExistingCar
+      ? "matched"
+      : successResult.identificationStatus === "unknown"
+        ? "unknown"
+        : "new_identified"
+    : null;
+
   const handleDialogOpenChange = (next: boolean) => {
     if (!next && successResult) {
       // Closing via X / overlay after success — reset cleanly.
+      void track("spotting_success_cta", screen, {
+        cta: "dismiss",
+        variant: successVariant,
+        car_id: successResult.carId,
+        has_slug: Boolean(successResult.slug),
+      });
       setSuccessResult(null);
       resetForm();
     }
     handleOpenChange(next);
   };
 
+  // Fire view event when success panel becomes visible
+  useEffect(() => {
+    if (!successResult || !successVariant) return;
+    void track("spotting_success_view", screen, {
+      variant: successVariant,
+      car_id: successResult.carId,
+      has_slug: Boolean(successResult.slug),
+    });
+    // Only fire once per success result
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [successResult]);
+
+  const trackCta = (cta: "see_car" | "see_unknown_list" | "done") => {
+    if (!successResult || !successVariant) return;
+    void track("spotting_success_cta", screen, {
+      cta,
+      variant: successVariant,
+      car_id: successResult.carId,
+      has_slug: Boolean(successResult.slug),
+    });
+  };
+
   const goToCar = () => {
     if (!successResult?.slug) return;
+    trackCta("see_car");
     navigate(`/biler/${successResult.slug}`);
     finishAndClose();
   };
 
   const goToUnknownCars = () => {
+    trackCta("see_unknown_list");
     navigate("/ukjente-biler");
+    finishAndClose();
+  };
+
+  const handleDone = () => {
+    trackCta("done");
     finishAndClose();
   };
 
@@ -228,7 +271,7 @@ function SpotCarDialogInner({ trigger, onSpotted }: SpotCarDialogProps) {
                 <Button
                   type="button"
                   variant="ghost"
-                  onClick={finishAndClose}
+                  onClick={handleDone}
                   className="min-h-[44px] w-full"
                 >
                   Ferdig
