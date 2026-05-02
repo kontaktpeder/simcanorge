@@ -140,6 +140,16 @@ export default function UkjenteBiler() {
           carTitle={identifyTarget.title}
         />
       )}
+
+      {relationshipTarget && (
+        <RelationshipRequestDialog
+          open={!!relationshipTarget}
+          onOpenChange={(o) => !o && setRelationshipTarget(null)}
+          carId={relationshipTarget.id}
+          carTitle={relationshipTarget.title}
+          source="ukjente_biler"
+        />
+      )}
     </Layout>
   );
 }
