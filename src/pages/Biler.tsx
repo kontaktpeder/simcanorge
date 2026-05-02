@@ -3,7 +3,8 @@ import { Link, useSearchParams } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { Footer } from "@/components/layout/Footer";
 import { supabase } from "@/integrations/supabase/client";
-import { Car, ChevronLeft, ChevronRight, SlidersHorizontal, X } from "lucide-react";
+import { Car, ChevronLeft, ChevronRight, SlidersHorizontal, X, Link2 } from "lucide-react";
+import { RelationshipRequestDialog } from "@/components/car/relationship/RelationshipRequestDialog";
 import { Helmet } from "react-helmet-async";
 import {
   groupCarsByModule,
