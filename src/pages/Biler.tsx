@@ -552,6 +552,15 @@ const Biler = () => {
           
         </div>
       </div>
+      {relationshipTarget && (
+        <RelationshipRequestDialog
+          open={!!relationshipTarget}
+          onOpenChange={(o) => !o && setRelationshipTarget(null)}
+          carId={relationshipTarget.id}
+          carTitle={relationshipTarget.title}
+          source="biler_list"
+        />
+      )}
     </Layout>
   );
 };
@@ -559,9 +568,10 @@ const Biler = () => {
 interface EditorialBlockProps {
   block: CarBlock<CarPost>;
   index: number;
+  onRequestRelationship?: (car: { id: string; title: string }) => void;
 }
 
-function EditorialBlock({ block, index }: EditorialBlockProps): React.ReactNode {
+function EditorialBlock({ block, index, onRequestRelationship }: EditorialBlockProps): React.ReactNode {
   const { car, module, size } = block;
   const gridClasses = getGridClasses(size);
 
