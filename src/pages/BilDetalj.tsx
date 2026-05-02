@@ -607,6 +607,24 @@ const BilDetalj = () => {
                   )}
                 </div>
 
+                {!isOwner && FEATURES.relationshipRequestsV1 && (
+                  <div className="mb-6">
+                    <button
+                      type="button"
+                      onClick={() => setRelationshipDialogOpen(true)}
+                      className="inline-flex items-center gap-2 px-4 py-2.5 text-[12px] uppercase tracking-[0.15em] text-[#070b10] font-bold transition-all hover:scale-[1.02] rounded-full"
+                      style={{
+                        fontFamily: "'Chakra Petch', sans-serif",
+                        background: 'linear-gradient(135deg, #34eab8 0%, #2dd4a8 100%)',
+                        boxShadow: '0 6px 18px rgba(52,234,184,0.25), inset 0 1px 0 rgba(255,255,255,0.3)',
+                      }}
+                    >
+                      <Link2 className="w-4 h-4" />
+                      Knytt relasjon til bilen
+                    </button>
+                  </div>
+                )}
+
                 {/* Tags */}
                 {car.tags && car.tags.length > 0 && (
                   <div className="flex flex-wrap gap-2 mb-6 stagger-children">
