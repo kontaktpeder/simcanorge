@@ -108,6 +108,32 @@ function SpotCarDialogInner({ trigger, onSpotted }: SpotCarDialogProps) {
     setMatch(null);
   };
 
+  const finishAndClose = () => {
+    setSuccessResult(null);
+    resetForm();
+    setOpen(false);
+  };
+
+  const handleDialogOpenChange = (next: boolean) => {
+    if (!next && successResult) {
+      // Closing via X / overlay after success — reset cleanly.
+      setSuccessResult(null);
+      resetForm();
+    }
+    handleOpenChange(next);
+  };
+
+  const goToCar = () => {
+    if (!successResult?.slug) return;
+    navigate(`/biler/${successResult.slug}`);
+    finishAndClose();
+  };
+
+  const goToUnknownCars = () => {
+    navigate("/ukjente-biler");
+    finishAndClose();
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!imageFile) return;
@@ -119,9 +145,8 @@ function SpotCarDialogInner({ trigger, onSpotted }: SpotCarDialogProps) {
     });
     if (result) {
       void track("spotting_submitted", screen, { car_id: result.carId, path: location.pathname });
-      setOpen(false);
-      resetForm();
-      onSpotted?.(result.carId);
+      setSuccessResult(result);
+      onSpotted?.(result);
     }
   };
 
