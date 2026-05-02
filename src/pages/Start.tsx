@@ -500,9 +500,9 @@ function PreviewCarTile({
         style={{ background: "hsl(215 25% 10%)" }}
       >
         <div className="aspect-[16/11] relative overflow-hidden bg-black/30">
-          {img ? (
+          {coverUrl ? (
             <img
-              src={img.image_url}
+              src={coverUrl}
               alt={car.title}
               loading="lazy"
               className="absolute inset-0 w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-500"
@@ -526,9 +526,13 @@ function PreviewCarTile({
             className="text-[12px] text-white/85 font-semibold truncate"
             style={chakra}
           >
-            {car.title}
+            {isUnknownSpotting ? "Ukjent bil" : car.title}
           </p>
-          {car.year && (
+          {isUnknownSpotting ? (
+            <p className="text-[10px] text-[#34eab8] mt-0.5 uppercase tracking-wider" style={oswald}>
+              Hjelp med å identifisere
+            </p>
+          ) : car.year && (
             <p className="text-[10px] text-white/35 mt-0.5" style={oswald}>
               {car.year}
             </p>
