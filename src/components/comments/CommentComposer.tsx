@@ -72,16 +72,16 @@ export function CommentComposer({
           value={body}
           onChange={(e) => setBody(e.target.value)}
           placeholder={placeholder}
-          rows={2}
+          rows={3}
           autoFocus={autoFocus}
           onKeyDown={(e) => {
             if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleSubmit();
             if (e.key === "Escape") onCancel?.();
           }}
-          className={`w-full bg-transparent border-b px-0 py-2 resize-none focus:outline-none transition-colors leading-relaxed text-[14px] ${
+          className={`w-full rounded-lg border px-3 py-2.5 resize-none focus:outline-none transition-colors leading-relaxed text-[15px] ${
             light
-              ? "border-neutral-300 focus:border-neutral-500 text-neutral-700 placeholder:text-neutral-400"
-              : "border-white/[0.08] focus:border-white/[0.20] text-white/70 placeholder:text-white/20"
+              ? "bg-white border-neutral-300 focus:border-neutral-500 text-neutral-800 placeholder:text-neutral-400"
+              : "bg-white/[0.04] border-white/[0.10] focus:border-[#34eab8]/60 focus:bg-white/[0.06] text-white/90 placeholder:text-white/30"
           }`}
         />
         <div className="flex items-center justify-between mt-2">
