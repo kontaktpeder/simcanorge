@@ -6,16 +6,19 @@ import { supabase } from "@/integrations/supabase/client";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { IdentifyCarDialog } from "@/components/car/IdentifyCarDialog";
+import {
+  resolveSpottingCoverFromRow,
+  type CarWithSpottingMedia,
+} from "@/lib/spottingMedia";
 
 const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
 const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
 
-interface UnknownCar {
+interface UnknownCar extends CarWithSpottingMedia {
   id: string;
   title: string;
   slug: string | null;
   created_at: string;
-  car_images: { image_url: string; sort_order: number }[] | null;
 }
 
 export default function UkjenteBiler() {
@@ -26,14 +29,17 @@ export default function UkjenteBiler() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("cars")
-        .select("id,title,slug,created_at,car_images(image_url,sort_order)")
+        .select(
+          `id,title,slug,created_at,
+           car_images(image_url,sort_order),
+           car_events(visibility,occurred_at,car_event_images(image_url,sort_order))`,
+        )
         .in("identification_status", ["unknown", "needs_review"])
         .eq("source", "spotting")
-        .is("published_at", null)
         .order("created_at", { ascending: false })
         .limit(50);
       if (error) throw error;
-      return (data ?? []) as UnknownCar[];
+      return (data ?? []) as unknown as UnknownCar[];
     },
   });
 
@@ -65,9 +71,8 @@ export default function UkjenteBiler() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {data?.map((car) => {
-            const firstImage = car.car_images
-              ?.slice()
-              .sort((a, b) => a.sort_order - b.sort_order)[0]?.image_url;
+            const cover = resolveSpottingCoverFromRow(car);
+            const firstImage = cover?.image_url;
             return (
               <article
                 key={car.id}
