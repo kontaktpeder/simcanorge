@@ -12,10 +12,17 @@ export interface SpotCarInput {
   note?: string;
 }
 
+export type SpotIdentificationStatus = "unknown" | "needs_review" | "identified" | null;
+
 export interface SpotCarResult {
   carId: string;
   eventId: string;
+  /** Backwards-compat alias for createdNewCar */
   isNewCar: boolean;
+  createdNewCar: boolean;
+  matchedExistingCar: boolean;
+  identificationStatus: SpotIdentificationStatus;
+  slug: string | null;
 }
 
 function normalizeRegnr(regnr: string): string {
