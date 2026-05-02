@@ -80,31 +80,26 @@ export function useSpotCar() {
 
       // 2) If no match, create minimal "spotting" car
       if (!carId) {
-        const titleTrimmed = input.titleOrModel?.trim() || "";
-        const hasRegnr = regnrNormalized.length >= 2;
-        const hasTitle = titleTrimmed.length > 0;
-        // Kun bilde → ukjent. Regnr og/eller modell/tittel → identifisert observert bil.
-        const isUnknown = !hasRegnr && !hasTitle;
-        const displayTitle = isUnknown
-          ? "Ukjent bil"
-          : titleTrimmed || "Observert bil";
-        const displayModel = isUnknown ? "Ukjent" : titleTrimmed || "Ukjent";
-        const baseSlug = slugify(`${displayTitle}-${Date.now()}`);
-        const regForCar = hasRegnr ? (input.registrationNumber ?? "").replace(/\s+/g, " ").trim() : null;
+        const meta = buildSpottingCarInsertMeta({
+          registrationNumberRaw: input.registrationNumber,
+          registrationNumberNormalized: regnrNormalized,
+          titleOrModel: input.titleOrModel,
+        });
+        const baseSlug = slugify(`${meta.displayTitle}-${Date.now()}`);
 
         const { data: created, error: createErr } = await supabase
           .from("cars")
           .insert({
-            title: displayTitle,
-            model: displayModel,
+            title: meta.displayTitle,
+            model: meta.displayModel,
             slug: baseSlug,
             source: "spotting",
             status: "submitted",
             category: "registrert",
             created_by_user_id: user.id,
-            identification_status: isUnknown ? "unknown" : "identified",
+            identification_status: meta.identification_status,
             published_at: new Date().toISOString(),
-            ...(regForCar ? { registration_number: regForCar } : {}),
+            ...(meta.registration_number ? { registration_number: meta.registration_number } : {}),
           })
           .select("id, slug, identification_status")
           .single();
@@ -112,7 +107,8 @@ export function useSpotCar() {
         const createdRow = created as { id: string; slug: string | null; identification_status: string | null };
         carId = createdRow.id;
         slug = createdRow.slug ?? null;
-        identificationStatus = (createdRow.identification_status as SpotIdentificationStatus) ?? (isUnknown ? "unknown" : "identified");
+        identificationStatus =
+          (createdRow.identification_status as SpotIdentificationStatus) ?? meta.identification_status;
         createdNewCar = true;
       }
 
