@@ -121,6 +121,7 @@ const BilDetalj = () => {
   const [showFeedComposer, setShowFeedComposer] = useState(false);
   const [composerInitialBody, setComposerInitialBody] = useState<string | undefined>(undefined);
   const [showPostPublishOverlay, setShowPostPublishOverlay] = useState(false);
+  const [relationshipDialogOpen, setRelationshipDialogOpen] = useState(false);
 
   // Owner detection: car_owners join from query
   const carOwners = (car as any)?.car_owners as { user_id: string }[] | undefined;
