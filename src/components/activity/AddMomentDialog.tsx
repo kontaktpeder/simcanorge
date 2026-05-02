@@ -415,24 +415,30 @@ export function AddMomentDialog({
             rows={3}
             className="bg-[hsl(215_25%_8%)] border-white/10 text-white placeholder:text-white/30"
           />
-          <div className="flex gap-2 justify-end sticky bottom-0 pt-2" style={{ background: "hsl(215 25% 10%)" }}>
-            <Button
-              type="button"
-              variant="ghost"
-              onClick={() => onOpenChange(false)}
-              className="text-white/60 hover:text-white"
-            >
-              Avbryt
-            </Button>
-            <Button
-              type="button"
-              onClick={handleSubmit}
-              disabled={isAdding || (!imageFile && !note.trim() && !regnr.trim())}
-              className="bg-[#2dd4a8] text-[#070b10] hover:bg-[#34eab8]"
-            >
-              {isAdding ? <Loader2 className="w-4 h-4 animate-spin" /> : "Lagre"}
-            </Button>
-          </div>
+        </div>
+        <div
+          className="flex gap-2 justify-end px-5 py-3 border-t border-white/[0.06] shrink-0"
+          style={{
+            background: "hsl(215 30% 9%)",
+            paddingBottom: "calc(0.75rem + env(safe-area-inset-bottom))",
+          }}
+        >
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={() => onOpenChange(false)}
+            className="text-white/60 hover:text-white"
+          >
+            Avbryt
+          </Button>
+          <Button
+            type="button"
+            onClick={handleSubmit}
+            disabled={isAdding || (!imageFile && !note.trim() && !regnr.trim())}
+            className="bg-[#2dd4a8] text-[#070b10] hover:bg-[#34eab8]"
+          >
+            {isAdding ? <Loader2 className="w-4 h-4 animate-spin" /> : "Lagre"}
+          </Button>
         </div>
       </DialogContent>
     </Dialog>
