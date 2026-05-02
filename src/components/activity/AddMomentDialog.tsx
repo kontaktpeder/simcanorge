@@ -193,10 +193,10 @@ export function AddMomentDialog({
           boxShadow: "0 -20px 60px rgba(0,0,0,0.6), 0 0 40px rgba(52,234,184,0.08)",
         }}
       >
-        <DialogHeader>
+        <DialogHeader className="px-5 pt-5 pb-3 shrink-0">
           <DialogTitle className="text-white" style={chakra}>Legg til øyeblikk</DialogTitle>
         </DialogHeader>
-        <div className="space-y-3 mt-2">
+        <div className="space-y-3 px-5 pb-3 overflow-y-auto flex-1 min-h-0">
           {previewUrl ? (
             <div className="relative rounded-lg overflow-hidden border border-white/10">
               <img src={previewUrl} alt="" className="w-full max-h-72 object-cover" />
