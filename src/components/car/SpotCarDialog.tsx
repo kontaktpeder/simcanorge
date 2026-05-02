@@ -271,7 +271,7 @@ function SpotCarDialogInner({ trigger, onSpotted }: SpotCarDialogProps) {
                 <Button
                   type="button"
                   variant="ghost"
-                  onClick={finishAndClose}
+                  onClick={handleDone}
                   className="min-h-[44px] w-full"
                 >
                   Ferdig
