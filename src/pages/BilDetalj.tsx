@@ -75,6 +75,8 @@ interface CarDetail {
   timeline_events: TimelineEvent[] | null;
   car_images: CarImage[];
   owner_profile_id: string | null;
+  source?: string | null;
+  identification_status?: "unknown" | "needs_review" | "identified" | null;
 }
 
 const CATEGORY_LABELS: Record<string, { label: string; color: string }> = {
@@ -161,8 +163,9 @@ const BilDetalj = () => {
         .select(`
           id, title, slug, brand, model, variant, body_type, year, story, 
           overhauled, tags, featured, published_at, created_at, updated_at, category,
-          external_links, timeline_events,
+          external_links, timeline_events, source, identification_status,
           car_images(id, image_url, alt_text, sort_order),
+          car_events(visibility, occurred_at, car_event_images(image_url, alt_text, sort_order)),
           car_owners!car_owners_car_id_fkey(user_id)
         `)
         .eq("slug", slug)
@@ -190,7 +193,25 @@ const BilDetalj = () => {
             .maybeSingle();
           if (pp) parsed.owner_profile_id = pp.id;
         }
-        setCar(parsed);
+        // Spotting fallback: if no car_images, build a synthetic one from latest public car_event image
+        if (parsed) {
+          const hasCarImages = Array.isArray(parsed.car_images) && parsed.car_images.length > 0;
+          if (!hasCarImages && (parsed as any).source === "spotting") {
+            const { resolveSpottingCoverFromRow } = await import("@/lib/spottingMedia");
+            const cover = resolveSpottingCoverFromRow(parsed as any);
+            if (cover?.image_url) {
+              (parsed as any).car_images = [
+                {
+                  id: "spotting-event-cover",
+                  image_url: cover.image_url,
+                  alt_text: cover.alt_text ?? parsed.title,
+                  sort_order: 0,
+                },
+              ];
+            }
+          }
+        }
+        setCar(parsed as CarDetail | null);
       }
       setIsLoading(false);
     };
@@ -555,6 +576,31 @@ const BilDetalj = () => {
                       <Wrench className="w-4 h-4" />
                       Overhalt
                     </span>
+                  )}
+                  {car.source === "spotting" && (
+                    <>
+                      <span
+                        className="flex items-center gap-1.5 bg-white/[0.06] text-white/80 px-3 py-1.5 text-sm border border-white/[0.14] rounded-md uppercase tracking-wider font-bold"
+                        style={{ fontFamily: "'Chakra Petch', sans-serif" }}
+                      >
+                        Observert
+                      </span>
+                      <span
+                        className="flex items-center gap-1.5 bg-amber-500/[0.10] text-amber-200 px-3 py-1.5 text-sm border border-amber-400/30 rounded-md uppercase tracking-wider font-bold"
+                        style={{ fontFamily: "'Chakra Petch', sans-serif" }}
+                      >
+                        Uverifisert
+                      </span>
+                      {(car.identification_status === "unknown" || car.identification_status === "needs_review") && (
+                        <Link
+                          to="/ukjente-biler"
+                          className="flex items-center gap-1.5 bg-[#34eab8]/12 text-[#7ff4cd] px-3 py-1.5 text-sm border border-[#34eab8]/30 rounded-md uppercase tracking-wider font-bold hover:bg-[#34eab8]/20 transition"
+                          style={{ fontFamily: "'Chakra Petch', sans-serif" }}
+                        >
+                          Hjelp å identifisere
+                        </Link>
+                      )}
+                    </>
                   )}
                 </div>
 
