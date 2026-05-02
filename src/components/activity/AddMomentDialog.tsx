@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
@@ -47,6 +48,7 @@ export function AddMomentDialog({
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [note, setNote] = useState("");
   const [regnr, setRegnr] = useState("");
+  const [titleOrModel, setTitleOrModel] = useState("");
   const [match, setMatch] = useState<CarMatch | null>(null);
   const [isLookingUp, setIsLookingUp] = useState(false);
 
@@ -131,6 +133,7 @@ export function AddMomentDialog({
     setImageFile(null);
     setNote("");
     setRegnr("");
+    setTitleOrModel("");
     setMatch(null);
     if (previewUrl) URL.revokeObjectURL(previewUrl);
     setPreviewUrl(null);
@@ -153,12 +156,13 @@ export function AddMomentDialog({
   };
 
   const handleSubmit = async () => {
-    if (!imageFile && !note.trim() && !regnr.trim()) return;
+    if (!imageFile && !note.trim() && !regnr.trim() && !titleOrModel.trim()) return;
     await addMoment({
       sessionId,
       imageFile,
       note: note.trim() || null,
       registrationNumber: regnr.trim() || null,
+      titleOrModel: titleOrModel.trim() || null,
     });
     reset();
     onOpenChange(false);
@@ -234,6 +238,21 @@ export function AddMomentDialog({
             </div>
             <p className="text-[10px] text-white/30 mt-1.5" style={oswald}>
               Kobles til bil i garasjen. Vises aldri offentlig.
+            </p>
+          </div>
+
+          <div>
+            <Label className="text-[11px] uppercase tracking-[0.15em] text-white/40" style={oswald}>
+              Modell / tittel (valgfri)
+            </Label>
+            <Input
+              value={titleOrModel}
+              onChange={(e) => setTitleOrModel(e.target.value.slice(0, 80))}
+              placeholder="Volvo 240"
+              className="mt-1.5 bg-[hsl(215_25%_8%)] border-white/10 text-white placeholder:text-white/30"
+            />
+            <p className="text-[10px] text-white/30 mt-1.5" style={oswald}>
+              Brukes som navn hvis vi oppretter en ny bil for øyeblikket.
             </p>
           </div>
 
@@ -434,7 +453,7 @@ export function AddMomentDialog({
           <Button
             type="button"
             onClick={handleSubmit}
-            disabled={isAdding || (!imageFile && !note.trim() && !regnr.trim())}
+            disabled={isAdding || (!imageFile && !note.trim() && !regnr.trim() && !titleOrModel.trim())}
             className="bg-[#2dd4a8] text-[#070b10] hover:bg-[#34eab8]"
           >
             {isAdding ? <Loader2 className="w-4 h-4 animate-spin" /> : "Lagre"}
