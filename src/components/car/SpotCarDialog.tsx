@@ -11,9 +11,9 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Camera, Loader2, Eye, Car as CarIcon, Link2 } from "lucide-react";
+import { Camera, Loader2, Eye, Car as CarIcon, Link2, CheckCircle2, HelpCircle, ArrowRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { useSpotCar } from "@/hooks/useSpotCar";
+import { useSpotCar, type SpotCarResult } from "@/hooks/useSpotCar";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate, useLocation } from "react-router-dom";
 import { FEATURES } from "@/config/features";
@@ -23,7 +23,7 @@ import { track } from "@/lib/analytics";
 
 interface SpotCarDialogProps {
   trigger?: React.ReactNode;
-  onSpotted?: (carId: string) => void;
+  onSpotted?: (result: SpotCarResult) => void;
 }
 
 const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
