@@ -100,6 +100,7 @@ export function useSpotCar() {
             category: "registrert",
             created_by_user_id: user.id,
             identification_status: isUnknown ? "unknown" : "identified",
+            published_at: new Date().toISOString(),
           })
           .select("id, slug, identification_status")
           .single();
@@ -157,6 +158,7 @@ export function useSpotCar() {
       if (imgErr) throw imgErr;
 
       queryClient.invalidateQueries({ queryKey: ["car-events", carId] });
+      queryClient.invalidateQueries({ queryKey: ["unknown-cars"] });
       // Success-toast intentionally omitted — SpotCarDialog renders a success panel.
       return {
         carId,
