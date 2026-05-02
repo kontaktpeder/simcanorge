@@ -67,18 +67,26 @@ export function useSpotCar() {
 
       // 2) If no match, create minimal "spotting" car
       if (!carId) {
-        const titleBase = input.titleOrModel?.trim() || "Spottet bil";
+        const titleTrimmed = input.titleOrModel?.trim() || "";
+        const titleBase = titleTrimmed || "Spottet bil";
         const baseSlug = slugify(`${titleBase}-${Date.now()}`);
+
+        // Mark as "unknown" identification when we have neither regnr nor a meaningful title
+        const isUnknown =
+          regnrNormalized.length < 2 &&
+          (titleTrimmed === "" || titleTrimmed.toLowerCase() === "spottet bil");
+
         const { data: created, error: createErr } = await supabase
           .from("cars")
           .insert({
             title: titleBase,
-            model: input.titleOrModel?.trim() || "Ukjent",
+            model: titleTrimmed || "Ukjent",
             slug: baseSlug,
             source: "spotting",
             status: "submitted",
             category: "registrert",
             created_by_user_id: user.id,
+            identification_status: isUnknown ? "unknown" : "identified",
           })
           .select("id")
           .single();

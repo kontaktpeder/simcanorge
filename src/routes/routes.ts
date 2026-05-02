@@ -1,5 +1,5 @@
 import { lazy, ComponentType } from "react";
-import { Home, Star, Car, Wrench, Send, BookOpen, Users, Mail, ShoppingBag, User, LayoutDashboard, CalendarDays, Plus } from "lucide-react";
+import { Home, Star, Car, Wrench, Send, BookOpen, Users, Mail, ShoppingBag, User, LayoutDashboard, CalendarDays, Plus, HelpCircle } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { FEATURES } from "@/config/features";
 
@@ -63,6 +63,7 @@ const AktivTur = lazy(() => import("@/pages/AktivTur"));
 const MineTurer = lazy(() => import("@/pages/MineTurer"));
 const TurDetalj = lazy(() => import("@/pages/TurDetalj"));
 const MinGarasje = lazy(() => import("@/pages/MinGarasje"));
+const UkjenteBiler = lazy(() => import("@/pages/UkjenteBiler"));
 
 // Dashboard pages
 const Garasje = lazy(() => import("@/pages/Garasje"));
@@ -133,6 +134,7 @@ const rawRoutes: RouteConfig[] = [
   { path: "/hjem", element: Index, label: "Utforsk", description: "Forsiden med biler og historier", icon: Home, isPublic: true, showInNav: false },
   { path: "/manedens-bil", element: ManedensBil, label: "Månedens bil", description: "Se denne månedens utvalgte bil", icon: Star, glow: true, isPublic: true, showInNav: true },
   { path: "/biler", element: Biler, label: "Biler", description: "Utforsk biler og historier fra hele Norge", icon: Car, isPublic: true, showInNav: true },
+  { path: "/ukjente-biler", element: UkjenteBiler, label: "Ukjente biler", description: "Hjelp å identifisere spottede biler", icon: HelpCircle, isPublic: true, showInNav: false },
   { path: "/markedsplass/:branch", element: Markedsplass, isPublic: true },
   { path: "/markedsplass", element: Markedsplass, label: "Markedsplass", description: "Deler, tilbehør og annonser", icon: ShoppingBag, isPublic: true, showInNav: true },
   { path: "/arrangement", element: EventsPage, label: "Arrangement", description: "Kommende biltreff og events", icon: CalendarDays, isPublic: true, showInNav: true },

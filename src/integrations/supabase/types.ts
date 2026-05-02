@@ -256,6 +256,53 @@ export type Database = {
           },
         ]
       }
+      car_identification_suggestions: {
+        Row: {
+          car_id: string
+          comment: string | null
+          created_at: string
+          id: string
+          submitter_id: string | null
+          suggested_brand: string
+          suggested_model: string
+          suggested_year: number | null
+          suggested_year_from: number | null
+          suggested_year_to: number | null
+        }
+        Insert: {
+          car_id: string
+          comment?: string | null
+          created_at?: string
+          id?: string
+          submitter_id?: string | null
+          suggested_brand: string
+          suggested_model: string
+          suggested_year?: number | null
+          suggested_year_from?: number | null
+          suggested_year_to?: number | null
+        }
+        Update: {
+          car_id?: string
+          comment?: string | null
+          created_at?: string
+          id?: string
+          submitter_id?: string | null
+          suggested_brand?: string
+          suggested_model?: string
+          suggested_year?: number | null
+          suggested_year_from?: number | null
+          suggested_year_to?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "car_identification_suggestions_car_id_fkey"
+            columns: ["car_id"]
+            isOneToOne: false
+            referencedRelation: "cars"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       car_images: {
         Row: {
           alt_text: string | null
@@ -635,6 +682,7 @@ export type Database = {
           featured: boolean | null
           geography: Json | null
           id: string
+          identification_status: Database["public"]["Enums"]["car_identification_status"]
           model: string
           overhauled: boolean | null
           published_at: string | null
@@ -670,6 +718,7 @@ export type Database = {
           featured?: boolean | null
           geography?: Json | null
           id?: string
+          identification_status?: Database["public"]["Enums"]["car_identification_status"]
           model: string
           overhauled?: boolean | null
           published_at?: string | null
@@ -705,6 +754,7 @@ export type Database = {
           featured?: boolean | null
           geography?: Json | null
           id?: string
+          identification_status?: Database["public"]["Enums"]["car_identification_status"]
           model?: string
           overhauled?: boolean | null
           published_at?: string | null
@@ -2425,11 +2475,24 @@ export type Database = {
         Returns: Json
       }
       request_seller_approval: { Args: never; Returns: Json }
+      submit_car_identification_suggestion: {
+        Args: {
+          p_brand: string
+          p_car_id: string
+          p_comment?: string
+          p_model: string
+          p_year?: number
+          p_year_from?: number
+          p_year_to?: number
+        }
+        Returns: Json
+      }
     }
     Enums: {
       activity_type: "drive" | "walk_spotting" | "meetup"
       activity_visibility: "private" | "public" | "link_only"
       app_role: "admin"
+      car_identification_status: "unknown" | "needs_review" | "identified"
       car_relationship_type:
         | "current_owner"
         | "former_owner"
@@ -2569,6 +2632,7 @@ export const Constants = {
       activity_type: ["drive", "walk_spotting", "meetup"],
       activity_visibility: ["private", "public", "link_only"],
       app_role: ["admin"],
+      car_identification_status: ["unknown", "needs_review", "identified"],
       car_relationship_type: [
         "current_owner",
         "former_owner",
