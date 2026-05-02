@@ -134,7 +134,7 @@ export function CommentCard({ comment, carId, eventId, marketplaceItemId, feedPo
                 </div>
               </div>
             ) : (
-              <p className={`text-[15px] leading-[1.7] whitespace-pre-wrap ${light ? "text-neutral-700" : "text-white/85"}`}>{comment.body}</p>
+              <p className={`text-[15px] leading-[1.65] whitespace-pre-wrap ${light ? "text-neutral-800" : "text-white"}`}>{comment.body}</p>
             )}
 
             {!isEditing && (

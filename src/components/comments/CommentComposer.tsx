@@ -78,10 +78,10 @@ export function CommentComposer({
             if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleSubmit();
             if (e.key === "Escape") onCancel?.();
           }}
-          className={`w-full rounded-lg border px-3 py-2.5 resize-none focus:outline-none transition-colors leading-relaxed text-[15px] ${
+          className={`w-full rounded-lg border px-3.5 py-3 resize-none focus:outline-none transition-all leading-relaxed text-[15px] ${
             light
-              ? "bg-white border-neutral-300 focus:border-neutral-500 text-neutral-800 placeholder:text-neutral-400"
-              : "bg-white/[0.04] border-white/[0.10] focus:border-[#34eab8]/60 focus:bg-white/[0.06] text-white/90 placeholder:text-white/30"
+              ? "bg-white border-neutral-200 focus:border-neutral-400 text-neutral-900 placeholder:text-neutral-400"
+              : "bg-white/[0.025] border-white/[0.07] hover:border-white/[0.10] focus:border-[#34eab8]/40 text-white placeholder:text-white/35"
           }`}
         />
         <div className="flex items-center justify-between mt-2">
