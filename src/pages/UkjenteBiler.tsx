@@ -104,15 +104,27 @@ export default function UkjenteBiler() {
                       {car.title}
                     </h2>
                   </div>
-                  <Button
-                    type="button"
-                    size="sm"
-                    className="mt-auto"
-                    onClick={() => setIdentifyTarget({ id: car.id, title: car.title })}
-                  >
-                    <HelpCircle className="h-4 w-4 mr-1.5" />
-                    Vet du hva dette er?
-                  </Button>
+                  <div className="mt-auto flex flex-col gap-2">
+                    <Button
+                      type="button"
+                      size="sm"
+                      onClick={() => setIdentifyTarget({ id: car.id, title: car.title })}
+                    >
+                      <HelpCircle className="h-4 w-4 mr-1.5" />
+                      Vet du hva dette er?
+                    </Button>
+                    {FEATURES.relationshipRequestsV1 && (
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        onClick={() => setRelationshipTarget({ id: car.id, title: car.title })}
+                      >
+                        <Link2 className="h-4 w-4 mr-1.5" />
+                        Knytt relasjon
+                      </Button>
+                    )}
+                  </div>
                 </div>
               </article>
             );
