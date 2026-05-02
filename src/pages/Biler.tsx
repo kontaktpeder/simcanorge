@@ -424,6 +424,11 @@ const Biler = () => {
                         key={block.key}
                         block={block}
                         index={index}
+                        onRequestRelationship={
+                          FEATURES.relationshipRequestsV1
+                            ? (c) => setRelationshipTarget(c)
+                            : undefined
+                        }
                       />
                     ))}
                   </div>
