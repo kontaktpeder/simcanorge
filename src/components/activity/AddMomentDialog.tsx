@@ -156,12 +156,13 @@ export function AddMomentDialog({
   };
 
   const handleSubmit = async () => {
-    if (!imageFile && !note.trim() && !regnr.trim()) return;
+    if (!imageFile && !note.trim() && !regnr.trim() && !titleOrModel.trim()) return;
     await addMoment({
       sessionId,
       imageFile,
       note: note.trim() || null,
       registrationNumber: regnr.trim() || null,
+      titleOrModel: titleOrModel.trim() || null,
     });
     reset();
     onOpenChange(false);
