@@ -186,16 +186,17 @@ export function AddMomentDialog({
   return (
     <Dialog open={open} onOpenChange={(v) => { onOpenChange(v); if (!v) reset(); }}>
       <DialogContent
-        className="border-white/10 max-h-[92vh] overflow-y-auto p-5 sm:rounded-2xl rounded-t-2xl rounded-b-none sm:rounded-b-2xl bottom-0 top-auto sm:top-[50%] translate-y-0 sm:translate-y-[-50%] data-[state=open]:slide-in-from-bottom-4 sm:data-[state=open]:slide-in-from-top-[48%]"
+        onOpenAutoFocus={(e) => e.preventDefault()}
+        className="border-white/10 max-h-[90dvh] flex flex-col p-0 gap-0 sm:rounded-2xl rounded-t-2xl rounded-b-none sm:rounded-b-2xl bottom-0 top-auto sm:top-[50%] translate-y-0 sm:translate-y-[-50%] data-[state=open]:slide-in-from-bottom-4 sm:data-[state=open]:slide-in-from-top-[48%]"
         style={{
           background: "linear-gradient(180deg, hsl(215 30% 11%) 0%, hsl(215 30% 8%) 100%)",
           boxShadow: "0 -20px 60px rgba(0,0,0,0.6), 0 0 40px rgba(52,234,184,0.08)",
         }}
       >
-        <DialogHeader>
+        <DialogHeader className="px-5 pt-5 pb-3 shrink-0">
           <DialogTitle className="text-white" style={chakra}>Legg til øyeblikk</DialogTitle>
         </DialogHeader>
-        <div className="space-y-3 mt-2">
+        <div className="space-y-3 px-5 pb-3 overflow-y-auto flex-1 min-h-0">
           {previewUrl ? (
             <div className="relative rounded-lg overflow-hidden border border-white/10">
               <img src={previewUrl} alt="" className="w-full max-h-72 object-cover" />
@@ -414,24 +415,30 @@ export function AddMomentDialog({
             rows={3}
             className="bg-[hsl(215_25%_8%)] border-white/10 text-white placeholder:text-white/30"
           />
-          <div className="flex gap-2 justify-end sticky bottom-0 pt-2" style={{ background: "hsl(215 25% 10%)" }}>
-            <Button
-              type="button"
-              variant="ghost"
-              onClick={() => onOpenChange(false)}
-              className="text-white/60 hover:text-white"
-            >
-              Avbryt
-            </Button>
-            <Button
-              type="button"
-              onClick={handleSubmit}
-              disabled={isAdding || (!imageFile && !note.trim() && !regnr.trim())}
-              className="bg-[#2dd4a8] text-[#070b10] hover:bg-[#34eab8]"
-            >
-              {isAdding ? <Loader2 className="w-4 h-4 animate-spin" /> : "Lagre"}
-            </Button>
-          </div>
+        </div>
+        <div
+          className="flex gap-2 justify-end px-5 py-3 border-t border-white/[0.06] shrink-0"
+          style={{
+            background: "hsl(215 30% 9%)",
+            paddingBottom: "calc(0.75rem + env(safe-area-inset-bottom))",
+          }}
+        >
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={() => onOpenChange(false)}
+            className="text-white/60 hover:text-white"
+          >
+            Avbryt
+          </Button>
+          <Button
+            type="button"
+            onClick={handleSubmit}
+            disabled={isAdding || (!imageFile && !note.trim() && !regnr.trim())}
+            className="bg-[#2dd4a8] text-[#070b10] hover:bg-[#34eab8]"
+          >
+            {isAdding ? <Loader2 className="w-4 h-4 animate-spin" /> : "Lagre"}
+          </Button>
         </div>
       </DialogContent>
     </Dialog>

@@ -39,18 +39,19 @@ export function StopSessionDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="border-white/10 p-5 sm:rounded-2xl rounded-t-2xl rounded-b-none sm:rounded-b-2xl bottom-0 top-auto sm:top-[50%] translate-y-0 sm:translate-y-[-50%] data-[state=open]:slide-in-from-bottom-4 sm:data-[state=open]:slide-in-from-top-[48%]"
+        onOpenAutoFocus={(e) => e.preventDefault()}
+        className="border-white/10 max-h-[90dvh] flex flex-col p-0 gap-0 sm:rounded-2xl rounded-t-2xl rounded-b-none sm:rounded-b-2xl bottom-0 top-auto sm:top-[50%] translate-y-0 sm:translate-y-[-50%] data-[state=open]:slide-in-from-bottom-4 sm:data-[state=open]:slide-in-from-top-[48%]"
         style={{
           background: "linear-gradient(180deg, hsl(215 30% 11%) 0%, hsl(215 30% 8%) 100%)",
           boxShadow: "0 -20px 60px rgba(0,0,0,0.6), 0 0 40px rgba(232,74,74,0.08)",
         }}
       >
-        <DialogHeader>
+        <DialogHeader className="px-5 pt-5 pb-3 shrink-0">
           <DialogTitle className="text-white" style={chakra}>
             Avslutt tur
           </DialogTitle>
         </DialogHeader>
-        <div className="space-y-4 mt-2">
+        <div className="space-y-4 px-5 pb-3 overflow-y-auto flex-1 min-h-0">
           <div className="grid grid-cols-2 gap-3">
             <Stat label="Varighet" value={`${elapsedMinutes} min`} />
             <Stat label="Øyeblikk" value={String(moments.length)} />
@@ -98,24 +99,30 @@ export function StopSessionDialog({
             </div>
           </div>
 
-          <div className="flex gap-2 justify-end pt-1">
-            <Button
-              type="button"
-              variant="ghost"
-              onClick={() => onOpenChange(false)}
-              className="text-white/60 hover:text-white"
-            >
-              Lukk
-            </Button>
-            <Button
-              type="button"
-              onClick={handleStop}
-              disabled={isStopping}
-              className="bg-[#2dd4a8] text-[#070b10] hover:bg-[#34eab8]"
-            >
-              {isStopping ? <Loader2 className="w-4 h-4 animate-spin" /> : "Avslutt tur"}
-            </Button>
-          </div>
+        </div>
+        <div
+          className="flex gap-2 justify-end px-5 py-3 border-t border-white/[0.06] shrink-0"
+          style={{
+            background: "hsl(215 30% 9%)",
+            paddingBottom: "calc(0.75rem + env(safe-area-inset-bottom))",
+          }}
+        >
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={() => onOpenChange(false)}
+            className="text-white/60 hover:text-white"
+          >
+            Lukk
+          </Button>
+          <Button
+            type="button"
+            onClick={handleStop}
+            disabled={isStopping}
+            className="bg-[#2dd4a8] text-[#070b10] hover:bg-[#34eab8]"
+          >
+            {isStopping ? <Loader2 className="w-4 h-4 animate-spin" /> : "Avslutt tur"}
+          </Button>
         </div>
       </DialogContent>
     </Dialog>
