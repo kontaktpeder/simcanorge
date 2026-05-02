@@ -133,6 +133,7 @@ export function AddMomentDialog({
     setImageFile(null);
     setNote("");
     setRegnr("");
+    setTitleOrModel("");
     setMatch(null);
     if (previewUrl) URL.revokeObjectURL(previewUrl);
     setPreviewUrl(null);
