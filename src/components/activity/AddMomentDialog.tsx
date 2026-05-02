@@ -453,7 +453,7 @@ export function AddMomentDialog({
           <Button
             type="button"
             onClick={handleSubmit}
-            disabled={isAdding || (!imageFile && !note.trim() && !regnr.trim())}
+            disabled={isAdding || (!imageFile && !note.trim() && !regnr.trim() && !titleOrModel.trim())}
             className="bg-[#2dd4a8] text-[#070b10] hover:bg-[#34eab8]"
           >
             {isAdding ? <Loader2 className="w-4 h-4 animate-spin" /> : "Lagre"}
