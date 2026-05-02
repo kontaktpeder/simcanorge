@@ -25,6 +25,7 @@ interface UnknownCar extends CarWithSpottingMedia {
 
 export default function UkjenteBiler() {
   const [identifyTarget, setIdentifyTarget] = useState<{ id: string; title: string } | null>(null);
+  const [relationshipTarget, setRelationshipTarget] = useState<{ id: string; title: string } | null>(null);
 
   const { data, isLoading } = useQuery({
     queryKey: ["unknown-cars"],
