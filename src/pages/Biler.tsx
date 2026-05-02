@@ -620,6 +620,23 @@ function EditorialBlock({ block, index, onRequestRelationship }: EditorialBlockP
     </div>
   ) : null;
 
+  const showRelCta = !!onRequestRelationship && !isUnknownSpotting;
+  const relButton = showRelCta ? (
+    <button
+      type="button"
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        onRequestRelationship!({ id: car.id, title: car.title });
+      }}
+      className="inline-flex items-center gap-1.5 text-[10px] uppercase tracking-[0.15em] text-[#34eab8] hover:text-white border border-[#34eab8]/30 hover:border-[#34eab8]/70 rounded-full px-3 py-1.5 transition-colors bg-black/20 backdrop-blur-sm"
+      style={oswald}
+    >
+      <Link2 className="w-3 h-3" />
+      Knytt relasjon
+    </button>
+  ) : null;
+
   switch (module) {
     case 'hero':
       return (
