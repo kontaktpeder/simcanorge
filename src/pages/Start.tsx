@@ -15,6 +15,7 @@ import { useLatestCompletedSession } from "@/hooks/useLatestCompletedSession";
 import { useActivitySession, type ActivityType } from "@/hooks/useActivitySession";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { track, trackScreenViewOnce } from "@/lib/analytics";
+import { resolveSpottingCoverFromRow } from "@/lib/spottingMedia";
 
 const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
 const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
@@ -31,9 +32,14 @@ const ACTIVITY_TYPES: {
 ];
 
 interface CarImageMini {
-  id: string;
+  id?: string;
   image_url: string;
   sort_order: number | null;
+}
+interface CarEventMini {
+  visibility: string;
+  occurred_at: string;
+  car_event_images: { image_url: string; sort_order: number }[] | null;
 }
 interface CarMini {
   id: string;
@@ -42,8 +48,12 @@ interface CarMini {
   year: number | null;
   brand: string | null;
   published_at: string | null;
+  source?: string | null;
+  identification_status?: string | null;
   car_images: CarImageMini[];
+  car_events?: CarEventMini[] | null;
 }
+
 
 /**
  * Start.tsx — ny default landing for innloggede brukere.
@@ -128,13 +138,17 @@ export default function Start() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("cars")
-        .select("id, title, slug, year, brand, published_at, car_images(id, image_url, sort_order)")
+        .select(
+          `id, title, slug, year, brand, published_at, source, identification_status,
+           car_images(id, image_url, sort_order),
+           car_events(visibility, occurred_at, car_event_images(image_url, sort_order))`
+        )
         .not("published_at", "is", null)
         .lte("published_at", new Date().toISOString())
         .order("published_at", { ascending: false })
         .limit(2);
       if (error) throw error;
-      return (data ?? []) as CarMini[];
+      return (data ?? []) as unknown as CarMini[];
     },
   });
 
@@ -460,9 +474,16 @@ function PreviewCarTile({
   onClick?: () => void;
   hrefOverride?: string;
 }) {
-  const img = car.car_images?.sort(
+  const sortedImg = car.car_images?.slice().sort(
     (a, b) => (a.sort_order ?? 99) - (b.sort_order ?? 99),
   )[0];
+  let coverUrl: string | undefined = sortedImg?.image_url;
+  if (!coverUrl) {
+    coverUrl = resolveSpottingCoverFromRow(car as any)?.image_url ?? undefined;
+  }
+  const isUnknownSpotting =
+    car.source === "spotting" &&
+    (car.identification_status === "unknown" || car.identification_status === "needs_review");
   const isPublished = !!car.published_at;
   const href = hrefOverride ?? (isPublished ? `/biler/${car.slug}` : `/dashboard/bil/${car.id}`);
 
