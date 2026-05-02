@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { compressImage, generateImageId } from "@/lib/imageCompression";
+import { buildSpottingCarInsertMeta } from "@/lib/spottingCarInsertMeta";
 import { toast } from "sonner";
 import type { ActivityVisibility } from "./useActivitySession";
 
