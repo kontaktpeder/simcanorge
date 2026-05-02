@@ -838,12 +838,15 @@ function EditorialBlock({ block, index, onRequestRelationship }: EditorialBlockP
                     {excerpt}
                   </p>
                 )}
-                <span
-                  className="inline-block text-[10px] tracking-[0.15em] text-[#34eab8] uppercase pt-2"
-                  style={oswald}
-                >
-                  Les historien →
-                </span>
+                <div className="flex items-center gap-3 pt-2">
+                  <span
+                    className="inline-block text-[10px] tracking-[0.15em] text-[#34eab8] uppercase"
+                    style={oswald}
+                  >
+                    Les historien →
+                  </span>
+                  {relButton}
+                </div>
               </div>
             </div>
           </LinkWrapper>
