@@ -26,6 +26,7 @@ import { SaveCarButton } from "@/components/car/SaveCarButton";
 import { FEATURES } from "@/config/features";
 import carSilhouette from "@/assets/car-silhouette.png";
 import { BrandLoader } from "@/components/brand/BrandLoader";
+import { resolveSpottingCoverFromRow } from "@/lib/spottingMedia";
 
 const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
 const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
