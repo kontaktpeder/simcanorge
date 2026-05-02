@@ -558,8 +558,19 @@ function EditorialBlock({ block, index }: EditorialBlockProps): React.ReactNode 
   const gridClasses = getGridClasses(size);
 
   const sortedImages = [...(car.car_images ?? [])].sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
-  const primaryImage = sortedImages[0]?.image_url;
-  const imageAlt = sortedImages[0]?.alt_text || car.title;
+  let primaryImage: string | undefined = sortedImages[0]?.image_url;
+  let imageAlt: string = sortedImages[0]?.alt_text || car.title;
+  if (!primaryImage) {
+    const cover = resolveSpottingCoverFromRow(car as any);
+    if (cover?.image_url) {
+      primaryImage = cover.image_url;
+      imageAlt = cover.alt_text || car.title;
+    }
+  }
+
+  const isUnknownSpotting =
+    car.source === "spotting" &&
+    (car.identification_status === "unknown" || car.identification_status === "needs_review");
 
   const excerpt = car.story
     ? car.story.slice(0, module === 'hero' ? 200 : module === 'feature' ? 150 : 80) + (car.story.length > 80 ? '...' : '')
@@ -577,6 +588,9 @@ function EditorialBlock({ block, index }: EditorialBlockProps): React.ReactNode 
     }
     return <Link to={carLink} className={className}>{children}</Link>;
   };
+
+  const displayTitle = isUnknownSpotting ? "Ukjent bil" : car.title;
+  const displaySubtitle = isUnknownSpotting ? "Hjelp med å identifisere bilen" : null;
 
   const showSave = FEATURES.savedCars && !FEATURES.simpleLaunchMode;
   const saveOverlay = showSave ? (
