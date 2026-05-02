@@ -219,8 +219,8 @@ function SpotCarDialogInner({ trigger, onSpotted }: SpotCarDialogProps) {
       successTitle = "Ukjent bil lagt inn";
       successText = "Andre kan nå hjelpe å identifisere bilen.";
     } else {
-      successTitle = "Ny bil lagt inn";
-      successText = "Bilen er opprettet fra spottingen din.";
+      successTitle = "Bil lagt inn";
+      successText = "Bilen er publisert som observert. Du kan åpne siden og dele videre.";
     }
   }
 
