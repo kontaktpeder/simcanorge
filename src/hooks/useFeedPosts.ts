@@ -21,8 +21,9 @@ export function useFeedPosts(filters?: FeedFilters) {
             id, display_name, slug, avatar_url
           ),
           car:cars!feed_posts_car_id_fkey(
-            id, title, slug,
-            car_images(image_url, sort_order)
+            id, title, slug, source, identification_status,
+            car_images(image_url, sort_order),
+            car_events(visibility, occurred_at, car_event_images(image_url, sort_order))
           ),
           marketplace_item:marketplace_items!feed_posts_marketplace_item_id_fkey(
             id, title, slug,

@@ -26,6 +26,7 @@ import { SaveCarButton } from "@/components/car/SaveCarButton";
 import { FEATURES } from "@/config/features";
 import carSilhouette from "@/assets/car-silhouette.png";
 import { BrandLoader } from "@/components/brand/BrandLoader";
+import { resolveSpottingCoverFromRow } from "@/lib/spottingMedia";
 
 const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
 const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
@@ -43,14 +44,22 @@ interface CarPost {
   published_at: string | null;
   category: string;
   editorial_status: string | null;
+  source?: string | null;
+  identification_status?: string | null;
   car_images: {
     image_url: string;
     alt_text: string | null;
     sort_order?: number | null;
   }[];
+  car_events?: {
+    visibility: string;
+    occurred_at: string;
+    car_event_images: { image_url: string; sort_order: number; alt_text?: string | null }[] | null;
+  }[] | null;
   image_count?: number;
   event_count?: number;
 }
+
 
 const ITEMS_PER_PAGE = 20;
 
@@ -89,8 +98,9 @@ const Biler = () => {
       .from("cars")
       .select(`
         id, title, slug, brand, model, year, story, tags, featured, 
-        published_at, category, editorial_status,
-        car_images(image_url, alt_text, sort_order)
+        published_at, category, editorial_status, source, identification_status,
+        car_images(image_url, alt_text, sort_order),
+        car_events(visibility, occurred_at, car_event_images(image_url, sort_order))
       `, { count: 'exact' })
       .not("published_at", "is", null)
       .lte("published_at", new Date().toISOString())
@@ -549,8 +559,19 @@ function EditorialBlock({ block, index }: EditorialBlockProps): React.ReactNode 
   const gridClasses = getGridClasses(size);
 
   const sortedImages = [...(car.car_images ?? [])].sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
-  const primaryImage = sortedImages[0]?.image_url;
-  const imageAlt = sortedImages[0]?.alt_text || car.title;
+  let primaryImage: string | undefined = sortedImages[0]?.image_url;
+  let imageAlt: string = sortedImages[0]?.alt_text || car.title;
+  if (!primaryImage) {
+    const cover = resolveSpottingCoverFromRow(car as any);
+    if (cover?.image_url) {
+      primaryImage = cover.image_url;
+      imageAlt = cover.alt_text || car.title;
+    }
+  }
+
+  const isUnknownSpotting =
+    car.source === "spotting" &&
+    (car.identification_status === "unknown" || car.identification_status === "needs_review");
 
   const excerpt = car.story
     ? car.story.slice(0, module === 'hero' ? 200 : module === 'feature' ? 150 : 80) + (car.story.length > 80 ? '...' : '')
@@ -568,6 +589,9 @@ function EditorialBlock({ block, index }: EditorialBlockProps): React.ReactNode 
     }
     return <Link to={carLink} className={className}>{children}</Link>;
   };
+
+  const displayTitle = isUnknownSpotting ? "Ukjent bil" : car.title;
+  const displaySubtitle = isUnknownSpotting ? "Hjelp med å identifisere bilen" : null;
 
   const showSave = FEATURES.savedCars && !FEATURES.simpleLaunchMode;
   const saveOverlay = showSave ? (
@@ -614,9 +638,14 @@ function EditorialBlock({ block, index }: EditorialBlockProps): React.ReactNode 
                     className="text-[1.2rem] md:text-[1.8rem] lg:text-[2.2rem] text-white leading-tight mb-3 md:mb-4 uppercase font-bold italic"
                     style={chakra}
                   >
-                    {car.title}
+                    {displayTitle}
                   </h2>
-                  {excerpt && (
+                  {displaySubtitle && (
+                    <p className="text-[#34eab8] text-[12px] md:text-[13px] uppercase tracking-[0.15em] mb-3" style={oswald}>
+                      {displaySubtitle}
+                    </p>
+                  )}
+                  {!isUnknownSpotting && excerpt && (
                     <p className="hidden md:block text-white/70 text-sm lg:text-base max-w-2xl leading-relaxed mb-4 line-clamp-2">
                       {excerpt}
                     </p>
@@ -669,9 +698,11 @@ function EditorialBlock({ block, index }: EditorialBlockProps): React.ReactNode 
                 className="text-[14px] md:text-[16px] tracking-[0.03em] uppercase font-bold italic text-white group-hover:text-[#34eab8] transition-colors"
                 style={chakra}
               >
-                {car.title}
+                {displayTitle}
               </h3>
-              {excerpt && (
+              {displaySubtitle ? (
+                <p className="text-[#34eab8] text-[11px] uppercase tracking-[0.12em]" style={oswald}>{displaySubtitle}</p>
+              ) : excerpt && (
                 <p className="text-white/50 text-sm line-clamp-2" style={oswald}>
                   {excerpt}
                 </p>
@@ -714,8 +745,11 @@ function EditorialBlock({ block, index }: EditorialBlockProps): React.ReactNode 
                   className="text-[12px] md:text-[13px] tracking-[0.03em] text-white uppercase font-bold italic"
                   style={chakra}
                 >
-                  {car.model}
+                  {isUnknownSpotting ? "Ukjent bil" : car.model}
                 </h3>
+                {displaySubtitle && (
+                  <p className="text-[#34eab8] text-[10px] uppercase tracking-[0.12em] mt-1" style={oswald}>{displaySubtitle}</p>
+                )}
               </div>
             </div>
           </LinkWrapper>
@@ -756,9 +790,11 @@ function EditorialBlock({ block, index }: EditorialBlockProps): React.ReactNode 
                   className="text-[14px] md:text-[16px] tracking-[0.03em] uppercase leading-tight font-bold italic text-white group-hover:text-[#34eab8] transition-colors"
                   style={chakra}
                 >
-                  {car.title}
+                  {displayTitle}
                 </h3>
-                {excerpt && (
+                {displaySubtitle ? (
+                  <p className="text-[#34eab8] text-[11px] uppercase tracking-[0.12em]" style={oswald}>{displaySubtitle}</p>
+                ) : excerpt && (
                   <p className="text-white/40 text-sm line-clamp-2 leading-relaxed" style={oswald}>
                     {excerpt}
                   </p>

@@ -43,3 +43,13 @@ export function resolveSpottingCoverFromRow(
   }
   return null;
 }
+
+/** Convenience: returns the cover URL only. */
+export function resolveCoverUrl(row: CarWithSpottingMedia): string | null {
+  return resolveSpottingCoverFromRow(row)?.image_url ?? null;
+}
+
+/** Nested select fragment to use in supabase queries that need spotting fallback. */
+export const SPOTTING_COVER_SELECT =
+  "car_images(image_url, alt_text, sort_order), car_events(visibility, occurred_at, car_event_images(image_url, sort_order))";
+
