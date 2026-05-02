@@ -19,11 +19,13 @@ import { getResponsiveImageProps, IMAGE_SIZES, getThumbnailUrl } from "@/lib/ima
 import { 
   ArrowLeft, Calendar, Wrench, ArrowRight, ChevronLeft, ChevronRight, Car, 
   Facebook, Twitter, Link as LinkIcon, Check, Instagram, X, Youtube, ExternalLink,
-  Tag, Gauge, FileText, Share2, ChevronDown, Pencil
+  Tag, Gauge, FileText, Share2, ChevronDown, Pencil, Link2
 } from "lucide-react";
 import { toast } from "sonner";
 import { CreateCTA } from "@/components/ui/CreateCTA";
 import { BrandLoader } from "@/components/brand/BrandLoader";
+import { FEATURES } from "@/config/features";
+import { RelationshipRequestDialog } from "@/components/car/relationship/RelationshipRequestDialog";
 
 const SITE_URL = (() => {
   if (typeof window !== "undefined") {
