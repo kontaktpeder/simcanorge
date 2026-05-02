@@ -760,6 +760,7 @@ function EditorialBlock({ block, index, onRequestRelationship }: EditorialBlockP
       return (
         <article className={`${gridClasses} group relative`}>
           {saveOverlay}
+          {relButton && <div className="absolute top-2 left-2 z-30">{relButton}</div>}
           <LinkWrapper className="block">
             <div className="relative aspect-[4/3] overflow-hidden bg-muted transition-all duration-500 group-hover:-translate-y-1 group-hover:shadow-lg">
               {primaryImage && (
