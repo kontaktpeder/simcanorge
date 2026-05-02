@@ -642,6 +642,7 @@ function EditorialBlock({ block, index, onRequestRelationship }: EditorialBlockP
       return (
         <article className={`${gridClasses} relative group`}>
           {saveOverlay}
+          {relButton && <div className="absolute top-3 left-3 z-30">{relButton}</div>}
           <LinkWrapper className="block">
             <div className="relative aspect-[16/9] md:aspect-[21/9] overflow-hidden bg-muted">
               {primaryImage && (
