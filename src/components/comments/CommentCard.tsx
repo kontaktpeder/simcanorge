@@ -117,8 +117,8 @@ export function CommentCard({ comment, carId, eventId, marketplaceItemId, feedPo
                     if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleSaveEdit();
                     if (e.key === "Escape") { setIsEditing(false); setEditBody(comment.body); }
                   }}
-                  className={`w-full bg-transparent border-b px-0 py-2 resize-none focus:outline-none transition-colors leading-relaxed text-[14px] ${
-                    light ? "border-neutral-300 focus:border-neutral-500 text-neutral-700" : "border-white/[0.10] focus:border-white/[0.25] text-white/70"
+                  className={`w-full bg-transparent border-b px-0 py-2 resize-none focus:outline-none transition-colors leading-relaxed text-[15px] ${
+                    light ? "border-neutral-300 focus:border-neutral-500 text-neutral-800" : "border-white/[0.12] focus:border-[#34eab8]/60 text-white/90"
                   }`}
                 />
                 <div className="flex items-center gap-3 mt-2">
