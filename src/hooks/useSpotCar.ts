@@ -12,10 +12,17 @@ export interface SpotCarInput {
   note?: string;
 }
 
+export type SpotIdentificationStatus = "unknown" | "needs_review" | "identified" | null;
+
 export interface SpotCarResult {
   carId: string;
   eventId: string;
+  /** Backwards-compat alias for createdNewCar */
   isNewCar: boolean;
+  createdNewCar: boolean;
+  matchedExistingCar: boolean;
+  identificationStatus: SpotIdentificationStatus;
+  slug: string | null;
 }
 
 function normalizeRegnr(regnr: string): string {
@@ -53,7 +60,10 @@ export function useSpotCar() {
     try {
       // 1) Try to find existing car by registration number
       let carId: string | null = null;
-      let isNewCar = false;
+      let slug: string | null = null;
+      let matchedExistingCar = false;
+      let createdNewCar = false;
+      let identificationStatus: SpotIdentificationStatus = null;
       const regnrNormalized = input.registrationNumber ? normalizeRegnr(input.registrationNumber) : "";
 
       if (regnrNormalized.length >= 2) {
@@ -61,7 +71,10 @@ export function useSpotCar() {
           p_normalized: regnrNormalized,
         });
         if (matches && Array.isArray(matches) && matches.length > 0) {
-          carId = (matches[0] as { id: string }).id;
+          const row = matches[0] as { id: string; slug: string | null };
+          carId = row.id;
+          slug = row.slug ?? null;
+          matchedExistingCar = true;
         }
       }
 
@@ -88,11 +101,14 @@ export function useSpotCar() {
             created_by_user_id: user.id,
             identification_status: isUnknown ? "unknown" : "identified",
           })
-          .select("id")
+          .select("id, slug, identification_status")
           .single();
         if (createErr || !created) throw createErr ?? new Error("Kunne ikke opprette bil");
-        carId = (created as { id: string }).id;
-        isNewCar = true;
+        const createdRow = created as { id: string; slug: string | null; identification_status: string | null };
+        carId = createdRow.id;
+        slug = createdRow.slug ?? null;
+        identificationStatus = (createdRow.identification_status as SpotIdentificationStatus) ?? (isUnknown ? "unknown" : "identified");
+        createdNewCar = true;
       }
 
       // 3) Create the spotting car_event (public)
@@ -141,8 +157,16 @@ export function useSpotCar() {
       if (imgErr) throw imgErr;
 
       queryClient.invalidateQueries({ queryKey: ["car-events", carId] });
-      toast.success(isNewCar ? "Bil registrert og spotting lagret" : "Spotting lagret");
-      return { carId, eventId, isNewCar };
+      // Success-toast intentionally omitted — SpotCarDialog renders a success panel.
+      return {
+        carId,
+        eventId,
+        isNewCar: createdNewCar,
+        createdNewCar,
+        matchedExistingCar,
+        identificationStatus,
+        slug,
+      };
     } catch (err) {
       console.error("spotCar error", err);
       toast.error("Kunne ikke lagre spotting");
