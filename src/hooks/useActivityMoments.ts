@@ -66,39 +66,55 @@ export function useActivityMoments(sessionId?: string) {
       visibility?: ActivityVisibility;
       carId?: string | null;
       registrationNumber?: string | null;
+      titleOrModel?: string | null;
     }) => {
       if (!user) throw new Error("not_authenticated");
 
       // 1) Resolve car_id via regnr if provided and no explicit carId
       let carId: string | null = input.carId ?? null;
       const regnrNormalized = input.registrationNumber ? normalizeRegnr(input.registrationNumber) : "";
-      if (!carId && regnrNormalized.length >= 2) {
+      const titleTrimmed = (input.titleOrModel ?? "").trim();
+      const hasRegnr = regnrNormalized.length >= 2;
+      const hasTitle = titleTrimmed.length > 0;
+
+      if (!carId && hasRegnr) {
         const { data: matches } = await supabase.rpc("find_cars_by_registration_number", {
           p_normalized: regnrNormalized,
         });
         if (matches && Array.isArray(matches) && matches.length > 0) {
           carId = (matches[0] as { id: string }).id;
-        } else {
-          // Create minimal unclaimed car
-          const titleBase = "Bil sett underveis";
-          const baseSlug = slugify(`${titleBase}-${Date.now()}`);
-          const { data: created, error: createErr } = await supabase
-            .from("cars")
-            .insert({
-              title: titleBase,
-              model: "Ukjent",
-              slug: baseSlug,
-              source: "spotting",
-              status: "submitted",
-              category: "registrert",
-              created_by_user_id: user.id,
-            })
-            .select("id")
-            .single();
-          if (createErr || !created) throw createErr ?? new Error("Kunne ikke opprette bil");
-          carId = (created as { id: string }).id;
         }
       }
+
+      // If still no car, create one (regnr without match, OR only title, OR only image/note)
+      if (!carId) {
+        const meta = buildSpottingCarInsertMeta({
+          registrationNumberRaw: input.registrationNumber,
+          registrationNumberNormalized: regnrNormalized,
+          titleOrModel: input.titleOrModel,
+        });
+        const baseSlug = slugify(`${meta.displayTitle}-${Date.now()}`);
+        const { data: created, error: createErr } = await supabase
+          .from("cars")
+          .insert({
+            title: meta.displayTitle,
+            model: meta.displayModel,
+            slug: baseSlug,
+            source: "spotting",
+            status: "submitted",
+            category: "registrert",
+            created_by_user_id: user.id,
+            identification_status: meta.identification_status,
+            published_at: new Date().toISOString(),
+            ...(meta.registration_number ? { registration_number: meta.registration_number } : {}),
+          })
+          .select("id")
+          .single();
+        if (createErr || !created) throw createErr ?? new Error("Kunne ikke opprette bil");
+        carId = (created as { id: string }).id;
+      }
+      // Mark used to silence unused warnings (read for clarity)
+      void hasTitle;
 
       // 2) Upload optional image
       let imageUrl: string | null = null;
