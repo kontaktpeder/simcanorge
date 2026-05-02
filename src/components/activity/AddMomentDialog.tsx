@@ -48,6 +48,7 @@ export function AddMomentDialog({
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [note, setNote] = useState("");
   const [regnr, setRegnr] = useState("");
+  const [titleOrModel, setTitleOrModel] = useState("");
   const [match, setMatch] = useState<CarMatch | null>(null);
   const [isLookingUp, setIsLookingUp] = useState(false);
 
