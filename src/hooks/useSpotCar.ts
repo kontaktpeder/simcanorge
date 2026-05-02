@@ -4,6 +4,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useQueryClient } from "@tanstack/react-query";
 import { compressImage, generateImageId, getCarEventImagePath } from "@/lib/imageCompression";
 import { toast } from "sonner";
+import { buildSpottingCarInsertMeta } from "@/lib/spottingCarInsertMeta";
 
 export interface SpotCarInput {
   imageFile: File;
