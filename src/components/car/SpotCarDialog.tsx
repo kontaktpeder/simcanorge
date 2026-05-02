@@ -58,6 +58,7 @@ function SpotCarDialogInner({ trigger, onSpotted }: SpotCarDialogProps) {
   const [match, setMatch] = useState<CarMatch | null>(null);
   const [isLookingUp, setIsLookingUp] = useState(false);
   const [relOpen, setRelOpen] = useState(false);
+  const [successResult, setSuccessResult] = useState<SpotCarResult | null>(null);
 
   // Debounced regnr lookup
   useEffect(() => {
