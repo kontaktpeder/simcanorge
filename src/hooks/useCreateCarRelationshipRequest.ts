@@ -7,7 +7,10 @@ export type RelationshipRequestSource =
   | "manual"
   | "regnr_gate"
   | "spotting"
-  | "activity_moment";
+  | "activity_moment"
+  | "biler_list"
+  | "bil_detalj"
+  | "ukjente_biler";
 
 export interface CreateRelationshipRequestInput {
   carId: string;

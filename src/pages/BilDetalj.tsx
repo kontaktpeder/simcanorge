@@ -19,11 +19,13 @@ import { getResponsiveImageProps, IMAGE_SIZES, getThumbnailUrl } from "@/lib/ima
 import { 
   ArrowLeft, Calendar, Wrench, ArrowRight, ChevronLeft, ChevronRight, Car, 
   Facebook, Twitter, Link as LinkIcon, Check, Instagram, X, Youtube, ExternalLink,
-  Tag, Gauge, FileText, Share2, ChevronDown, Pencil
+  Tag, Gauge, FileText, Share2, ChevronDown, Pencil, Link2
 } from "lucide-react";
 import { toast } from "sonner";
 import { CreateCTA } from "@/components/ui/CreateCTA";
 import { BrandLoader } from "@/components/brand/BrandLoader";
+import { FEATURES } from "@/config/features";
+import { RelationshipRequestDialog } from "@/components/car/relationship/RelationshipRequestDialog";
 
 const SITE_URL = (() => {
   if (typeof window !== "undefined") {
@@ -119,6 +121,7 @@ const BilDetalj = () => {
   const [showFeedComposer, setShowFeedComposer] = useState(false);
   const [composerInitialBody, setComposerInitialBody] = useState<string | undefined>(undefined);
   const [showPostPublishOverlay, setShowPostPublishOverlay] = useState(false);
+  const [relationshipDialogOpen, setRelationshipDialogOpen] = useState(false);
 
   // Owner detection: car_owners join from query
   const carOwners = (car as any)?.car_owners as { user_id: string }[] | undefined;
@@ -604,6 +607,24 @@ const BilDetalj = () => {
                   )}
                 </div>
 
+                {!isOwner && FEATURES.relationshipRequestsV1 && (
+                  <div className="mb-6">
+                    <button
+                      type="button"
+                      onClick={() => setRelationshipDialogOpen(true)}
+                      className="inline-flex items-center gap-2 px-4 py-2.5 text-[12px] uppercase tracking-[0.15em] text-[#070b10] font-bold transition-all hover:scale-[1.02] rounded-full"
+                      style={{
+                        fontFamily: "'Chakra Petch', sans-serif",
+                        background: 'linear-gradient(135deg, #34eab8 0%, #2dd4a8 100%)',
+                        boxShadow: '0 6px 18px rgba(52,234,184,0.25), inset 0 1px 0 rgba(255,255,255,0.3)',
+                      }}
+                    >
+                      <Link2 className="w-4 h-4" />
+                      Knytt relasjon til bilen
+                    </button>
+                  </div>
+                )}
+
                 {/* Tags */}
                 {car.tags && car.tags.length > 0 && (
                   <div className="flex flex-wrap gap-2 mb-6 stagger-children">
@@ -1017,6 +1038,16 @@ const BilDetalj = () => {
             variant="card"
           />
         </div>
+      )}
+
+      {!isOwner && FEATURES.relationshipRequestsV1 && (
+        <RelationshipRequestDialog
+          open={relationshipDialogOpen}
+          onOpenChange={setRelationshipDialogOpen}
+          carId={car.id}
+          carTitle={car.title}
+          source="bil_detalj"
+        />
       )}
     </Layout>
   );

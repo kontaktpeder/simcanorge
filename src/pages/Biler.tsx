@@ -3,7 +3,8 @@ import { Link, useSearchParams } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { Footer } from "@/components/layout/Footer";
 import { supabase } from "@/integrations/supabase/client";
-import { Car, ChevronLeft, ChevronRight, SlidersHorizontal, X } from "lucide-react";
+import { Car, ChevronLeft, ChevronRight, SlidersHorizontal, X, Link2 } from "lucide-react";
+import { RelationshipRequestDialog } from "@/components/car/relationship/RelationshipRequestDialog";
 import { Helmet } from "react-helmet-async";
 import {
   groupCarsByModule,
@@ -69,6 +70,7 @@ const Biler = () => {
   const [categoryCounts, setCategoryCounts] = useState<Record<string, number>>({});
   const [sidePanelOpen, setSidePanelOpen] = useState(false);
   const [panelExpanded, setPanelExpanded] = useState(false);
+  const [relationshipTarget, setRelationshipTarget] = useState<{ id: string; title: string } | null>(null);
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(0);
@@ -422,6 +424,11 @@ const Biler = () => {
                         key={block.key}
                         block={block}
                         index={index}
+                        onRequestRelationship={
+                          FEATURES.relationshipRequestsV1
+                            ? (c) => setRelationshipTarget(c)
+                            : undefined
+                        }
                       />
                     ))}
                   </div>
@@ -545,6 +552,15 @@ const Biler = () => {
           
         </div>
       </div>
+      {relationshipTarget && (
+        <RelationshipRequestDialog
+          open={!!relationshipTarget}
+          onOpenChange={(o) => !o && setRelationshipTarget(null)}
+          carId={relationshipTarget.id}
+          carTitle={relationshipTarget.title}
+          source="biler_list"
+        />
+      )}
     </Layout>
   );
 };
@@ -552,9 +568,10 @@ const Biler = () => {
 interface EditorialBlockProps {
   block: CarBlock<CarPost>;
   index: number;
+  onRequestRelationship?: (car: { id: string; title: string }) => void;
 }
 
-function EditorialBlock({ block, index }: EditorialBlockProps): React.ReactNode {
+function EditorialBlock({ block, index, onRequestRelationship }: EditorialBlockProps): React.ReactNode {
   const { car, module, size } = block;
   const gridClasses = getGridClasses(size);
 
@@ -603,11 +620,29 @@ function EditorialBlock({ block, index }: EditorialBlockProps): React.ReactNode 
     </div>
   ) : null;
 
+  const showRelCta = !!onRequestRelationship && !isUnknownSpotting;
+  const relButton = showRelCta ? (
+    <button
+      type="button"
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        onRequestRelationship!({ id: car.id, title: car.title });
+      }}
+      className="inline-flex items-center gap-1.5 text-[10px] uppercase tracking-[0.15em] text-[#34eab8] hover:text-white border border-[#34eab8]/30 hover:border-[#34eab8]/70 rounded-full px-3 py-1.5 transition-colors bg-black/20 backdrop-blur-sm"
+      style={oswald}
+    >
+      <Link2 className="w-3 h-3" />
+      Knytt relasjon
+    </button>
+  ) : null;
+
   switch (module) {
     case 'hero':
       return (
         <article className={`${gridClasses} relative group`}>
           {saveOverlay}
+          {relButton && <div className="absolute top-3 left-3 z-30">{relButton}</div>}
           <LinkWrapper className="block">
             <div className="relative aspect-[16/9] md:aspect-[21/9] overflow-hidden bg-muted">
               {primaryImage && (
@@ -707,12 +742,15 @@ function EditorialBlock({ block, index }: EditorialBlockProps): React.ReactNode 
                   {excerpt}
                 </p>
               )}
-              <span
-                className="inline-block text-[10px] tracking-[0.15em] text-[#34eab8] uppercase pt-2"
-                style={oswald}
-              >
-                Les historien →
-              </span>
+              <div className="flex items-center gap-3 pt-1">
+                <span
+                  className="inline-block text-[10px] tracking-[0.15em] text-[#34eab8] uppercase"
+                  style={oswald}
+                >
+                  Les historien →
+                </span>
+                {relButton}
+              </div>
             </div>
           </LinkWrapper>
         </article>
@@ -722,6 +760,7 @@ function EditorialBlock({ block, index }: EditorialBlockProps): React.ReactNode 
       return (
         <article className={`${gridClasses} group relative`}>
           {saveOverlay}
+          {relButton && <div className="absolute top-2 left-2 z-30">{relButton}</div>}
           <LinkWrapper className="block">
             <div className="relative aspect-[4/3] overflow-hidden bg-muted transition-all duration-500 group-hover:-translate-y-1 group-hover:shadow-lg">
               {primaryImage && (
@@ -799,12 +838,15 @@ function EditorialBlock({ block, index }: EditorialBlockProps): React.ReactNode 
                     {excerpt}
                   </p>
                 )}
-                <span
-                  className="inline-block text-[10px] tracking-[0.15em] text-[#34eab8] uppercase pt-2"
-                  style={oswald}
-                >
-                  Les historien →
-                </span>
+                <div className="flex items-center gap-3 pt-2">
+                  <span
+                    className="inline-block text-[10px] tracking-[0.15em] text-[#34eab8] uppercase"
+                    style={oswald}
+                  >
+                    Les historien →
+                  </span>
+                  {relButton}
+                </div>
               </div>
             </div>
           </LinkWrapper>

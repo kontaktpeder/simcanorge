@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import { Car as CarIcon, HelpCircle } from "lucide-react";
+import { Car as CarIcon, HelpCircle, Link2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { IdentifyCarDialog } from "@/components/car/IdentifyCarDialog";
+import { RelationshipRequestDialog } from "@/components/car/relationship/RelationshipRequestDialog";
+import { FEATURES } from "@/config/features";
 import {
   resolveSpottingCoverFromRow,
   type CarWithSpottingMedia,
@@ -23,6 +25,7 @@ interface UnknownCar extends CarWithSpottingMedia {
 
 export default function UkjenteBiler() {
   const [identifyTarget, setIdentifyTarget] = useState<{ id: string; title: string } | null>(null);
+  const [relationshipTarget, setRelationshipTarget] = useState<{ id: string; title: string } | null>(null);
 
   const { data, isLoading } = useQuery({
     queryKey: ["unknown-cars"],
@@ -101,15 +104,27 @@ export default function UkjenteBiler() {
                       {car.title}
                     </h2>
                   </div>
-                  <Button
-                    type="button"
-                    size="sm"
-                    className="mt-auto"
-                    onClick={() => setIdentifyTarget({ id: car.id, title: car.title })}
-                  >
-                    <HelpCircle className="h-4 w-4 mr-1.5" />
-                    Vet du hva dette er?
-                  </Button>
+                  <div className="mt-auto flex flex-col gap-2">
+                    <Button
+                      type="button"
+                      size="sm"
+                      onClick={() => setIdentifyTarget({ id: car.id, title: car.title })}
+                    >
+                      <HelpCircle className="h-4 w-4 mr-1.5" />
+                      Vet du hva dette er?
+                    </Button>
+                    {FEATURES.relationshipRequestsV1 && (
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        onClick={() => setRelationshipTarget({ id: car.id, title: car.title })}
+                      >
+                        <Link2 className="h-4 w-4 mr-1.5" />
+                        Knytt relasjon
+                      </Button>
+                    )}
+                  </div>
                 </div>
               </article>
             );
@@ -123,6 +138,16 @@ export default function UkjenteBiler() {
           onOpenChange={(o) => !o && setIdentifyTarget(null)}
           carId={identifyTarget.id}
           carTitle={identifyTarget.title}
+        />
+      )}
+
+      {relationshipTarget && (
+        <RelationshipRequestDialog
+          open={!!relationshipTarget}
+          onOpenChange={(o) => !o && setRelationshipTarget(null)}
+          carId={relationshipTarget.id}
+          carTitle={relationshipTarget.title}
+          source="ukjente_biler"
         />
       )}
     </Layout>
