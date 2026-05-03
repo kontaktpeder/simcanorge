@@ -7,6 +7,7 @@ import { useFeedPosts } from "@/hooks/useFeedPosts";
 import { FeedCard } from "@/components/feed/FeedCard";
 import { ExploreMomentCta } from "@/components/explore/ExploreMomentCta";
 import { ExploreInlineComposer } from "@/components/explore/ExploreInlineComposer";
+import { RecentQuestionsBlock } from "@/components/questions/RecentQuestionsBlock";
 import { AddMomentDialog } from "@/components/activity/AddMomentDialog";
 
 const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
@@ -44,6 +45,11 @@ export default function Index() {
           {/* Inline composer */}
           <div className="mb-5">
             <ExploreInlineComposer />
+          </div>
+
+          {/* Recent questions */}
+          <div className="mb-6">
+            <RecentQuestionsBlock />
           </div>
 
           {/* Loading */}

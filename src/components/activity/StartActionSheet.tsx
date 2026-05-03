@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
-import { Camera, Car, Eye, Plus } from "lucide-react";
+import { Camera, Car, Eye, MessageCircleQuestion, Plus } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useState } from "react";
 import { SpotCarDialog } from "@/components/car/SpotCarDialog";
@@ -21,8 +22,18 @@ interface Props {
  */
 export function StartActionSheet({ open, onOpenChange, activitiesEnabled = true }: Props) {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const { startSession, isStarting, activeSession } = useActivitySession({ enabled: activitiesEnabled });
   const [momentOpen, setMomentOpen] = useState(false);
+
+  const handleAskQuestion = () => {
+    onOpenChange(false);
+    if (!user) {
+      navigate("/login?returnUrl=/sporsmal/ny");
+      return;
+    }
+    navigate("/sporsmal/ny");
+  };
 
   const handleStartDrive = async () => {
     if (!activitiesEnabled) return;
@@ -74,6 +85,12 @@ export function StartActionSheet({ open, onOpenChange, activitiesEnabled = true 
               label="Legg til øyeblikk"
               desc="Et bilde, en bil eller et notat"
               onClick={handleOpenMoment}
+            />
+            <ActionButton
+              Icon={MessageCircleQuestion}
+              label="Still spørsmål"
+              desc="Få svar fra fellesskapet"
+              onClick={handleAskQuestion}
             />
             <ActionButton
               Icon={Plus}
