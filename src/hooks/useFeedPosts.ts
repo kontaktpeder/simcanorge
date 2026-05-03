@@ -17,6 +17,7 @@ export function useFeedPosts(filters?: FeedFilters) {
         .select(`
           id, created_at, updated_at, post_type, body, page_id,
           snapshot_title, snapshot_image_url, snapshot_entity_type,
+          car_event_id,
           author:person_profiles!feed_posts_author_profile_id_fkey(
             id, display_name, slug, avatar_url
           ),
@@ -24,6 +25,10 @@ export function useFeedPosts(filters?: FeedFilters) {
             id, title, slug, source, identification_status,
             car_images(image_url, sort_order),
             car_events(visibility, occurred_at, car_event_images(image_url, sort_order))
+          ),
+          source_event:car_events!feed_posts_car_event_id_fkey(
+            id, category, event_type, title, description, occurred_at, visibility, data,
+            car_event_images(image_url, sort_order, alt_text)
           ),
           marketplace_item:marketplace_items!feed_posts_marketplace_item_id_fkey(
             id, title, slug,
