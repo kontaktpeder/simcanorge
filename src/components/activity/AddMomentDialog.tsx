@@ -37,13 +37,14 @@ export function AddMomentDialog({
   open,
   onOpenChange,
 }: {
-  sessionId: string;
+  sessionId?: string | null;
   open: boolean;
   onOpenChange: (v: boolean) => void;
 }) {
-  const { addMoment, isAdding } = useActivityMoments(sessionId);
+  const { addMoment, isAdding } = useActivityMoments(sessionId ?? undefined);
   const { user } = useAuth();
   const relMutation = useCreateCarRelationshipRequest();
+  const [visibility, setVisibility] = useState<"public" | "private">("public");
 
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -176,9 +177,10 @@ export function AddMomentDialog({
   const handleSubmit = async () => {
     if (!imageFile && !note.trim() && !regnr.trim() && !composedTitle) return;
     await addMoment({
-      sessionId,
+      sessionId: sessionId ?? null,
       imageFile,
       note: note.trim() || null,
+      visibility,
       registrationNumber: regnr.trim() || null,
       titleOrModel: composedTitle || null,
     });
@@ -246,6 +248,35 @@ export function AddMomentDialog({
               />
             </label>
           )}
+
+          {/* Synlighet */}
+          <div>
+            <div className="rounded-lg border border-white/10 bg-[hsl(215_25%_8%)] p-1 grid grid-cols-2 gap-1">
+              <button
+                type="button"
+                onClick={() => setVisibility("public")}
+                className={`px-3 py-2 rounded-md text-[11px] uppercase tracking-[0.1em] font-bold transition-all ${
+                  visibility === "public" ? "bg-[#2dd4a8] text-[#070b10]" : "text-white/60 hover:text-white"
+                }`}
+                style={chakra}
+              >
+                Offentlig
+              </button>
+              <button
+                type="button"
+                onClick={() => setVisibility("private")}
+                className={`px-3 py-2 rounded-md text-[11px] uppercase tracking-[0.1em] font-bold transition-all ${
+                  visibility === "private" ? "bg-white/15 text-white" : "text-white/60 hover:text-white"
+                }`}
+                style={chakra}
+              >
+                Privat
+              </button>
+            </div>
+            <p className="text-[10px] text-white/40 mt-1.5" style={oswald}>
+              {visibility === "public" ? "Synlig i feed og på bilens tidslinje" : "Kun for deg – vises ikke i feed"}
+            </p>
+          </div>
 
           <div>
             <Label className="text-[11px] uppercase tracking-[0.15em] text-white/40" style={oswald}>

@@ -1133,6 +1133,7 @@ export type Database = {
         Row: {
           author_profile_id: string
           body: string | null
+          car_event_id: string | null
           car_id: string | null
           created_at: string
           event_id: string | null
@@ -1149,6 +1150,7 @@ export type Database = {
         Insert: {
           author_profile_id: string
           body?: string | null
+          car_event_id?: string | null
           car_id?: string | null
           created_at?: string
           event_id?: string | null
@@ -1165,6 +1167,7 @@ export type Database = {
         Update: {
           author_profile_id?: string
           body?: string | null
+          car_event_id?: string | null
           car_id?: string | null
           created_at?: string
           event_id?: string | null
@@ -1191,6 +1194,13 @@ export type Database = {
             columns: ["author_profile_id"]
             isOneToOne: false
             referencedRelation: "public_person_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "feed_posts_car_event_id_fkey"
+            columns: ["car_event_id"]
+            isOneToOne: false
+            referencedRelation: "car_events"
             referencedColumns: ["id"]
           },
           {

@@ -60,7 +60,7 @@ export function useActivityMoments(sessionId?: string) {
 
   const addMutation = useMutation({
     mutationFn: async (input: {
-      sessionId: string;
+      sessionId?: string | null;
       imageFile?: File | null;
       note?: string | null;
       visibility?: ActivityVisibility;
@@ -69,6 +69,8 @@ export function useActivityMoments(sessionId?: string) {
       titleOrModel?: string | null;
     }) => {
       if (!user) throw new Error("not_authenticated");
+      const visibility: ActivityVisibility = input.visibility ?? "public";
+      const sessionId = input.sessionId?.trim() ? input.sessionId : null;
 
       // 1) Resolve car_id via regnr if provided and no explicit carId
       let carId: string | null = input.carId ?? null;
@@ -120,7 +122,10 @@ export function useActivityMoments(sessionId?: string) {
       let imageUrl: string | null = null;
       if (input.imageFile) {
         const { file } = await compressImage(input.imageFile);
-        const path = `activity-moments/${input.sessionId}/${generateImageId()}.webp`;
+        const folder = sessionId
+          ? `activity-moments/${sessionId}`
+          : `car-moments/${user.id}`;
+        const path = `${folder}/${generateImageId()}.webp`;
         const { error: upErr } = await supabase.storage
           .from("simca-images")
           .upload(path, file, { contentType: "image/webp" });
@@ -133,11 +138,11 @@ export function useActivityMoments(sessionId?: string) {
       const now = new Date();
       const { error } = await supabase.from("car_events").insert({
         car_id: carId,
-        activity_session_id: input.sessionId,
+        activity_session_id: sessionId,
         category: "bruk",
         event_type: "moment",
         title: input.note?.slice(0, 80) || "Øyeblikk",
-        visibility: input.visibility ?? "private",
+        visibility,
         occurred_at: now.toISOString(),
         year: now.getFullYear(),
         description: input.note ?? null,
@@ -145,15 +150,20 @@ export function useActivityMoments(sessionId?: string) {
         data: {
           image_url: imageUrl,
           note: input.note ?? null,
-          // Internal only — never rendered publicly
           registration_number_internal: regnrNormalized || null,
         },
       });
       if (error) throw error;
+      return { visibility };
     },
-    onSuccess: () => {
+    onSuccess: (result) => {
       queryClient.invalidateQueries({ queryKey: ["activity-moments", sessionId] });
-      toast.success("Øyeblikk lagret");
+      if (result?.visibility === "public") {
+        queryClient.invalidateQueries({ queryKey: ["feed_posts"] });
+        toast.success("Publisert i feed");
+      } else {
+        toast.success("Lagret");
+      }
     },
     onError: (err) => {
       console.error("addMoment error", err);

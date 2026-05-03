@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import { Car, Eye, Warehouse, ChevronRight, Plus, Footprints, Users, Shield } from "lucide-react";
+import { Car, Eye, Warehouse, ChevronRight, Plus, Shield } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useFeatures } from "@/hooks/useFeatures";
@@ -12,24 +12,12 @@ import { BrandLoader } from "@/components/brand/BrandLoader";
 import { LastTripCard } from "@/components/activity/LastTripCard";
 import { SpotCarDialog } from "@/components/car/SpotCarDialog";
 import { useLatestCompletedSession } from "@/hooks/useLatestCompletedSession";
-import { useActivitySession, type ActivityType } from "@/hooks/useActivitySession";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { StartActionSheet } from "@/components/activity/StartActionSheet";
 import { track, trackScreenViewOnce } from "@/lib/analytics";
 import { resolveSpottingCoverFromRow } from "@/lib/spottingMedia";
 
 const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
 const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
-
-const ACTIVITY_TYPES: {
-  value: ActivityType;
-  label: string;
-  desc: string;
-  Icon: React.ComponentType<{ className?: string }>;
-}[] = [
-  { value: "drive", label: "Kjøretur", desc: "Du kjører en bil", Icon: Car },
-  { value: "walk_spotting", label: "Spotting", desc: "Til fots, ser biler", Icon: Footprints },
-  { value: "meetup", label: "Treff", desc: "Du er på et arrangement", Icon: Users },
-];
 
 interface CarImageMini {
   id?: string;
@@ -71,7 +59,6 @@ export default function Start() {
   const features = useFeatures();
   const activitiesEnabled = !!features.activitySessions;
   const navigate = useNavigate();
-  const { startSession, isStarting } = useActivitySession({ enabled: activitiesEnabled });
   const [drivePickerOpen, setDrivePickerOpen] = useState(false);
 
   useEffect(() => {
@@ -81,17 +68,6 @@ export default function Start() {
   useEffect(() => {
     trackScreenViewOnce("start");
   }, []);
-
-  const handleStartActivity = async (type: ActivityType) => {
-    const intent = type === "drive" ? "drive" : type === "walk_spotting" ? "spot" : "meetup";
-    void track(`${intent}_intent_click`, "start", { intent, activity_type: type });
-    const result = await startSession(type);
-    if (result) {
-      void track("session_started", "start", { activity_type: type, source: "start_intent" });
-      setDrivePickerOpen(false);
-      navigate("/aktiv");
-    }
-  };
 
   // ── Mine biler (2 stk preview) ───────────────────────────────────────────
   const { data: myCars } = useQuery({
@@ -258,44 +234,12 @@ export default function Start() {
             </div>
           </section>
 
-          {/* Aktivitets-picker (drive / walk_spotting / meetup) */}
-          <Dialog open={drivePickerOpen} onOpenChange={setDrivePickerOpen}>
-            <DialogContent className="border-white/10" style={{ background: "hsl(215 25% 10%)" }}>
-              <DialogHeader>
-                <DialogTitle className="text-white" style={chakra}>
-                  Hva gjør du nå?
-                </DialogTitle>
-              </DialogHeader>
-              <div className="space-y-2 mt-2">
-                {ACTIVITY_TYPES.map((t) => {
-                  const Icon = t.Icon;
-                  return (
-                    <button
-                      key={t.value}
-                      type="button"
-                      disabled={isStarting}
-                      onClick={() => handleStartActivity(t.value)}
-                      className="w-full flex items-center gap-3 p-4 rounded-lg border border-white/[0.08] hover:border-[#2dd4a8]/40 transition-all text-left disabled:opacity-50"
-                      style={{ background: "hsl(215 25% 8%)" }}
-                    >
-                      <Icon className="w-5 h-5 text-[#2dd4a8]" />
-                      <div>
-                        <div
-                          className="text-[13px] text-white font-bold uppercase tracking-[0.05em]"
-                          style={chakra}
-                        >
-                          {t.label}
-                        </div>
-                        <div className="text-[11px] text-white/40" style={oswald}>
-                          {t.desc}
-                        </div>
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-            </DialogContent>
-          </Dialog>
+          {/* Aktivitets-/handlingsmeny */}
+          <StartActionSheet
+            open={drivePickerOpen}
+            onOpenChange={setDrivePickerOpen}
+            activitiesEnabled={activitiesEnabled}
+          />
 
           {/* ── 2. Siste aktivitet ─────────────────────────────── */}
           {lastSession && (
