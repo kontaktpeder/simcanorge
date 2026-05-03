@@ -2144,6 +2144,139 @@ export type Database = {
         }
         Relationships: []
       }
+      question_replies: {
+        Row: {
+          author_profile_id: string
+          body: string
+          created_at: string
+          id: string
+          is_deleted: boolean
+          question_id: string
+        }
+        Insert: {
+          author_profile_id: string
+          body: string
+          created_at?: string
+          id?: string
+          is_deleted?: boolean
+          question_id: string
+        }
+        Update: {
+          author_profile_id?: string
+          body?: string
+          created_at?: string
+          id?: string
+          is_deleted?: boolean
+          question_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "question_replies_author_profile_id_fkey"
+            columns: ["author_profile_id"]
+            isOneToOne: false
+            referencedRelation: "person_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "question_replies_author_profile_id_fkey"
+            columns: ["author_profile_id"]
+            isOneToOne: false
+            referencedRelation: "public_person_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "question_replies_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      question_saves: {
+        Row: {
+          created_at: string
+          question_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          question_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          question_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "question_saves_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      questions: {
+        Row: {
+          author_profile_id: string
+          body: string
+          car_id: string | null
+          created_at: string
+          id: string
+          is_deleted: boolean
+          slug: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          author_profile_id: string
+          body: string
+          car_id?: string | null
+          created_at?: string
+          id?: string
+          is_deleted?: boolean
+          slug: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          author_profile_id?: string
+          body?: string
+          car_id?: string | null
+          created_at?: string
+          id?: string
+          is_deleted?: boolean
+          slug?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "questions_author_profile_id_fkey"
+            columns: ["author_profile_id"]
+            isOneToOne: false
+            referencedRelation: "person_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "questions_author_profile_id_fkey"
+            columns: ["author_profile_id"]
+            isOneToOne: false
+            referencedRelation: "public_person_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "questions_car_id_fkey"
+            columns: ["car_id"]
+            isOneToOne: false
+            referencedRelation: "cars"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       saved_cars: {
         Row: {
           car_id: string
