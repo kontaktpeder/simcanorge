@@ -474,7 +474,7 @@ export function CarWizard({ onSuccess, initialRegistrationNumber, skipDuplicateC
               (() => {
                 const missing: string[] = [];
                 if (data.allowEdits === null) missing.push("Velg om vi kan redigere bilen (Ja/Nei)");
-                if (!data.privacyAccepted) missing.push("Godta personvernerklæringen");
+                if (!data.privacyAccepted) missing.push("Godta personvernerklæringen og brukervilkårene");
                 const blocked = missing.length > 0;
                 return (
                   <div className="flex flex-col items-end gap-2">
