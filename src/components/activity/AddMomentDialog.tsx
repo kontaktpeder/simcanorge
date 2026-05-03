@@ -50,6 +50,13 @@ export function AddMomentDialog({
   const [note, setNote] = useState("");
   const [regnr, setRegnr] = useState("");
   const [titleOrModel, setTitleOrModel] = useState("");
+  const [brandId, setBrandId] = useState<number | null>(null);
+  const [brandName, setBrandName] = useState("");
+  const [modelName, setModelName] = useState("");
+  const [brandMode, setBrandMode] = useState<"select" | "other">("select");
+  const [modelMode, setModelMode] = useState<"select" | "other">("select");
+  const { data: brands = [], isLoading: brandsLoading } = useCarBrands();
+  const { data: models = [], isLoading: modelsLoading } = useCarModels(brandId);
   const [match, setMatch] = useState<CarMatch | null>(null);
   const [isLookingUp, setIsLookingUp] = useState(false);
 
