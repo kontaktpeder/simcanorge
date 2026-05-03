@@ -23,7 +23,6 @@ export function StartActionSheet({ open, onOpenChange, activitiesEnabled = true 
   const navigate = useNavigate();
   const { startSession, isStarting, activeSession } = useActivitySession({ enabled: activitiesEnabled });
   const [momentOpen, setMomentOpen] = useState(false);
-  const [spotTrigger, setSpotTrigger] = useState(0);
 
   const handleStartDrive = async () => {
     if (!activitiesEnabled) return;
