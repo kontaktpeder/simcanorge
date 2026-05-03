@@ -1,6 +1,7 @@
 import { useCallback } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { compressImage, generateImageId } from "@/lib/imageCompression";
 import { buildSpottingCarInsertMeta } from "@/lib/spottingCarInsertMeta";
