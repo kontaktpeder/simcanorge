@@ -27,6 +27,7 @@ export default function RegistrerBruker() {
   const returnUrl = safeInternalPath(searchParams.get('returnUrl'), '/app');
 
   const [email, setEmail] = useState('');
+  const [emailConfirm, setEmailConfirm] = useState('');
   const [password, setPassword] = useState('');
   const [password2, setPassword2] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -41,15 +42,22 @@ export default function RegistrerBruker() {
     e.preventDefault();
     setError('');
     setInfo('');
+    const emailTrim = email.trim();
+    const emailConfirmTrim = emailConfirm.trim();
+    if (emailTrim.toLowerCase() !== emailConfirmTrim.toLowerCase()) {
+      setError('E-postadressene stemmer ikke overens');
+      return;
+    }
     if (password !== password2) {
       setError('Passordene er ikke like');
       return;
     }
-    const result = schema.safeParse({ email, password });
+    const result = schema.safeParse({ email: emailTrim, password });
     if (!result.success) {
       setError(result.error.errors[0].message);
       return;
     }
+
     setIsLoading(true);
     try {
       const { data, error } = await supabase.auth.signUp({
@@ -152,6 +160,23 @@ export default function RegistrerBruker() {
                   placeholder="din@epost.no"
                   required
                   autoComplete="email"
+                  className="h-12 text-base bg-background/50 border-border/60 focus:border-primary/60"
+                  style={oswald}
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground block" style={oswald}>
+                  Bekreft e-post
+                </label>
+                <Input
+                  type="email"
+                  value={emailConfirm}
+                  onChange={(e) => setEmailConfirm(e.target.value)}
+                  onPaste={(e) => e.preventDefault()}
+                  placeholder="Skriv e-posten på nytt"
+                  required
+                  autoComplete="off"
                   className="h-12 text-base bg-background/50 border-border/60 focus:border-primary/60"
                   style={oswald}
                 />
