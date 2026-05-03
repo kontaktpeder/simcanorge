@@ -46,6 +46,7 @@ const SendInnBil = lazy(() => import("@/pages/SendInnBil"));
 const LeggTilBil = lazy(() => import("@/pages/LeggTilBil"));
 const Kontakt = lazy(() => import("@/pages/Kontakt"));
 const Personvern = lazy(() => import("@/pages/Personvern"));
+const Brukervilkar = lazy(() => import("@/pages/Brukervilkar"));
 const AcceptInvitation = lazy(() => import("@/pages/AcceptInvitation"));
 const Login = lazy(() => import("@/pages/Login"));
 const GlemtPassord = lazy(() => import("@/pages/GlemtPassord"));
