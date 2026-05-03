@@ -2,7 +2,9 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Helmet } from "react-helmet-async";
-import { User, LogOut, Shield, Trash2, Mail, Calendar, Loader2, AlertTriangle } from "lucide-react";
+import { User, LogOut, Shield, Trash2, Mail, Calendar, Loader2, AlertTriangle, Bookmark, ChevronRight } from "lucide-react";
+import { Link } from "react-router-dom";
+import { useMySavedQuestions } from "@/hooks/useQuestionSave";
 import { Layout } from "@/components/layout/Layout";
 import { EnamelCard, SectionHeader, BigActionButton } from "@/components/ui/garage";
 import { Input } from "@/components/ui/input";
@@ -260,6 +262,9 @@ export default function Konto() {
             </EnamelCard>
           </motion.div>
 
+
+          {/* Mine lagrede spørsmål */}
+          {user && <SavedQuestionsCard />}
 
           {/* Personvern og kontroll - kun synlig når innlogget */}
           {user && (
