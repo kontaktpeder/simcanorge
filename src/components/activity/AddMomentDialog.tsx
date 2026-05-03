@@ -11,6 +11,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useActivityMoments } from "@/hooks/useActivityMoments";
 import { LicensePlateInput } from "@/components/car/wizard/LicensePlateInput";
 import { useCreateCarRelationshipRequest } from "@/hooks/useCreateCarRelationshipRequest";
+import { useCarBrands, useCarModels } from "@/hooks/useCarCatalog";
 import {
   RELATIONSHIP_OPTIONS,
   RELATIONSHIP_NOTE_MAX,
@@ -49,6 +50,13 @@ export function AddMomentDialog({
   const [note, setNote] = useState("");
   const [regnr, setRegnr] = useState("");
   const [titleOrModel, setTitleOrModel] = useState("");
+  const [brandId, setBrandId] = useState<number | null>(null);
+  const [brandName, setBrandName] = useState("");
+  const [modelName, setModelName] = useState("");
+  const [brandMode, setBrandMode] = useState<"select" | "other">("select");
+  const [modelMode, setModelMode] = useState<"select" | "other">("select");
+  const { data: brands = [], isLoading: brandsLoading } = useCarBrands();
+  const { data: models = [], isLoading: modelsLoading } = useCarModels(brandId);
   const [match, setMatch] = useState<CarMatch | null>(null);
   const [isLookingUp, setIsLookingUp] = useState(false);
 
@@ -134,6 +142,11 @@ export function AddMomentDialog({
     setNote("");
     setRegnr("");
     setTitleOrModel("");
+    setBrandId(null);
+    setBrandName("");
+    setModelName("");
+    setBrandMode("select");
+    setModelMode("select");
     setMatch(null);
     if (previewUrl) URL.revokeObjectURL(previewUrl);
     setPreviewUrl(null);
@@ -155,14 +168,19 @@ export function AddMomentDialog({
     }
   };
 
+  const composedTitle = [brandName.trim(), modelName.trim(), titleOrModel.trim()]
+    .filter(Boolean)
+    .join(" ")
+    .trim();
+
   const handleSubmit = async () => {
-    if (!imageFile && !note.trim() && !regnr.trim() && !titleOrModel.trim()) return;
+    if (!imageFile && !note.trim() && !regnr.trim() && !composedTitle) return;
     await addMoment({
       sessionId,
       imageFile,
       note: note.trim() || null,
       registrationNumber: regnr.trim() || null,
-      titleOrModel: titleOrModel.trim() || null,
+      titleOrModel: composedTitle || null,
     });
     reset();
     onOpenChange(false);
@@ -241,19 +259,120 @@ export function AddMomentDialog({
             </p>
           </div>
 
-          <div>
-            <Label className="text-[11px] uppercase tracking-[0.15em] text-white/40" style={oswald}>
-              Modell / tittel (valgfri)
-            </Label>
-            <Input
-              value={titleOrModel}
-              onChange={(e) => setTitleOrModel(e.target.value.slice(0, 80))}
-              placeholder="Volvo 240"
-              className="mt-1.5 bg-[hsl(215_25%_8%)] border-white/10 text-white placeholder:text-white/30"
-            />
-            <p className="text-[10px] text-white/30 mt-1.5" style={oswald}>
-              Brukes som navn hvis vi oppretter en ny bil for øyeblikket.
-            </p>
+          <div className="space-y-3">
+            <div>
+              <Label className="text-[11px] uppercase tracking-[0.15em] text-white/40" style={oswald}>
+                Merke (valgfri)
+              </Label>
+              {brandMode === "select" ? (
+                <select
+                  value={brandName}
+                  onChange={(e) => {
+                    const v = e.target.value;
+                    if (v === "__other__") {
+                      setBrandMode("other");
+                      setBrandName("");
+                      setBrandId(null);
+                      setModelName("");
+                      return;
+                    }
+                    const b = brands.find((x) => x.name === v);
+                    setBrandName(b?.name ?? "");
+                    setBrandId(b?.id ?? null);
+                    setModelName("");
+                    setModelMode("select");
+                  }}
+                  disabled={brandsLoading}
+                  className="mt-1.5 w-full h-11 px-3 text-[14px] rounded-md border border-white/10 bg-[hsl(215_25%_8%)] text-white"
+                >
+                  <option value="">{brandsLoading ? "Laster…" : "Velg merke…"}</option>
+                  {brands.map((b) => (
+                    <option key={b.id} value={b.name}>{b.name}</option>
+                  ))}
+                  <option value="__other__">Annet (skriv inn)</option>
+                </select>
+              ) : (
+                <div className="flex gap-2 mt-1.5">
+                  <Input
+                    value={brandName}
+                    onChange={(e) => { setBrandName(e.target.value); setBrandId(null); }}
+                    placeholder="Skriv inn merke…"
+                    className="bg-[hsl(215_25%_8%)] border-white/10 text-white placeholder:text-white/30"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => { setBrandMode("select"); setBrandName(""); setBrandId(null); }}
+                    className="px-2 text-[11px] text-white/50 hover:text-white underline whitespace-nowrap"
+                  >
+                    Velg fra liste
+                  </button>
+                </div>
+              )}
+            </div>
+
+            <div>
+              <Label className="text-[11px] uppercase tracking-[0.15em] text-white/40" style={oswald}>
+                Modell (valgfri)
+              </Label>
+              {modelMode === "select" && brandId ? (
+                <select
+                  value={modelName}
+                  onChange={(e) => {
+                    const v = e.target.value;
+                    if (v === "__other__") {
+                      setModelMode("other");
+                      setModelName("");
+                      return;
+                    }
+                    setModelName(v);
+                  }}
+                  disabled={!brandId || modelsLoading}
+                  className="mt-1.5 w-full h-11 px-3 text-[14px] rounded-md border border-white/10 bg-[hsl(215_25%_8%)] text-white"
+                >
+                  <option value="">
+                    {!brandId ? "Velg merke først…" : modelsLoading ? "Laster…" : models.length === 0 ? "Ingen modeller – skriv inn" : "Velg modell…"}
+                  </option>
+                  {models.map((m) => (
+                    <option key={m.id} value={m.name}>{m.name}</option>
+                  ))}
+                  <option value="__other__">Annet (skriv inn)</option>
+                </select>
+              ) : (
+                <div className="flex gap-2 mt-1.5">
+                  <Input
+                    value={modelName}
+                    onChange={(e) => setModelName(e.target.value)}
+                    placeholder="Skriv inn modell…"
+                    disabled={!brandName}
+                    className="bg-[hsl(215_25%_8%)] border-white/10 text-white placeholder:text-white/30"
+                  />
+                  {brandId && (
+                    <button
+                      type="button"
+                      onClick={() => { setModelMode("select"); setModelName(""); }}
+                      className="px-2 text-[11px] text-white/50 hover:text-white underline whitespace-nowrap"
+                    >
+                      Velg fra liste
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
+
+            <div>
+              <Label className="text-[11px] uppercase tracking-[0.15em] text-white/40" style={oswald}>
+                Variant / tittel (valgfri)
+              </Label>
+              <Input
+                value={titleOrModel}
+                onChange={(e) => setTitleOrModel(e.target.value.slice(0, 80))}
+                placeholder="F.eks. GL, Turbo"
+                className="mt-1.5 bg-[hsl(215_25%_8%)] border-white/10 text-white placeholder:text-white/30"
+              />
+              <p className="text-[10px] text-white/30 mt-1.5" style={oswald}>
+                Brukes som navn hvis vi oppretter en ny bil for øyeblikket.
+              </p>
+            </div>
           </div>
 
           {isLookingUp && (
