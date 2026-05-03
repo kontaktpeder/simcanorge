@@ -51,6 +51,7 @@ const Login = lazy(() => import("@/pages/Login"));
 const GlemtPassord = lazy(() => import("@/pages/GlemtPassord"));
 const NyttPassord = lazy(() => import("@/pages/NyttPassord"));
 const SokOmTilgang = lazy(() => import("@/pages/SokOmTilgang"));
+const RegistrerBruker = lazy(() => import("@/pages/RegistrerBruker"));
 const StartAnnonse = lazy(() => import("@/pages/StartAnnonse"));
 const RegistrerBil = lazy(() => import("@/pages/RegistrerBil"));
 const Hjem = lazy(() => import("@/pages/Hjem"));
@@ -157,6 +158,7 @@ const rawRoutes: RouteConfig[] = [
   { path: "/glemt-passord", element: GlemtPassord, isPublic: true },
   { path: "/nytt-passord", element: NyttPassord, isPublic: true },
   { path: "/sok-om-tilgang", element: SokOmTilgang, isPublic: true },
+  { path: "/registrer", element: RegistrerBruker, isPublic: true },
   { path: "/start-annonse", element: StartAnnonse, isPublic: true },
   { path: "/registrer-bil", element: RegistrerBil, isPublic: true },
   { path: "/s/:slug", element: PublicPagePage, isPublic: true },
