@@ -162,7 +162,9 @@ export function useActivityMoments(sessionId?: string) {
       queryClient.invalidateQueries({ queryKey: ["activity-moments", sessionId] });
       if (result?.visibility === "public") {
         queryClient.invalidateQueries({ queryKey: ["feed_posts"] });
-        toast.success("Publisert i feed");
+        toast.success("Publisert i Utforsk", {
+          action: { label: "Se i Utforsk", onClick: () => navigate("/hjem") },
+        });
       } else {
         toast.success("Lagret");
       }
