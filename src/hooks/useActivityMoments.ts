@@ -1,6 +1,7 @@
 import { useCallback } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { compressImage, generateImageId } from "@/lib/imageCompression";
 import { buildSpottingCarInsertMeta } from "@/lib/spottingCarInsertMeta";
@@ -35,6 +36,7 @@ function slugify(input: string): string {
 export function useActivityMoments(sessionId?: string) {
   const { user } = useAuth();
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const { data: moments = [], isLoading } = useQuery({
     queryKey: ["activity-moments", sessionId],
@@ -160,7 +162,9 @@ export function useActivityMoments(sessionId?: string) {
       queryClient.invalidateQueries({ queryKey: ["activity-moments", sessionId] });
       if (result?.visibility === "public") {
         queryClient.invalidateQueries({ queryKey: ["feed_posts"] });
-        toast.success("Publisert i feed");
+        toast.success("Publisert i Utforsk", {
+          action: { label: "Se i Utforsk", onClick: () => navigate("/hjem") },
+        });
       } else {
         toast.success("Lagret");
       }

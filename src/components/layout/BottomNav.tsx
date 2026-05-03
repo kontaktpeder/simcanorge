@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Warehouse, Search, Play, Route, Home } from "lucide-react";
+import { Warehouse, Play, Route, Compass, User } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useFeatures } from "@/hooks/useFeatures";
 import { useActivitySession } from "@/hooks/useActivitySession";
@@ -79,14 +79,14 @@ export function BottomNav() {
 
   if (hidden) return null;
 
-  // Layout: Hjem · Biler · [Start] · Turer · Garasje
+  // Layout: Utforsk · Garasje · [Start] · Turer · Profil
   const left: Item[] = [
-    { href: "/", label: "Hjem", Icon: Home },
-    { href: "/biler", label: "Biler", Icon: Search },
+    { href: "/hjem", label: "Utforsk", Icon: Compass },
+    { href: "/min-garasje", label: "Garasje", Icon: Warehouse },
   ];
   const right: Item[] = [
     { href: "/turer", label: "Turer", Icon: Route, badge: "Ny" },
-    { href: "/min-garasje", label: "Garasje", Icon: Warehouse },
+    { href: "/dashboard/min-profil", label: "Profil", Icon: User },
   ];
 
   const isActive = (href: string) =>
