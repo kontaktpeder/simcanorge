@@ -44,23 +44,9 @@ export default function Index() {
         }}
       >
         <div className="max-w-[800px] mx-auto px-3 sm:px-5 pt-4 sm:pt-6">
-          {/* Top CTA */}
+          {/* Inline composer */}
           <div className="mb-5">
-            <ExploreMomentCta
-              variant="top"
-              subtitle={
-                user
-                  ? "Del en bil du så, en tur du tok, eller noe fra garasjen."
-                  : "Logg inn for å dele øyeblikk fra bilhverdagen."
-              }
-              onClick={() => {
-                if (!user) {
-                  window.location.href = "/login?returnUrl=/hjem";
-                  return;
-                }
-                openMoment();
-              }}
-            />
+            <ExploreInlineComposer />
           </div>
 
           {/* Loading */}
