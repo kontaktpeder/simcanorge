@@ -126,7 +126,7 @@ export function BottomNav() {
             <button
               type="button"
               onClick={() => activitiesEnabled && setPickerOpen(true)}
-              disabled={!activitiesEnabled || isStarting}
+              disabled={!activitiesEnabled}
               className="pointer-events-auto w-16 h-16 rounded-full flex items-center justify-center transition-all hover:scale-[1.04] active:scale-[0.97] disabled:opacity-40"
               style={{
                 background: "linear-gradient(135deg, #34eab8 0%, #2ab89a 60%, #1cb896 100%)",
@@ -148,43 +148,11 @@ export function BottomNav() {
         </div>
       </nav>
 
-      <Dialog open={pickerOpen} onOpenChange={setPickerOpen}>
-        <DialogContent className="border-white/10" style={{ background: "hsl(215 25% 10%)" }}>
-          <DialogHeader>
-            <DialogTitle className="text-white" style={chakra}>
-              Hva gjør du nå?
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-2 mt-2">
-            {TYPES.map((t) => {
-              const Icon = t.Icon;
-              return (
-                <button
-                  key={t.value}
-                  type="button"
-                  disabled={isStarting}
-                  onClick={() => handleStart(t.value)}
-                  className="w-full flex items-center gap-3 p-4 rounded-lg border border-white/[0.08] hover:border-[#2dd4a8]/40 transition-all text-left disabled:opacity-50"
-                  style={{ background: "hsl(215 25% 8%)" }}
-                >
-                  <Icon className="w-5 h-5 text-[#2dd4a8]" />
-                  <div>
-                    <div
-                      className="text-[13px] text-white font-bold uppercase tracking-[0.05em]"
-                      style={chakra}
-                    >
-                      {t.label}
-                    </div>
-                    <div className="text-[11px] text-white/40" style={oswald}>
-                      {t.desc}
-                    </div>
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-        </DialogContent>
-      </Dialog>
+      <StartActionSheet
+        open={pickerOpen}
+        onOpenChange={setPickerOpen}
+        activitiesEnabled={activitiesEnabled}
+      />
     </>
   );
 }
