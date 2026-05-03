@@ -168,14 +168,19 @@ export function AddMomentDialog({
     }
   };
 
+  const composedTitle = [brandName.trim(), modelName.trim(), titleOrModel.trim()]
+    .filter(Boolean)
+    .join(" ")
+    .trim();
+
   const handleSubmit = async () => {
-    if (!imageFile && !note.trim() && !regnr.trim() && !titleOrModel.trim()) return;
+    if (!imageFile && !note.trim() && !regnr.trim() && !composedTitle) return;
     await addMoment({
       sessionId,
       imageFile,
       note: note.trim() || null,
       registrationNumber: regnr.trim() || null,
-      titleOrModel: titleOrModel.trim() || null,
+      titleOrModel: composedTitle || null,
     });
     reset();
     onOpenChange(false);
