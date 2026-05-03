@@ -7,6 +7,7 @@ import { useFeedPosts } from "@/hooks/useFeedPosts";
 import { FeedCard } from "@/components/feed/FeedCard";
 import { ExploreTopBar } from "@/components/explore/ExploreTopBar";
 import { ExploreMomentCta } from "@/components/explore/ExploreMomentCta";
+import { ExploreInlineComposer } from "@/components/explore/ExploreInlineComposer";
 import { AddMomentDialog } from "@/components/activity/AddMomentDialog";
 
 const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
