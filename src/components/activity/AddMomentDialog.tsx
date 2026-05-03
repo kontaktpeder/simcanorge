@@ -142,6 +142,11 @@ export function AddMomentDialog({
     setNote("");
     setRegnr("");
     setTitleOrModel("");
+    setBrandId(null);
+    setBrandName("");
+    setModelName("");
+    setBrandMode("select");
+    setModelMode("select");
     setMatch(null);
     if (previewUrl) URL.revokeObjectURL(previewUrl);
     setPreviewUrl(null);
