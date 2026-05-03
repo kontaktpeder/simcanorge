@@ -530,7 +530,7 @@ function PreviewCarTile({
           </p>
           {isUnknownSpotting ? (
             <p className="text-[10px] text-[#34eab8] mt-0.5 uppercase tracking-wider" style={oswald}>
-              Hjelp med å identifisere
+              Hjelp med å identifisere bil
             </p>
           ) : car.year && (
             <p className="text-[10px] text-white/35 mt-0.5" style={oswald}>
