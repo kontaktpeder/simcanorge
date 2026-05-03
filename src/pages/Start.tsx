@@ -14,6 +14,7 @@ import { SpotCarDialog } from "@/components/car/SpotCarDialog";
 import { useLatestCompletedSession } from "@/hooks/useLatestCompletedSession";
 import { useActivitySession, type ActivityType } from "@/hooks/useActivitySession";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { StartActionSheet } from "@/components/activity/StartActionSheet";
 import { track, trackScreenViewOnce } from "@/lib/analytics";
 import { resolveSpottingCoverFromRow } from "@/lib/spottingMedia";
 
