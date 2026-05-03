@@ -258,44 +258,12 @@ export default function Start() {
             </div>
           </section>
 
-          {/* Aktivitets-picker (drive / walk_spotting / meetup) */}
-          <Dialog open={drivePickerOpen} onOpenChange={setDrivePickerOpen}>
-            <DialogContent className="border-white/10" style={{ background: "hsl(215 25% 10%)" }}>
-              <DialogHeader>
-                <DialogTitle className="text-white" style={chakra}>
-                  Hva gjør du nå?
-                </DialogTitle>
-              </DialogHeader>
-              <div className="space-y-2 mt-2">
-                {ACTIVITY_TYPES.map((t) => {
-                  const Icon = t.Icon;
-                  return (
-                    <button
-                      key={t.value}
-                      type="button"
-                      disabled={isStarting}
-                      onClick={() => handleStartActivity(t.value)}
-                      className="w-full flex items-center gap-3 p-4 rounded-lg border border-white/[0.08] hover:border-[#2dd4a8]/40 transition-all text-left disabled:opacity-50"
-                      style={{ background: "hsl(215 25% 8%)" }}
-                    >
-                      <Icon className="w-5 h-5 text-[#2dd4a8]" />
-                      <div>
-                        <div
-                          className="text-[13px] text-white font-bold uppercase tracking-[0.05em]"
-                          style={chakra}
-                        >
-                          {t.label}
-                        </div>
-                        <div className="text-[11px] text-white/40" style={oswald}>
-                          {t.desc}
-                        </div>
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-            </DialogContent>
-          </Dialog>
+          {/* Aktivitets-/handlingsmeny */}
+          <StartActionSheet
+            open={drivePickerOpen}
+            onOpenChange={setDrivePickerOpen}
+            activitiesEnabled={activitiesEnabled}
+          />
 
           {/* ── 2. Siste aktivitet ─────────────────────────────── */}
           {lastSession && (
