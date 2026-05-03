@@ -81,11 +81,6 @@ export default function UkjenteBiler() {
                 key={car.id}
                 className="rounded-lg border border-border/40 bg-card overflow-hidden flex flex-col"
               >
-                {/* Check if it's a completely unidentified spotting to show the custom title */}
-                {(() => {
-                  const isUnidentified = car.title === "Hjelp med å identifisere bil";
-                  return null; // Logic is handled inside the rendering
-                })()}
                 <Link to={`/biler/${car.slug ?? car.id}`} className="block aspect-[4/3] bg-muted relative">
                   {firstImage ? (
                     <img
