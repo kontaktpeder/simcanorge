@@ -23,6 +23,7 @@ export function useFeedPosts(filters?: FeedFilters) {
           ),
           car:cars!feed_posts_car_id_fkey(
             id, title, slug, source, identification_status,
+            brand, model, year, tags,
             car_images(image_url, sort_order),
             car_events(visibility, occurred_at, car_event_images(image_url, sort_order))
           ),

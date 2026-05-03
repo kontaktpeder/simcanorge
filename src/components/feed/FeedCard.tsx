@@ -61,7 +61,7 @@ function getAllImages(post: FeedPost) {
   return imgs as { url: string; alt?: string }[];
 }
 
-export function FeedCard({ post }: { post: FeedPost }) {
+export function FeedCard({ post, variant = "default" }: { post: FeedPost; variant?: "default" | "explore" }) {
   const { user } = useAuth();
   const { data: myProfile } = useMyPersonProfile();
   const { mutate: toggleLike } = useLikeFeedPost();
@@ -125,6 +125,180 @@ export function FeedCard({ post }: { post: FeedPost }) {
       setShowDeleteConfirm(false);
     }
   }
+
+  // ─── Explore variant: image-first, compact ───
+  if (variant === "explore") {
+    const carBrand = (car as any)?.brand as string | null;
+    const carModel = (car as any)?.model as string | null;
+    const carYear = (car as any)?.year as number | null;
+    const carTags = ((car as any)?.tags ?? []) as string[];
+    const subline = [carBrand, carModel, carYear].filter(Boolean).join(" • ");
+    const bodyText = post.body ?? (post as any).source_event?.description ?? null;
+
+    return (
+      <>
+        <article className="group">
+          {/* Image */}
+          <div className="relative overflow-hidden rounded-lg mb-3 bg-white/[0.04] border border-white/[0.06]">
+            {heroImage ? (
+              entityLink ? (
+                <Link to={entityLink} className="block">
+                  <img src={heroImage} alt={entityTitle ?? ""}
+                    className="w-full aspect-[4/5] sm:aspect-video object-cover transition-transform duration-700 group-hover:scale-[1.02]" />
+                </Link>
+              ) : (
+                <img src={heroImage} alt={entityTitle ?? ""}
+                  className="w-full aspect-[4/5] sm:aspect-video object-cover" />
+              )
+            ) : (
+              <div className="w-full aspect-[4/5] sm:aspect-video flex items-center justify-center">
+                <Car className="w-12 h-12 text-white/15" />
+              </div>
+            )}
+
+            {/* Type badge overlay top-left */}
+            <div className="absolute top-2 left-2 flex items-center gap-1.5 px-2 py-1 rounded-md bg-black/60 backdrop-blur-sm">
+              <Icon className={`w-3 h-3 ${meta.color}`} />
+              <span className={`text-[9px] uppercase tracking-[0.16em] font-bold ${meta.color}`} style={oswald}>
+                {meta.label}
+              </span>
+            </div>
+
+            {/* Own post menu */}
+            {isOwn && !isEditing && !showDeleteConfirm && (
+              <div className="absolute top-2 right-2">
+                <button onClick={() => setShowMenu(!showMenu)}
+                  className="p-1.5 rounded-md bg-black/60 backdrop-blur-sm text-white/70 hover:text-white">
+                  <MoreHorizontal className="w-4 h-4" />
+                </button>
+                {showMenu && (
+                  <div className="absolute right-0 top-full mt-1 bg-[#1a2332] border border-white/[0.1] py-1 z-20 min-w-[130px] rounded-lg shadow-lg">
+                    <button onClick={() => { setIsEditing(true); setShowMenu(false); }}
+                      className="flex items-center gap-2 w-full px-4 py-2.5 text-[12px] uppercase tracking-[0.1em] text-white/50 hover:text-white hover:bg-white/[0.06] font-bold" style={oswald}>
+                      <Pencil className="w-3 h-3" /> Rediger
+                    </button>
+                    <button onClick={handleDelete}
+                      className="flex items-center gap-2 w-full px-4 py-2.5 text-[12px] uppercase tracking-[0.1em] text-red-500/60 hover:text-red-400 hover:bg-white/[0.06] font-bold" style={oswald}>
+                      <Trash2 className="w-3 h-3" /> Slett
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Title */}
+          {entityTitle && (
+            entityLink ? (
+              <Link to={entityLink}>
+                <h3 className="text-[1.05rem] sm:text-[1.2rem] font-bold text-white hover:text-[#2dd4a8] transition-colors leading-snug" style={oswald}>
+                  {entityTitle}
+                </h3>
+              </Link>
+            ) : (
+              <h3 className="text-[1.05rem] sm:text-[1.2rem] font-bold text-white leading-snug" style={oswald}>
+                {entityTitle}
+              </h3>
+            )
+          )}
+
+          {/* Subline */}
+          {subline && (
+            <p className="text-[12px] uppercase tracking-[0.1em] text-white/45 mt-0.5" style={oswald}>
+              {subline}
+            </p>
+          )}
+
+          {/* Body */}
+          {isEditing ? (
+            <div className="mt-2">
+              <textarea value={editBody} onChange={(e) => setEditBody(e.target.value)} rows={3} autoFocus
+                className="w-full bg-transparent border-b-2 border-white/[0.12] focus:border-[#2dd4a8] text-white/80 text-[14px] px-0 py-2 resize-none focus:outline-none" />
+              <div className="flex items-center gap-3 mt-2">
+                <button onClick={handleSaveEdit} disabled={isEditPending}
+                  className="text-[11px] uppercase tracking-[0.12em] text-[#0c1117] px-4 py-1.5 font-bold rounded"
+                  style={{ ...oswald, background: 'linear-gradient(135deg, #2dd4a8, #14b8a6)' }}>
+                  <Check className="w-3 h-3 inline mr-1" />{isEditPending ? "Lagrer…" : "Lagre"}
+                </button>
+                <button onClick={() => { setIsEditing(false); setEditBody(post.body ?? ""); }}
+                  className="text-[11px] uppercase tracking-[0.1em] text-white/40 hover:text-white/70 font-bold" style={oswald}>
+                  Avbryt
+                </button>
+              </div>
+            </div>
+          ) : (
+            bodyText && (
+              <p className="text-[13.5px] text-white/65 leading-snug mt-2 line-clamp-2">
+                {bodyText}
+              </p>
+            )
+          )}
+
+          {/* Tags */}
+          {carTags.length > 0 && (
+            <div className="flex flex-wrap gap-1.5 mt-2">
+              {carTags.slice(0, 3).map((t) => (
+                <span key={t} className="text-[10px] uppercase tracking-[0.1em] text-[#2dd4a8]/80" style={oswald}>
+                  #{t}
+                </span>
+              ))}
+            </div>
+          )}
+
+          {/* Meta row */}
+          {author && (
+            <Link to={`/profil/${author.slug}`} className="flex items-center gap-2 mt-3 group/author">
+              {author.avatar_url ? (
+                <img src={author.avatar_url} alt="" className="w-6 h-6 rounded-full object-cover ring-1 ring-white/10" />
+              ) : (
+                <div className="w-6 h-6 rounded-full bg-white/[0.08] flex items-center justify-center">
+                  <span className="text-[10px] font-bold text-white/50" style={oswald}>{author.display_name?.[0] ?? "?"}</span>
+                </div>
+              )}
+              <span className="text-[11px] uppercase tracking-[0.08em] text-white/55 group-hover/author:text-white font-bold" style={oswald}>
+                {author.display_name}
+              </span>
+              <span className="text-[10px] text-white/20">·</span>
+              <span className="text-[10px] text-white/35">{timeAgo}</span>
+            </Link>
+          )}
+
+          {/* Inline delete confirm */}
+          {showDeleteConfirm && (
+            <div className="flex items-center gap-3 mt-3">
+              <span className="text-[11px] uppercase tracking-[0.12em] text-red-400 font-bold" style={oswald}>Slett?</span>
+              <button onClick={confirmDelete}
+                className="text-[11px] uppercase tracking-[0.12em] text-white bg-red-600 hover:bg-red-700 px-3 py-1 font-bold rounded" style={oswald}>
+                Ja, slett
+              </button>
+              <button onClick={() => setShowDeleteConfirm(false)} className="text-white/25 hover:text-white/60">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+          )}
+
+          {/* Actions */}
+          <div className="flex items-center gap-5 mt-3">
+            <button onClick={() => setShowComments(!showComments)}
+              className={`flex items-center gap-1.5 transition-colors ${showComments ? "text-white/60" : "text-white/25 hover:text-white/55"}`}>
+              <MessageSquare className="w-4 h-4" />
+              <span className="text-[11px] uppercase tracking-[0.1em] font-bold" style={oswald}>Kommentar</span>
+            </button>
+            <button
+              onClick={() => { if (!user) return; toggleLike({ postId: post.id, liked }); }}
+              className={`flex items-center gap-1.5 transition-colors ${liked ? "text-red-500" : "text-white/25 hover:text-white/55"}`}>
+              <Heart className={`w-4 h-4 ${liked ? "fill-current" : ""}`} />
+              {likeCount > 0 && <span className="text-[12px] font-bold" style={oswald}>{likeCount}</span>}
+            </button>
+          </div>
+
+          {showComments && <CommentSection feedPostId={post.id} />}
+        </article>
+        <ImageLightbox images={allImages} initialIndex={0} isOpen={lightboxOpen} onClose={() => setLightboxOpen(false)} />
+      </>
+    );
+  }
+
   return (
     <>
       <article className="group">
