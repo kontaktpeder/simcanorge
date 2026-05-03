@@ -620,7 +620,7 @@ const BilDetalj = () => {
                       }}
                     >
                       <Link2 className="w-4 h-4" />
-                      Knytt relasjon til bilen
+                      Kjenner du til bilen?
                     </button>
                   </div>
                 )}
