@@ -101,7 +101,7 @@ export default function UkjenteBiler() {
                       Ukjent bil
                     </p>
                     <h2 className="text-base font-semibold truncate" style={chakra}>
-                      {car.title}
+                      {car.title === "Hjelp med å identifisere bil" ? "Ukjent modell" : car.title}
                     </h2>
                   </div>
                   <div className="mt-auto flex flex-col gap-2">
