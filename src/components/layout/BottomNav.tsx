@@ -60,11 +60,10 @@ function NavBtn({ item, active }: { item: Item; active: boolean }) {
 
 export function BottomNav() {
   const { pathname } = useLocation();
-  const navigate = useNavigate();
   const { user } = useAuth();
   const features = useFeatures();
   const activitiesEnabled = !!features.activitySessions;
-  const { activeSession, startSession, isStarting } = useActivitySession({ enabled: activitiesEnabled });
+  const { activeSession } = useActivitySession({ enabled: activitiesEnabled });
   const effectiveActiveSession = activitiesEnabled ? activeSession : null;
   const [pickerOpen, setPickerOpen] = useState(false);
   const visible = useHideOnScroll(10);
@@ -92,12 +91,6 @@ export function BottomNav() {
 
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(href + "/");
-
-  const handleStart = async (type: ActivityType) => {
-    const result = await startSession(type);
-    if (result) navigate("/aktiv");
-    setPickerOpen(false);
-  };
 
   return (
     <>
