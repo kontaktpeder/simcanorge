@@ -160,6 +160,15 @@ export function useSpotCar() {
 
       queryClient.invalidateQueries({ queryKey: ["car-events", carId] });
       queryClient.invalidateQueries({ queryKey: ["unknown-cars"] });
+      queryClient.invalidateQueries({ queryKey: ["feed_posts"] });
+      toast.success("Publisert i Utforsk", {
+        action: {
+          label: "Se i Utforsk",
+          onClick: () => {
+            window.location.assign("/hjem");
+          },
+        },
+      });
       // Success-toast intentionally omitted — SpotCarDialog renders a success panel.
       return {
         carId,
