@@ -8,7 +8,7 @@ import { useHideOnScroll } from "@/hooks/useHideOnScroll";
 import { StartActionSheet } from "@/components/activity/StartActionSheet";
 
 const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
-const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
+
 
 type Item = {
   href: string;
