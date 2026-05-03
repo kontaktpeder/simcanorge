@@ -28,7 +28,7 @@ export function buildSpottingCarInsertMeta(params: {
   const hasTitle = titleTrimmed.length > 0;
   const isUnknown = !hasRegnr && !hasTitle;
 
-  const displayTitle = isUnknown ? "Ukjent bil" : titleTrimmed || "Observert bil";
+  const displayTitle = isUnknown ? "Ukjent bil" : titleTrimmed || "Hjelp med å identifisere bil";
   const displayModel = isUnknown ? "Ukjent" : titleTrimmed || "Ukjent";
 
   const regForCar = hasRegnr

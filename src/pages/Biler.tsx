@@ -603,7 +603,7 @@ function EditorialBlock({ block, index, onRequestRelationship }: EditorialBlockP
   };
 
   const displayTitle = isUnknownSpotting ? "Ukjent bil" : car.title;
-  const displaySubtitle = isUnknownSpotting ? "Hjelp med å identifisere bilen" : null;
+  const displaySubtitle = isUnknownSpotting ? "Hjelp med å identifisere bil" : null;
 
   const showSave = FEATURES.savedCars && !FEATURES.simpleLaunchMode;
   const saveOverlay = showSave ? (
