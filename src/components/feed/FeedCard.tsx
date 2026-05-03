@@ -20,6 +20,8 @@ const TYPE_META: Record<string, { label: string; icon: typeof Pencil; color: str
   manual:                { label: "Oppdatering",  icon: Pencil,       color: "text-white/40" },
   car_published:         { label: "Ny bil",        icon: Car,          color: "text-[#2dd4a8]" },
   car_update:            { label: "Bil oppdatert", icon: Car,          color: "text-[#2dd4a8]" },
+  car_moment:            { label: "Øyeblikk",      icon: Camera,       color: "text-[#2dd4a8]" },
+  car_spotting:          { label: "Spotting",      icon: Eye,          color: "text-[#2dd4a8]" },
   marketplace_published: { label: "Til salgs",     icon: ShoppingBag,  color: "text-[#2dd4a8]" },
   event_published:       { label: "Arrangement",   icon: CalendarDays, color: "text-[#2dd4a8]" },
 };
@@ -28,6 +30,25 @@ function getAllImages(post: FeedPost) {
   const car = (post as any).car;
   const marketItem = (post as any).marketplace_item;
   const event = (post as any).event;
+  const sourceEvent = (post as any).source_event;
+
+  // 1) Snapshot direkte på posten
+  if (post.snapshot_image_url) {
+    return [{ url: post.snapshot_image_url }];
+  }
+
+  // 2) Bilder fra source_event (car_event_images / data.image_url)
+  if (sourceEvent) {
+    const evImgs = (sourceEvent.car_event_images ?? [])
+      .slice()
+      .sort((a: any, b: any) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
+      .map((i: any) => ({ url: i.image_url, alt: i.alt_text ?? undefined }));
+    if (evImgs.length > 0) return evImgs;
+    const dataUrl = sourceEvent.data?.image_url;
+    if (dataUrl) return [{ url: dataUrl }];
+  }
+
+  // 3) Eksisterende fallback: bil / annonse / event
   let imgs =
     car?.car_images?.slice().sort((a: any, b: any) => (a.sort_order ?? 0) - (b.sort_order ?? 0)).map((i: any) => ({ url: i.image_url })) ??
     marketItem?.marketplace_images?.slice().sort((a: any, b: any) => (a.sort_order ?? 0) - (b.sort_order ?? 0)).map((i: any) => ({ url: i.image_url })) ??
@@ -37,7 +58,6 @@ function getAllImages(post: FeedPost) {
     const cover = resolveSpottingCoverFromRow(car);
     if (cover?.image_url) imgs = [{ url: cover.image_url }];
   }
-  if (imgs.length === 0 && post.snapshot_image_url) return [{ url: post.snapshot_image_url }];
   return imgs as { url: string; alt?: string }[];
 }
 
