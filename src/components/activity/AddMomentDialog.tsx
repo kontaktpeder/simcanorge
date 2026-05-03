@@ -11,6 +11,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useActivityMoments } from "@/hooks/useActivityMoments";
 import { LicensePlateInput } from "@/components/car/wizard/LicensePlateInput";
 import { useCreateCarRelationshipRequest } from "@/hooks/useCreateCarRelationshipRequest";
+import { useCarBrands, useCarModels } from "@/hooks/useCarCatalog";
 import {
   RELATIONSHIP_OPTIONS,
   RELATIONSHIP_NOTE_MAX,
