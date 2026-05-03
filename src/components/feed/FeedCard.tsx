@@ -61,7 +61,7 @@ function getAllImages(post: FeedPost) {
   return imgs as { url: string; alt?: string }[];
 }
 
-export function FeedCard({ post }: { post: FeedPost }) {
+export function FeedCard({ post, variant = "default" }: { post: FeedPost; variant?: "default" | "explore" }) {
   const { user } = useAuth();
   const { data: myProfile } = useMyPersonProfile();
   const { mutate: toggleLike } = useLikeFeedPost();
