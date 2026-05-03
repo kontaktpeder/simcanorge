@@ -90,7 +90,7 @@ export default function UkjenteBiler() {
                   {firstImage ? (
                     <img
                       src={firstImage}
-                      alt={car.title}
+                      alt={car.title === "Hjelp med å identifisere bil" ? "Ukjent bil" : car.title}
                       loading="lazy"
                       className="w-full h-full object-cover"
                     />
