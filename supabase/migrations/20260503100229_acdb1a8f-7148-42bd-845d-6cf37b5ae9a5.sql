@@ -1,0 +1,1 @@
+UPDATE public.cars SET title = 'Hjelp med å identifisere bil' WHERE source = 'spotting' AND title = 'Bil sett underveis';
