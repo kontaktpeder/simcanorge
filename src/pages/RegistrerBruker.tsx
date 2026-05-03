@@ -167,6 +167,23 @@ export default function RegistrerBruker() {
 
               <div className="space-y-1.5">
                 <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground block" style={oswald}>
+                  Bekreft e-post
+                </label>
+                <Input
+                  type="email"
+                  value={emailConfirm}
+                  onChange={(e) => setEmailConfirm(e.target.value)}
+                  onPaste={(e) => e.preventDefault()}
+                  placeholder="Skriv e-posten på nytt"
+                  required
+                  autoComplete="off"
+                  className="h-12 text-base bg-background/50 border-border/60 focus:border-primary/60"
+                  style={oswald}
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground block" style={oswald}>
                   Passord
                 </label>
                 <Input
