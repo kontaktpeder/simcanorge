@@ -153,6 +153,7 @@ const rawRoutes: RouteConfig[] = [
   { path: "/eier/:slug", element: EierProfil, isPublic: true },
   { path: "/foresporsel", element: Foresporsel, isPublic: true },
   { path: "/personvern", element: Personvern, isPublic: true },
+  { path: "/vilkar", element: Brukervilkar, isPublic: true },
   { path: "/accept-invitation", element: AcceptInvitation, isPublic: true },
   { path: "/i/:token", element: AcceptInvitation, isPublic: true },
   { path: "/login", element: Login, isPublic: true },
