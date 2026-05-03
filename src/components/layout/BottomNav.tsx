@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Warehouse, Search, Users, User, Play, Car, Footprints, Route, Home } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Link, useLocation } from "react-router-dom";
+import { Warehouse, Search, User, Play, Route, Home } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useFeatures } from "@/hooks/useFeatures";
-import { useActivitySession, type ActivityType } from "@/hooks/useActivitySession";
+import { useActivitySession } from "@/hooks/useActivitySession";
 import { useHideOnScroll } from "@/hooks/useHideOnScroll";
+import { StartActionSheet } from "@/components/activity/StartActionSheet";
 
 const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
 const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
