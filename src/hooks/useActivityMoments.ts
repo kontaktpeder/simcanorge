@@ -60,7 +60,7 @@ export function useActivityMoments(sessionId?: string) {
 
   const addMutation = useMutation({
     mutationFn: async (input: {
-      sessionId: string;
+      sessionId?: string | null;
       imageFile?: File | null;
       note?: string | null;
       visibility?: ActivityVisibility;
@@ -69,6 +69,8 @@ export function useActivityMoments(sessionId?: string) {
       titleOrModel?: string | null;
     }) => {
       if (!user) throw new Error("not_authenticated");
+      const visibility: ActivityVisibility = input.visibility ?? "public";
+      const sessionId = input.sessionId?.trim() ? input.sessionId : null;
 
       // 1) Resolve car_id via regnr if provided and no explicit carId
       let carId: string | null = input.carId ?? null;
