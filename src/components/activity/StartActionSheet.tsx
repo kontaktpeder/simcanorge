@@ -44,29 +44,6 @@ export function StartActionSheet({ open, onOpenChange, activitiesEnabled = true 
     navigate("/legg-til-bil");
   };
 
-  const items = [
-    {
-      key: "spot",
-      label: "Spot bil",
-      desc: "Sett en bil du har sett ute",
-      Icon: Eye,
-      render: (
-        <SpotCarDialog
-          trigger={
-            <ActionButton
-              Icon={Eye}
-              label="Spot bil"
-              desc="Sett en bil du har sett ute"
-              onClick={() => onOpenChange(false)}
-            />
-          }
-        />
-      ),
-    },
-  ];
-  void items;
-  void spotTrigger;
-  void setSpotTrigger;
 
   return (
     <>
