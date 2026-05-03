@@ -59,7 +59,6 @@ export default function Start() {
   const features = useFeatures();
   const activitiesEnabled = !!features.activitySessions;
   const navigate = useNavigate();
-  const { startSession, isStarting } = useActivitySession({ enabled: activitiesEnabled });
   const [drivePickerOpen, setDrivePickerOpen] = useState(false);
 
   useEffect(() => {
@@ -69,17 +68,6 @@ export default function Start() {
   useEffect(() => {
     trackScreenViewOnce("start");
   }, []);
-
-  const handleStartActivity = async (type: ActivityType) => {
-    const intent = type === "drive" ? "drive" : type === "walk_spotting" ? "spot" : "meetup";
-    void track(`${intent}_intent_click`, "start", { intent, activity_type: type });
-    const result = await startSession(type);
-    if (result) {
-      void track("session_started", "start", { activity_type: type, source: "start_intent" });
-      setDrivePickerOpen(false);
-      navigate("/aktiv");
-    }
-  };
 
   // ── Mine biler (2 stk preview) ───────────────────────────────────────────
   const { data: myCars } = useQuery({
