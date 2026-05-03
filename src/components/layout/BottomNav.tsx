@@ -17,11 +17,6 @@ type Item = {
   badge?: string;
 };
 
-const TYPES: { value: ActivityType; label: string; desc: string; Icon: React.ComponentType<{ className?: string }> }[] = [
-  { value: "drive", label: "Kjøretur", desc: "Du kjører en bil", Icon: Car },
-  { value: "walk_spotting", label: "Spotting", desc: "Til fots, ser biler", Icon: Footprints },
-  { value: "meetup", label: "Treff", desc: "Du er på et arrangement", Icon: Users },
-];
 
 function NavBtn({ item, active }: { item: Item; active: boolean }) {
   const { Icon } = item;
