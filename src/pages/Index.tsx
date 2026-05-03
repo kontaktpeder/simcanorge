@@ -5,7 +5,6 @@ import { Helmet } from "react-helmet-async";
 import { useAuth } from "@/hooks/useAuth";
 import { useFeedPosts } from "@/hooks/useFeedPosts";
 import { FeedCard } from "@/components/feed/FeedCard";
-import { ExploreTopBar } from "@/components/explore/ExploreTopBar";
 import { ExploreMomentCta } from "@/components/explore/ExploreMomentCta";
 import { ExploreInlineComposer } from "@/components/explore/ExploreInlineComposer";
 import { AddMomentDialog } from "@/components/activity/AddMomentDialog";
@@ -33,8 +32,6 @@ export default function Index() {
           content="Utforsk øyeblikk fra norske bileiere — biler, spotting og hverdagshistorier."
         />
       </Helmet>
-
-      <ExploreTopBar />
 
       <section
         className="relative pb-20"
