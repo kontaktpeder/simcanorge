@@ -121,7 +121,7 @@ export default function UkjenteBiler() {
                         onClick={() => setRelationshipTarget({ id: car.id, title: car.title })}
                       >
                         <Link2 className="h-4 w-4 mr-1.5" />
-                        Knytt relasjon
+                        Kjenner du til bilen?
                       </Button>
                     )}
                   </div>
