@@ -177,9 +177,10 @@ export function AddMomentDialog({
   const handleSubmit = async () => {
     if (!imageFile && !note.trim() && !regnr.trim() && !composedTitle) return;
     await addMoment({
-      sessionId,
+      sessionId: sessionId ?? null,
       imageFile,
       note: note.trim() || null,
+      visibility,
       registrationNumber: regnr.trim() || null,
       titleOrModel: composedTitle || null,
     });
