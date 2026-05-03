@@ -37,13 +37,14 @@ export function AddMomentDialog({
   open,
   onOpenChange,
 }: {
-  sessionId: string;
+  sessionId?: string | null;
   open: boolean;
   onOpenChange: (v: boolean) => void;
 }) {
-  const { addMoment, isAdding } = useActivityMoments(sessionId);
+  const { addMoment, isAdding } = useActivityMoments(sessionId ?? undefined);
   const { user } = useAuth();
   const relMutation = useCreateCarRelationshipRequest();
+  const [visibility, setVisibility] = useState<"public" | "private">("public");
 
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
