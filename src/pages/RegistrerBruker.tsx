@@ -177,44 +177,25 @@ export default function RegistrerBruker() {
                 <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground block" style={oswald}>
                   Bekreft e-post
                 </label>
-                <Input
-                  type="email"
-                  value={emailConfirm}
-                  onChange={(e) => setEmailConfirm(e.target.value)}
-                  onPaste={(e) => e.preventDefault()}
-                  placeholder="Skriv e-posten på nytt"
-                  required
-                  autoComplete="off"
-                  className="h-12 text-base bg-background/50 border-border/60 focus:border-primary/60"
-                  style={oswald}
-                />
-              </div>
-
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground block" style={oswald}>
-                  Passord
-                </label>
-                <Input
-                  type="email"
-                  value={emailConfirm}
-                  onChange={(e) => setEmailConfirm(e.target.value)}
-                  onPaste={(e) => e.preventDefault()}
-                  placeholder="Skriv e-posten på nytt"
-                  required
-                  autoComplete="off"
-                  className="h-12 text-base bg-background/50 border-border/60 focus:border-primary/60"
-                  style={oswald}
-                />
-                {emailsMatch && (
-                  <p className="text-xs text-[#34eab8] flex items-center gap-1.5 mt-1" style={oswald}>
-                    <Check className="w-3.5 h-3.5" /> E-postadressene samsvarer
-                  </p>
-                )}
-                {emailsMismatch && (
-                  <p className="text-xs text-destructive flex items-center gap-1.5 mt-1" style={oswald}>
-                    <X className="w-3.5 h-3.5" /> E-postadressene samsvarer ikke
-                  </p>
-                )}
+                <div className="relative">
+                  <Input
+                    type="email"
+                    value={emailConfirm}
+                    onChange={(e) => setEmailConfirm(e.target.value)}
+                    onPaste={(e) => e.preventDefault()}
+                    placeholder="Skriv e-posten på nytt"
+                    required
+                    autoComplete="off"
+                    className={`h-12 text-base bg-background/50 border-border/60 focus:border-primary/60 pr-10 ${emailsMismatch ? 'border-destructive/60' : ''}`}
+                    style={oswald}
+                  />
+                  {emailsMatch && (
+                    <Check className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#34eab8]" aria-label="E-post samsvarer" />
+                  )}
+                  {emailsMismatch && (
+                    <X className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-destructive" aria-label="E-post samsvarer ikke" />
+                  )}
+                </div>
               </div>
 
               <div className="space-y-1.5">
@@ -257,9 +238,15 @@ export default function RegistrerBruker() {
                     required
                     minLength={6}
                     autoComplete="new-password"
-                    className="h-12 text-base bg-background/50 border-border/60 focus:border-primary/60 pr-11"
+                    className={`h-12 text-base bg-background/50 border-border/60 focus:border-primary/60 pr-20 ${passwordsMismatch ? 'border-destructive/60' : ''}`}
                     style={oswald}
                   />
+                  {passwordsMatch && (
+                    <Check className="absolute right-11 top-1/2 -translate-y-1/2 w-4 h-4 text-[#34eab8]" aria-label="Passord samsvarer" />
+                  )}
+                  {passwordsMismatch && (
+                    <X className="absolute right-11 top-1/2 -translate-y-1/2 w-4 h-4 text-destructive" aria-label="Passord samsvarer ikke" />
+                  )}
                   <button
                     type="button"
                     onClick={() => setShowPassword((v) => !v)}
@@ -269,16 +256,6 @@ export default function RegistrerBruker() {
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                 </div>
-                {passwordsMatch && (
-                  <p className="text-xs text-[#34eab8] flex items-center gap-1.5 mt-1" style={oswald}>
-                    <Check className="w-3.5 h-3.5" /> Passordene samsvarer
-                  </p>
-                )}
-                {passwordsMismatch && (
-                  <p className="text-xs text-destructive flex items-center gap-1.5 mt-1" style={oswald}>
-                    <X className="w-3.5 h-3.5" /> Passordene samsvarer ikke
-                  </p>
-                )}
               </div>
 
               <Button
