@@ -146,6 +146,11 @@ export function StepSave({ data, onChange, onBack, onSubmit, isSubmitting, error
               className="text-primary underline hover:text-accent">
               personvernerklæringen
             </Link>
+            {" "}og{" "}
+            <Link to="/vilkar" target="_blank" rel="noopener noreferrer"
+              className="text-primary underline hover:text-accent">
+              brukervilkårene
+            </Link>
           </span>
         </label>
         {errors.privacyAccepted && (
