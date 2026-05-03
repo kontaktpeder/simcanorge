@@ -132,7 +132,7 @@ export function CarWizard({ onSuccess, initialRegistrationNumber, skipDuplicateC
     if (!data.owner_name.trim() || data.owner_name.trim().length < 2) fieldErrors.owner_name = "Navn må være minst 2 tegn";
     if (!data.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) fieldErrors.email = "Ugyldig e-postadresse";
     if (data.allowEdits === null) fieldErrors.allowEdits = "Velg et alternativ";
-    if (!data.privacyAccepted) fieldErrors.privacyAccepted = "Du må godta personvernerklæringen";
+    if (!data.privacyAccepted) fieldErrors.privacyAccepted = "Du må godta personvernerklæringen og brukervilkårene";
     if (data.clubLinkRequested && !data.clubPageId) fieldErrors.club_page = "Velg klubb";
     if (!data.brand) fieldErrors.brand = "Velg merke";
     if (!data.car_model) fieldErrors.car_model = "Velg modell";
@@ -474,7 +474,7 @@ export function CarWizard({ onSuccess, initialRegistrationNumber, skipDuplicateC
               (() => {
                 const missing: string[] = [];
                 if (data.allowEdits === null) missing.push("Velg om vi kan redigere bilen (Ja/Nei)");
-                if (!data.privacyAccepted) missing.push("Godta personvernerklæringen");
+                if (!data.privacyAccepted) missing.push("Godta personvernerklæringen og brukervilkårene");
                 const blocked = missing.length > 0;
                 return (
                   <div className="flex flex-col items-end gap-2">

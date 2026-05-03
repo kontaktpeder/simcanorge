@@ -88,6 +88,7 @@ export function Footer() {
             <p>© {new Date().getFullYear()} Bilgarasje.no</p>
             <div className="flex items-center gap-4">
               <Link to="/personvern" className="hover:text-[#2dd4a8]/50 transition-colors">Personvern</Link>
+              <Link to="/vilkar" className="hover:text-[#2dd4a8]/50 transition-colors">Brukervilkår</Link>
               <Link to="/admin/login" className="hover:text-[#2dd4a8]/50 transition-colors">Admin</Link>
             </div>
           </div>

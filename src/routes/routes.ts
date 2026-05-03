@@ -46,6 +46,7 @@ const SendInnBil = lazy(() => import("@/pages/SendInnBil"));
 const LeggTilBil = lazy(() => import("@/pages/LeggTilBil"));
 const Kontakt = lazy(() => import("@/pages/Kontakt"));
 const Personvern = lazy(() => import("@/pages/Personvern"));
+const Brukervilkar = lazy(() => import("@/pages/Brukervilkar"));
 const AcceptInvitation = lazy(() => import("@/pages/AcceptInvitation"));
 const Login = lazy(() => import("@/pages/Login"));
 const GlemtPassord = lazy(() => import("@/pages/GlemtPassord"));
@@ -152,6 +153,7 @@ const rawRoutes: RouteConfig[] = [
   { path: "/eier/:slug", element: EierProfil, isPublic: true },
   { path: "/foresporsel", element: Foresporsel, isPublic: true },
   { path: "/personvern", element: Personvern, isPublic: true },
+  { path: "/vilkar", element: Brukervilkar, isPublic: true },
   { path: "/accept-invitation", element: AcceptInvitation, isPublic: true },
   { path: "/i/:token", element: AcceptInvitation, isPublic: true },
   { path: "/login", element: Login, isPublic: true },

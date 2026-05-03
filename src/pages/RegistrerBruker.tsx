@@ -288,8 +288,10 @@ export default function RegistrerBruker() {
           </div>
 
           <p className="text-center text-xs text-muted-foreground/60 mt-6" style={oswald}>
-            Ved å opprette konto godtar du våre{' '}
-            <Link to="/personvern" className="underline hover:text-muted-foreground transition-colors">personvernregler</Link>
+            Ved å opprette konto godtar du{' '}
+            <Link to="/vilkar" className="underline hover:text-muted-foreground transition-colors">brukervilkårene</Link>
+            {' '}og{' '}
+            <Link to="/personvern" className="underline hover:text-muted-foreground transition-colors">personvernerklæringen</Link>.
           </p>
         </div>
       </div>
