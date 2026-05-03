@@ -36,6 +36,7 @@ function slugify(input: string): string {
 export function useActivityMoments(sessionId?: string) {
   const { user } = useAuth();
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const { data: moments = [], isLoading } = useQuery({
     queryKey: ["activity-moments", sessionId],
