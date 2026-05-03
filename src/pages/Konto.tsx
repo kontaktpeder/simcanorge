@@ -284,6 +284,15 @@ export default function Konto() {
                     Les personvernerklæringen
                   </Button>
 
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start"
+                    onClick={() => navigate("/vilkar")}
+                  >
+                    <Shield className="h-4 w-4 mr-2" />
+                    Les brukervilkår
+                  </Button>
+
                   {/* Anonymisering */}
                   {hasPendingRequest('anonymize') ? (
                     <div className="p-4 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-lg">
