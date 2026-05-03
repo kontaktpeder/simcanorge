@@ -66,6 +66,8 @@ const MineTurer = lazy(() => import("@/pages/MineTurer"));
 const TurDetalj = lazy(() => import("@/pages/TurDetalj"));
 const MinGarasje = lazy(() => import("@/pages/MinGarasje"));
 const UkjenteBiler = lazy(() => import("@/pages/UkjenteBiler"));
+const NyttSporsmal = lazy(() => import("@/pages/NyttSporsmal"));
+const SporsmalDetalj = lazy(() => import("@/pages/SporsmalDetalj"));
 
 // Dashboard pages
 const Garasje = lazy(() => import("@/pages/Garasje"));
@@ -196,6 +198,8 @@ const rawRoutes: RouteConfig[] = [
   { path: "/dashboard/events/ny", element: CreateEventPage, requiresAuth: true },
   { path: "/dashboard/events/:eventId", element: EditEventPage, requiresAuth: true },
   { path: "/relasjon-sendt/:requestId", element: RelasjonSendt, requiresAuth: true },
+  { path: "/sporsmal/ny", element: NyttSporsmal, requiresAuth: true },
+  { path: "/sporsmal/:slug", element: SporsmalDetalj, isPublic: true },
 
   // Admin
   { path: "/admin/login", element: AdminLogin, isPublic: true },
