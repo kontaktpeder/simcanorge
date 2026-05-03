@@ -236,6 +236,12 @@ export default function RegistrerBil() {
               <ArrowRight className="w-4 h-4" />
             </Link>
             <p className="mt-4 text-[12px] text-white/40">Gratis · Tar under 2 minutter</p>
+            <p className="mt-2 text-[12px] text-white/60">
+              Har du ikke bil ennå?{' '}
+              <Link to="/registrer" className="text-[#34eab8] hover:underline font-semibold">
+                Opprett gratis konto
+              </Link>
+            </p>
           </div>
         </div>
       </section>
