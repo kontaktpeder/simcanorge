@@ -13,23 +13,11 @@ import { LastTripCard } from "@/components/activity/LastTripCard";
 import { SpotCarDialog } from "@/components/car/SpotCarDialog";
 import { useLatestCompletedSession } from "@/hooks/useLatestCompletedSession";
 import { StartActionSheet } from "@/components/activity/StartActionSheet";
-import { StartActionSheet } from "@/components/activity/StartActionSheet";
 import { track, trackScreenViewOnce } from "@/lib/analytics";
 import { resolveSpottingCoverFromRow } from "@/lib/spottingMedia";
 
 const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
 const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
-
-const ACTIVITY_TYPES: {
-  value: ActivityType;
-  label: string;
-  desc: string;
-  Icon: React.ComponentType<{ className?: string }>;
-}[] = [
-  { value: "drive", label: "Kjøretur", desc: "Du kjører en bil", Icon: Car },
-  { value: "walk_spotting", label: "Spotting", desc: "Til fots, ser biler", Icon: Footprints },
-  { value: "meetup", label: "Treff", desc: "Du er på et arrangement", Icon: Users },
-];
 
 interface CarImageMini {
   id?: string;
