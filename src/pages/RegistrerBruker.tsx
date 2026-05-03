@@ -27,6 +27,7 @@ export default function RegistrerBruker() {
   const returnUrl = safeInternalPath(searchParams.get('returnUrl'), '/app');
 
   const [email, setEmail] = useState('');
+  const [emailConfirm, setEmailConfirm] = useState('');
   const [password, setPassword] = useState('');
   const [password2, setPassword2] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -41,15 +42,22 @@ export default function RegistrerBruker() {
     e.preventDefault();
     setError('');
     setInfo('');
+    const emailTrim = email.trim();
+    const emailConfirmTrim = emailConfirm.trim();
+    if (emailTrim.toLowerCase() !== emailConfirmTrim.toLowerCase()) {
+      setError('E-postadressene stemmer ikke overens');
+      return;
+    }
     if (password !== password2) {
       setError('Passordene er ikke like');
       return;
     }
-    const result = schema.safeParse({ email, password });
+    const result = schema.safeParse({ email: emailTrim, password });
     if (!result.success) {
       setError(result.error.errors[0].message);
       return;
     }
+
     setIsLoading(true);
     try {
       const { data, error } = await supabase.auth.signUp({
