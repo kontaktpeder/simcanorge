@@ -87,6 +87,12 @@ export function StartActionSheet({ open, onOpenChange, activitiesEnabled = true 
               onClick={handleOpenMoment}
             />
             <ActionButton
+              Icon={MessageCircleQuestion}
+              label="Still spørsmål"
+              desc="Få svar fra fellesskapet"
+              onClick={handleAskQuestion}
+            />
+            <ActionButton
               Icon={Plus}
               label="Registrer bil"
               desc="Legg en bil inn i garasjen"
