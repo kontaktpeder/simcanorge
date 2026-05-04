@@ -28,6 +28,7 @@ import { BrandLoader } from "@/components/brand/BrandLoader";
 import { FEATURES } from "@/config/features";
 import { RelationshipRequestDialog } from "@/components/car/relationship/RelationshipRequestDialog";
 import { canEditCarInDashboard, type CarOwnerAccessRow } from "@/lib/carEditAccess";
+import { ExploreSectionNav } from "@/components/explore/ExploreSectionNav";
 
 const SITE_URL = (() => {
   if (typeof window !== "undefined") {
