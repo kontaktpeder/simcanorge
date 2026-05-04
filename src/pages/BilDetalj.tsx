@@ -1061,7 +1061,7 @@ const BilDetalj = () => {
         </div>
       )}
 
-      {!isOwner && FEATURES.relationshipRequestsV1 && (
+      {!isLinkedToCar && FEATURES.relationshipRequestsV1 && (
         <RelationshipRequestDialog
           open={relationshipDialogOpen}
           onOpenChange={setRelationshipDialogOpen}
