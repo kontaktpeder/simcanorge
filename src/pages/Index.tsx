@@ -35,6 +35,8 @@ export default function Index() {
         />
       </Helmet>
 
+      <ExploreSectionNav />
+
       <section
         className="relative pb-20"
         style={{
