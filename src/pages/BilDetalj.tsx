@@ -27,6 +27,7 @@ import { CreateCTA } from "@/components/ui/CreateCTA";
 import { BrandLoader } from "@/components/brand/BrandLoader";
 import { FEATURES } from "@/config/features";
 import { RelationshipRequestDialog } from "@/components/car/relationship/RelationshipRequestDialog";
+import { canEditCarInDashboard, type CarOwnerAccessRow } from "@/lib/carEditAccess";
 
 const SITE_URL = (() => {
   if (typeof window !== "undefined") {
@@ -124,22 +125,39 @@ const BilDetalj = () => {
   const [showPostPublishOverlay, setShowPostPublishOverlay] = useState(false);
   const [relationshipDialogOpen, setRelationshipDialogOpen] = useState(false);
 
-  // Owner detection: car_owners join from query
-  const carOwners = (car as any)?.car_owners as { user_id: string }[] | undefined;
-  const userIsCarOwner = !!(user && carOwners?.some((r) => r.user_id === user.id));
-  const isOwner = !!(myProfile && car?.owner_profile_id === myProfile.id) || userIsCarOwner;
+  // Owner / edit access detection: car_owners join from query
+  const carOwners = (car as { car_owners?: CarOwnerAccessRow[] } | null)?.car_owners;
+  const canEditCar = canEditCarInDashboard(user?.id, carOwners);
+  const userHasAnyCarOwnerRow = !!(
+    user && carOwners?.some((r) => r.user_id === user.id)
+  );
+  const isLinkedToCar =
+    !!(myProfile && car?.owner_profile_id === myProfile.id) || userHasAnyCarOwnerRow;
   const firstCarImage = car ? [...car.car_images].sort((a, b) => a.sort_order - b.sort_order)[0]?.image_url ?? null : null;
 
-  // Show post-publish overlay once per car for owners
+  // Show post-publish overlay once per car for users with edit access
   useEffect(() => {
     if (
       car?.published_at &&
-      userIsCarOwner &&
+      canEditCar &&
       localStorage.getItem(`bilgarasje_post_publish_seen_${car.id}`) !== "1"
     ) {
       setShowPostPublishOverlay(true);
     }
-  }, [car?.id, car?.published_at, userIsCarOwner]);
+  }, [car?.id, car?.published_at, canEditCar]);
+
+  // First-time toast when user gains edit access to this car
+  useEffect(() => {
+    if (!car?.id || !user?.id || !canEditCar) return;
+    const key = `seen_edit_access_${car.id}`;
+    if (localStorage.getItem(key) === "1") return;
+    localStorage.setItem(key, "1");
+    toast.success("Du har fått tilgang til denne bilen 🚗", {
+      duration: 12000,
+      description:
+        "Du kan nå redigere, legge til bilder og oppdatere historien når du vil. Finn den alltid igjen i Garasjen din.",
+    });
+  }, [car?.id, user?.id, canEditCar]);
 
   // Hide scroll indicator when CTA section is visible
   useEffect(() => {
@@ -170,7 +188,7 @@ const BilDetalj = () => {
           external_links, timeline_events, source, identification_status,
           car_images(id, image_url, alt_text, sort_order),
           car_events(visibility, occurred_at, car_event_images(image_url, alt_text, sort_order)),
-          car_owners!car_owners_car_id_fkey(user_id)
+          car_owners!car_owners_car_id_fkey(user_id, role)
         `)
         .eq("slug", slug)
         .not("published_at", "is", null)
@@ -469,11 +487,11 @@ const BilDetalj = () => {
         subtitle="En unik historie fra vårt fellesskap" 
       />
 
-      {isOwner && (
+      {canEditCar && (
         <div className="bg-[#111315] border-b border-white/[0.08]">
           <div className="container mx-auto px-4 py-3 flex items-center justify-between">
             <span className="text-[12px] uppercase tracking-[0.12em] text-white/40 font-sans font-medium">
-              Din bil
+              Du kan redigere denne bilen
             </span>
             <div className="flex items-center gap-2">
               <Link
@@ -481,7 +499,7 @@ const BilDetalj = () => {
                 className="flex items-center gap-1.5 text-[11px] uppercase tracking-[0.12em] text-white/60 hover:text-white bg-white/[0.06] hover:bg-white/[0.10] border border-white/[0.10] px-3 py-1.5 transition-all font-sans"
               >
                 <Pencil className="w-3 h-3" />
-                Rediger
+                Rediger bil
               </Link>
               {!showFeedComposer && (
                 <button
@@ -608,7 +626,7 @@ const BilDetalj = () => {
                   )}
                 </div>
 
-                {!isOwner && FEATURES.relationshipRequestsV1 && (
+                {!isLinkedToCar && FEATURES.relationshipRequestsV1 && (
                   <div className="mb-6">
                     <button
                       type="button"
@@ -1043,7 +1061,7 @@ const BilDetalj = () => {
         </div>
       )}
 
-      {!isOwner && FEATURES.relationshipRequestsV1 && (
+      {!isLinkedToCar && FEATURES.relationshipRequestsV1 && (
         <RelationshipRequestDialog
           open={relationshipDialogOpen}
           onOpenChange={setRelationshipDialogOpen}

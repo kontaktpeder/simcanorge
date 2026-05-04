@@ -28,6 +28,7 @@ import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import { canEditCarInDashboard } from '@/lib/carEditAccess';
 
 const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
 const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
@@ -81,10 +82,12 @@ export default function DashboardBilDetalj() {
     queryKey: ['my-car', carId, user?.id],
     queryFn: async () => {
       if (!user || !carId) return null;
-      const { data: ownerCheck } = await supabase
-        .from('car_owners').select('id')
-        .eq('car_id', carId).eq('user_id', user.id).eq('role', 'owner').maybeSingle();
-      if (!ownerCheck) return { hasAccess: false };
+      const { data: myOwnerRows } = await supabase
+        .from('car_owners')
+        .select('user_id, role')
+        .eq('car_id', carId)
+        .eq('user_id', user.id);
+      if (!canEditCarInDashboard(user.id, myOwnerRows ?? [])) return { hasAccess: false };
       const { data: car, error } = await supabase
         .from('cars').select(`*, car_images(id, image_url, alt_text, sort_order)`)
         .eq('id', carId).single();
