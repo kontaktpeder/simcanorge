@@ -28,6 +28,7 @@ import { BrandLoader } from "@/components/brand/BrandLoader";
 import { FEATURES } from "@/config/features";
 import { RelationshipRequestDialog } from "@/components/car/relationship/RelationshipRequestDialog";
 import { canEditCarInDashboard, type CarOwnerAccessRow } from "@/lib/carEditAccess";
+import { ExploreSectionNav } from "@/components/explore/ExploreSectionNav";
 
 const SITE_URL = (() => {
   if (typeof window !== "undefined") {
@@ -313,6 +314,7 @@ const BilDetalj = () => {
   if (isLoading) {
     return (
       <Layout>
+        <ExploreSectionNav />
         <div className="min-h-[60vh] flex items-center justify-center">
           <BrandLoader size={220} />
         </div>
@@ -323,6 +325,7 @@ const BilDetalj = () => {
   if (!car) {
     return (
       <Layout>
+        <ExploreSectionNav />
         <section className="poster-section min-h-[60vh] flex items-center justify-center">
           <div className="text-center animate-fade-in">
             <Car className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
@@ -414,6 +417,7 @@ const BilDetalj = () => {
 
   return (
     <Layout>
+      <ExploreSectionNav />
       {showPostPublishOverlay && (
         <PostPublishOnboardingOverlay
           carTitle={car.title}

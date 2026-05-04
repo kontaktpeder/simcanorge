@@ -7,6 +7,7 @@ import { useFeedPosts } from "@/hooks/useFeedPosts";
 import { FeedCard } from "@/components/feed/FeedCard";
 import { ExploreMomentCta } from "@/components/explore/ExploreMomentCta";
 import { ExploreInlineComposer } from "@/components/explore/ExploreInlineComposer";
+import { ExploreSectionNav } from "@/components/explore/ExploreSectionNav";
 import { RecentQuestionsBlock } from "@/components/questions/RecentQuestionsBlock";
 import { AddMomentDialog } from "@/components/activity/AddMomentDialog";
 
@@ -33,6 +34,8 @@ export default function Index() {
           content="Utforsk øyeblikk fra norske bileiere — biler, spotting og hverdagshistorier."
         />
       </Helmet>
+
+      <ExploreSectionNav />
 
       <section
         className="relative pb-20"
