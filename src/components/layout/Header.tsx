@@ -102,8 +102,73 @@ export function Header() {
             />
           </Link>
 
-          {/* RIGHT — Search */}
-          <div className="flex items-center justify-end flex-shrink-0">
+          {/* RIGHT — Desktop nav links + Search */}
+          <div className="flex items-center justify-end flex-shrink-0 gap-2 md:gap-3">
+            {/* Desktop nav links */}
+            <nav className="hidden md:flex items-center gap-0.5 lg:gap-1" aria-label="Hovedmeny">
+              <NavLink
+                to="/hjem"
+                className={({ isActive }) =>
+                  `text-[11px] uppercase tracking-[0.14em] font-bold px-2 py-1 rounded transition-colors ${
+                    isActive || location.pathname.startsWith("/biler")
+                      ? "text-[#34eab8]"
+                      : "text-white/55 hover:text-white/90"
+                  }`
+                }
+                style={oswald}
+              >
+                Utforsk
+              </NavLink>
+              {!features.simpleLaunchMode && (
+                <>
+                  <NavLink
+                    to="/markedsplass"
+                    className={({ isActive }) =>
+                      `text-[11px] uppercase tracking-[0.14em] font-bold px-2 py-1 rounded transition-colors ${
+                        isActive ? "text-[#34eab8]" : "text-white/55 hover:text-white/90"
+                      }`
+                    }
+                    style={oswald}
+                  >
+                    Marked
+                  </NavLink>
+                  <NavLink
+                    to="/arrangement"
+                    className={({ isActive }) =>
+                      `text-[11px] uppercase tracking-[0.14em] font-bold px-2 py-1 rounded transition-colors ${
+                        isActive ? "text-[#34eab8]" : "text-white/55 hover:text-white/90"
+                      }`
+                    }
+                    style={oswald}
+                  >
+                    Treff
+                  </NavLink>
+                  <NavLink
+                    to="/klubber"
+                    className={({ isActive }) =>
+                      `text-[11px] uppercase tracking-[0.14em] font-bold px-2 py-1 rounded transition-colors ${
+                        isActive ? "text-[#34eab8]" : "text-white/55 hover:text-white/90"
+                      }`
+                    }
+                    style={oswald}
+                  >
+                    Klubber
+                  </NavLink>
+                </>
+              )}
+              <NavLink
+                to="/om-oss"
+                className={({ isActive }) =>
+                  `text-[11px] uppercase tracking-[0.14em] font-bold px-2 py-1 rounded transition-colors ${
+                    isActive ? "text-[#34eab8]" : "text-white/55 hover:text-white/90"
+                  }`
+                }
+                style={oswald}
+              >
+                Om oss
+              </NavLink>
+            </nav>
+
             {/* Desktop / tablet */}
             <div className="hidden md:flex items-center justify-end">
               <div className="w-full max-w-xl">
