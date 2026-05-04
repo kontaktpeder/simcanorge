@@ -1,14 +1,18 @@
 import { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, NavLink, useLocation } from "react-router-dom";
 import { Search as SearchIcon, X, User } from "lucide-react";
 import { HeroSearch } from "@/components/layout/HeroSearch";
 import { useHideOnScroll } from "@/hooks/useHideOnScroll";
 import { useAuth } from "@/hooks/useAuth";
+import { useFeatures } from "@/hooks/useFeatures";
 import bilgarasjeLogo from "@/assets/bilgarasje-logo.png";
+
+const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
 
 export function Header() {
   const location = useLocation();
   const { user } = useAuth();
+  const features = useFeatures();
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const [navSearchOpen, setNavSearchOpen] = useState(false);
   const [heroVisible, setHeroVisible] = useState(true);
