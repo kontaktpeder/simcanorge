@@ -549,7 +549,7 @@ export default function DashboardBilDetalj() {
                   <FieldLabel label="Merke">
                     <Select value={basicForm.brand} onValueChange={(v) => setBasicForm({ ...basicForm, brand: v, model: "" })}>
                       <SelectTrigger className="h-11 bg-card border-border text-[15px] text-foreground"><SelectValue placeholder="Velg merke" /></SelectTrigger>
-                      <SelectContent>{CAR_BRANDS.map(b => <SelectItem key={b.name} value={b.name}>{b.name}</SelectItem>)}</SelectContent>
+                      <SelectContent>{catalogBrands.map(b => <SelectItem key={b.id} value={b.name}>{b.name}</SelectItem>)}</SelectContent>
                     </Select>
                   </FieldLabel>
                   <FieldLabel label="Modell">
