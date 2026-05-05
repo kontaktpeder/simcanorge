@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { FormFieldWithTooltip } from '@/components/ui/form-field-with-tooltip';
 import { Input } from '@/components/ui/input';
 import { CAR_BRANDS, getModelsForBrand, getVariantsForModel, getYearsForModel } from '@/data/carBrands';
