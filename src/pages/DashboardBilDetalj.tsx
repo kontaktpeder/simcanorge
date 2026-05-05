@@ -33,11 +33,8 @@ import { canEditCarInDashboard } from '@/lib/carEditAccess';
 const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
 const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
 
-const CATEGORIES = [
-  { value: 'registrert', label: 'Registrert' },
-  { value: 'prosjekt', label: 'Prosjekt' },
-  { value: 'veteran', label: 'Veteranbil' },
-];
+import { CAR_CATEGORIES } from '@/data/carCategories';
+const CATEGORIES = CAR_CATEGORIES.map(c => ({ value: c.id, label: c.label }));
 
 const statusLabel = (s: string) => {
   switch (s) {
