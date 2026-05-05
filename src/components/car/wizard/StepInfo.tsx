@@ -5,12 +5,8 @@ import { CAR_BRANDS, getModelsForBrand, getYearsForModel, getVariantsForModel } 
 import { CAR_BODY_TYPES } from "@/data/carBodyTypes";
 import type { WizardData } from "./WizardTypes";
 
-const CATEGORIES = [
-  { id: "registrert", label: "Registrerte biler" },
-  { id: "restaurering", label: "Restaureringsprosjekter" },
-  { id: "historisk", label: "Historiske biler" },
-  { id: "vrak", label: "Vrak" },
-];
+import { CAR_CATEGORIES } from "@/data/carCategories";
+const CATEGORIES = CAR_CATEGORIES;
 
 interface StepInfoProps {
   data: WizardData;
