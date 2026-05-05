@@ -551,7 +551,7 @@ export default function DashboardBilDetalj() {
                     </Select>
                   </FieldLabel>
                   <FieldLabel label="Modell">
-                    {availableModels.length > 0 && !modelOtherMode && availableModels.some(m => m.name === basicForm.model) || (availableModels.length > 0 && !modelOtherMode && !basicForm.model) ? (
+                    {availableModels.length > 0 && !modelOtherMode ? (
                       <Select
                         value={availableModels.some(m => m.name === basicForm.model) ? basicForm.model : ''}
                         onValueChange={(v) => {
