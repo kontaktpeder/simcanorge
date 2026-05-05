@@ -116,12 +116,16 @@ export default function DashboardBilDetalj() {
     if (!car) return;
     setIsSaving(true);
     try {
-      const { error } = await supabase.from('cars').update({
+      const { data, error } = await supabase.from('cars').update({
         brand: basicForm.brand || null, model: basicForm.model, variant: basicForm.variant || null,
         body_type: basicForm.body_type || null, year: basicForm.year ? parseInt(basicForm.year) : null,
         category: basicForm.category, tags: basicForm.tags.split(',').map(t => t.trim()).filter(t => t),
-      }).eq('id', car.id);
+      }).eq('id', car.id).select('id');
       if (error) { toast.error(`Kunne ikke lagre: ${error.message}`); return; }
+      if (!data || data.length === 0) {
+        toast.error('Lagring ble blokkert av tilgangskontroll – din eier-tilgang ser ut til å være borte. Last siden på nytt.');
+        return;
+      }
       toast.success('Lagret!');
       setIsEditingBasic(false);
       queryClient.invalidateQueries({ queryKey: ['my-car', carId, user?.id] });
