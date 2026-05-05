@@ -550,10 +550,26 @@ export default function DashboardBilDetalj() {
                     </Select>
                   </FieldLabel>
                   <FieldLabel label="Modell">
-                    <Select value={basicForm.model} onValueChange={(v) => setBasicForm({ ...basicForm, model: v })}>
-                      <SelectTrigger className="h-11 bg-card border-border text-[15px] text-foreground"><SelectValue placeholder="Velg modell" /></SelectTrigger>
-                      <SelectContent>{availableModels.map(m => <SelectItem key={m.name} value={m.name}>{m.name}</SelectItem>)}</SelectContent>
-                    </Select>
+                    {availableModels.length > 0 ? (
+                      <Select
+                        value={availableModels.some(m => m.name === basicForm.model) ? basicForm.model : (basicForm.model ? '__other__' : '')}
+                        onValueChange={(v) => setBasicForm({ ...basicForm, model: v === '__other__' ? '' : v })}
+                      >
+                        <SelectTrigger className="h-11 bg-card border-border text-[15px] text-foreground"><SelectValue placeholder="Velg modell" /></SelectTrigger>
+                        <SelectContent>
+                          {availableModels.map(m => <SelectItem key={m.name} value={m.name}>{m.name}</SelectItem>)}
+                          <SelectItem value="__other__">Annet (skriv inn)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    ) : null}
+                    {(availableModels.length === 0 || (basicForm.model && !availableModels.some(m => m.name === basicForm.model))) && (
+                      <Input
+                        value={basicForm.model}
+                        onChange={(e) => setBasicForm({ ...basicForm, model: e.target.value })}
+                        placeholder="Skriv inn modell"
+                        className={`h-11 bg-card border-border text-[15px] text-foreground ${availableModels.length > 0 ? 'mt-2' : ''}`}
+                      />
+                    )}
                   </FieldLabel>
                   <FieldLabel label="Variant">
                     <Input value={basicForm.variant} onChange={(e) => setBasicForm({ ...basicForm, variant: e.target.value })}
