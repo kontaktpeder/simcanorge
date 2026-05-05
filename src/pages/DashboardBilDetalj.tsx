@@ -10,7 +10,7 @@ import {
   ChevronLeft, ChevronRight, Star, ImageIcon, BookOpen, Info, ArrowLeft,
   CheckCircle2, Circle, ExternalLink, User
 } from 'lucide-react';
-import { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
