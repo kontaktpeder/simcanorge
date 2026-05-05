@@ -16,7 +16,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
 import { compressImages, generateImageId, getCarImagePath } from '@/lib/imageCompression';
-import { CAR_BRANDS, getModelsForBrand } from '@/data/carBrands';
+import { useCarBrands, useCarModels } from '@/hooks/useCarCatalog';
 import { CAR_BODY_TYPES } from '@/data/carBodyTypes';
 import { motion } from 'framer-motion';
 import { PostComposer } from '@/components/feed/PostComposer';
@@ -303,7 +303,10 @@ export default function DashboardBilDetalj() {
   const sideImages = sortedImages.slice(1, 3);
   const restImages = sortedImages.slice(3);
   const status = statusLabel(car.status || 'draft');
-  const availableModels = basicForm.brand ? getModelsForBrand(basicForm.brand) : [];
+  const { data: catalogBrands = [] } = useCarBrands();
+  const selectedBrandId = catalogBrands.find(b => b.name === basicForm.brand)?.id ?? null;
+  const { data: catalogModels = [] } = useCarModels(selectedBrandId);
+  const availableModels = catalogModels;
 
   const persistCarImageOrder = async (images: any[]) => {
     setIsReorderingImages(true);
@@ -546,7 +549,7 @@ export default function DashboardBilDetalj() {
                   <FieldLabel label="Merke">
                     <Select value={basicForm.brand} onValueChange={(v) => setBasicForm({ ...basicForm, brand: v, model: "" })}>
                       <SelectTrigger className="h-11 bg-card border-border text-[15px] text-foreground"><SelectValue placeholder="Velg merke" /></SelectTrigger>
-                      <SelectContent>{CAR_BRANDS.map(b => <SelectItem key={b.name} value={b.name}>{b.name}</SelectItem>)}</SelectContent>
+                      <SelectContent>{catalogBrands.map(b => <SelectItem key={b.id} value={b.name}>{b.name}</SelectItem>)}</SelectContent>
                     </Select>
                   </FieldLabel>
                   <FieldLabel label="Modell">
