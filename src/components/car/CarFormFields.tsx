@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { FormFieldWithTooltip } from '@/components/ui/form-field-with-tooltip';
 import { Input } from '@/components/ui/input';
 import { CAR_BRANDS, getModelsForBrand, getVariantsForModel, getYearsForModel } from '@/data/carBrands';
@@ -77,47 +77,15 @@ export function CarFormFields({
       </FieldWrapper>
 
       {/* Model */}
-      <FieldWrapper label="MODELL" tooltip="Modellserie / plattform. Eks: 1100">
-        {availableModels.length > 0 ? (
-          <select
-            value={availableModels.some(m => m.name === formData.model) ? formData.model : (formData.model ? '__other__' : '')}
-            onChange={(e) => {
-              if (e.target.value === '__other__') {
-                onChange('model', '');
-                onChange('year', '');
-                onChange('variant', '');
-              } else {
-                handleModelChange(e.target.value);
-              }
-            }}
-            className={`w-full h-12 px-3 text-base border-2 border-foreground bg-card rounded ${errors.model ? 'border-destructive' : ''}`}
-            disabled={disabled || !formData.brand}
-          >
-            <option value="">Velg modell...</option>
-            {availableModels.map((model) => (
-              <option key={model.name} value={model.name}>{model.name}</option>
-            ))}
-            <option value="__other__">Annet (skriv inn)</option>
-          </select>
-        ) : (
-          <Input
-            value={formData.model}
-            onChange={(e) => onChange('model', e.target.value)}
-            placeholder="Skriv inn modell..."
-            className={`h-12 text-base border-2 ${errors.model ? 'border-destructive' : 'border-foreground'}`}
-            disabled={disabled || !formData.brand}
-          />
-        )}
-        {availableModels.length > 0 && formData.model && !availableModels.some(m => m.name === formData.model) && (
-          <Input
-            value={formData.model}
-            onChange={(e) => onChange('model', e.target.value)}
-            placeholder="Skriv inn modell..."
-            className={`h-12 text-base border-2 mt-2 ${errors.model ? 'border-destructive' : 'border-foreground'}`}
-            disabled={disabled}
-          />
-        )}
-      </FieldWrapper>
+      <ModelField
+        formData={formData}
+        availableModels={availableModels}
+        onChange={onChange}
+        handleModelChange={handleModelChange}
+        errors={errors}
+        disabled={disabled}
+        FieldWrapper={FieldWrapper}
+      />
 
       {/* Variant */}
       <FieldWrapper label="VARIANT" tooltip="Fabrikkens navn på en spesifikk utgave. Eks: VF1, Rallye 2">
@@ -177,3 +145,73 @@ export function CarFormFields({
     </div>
   );
 }
+
+interface ModelFieldProps {
+  formData: { brand: string; model: string };
+  availableModels: { name: string }[];
+  onChange: (field: string, value: string) => void;
+  handleModelChange: (value: string) => void;
+  errors: Record<string, string>;
+  disabled: boolean;
+  FieldWrapper: any;
+}
+
+function ModelField({ formData, availableModels, onChange, handleModelChange, errors, disabled, FieldWrapper }: ModelFieldProps) {
+  const inCatalog = availableModels.some(m => m.name === formData.model);
+  const [otherMode, setOtherMode] = useState(!!formData.model && !inCatalog && availableModels.length > 0);
+
+  useEffect(() => {
+    if (formData.model && !inCatalog && availableModels.length > 0) setOtherMode(true);
+  }, [formData.model, inCatalog, availableModels.length]);
+
+  const useSelect = availableModels.length > 0 && !otherMode;
+
+  return (
+    <FieldWrapper label="MODELL" tooltip="Modellserie / plattform. Eks: 1100">
+      {useSelect ? (
+        <select
+          value={inCatalog ? formData.model : ''}
+          onChange={(e) => {
+            if (e.target.value === '__other__') {
+              setOtherMode(true);
+              onChange('model', '');
+              onChange('year', '');
+              onChange('variant', '');
+            } else {
+              handleModelChange(e.target.value);
+            }
+          }}
+          className={`w-full h-12 px-3 text-base border-2 border-foreground bg-card rounded ${errors.model ? 'border-destructive' : ''}`}
+          disabled={disabled || !formData.brand}
+        >
+          <option value="">Velg modell...</option>
+          {availableModels.map((model) => (
+            <option key={model.name} value={model.name}>{model.name}</option>
+          ))}
+          <option value="__other__">Annet (skriv inn)</option>
+        </select>
+      ) : (
+        <div className="flex gap-2">
+          <Input
+            value={formData.model}
+            onChange={(e) => onChange('model', e.target.value)}
+            placeholder="Skriv inn modell..."
+            className={`h-12 text-base border-2 flex-1 ${errors.model ? 'border-destructive' : 'border-foreground'}`}
+            disabled={disabled || !formData.brand}
+          />
+          {availableModels.length > 0 && (
+            <button
+              type="button"
+              onClick={() => { setOtherMode(false); onChange('model', ''); }}
+              className="px-3 text-xs text-muted-foreground hover:text-foreground underline whitespace-nowrap"
+              disabled={disabled}
+            >
+              Velg fra liste
+            </button>
+          )}
+        </div>
+      )}
+    </FieldWrapper>
+  );
+}
+
