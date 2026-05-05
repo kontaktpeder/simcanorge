@@ -62,12 +62,8 @@ interface ExternalLinkData {
   title?: string;
 }
 
-const CATEGORIES = [
-  { id: "registrert", label: "Registrerte biler" },
-  { id: "restaurering", label: "Restaureringsprosjekter" },
-  { id: "historisk", label: "Historiske biler" },
-  { id: "vrak", label: "Vrak" },
-];
+import { CAR_CATEGORIES } from "@/data/carCategories";
+const CATEGORIES = CAR_CATEGORIES;
 
 function ClubLinkRequestBox({ carId, clubReq }: { carId: string; clubReq: Record<string, unknown> }) {
   const queryClient = useQueryClient();
