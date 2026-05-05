@@ -551,10 +551,17 @@ export default function DashboardBilDetalj() {
                     </Select>
                   </FieldLabel>
                   <FieldLabel label="Modell">
-                    {availableModels.length > 0 ? (
+                    {availableModels.length > 0 && !modelOtherMode && availableModels.some(m => m.name === basicForm.model) || (availableModels.length > 0 && !modelOtherMode && !basicForm.model) ? (
                       <Select
-                        value={availableModels.some(m => m.name === basicForm.model) ? basicForm.model : (basicForm.model ? '__other__' : '')}
-                        onValueChange={(v) => setBasicForm({ ...basicForm, model: v === '__other__' ? '' : v })}
+                        value={availableModels.some(m => m.name === basicForm.model) ? basicForm.model : ''}
+                        onValueChange={(v) => {
+                          if (v === '__other__') {
+                            setModelOtherMode(true);
+                            setBasicForm({ ...basicForm, model: '' });
+                          } else {
+                            setBasicForm({ ...basicForm, model: v });
+                          }
+                        }}
                       >
                         <SelectTrigger className="h-11 bg-card border-border text-[15px] text-foreground"><SelectValue placeholder="Velg modell" /></SelectTrigger>
                         <SelectContent>
@@ -562,14 +569,24 @@ export default function DashboardBilDetalj() {
                           <SelectItem value="__other__">Annet (skriv inn)</SelectItem>
                         </SelectContent>
                       </Select>
-                    ) : null}
-                    {(availableModels.length === 0 || (basicForm.model && !availableModels.some(m => m.name === basicForm.model))) && (
-                      <Input
-                        value={basicForm.model}
-                        onChange={(e) => setBasicForm({ ...basicForm, model: e.target.value })}
-                        placeholder="Skriv inn modell"
-                        className={`h-11 bg-card border-border text-[15px] text-foreground ${availableModels.length > 0 ? 'mt-2' : ''}`}
-                      />
+                    ) : (
+                      <div className="flex gap-2">
+                        <Input
+                          value={basicForm.model}
+                          onChange={(e) => setBasicForm({ ...basicForm, model: e.target.value })}
+                          placeholder="Skriv inn modell"
+                          className="h-11 bg-card border-border text-[15px] text-foreground flex-1"
+                        />
+                        {availableModels.length > 0 && (
+                          <button
+                            type="button"
+                            onClick={() => { setModelOtherMode(false); setBasicForm({ ...basicForm, model: '' }); }}
+                            className="px-3 text-xs text-muted-foreground hover:text-foreground underline whitespace-nowrap"
+                          >
+                            Velg fra liste
+                          </button>
+                        )}
+                      </div>
                     )}
                   </FieldLabel>
                   <FieldLabel label="Variant">
