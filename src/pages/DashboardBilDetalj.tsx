@@ -16,7 +16,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
 import { compressImages, generateImageId, getCarImagePath } from '@/lib/imageCompression';
-import { CAR_BRANDS, getModelsForBrand } from '@/data/carBrands';
+import { useCarBrands, useCarModels } from '@/hooks/useCarCatalog';
 import { CAR_BODY_TYPES } from '@/data/carBodyTypes';
 import { motion } from 'framer-motion';
 import { PostComposer } from '@/components/feed/PostComposer';
