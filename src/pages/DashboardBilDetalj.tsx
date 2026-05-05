@@ -10,7 +10,7 @@ import {
   ChevronLeft, ChevronRight, Star, ImageIcon, BookOpen, Info, ArrowLeft,
   CheckCircle2, Circle, ExternalLink, User
 } from 'lucide-react';
-import { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -742,14 +742,15 @@ function SectionHeading({ icon, title }: { icon: React.ReactNode; title: string 
   );
 }
 
-function FieldLabel({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <div>
+const FieldLabel = React.forwardRef<HTMLDivElement, { label: string; children: React.ReactNode }>(
+  ({ label, children }, ref) => (
+    <div ref={ref}>
       <label className="text-[13px] uppercase tracking-[0.08em] font-bold text-muted-foreground/80 block mb-2" style={sectionOswald}>{label}</label>
       {children}
     </div>
-  );
-}
+  )
+);
+FieldLabel.displayName = 'FieldLabel';
 
 function ActionBtn({ onClick, disabled, children, variant = 'ghost' }: {
   onClick?: () => void; disabled?: boolean; children: React.ReactNode; variant?: 'primary' | 'ghost';
