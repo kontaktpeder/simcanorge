@@ -303,10 +303,6 @@ export default function DashboardBilDetalj() {
   const sideImages = sortedImages.slice(1, 3);
   const restImages = sortedImages.slice(3);
   const status = statusLabel(car.status || 'draft');
-  const { data: catalogBrands = [] } = useCarBrands();
-  const selectedBrandId = catalogBrands.find(b => b.name === basicForm.brand)?.id ?? null;
-  const { data: catalogModels = [] } = useCarModels(selectedBrandId);
-  const availableModels = catalogModels;
 
   const persistCarImageOrder = async (images: any[]) => {
     setIsReorderingImages(true);
