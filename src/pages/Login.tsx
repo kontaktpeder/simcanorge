@@ -315,7 +315,7 @@ export default function Login() {
                       type="button"
                       onClick={handleSendMagicLink}
                       disabled={isLoading}
-                      className="w-full h-12 text-base uppercase tracking-wider"
+                      className="w-full min-h-12 h-auto py-3 text-sm sm:text-base uppercase tracking-wider whitespace-normal break-words leading-tight"
                       style={{
                         ...chakra,
                         background: 'linear-gradient(135deg, #34eab8 0%, #2ab89a 100%)',
@@ -324,9 +324,19 @@ export default function Login() {
                       }}
                     >
                       {isLoading ? (
-                        <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Sender lenke…</>
+                        <><Loader2 className="w-4 h-4 mr-2 animate-spin shrink-0" />Sender lenke…</>
                       ) : (
-                        <><Mail className="w-4 h-4 mr-2" />Send innloggingslenke{inviteFlow && inviteEmail ? ` til ${inviteEmail}` : ''}</>
+                        <span className="inline-flex items-center justify-center gap-2 max-w-full">
+                          <Mail className="w-4 h-4 shrink-0" />
+                          <span className="break-all">
+                            Send innloggingslenke
+                            {inviteFlow && inviteEmail ? (
+                              <>
+                                <span className="hidden sm:inline"> til {inviteEmail}</span>
+                              </>
+                            ) : null}
+                          </span>
+                        </span>
                       )}
                     </Button>
                   </>
