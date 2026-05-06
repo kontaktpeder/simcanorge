@@ -60,6 +60,7 @@ export default function PublicPagePage() {
           <title>{page.title} | Bilgarasjen</title>
           {page.tagline && <meta name="description" content={page.tagline} />}
         </Helmet>
+        <PlatformContextBanner light />
         <ClubClassicTemplate page={page} />
       </Layout>
     );
