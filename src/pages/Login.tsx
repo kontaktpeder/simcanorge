@@ -87,16 +87,22 @@ export default function Login() {
 
   const handleSendMagicLink = async () => {
     setError('');
-    if (!inviteEmail) { setError('Mangler e-post for invitasjonen.'); return; }
+    const targetEmail = ((inviteFlow && inviteEmail) ? inviteEmail : email).trim().toLowerCase();
+    if (!targetEmail) {
+      setError('Skriv inn e-postadressen din');
+      return;
+    }
     setIsLoading(true);
     try {
       const { error } = await supabase.auth.signInWithOtp({
-        email: inviteEmail,
+        email: targetEmail,
         options: {
-          emailRedirectTo: `${window.location.origin}${returnUrl}`,
+          shouldCreateUser: true,
+          emailRedirectTo: `${publicBaseUrl}${returnUrl}`,
         },
       });
       if (error) throw error;
+      setEmail(targetEmail);
       setMagicLinkSent(true);
       toast.success('Innloggingslenke sendt!');
     } catch (err: any) {
