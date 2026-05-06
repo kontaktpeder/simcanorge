@@ -163,17 +163,34 @@ export default function Login() {
 
             {useMagicLink ? (
               <div className="space-y-5">
-                <div className="bg-primary/10 border border-primary/30 rounded-lg p-4">
-                  <p className="text-sm font-semibold text-foreground" style={oswald}>
-                    Invitasjonen din venter fortsatt
-                  </p>
-                  <p className="text-xs text-muted-foreground mt-2 leading-relaxed" style={oswald}>
-                    Vi sender en sikker innloggingslenke til{' '}
-                    <span className="text-foreground font-semibold break-all">{inviteEmail}</span>.
-                    Når du åpner lenken fortsetter invitasjonen automatisk
-                    {inviteCar ? ` for ${inviteCar}` : ''}.
-                  </p>
-                </div>
+                {inviteFlow && inviteEmail ? (
+                  <div className="bg-primary/10 border border-primary/30 rounded-lg p-4">
+                    <p className="text-sm font-semibold text-foreground" style={oswald}>
+                      Invitasjonen din venter fortsatt
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-2 leading-relaxed" style={oswald}>
+                      Vi sender en sikker innloggingslenke til{' '}
+                      <span className="text-foreground font-semibold break-all">{inviteEmail}</span>.
+                      Når du åpner lenken fortsetter invitasjonen automatisk
+                      {inviteCar ? ` for ${inviteCar}` : ''}.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="space-y-1">
+                    <p className="text-sm text-foreground" style={oswald}>
+                      Du har sannsynligvis allerede konto.
+                    </p>
+                    <p className="text-xs text-muted-foreground" style={oswald}>
+                      Vi sender deg en sikker innloggingslenke på e-post.
+                    </p>
+                  </div>
+                )}
+
+                {compatWarning && (
+                  <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-3">
+                    <p className="text-sm text-foreground">{compatWarning}</p>
+                  </div>
+                )}
 
                 {error && (
                   <div className="bg-destructive/10 border border-destructive/30 rounded-lg p-3">
@@ -185,10 +202,13 @@ export default function Login() {
                   <div className="bg-primary/5 border border-primary/20 rounded-lg p-4 text-center">
                     <CheckCircle className="w-8 h-8 mx-auto mb-2 text-[#34eab8]" />
                     <p className="text-sm font-semibold text-foreground" style={oswald}>
-                      Sjekk e-posten din
+                      Innloggingslenke sendt
                     </p>
                     <p className="text-xs text-muted-foreground mt-1" style={oswald}>
-                      Vi har sendt en innloggingslenke til {inviteEmail}. Åpne den på samme enhet for å fortsette.
+                      Åpne e-posten på denne enheten for å fortsette.
+                    </p>
+                    <p className="text-[11px] text-muted-foreground/70 mt-1" style={oswald}>
+                      Sjekk spam / søk etter Bilgarasje.
                     </p>
                     <button
                       type="button"
@@ -201,24 +221,43 @@ export default function Login() {
                     </button>
                   </div>
                 ) : (
-                  <Button
-                    type="button"
-                    onClick={handleSendMagicLink}
-                    disabled={isLoading}
-                    className="w-full h-12 text-base uppercase tracking-wider"
-                    style={{
-                      ...chakra,
-                      background: 'linear-gradient(135deg, #34eab8 0%, #2ab89a 100%)',
-                      color: '#070b10',
-                      boxShadow: '0 0 24px rgba(52,234,184,0.2)',
-                    }}
-                  >
-                    {isLoading ? (
-                      <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Sender lenke…</>
-                    ) : (
-                      <><Mail className="w-4 h-4 mr-2" />Send innloggingslenke til {inviteEmail}</>
+                  <>
+                    {!(inviteFlow && inviteEmail) && (
+                      <div className="space-y-1.5">
+                        <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground block" style={oswald}>
+                          E-post
+                        </label>
+                        <Input
+                          type="email"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          placeholder="din@epost.no"
+                          required
+                          autoComplete="email"
+                          className="h-12 text-base bg-background/50 border-border/60 focus:border-primary/60"
+                          style={oswald}
+                        />
+                      </div>
                     )}
-                  </Button>
+                    <Button
+                      type="button"
+                      onClick={handleSendMagicLink}
+                      disabled={isLoading}
+                      className="w-full h-12 text-base uppercase tracking-wider"
+                      style={{
+                        ...chakra,
+                        background: 'linear-gradient(135deg, #34eab8 0%, #2ab89a 100%)',
+                        color: '#070b10',
+                        boxShadow: '0 0 24px rgba(52,234,184,0.2)',
+                      }}
+                    >
+                      {isLoading ? (
+                        <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Sender lenke…</>
+                      ) : (
+                        <><Mail className="w-4 h-4 mr-2" />Send innloggingslenke{inviteFlow && inviteEmail ? ` til ${inviteEmail}` : ''}</>
+                      )}
+                    </Button>
+                  </>
                 )}
 
                 <div className="text-center">
