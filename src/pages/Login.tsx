@@ -157,11 +157,19 @@ export default function Login() {
       setEmail(targetEmail);
       setSentToEmail(targetEmail);
       setMagicLinkSent(true);
-      setResendCooldown(20);
+      setResendCooldown(COOLDOWN_SECONDS);
+      try {
+        sessionStorage.setItem(
+          COOLDOWN_KEY,
+          JSON.stringify({ at: Date.now(), email: targetEmail }),
+        );
+      } catch {
+        // ignore storage errors
+      }
       toast.success('Innloggingslenke sendt!');
     } catch (err: any) {
       console.error('Magic link error:', err);
-      setError(err.message || 'Kunne ikke sende innloggingslenke. Prøv igjen.');
+      setError(mapOtpError(err));
     } finally {
       setIsLoading(false);
     }
