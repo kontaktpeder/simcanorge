@@ -192,7 +192,7 @@ export function OwnerSection({ carId, isApproved, submittedEmail, carTitle, subm
 
   // Copy link
   const copyLink = async (token: string) => {
-    const magicLink = `${window.location.origin}/i/${token}`;
+    const magicLink = buildInviteUrl(token);
     await navigator.clipboard.writeText(magicLink);
     setCopiedLink(token);
     setTimeout(() => setCopiedLink(null), 3000);
