@@ -53,6 +53,7 @@ export default function DashboardBilDetalj() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const accessSectionRef = useRef<HTMLDivElement>(null);
 
   const [isEditingBasic, setIsEditingBasic] = useState(false);
   const [isEditingStory, setIsEditingStory] = useState(false);
