@@ -95,6 +95,7 @@ export default function Login() {
 
   const handleSendMagicLink = async () => {
     setError('');
+    if (resendCooldown > 0) return;
     const targetEmail = ((inviteFlow && inviteEmail) ? inviteEmail : email).trim().toLowerCase();
     if (!targetEmail) {
       setError('Skriv inn e-postadressen din');
@@ -111,7 +112,9 @@ export default function Login() {
       });
       if (error) throw error;
       setEmail(targetEmail);
+      setSentToEmail(targetEmail);
       setMagicLinkSent(true);
+      setResendCooldown(20);
       toast.success('Innloggingslenke sendt!');
     } catch (err: any) {
       console.error('Magic link error:', err);
