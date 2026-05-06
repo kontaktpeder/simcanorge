@@ -127,17 +127,28 @@ export default function AcceptInvitation() {
     }
 
     try {
-      const { error: ownerError } = await supabase
+      // Hvis bruker allerede er koblet til bilen, hopp over insert (RLS nekter
+      // insert etter at invitasjonen er markert som brukt).
+      const { data: existingOwner } = await supabase
         .from('car_owners')
-        .insert({
-          car_id: invitation.car_id,
-          user_id: currentUser.id,
-          email: invitation.email,
-          role: 'owner',
-        });
+        .select('id')
+        .eq('car_id', invitation.car_id)
+        .eq('user_id', currentUser.id)
+        .maybeSingle();
 
-      if (ownerError && ownerError.code !== '23505') {
-        throw ownerError;
+      if (!existingOwner) {
+        const { error: ownerError } = await supabase
+          .from('car_owners')
+          .insert({
+            car_id: invitation.car_id,
+            user_id: currentUser.id,
+            email: invitation.email,
+            role: 'owner',
+          });
+
+        if (ownerError && ownerError.code !== '23505') {
+          throw ownerError;
+        }
       }
 
       await supabase
