@@ -161,10 +161,10 @@ export default function Login() {
             </p>
             <h1 className="text-3xl sm:text-4xl uppercase tracking-wide text-foreground font-bold italic"
               style={chakra}>
-              Logg inn
+              Logg inn / Opprett konto
             </h1>
             <p className="mt-2 text-sm text-muted-foreground" style={oswald}>
-              {fromApp ? 'Logg inn for å fortsette til garasjen din' : 'Få tilgang til din garasje'}
+              Skriv inn e-post — vi sender deg en innloggingslenke.
             </p>
           </div>
 
