@@ -29,6 +29,8 @@ export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [compatWarning, setCompatWarning] = useState<string | null>(null);
+  const [magicLinkSent, setMagicLinkSent] = useState(false);
+  const [showPasswordMode, setShowPasswordMode] = useState(false);
 
   const returnUrl = safeInternalPath(searchParams.get('returnUrl'), '/app');
   const prefillEmail = searchParams.get('email');
@@ -36,6 +38,7 @@ export default function Login() {
   const inviteFlow = searchParams.get('inviteFlow') === '1';
   const inviteEmail = searchParams.get('inviteEmail') || '';
   const inviteCar = searchParams.get('inviteCar') || '';
+  const useMagicLink = inviteFlow && !!inviteEmail && !showPasswordMode;
 
   useEffect(() => {
     const support = getBrowserAuthSupport();
