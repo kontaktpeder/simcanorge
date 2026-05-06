@@ -70,11 +70,17 @@ export default function AcceptInvitation() {
       setCarTitle(car?.title || 'bilen');
       setInviteEmail(invitation.email);
 
-      // Not logged in -> send to standard login flow with returnUrl back here
+      // Not logged in -> send to standard login flow with invite context
       if (!user) {
         toast.message('Logg inn eller opprett bruker for å akseptere invitasjonen.');
         const returnTo = `/i/${token}`;
-        navigate(`/login?returnUrl=${encodeURIComponent(returnTo)}`, { replace: true });
+        const params = new URLSearchParams({
+          returnUrl: returnTo,
+          inviteFlow: '1',
+          inviteEmail: invitation.email,
+          inviteCar: car?.title || 'bilen',
+        });
+        navigate(`/login?${params.toString()}`, { replace: true });
         return;
       }
 
