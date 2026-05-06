@@ -30,6 +30,8 @@ export default function Login() {
   const [error, setError] = useState('');
   const [compatWarning, setCompatWarning] = useState<string | null>(null);
   const [magicLinkSent, setMagicLinkSent] = useState(false);
+  const [sentToEmail, setSentToEmail] = useState('');
+  const [resendCooldown, setResendCooldown] = useState(0);
   const [showPasswordMode, setShowPasswordMode] = useState(false);
 
   const returnUrl = safeInternalPath(searchParams.get('returnUrl'), '/app');
