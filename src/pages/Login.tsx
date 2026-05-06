@@ -84,6 +84,28 @@ export default function Login() {
     }
   };
 
+  const handleSendMagicLink = async () => {
+    setError('');
+    if (!inviteEmail) { setError('Mangler e-post for invitasjonen.'); return; }
+    setIsLoading(true);
+    try {
+      const { error } = await supabase.auth.signInWithOtp({
+        email: inviteEmail,
+        options: {
+          emailRedirectTo: `${window.location.origin}${returnUrl}`,
+        },
+      });
+      if (error) throw error;
+      setMagicLinkSent(true);
+      toast.success('Innloggingslenke sendt!');
+    } catch (err: any) {
+      console.error('Magic link error:', err);
+      setError(err.message || 'Kunne ikke sende innloggingslenke. Prøv igjen.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   if (authLoading) {
     return (
       <Layout>
