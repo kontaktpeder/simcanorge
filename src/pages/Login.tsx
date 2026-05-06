@@ -65,6 +65,12 @@ export default function Login() {
     if (!authLoading && user) navigate(returnUrl);
   }, [user, authLoading, navigate, returnUrl]);
 
+  useEffect(() => {
+    if (resendCooldown <= 0) return;
+    const t = setTimeout(() => setResendCooldown((s) => s - 1), 1000);
+    return () => clearTimeout(t);
+  }, [resendCooldown]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
