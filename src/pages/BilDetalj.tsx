@@ -648,8 +648,7 @@ const BilDetalj = () => {
                     <button
                       type="button"
                       onClick={() =>
-                        toast({
-                          title: "Be om redigeringstilgang",
+                        toast("Be om redigeringstilgang", {
                           description: "For å redigere bilen må en eier sende deg en invitasjonslenke.",
                         })
                       }
