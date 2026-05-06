@@ -142,6 +142,8 @@ export default function PublicPagePage() {
             </div>
           </section>
 
+          <PlatformContextBanner light />
+
           {/* ─── INFO STRIP ─── */}
           <div style={{ background: 'linear-gradient(180deg, #f2ece4 0%, #eee7dd 100%)', borderBottom: '1px solid rgba(58,46,36,0.06)' }}>
             <div className="max-w-[1000px] mx-auto px-5 md:px-8">
