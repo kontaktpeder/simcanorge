@@ -154,91 +154,177 @@ export default function Login() {
           <div className="rounded-2xl border border-border/60 p-6 sm:p-8 shadow-2xl"
             style={{ background: 'linear-gradient(180deg, hsl(215 25% 11%) 0%, hsl(215 25% 9%) 100%)' }}>
 
-            <form onSubmit={handleSubmit} className="space-y-5">
-              {inviteFlow && inviteEmail && (
-                <div className="bg-primary/10 border border-primary/30 rounded-lg p-3">
+            {useMagicLink ? (
+              <div className="space-y-5">
+                <div className="bg-primary/10 border border-primary/30 rounded-lg p-4">
                   <p className="text-sm font-semibold text-foreground" style={oswald}>
                     Invitasjonen din venter fortsatt
                   </p>
-                  <p className="text-xs text-muted-foreground mt-1" style={oswald}>
-                    Logg inn eller opprett konto med <span className="text-foreground font-semibold">{inviteEmail}</span> for å få tilgang til {inviteCar || 'bilen'}.
+                  <p className="text-xs text-muted-foreground mt-2 leading-relaxed" style={oswald}>
+                    Vi sender en sikker innloggingslenke til{' '}
+                    <span className="text-foreground font-semibold break-all">{inviteEmail}</span>.
+                    Når du åpner lenken fortsetter invitasjonen automatisk
+                    {inviteCar ? ` for ${inviteCar}` : ''}.
                   </p>
                 </div>
-              )}
-              {compatWarning && (
-                <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-3">
-                  <p className="text-sm text-foreground">{compatWarning}</p>
-                </div>
-              )}
-              {error && (
-                <div className="bg-destructive/10 border border-destructive/30 rounded-lg p-3">
-                  <p className="text-sm text-destructive">{error}</p>
-                </div>
-              )}
 
-              <div className="space-y-1.5">
-              <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground block"
-                style={oswald}>
-                E-post
-              </label>
-                <Input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="din@epost.no"
-                  required
-                  readOnly={inviteFlow && !!inviteEmail}
-                  className="h-12 text-base bg-background/50 border-border/60 focus:border-primary/60"
-                  style={oswald}
-                />
-                {inviteFlow && inviteEmail && (
-                  <p className="text-[11px] text-muted-foreground/80 mt-1" style={oswald}>
-                    Bruk denne e-posten for at invitasjonen skal fungere.
-                  </p>
+                {error && (
+                  <div className="bg-destructive/10 border border-destructive/30 rounded-lg p-3">
+                    <p className="text-sm text-destructive">{error}</p>
+                  </div>
                 )}
-              </div>
 
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground block"
-                  style={oswald}>
-                  Passord
-                </label>
-                <Input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Ditt passord"
-                  required
-                  minLength={6}
-                  className="h-12 text-base bg-background/50 border-border/60 focus:border-primary/60"
-                  style={oswald}
-                />
-              </div>
-
-              <div className="text-right">
-                <Link to="/glemt-passord" className="text-xs text-muted-foreground hover:text-primary transition-colors" style={oswald}>
-                  Glemt passord?
-                </Link>
-              </div>
-
-              <Button
-                type="submit"
-                disabled={isLoading}
-                className="w-full h-12 text-base uppercase tracking-wider"
-                style={{
-                  ...chakra,
-                  background: 'linear-gradient(135deg, #34eab8 0%, #2ab89a 100%)',
-                  color: '#070b10',
-                  boxShadow: '0 0 24px rgba(52,234,184,0.2)',
-                }}
-              >
-                {isLoading ? (
-                  <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Logger inn…</>
+                {magicLinkSent ? (
+                  <div className="bg-primary/5 border border-primary/20 rounded-lg p-4 text-center">
+                    <CheckCircle className="w-8 h-8 mx-auto mb-2 text-[#34eab8]" />
+                    <p className="text-sm font-semibold text-foreground" style={oswald}>
+                      Sjekk e-posten din
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-1" style={oswald}>
+                      Vi har sendt en innloggingslenke til {inviteEmail}. Åpne den på samme enhet for å fortsette.
+                    </p>
+                    <button
+                      type="button"
+                      onClick={handleSendMagicLink}
+                      disabled={isLoading}
+                      className="text-xs text-muted-foreground hover:text-primary underline mt-3"
+                      style={oswald}
+                    >
+                      Send på nytt
+                    </button>
+                  </div>
                 ) : (
-                  <><LogIn className="w-4 h-4 mr-2" />Logg inn</>
+                  <Button
+                    type="button"
+                    onClick={handleSendMagicLink}
+                    disabled={isLoading}
+                    className="w-full h-12 text-base uppercase tracking-wider"
+                    style={{
+                      ...chakra,
+                      background: 'linear-gradient(135deg, #34eab8 0%, #2ab89a 100%)',
+                      color: '#070b10',
+                      boxShadow: '0 0 24px rgba(52,234,184,0.2)',
+                    }}
+                  >
+                    {isLoading ? (
+                      <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Sender lenke…</>
+                    ) : (
+                      <><Mail className="w-4 h-4 mr-2" />Send innloggingslenke til {inviteEmail}</>
+                    )}
+                  </Button>
                 )}
-              </Button>
-            </form>
+
+                <div className="text-center">
+                  <button
+                    type="button"
+                    onClick={() => { setShowPasswordMode(true); setError(''); }}
+                    className="text-xs text-muted-foreground hover:text-primary underline inline-flex items-center gap-1"
+                    style={oswald}
+                  >
+                    <KeyRound className="w-3 h-3" />
+                    Bruk passord i stedet
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit} className="space-y-5">
+                {inviteFlow && inviteEmail && (
+                  <div className="bg-primary/10 border border-primary/30 rounded-lg p-3">
+                    <p className="text-sm font-semibold text-foreground" style={oswald}>
+                      Invitasjonen din venter fortsatt
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-1" style={oswald}>
+                      Logg inn med <span className="text-foreground font-semibold">{inviteEmail}</span> for å få tilgang til {inviteCar || 'bilen'}.
+                    </p>
+                  </div>
+                )}
+                {compatWarning && (
+                  <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-3">
+                    <p className="text-sm text-foreground">{compatWarning}</p>
+                  </div>
+                )}
+                {error && (
+                  <div className="bg-destructive/10 border border-destructive/30 rounded-lg p-3">
+                    <p className="text-sm text-destructive">{error}</p>
+                  </div>
+                )}
+
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground block" style={oswald}>
+                    E-post
+                  </label>
+                  <Input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="din@epost.no"
+                    required
+                    readOnly={inviteFlow && !!inviteEmail}
+                    className="h-12 text-base bg-background/50 border-border/60 focus:border-primary/60"
+                    style={oswald}
+                  />
+                  {inviteFlow && inviteEmail && (
+                    <p className="text-[11px] text-muted-foreground/80 mt-1" style={oswald}>
+                      Bruk denne e-posten for at invitasjonen skal fungere.
+                    </p>
+                  )}
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground block" style={oswald}>
+                    Passord
+                  </label>
+                  <Input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Ditt passord"
+                    required
+                    minLength={6}
+                    className="h-12 text-base bg-background/50 border-border/60 focus:border-primary/60"
+                    style={oswald}
+                  />
+                </div>
+
+                <div className="text-right">
+                  <Link to="/glemt-passord" className="text-xs text-muted-foreground hover:text-primary transition-colors" style={oswald}>
+                    Glemt passord?
+                  </Link>
+                </div>
+
+                <Button
+                  type="submit"
+                  disabled={isLoading}
+                  className="w-full h-12 text-base uppercase tracking-wider"
+                  style={{
+                    ...chakra,
+                    background: 'linear-gradient(135deg, #34eab8 0%, #2ab89a 100%)',
+                    color: '#070b10',
+                    boxShadow: '0 0 24px rgba(52,234,184,0.2)',
+                  }}
+                >
+                  {isLoading ? (
+                    <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Logger inn…</>
+                  ) : (
+                    <><LogIn className="w-4 h-4 mr-2" />Logg inn</>
+                  )}
+                </Button>
+
+                {inviteFlow && inviteEmail && (
+                  <div className="text-center">
+                    <button
+                      type="button"
+                      onClick={() => { setShowPasswordMode(false); setError(''); }}
+                      className="text-xs text-muted-foreground hover:text-primary underline inline-flex items-center gap-1"
+                      style={oswald}
+                    >
+                      <Mail className="w-3 h-3" />
+                      Få innloggingslenke på e-post i stedet
+                    </button>
+                  </div>
+                )}
+              </form>
+            )}
 
             <div className="mt-6 pt-5 border-t border-border/40 text-center">
               <p className="text-sm text-muted-foreground" style={oswald}>
