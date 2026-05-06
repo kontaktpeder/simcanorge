@@ -210,25 +210,35 @@ export default function Login() {
                 )}
 
                 {magicLinkSent ? (
-                  <div className="bg-primary/5 border border-primary/20 rounded-lg p-4 text-center">
-                    <CheckCircle className="w-8 h-8 mx-auto mb-2 text-[#34eab8]" />
-                    <p className="text-sm font-semibold text-foreground" style={oswald}>
+                  <div className="bg-primary/5 border border-primary/20 rounded-lg p-5 text-center">
+                    <CheckCircle className="w-10 h-10 mx-auto mb-3 text-[#34eab8]" />
+                    <p className="text-base font-semibold text-foreground" style={oswald}>
                       Innloggingslenke sendt
                     </p>
-                    <p className="text-xs text-muted-foreground mt-1" style={oswald}>
-                      Åpne e-posten på denne enheten for å fortsette.
+                    <p className="text-sm text-muted-foreground mt-2" style={oswald}>
+                      Lenken ble sendt til:
                     </p>
-                    <p className="text-[11px] text-muted-foreground/70 mt-1" style={oswald}>
-                      Sjekk spam / søk etter Bilgarasje.
+                    <p className="text-sm font-semibold text-foreground break-all mt-0.5" style={oswald}>
+                      {sentToEmail || email}
                     </p>
+                    <div className="mt-3 pt-3 border-t border-border/30 space-y-1">
+                      <p className="text-xs text-muted-foreground" style={oswald}>
+                        Åpne Mail- eller Gmail-appen <span className="text-foreground font-semibold">på denne enheten</span> og klikk på lenken.
+                      </p>
+                      <p className="text-[11px] text-muted-foreground/70" style={oswald}>
+                        Ser du den ikke? Sjekk spam-mappen eller søk etter «Bilgarasje».
+                      </p>
+                    </div>
                     <button
                       type="button"
                       onClick={handleSendMagicLink}
-                      disabled={isLoading}
-                      className="text-xs text-muted-foreground hover:text-primary underline mt-3"
+                      disabled={isLoading || resendCooldown > 0}
+                      className="text-xs text-muted-foreground hover:text-primary underline mt-4 disabled:opacity-50 disabled:no-underline disabled:cursor-not-allowed"
                       style={oswald}
                     >
-                      Send på nytt
+                      {resendCooldown > 0
+                        ? `Du kan sende ny lenke om ${resendCooldown} sek`
+                        : 'Send på nytt'}
                     </button>
                   </div>
                 ) : (
