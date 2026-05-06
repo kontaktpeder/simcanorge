@@ -84,16 +84,16 @@ export function Header() {
             <User className="w-5 h-5 md:w-[22px] md:h-[22px]" />
           </Link>
 
-          {/* CENTER — Logo */}
+          {/* CENTER — Logo (constrained to header height so it doesn't overlap nav below) */}
           <Link
             to="/"
-            className="flex justify-center items-center group -my-2 min-w-0"
+            className="flex justify-center items-center group min-w-0 h-14 md:h-16 overflow-hidden"
             aria-label="Bilgarasje.no — hjem"
           >
             <img
               src={bilgarasjeLogo}
               alt="Bilgarasje.no"
-              className="h-24 md:h-28 w-auto transition-all duration-300 group-hover:opacity-90"
+              className="h-24 md:h-28 w-auto transition-all duration-300 group-hover:opacity-90 pointer-events-none"
               style={{
                 filter:
                   "brightness(1.9) invert(1) drop-shadow(0 0 14px rgba(52,234,184,0.35)) drop-shadow(0 2px 6px rgba(0,0,0,0.5))",
