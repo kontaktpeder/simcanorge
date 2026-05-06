@@ -130,6 +130,16 @@ export default function Login() {
             style={{ background: 'linear-gradient(180deg, hsl(215 25% 11%) 0%, hsl(215 25% 9%) 100%)' }}>
 
             <form onSubmit={handleSubmit} className="space-y-5">
+              {inviteFlow && inviteEmail && (
+                <div className="bg-primary/10 border border-primary/30 rounded-lg p-3">
+                  <p className="text-sm font-semibold text-foreground" style={oswald}>
+                    Invitasjonen din venter fortsatt
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1" style={oswald}>
+                    Logg inn eller opprett konto med <span className="text-foreground font-semibold">{inviteEmail}</span> for å få tilgang til {inviteCar || 'bilen'}.
+                  </p>
+                </div>
+              )}
               {compatWarning && (
                 <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-3">
                   <p className="text-sm text-foreground">{compatWarning}</p>
