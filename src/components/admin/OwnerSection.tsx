@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import { Copy, Check, Trash2, Users, Mail, Link as LinkIcon, Clock, Send, StickyNote, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { buildInviteUrl } from '@/lib/publicUrl';
 
 interface Owner {
   id: string;
