@@ -381,6 +381,17 @@ export default function DashboardBilDetalj() {
                 <ExternalLink className="w-3.5 h-3.5" /> Se offentlig side
               </Link>
             )}
+            <div className="mt-6 flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={() => accessSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+                title="Inviter med redigeringslenke"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#34eab8] text-[#070b10] text-[12px] uppercase tracking-[0.1em] font-bold hover:brightness-110 transition"
+                style={chakra}
+              >
+                <Users className="w-3.5 h-3.5" /> Del tilgang
+              </button>
+            </div>
           </div>
         </section>
         <div className="max-w-[900px] mx-auto px-5 sm:px-8 py-8 sm:py-12 space-y-12 sm:space-y-16">
