@@ -214,7 +214,7 @@ export function CarAccessInviteSection({ carId }: Props) {
       {invitations.length > 0 && (
         <ul className="mt-4 space-y-2.5">
           {invitations.map((inv) => {
-            const link = `${window.location.origin}/i/${inv.token}`;
+            const link = buildInviteUrl(inv.token);
             const copied = copiedToken === inv.token;
             return (
               <li
