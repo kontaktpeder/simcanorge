@@ -631,7 +631,7 @@ const BilDetalj = () => {
                 </div>
 
                 {!isLinkedToCar && FEATURES.relationshipRequestsV1 && (
-                  <div className="mb-6">
+                  <div className="mb-6 flex flex-wrap gap-2">
                     <button
                       type="button"
                       onClick={() => setRelationshipDialogOpen(true)}
@@ -643,7 +643,20 @@ const BilDetalj = () => {
                       }}
                     >
                       <Link2 className="w-4 h-4" />
-                      Kjenner du til bilen?
+                      Kjenner du denne bilen?
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        toast({
+                          title: "Be om redigeringstilgang",
+                          description: "For å redigere bilen må en eier sende deg en invitasjonslenke.",
+                        })
+                      }
+                      className="inline-flex items-center justify-center gap-2 px-4 py-2.5 text-[12px] uppercase tracking-[0.15em] text-white/90 font-bold rounded-full border border-white/25 hover:bg-white/10 transition-all"
+                      style={{ fontFamily: "'Chakra Petch', sans-serif" }}
+                    >
+                      Be om redigeringstilgang
                     </button>
                   </div>
                 )}
