@@ -156,6 +156,19 @@ export function Header() {
                   </NavLink>
                 </>
               )}
+              {user && (
+                <NavLink
+                  to="/min-garasje"
+                  className={({ isActive }) =>
+                    `text-[11px] uppercase tracking-[0.14em] font-bold px-2 py-1 rounded transition-colors ${
+                      isActive ? "text-[#34eab8]" : "text-white/55 hover:text-white/90"
+                    }`
+                  }
+                  style={oswald}
+                >
+                  Min garasje
+                </NavLink>
+              )}
               <NavLink
                 to="/om-oss"
                 className={({ isActive }) =>
