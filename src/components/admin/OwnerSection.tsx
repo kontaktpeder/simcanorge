@@ -337,7 +337,7 @@ export function OwnerSection({ carId, isApproved, submittedEmail, carTitle, subm
           <p className="text-sm font-medium mb-2">Aktive invitasjoner:</p>
           <div className="space-y-3">
             {invitations.map(invitation => {
-              const magicLink = `${window.location.origin}/i/${invitation.token}`;
+              const magicLink = buildInviteUrl(invitation.token);
               const isCopied = copiedLink === invitation.token;
               const daysLeft = getDaysUntilExpiry(invitation.expires_at);
               
