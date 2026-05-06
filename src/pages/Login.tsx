@@ -33,6 +33,9 @@ export default function Login() {
   const returnUrl = safeInternalPath(searchParams.get('returnUrl'), '/app');
   const prefillEmail = searchParams.get('email');
   const fromApp = searchParams.get('reason') === 'app' || returnUrl === '/app';
+  const inviteFlow = searchParams.get('inviteFlow') === '1';
+  const inviteEmail = searchParams.get('inviteEmail') || '';
+  const inviteCar = searchParams.get('inviteCar') || '';
 
   useEffect(() => {
     const support = getBrowserAuthSupport();
@@ -48,8 +51,9 @@ export default function Login() {
   }, []);
 
   useEffect(() => {
-    if (prefillEmail) setEmail(prefillEmail);
-  }, [prefillEmail]);
+    if (inviteEmail) setEmail(inviteEmail);
+    else if (prefillEmail) setEmail(prefillEmail);
+  }, [prefillEmail, inviteEmail]);
 
   useEffect(() => {
     if (!authLoading && user) navigate(returnUrl);
