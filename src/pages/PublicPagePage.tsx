@@ -233,6 +233,7 @@ export default function PublicPagePage() {
 
       <div className="min-h-screen bg-[#0B0B0C]" style={themeStyle}>
         <PublicPageHero page={page} />
+        <PlatformContextBanner />
 
         <div className="max-w-[1000px] mx-auto px-5 md:px-8">
           <div className="flex items-center gap-6 py-5 border-b border-white/[0.06]">
