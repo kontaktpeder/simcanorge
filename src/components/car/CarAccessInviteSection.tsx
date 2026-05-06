@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Check, Copy, Clock, Trash2, Users, Mail, MessageCircle, Info } from "lucide-react";
+import { buildInviteUrl } from "@/lib/publicUrl";
 
 type Invitation = {
   id: string;
@@ -44,7 +45,7 @@ export function CarAccessInviteSection({ carId }: Props) {
   }, [carId]);
 
   const copyInviteLink = async (token: string) => {
-    const link = `${window.location.origin}/i/${token}`;
+    const link = buildInviteUrl(token);
     await navigator.clipboard.writeText(link);
     setCopiedToken(token);
     setTimeout(() => setCopiedToken(null), 2500);
@@ -213,7 +214,7 @@ export function CarAccessInviteSection({ carId }: Props) {
       {invitations.length > 0 && (
         <ul className="mt-4 space-y-2.5">
           {invitations.map((inv) => {
-            const link = `${window.location.origin}/i/${inv.token}`;
+            const link = buildInviteUrl(inv.token);
             const copied = copiedToken === inv.token;
             return (
               <li

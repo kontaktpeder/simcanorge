@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import { Copy, Check, Trash2, Users, Mail, Link as LinkIcon, Clock, Send, StickyNote, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { buildInviteUrl } from '@/lib/publicUrl';
 
 interface Owner {
   id: string;
@@ -131,7 +132,7 @@ export function OwnerSection({ carId, isApproved, submittedEmail, carTitle, subm
 
       if (existingInvitation) {
         // Use existing invitation
-        const magicLink = `${window.location.origin}/i/${existingInvitation.token}`;
+        const magicLink = buildInviteUrl(existingInvitation.token);
         await navigator.clipboard.writeText(magicLink);
         setCopiedLink(existingInvitation.token);
         setTimeout(() => setCopiedLink(null), 3000);
@@ -171,7 +172,7 @@ export function OwnerSection({ carId, isApproved, submittedEmail, carTitle, subm
       setInvitations(prev => [data, ...prev]);
       
       // Generate short magic link
-      const magicLink = `${window.location.origin}/i/${token}`;
+      const magicLink = buildInviteUrl(token);
       
       // Copy to clipboard
       await navigator.clipboard.writeText(magicLink);
@@ -191,7 +192,7 @@ export function OwnerSection({ carId, isApproved, submittedEmail, carTitle, subm
 
   // Copy link
   const copyLink = async (token: string) => {
-    const magicLink = `${window.location.origin}/i/${token}`;
+    const magicLink = buildInviteUrl(token);
     await navigator.clipboard.writeText(magicLink);
     setCopiedLink(token);
     setTimeout(() => setCopiedLink(null), 3000);
@@ -336,7 +337,7 @@ export function OwnerSection({ carId, isApproved, submittedEmail, carTitle, subm
           <p className="text-sm font-medium mb-2">Aktive invitasjoner:</p>
           <div className="space-y-3">
             {invitations.map(invitation => {
-              const magicLink = `${window.location.origin}/i/${invitation.token}`;
+              const magicLink = buildInviteUrl(invitation.token);
               const isCopied = copiedLink === invitation.token;
               const daysLeft = getDaysUntilExpiry(invitation.expires_at);
               
