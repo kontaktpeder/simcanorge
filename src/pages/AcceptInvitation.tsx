@@ -21,6 +21,7 @@ export default function AcceptInvitation() {
   const [inviteEmail, setInviteEmail] = useState('');
   const [currentEmail, setCurrentEmail] = useState('');
   const [signingOut, setSigningOut] = useState(false);
+  const handledRef = useRef(false);
 
   // Support both /i/:token and /accept-invitation?token=xxx
   const token = pathToken || searchParams.get('token');
