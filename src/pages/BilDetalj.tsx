@@ -3,6 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { Layout } from "@/components/layout/Layout";
 import { PageHeader } from "@/components/layout/PageHeader";
+import { PlatformContextBanner } from "@/components/layout/PlatformContextBanner";
 import { AnimatedSection } from "@/components/layout/AnimatedSection";
 import { TimelineSection } from "@/components/car/TimelineSection";
 import { OwnerCard } from "@/components/car/OwnerCard";
@@ -490,6 +491,7 @@ const BilDetalj = () => {
         title="BILHISTORIE" 
         subtitle="En unik historie fra vårt fellesskap" 
       />
+      <PlatformContextBanner />
 
       {canEditCar && (
         <div className="bg-[#111315] border-b border-white/[0.08]">
