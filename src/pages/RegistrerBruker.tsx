@@ -180,36 +180,44 @@ export default function RegistrerBruker() {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="din@epost.no"
                   required
+                  readOnly={inviteFlow && !!inviteEmail}
                   autoComplete="email"
                   className="h-12 text-base bg-background/50 border-border/60 focus:border-primary/60"
                   style={oswald}
                 />
+                {inviteFlow && inviteEmail && (
+                  <p className="text-[11px] text-muted-foreground/80 mt-1" style={oswald}>
+                    Bruk denne e-posten for at invitasjonen skal fungere.
+                  </p>
+                )}
               </div>
 
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground block" style={oswald}>
-                  Bekreft e-post
-                </label>
-                <div className="relative">
-                  <Input
-                    type="email"
-                    value={emailConfirm}
-                    onChange={(e) => setEmailConfirm(e.target.value)}
-                    onPaste={(e) => e.preventDefault()}
-                    placeholder="Skriv e-posten på nytt"
-                    required
-                    autoComplete="off"
-                    className={`h-12 text-base bg-background/50 border-border/60 focus:border-primary/60 pr-10 ${emailsMismatch ? 'border-destructive/60' : ''}`}
-                    style={oswald}
-                  />
-                  {emailsMatch && (
-                    <Check className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#34eab8]" aria-label="E-post samsvarer" />
-                  )}
-                  {emailsMismatch && (
-                    <X className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-destructive" aria-label="E-post samsvarer ikke" />
-                  )}
+              {!(inviteFlow && inviteEmail) && (
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground block" style={oswald}>
+                    Bekreft e-post
+                  </label>
+                  <div className="relative">
+                    <Input
+                      type="email"
+                      value={emailConfirm}
+                      onChange={(e) => setEmailConfirm(e.target.value)}
+                      onPaste={(e) => e.preventDefault()}
+                      placeholder="Skriv e-posten på nytt"
+                      required
+                      autoComplete="off"
+                      className={`h-12 text-base bg-background/50 border-border/60 focus:border-primary/60 pr-10 ${emailsMismatch ? 'border-destructive/60' : ''}`}
+                      style={oswald}
+                    />
+                    {emailsMatch && (
+                      <Check className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#34eab8]" aria-label="E-post samsvarer" />
+                    )}
+                    {emailsMismatch && (
+                      <X className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-destructive" aria-label="E-post samsvarer ikke" />
+                    )}
+                  </div>
                 </div>
-              </div>
+              )}
 
               <div className="space-y-1.5">
                 <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground block" style={oswald}>
