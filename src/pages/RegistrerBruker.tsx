@@ -25,9 +25,12 @@ export default function RegistrerBruker() {
   const navigate = useNavigate();
   const { user, isLoading: authLoading } = useAuth();
   const returnUrl = safeInternalPath(searchParams.get('returnUrl'), '/app');
+  const inviteFlow = searchParams.get('inviteFlow') === '1';
+  const inviteEmail = searchParams.get('inviteEmail') || '';
+  const inviteCar = searchParams.get('inviteCar') || '';
 
-  const [email, setEmail] = useState('');
-  const [emailConfirm, setEmailConfirm] = useState('');
+  const [email, setEmail] = useState(inviteEmail);
+  const [emailConfirm, setEmailConfirm] = useState(inviteEmail);
   const [password, setPassword] = useState('');
   const [password2, setPassword2] = useState('');
   const [isLoading, setIsLoading] = useState(false);
