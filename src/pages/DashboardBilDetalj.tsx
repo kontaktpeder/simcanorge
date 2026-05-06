@@ -8,7 +8,7 @@ import {
   Car, Wrench, Loader2, XCircle,
   Pencil, Save, X, Upload, Trash2, Clock, Send,
   ChevronLeft, ChevronRight, Star, ImageIcon, BookOpen, Info, ArrowLeft,
-  CheckCircle2, Circle, ExternalLink, User
+  CheckCircle2, Circle, ExternalLink, User, Users
 } from 'lucide-react';
 import React, { useEffect, useState, useRef } from 'react';
 import { Input } from '@/components/ui/input';
@@ -53,6 +53,7 @@ export default function DashboardBilDetalj() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const accessSectionRef = useRef<HTMLDivElement>(null);
 
   const [isEditingBasic, setIsEditingBasic] = useState(false);
   const [isEditingStory, setIsEditingStory] = useState(false);
@@ -380,6 +381,17 @@ export default function DashboardBilDetalj() {
                 <ExternalLink className="w-3.5 h-3.5" /> Se offentlig side
               </Link>
             )}
+            <div className="mt-6 flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={() => accessSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+                title="Inviter med redigeringslenke"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#34eab8] text-[#070b10] text-[12px] uppercase tracking-[0.1em] font-bold hover:brightness-110 transition"
+                style={chakra}
+              >
+                <Users className="w-3.5 h-3.5" /> Del tilgang
+              </button>
+            </div>
           </div>
         </section>
         <div className="max-w-[900px] mx-auto px-5 sm:px-8 py-8 sm:py-12 space-y-12 sm:space-y-16">
@@ -707,7 +719,9 @@ export default function DashboardBilDetalj() {
             </motion.section>
           )}
           <motion.section initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.28 }}>
-            <CarAccessInviteSection carId={car.id} />
+            <div ref={accessSectionRef}>
+              <CarAccessInviteSection carId={car.id} />
+            </div>
           </motion.section>
 
           <motion.section initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
