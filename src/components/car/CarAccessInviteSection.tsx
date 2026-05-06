@@ -44,7 +44,7 @@ export function CarAccessInviteSection({ carId }: Props) {
   }, [carId]);
 
   const copyInviteLink = async (token: string) => {
-    const link = `${window.location.origin}/i/${token}`;
+    const link = buildInviteUrl(token);
     await navigator.clipboard.writeText(link);
     setCopiedToken(token);
     setTimeout(() => setCopiedToken(null), 2500);
