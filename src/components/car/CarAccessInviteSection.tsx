@@ -123,71 +123,28 @@ export function CarAccessInviteSection({ carId }: Props) {
     Math.max(0, Math.ceil((new Date(expiresAt).getTime() - Date.now()) / 86400000));
 
   return (
-    <section className="rounded-xl border border-white/10 bg-white/[0.03] p-5 md:p-6">
+    <section className="rounded-xl border border-white/10 bg-white/[0.03] p-4 md:p-6">
       <div className="flex items-center gap-2 mb-1">
-        <Users className="w-4 h-4 text-[#34eab8]" />
+        <Users className="w-4 h-4 text-[#34eab8] shrink-0" />
         <h3
-          className="text-[15px] uppercase tracking-[0.12em] text-white font-bold"
+          className="text-[14px] md:text-[15px] uppercase tracking-[0.12em] text-white font-bold"
           style={{ fontFamily: "'Chakra Petch', sans-serif" }}
         >
           Del tilgang til bilen
         </h3>
       </div>
-      <p className="text-[13px] text-white/55 mb-1">
+      <p className="text-[12.5px] md:text-[13px] text-white/55 mb-1 leading-snug">
         Inviter noen som hjelper med bilder, historikk eller prosjektet.
       </p>
-      <p className="text-[12px] text-white/40 mb-4">
+      <p className="text-[11.5px] md:text-[12px] text-white/40 mb-4">
         Invitasjonen gir full redigeringstilgang (eier).
       </p>
 
-      <div className="rounded-lg border border-white/10 bg-black/20 p-3 mb-4">
-        <div className="flex items-center gap-1.5 mb-2">
-          <Info className="w-3.5 h-3.5 text-[#34eab8]" />
-          <p
-            className="text-[11px] uppercase tracking-[0.12em] text-white/70 font-bold"
-            style={{ fontFamily: "'Chakra Petch', sans-serif" }}
-          >
-            Slik fungerer det
-          </p>
-        </div>
-        <ol className="space-y-1.5 text-[12px] text-white/60 leading-relaxed">
-          <li>
-            <span className="text-[#34eab8] font-bold">1.</span> Skriv inn e-posten
-            til personen og trykk «Lag invitasjonslenke». Lenken kopieres automatisk.
-          </li>
-          <li className="flex gap-1.5">
-            <span className="text-[#34eab8] font-bold">2.</span>
-            <span>
-              Send lenken til bidragsyteren selv – på{" "}
-              <span className="inline-flex items-center gap-0.5 text-white/80">
-                <Mail className="w-3 h-3" /> e-post
-              </span>
-              ,{" "}
-              <span className="inline-flex items-center gap-0.5 text-white/80">
-                <MessageCircle className="w-3 h-3" /> SMS, Messenger
-              </span>{" "}
-              eller annen melding. Vi sender ikke noe automatisk.
-            </span>
-          </li>
-          <li>
-            <span className="text-[#34eab8] font-bold">3.</span> Personen åpner
-            lenken og må logge inn eller registrere seg med <em>samme e-post</em>{" "}
-            som invitasjonen er sendt til.
-          </li>
-          <li>
-            <span className="text-[#34eab8] font-bold">4.</span> Bilen dukker opp i
-            deres garasje, og de får full redigeringstilgang som eier.
-          </li>
-          <li>
-            <span className="text-[#34eab8] font-bold">5.</span> Lenken utløper
-            etter 7 dager og kan kun brukes én gang. Du kan slette den når som helst.
-          </li>
-        </ol>
-      </div>
-
-      <div className="flex flex-col sm:flex-row gap-2">
+      <div className="flex flex-col sm:flex-row gap-2 mb-4">
         <Input
           type="email"
+          inputMode="email"
+          autoComplete="email"
           placeholder="navn@eksempel.no"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -197,19 +154,64 @@ export function CarAccessInviteSection({ carId }: Props) {
               void createInvite();
             }
           }}
-          className="bg-white/5 border-white/10 text-white"
+          className="bg-white/5 border-white/10 text-white h-11"
         />
         <Button
           onClick={() => void createInvite()}
           disabled={isCreating || !email.trim()}
-          className="bg-[#34eab8] text-[#070b10] hover:bg-[#2dd4a8] font-bold whitespace-nowrap"
+          className="bg-[#34eab8] text-[#070b10] hover:bg-[#2dd4a8] font-bold whitespace-nowrap h-11 w-full sm:w-auto"
         >
           Lag invitasjonslenke
         </Button>
       </div>
 
+      <details className="rounded-lg border border-white/10 bg-black/20 group">
+        <summary className="flex items-center gap-1.5 p-3 cursor-pointer list-none">
+          <Info className="w-3.5 h-3.5 text-[#34eab8] shrink-0" />
+          <p
+            className="text-[11px] uppercase tracking-[0.12em] text-white/70 font-bold flex-1"
+            style={{ fontFamily: "'Chakra Petch', sans-serif" }}
+          >
+            Slik fungerer det
+          </p>
+          <span className="text-white/40 text-[11px] group-open:rotate-180 transition-transform">▾</span>
+        </summary>
+        <ol className="space-y-1.5 text-[12px] text-white/60 leading-relaxed px-3 pb-3">
+          <li>
+            <span className="text-[#34eab8] font-bold">1.</span> Skriv inn e-posten
+            og trykk «Lag invitasjonslenke». Lenken kopieres automatisk.
+          </li>
+          <li className="flex gap-1.5">
+            <span className="text-[#34eab8] font-bold shrink-0">2.</span>
+            <span>
+              Send lenken til bidragsyteren selv – på{" "}
+              <span className="inline-flex items-center gap-0.5 text-white/80">
+                <Mail className="w-3 h-3" /> e-post
+              </span>
+              ,{" "}
+              <span className="inline-flex items-center gap-0.5 text-white/80">
+                <MessageCircle className="w-3 h-3" /> SMS eller Messenger
+              </span>
+              . Vi sender ikke noe automatisk.
+            </span>
+          </li>
+          <li>
+            <span className="text-[#34eab8] font-bold">3.</span> Personen logger
+            inn eller registrerer seg med <em>samme e-post</em>.
+          </li>
+          <li>
+            <span className="text-[#34eab8] font-bold">4.</span> Bilen dukker opp
+            i deres garasje med full redigeringstilgang.
+          </li>
+          <li>
+            <span className="text-[#34eab8] font-bold">5.</span> Lenken utløper
+            etter 7 dager og kan kun brukes én gang.
+          </li>
+        </ol>
+      </details>
+
       {invitations.length > 0 && (
-        <ul className="mt-5 space-y-3">
+        <ul className="mt-4 space-y-2.5">
           {invitations.map((inv) => {
             const link = `${window.location.origin}/i/${inv.token}`;
             const copied = copiedToken === inv.token;
@@ -219,31 +221,31 @@ export function CarAccessInviteSection({ carId }: Props) {
                 className="rounded-lg border border-white/10 bg-black/20 p-3"
               >
                 <div className="flex items-center justify-between gap-2 mb-2">
-                  <p className="text-[13px] text-white/85 font-medium truncate">
+                  <p className="text-[13px] text-white/85 font-medium truncate min-w-0">
                     {inv.email}
                   </p>
                   <button
                     type="button"
                     onClick={() => void removeInvite(inv.id)}
-                    className="text-destructive hover:text-red-400 p-1"
+                    className="text-destructive hover:text-red-400 p-2 -m-2 shrink-0"
                     aria-label="Slett invitasjon"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
                 </div>
-                <div className="flex items-center gap-2 mb-2">
-                  <p className="text-[11px] text-white/45 truncate flex-1 font-mono">
+                <button
+                  type="button"
+                  onClick={() => void copyInviteLink(inv.token)}
+                  className="w-full flex items-center gap-2 mb-2 px-2.5 py-2 rounded border border-white/10 bg-white/[0.02] hover:bg-white/5 text-left"
+                >
+                  <p className="text-[11px] text-white/55 truncate flex-1 font-mono min-w-0">
                     {link}
                   </p>
-                  <button
-                    type="button"
-                    onClick={() => void copyInviteLink(inv.token)}
-                    className="inline-flex items-center gap-1 text-[11px] uppercase tracking-wider px-2 py-1 rounded border border-white/10 text-white/70 hover:bg-white/5"
-                  >
+                  <span className="inline-flex items-center gap-1 text-[11px] uppercase tracking-wider text-white/70 shrink-0">
                     {copied ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
                     {copied ? "Kopiert" : "Kopier"}
-                  </button>
-                </div>
+                  </span>
+                </button>
                 <p className="text-[11px] text-white/40 flex items-center gap-1.5">
                   <Clock className="w-3 h-3" />
                   Utløper om {daysLeft(inv.expires_at)} dager
