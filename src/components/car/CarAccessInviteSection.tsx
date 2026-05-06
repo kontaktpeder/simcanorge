@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Check, Copy, Clock, Trash2, Users, Mail, MessageCircle, Info } from "lucide-react";
+import { buildInviteUrl } from "@/lib/publicUrl";
 
 type Invitation = {
   id: string;
