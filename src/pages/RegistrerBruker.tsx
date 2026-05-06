@@ -25,9 +25,12 @@ export default function RegistrerBruker() {
   const navigate = useNavigate();
   const { user, isLoading: authLoading } = useAuth();
   const returnUrl = safeInternalPath(searchParams.get('returnUrl'), '/app');
+  const inviteFlow = searchParams.get('inviteFlow') === '1';
+  const inviteEmail = searchParams.get('inviteEmail') || '';
+  const inviteCar = searchParams.get('inviteCar') || '';
 
-  const [email, setEmail] = useState('');
-  const [emailConfirm, setEmailConfirm] = useState('');
+  const [email, setEmail] = useState(inviteEmail);
+  const [emailConfirm, setEmailConfirm] = useState(inviteEmail);
   const [password, setPassword] = useState('');
   const [password2, setPassword2] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -146,6 +149,16 @@ export default function RegistrerBruker() {
           <div className="rounded-2xl border border-border/60 p-6 sm:p-8 shadow-2xl"
             style={{ background: 'linear-gradient(180deg, hsl(215 25% 11%) 0%, hsl(215 25% 9%) 100%)' }}>
             <form onSubmit={handleSubmit} className="space-y-5">
+              {inviteFlow && inviteEmail && (
+                <div className="bg-primary/10 border border-primary/30 rounded-lg p-3">
+                  <p className="text-sm font-semibold text-foreground" style={oswald}>
+                    Invitasjonen din venter fortsatt
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1" style={oswald}>
+                    Logg inn eller opprett konto med <span className="text-foreground font-semibold">{inviteEmail}</span> for å få tilgang til {inviteCar || 'bilen'}.
+                  </p>
+                </div>
+              )}
               {error && (
                 <div className="bg-destructive/10 border border-destructive/30 rounded-lg p-3">
                   <p className="text-sm text-destructive">{error}</p>
@@ -167,36 +180,44 @@ export default function RegistrerBruker() {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="din@epost.no"
                   required
+                  readOnly={inviteFlow && !!inviteEmail}
                   autoComplete="email"
                   className="h-12 text-base bg-background/50 border-border/60 focus:border-primary/60"
                   style={oswald}
                 />
+                {inviteFlow && inviteEmail && (
+                  <p className="text-[11px] text-muted-foreground/80 mt-1" style={oswald}>
+                    Bruk denne e-posten for at invitasjonen skal fungere.
+                  </p>
+                )}
               </div>
 
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground block" style={oswald}>
-                  Bekreft e-post
-                </label>
-                <div className="relative">
-                  <Input
-                    type="email"
-                    value={emailConfirm}
-                    onChange={(e) => setEmailConfirm(e.target.value)}
-                    onPaste={(e) => e.preventDefault()}
-                    placeholder="Skriv e-posten på nytt"
-                    required
-                    autoComplete="off"
-                    className={`h-12 text-base bg-background/50 border-border/60 focus:border-primary/60 pr-10 ${emailsMismatch ? 'border-destructive/60' : ''}`}
-                    style={oswald}
-                  />
-                  {emailsMatch && (
-                    <Check className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#34eab8]" aria-label="E-post samsvarer" />
-                  )}
-                  {emailsMismatch && (
-                    <X className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-destructive" aria-label="E-post samsvarer ikke" />
-                  )}
+              {!(inviteFlow && inviteEmail) && (
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground block" style={oswald}>
+                    Bekreft e-post
+                  </label>
+                  <div className="relative">
+                    <Input
+                      type="email"
+                      value={emailConfirm}
+                      onChange={(e) => setEmailConfirm(e.target.value)}
+                      onPaste={(e) => e.preventDefault()}
+                      placeholder="Skriv e-posten på nytt"
+                      required
+                      autoComplete="off"
+                      className={`h-12 text-base bg-background/50 border-border/60 focus:border-primary/60 pr-10 ${emailsMismatch ? 'border-destructive/60' : ''}`}
+                      style={oswald}
+                    />
+                    {emailsMatch && (
+                      <Check className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#34eab8]" aria-label="E-post samsvarer" />
+                    )}
+                    {emailsMismatch && (
+                      <X className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-destructive" aria-label="E-post samsvarer ikke" />
+                    )}
+                  </div>
                 </div>
-              </div>
+              )}
 
               <div className="space-y-1.5">
                 <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground block" style={oswald}>
@@ -280,7 +301,7 @@ export default function RegistrerBruker() {
             <div className="mt-6 pt-5 border-t border-border/40 text-center">
               <p className="text-sm text-muted-foreground" style={oswald}>
                 Har du allerede konto?{' '}
-                <Link to="/login" className="text-primary hover:underline font-medium inline-flex items-center gap-1">
+                <Link to={`/login?${searchParams.toString()}`} className="text-primary hover:underline font-medium inline-flex items-center gap-1">
                   Logg inn <ArrowRight className="w-3 h-3" />
                 </Link>
               </p>

@@ -33,6 +33,9 @@ export default function Login() {
   const returnUrl = safeInternalPath(searchParams.get('returnUrl'), '/app');
   const prefillEmail = searchParams.get('email');
   const fromApp = searchParams.get('reason') === 'app' || returnUrl === '/app';
+  const inviteFlow = searchParams.get('inviteFlow') === '1';
+  const inviteEmail = searchParams.get('inviteEmail') || '';
+  const inviteCar = searchParams.get('inviteCar') || '';
 
   useEffect(() => {
     const support = getBrowserAuthSupport();
@@ -48,8 +51,9 @@ export default function Login() {
   }, []);
 
   useEffect(() => {
-    if (prefillEmail) setEmail(prefillEmail);
-  }, [prefillEmail]);
+    if (inviteEmail) setEmail(inviteEmail);
+    else if (prefillEmail) setEmail(prefillEmail);
+  }, [prefillEmail, inviteEmail]);
 
   useEffect(() => {
     if (!authLoading && user) navigate(returnUrl);
@@ -126,6 +130,16 @@ export default function Login() {
             style={{ background: 'linear-gradient(180deg, hsl(215 25% 11%) 0%, hsl(215 25% 9%) 100%)' }}>
 
             <form onSubmit={handleSubmit} className="space-y-5">
+              {inviteFlow && inviteEmail && (
+                <div className="bg-primary/10 border border-primary/30 rounded-lg p-3">
+                  <p className="text-sm font-semibold text-foreground" style={oswald}>
+                    Invitasjonen din venter fortsatt
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1" style={oswald}>
+                    Logg inn eller opprett konto med <span className="text-foreground font-semibold">{inviteEmail}</span> for å få tilgang til {inviteCar || 'bilen'}.
+                  </p>
+                </div>
+              )}
               {compatWarning && (
                 <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-3">
                   <p className="text-sm text-foreground">{compatWarning}</p>
@@ -148,9 +162,15 @@ export default function Login() {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="din@epost.no"
                   required
+                  readOnly={inviteFlow && !!inviteEmail}
                   className="h-12 text-base bg-background/50 border-border/60 focus:border-primary/60"
                   style={oswald}
                 />
+                {inviteFlow && inviteEmail && (
+                  <p className="text-[11px] text-muted-foreground/80 mt-1" style={oswald}>
+                    Bruk denne e-posten for at invitasjonen skal fungere.
+                  </p>
+                )}
               </div>
 
               <div className="space-y-1.5">
@@ -198,7 +218,7 @@ export default function Login() {
             <div className="mt-6 pt-5 border-t border-border/40 text-center">
               <p className="text-sm text-muted-foreground" style={oswald}>
                 Ikke medlem ennå?{' '}
-                <Link to="/registrer" className="text-primary hover:underline font-medium inline-flex items-center gap-1">
+                <Link to={`/registrer?${searchParams.toString()}`} className="text-primary hover:underline font-medium inline-flex items-center gap-1">
                   Opprett gratis konto <ArrowRight className="w-3 h-3" />
                 </Link>
               </p>

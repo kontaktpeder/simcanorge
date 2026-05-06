@@ -138,7 +138,14 @@ export default function AcceptInvitation() {
     setSigningOut(true);
     try {
       await supabase.auth.signOut();
-      navigate(`/login?returnUrl=${encodeURIComponent(`/i/${token}`)}`, { replace: true });
+      const returnTo = `/i/${token}`;
+      const params = new URLSearchParams({
+        returnUrl: returnTo,
+        inviteFlow: '1',
+        inviteEmail: inviteEmail,
+        inviteCar: carTitle || 'bilen',
+      });
+      navigate(`/login?${params.toString()}`, { replace: true });
     } catch (e) {
       console.error('Sign out failed:', e);
       toast.error('Kunne ikke logge ut. Prøv igjen.');
@@ -206,7 +213,7 @@ export default function AcceptInvitation() {
                 ) : (
                   <>
                     <LogOut className="w-4 h-4 mr-2" />
-                    Logg ut og prøv igjen
+                    Logg ut og fortsett med riktig konto
                   </>
                 )}
               </Button>
