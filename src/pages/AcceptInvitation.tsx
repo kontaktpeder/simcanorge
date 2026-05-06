@@ -149,7 +149,7 @@ export default function AcceptInvitation() {
       setIsProcessing(false);
 
       setTimeout(() => {
-        navigate('/dashboard/mine-biler');
+        navigate(`/dashboard/bil/${invitation.car_id}`);
       }, 1500);
     } catch (error: any) {
       console.error('Error accepting invitation:', error);
