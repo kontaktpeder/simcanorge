@@ -149,6 +149,16 @@ export default function RegistrerBruker() {
           <div className="rounded-2xl border border-border/60 p-6 sm:p-8 shadow-2xl"
             style={{ background: 'linear-gradient(180deg, hsl(215 25% 11%) 0%, hsl(215 25% 9%) 100%)' }}>
             <form onSubmit={handleSubmit} className="space-y-5">
+              {inviteFlow && inviteEmail && (
+                <div className="bg-primary/10 border border-primary/30 rounded-lg p-3">
+                  <p className="text-sm font-semibold text-foreground" style={oswald}>
+                    Invitasjonen din venter fortsatt
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1" style={oswald}>
+                    Logg inn eller opprett konto med <span className="text-foreground font-semibold">{inviteEmail}</span> for å få tilgang til {inviteCar || 'bilen'}.
+                  </p>
+                </div>
+              )}
               {error && (
                 <div className="bg-destructive/10 border border-destructive/30 rounded-lg p-3">
                   <p className="text-sm text-destructive">{error}</p>
