@@ -132,7 +132,7 @@ export function OwnerSection({ carId, isApproved, submittedEmail, carTitle, subm
 
       if (existingInvitation) {
         // Use existing invitation
-        const magicLink = `${window.location.origin}/i/${existingInvitation.token}`;
+        const magicLink = buildInviteUrl(existingInvitation.token);
         await navigator.clipboard.writeText(magicLink);
         setCopiedLink(existingInvitation.token);
         setTimeout(() => setCopiedLink(null), 3000);
