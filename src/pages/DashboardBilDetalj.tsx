@@ -29,6 +29,7 @@ import {
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { canEditCarInDashboard } from '@/lib/carEditAccess';
+import { CarAccessInviteSection } from '@/components/car/CarAccessInviteSection';
 
 const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
 const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
@@ -705,6 +706,10 @@ export default function DashboardBilDetalj() {
               </div>
             </motion.section>
           )}
+          <motion.section initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.28 }}>
+            <CarAccessInviteSection carId={car.id} />
+          </motion.section>
+
           <motion.section initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
             <SectionHeading icon={<Send />} title="DEL I FEEDEN" />
             <PostComposer compact postType="car_update" carId={car.id}
