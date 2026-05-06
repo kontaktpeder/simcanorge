@@ -38,7 +38,8 @@ export default function Login() {
   const inviteFlow = searchParams.get('inviteFlow') === '1';
   const inviteEmail = searchParams.get('inviteEmail') || '';
   const inviteCar = searchParams.get('inviteCar') || '';
-  const useMagicLink = inviteFlow && !!inviteEmail && !showPasswordMode;
+  const useMagicLink = !showPasswordMode;
+  const publicBaseUrl = (import.meta.env.VITE_PUBLIC_SITE_URL as string | undefined) || window.location.origin;
 
   useEffect(() => {
     const support = getBrowserAuthSupport();
