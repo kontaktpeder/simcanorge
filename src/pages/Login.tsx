@@ -356,19 +356,17 @@ export default function Login() {
                   )}
                 </Button>
 
-                {inviteFlow && inviteEmail && (
-                  <div className="text-center">
-                    <button
-                      type="button"
-                      onClick={() => { setShowPasswordMode(false); setError(''); }}
-                      className="text-xs text-muted-foreground hover:text-primary underline inline-flex items-center gap-1"
-                      style={oswald}
-                    >
-                      <Mail className="w-3 h-3" />
-                      Få innloggingslenke på e-post i stedet
-                    </button>
-                  </div>
-                )}
+                <div className="text-center">
+                  <button
+                    type="button"
+                    onClick={() => { setShowPasswordMode(false); setError(''); }}
+                    className="text-xs text-muted-foreground hover:text-primary underline inline-flex items-center gap-1"
+                    style={oswald}
+                  >
+                    <Mail className="w-3 h-3" />
+                    Få innloggingslenke på e-post i stedet
+                  </button>
+                </div>
               </form>
             )}
 
