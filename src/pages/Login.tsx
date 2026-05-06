@@ -30,6 +30,8 @@ export default function Login() {
   const [error, setError] = useState('');
   const [compatWarning, setCompatWarning] = useState<string | null>(null);
   const [magicLinkSent, setMagicLinkSent] = useState(false);
+  const [sentToEmail, setSentToEmail] = useState('');
+  const [resendCooldown, setResendCooldown] = useState(0);
   const [showPasswordMode, setShowPasswordMode] = useState(false);
 
   const returnUrl = safeInternalPath(searchParams.get('returnUrl'), '/app');
@@ -63,6 +65,12 @@ export default function Login() {
     if (!authLoading && user) navigate(returnUrl);
   }, [user, authLoading, navigate, returnUrl]);
 
+  useEffect(() => {
+    if (resendCooldown <= 0) return;
+    const t = setTimeout(() => setResendCooldown((s) => s - 1), 1000);
+    return () => clearTimeout(t);
+  }, [resendCooldown]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -87,6 +95,7 @@ export default function Login() {
 
   const handleSendMagicLink = async () => {
     setError('');
+    if (resendCooldown > 0) return;
     const targetEmail = ((inviteFlow && inviteEmail) ? inviteEmail : email).trim().toLowerCase();
     if (!targetEmail) {
       setError('Skriv inn e-postadressen din');
@@ -103,7 +112,9 @@ export default function Login() {
       });
       if (error) throw error;
       setEmail(targetEmail);
+      setSentToEmail(targetEmail);
       setMagicLinkSent(true);
+      setResendCooldown(20);
       toast.success('Innloggingslenke sendt!');
     } catch (err: any) {
       console.error('Magic link error:', err);
@@ -150,10 +161,10 @@ export default function Login() {
             </p>
             <h1 className="text-3xl sm:text-4xl uppercase tracking-wide text-foreground font-bold italic"
               style={chakra}>
-              Logg inn
+              Logg inn / Opprett konto
             </h1>
             <p className="mt-2 text-sm text-muted-foreground" style={oswald}>
-              {fromApp ? 'Logg inn for å fortsette til garasjen din' : 'Få tilgang til din garasje'}
+              Skriv inn e-post — vi sender deg en innloggingslenke.
             </p>
           </div>
 
@@ -199,25 +210,35 @@ export default function Login() {
                 )}
 
                 {magicLinkSent ? (
-                  <div className="bg-primary/5 border border-primary/20 rounded-lg p-4 text-center">
-                    <CheckCircle className="w-8 h-8 mx-auto mb-2 text-[#34eab8]" />
-                    <p className="text-sm font-semibold text-foreground" style={oswald}>
+                  <div className="bg-primary/5 border border-primary/20 rounded-lg p-5 text-center">
+                    <CheckCircle className="w-10 h-10 mx-auto mb-3 text-[#34eab8]" />
+                    <p className="text-base font-semibold text-foreground" style={oswald}>
                       Innloggingslenke sendt
                     </p>
-                    <p className="text-xs text-muted-foreground mt-1" style={oswald}>
-                      Åpne e-posten på denne enheten for å fortsette.
+                    <p className="text-sm text-muted-foreground mt-2" style={oswald}>
+                      Lenken ble sendt til:
                     </p>
-                    <p className="text-[11px] text-muted-foreground/70 mt-1" style={oswald}>
-                      Sjekk spam / søk etter Bilgarasje.
+                    <p className="text-sm font-semibold text-foreground break-all mt-0.5" style={oswald}>
+                      {sentToEmail || email}
                     </p>
+                    <div className="mt-3 pt-3 border-t border-border/30 space-y-1">
+                      <p className="text-xs text-muted-foreground" style={oswald}>
+                        Åpne Mail- eller Gmail-appen <span className="text-foreground font-semibold">på denne enheten</span> og klikk på lenken.
+                      </p>
+                      <p className="text-[11px] text-muted-foreground/70" style={oswald}>
+                        Ser du den ikke? Sjekk spam-mappen eller søk etter «Bilgarasje».
+                      </p>
+                    </div>
                     <button
                       type="button"
                       onClick={handleSendMagicLink}
-                      disabled={isLoading}
-                      className="text-xs text-muted-foreground hover:text-primary underline mt-3"
+                      disabled={isLoading || resendCooldown > 0}
+                      className="text-xs text-muted-foreground hover:text-primary underline mt-4 disabled:opacity-50 disabled:no-underline disabled:cursor-not-allowed"
                       style={oswald}
                     >
-                      Send på nytt
+                      {resendCooldown > 0
+                        ? `Du kan sende ny lenke om ${resendCooldown} sek`
+                        : 'Send på nytt'}
                     </button>
                   </div>
                 ) : (
