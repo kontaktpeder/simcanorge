@@ -4,7 +4,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Check, Copy, Clock, Trash2, Users } from "lucide-react";
+import { Check, Copy, Clock, Trash2, Users, Mail, MessageCircle, Info } from "lucide-react";
 
 type Invitation = {
   id: string;
@@ -139,6 +139,51 @@ export function CarAccessInviteSection({ carId }: Props) {
       <p className="text-[12px] text-white/40 mb-4">
         Invitasjonen gir full redigeringstilgang (eier).
       </p>
+
+      <div className="rounded-lg border border-white/10 bg-black/20 p-3 mb-4">
+        <div className="flex items-center gap-1.5 mb-2">
+          <Info className="w-3.5 h-3.5 text-[#34eab8]" />
+          <p
+            className="text-[11px] uppercase tracking-[0.12em] text-white/70 font-bold"
+            style={{ fontFamily: "'Chakra Petch', sans-serif" }}
+          >
+            Slik fungerer det
+          </p>
+        </div>
+        <ol className="space-y-1.5 text-[12px] text-white/60 leading-relaxed">
+          <li>
+            <span className="text-[#34eab8] font-bold">1.</span> Skriv inn e-posten
+            til personen og trykk «Lag invitasjonslenke». Lenken kopieres automatisk.
+          </li>
+          <li className="flex gap-1.5">
+            <span className="text-[#34eab8] font-bold">2.</span>
+            <span>
+              Send lenken til bidragsyteren selv – på{" "}
+              <span className="inline-flex items-center gap-0.5 text-white/80">
+                <Mail className="w-3 h-3" /> e-post
+              </span>
+              ,{" "}
+              <span className="inline-flex items-center gap-0.5 text-white/80">
+                <MessageCircle className="w-3 h-3" /> SMS, Messenger
+              </span>{" "}
+              eller annen melding. Vi sender ikke noe automatisk.
+            </span>
+          </li>
+          <li>
+            <span className="text-[#34eab8] font-bold">3.</span> Personen åpner
+            lenken og må logge inn eller registrere seg med <em>samme e-post</em>{" "}
+            som invitasjonen er sendt til.
+          </li>
+          <li>
+            <span className="text-[#34eab8] font-bold">4.</span> Bilen dukker opp i
+            deres garasje, og de får full redigeringstilgang som eier.
+          </li>
+          <li>
+            <span className="text-[#34eab8] font-bold">5.</span> Lenken utløper
+            etter 7 dager og kan kun brukes én gang. Du kan slette den når som helst.
+          </li>
+        </ol>
+      </div>
 
       <div className="flex flex-col sm:flex-row gap-2">
         <Input
