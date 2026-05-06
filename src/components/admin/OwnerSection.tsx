@@ -172,7 +172,7 @@ export function OwnerSection({ carId, isApproved, submittedEmail, carTitle, subm
       setInvitations(prev => [data, ...prev]);
       
       // Generate short magic link
-      const magicLink = `${window.location.origin}/i/${token}`;
+      const magicLink = buildInviteUrl(token);
       
       // Copy to clipboard
       await navigator.clipboard.writeText(magicLink);
