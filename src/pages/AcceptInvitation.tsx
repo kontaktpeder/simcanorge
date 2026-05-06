@@ -35,6 +35,9 @@ export default function AcceptInvitation() {
         return;
       }
 
+      if (handledRef.current) return;
+      handledRef.current = true;
+
       const { data: invitation, error: invError } = await supabase
         .from('car_invitations')
         .select('*')
@@ -55,13 +58,6 @@ export default function AcceptInvitation() {
         return;
       }
 
-      if (invitation.used_at) {
-        setStatus('error');
-        setMessage('Denne invitasjonen er allerede brukt.');
-        setIsProcessing(false);
-        return;
-      }
-
       const { data: car } = await supabase
         .from('cars')
         .select('id, title, slug')
@@ -70,6 +66,29 @@ export default function AcceptInvitation() {
 
       setCarTitle(car?.title || 'bilen');
       setInviteEmail(invitation.email);
+
+      if (invitation.used_at) {
+        // Idempotent: hvis innlogget bruker allerede har tilgang, vis success.
+        if (user) {
+          const { data: existingOwner } = await supabase
+            .from('car_owners')
+            .select('id')
+            .eq('car_id', invitation.car_id)
+            .eq('user_id', user.id)
+            .maybeSingle();
+
+          if (existingOwner) {
+            setStatus('success');
+            setIsProcessing(false);
+            setTimeout(() => navigate('/dashboard/mine-biler'), 1500);
+            return;
+          }
+        }
+        setStatus('error');
+        setMessage('Denne invitasjonen er allerede brukt. Be eier sende en ny invitasjon.');
+        setIsProcessing(false);
+        return;
+      }
 
       // Not logged in -> send to standard login flow with invite context
       if (!user) {
