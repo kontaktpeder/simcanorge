@@ -13,6 +13,7 @@ import { MapPin, Calendar } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { CreateCTA } from "@/components/ui/CreateCTA";
 import { ClubCommunityCars } from "@/components/pages/ClubCommunityCars";
+import { PlatformContextBanner } from "@/components/layout/PlatformContextBanner";
 
 const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
 
