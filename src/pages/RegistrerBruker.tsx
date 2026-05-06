@@ -4,7 +4,7 @@ import { Helmet } from 'react-helmet-async';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { Layout } from '@/components/layout/Layout';
-import { Loader2, UserPlus, ArrowRight, Eye, EyeOff, Check, X } from 'lucide-react';
+import { Loader2, Mail, ArrowRight, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
@@ -17,7 +17,6 @@ const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
 
 const schema = z.object({
   email: z.string().trim().email('Ugyldig e-postadresse').max(255),
-  password: z.string().min(6, 'Passord må være minst 6 tegn').max(128),
 });
 
 export default function RegistrerBruker() {
@@ -28,22 +27,13 @@ export default function RegistrerBruker() {
   const inviteFlow = searchParams.get('inviteFlow') === '1';
   const inviteEmail = searchParams.get('inviteEmail') || '';
   const inviteCar = searchParams.get('inviteCar') || '';
+  const publicBaseUrl = (import.meta.env.VITE_PUBLIC_SITE_URL as string | undefined) || window.location.origin;
 
   const [email, setEmail] = useState(inviteEmail);
-  const [emailConfirm, setEmailConfirm] = useState(inviteEmail);
-  const [password, setPassword] = useState('');
-  const [password2, setPassword2] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [info, setInfo] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-
-  const emailTrim = email.trim();
-  const emailConfirmTrim = emailConfirm.trim();
-  const emailsMatch = emailTrim.length > 0 && emailTrim.toLowerCase() === emailConfirmTrim.toLowerCase();
-  const emailsMismatch = emailConfirmTrim.length > 0 && !emailsMatch;
-  const passwordsMatch = password.length >= 6 && password === password2;
-  const passwordsMismatch = password2.length > 0 && password !== password2;
+  const [linkSent, setLinkSent] = useState(false);
 
   useEffect(() => {
     if (!authLoading && user) navigate(returnUrl, { replace: true });
@@ -53,17 +43,8 @@ export default function RegistrerBruker() {
     e.preventDefault();
     setError('');
     setInfo('');
-    const emailTrim = email.trim();
-    const emailConfirmTrim = emailConfirm.trim();
-    if (emailTrim.toLowerCase() !== emailConfirmTrim.toLowerCase()) {
-      setError('E-postadressene stemmer ikke overens');
-      return;
-    }
-    if (password !== password2) {
-      setError('Passordene er ikke like');
-      return;
-    }
-    const result = schema.safeParse({ email: emailTrim, password });
+    const emailTrim = email.trim().toLowerCase();
+    const result = schema.safeParse({ email: emailTrim });
     if (!result.success) {
       setError(result.error.errors[0].message);
       return;
@@ -71,28 +52,18 @@ export default function RegistrerBruker() {
 
     setIsLoading(true);
     try {
-      const { data, error } = await supabase.auth.signUp({
-        email: email.trim(),
-        password,
+      const { error } = await supabase.auth.signInWithOtp({
+        email: emailTrim,
         options: {
-          emailRedirectTo: `${window.location.origin}${returnUrl}`,
+          shouldCreateUser: true,
+          emailRedirectTo: `${publicBaseUrl}${returnUrl}`,
         },
       });
-      if (error) {
-        if (error.message.toLowerCase().includes('already')) {
-          setError('Denne e-posten er allerede registrert. Prøv å logge inn.');
-        } else {
-          setError(error.message);
-        }
-        return;
-      }
-      if (data.session) {
-        toast.success('Velkommen!');
-        navigate(returnUrl, { replace: true });
-      } else {
-        setInfo('Konto opprettet — sjekk e-posten din for å bekrefte adressen, deretter kan du logge inn.');
-        toast.success('Sjekk e-posten din for bekreftelse');
-      }
+      if (error) throw error;
+      setEmail(emailTrim);
+      setLinkSent(true);
+      setInfo('Innloggingslenke sendt. Åpne e-posten på denne enheten for å fortsette.');
+      toast.success('Innloggingslenke sendt');
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Noe gikk galt');
     } finally {
@@ -113,7 +84,7 @@ export default function RegistrerBruker() {
     <Layout>
       <Helmet>
         <title>Opprett konto – {SITE_NAME}</title>
-        <meta name="description" content="Opprett gratis konto på Bilgarasje.no — samle bilene dine, del historier og koble deg til bilmiljøet." />
+        <meta name="description" content="Opprett gratis konto på Bilgarasje.no — vi sender deg en innloggingslenke på e-post." />
         <meta name="robots" content="noindex" />
       </Helmet>
       <div
@@ -142,161 +113,98 @@ export default function RegistrerBruker() {
               Opprett konto
             </h1>
             <p className="mt-2 text-sm text-muted-foreground" style={oswald}>
-              Bli med på Bilgarasje — gratis, ingen bil nødvendig
+              Skriv inn e-post. Vi sender deg en innloggingslenke. Hvis du ikke har konto, opprettes den automatisk.
             </p>
           </div>
 
           <div className="rounded-2xl border border-border/60 p-6 sm:p-8 shadow-2xl"
             style={{ background: 'linear-gradient(180deg, hsl(215 25% 11%) 0%, hsl(215 25% 9%) 100%)' }}>
-            <form onSubmit={handleSubmit} className="space-y-5">
-              {inviteFlow && inviteEmail && (
-                <div className="bg-primary/10 border border-primary/30 rounded-lg p-3">
-                  <p className="text-sm font-semibold text-foreground" style={oswald}>
-                    Invitasjonen din venter fortsatt
-                  </p>
-                  <p className="text-xs text-muted-foreground mt-1" style={oswald}>
-                    Logg inn eller opprett konto med <span className="text-foreground font-semibold">{inviteEmail}</span> for å få tilgang til {inviteCar || 'bilen'}.
-                  </p>
-                </div>
-              )}
-              {error && (
-                <div className="bg-destructive/10 border border-destructive/30 rounded-lg p-3">
-                  <p className="text-sm text-destructive">{error}</p>
-                </div>
-              )}
-              {info && (
-                <div className="bg-primary/10 border border-primary/30 rounded-lg p-3">
-                  <p className="text-sm text-foreground">{info}</p>
-                </div>
-              )}
-
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground block" style={oswald}>
-                  E-post
-                </label>
-                <Input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="din@epost.no"
-                  required
-                  readOnly={inviteFlow && !!inviteEmail}
-                  autoComplete="email"
-                  className="h-12 text-base bg-background/50 border-border/60 focus:border-primary/60"
+            {linkSent ? (
+              <div className="bg-primary/5 border border-primary/20 rounded-lg p-5 text-center">
+                <CheckCircle className="w-10 h-10 mx-auto mb-3 text-[#34eab8]" />
+                <p className="text-base font-semibold text-foreground" style={oswald}>
+                  Innloggingslenke sendt
+                </p>
+                <p className="text-sm text-muted-foreground mt-1" style={oswald}>
+                  Åpne e-posten på denne enheten for å fortsette.
+                </p>
+                <p className="text-xs text-muted-foreground/70 mt-2" style={oswald}>
+                  Sjekk spam-mappen eller søk etter Bilgarasje.
+                </p>
+                <button
+                  type="button"
+                  onClick={handleSubmit as any}
+                  disabled={isLoading}
+                  className="text-xs text-muted-foreground hover:text-primary underline mt-3"
                   style={oswald}
-                />
-                {inviteFlow && inviteEmail && (
-                  <p className="text-[11px] text-muted-foreground/80 mt-1" style={oswald}>
-                    Bruk denne e-posten for at invitasjonen skal fungere.
-                  </p>
-                )}
+                >
+                  Send på nytt
+                </button>
               </div>
+            ) : (
+              <form onSubmit={handleSubmit} className="space-y-5">
+                {inviteFlow && inviteEmail && (
+                  <div className="bg-primary/10 border border-primary/30 rounded-lg p-3">
+                    <p className="text-sm font-semibold text-foreground" style={oswald}>
+                      Invitasjonen din venter fortsatt
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-1" style={oswald}>
+                      Bruk <span className="text-foreground font-semibold">{inviteEmail}</span> for å få tilgang til {inviteCar || 'bilen'}.
+                    </p>
+                  </div>
+                )}
+                {error && (
+                  <div className="bg-destructive/10 border border-destructive/30 rounded-lg p-3">
+                    <p className="text-sm text-destructive">{error}</p>
+                  </div>
+                )}
+                {info && !linkSent && (
+                  <div className="bg-primary/10 border border-primary/30 rounded-lg p-3">
+                    <p className="text-sm text-foreground">{info}</p>
+                  </div>
+                )}
 
-              {!(inviteFlow && inviteEmail) && (
                 <div className="space-y-1.5">
                   <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground block" style={oswald}>
-                    Bekreft e-post
+                    E-post
                   </label>
-                  <div className="relative">
-                    <Input
-                      type="email"
-                      value={emailConfirm}
-                      onChange={(e) => setEmailConfirm(e.target.value)}
-                      onPaste={(e) => e.preventDefault()}
-                      placeholder="Skriv e-posten på nytt"
-                      required
-                      autoComplete="off"
-                      className={`h-12 text-base bg-background/50 border-border/60 focus:border-primary/60 pr-10 ${emailsMismatch ? 'border-destructive/60' : ''}`}
-                      style={oswald}
-                    />
-                    {emailsMatch && (
-                      <Check className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#34eab8]" aria-label="E-post samsvarer" />
-                    )}
-                    {emailsMismatch && (
-                      <X className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-destructive" aria-label="E-post samsvarer ikke" />
-                    )}
-                  </div>
-                </div>
-              )}
-
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground block" style={oswald}>
-                  Passord
-                </label>
-                <div className="relative">
                   <Input
-                    type={showPassword ? 'text' : 'password'}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Minst 6 tegn"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="din@epost.no"
                     required
-                    minLength={6}
-                    autoComplete="new-password"
-                    className="h-12 text-base bg-background/50 border-border/60 focus:border-primary/60 pr-11"
+                    readOnly={inviteFlow && !!inviteEmail}
+                    autoComplete="email"
+                    className="h-12 text-base bg-background/50 border-border/60 focus:border-primary/60"
                     style={oswald}
                   />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword((v) => !v)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                    aria-label={showPassword ? 'Skjul passord' : 'Vis passord'}
-                  >
-                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </button>
-                </div>
-              </div>
-
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground block" style={oswald}>
-                  Gjenta passord
-                </label>
-                <div className="relative">
-                  <Input
-                    type={showPassword ? 'text' : 'password'}
-                    value={password2}
-                    onChange={(e) => setPassword2(e.target.value)}
-                    placeholder="Gjenta passordet"
-                    required
-                    minLength={6}
-                    autoComplete="new-password"
-                    className={`h-12 text-base bg-background/50 border-border/60 focus:border-primary/60 pr-20 ${passwordsMismatch ? 'border-destructive/60' : ''}`}
-                    style={oswald}
-                  />
-                  {passwordsMatch && (
-                    <Check className="absolute right-11 top-1/2 -translate-y-1/2 w-4 h-4 text-[#34eab8]" aria-label="Passord samsvarer" />
+                  {inviteFlow && inviteEmail && (
+                    <p className="text-[11px] text-muted-foreground/80 mt-1" style={oswald}>
+                      Bruk denne e-posten for at invitasjonen skal fungere.
+                    </p>
                   )}
-                  {passwordsMismatch && (
-                    <X className="absolute right-11 top-1/2 -translate-y-1/2 w-4 h-4 text-destructive" aria-label="Passord samsvarer ikke" />
-                  )}
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword((v) => !v)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                    aria-label={showPassword ? 'Skjul passord' : 'Vis passord'}
-                  >
-                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </button>
                 </div>
-              </div>
 
-              <Button
-                type="submit"
-                disabled={isLoading}
-                className="w-full h-12 text-base uppercase tracking-wider"
-                style={{
-                  ...chakra,
-                  background: 'linear-gradient(135deg, #34eab8 0%, #2ab89a 100%)',
-                  color: '#070b10',
-                  boxShadow: '0 0 24px rgba(52,234,184,0.2)',
-                }}
-              >
-                {isLoading ? (
-                  <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Oppretter…</>
-                ) : (
-                  <><UserPlus className="w-4 h-4 mr-2" />Opprett konto</>
-                )}
-              </Button>
-            </form>
+                <Button
+                  type="submit"
+                  disabled={isLoading}
+                  className="w-full h-12 text-base uppercase tracking-wider"
+                  style={{
+                    ...chakra,
+                    background: 'linear-gradient(135deg, #34eab8 0%, #2ab89a 100%)',
+                    color: '#070b10',
+                    boxShadow: '0 0 24px rgba(52,234,184,0.2)',
+                  }}
+                >
+                  {isLoading ? (
+                    <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Sender lenke…</>
+                  ) : (
+                    <><Mail className="w-4 h-4 mr-2" />Send innloggingslenke</>
+                  )}
+                </Button>
+              </form>
+            )}
 
             <div className="mt-6 pt-5 border-t border-border/40 text-center">
               <p className="text-sm text-muted-foreground" style={oswald}>
