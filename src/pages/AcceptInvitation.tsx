@@ -80,7 +80,7 @@ export default function AcceptInvitation() {
           if (existingOwner) {
             setStatus('success');
             setIsProcessing(false);
-            setTimeout(() => navigate('/dashboard/mine-biler'), 1500);
+            setTimeout(() => navigate(`/dashboard/bil/${invitation.car_id}`), 1500);
             return;
           }
         }
