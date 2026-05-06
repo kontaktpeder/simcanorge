@@ -13,6 +13,7 @@ import { MapPin, Calendar } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { CreateCTA } from "@/components/ui/CreateCTA";
 import { ClubCommunityCars } from "@/components/pages/ClubCommunityCars";
+import { PlatformContextBanner } from "@/components/layout/PlatformContextBanner";
 
 const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
 
@@ -59,6 +60,7 @@ export default function PublicPagePage() {
           <title>{page.title} | Bilgarasjen</title>
           {page.tagline && <meta name="description" content={page.tagline} />}
         </Helmet>
+        <PlatformContextBanner light />
         <ClubClassicTemplate page={page} />
       </Layout>
     );
@@ -139,6 +141,8 @@ export default function PublicPagePage() {
               </div>
             </div>
           </section>
+
+          <PlatformContextBanner light />
 
           {/* ─── INFO STRIP ─── */}
           <div style={{ background: 'linear-gradient(180deg, #f2ece4 0%, #eee7dd 100%)', borderBottom: '1px solid rgba(58,46,36,0.06)' }}>
@@ -229,6 +233,7 @@ export default function PublicPagePage() {
 
       <div className="min-h-screen bg-[#0B0B0C]" style={themeStyle}>
         <PublicPageHero page={page} />
+        <PlatformContextBanner />
 
         <div className="max-w-[1000px] mx-auto px-5 md:px-8">
           <div className="flex items-center gap-6 py-5 border-b border-white/[0.06]">

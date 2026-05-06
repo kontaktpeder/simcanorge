@@ -98,8 +98,9 @@ export function RelationshipRequestDialog({
             Knytt deg til {carTitle ? `«${carTitle}»` : "denne bilen"}
           </DialogTitle>
           <DialogDescription>
-            Velg hva som beskriver deg best. En ansvarlig vurderer forespørselen og
-            knytter deg til bilens historikk når den er godkjent.
+            Velg hva som beskriver deg best. En ansvarlig vurderer forespørselen.
+            Godkjenning knytter deg til bilens historikk, men gir ikke redigeringsrett.
+            For redigering må en eier sende deg en invitasjonslenke.
           </DialogDescription>
         </DialogHeader>
 

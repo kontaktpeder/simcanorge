@@ -11,19 +11,19 @@ export type RelationshipType =
   | "other";
 
 export const RELATIONSHIP_OPTIONS: { value: RelationshipType; label: string; helper?: string }[] = [
-  { value: "current_owner", label: "Jeg eier den nå" },
-  { value: "former_owner", label: "Jeg har eid den tidligere" },
-  { value: "restorer", label: "Jeg har restaurert / jobbet med den" },
-  { value: "storyteller", label: "Jeg kjenner historien" },
-  { value: "contributor", label: "Jeg bidrar med dokumentasjon" },
+  { value: "current_owner", label: "Eier" },
+  { value: "former_owner", label: "Tidligere eier" },
+  { value: "restorer", label: "Mekaniker / restauratør" },
+  { value: "storyteller", label: "Historiekjenner" },
+  { value: "contributor", label: "Bidragsyter (fotograf, deleinnkjøper, familie/venn, klubbmedlem)" },
   { value: "other", label: "Annet" },
 ];
 
 export const RELATIONSHIP_LABELS: Record<RelationshipType, string> = {
-  current_owner: "Nåværende eier",
+  current_owner: "Eier",
   former_owner: "Tidligere eier",
-  restorer: "Restauratør",
-  storyteller: "Historieforteller",
+  restorer: "Mekaniker / restauratør",
+  storyteller: "Historiekjenner",
   contributor: "Bidragsyter",
   other: "Annet",
 };
