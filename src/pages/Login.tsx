@@ -162,9 +162,15 @@ export default function Login() {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="din@epost.no"
                   required
+                  readOnly={inviteFlow && !!inviteEmail}
                   className="h-12 text-base bg-background/50 border-border/60 focus:border-primary/60"
                   style={oswald}
                 />
+                {inviteFlow && inviteEmail && (
+                  <p className="text-[11px] text-muted-foreground/80 mt-1" style={oswald}>
+                    Bruk denne e-posten for at invitasjonen skal fungere.
+                  </p>
+                )}
               </div>
 
               <div className="space-y-1.5">
