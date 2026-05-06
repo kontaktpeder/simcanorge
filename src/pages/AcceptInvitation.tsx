@@ -213,7 +213,7 @@ export default function AcceptInvitation() {
                 ) : (
                   <>
                     <LogOut className="w-4 h-4 mr-2" />
-                    Logg ut og prøv igjen
+                    Logg ut og fortsett med riktig konto
                   </>
                 )}
               </Button>
