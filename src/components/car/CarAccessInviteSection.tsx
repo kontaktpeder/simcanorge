@@ -4,7 +4,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Check, Copy, Clock, Trash2, Users } from "lucide-react";
+import { Check, Copy, Clock, Trash2, Users, Mail, MessageCircle, Info } from "lucide-react";
 
 type Invitation = {
   id: string;
