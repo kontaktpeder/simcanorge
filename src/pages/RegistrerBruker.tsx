@@ -301,7 +301,7 @@ export default function RegistrerBruker() {
             <div className="mt-6 pt-5 border-t border-border/40 text-center">
               <p className="text-sm text-muted-foreground" style={oswald}>
                 Har du allerede konto?{' '}
-                <Link to="/login" className="text-primary hover:underline font-medium inline-flex items-center gap-1">
+                <Link to={`/login?${searchParams.toString()}`} className="text-primary hover:underline font-medium inline-flex items-center gap-1">
                   Logg inn <ArrowRight className="w-3 h-3" />
                 </Link>
               </p>
