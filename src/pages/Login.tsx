@@ -65,11 +65,54 @@ export default function Login() {
     if (!authLoading && user) navigate(returnUrl);
   }, [user, authLoading, navigate, returnUrl]);
 
+  const COOLDOWN_SECONDS = 20;
+  const COOLDOWN_KEY = 'auth:lastMagicLinkSentAt';
+
+  // Restore cooldown + sent-state from sessionStorage on mount
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem(COOLDOWN_KEY);
+      if (!raw) return;
+      const { at, email: storedEmail } = JSON.parse(raw) as { at: number; email?: string };
+      const elapsed = Math.floor((Date.now() - at) / 1000);
+      const remaining = COOLDOWN_SECONDS - elapsed;
+      if (remaining > 0) {
+        setResendCooldown(remaining);
+        if (storedEmail) {
+          setSentToEmail(storedEmail);
+          setMagicLinkSent(true);
+        }
+      } else {
+        sessionStorage.removeItem(COOLDOWN_KEY);
+      }
+    } catch {
+      // ignore
+    }
+  }, []);
+
   useEffect(() => {
     if (resendCooldown <= 0) return;
     const t = setTimeout(() => setResendCooldown((s) => s - 1), 1000);
     return () => clearTimeout(t);
   }, [resendCooldown]);
+
+  const mapOtpError = (err: any): string => {
+    const raw = (err?.message || '').toString();
+    const msg = raw.toLowerCase();
+    if (!navigator.onLine || msg.includes('network') || msg.includes('failed to fetch') || msg.includes('fetch')) {
+      return 'Kunne ikke kontakte serveren. Sjekk internett og prøv igjen.';
+    }
+    if (msg.includes('rate') || msg.includes('too many') || msg.includes('429')) {
+      return 'Du har sendt mange forespørsler. Vent litt og prøv igjen.';
+    }
+    if (msg.includes('invalid') && msg.includes('email')) {
+      return 'Skriv inn en gyldig e-postadresse.';
+    }
+    if (msg.includes('email') && (msg.includes('not') || msg.includes('disabled'))) {
+      return 'Denne e-postadressen kan ikke brukes. Prøv en annen.';
+    }
+    return 'Kunne ikke sende innloggingslenke. Prøv igjen.';
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -114,11 +157,19 @@ export default function Login() {
       setEmail(targetEmail);
       setSentToEmail(targetEmail);
       setMagicLinkSent(true);
-      setResendCooldown(20);
+      setResendCooldown(COOLDOWN_SECONDS);
+      try {
+        sessionStorage.setItem(
+          COOLDOWN_KEY,
+          JSON.stringify({ at: Date.now(), email: targetEmail }),
+        );
+      } catch {
+        // ignore storage errors
+      }
       toast.success('Innloggingslenke sendt!');
     } catch (err: any) {
       console.error('Magic link error:', err);
-      setError(err.message || 'Kunne ikke sende innloggingslenke. Prøv igjen.');
+      setError(mapOtpError(err));
     } finally {
       setIsLoading(false);
     }
