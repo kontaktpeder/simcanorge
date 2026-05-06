@@ -218,7 +218,7 @@ export default function Login() {
             <div className="mt-6 pt-5 border-t border-border/40 text-center">
               <p className="text-sm text-muted-foreground" style={oswald}>
                 Ikke medlem ennå?{' '}
-                <Link to="/registrer" className="text-primary hover:underline font-medium inline-flex items-center gap-1">
+                <Link to={`/registrer?${searchParams.toString()}`} className="text-primary hover:underline font-medium inline-flex items-center gap-1">
                   Opprett gratis konto <ArrowRight className="w-3 h-3" />
                 </Link>
               </p>
