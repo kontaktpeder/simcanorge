@@ -719,7 +719,9 @@ export default function DashboardBilDetalj() {
             </motion.section>
           )}
           <motion.section initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.28 }}>
-            <CarAccessInviteSection carId={car.id} />
+            <div ref={accessSectionRef}>
+              <CarAccessInviteSection carId={car.id} />
+            </div>
           </motion.section>
 
           <motion.section initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
