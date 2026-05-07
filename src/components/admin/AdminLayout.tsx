@@ -17,6 +17,7 @@ import {
   Bug,
   Mail,
   ShoppingBag,
+  Handshake,
 } from "lucide-react";
 import simcaBadgeLogo from "@/assets/simca-badge-logo.png";
 
