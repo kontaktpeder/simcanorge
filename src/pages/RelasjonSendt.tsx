@@ -169,7 +169,7 @@ export default function RelasjonSendt() {
                   <p className="text-sm text-muted-foreground">{relLabel}</p>
                   {request.wants_stewardship && (
                     <p className="text-xs text-primary mt-1">
-                      Du har bedt om å forvalte profilen — dette behandles manuelt.
+                      Hvis eier/admin godkjenner forespørselen, får du redigeringstilgang til bilen.
                     </p>
                   )}
                 </div>
@@ -220,7 +220,9 @@ export default function RelasjonSendt() {
             </div>
 
             <p className="text-center text-xs text-muted-foreground">
-              Forespørselen gir deg ikke automatisk redigeringsrett. Den knytter deg til bilens historikk når den er godkjent.
+              {request.wants_stewardship
+                ? "Hvis eier/admin godkjenner forespørselen, får du redigeringstilgang til bilen."
+                : "Forespørselen gir deg ikke automatisk redigeringsrett. Den knytter deg til bilens historikk når den er godkjent."}
             </p>
           </div>
         </div>
