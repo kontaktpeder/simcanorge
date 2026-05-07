@@ -28,6 +28,7 @@ import { CreateCTA } from "@/components/ui/CreateCTA";
 import { BrandLoader } from "@/components/brand/BrandLoader";
 import { FEATURES } from "@/config/features";
 import { RelationshipRequestDialog } from "@/components/car/relationship/RelationshipRequestDialog";
+import { RequestEditAccessDialog } from "@/components/car/relationship/RequestEditAccessDialog";
 import { canEditCarInDashboard, type CarOwnerAccessRow } from "@/lib/carEditAccess";
 import { ExploreSectionNav } from "@/components/explore/ExploreSectionNav";
 
@@ -126,6 +127,7 @@ const BilDetalj = () => {
   const [composerInitialBody, setComposerInitialBody] = useState<string | undefined>(undefined);
   const [showPostPublishOverlay, setShowPostPublishOverlay] = useState(false);
   const [relationshipDialogOpen, setRelationshipDialogOpen] = useState(false);
+  const [editAccessDialogOpen, setEditAccessDialogOpen] = useState(false);
 
   // Owner / edit access detection: car_owners join from query
   const carOwners = (car as { car_owners?: CarOwnerAccessRow[] } | null)?.car_owners;
@@ -649,11 +651,7 @@ const BilDetalj = () => {
                     </button>
                     <button
                       type="button"
-                      onClick={() =>
-                        toast("Be om redigeringstilgang", {
-                          description: "For å redigere bilen må en eier sende deg en invitasjonslenke.",
-                        })
-                      }
+                      onClick={() => setEditAccessDialogOpen(true)}
                       className="inline-flex items-center justify-center gap-2 px-4 py-2.5 text-[12px] uppercase tracking-[0.15em] text-white/90 font-bold rounded-full border border-white/25 hover:bg-white/10 transition-all"
                       style={{ fontFamily: "'Chakra Petch', sans-serif" }}
                     >
@@ -1080,13 +1078,21 @@ const BilDetalj = () => {
       )}
 
       {!isLinkedToCar && FEATURES.relationshipRequestsV1 && (
-        <RelationshipRequestDialog
-          open={relationshipDialogOpen}
-          onOpenChange={setRelationshipDialogOpen}
-          carId={car.id}
-          carTitle={car.title}
-          source="bil_detalj"
-        />
+        <>
+          <RelationshipRequestDialog
+            open={relationshipDialogOpen}
+            onOpenChange={setRelationshipDialogOpen}
+            carId={car.id}
+            carTitle={car.title}
+            source="bil_detalj"
+          />
+          <RequestEditAccessDialog
+            open={editAccessDialogOpen}
+            onOpenChange={setEditAccessDialogOpen}
+            carId={car.id}
+            carTitle={car.title}
+          />
+        </>
       )}
     </Layout>
   );
