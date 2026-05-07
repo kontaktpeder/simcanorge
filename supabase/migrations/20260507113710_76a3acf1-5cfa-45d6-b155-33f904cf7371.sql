@@ -1,0 +1,2 @@
+ALTER TABLE public.car_relationship_requests DROP CONSTRAINT IF EXISTS car_relationship_requests_source_chk;
+ALTER TABLE public.car_relationship_requests ADD CONSTRAINT car_relationship_requests_source_chk CHECK (source = ANY (ARRAY['manual'::text, 'regnr_gate'::text, 'spotting'::text, 'activity_moment'::text, 'bil_detalj'::text, 'biler_list'::text, 'ukjente_biler'::text]));
