@@ -202,6 +202,31 @@ const AdminBiler = () => {
   const getRequestAction = (carId: string) => 
     carsWithRequests?.find(r => r.car_id === carId)?.action;
 
+  // Hent eiere/tilganger pr bil
+  const { data: ownersData } = useQuery({
+    queryKey: ['admin-car-owners'],
+    queryFn: async () => {
+      const { data: owners } = await supabase
+        .from('car_owners')
+        .select('car_id, user_id, email, role');
+      const userIds = Array.from(new Set((owners || []).map((o: any) => o.user_id)));
+      const { data: profiles } = userIds.length
+        ? await supabase.from('person_profiles').select('user_id, display_name').in('user_id', userIds)
+        : { data: [] as any[] };
+      const nameMap: Record<string, string> = {};
+      (profiles || []).forEach((p: any) => { if (p.display_name) nameMap[p.user_id] = p.display_name; });
+      const map: Record<string, Array<{ user_id: string; email: string; role: string; name: string | null }>> = {};
+      (owners || []).forEach((o: any) => {
+        const list = map[o.car_id] || [];
+        list.push({ user_id: o.user_id, email: o.email, role: o.role, name: nameMap[o.user_id] || null });
+        map[o.car_id] = list;
+      });
+      return map;
+    }
+  });
+
+  const getCarOwners = (carId: string) => ownersData?.[carId] || [];
+
   useEffect(() => {
     fetchCars();
   }, []);
@@ -1094,6 +1119,7 @@ const AdminBiler = () => {
                   <th className="text-left p-4 font-display text-sm">MODELL</th>
                   <th className="text-left p-4 font-display text-sm">KATEGORI</th>
                   <th className="text-left p-4 font-display text-sm">STATUS</th>
+                  <th className="text-left p-4 font-display text-sm">TILGANGER</th>
                   <th className="text-right p-4 font-display text-sm">HANDLINGER</th>
                 </tr>
               </thead>
@@ -1149,6 +1175,28 @@ const AdminBiler = () => {
                     </td>
                     <td className="p-4">
                       <CarStatusBadge car={car} />
+                    </td>
+                    <td className="p-4 align-top">
+                      {(() => {
+                        const owners = getCarOwners(car.id);
+                        if (owners.length === 0) {
+                          return <span className="text-xs text-muted-foreground italic">Ingen</span>;
+                        }
+                        return (
+                          <ul className="text-xs space-y-0.5 max-w-[220px]">
+                            {owners.map((o) => (
+                              <li key={o.user_id} className="flex items-center gap-1.5">
+                                <span className={`px-1.5 py-0.5 rounded text-[10px] font-display ${
+                                  o.role === 'owner' ? 'bg-green-100 text-green-700' :
+                                  o.role === 'admin' ? 'bg-purple-100 text-purple-700' :
+                                  'bg-gray-100 text-gray-700'
+                                }`}>{o.role}</span>
+                                <span className="truncate" title={o.email}>{o.name || o.email}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        );
+                      })()}
                     </td>
                     <td className="p-4">
                       <div className="flex items-center justify-end gap-1">
