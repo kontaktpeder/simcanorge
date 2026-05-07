@@ -111,7 +111,7 @@ export function RequestEditAccessDialog({ open, onOpenChange, carId, carTitle }:
               <ul className="text-xs text-muted-foreground list-disc list-inside space-y-0.5">
                 <li>Eieren av bilen får varsel</li>
                 <li>Administrator i Bilgarasje får også varsel</li>
-                <li>Du får svar når forespørselen er vurdert</li>
+                <li>Hvis godkjent får du full redigeringstilgang til bilen</li>
               </ul>
             </div>
           </div>
