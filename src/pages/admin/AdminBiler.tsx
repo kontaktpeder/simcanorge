@@ -202,6 +202,31 @@ const AdminBiler = () => {
   const getRequestAction = (carId: string) => 
     carsWithRequests?.find(r => r.car_id === carId)?.action;
 
+  // Hent eiere/tilganger pr bil
+  const { data: ownersData } = useQuery({
+    queryKey: ['admin-car-owners'],
+    queryFn: async () => {
+      const { data: owners } = await supabase
+        .from('car_owners')
+        .select('car_id, user_id, email, role');
+      const userIds = Array.from(new Set((owners || []).map((o: any) => o.user_id)));
+      const { data: profiles } = userIds.length
+        ? await supabase.from('person_profiles').select('user_id, display_name').in('user_id', userIds)
+        : { data: [] as any[] };
+      const nameMap: Record<string, string> = {};
+      (profiles || []).forEach((p: any) => { if (p.display_name) nameMap[p.user_id] = p.display_name; });
+      const map: Record<string, Array<{ user_id: string; email: string; role: string; name: string | null }>> = {};
+      (owners || []).forEach((o: any) => {
+        const list = map[o.car_id] || [];
+        list.push({ user_id: o.user_id, email: o.email, role: o.role, name: nameMap[o.user_id] || null });
+        map[o.car_id] = list;
+      });
+      return map;
+    }
+  });
+
+  const getCarOwners = (carId: string) => ownersData?.[carId] || [];
+
   useEffect(() => {
     fetchCars();
   }, []);
