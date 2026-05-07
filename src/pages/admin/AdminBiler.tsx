@@ -1176,6 +1176,28 @@ const AdminBiler = () => {
                     <td className="p-4">
                       <CarStatusBadge car={car} />
                     </td>
+                    <td className="p-4 align-top">
+                      {(() => {
+                        const owners = getCarOwners(car.id);
+                        if (owners.length === 0) {
+                          return <span className="text-xs text-muted-foreground italic">Ingen</span>;
+                        }
+                        return (
+                          <ul className="text-xs space-y-0.5 max-w-[220px]">
+                            {owners.map((o) => (
+                              <li key={o.user_id} className="flex items-center gap-1.5">
+                                <span className={`px-1.5 py-0.5 rounded text-[10px] font-display ${
+                                  o.role === 'owner' ? 'bg-green-100 text-green-700' :
+                                  o.role === 'admin' ? 'bg-purple-100 text-purple-700' :
+                                  'bg-gray-100 text-gray-700'
+                                }`}>{o.role}</span>
+                                <span className="truncate" title={o.email}>{o.name || o.email}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        );
+                      })()}
+                    </td>
                     <td className="p-4">
                       <div className="flex items-center justify-end gap-1">
                         <button
