@@ -30,7 +30,7 @@ export default function AdminCarRelationshipRequests() {
   const [cars, setCars] = useState<Record<string, CarMeta>>({});
   const [loading, setLoading] = useState(true);
   const [busyId, setBusyId] = useState<string | null>(null);
-  const [filter, setFilter] = useState<"pending" | "all">("pending");
+  const [filter, setFilter] = useState<"pending" | "all">("all");
 
   const load = async () => {
     setLoading(true);
