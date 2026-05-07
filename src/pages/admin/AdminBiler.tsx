@@ -1119,6 +1119,7 @@ const AdminBiler = () => {
                   <th className="text-left p-4 font-display text-sm">MODELL</th>
                   <th className="text-left p-4 font-display text-sm">KATEGORI</th>
                   <th className="text-left p-4 font-display text-sm">STATUS</th>
+                  <th className="text-left p-4 font-display text-sm">TILGANGER</th>
                   <th className="text-right p-4 font-display text-sm">HANDLINGER</th>
                 </tr>
               </thead>
