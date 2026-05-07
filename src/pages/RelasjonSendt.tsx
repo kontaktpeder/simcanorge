@@ -220,7 +220,9 @@ export default function RelasjonSendt() {
             </div>
 
             <p className="text-center text-xs text-muted-foreground">
-              Forespørselen gir deg ikke automatisk redigeringsrett. Den knytter deg til bilens historikk når den er godkjent.
+              {request.wants_stewardship
+                ? "Hvis eier/admin godkjenner forespørselen, får du redigeringstilgang til bilen."
+                : "Forespørselen gir deg ikke automatisk redigeringsrett. Den knytter deg til bilens historikk når den er godkjent."}
             </p>
           </div>
         </div>
