@@ -197,8 +197,24 @@ export default function AdminCarRelationshipRequests() {
                     </div>
                   )}
 
-                  <div className="text-[11px] text-muted-foreground">
-                    Avsender: <span className="font-mono">{r.requester_id}</span>
+                  <div className="text-[11px] text-muted-foreground space-y-1">
+                    <div>
+                      Avsender:{" "}
+                      <span className="text-foreground/80">
+                        {requesters[r.requester_id]?.display_name || r.requester_id}
+                      </span>
+                    </div>
+                    <div>
+                      Nåværende eiere:{" "}
+                      {(carOwners[r.car_id] || []).filter(o => o.role === 'owner').length === 0 ? (
+                        <span className="italic">Ingen</span>
+                      ) : (
+                        (carOwners[r.car_id] || [])
+                          .filter(o => o.role === 'owner')
+                          .map((o) => o.display_name || o.email)
+                          .join(", ")
+                      )}
+                    </div>
                   </div>
                 </div>
               );
