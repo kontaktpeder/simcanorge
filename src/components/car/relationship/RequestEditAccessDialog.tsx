@@ -57,6 +57,24 @@ export function RequestEditAccessDialog({ open, onOpenChange, carId, carTitle }:
     enabled: open && !!user,
   });
 
+  const { data: existingLink } = useQuery({
+    queryKey: ["my-car-owner-link", carId, user?.id],
+    queryFn: async () => {
+      if (!user) return null;
+      const { data } = await supabase
+        .from("car_owners")
+        .select("role")
+        .eq("car_id", carId)
+        .eq("user_id", user.id)
+        .maybeSingle();
+      return data;
+    },
+    enabled: open && !!user,
+  });
+
+  const alreadyOwner = existingLink?.role === "owner" || existingLink?.role === "admin";
+  const alreadyViewer = !!existingLink && !alreadyOwner;
+
   useEffect(() => {
     if (!open) setNote("");
   }, [open]);
