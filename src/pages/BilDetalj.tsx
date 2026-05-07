@@ -1078,13 +1078,21 @@ const BilDetalj = () => {
       )}
 
       {!isLinkedToCar && FEATURES.relationshipRequestsV1 && (
-        <RelationshipRequestDialog
-          open={relationshipDialogOpen}
-          onOpenChange={setRelationshipDialogOpen}
-          carId={car.id}
-          carTitle={car.title}
-          source="bil_detalj"
-        />
+        <>
+          <RelationshipRequestDialog
+            open={relationshipDialogOpen}
+            onOpenChange={setRelationshipDialogOpen}
+            carId={car.id}
+            carTitle={car.title}
+            source="bil_detalj"
+          />
+          <RequestEditAccessDialog
+            open={editAccessDialogOpen}
+            onOpenChange={setEditAccessDialogOpen}
+            carId={car.id}
+            carTitle={car.title}
+          />
+        </>
       )}
     </Layout>
   );
