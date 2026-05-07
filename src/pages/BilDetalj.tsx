@@ -127,6 +127,7 @@ const BilDetalj = () => {
   const [composerInitialBody, setComposerInitialBody] = useState<string | undefined>(undefined);
   const [showPostPublishOverlay, setShowPostPublishOverlay] = useState(false);
   const [relationshipDialogOpen, setRelationshipDialogOpen] = useState(false);
+  const [editAccessDialogOpen, setEditAccessDialogOpen] = useState(false);
 
   // Owner / edit access detection: car_owners join from query
   const carOwners = (car as { car_owners?: CarOwnerAccessRow[] } | null)?.car_owners;
