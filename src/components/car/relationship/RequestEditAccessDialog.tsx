@@ -57,6 +57,24 @@ export function RequestEditAccessDialog({ open, onOpenChange, carId, carTitle }:
     enabled: open && !!user,
   });
 
+  const { data: existingLink } = useQuery({
+    queryKey: ["my-car-owner-link", carId, user?.id],
+    queryFn: async () => {
+      if (!user) return null;
+      const { data } = await supabase
+        .from("car_owners")
+        .select("role")
+        .eq("car_id", carId)
+        .eq("user_id", user.id)
+        .maybeSingle();
+      return data;
+    },
+    enabled: open && !!user,
+  });
+
+  const alreadyOwner = existingLink?.role === "owner" || existingLink?.role === "admin";
+  const alreadyViewer = !!existingLink && !alreadyOwner;
+
   useEffect(() => {
     if (!open) setNote("");
   }, [open]);
@@ -155,29 +173,44 @@ export function RequestEditAccessDialog({ open, onOpenChange, carId, carTitle }:
             </div>
           )}
 
-          {hasPending && (
+          {hasPending && !alreadyOwner && (
             <p className="text-xs text-muted-foreground">
               Du har allerede en ventende forespørsel. Vent på svar før du sender en ny.
             </p>
+          )}
+
+          {alreadyOwner && (
+            <div className="rounded-lg border border-primary/40 bg-primary/10 p-3 text-sm">
+              <p className="font-medium text-foreground">Du har allerede full tilgang til denne bilen</p>
+              <p className="text-xs text-muted-foreground mt-1">
+                Du står oppført som {existingLink?.role === "admin" ? "admin" : "eier"} og kan redigere bilen direkte fra garasjen din.
+              </p>
+            </div>
           )}
         </div>
 
         <DialogFooter className="gap-2 sm:gap-2">
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={mutation.isPending}>
-            Avbryt
+            {alreadyOwner ? "Lukk" : "Avbryt"}
           </Button>
-          <Button
-            onClick={handleSubmit}
-            disabled={mutation.isPending || hasPending || loadingPrior}
-          >
-            {mutation.isPending ? (
-              <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Sender…</>
-            ) : !user ? (
-              "Logg inn for å sende"
-            ) : (
-              "Send forespørsel"
-            )}
-          </Button>
+          {alreadyOwner ? (
+            <Button onClick={() => { onOpenChange(false); navigate(`/dashboard/bil/${carId}`); }}>
+              Gå til bilen
+            </Button>
+          ) : (
+            <Button
+              onClick={handleSubmit}
+              disabled={mutation.isPending || hasPending || loadingPrior}
+            >
+              {mutation.isPending ? (
+                <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Sender…</>
+              ) : !user ? (
+                "Logg inn for å sende"
+              ) : (
+                "Send forespørsel"
+              )}
+            </Button>
+          )}
         </DialogFooter>
       </DialogContent>
     </Dialog>
