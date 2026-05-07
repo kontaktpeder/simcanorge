@@ -169,7 +169,7 @@ export default function RelasjonSendt() {
                   <p className="text-sm text-muted-foreground">{relLabel}</p>
                   {request.wants_stewardship && (
                     <p className="text-xs text-primary mt-1">
-                      Du har bedt om å forvalte profilen — dette behandles manuelt.
+                      Hvis eier/admin godkjenner forespørselen, får du redigeringstilgang til bilen.
                     </p>
                   )}
                 </div>
