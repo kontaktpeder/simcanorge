@@ -23,11 +23,15 @@ type Row = {
 };
 
 type CarMeta = { id: string; title: string; slug: string };
+type RequesterMeta = { user_id: string; display_name: string | null; slug: string | null };
+type OwnerMeta = { user_id: string; email: string; role: string; display_name: string | null };
 
 export default function AdminCarRelationshipRequests() {
   const { toast } = useToast();
   const [rows, setRows] = useState<Row[]>([]);
   const [cars, setCars] = useState<Record<string, CarMeta>>({});
+  const [requesters, setRequesters] = useState<Record<string, RequesterMeta>>({});
+  const [carOwners, setCarOwners] = useState<Record<string, OwnerMeta[]>>({});
   const [loading, setLoading] = useState(true);
   const [busyId, setBusyId] = useState<string | null>(null);
   const [filter, setFilter] = useState<"pending" | "all">("all");
@@ -49,11 +53,36 @@ export default function AdminCarRelationshipRequests() {
     setRows(list);
 
     const carIds = Array.from(new Set(list.map((r) => r.car_id)));
+    const requesterIds = Array.from(new Set(list.map((r) => r.requester_id)));
+
     if (carIds.length) {
       const { data: cs } = await supabase.from("cars").select("id, title, slug").in("id", carIds);
       const map: Record<string, CarMeta> = {};
       (cs || []).forEach((c: any) => { map[c.id] = c; });
       setCars(map);
+
+      const { data: os } = await supabase
+        .from("car_owners")
+        .select("car_id, user_id, email, role")
+        .in("car_id", carIds);
+      const ownerUserIds = Array.from(new Set((os || []).map((o: any) => o.user_id)));
+      const allProfileIds = Array.from(new Set([...requesterIds, ...ownerUserIds]));
+      const { data: pps } = allProfileIds.length
+        ? await supabase.from("person_profiles").select("user_id, display_name, slug").in("user_id", allProfileIds)
+        : { data: [] as any[] };
+      const ppMap: Record<string, RequesterMeta> = {};
+      (pps || []).forEach((p: any) => { ppMap[p.user_id] = p; });
+      setRequesters(ppMap);
+
+      const ownersMap: Record<string, OwnerMeta[]> = {};
+      (os || []).forEach((o: any) => {
+        const list = ownersMap[o.car_id] || [];
+        list.push({ ...o, display_name: ppMap[o.user_id]?.display_name ?? null });
+        ownersMap[o.car_id] = list;
+      });
+      setCarOwners(ownersMap);
+    } else {
+      setCars({}); setCarOwners({}); setRequesters({});
     }
     setLoading(false);
   };
