@@ -27,14 +27,12 @@ export type ResolvedFeatures = typeof FEATURES;
  */
 export function useFeatures(): ResolvedFeatures {
   const { user } = useAuth();
-  const email = user?.email?.toLowerCase().trim() ?? "";
-  const isTester = !!email && TESTER_EMAILS.has(email);
 
-  if (!isTester) return FEATURES;
+  // Aktivitetsfunksjoner (øyeblikk og tur) er nå tilgjengelig for alle innloggede brukere.
+  if (!user) return FEATURES;
 
   return {
     ...FEATURES,
-    simpleLaunchMode: false,
     activitySessions: true,
     savedCars: true,
     driveMode: true,
