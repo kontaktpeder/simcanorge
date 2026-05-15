@@ -23,6 +23,34 @@ const TRIP_CACHE_KEYS = [
   'activity_focus_minimized_v1',
 ];
 
+const MODULE_RELOAD_KEY = 'bilgarasje:module-load-retry-v1';
+
+function isModuleLoadError(error: Error | null): boolean {
+  const message = (error?.message ?? '').toLowerCase();
+  const name = (error?.name ?? '').toLowerCase();
+  return (
+    name.includes('chunkloaderror') ||
+    message.includes('importing a module script failed') ||
+    message.includes('failed to fetch dynamically imported module') ||
+    message.includes('error loading dynamically imported module')
+  );
+}
+
+function reloadOnceForModuleError(): boolean {
+  if (typeof window === 'undefined') return false;
+  try {
+    if (window.sessionStorage.getItem(MODULE_RELOAD_KEY) === window.location.href) {
+      return false;
+    }
+    window.sessionStorage.setItem(MODULE_RELOAD_KEY, window.location.href);
+    window.location.reload();
+    return true;
+  } catch {
+    window.location.reload();
+    return true;
+  }
+}
+
 function clearTripCaches() {
   if (typeof window === 'undefined') return;
   for (const key of TRIP_CACHE_KEYS) {
@@ -47,6 +75,14 @@ export class ErrorBoundary extends React.Component<Props, State> {
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     // Always log so the message shows up in support payloads.
     console.error('ErrorBoundary caught:', error?.message ?? error, errorInfo?.componentStack);
+
+    // A common production/preview failure is a stale lazy-loaded route chunk
+    // right after a deploy or after the preview swaps builds. Reload once to
+    // fetch the current asset manifest instead of stranding the user on the
+    // generic error page during login/navigation.
+    if (isModuleLoadError(error) && reloadOnceForModuleError()) {
+      return;
+    }
   }
 
   handleGoHome = () => {
