@@ -1,18 +1,18 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import { Car, Eye, Warehouse, ChevronRight, Plus, Shield } from "lucide-react";
+import { Car, ChevronRight, Plus, Shield, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useFeatures } from "@/hooks/useFeatures";
+import { useActivitySession } from "@/hooks/useActivitySession";
 import { Layout } from "@/components/layout/Layout";
 import { BrandLoader } from "@/components/brand/BrandLoader";
 import { LastTripCard } from "@/components/activity/LastTripCard";
-import { SpotCarDialog } from "@/components/car/SpotCarDialog";
+import { CaptureCameraButton } from "@/components/capture/CaptureCameraButton";
 import { useLatestCompletedSession } from "@/hooks/useLatestCompletedSession";
-import { StartActionSheet } from "@/components/activity/StartActionSheet";
 import { track, trackScreenViewOnce } from "@/lib/analytics";
 import { resolveSpottingCoverFromRow } from "@/lib/spottingMedia";
 
