@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { Camera } from "lucide-react";
+import { Camera, Images } from "lucide-react";
 import { SpotCarDialog } from "@/components/car/SpotCarDialog";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -28,16 +28,28 @@ export function CaptureCameraButton({ size = "hero", onOpenChange, screen }: Pro
   const navigate = useNavigate();
   const location = useLocation();
   const inputRef = useRef<HTMLInputElement>(null);
+  const galleryRef = useRef<HTMLInputElement>(null);
   const [prefillFile, setPrefillFile] = useState<File | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  const handleClick = () => {
-    void track("capture_intent_click", screen ?? "start", { path: location.pathname });
+  const requireAuth = () => {
     if (!user) {
       navigate(`/login?returnUrl=${encodeURIComponent(location.pathname)}`);
-      return;
+      return false;
     }
+    return true;
+  };
+
+  const handleClick = () => {
+    void track("capture_intent_click", screen ?? "start", { path: location.pathname, source: "camera" });
+    if (!requireAuth()) return;
     inputRef.current?.click();
+  };
+
+  const handleGalleryClick = () => {
+    void track("capture_intent_click", screen ?? "start", { path: location.pathname, source: "gallery" });
+    if (!requireAuth()) return;
+    galleryRef.current?.click();
   };
 
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -67,33 +79,51 @@ export function CaptureCameraButton({ size = "hero", onOpenChange, screen }: Pro
         className="hidden"
         onChange={handleFile}
       />
+      <input
+        ref={galleryRef}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={handleFile}
+      />
 
       {isHero ? (
-        <button
-          type="button"
-          onClick={handleClick}
-          aria-label="Fang bil"
-          className="group relative flex flex-col items-center gap-3 active:scale-[0.97] transition-transform"
-        >
-          <span
-            className="w-[132px] h-[132px] rounded-full flex items-center justify-center transition-all group-hover:scale-[1.03]"
-            style={{
-              background:
-                "linear-gradient(135deg, #34eab8 0%, #2ab89a 55%, #1cb896 100%)",
-              boxShadow:
-                "0 0 48px rgba(52,234,184,0.45), 0 12px 30px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.25)",
-              border: "4px solid rgba(8,12,17,0.95)",
-            }}
+        <div className="flex flex-col items-center gap-3">
+          <button
+            type="button"
+            onClick={handleClick}
+            aria-label="Fang bil"
+            className="group relative flex flex-col items-center gap-3 active:scale-[0.97] transition-transform"
           >
-            <Camera className="w-12 h-12 text-[#070b10]" strokeWidth={2.25} />
-          </span>
-          <span
-            className="text-[12px] uppercase tracking-[0.18em] font-bold text-white/85"
+            <span
+              className="w-[132px] h-[132px] rounded-full flex items-center justify-center transition-all group-hover:scale-[1.03]"
+              style={{
+                background:
+                  "linear-gradient(135deg, #34eab8 0%, #2ab89a 55%, #1cb896 100%)",
+                boxShadow:
+                  "0 0 48px rgba(52,234,184,0.45), 0 12px 30px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.25)",
+                border: "4px solid rgba(8,12,17,0.95)",
+              }}
+            >
+              <Camera className="w-12 h-12 text-[#070b10]" strokeWidth={2.25} />
+            </span>
+            <span
+              className="text-[12px] uppercase tracking-[0.18em] font-bold text-white/85"
+              style={chakra}
+            >
+              Fang bil
+            </span>
+          </button>
+          <button
+            type="button"
+            onClick={handleGalleryClick}
+            className="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-[0.16em] text-white/45 hover:text-white/85 transition-colors py-1.5 px-2"
             style={chakra}
           >
-            Fang bil
-          </span>
-        </button>
+            <Images className="w-3.5 h-3.5" />
+            Velg fra bilder
+          </button>
+        </div>
       ) : (
         <button
           type="button"
