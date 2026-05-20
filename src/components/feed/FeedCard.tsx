@@ -127,8 +127,7 @@ export function FeedCard({ post, variant = "default" }: { post: FeedPost; varian
     }
   }
 
-  const isSpotting = post.post_type === "car_spotting";
-  const cardClickable = !!entityLink && !isSpotting;
+  const cardClickable = !!entityLink;
 
   function handleCardClick(e: import("react").MouseEvent<HTMLElement>) {
     if (!cardClickable) return;
