@@ -126,12 +126,11 @@ export function FeedCard({ post, variant = "default" }: { post: FeedPost; varian
       setShowDeleteConfirm(false);
   }
 
-  function handleCardClick(e: React.MouseEvent<HTMLElement>) {
+  function handleCardClick(e: import("react").MouseEvent<HTMLElement>) {
     if (!entityLink) return;
     if (isEditing || showDeleteConfirm || showMenu) return;
     const target = e.target as HTMLElement;
     if (target.closest('a,button,textarea,input,select,label,[role="button"]')) return;
-    // Don't hijack text selection
     if (window.getSelection()?.toString()) return;
     navigate(entityLink);
   }
