@@ -24,13 +24,19 @@ import { track } from "@/lib/analytics";
 interface SpotCarDialogProps {
   trigger?: React.ReactNode;
   onSpotted?: (result: SpotCarResult) => void;
+  /** Controlled mode: when set, dialog is opened/closed by parent (no trigger needed). */
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  /** When set, dialog uses this image as initial value (skips empty form). */
+  initialImageFile?: File | null;
 }
 
 const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
 
-export function SpotCarDialog({ trigger, onSpotted }: SpotCarDialogProps) {
+export function SpotCarDialog(props: SpotCarDialogProps) {
+  // Innlogga brukarar får spotting via useFeatures(); FEATURES.spotting kan vere false build-time.
   if (!FEATURES.spotting) return null;
-  return <SpotCarDialogInner trigger={trigger} onSpotted={onSpotted} />;
+  return <SpotCarDialogInner {...props} />;
 }
 
 interface CarMatch {
