@@ -63,6 +63,7 @@ function getAllImages(post: FeedPost) {
 
 export function FeedCard({ post, variant = "default" }: { post: FeedPost; variant?: "default" | "explore" }) {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const { data: myProfile } = useMyPersonProfile();
   const { mutate: toggleLike } = useLikeFeedPost();
   const { mutateAsync: editPost, isPending: isEditPending } = useEditFeedPost();
