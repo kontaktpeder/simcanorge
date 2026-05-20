@@ -162,7 +162,7 @@ export default function Start() {
     <Layout>
       <Helmet>
         <title>Hjem — Bilgarasje.no</title>
-        <meta name="description" content="Din startskjerm — kjør, spot, og hold styr på garasjen." />
+        <meta name="description" content="Fang biler rundt deg — Norges levende bilearkiv." />
       </Helmet>
 
       <div className="min-h-screen bg-[#070b10] pb-32">
