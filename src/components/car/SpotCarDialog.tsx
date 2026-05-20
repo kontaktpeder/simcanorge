@@ -16,7 +16,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useSpotCar, type SpotCarResult } from "@/hooks/useSpotCar";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate, useLocation } from "react-router-dom";
-import { FEATURES } from "@/config/features";
+import { useFeatures } from "@/hooks/useFeatures";
 import { LicensePlateInput } from "@/components/car/wizard/LicensePlateInput";
 import { RelationshipRequestDialog } from "@/components/car/relationship/RelationshipRequestDialog";
 import { track } from "@/lib/analytics";
