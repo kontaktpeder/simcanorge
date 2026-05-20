@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { Camera } from "lucide-react";
+import { Camera, Images } from "lucide-react";
 import { SpotCarDialog } from "@/components/car/SpotCarDialog";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate, useLocation } from "react-router-dom";
