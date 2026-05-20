@@ -124,7 +124,17 @@ export function FeedCard({ post, variant = "default" }: { post: FeedPost; varian
     } catch {
       toast.error("Noe gikk galt");
       setShowDeleteConfirm(false);
-    }
+  }
+
+  function handleCardClick(e: React.MouseEvent<HTMLElement>) {
+    if (!entityLink) return;
+    if (isEditing || showDeleteConfirm || showMenu) return;
+    const target = e.target as HTMLElement;
+    if (target.closest('a,button,textarea,input,select,label,[role="button"]')) return;
+    // Don't hijack text selection
+    if (window.getSelection()?.toString()) return;
+    navigate(entityLink);
+  }
   }
 
   // ─── Explore variant: image-first, compact ───
