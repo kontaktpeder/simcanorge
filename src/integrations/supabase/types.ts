@@ -2605,6 +2605,7 @@ export type Database = {
         Args: { _display_name: string; _owner_id: string; _user_id: string }
         Returns: undefined
       }
+      publish_car_on_observation: { Args: { p_car_id: string }; Returns: Json }
       purge_user_data_before_auth_delete: {
         Args: { _user_id: string }
         Returns: undefined

@@ -429,7 +429,12 @@ function PreviewCarTile({
     car.source === "spotting" &&
     (car.identification_status === "unknown" || car.identification_status === "needs_review");
   const isPublished = !!car.published_at;
-  const href = hrefOverride ?? (isPublished ? `/biler/${car.slug}` : `/dashboard/bil/${car.id}`);
+  const isSpotting = car.source === "spotting";
+  const href =
+    hrefOverride ??
+    (isPublished || isSpotting
+      ? `/biler/${car.slug}`
+      : `/dashboard/bil/${car.id}`);
 
   return (
     <motion.div
