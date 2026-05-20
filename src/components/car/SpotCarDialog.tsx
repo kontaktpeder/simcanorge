@@ -48,14 +48,26 @@ export function SpotCarDialog({
     onOpenChangeProp?.(next);
   };
 
-  const triggerEl = trigger && isValidElement(trigger)
-    ? cloneElement(trigger as ReactElement<{ onClick?: (e: MouseEvent) => void }>, {
+  const defaultTrigger = (
+    <button
+      type="button"
+      className="inline-flex items-center gap-2 rounded-lg border border-primary/40 bg-primary/[0.06] text-primary px-4 py-2.5 text-sm font-bold uppercase tracking-wider min-h-[44px] hover:bg-primary/10 transition-colors"
+      style={oswald}
+    >
+      <Eye className="h-4 w-4" />
+      Spot bil
+    </button>
+  );
+
+  const triggerSource = trigger ?? (controlled ? null : defaultTrigger);
+  const triggerEl = triggerSource && isValidElement(triggerSource)
+    ? cloneElement(triggerSource as ReactElement<{ onClick?: (e: MouseEvent) => void }>, {
         onClick: (e: MouseEvent) => {
-          (trigger as ReactElement<{ onClick?: (e: MouseEvent) => void }>).props.onClick?.(e);
+          (triggerSource as ReactElement<{ onClick?: (e: MouseEvent) => void }>).props.onClick?.(e);
           if (!e.defaultPrevented) setOpen(true);
         },
       })
-    : trigger;
+    : triggerSource;
 
   return (
     <>
