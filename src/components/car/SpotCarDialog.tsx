@@ -250,7 +250,9 @@ function SpotCarDialogInner({
   return (
     <>
       <Dialog open={open} onOpenChange={handleDialogOpenChange}>
-        <DialogTrigger asChild>{trigger ?? defaultTrigger}</DialogTrigger>
+        {!controlled && (
+          <DialogTrigger asChild>{trigger ?? defaultTrigger}</DialogTrigger>
+        )}
         <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
           {successResult ? (
             <>
