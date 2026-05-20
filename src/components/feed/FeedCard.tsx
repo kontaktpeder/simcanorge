@@ -127,13 +127,16 @@ export function FeedCard({ post, variant = "default" }: { post: FeedPost; varian
     }
   }
 
+  const isSpotting = post.post_type === "car_spotting";
+  const cardClickable = !!entityLink && !isSpotting;
+
   function handleCardClick(e: import("react").MouseEvent<HTMLElement>) {
-    if (!entityLink) return;
+    if (!cardClickable) return;
     if (isEditing || showDeleteConfirm || showMenu) return;
     const target = e.target as HTMLElement;
     if (target.closest('a,button,textarea,input,select,label,[role="button"]')) return;
     if (window.getSelection()?.toString()) return;
-    navigate(entityLink);
+    navigate(entityLink!);
   }
 
   // ─── Explore variant: image-first, compact ───
