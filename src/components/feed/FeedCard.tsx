@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { format, formatDistanceToNow } from "date-fns";
 import { nb } from "date-fns/locale";
 import { Heart, Car, ShoppingBag, CalendarDays, Pencil, MoreHorizontal, Trash2, Check, X, MessageSquare, MapPin, Camera, Eye } from "lucide-react";
@@ -63,6 +63,7 @@ function getAllImages(post: FeedPost) {
 
 export function FeedCard({ post, variant = "default" }: { post: FeedPost; variant?: "default" | "explore" }) {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const { data: myProfile } = useMyPersonProfile();
   const { mutate: toggleLike } = useLikeFeedPost();
   const { mutateAsync: editPost, isPending: isEditPending } = useEditFeedPost();
@@ -126,6 +127,15 @@ export function FeedCard({ post, variant = "default" }: { post: FeedPost; varian
     }
   }
 
+  function handleCardClick(e: import("react").MouseEvent<HTMLElement>) {
+    if (!entityLink) return;
+    if (isEditing || showDeleteConfirm || showMenu) return;
+    const target = e.target as HTMLElement;
+    if (target.closest('a,button,textarea,input,select,label,[role="button"]')) return;
+    if (window.getSelection()?.toString()) return;
+    navigate(entityLink);
+  }
+
   // ─── Explore variant: image-first, compact ───
   if (variant === "explore") {
     const carBrand = (car as any)?.brand as string | null;
@@ -137,7 +147,7 @@ export function FeedCard({ post, variant = "default" }: { post: FeedPost; varian
 
     return (
       <>
-        <article className="group">
+        <article className={`group ${entityLink ? 'cursor-pointer' : ''}`} onClick={handleCardClick}>
           {/* Image */}
           <div className="relative overflow-hidden rounded-lg mb-3 bg-white/[0.04] border border-white/[0.06]">
             {heroImage ? (
@@ -301,7 +311,7 @@ export function FeedCard({ post, variant = "default" }: { post: FeedPost; varian
 
   return (
     <>
-      <article className="group">
+      <article className={`group ${entityLink ? 'cursor-pointer' : ''}`} onClick={handleCardClick}>
         {/* ── Author bar ── */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
