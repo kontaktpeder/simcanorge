@@ -34,8 +34,8 @@ interface SpotCarDialogProps {
 const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
 
 export function SpotCarDialog(props: SpotCarDialogProps) {
-  // Innlogga brukarar får spotting via useFeatures(); FEATURES.spotting kan vere false build-time.
-  if (!FEATURES.spotting) return null;
+  const features = useFeatures();
+  if (!features.spotting) return null;
   return <SpotCarDialogInner {...props} />;
 }
 
