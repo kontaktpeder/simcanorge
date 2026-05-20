@@ -28,16 +28,28 @@ export function CaptureCameraButton({ size = "hero", onOpenChange, screen }: Pro
   const navigate = useNavigate();
   const location = useLocation();
   const inputRef = useRef<HTMLInputElement>(null);
+  const galleryRef = useRef<HTMLInputElement>(null);
   const [prefillFile, setPrefillFile] = useState<File | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  const handleClick = () => {
-    void track("capture_intent_click", screen ?? "start", { path: location.pathname });
+  const requireAuth = () => {
     if (!user) {
       navigate(`/login?returnUrl=${encodeURIComponent(location.pathname)}`);
-      return;
+      return false;
     }
+    return true;
+  };
+
+  const handleClick = () => {
+    void track("capture_intent_click", screen ?? "start", { path: location.pathname, source: "camera" });
+    if (!requireAuth()) return;
     inputRef.current?.click();
+  };
+
+  const handleGalleryClick = () => {
+    void track("capture_intent_click", screen ?? "start", { path: location.pathname, source: "gallery" });
+    if (!requireAuth()) return;
+    galleryRef.current?.click();
   };
 
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
