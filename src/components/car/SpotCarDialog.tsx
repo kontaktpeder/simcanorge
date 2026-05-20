@@ -1,9 +1,12 @@
 import { useState, cloneElement, isValidElement, type ReactElement, type MouseEvent } from "react";
+import { Eye } from "lucide-react";
 import { useFeatures } from "@/hooks/useFeatures";
 import { ObservationComposeSheet } from "@/components/capture/ObservationComposeSheet";
 import { useAuth } from "@/hooks/useAuth";
 import { useLocation, useNavigate } from "react-router-dom";
 import type { SpotCarResult } from "@/hooks/useSpotCar";
+
+const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
 
 export interface SpotCarDialogProps {
   trigger?: React.ReactNode;
