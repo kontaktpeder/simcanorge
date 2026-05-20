@@ -1,436 +1,68 @@
-import { useEffect, useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogDescription,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import { Camera, Loader2, Eye, Car as CarIcon, Link2, CheckCircle2, HelpCircle, ArrowRight } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
-import { useSpotCar, type SpotCarResult } from "@/hooks/useSpotCar";
-import { useAuth } from "@/hooks/useAuth";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useState, cloneElement, isValidElement, type ReactElement, type MouseEvent } from "react";
 import { useFeatures } from "@/hooks/useFeatures";
-import { LicensePlateInput } from "@/components/car/wizard/LicensePlateInput";
-import { RelationshipRequestDialog } from "@/components/car/relationship/RelationshipRequestDialog";
-import { track } from "@/lib/analytics";
+import { ObservationComposeSheet } from "@/components/capture/ObservationComposeSheet";
+import { useAuth } from "@/hooks/useAuth";
+import { useLocation, useNavigate } from "react-router-dom";
+import type { SpotCarResult } from "@/hooks/useSpotCar";
 
-interface SpotCarDialogProps {
+export interface SpotCarDialogProps {
   trigger?: React.ReactNode;
   onSpotted?: (result: SpotCarResult) => void;
-  /** Controlled mode: when set, dialog is opened/closed by parent (no trigger needed). */
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
-  /** When set, dialog uses this image as initial value (skips empty form). */
   initialImageFile?: File | null;
 }
 
-const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
-
-export function SpotCarDialog(props: SpotCarDialogProps) {
-  const features = useFeatures();
-  if (!features.spotting) return null;
-  return <SpotCarDialogInner {...props} />;
-}
-
-interface CarMatch {
-  id: string;
-  slug: string | null;
-  title: string;
-  published_at: string | null;
-}
-
-function normalizeRegnr(regnr: string): string {
-  return regnr.toLowerCase().replace(/\s|-/g, "").trim();
-}
-
-function SpotCarDialogInner({
+/**
+ * Bakoverkompatibel wrapper. All compose/success-UX ligg no i
+ * ObservationComposeSheet (Instagram-style capture-first). Støttar både:
+ *  - controlled: <SpotCarDialog open onOpenChange initialImageFile />
+ *  - trigger-only: <SpotCarDialog trigger={<Button/>} />
+ */
+export function SpotCarDialog({
   trigger,
   onSpotted,
   open: openProp,
   onOpenChange: onOpenChangeProp,
   initialImageFile,
 }: SpotCarDialogProps) {
+  const features = useFeatures();
   const { user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const { spotCar, isSubmitting } = useSpotCar();
   const controlled = openProp !== undefined;
   const [internalOpen, setInternalOpen] = useState(false);
   const open = controlled ? !!openProp : internalOpen;
+
+  if (!features.spotting) return null;
+
   const setOpen = (next: boolean) => {
-    if (!controlled) setInternalOpen(next);
-    onOpenChangeProp?.(next);
-  };
-  const [imageFile, setImageFile] = useState<File | null>(initialImageFile ?? null);
-  const [regnr, setRegnr] = useState("");
-  const [titleOrModel, setTitleOrModel] = useState("");
-  const [note, setNote] = useState("");
-
-  const [match, setMatch] = useState<CarMatch | null>(null);
-  const [isLookingUp, setIsLookingUp] = useState(false);
-  const [relOpen, setRelOpen] = useState(false);
-  const [successResult, setSuccessResult] = useState<SpotCarResult | null>(null);
-
-  // Sync external initialImageFile into local state (e.g. when CaptureCameraButton prefills).
-  useEffect(() => {
-    if (initialImageFile) setImageFile(initialImageFile);
-  }, [initialImageFile]);
-
-  // Debounced regnr lookup
-  useEffect(() => {
-    const normalized = normalizeRegnr(regnr);
-    if (normalized.length < 2) {
-      setMatch(null);
-      setIsLookingUp(false);
-      return;
-    }
-    let cancelled = false;
-    setIsLookingUp(true);
-    const handle = window.setTimeout(async () => {
-      const { data } = await supabase.rpc(
-        "find_cars_by_registration_number" as never,
-        { p_normalized: normalized } as never,
-      );
-      if (cancelled) return;
-      const list = Array.isArray(data) ? (data as CarMatch[]) : [];
-      setMatch(list.length > 0 ? list[0] : null);
-      setIsLookingUp(false);
-    }, 350);
-    return () => {
-      cancelled = true;
-      window.clearTimeout(handle);
-      setIsLookingUp(false);
-    };
-  }, [regnr]);
-
-  const screen = location.pathname === "/" ? "start" : "other";
-
-  const handleOpenChange = (next: boolean) => {
-    if (next) {
-      void track("spot_intent_click", screen, { intent: "spot", path: location.pathname });
-    }
     if (next && !user) {
       navigate(`/login?returnUrl=${encodeURIComponent(location.pathname)}`);
       return;
     }
-    setOpen(next);
+    if (!controlled) setInternalOpen(next);
+    onOpenChangeProp?.(next);
   };
 
-  const resetForm = () => {
-    setImageFile(null);
-    setRegnr("");
-    setTitleOrModel("");
-    setNote("");
-    setMatch(null);
-  };
-
-  const finishAndClose = () => {
-    setSuccessResult(null);
-    resetForm();
-    setOpen(false);
-  };
-
-  const successVariant: "matched" | "unknown" | "new_identified" | null = successResult
-    ? successResult.matchedExistingCar
-      ? "matched"
-      : successResult.identificationStatus === "unknown"
-        ? "unknown"
-        : "new_identified"
-    : null;
-
-  const handleDialogOpenChange = (next: boolean) => {
-    if (!next && successResult) {
-      // Closing via X / overlay after success — reset cleanly.
-      void track("spotting_success_cta", screen, {
-        cta: "dismiss",
-        variant: successVariant,
-        car_id: successResult.carId,
-        has_slug: Boolean(successResult.slug),
-      });
-      setSuccessResult(null);
-      resetForm();
-    }
-    handleOpenChange(next);
-  };
-
-  // Fire view event when success panel becomes visible
-  useEffect(() => {
-    if (!successResult || !successVariant) return;
-    void track("spotting_success_view", screen, {
-      variant: successVariant,
-      car_id: successResult.carId,
-      has_slug: Boolean(successResult.slug),
-    });
-    // Only fire once per success result
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [successResult]);
-
-  const trackCta = (cta: "see_car" | "see_unknown_list" | "done") => {
-    if (!successResult || !successVariant) return;
-    void track("spotting_success_cta", screen, {
-      cta,
-      variant: successVariant,
-      car_id: successResult.carId,
-      has_slug: Boolean(successResult.slug),
-    });
-  };
-
-  const goToCar = () => {
-    if (!successResult?.slug) return;
-    trackCta("see_car");
-    navigate(`/biler/${successResult.slug}`);
-    finishAndClose();
-  };
-
-  const goToUnknownCars = () => {
-    trackCta("see_unknown_list");
-    navigate("/ukjente-biler");
-    finishAndClose();
-  };
-
-  const handleDone = () => {
-    trackCta("done");
-    finishAndClose();
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!imageFile) return;
-    const result = await spotCar({
-      imageFile,
-      registrationNumber: regnr.trim() || undefined,
-      titleOrModel: titleOrModel.trim() || undefined,
-      note: note.trim() || undefined,
-    });
-    if (result) {
-      void track("spotting_submitted", screen, { car_id: result.carId, path: location.pathname });
-      setSuccessResult(result);
-      onSpotted?.(result);
-    }
-  };
-
-  const defaultTrigger = (
-    <button
-      type="button"
-      className="inline-flex items-center gap-2 rounded-lg border border-primary/40 bg-primary/[0.06] text-primary px-4 py-2.5 text-sm font-bold uppercase tracking-wider min-h-[44px] hover:bg-primary/10 transition-colors"
-      style={oswald}
-    >
-      <Eye className="h-4 w-4" />
-      Spot bil
-    </button>
-  );
-
-  const canShowCarLink = Boolean(successResult?.slug);
-  const isUnknownNew =
-    successResult?.createdNewCar && successResult.identificationStatus === "unknown";
-  const isMatched = successResult?.matchedExistingCar === true;
-
-  let successTitle = "";
-  let successText = "";
-  if (successResult) {
-    if (isMatched) {
-      successTitle = "Spotting lagt til";
-      successText = "Bildet og notatet er lagt til på en eksisterende bil.";
-    } else if (isUnknownNew) {
-      successTitle = "Ukjent bil lagt inn";
-      successText = "Andre kan nå hjelpe å identifisere bilen.";
-    } else {
-      successTitle = "Bil lagt inn";
-      successText = "Bilen er publisert som observert. Du kan åpne siden og dele videre.";
-    }
-  }
+  const triggerEl = trigger && isValidElement(trigger)
+    ? cloneElement(trigger as ReactElement<{ onClick?: (e: MouseEvent) => void }>, {
+        onClick: (e: MouseEvent) => {
+          (trigger as ReactElement<{ onClick?: (e: MouseEvent) => void }>).props.onClick?.(e);
+          if (!e.defaultPrevented) setOpen(true);
+        },
+      })
+    : trigger;
 
   return (
     <>
-      <Dialog open={open} onOpenChange={handleDialogOpenChange}>
-        {!controlled && (
-          <DialogTrigger asChild>{trigger ?? defaultTrigger}</DialogTrigger>
-        )}
-        <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
-          {successResult ? (
-            <>
-              <DialogHeader>
-                <div className="flex items-center gap-2">
-                  {isUnknownNew ? (
-                    <HelpCircle className="h-5 w-5 text-primary" />
-                  ) : (
-                    <CheckCircle2 className="h-5 w-5 text-primary" />
-                  )}
-                  <DialogTitle style={oswald} className="uppercase tracking-wider">
-                    {successTitle}
-                  </DialogTitle>
-                </div>
-                <DialogDescription>{successText}</DialogDescription>
-              </DialogHeader>
-
-              <div className="flex flex-col gap-2 mt-4">
-                {canShowCarLink && (
-                  <Button
-                    type="button"
-                    onClick={goToCar}
-                    className="min-h-[48px] w-full"
-                  >
-                    <CarIcon className="h-4 w-4 mr-1.5" />
-                    Se bilen
-                    <ArrowRight className="h-4 w-4 ml-1.5" />
-                  </Button>
-                )}
-                {isUnknownNew && (
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={goToUnknownCars}
-                    className="min-h-[48px] w-full"
-                  >
-                    <HelpCircle className="h-4 w-4 mr-1.5" />
-                    Se ukjente biler
-                  </Button>
-                )}
-                <Button
-                  type="button"
-                  variant="ghost"
-                  onClick={handleDone}
-                  className="min-h-[44px] w-full"
-                >
-                  Ferdig
-                </Button>
-              </div>
-            </>
-          ) : (
-            <>
-              <DialogHeader>
-                <DialogTitle style={oswald} className="uppercase tracking-wider">
-                  Spot bil
-                </DialogTitle>
-                <DialogDescription>
-                  Del en bil du har sett i dag. Registreringsnummer vises ikke offentlig.
-                </DialogDescription>
-              </DialogHeader>
-
-              <form onSubmit={handleSubmit} className="flex flex-col gap-4 mt-2">
-                <div className="flex flex-col gap-2">
-                  <Label htmlFor="spot-image">
-                    Bilde <span className="text-destructive">*</span>
-                  </Label>
-                  <label
-                    htmlFor="spot-image"
-                    className="flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-border/60 bg-muted/20 p-6 cursor-pointer hover:border-primary/40 transition-colors min-h-[120px]"
-                  >
-                    <Camera className="h-6 w-6 text-muted-foreground" />
-                    <span className="text-sm text-muted-foreground text-center">
-                      {imageFile ? imageFile.name : "Trykk for å velge bilde"}
-                    </span>
-                  </label>
-                  <input
-                    id="spot-image"
-                    type="file"
-                    accept="image/*"
-                    capture="environment"
-                    className="hidden"
-                    onChange={(e) => setImageFile(e.target.files?.[0] ?? null)}
-                  />
-                </div>
-
-                <div className="flex flex-col gap-2">
-                  <Label>Registreringsnummer (valgfritt)</Label>
-                  <LicensePlateInput value={regnr} onChange={setRegnr} />
-                  <p className="text-[11px] text-muted-foreground">
-                    Vises aldri offentlig — brukes kun for å matche eksisterende bil.
-                  </p>
-                </div>
-
-                {/* Match-kort */}
-                {isLookingUp && (
-                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                    Søker etter bil…
-                  </div>
-                )}
-                {!isLookingUp && match && (
-                  <div className="rounded-lg border border-primary/30 bg-primary/[0.05] p-3">
-                    <div className="flex items-start gap-3">
-                      <div className="mt-0.5 rounded-md bg-primary/10 p-2 text-primary">
-                        <CarIcon className="h-4 w-4" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-[11px] uppercase tracking-wider text-primary/80" style={oswald}>
-                          Denne bilen finnes allerede
-                        </p>
-                        <p className="text-sm font-semibold text-foreground truncate">{match.title}</p>
-                        <p className="text-[11px] text-muted-foreground mt-0.5">
-                          Har du et forhold til den? Knytt deg til historikken.
-                        </p>
-                        <Button
-                          type="button"
-                          size="sm"
-                          className="mt-2 btn-enamel-blue"
-                          onClick={() => setRelOpen(true)}
-                        >
-                          <Link2 className="mr-1.5 h-3.5 w-3.5" />
-                          Jeg har forhold til denne bilen
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                <div className="flex flex-col gap-2">
-                  <Label htmlFor="spot-title">Modell / tittel (valgfritt)</Label>
-                  <Input
-                    id="spot-title"
-                    value={titleOrModel}
-                    onChange={(e) => setTitleOrModel(e.target.value)}
-                    placeholder="F.eks. Volvo 240"
-                    className="min-h-[44px]"
-                  />
-                </div>
-
-                <div className="flex flex-col gap-2">
-                  <Label htmlFor="spot-note">Notat (valgfritt)</Label>
-                  <Textarea
-                    id="spot-note"
-                    value={note}
-                    onChange={(e) => setNote(e.target.value)}
-                    placeholder="Hvor så du den? Hva fanget oppmerksomheten?"
-                    rows={3}
-                  />
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={!imageFile || isSubmitting}
-                  className="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-primary text-primary-foreground px-5 py-3 text-sm font-bold uppercase tracking-wider min-h-[48px] hover:bg-primary/90 transition-colors disabled:opacity-50"
-                  style={oswald}
-                >
-                  {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Eye className="h-4 w-4" />}
-                  Spot bil
-                </button>
-              </form>
-            </>
-          )}
-        </DialogContent>
-      </Dialog>
-
-      {match && (
-        <RelationshipRequestDialog
-          open={relOpen}
-          onOpenChange={setRelOpen}
-          carId={match.id}
-          carTitle={match.title}
-          source="spotting"
-          onSubmitted={() => {
-            setOpen(false);
-            resetForm();
-          }}
-        />
-      )}
+      {triggerEl}
+      <ObservationComposeSheet
+        open={open}
+        onOpenChange={setOpen}
+        initialImageFile={initialImageFile}
+        onPublished={onSpotted}
+      />
     </>
   );
 }
