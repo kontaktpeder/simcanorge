@@ -127,13 +127,16 @@ export function FeedCard({ post, variant = "default" }: { post: FeedPost; varian
     }
   }
 
+  const isSpotting = post.post_type === "car_spotting";
+  const cardClickable = !!entityLink && !isSpotting;
+
   function handleCardClick(e: import("react").MouseEvent<HTMLElement>) {
-    if (!entityLink) return;
+    if (!cardClickable) return;
     if (isEditing || showDeleteConfirm || showMenu) return;
     const target = e.target as HTMLElement;
     if (target.closest('a,button,textarea,input,select,label,[role="button"]')) return;
     if (window.getSelection()?.toString()) return;
-    navigate(entityLink);
+    navigate(entityLink!);
   }
 
   // ─── Explore variant: image-first, compact ───
@@ -147,7 +150,7 @@ export function FeedCard({ post, variant = "default" }: { post: FeedPost; varian
 
     return (
       <>
-        <article className={`group ${entityLink ? 'cursor-pointer' : ''}`} onClick={handleCardClick}>
+        <article className={`group ${cardClickable ? 'cursor-pointer' : ''}`} onClick={handleCardClick}>
           {/* Image */}
           <div className="relative overflow-hidden rounded-lg mb-3 bg-white/[0.04] border border-white/[0.06]">
             {heroImage ? (
@@ -311,7 +314,7 @@ export function FeedCard({ post, variant = "default" }: { post: FeedPost; varian
 
   return (
     <>
-      <article className={`group ${entityLink ? 'cursor-pointer' : ''}`} onClick={handleCardClick}>
+      <article className={`group ${cardClickable ? 'cursor-pointer' : ''}`} onClick={handleCardClick}>
         {/* ── Author bar ── */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
