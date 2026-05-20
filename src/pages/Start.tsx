@@ -59,7 +59,14 @@ export default function Start() {
   const features = useFeatures();
   const activitiesEnabled = !!features.activitySessions;
   const navigate = useNavigate();
-  const [drivePickerOpen, setDrivePickerOpen] = useState(false);
+  const { startSession, isStarting } = useActivitySession({ enabled: activitiesEnabled });
+
+  const handleStartDrive = async () => {
+    if (!activitiesEnabled) return;
+    void track("drive_intent_click", "start", { intent: "drive" });
+    const result = await startSession("drive");
+    if (result) navigate("/aktiv");
+  };
 
   useEffect(() => {
     if (!authLoading && !user) navigate("/login?returnUrl=%2Fapp", { replace: true });
