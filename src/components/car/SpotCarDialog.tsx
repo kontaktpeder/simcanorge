@@ -78,6 +78,11 @@ function SpotCarDialogInner({
   const [relOpen, setRelOpen] = useState(false);
   const [successResult, setSuccessResult] = useState<SpotCarResult | null>(null);
 
+  // Sync external initialImageFile into local state (e.g. when CaptureCameraButton prefills).
+  useEffect(() => {
+    if (initialImageFile) setImageFile(initialImageFile);
+  }, [initialImageFile]);
+
   // Debounced regnr lookup
   useEffect(() => {
     const normalized = normalizeRegnr(regnr);
