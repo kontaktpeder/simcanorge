@@ -311,7 +311,7 @@ export function FeedCard({ post, variant = "default" }: { post: FeedPost; varian
 
   return (
     <>
-      <article className="group">
+      <article className={`group ${entityLink ? 'cursor-pointer' : ''}`} onClick={handleCardClick}>
         {/* ── Author bar ── */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
