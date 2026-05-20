@@ -168,7 +168,7 @@ export default function Start() {
       <div className="min-h-screen bg-[#070b10] pb-32">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 pt-6 space-y-8">
           {/* ── Header ─────────────────────────────────────────── */}
-          <header>
+          <header className="text-center sm:text-left">
             <div
               className="text-[10px] uppercase tracking-[0.22em] text-white/40"
               style={oswald}
@@ -179,74 +179,73 @@ export default function Start() {
               className="text-2xl sm:text-3xl text-white font-bold mt-1"
               style={chakra}
             >
-              Hva vil du gjøre i dag?
+              Bilgarasje
             </h1>
           </header>
 
-          {/* ── 1. Intensjon ───────────────────────────────────── */}
-          <section aria-label="Hva vil du gjøre">
-            <div className={`grid ${isAdmin ? "grid-cols-2 sm:grid-cols-4" : "grid-cols-3"} gap-2.5`}>
-              {/* Kjør tur — åpner aktivitets-picker */}
-              {activitiesEnabled ? (
+          {/* ── 1. Fang bil — capture-first ────────────────────── */}
+          <section
+            aria-label="Fang bil"
+            className="flex flex-col items-center text-center gap-5 py-4"
+          >
+            <div className="max-w-md">
+              <p className="text-white/70 text-base" style={chakra}>
+                Fang biler rundt deg.
+              </p>
+              <p className="text-white/40 text-xs mt-1" style={oswald}>
+                Ta et bilde. Resten av historien kan komme senere.
+              </p>
+            </div>
+
+            <CaptureCameraButton size="hero" screen="start" />
+
+            <div className="flex items-center gap-4 mt-1 flex-wrap justify-center">
+              {activitiesEnabled && (
                 <button
                   type="button"
-                  onClick={() => {
-                    void track("drive_intent_click", "start", { intent: "drive" });
-                    setDrivePickerOpen(true);
-                  }}
-                  className="block w-full"
+                  onClick={handleStartDrive}
+                  disabled={isStarting}
+                  className="inline-flex items-center gap-1.5 text-[12px] uppercase tracking-[0.14em] font-bold text-white/55 hover:text-white/85 transition-colors disabled:opacity-50"
+                  style={chakra}
                 >
-                  <IntentBody icon={<Car className="w-5 h-5" />} label="Kjør tur" />
+                  {isStarting ? (
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  ) : (
+                    <Car className="w-3.5 h-3.5" />
+                  )}
+                  Start kjøretur
                 </button>
-              ) : (
-                <DisabledIntentTile icon={<Car className="w-5 h-5" />} label="Kjør tur" />
               )}
-
-              {/* Spotting */}
-              {activitiesEnabled ? (
-                <SpotCarDialog
-                  trigger={
-                    <button type="button" className="block w-full">
-                      <IntentBody icon={<Eye className="w-5 h-5" />} label="Spot bil" />
-                    </button>
-                  }
-                />
-              ) : (
-                <DisabledIntentTile icon={<Eye className="w-5 h-5" />} label="Spot bil" />
-              )}
-
-              {/* Garasjen */}
+              <span className="text-white/15">·</span>
               <Link
                 to="/min-garasje"
                 onClick={() =>
                   void track("garage_intent_click", "start", { intent: "garage" })
                 }
-                className="block"
+                className="text-[12px] uppercase tracking-[0.14em] font-bold text-white/55 hover:text-white/85 transition-colors"
+                style={chakra}
               >
-                <IntentBody icon={<Warehouse className="w-5 h-5" />} label="Garasje" />
+                Garasje
               </Link>
-
-              {/* Admin-snarvei (kun for admins) */}
               {isAdmin && (
-                <Link
-                  to="/admin/dashboard"
-                  onClick={() =>
-                    void track("admin_intent_click", "start", { intent: "admin" })
-                  }
-                  className="block"
-                >
-                  <IntentBody icon={<Shield className="w-5 h-5" />} label="Admin" />
-                </Link>
+                <>
+                  <span className="text-white/15">·</span>
+                  <Link
+                    to="/admin/dashboard"
+                    onClick={() =>
+                      void track("admin_intent_click", "start", { intent: "admin" })
+                    }
+                    className="inline-flex items-center gap-1.5 text-[12px] uppercase tracking-[0.14em] font-bold text-white/55 hover:text-white/85 transition-colors"
+                    style={chakra}
+                  >
+                    <Shield className="w-3.5 h-3.5" />
+                    Admin
+                  </Link>
+                </>
               )}
             </div>
           </section>
 
-          {/* Aktivitets-/handlingsmeny */}
-          <StartActionSheet
-            open={drivePickerOpen}
-            onOpenChange={setDrivePickerOpen}
-            activitiesEnabled={activitiesEnabled}
-          />
 
           {/* ── 2. Siste aktivitet ─────────────────────────────── */}
           {lastSession && (
