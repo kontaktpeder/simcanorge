@@ -82,7 +82,7 @@ export function useSpotCar() {
           if (pub.ok) {
             slug = pub.slug;
           } else {
-            throw new Error(pub.error);
+            throw new Error((pub as { error: string }).error);
           }
         }
       }
