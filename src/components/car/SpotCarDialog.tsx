@@ -16,7 +16,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useSpotCar, type SpotCarResult } from "@/hooks/useSpotCar";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate, useLocation } from "react-router-dom";
-import { FEATURES } from "@/config/features";
+import { useFeatures } from "@/hooks/useFeatures";
 import { LicensePlateInput } from "@/components/car/wizard/LicensePlateInput";
 import { RelationshipRequestDialog } from "@/components/car/relationship/RelationshipRequestDialog";
 import { track } from "@/lib/analytics";
@@ -24,13 +24,19 @@ import { track } from "@/lib/analytics";
 interface SpotCarDialogProps {
   trigger?: React.ReactNode;
   onSpotted?: (result: SpotCarResult) => void;
+  /** Controlled mode: when set, dialog is opened/closed by parent (no trigger needed). */
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  /** When set, dialog uses this image as initial value (skips empty form). */
+  initialImageFile?: File | null;
 }
 
 const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
 
-export function SpotCarDialog({ trigger, onSpotted }: SpotCarDialogProps) {
-  if (!FEATURES.spotting) return null;
-  return <SpotCarDialogInner trigger={trigger} onSpotted={onSpotted} />;
+export function SpotCarDialog(props: SpotCarDialogProps) {
+  const features = useFeatures();
+  if (!features.spotting) return null;
+  return <SpotCarDialogInner {...props} />;
 }
 
 interface CarMatch {
@@ -44,13 +50,25 @@ function normalizeRegnr(regnr: string): string {
   return regnr.toLowerCase().replace(/\s|-/g, "").trim();
 }
 
-function SpotCarDialogInner({ trigger, onSpotted }: SpotCarDialogProps) {
+function SpotCarDialogInner({
+  trigger,
+  onSpotted,
+  open: openProp,
+  onOpenChange: onOpenChangeProp,
+  initialImageFile,
+}: SpotCarDialogProps) {
   const { user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const { spotCar, isSubmitting } = useSpotCar();
-  const [open, setOpen] = useState(false);
-  const [imageFile, setImageFile] = useState<File | null>(null);
+  const controlled = openProp !== undefined;
+  const [internalOpen, setInternalOpen] = useState(false);
+  const open = controlled ? !!openProp : internalOpen;
+  const setOpen = (next: boolean) => {
+    if (!controlled) setInternalOpen(next);
+    onOpenChangeProp?.(next);
+  };
+  const [imageFile, setImageFile] = useState<File | null>(initialImageFile ?? null);
   const [regnr, setRegnr] = useState("");
   const [titleOrModel, setTitleOrModel] = useState("");
   const [note, setNote] = useState("");
@@ -59,6 +77,11 @@ function SpotCarDialogInner({ trigger, onSpotted }: SpotCarDialogProps) {
   const [isLookingUp, setIsLookingUp] = useState(false);
   const [relOpen, setRelOpen] = useState(false);
   const [successResult, setSuccessResult] = useState<SpotCarResult | null>(null);
+
+  // Sync external initialImageFile into local state (e.g. when CaptureCameraButton prefills).
+  useEffect(() => {
+    if (initialImageFile) setImageFile(initialImageFile);
+  }, [initialImageFile]);
 
   // Debounced regnr lookup
   useEffect(() => {
@@ -227,7 +250,9 @@ function SpotCarDialogInner({ trigger, onSpotted }: SpotCarDialogProps) {
   return (
     <>
       <Dialog open={open} onOpenChange={handleDialogOpenChange}>
-        <DialogTrigger asChild>{trigger ?? defaultTrigger}</DialogTrigger>
+        {!controlled && (
+          <DialogTrigger asChild>{trigger ?? defaultTrigger}</DialogTrigger>
+        )}
         <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
           {successResult ? (
             <>

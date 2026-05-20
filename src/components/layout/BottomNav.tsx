@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Warehouse, Play, Route, Compass, User } from "lucide-react";
+import { Warehouse, Route, Compass, User } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useFeatures } from "@/hooks/useFeatures";
 import { useActivitySession } from "@/hooks/useActivitySession";
 import { useHideOnScroll } from "@/hooks/useHideOnScroll";
-import { StartActionSheet } from "@/components/activity/StartActionSheet";
+import { CaptureCameraButton } from "@/components/capture/CaptureCameraButton";
 
 const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
 
@@ -121,38 +121,24 @@ export function BottomNav() {
             ))}
           </div>
 
-          {/* Raised Start button */}
+          {/* Raised capture button — capture-first inngang */}
           <div className="absolute left-1/2 -translate-x-1/2 -top-6 flex flex-col items-center pointer-events-none">
-            <button
-              type="button"
-              onClick={() => activitiesEnabled && setPickerOpen(true)}
-              disabled={!activitiesEnabled}
-              className="pointer-events-auto w-16 h-16 rounded-full flex items-center justify-center transition-all hover:scale-[1.04] active:scale-[0.97] disabled:opacity-40"
-              style={{
-                background: "linear-gradient(135deg, #34eab8 0%, #2ab89a 60%, #1cb896 100%)",
-                boxShadow:
-                  "0 0 28px rgba(52,234,184,0.45), 0 6px 18px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.25)",
-                border: "3px solid rgba(8,12,17,0.95)",
-              }}
-              aria-label={activitiesEnabled ? "Start tur eller spotting" : "Aktiviteter er ikke tilgjengelig"}
-            >
-              <Play className="w-6 h-6 text-[#070b10]" fill="#070b10" />
-            </button>
+            <div className="pointer-events-auto">
+              <CaptureCameraButton
+                size="fab"
+                screen="bottom_nav"
+                onOpenChange={setPickerOpen}
+              />
+            </div>
             <span
               className="mt-1 text-[9px] uppercase tracking-[0.12em] font-bold text-white/70"
               style={chakra}
             >
-              Start
+              Fang
             </span>
           </div>
         </div>
       </nav>
-
-      <StartActionSheet
-        open={pickerOpen}
-        onOpenChange={setPickerOpen}
-        activitiesEnabled={activitiesEnabled}
-      />
     </>
   );
 }
