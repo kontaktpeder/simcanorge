@@ -79,7 +79,9 @@ export function useSpotCar() {
           matchedExistingCar = true;
 
           const pub = await publishCarOnObservation(carId);
-          if (!pub.ok) throw new Error(pub.error);
+          if (!pub.ok) {
+            throw new Error(pub.error);
+          }
           slug = pub.slug;
         }
       }
