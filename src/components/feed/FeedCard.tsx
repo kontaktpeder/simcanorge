@@ -124,6 +124,7 @@ export function FeedCard({ post, variant = "default" }: { post: FeedPost; varian
     } catch {
       toast.error("Noe gikk galt");
       setShowDeleteConfirm(false);
+    }
   }
 
   function handleCardClick(e: import("react").MouseEvent<HTMLElement>) {
@@ -133,7 +134,6 @@ export function FeedCard({ post, variant = "default" }: { post: FeedPost; varian
     if (target.closest('a,button,textarea,input,select,label,[role="button"]')) return;
     if (window.getSelection()?.toString()) return;
     navigate(entityLink);
-  }
   }
 
   // ─── Explore variant: image-first, compact ───
