@@ -39,6 +39,8 @@ export default function UkjenteBiler() {
         )
         .in("identification_status", ["unknown", "needs_review"])
         .eq("source", "spotting")
+        .not("published_at", "is", null)
+        .lte("published_at", new Date().toISOString())
         .order("created_at", { ascending: false })
         .limit(50);
       if (error) throw error;

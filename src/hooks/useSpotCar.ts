@@ -5,6 +5,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { compressImage, generateImageId, getCarEventImagePath } from "@/lib/imageCompression";
 import { toast } from "sonner";
 import { buildSpottingCarInsertMeta } from "@/lib/spottingCarInsertMeta";
+import { publishCarOnObservation } from "@/lib/carPublishOnObservation";
 
 export interface SpotCarInput {
   imageFile: File;
@@ -76,6 +77,10 @@ export function useSpotCar() {
           carId = row.id;
           slug = row.slug ?? null;
           matchedExistingCar = true;
+
+          const pub = await publishCarOnObservation(carId);
+          if (!pub.ok) throw new Error(pub.error);
+          slug = pub.slug;
         }
       }
 
@@ -111,6 +116,9 @@ export function useSpotCar() {
         identificationStatus =
           (createdRow.identification_status as SpotIdentificationStatus) ?? meta.identification_status;
         createdNewCar = true;
+
+        const pub = await publishCarOnObservation(carId);
+        if (pub.ok) slug = pub.slug;
       }
 
       // 3) Create the spotting car_event (public)
@@ -161,14 +169,6 @@ export function useSpotCar() {
       queryClient.invalidateQueries({ queryKey: ["car-events", carId] });
       queryClient.invalidateQueries({ queryKey: ["unknown-cars"] });
       queryClient.invalidateQueries({ queryKey: ["feed_posts"] });
-      toast.success("Publisert i Utforsk", {
-        action: {
-          label: "Se i Utforsk",
-          onClick: () => {
-            window.location.assign("/hjem");
-          },
-        },
-      });
       // Success-toast intentionally omitted — SpotCarDialog renders a success panel.
       return {
         carId,
