@@ -50,13 +50,25 @@ function normalizeRegnr(regnr: string): string {
   return regnr.toLowerCase().replace(/\s|-/g, "").trim();
 }
 
-function SpotCarDialogInner({ trigger, onSpotted }: SpotCarDialogProps) {
+function SpotCarDialogInner({
+  trigger,
+  onSpotted,
+  open: openProp,
+  onOpenChange: onOpenChangeProp,
+  initialImageFile,
+}: SpotCarDialogProps) {
   const { user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const { spotCar, isSubmitting } = useSpotCar();
-  const [open, setOpen] = useState(false);
-  const [imageFile, setImageFile] = useState<File | null>(null);
+  const controlled = openProp !== undefined;
+  const [internalOpen, setInternalOpen] = useState(false);
+  const open = controlled ? !!openProp : internalOpen;
+  const setOpen = (next: boolean) => {
+    if (!controlled) setInternalOpen(next);
+    onOpenChangeProp?.(next);
+  };
+  const [imageFile, setImageFile] = useState<File | null>(initialImageFile ?? null);
   const [regnr, setRegnr] = useState("");
   const [titleOrModel, setTitleOrModel] = useState("");
   const [note, setNote] = useState("");
