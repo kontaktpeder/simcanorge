@@ -148,7 +148,7 @@ export function FeedCard({ post, variant = "default" }: { post: FeedPost; varian
 
     return (
       <>
-        <article className="group">
+        <article className={`group ${entityLink ? 'cursor-pointer' : ''}`} onClick={handleCardClick}>
           {/* Image */}
           <div className="relative overflow-hidden rounded-lg mb-3 bg-white/[0.04] border border-white/[0.06]">
             {heroImage ? (
