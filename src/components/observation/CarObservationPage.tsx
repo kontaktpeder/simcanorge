@@ -25,6 +25,8 @@ type Props = {
   variant: string | null;
   body_type: string | null;
   year: number | null;
+  category?: string | null;
+  tags?: string[] | null;
   galleryImages: GalleryImage[];
   enrichment: CarEnrichment;
   heroCaptionEventId?: string | null;
@@ -38,6 +40,7 @@ type Props = {
   showKnowCarCta: boolean;
   landingAck?: string | null;
 };
+
 
 const SectionDivider = () => (
   <div className="border-t border-white/[0.06]" />
