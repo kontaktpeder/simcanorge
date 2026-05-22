@@ -1,14 +1,24 @@
+import { useEffect, useState } from "react";
+import useEmblaCarousel from "embla-carousel-react";
 import { Car } from "lucide-react";
 import { getResponsiveImageProps, IMAGE_SIZES } from "@/lib/imageUtils";
 import { SpottingReactionsRow } from "@/components/car/detail/SpottingReactionsRow";
 import { oswald, oswaldLight, OBSERVATION_ACCENT } from "@/lib/observationPostTokens";
+
+type MediaItem = {
+  id: string;
+  image_url: string;
+  alt_text?: string | null;
+};
 
 type Props = {
   carId: string;
   imageUrl: string | null;
   imageAlt: string;
   caption: string | null;
-  onImageClick?: () => void;
+  /** All images in display order. If omitted, falls back to imageUrl. */
+  media?: MediaItem[];
+  onImageClick?: (index: number) => void;
   onKnowCar?: () => void;
   onShare: () => void;
   onOpenComments: () => void;
@@ -17,17 +27,17 @@ type Props = {
 };
 
 /**
- * Unified observation post core — used identically on /biler/:slug and
- * (via density="feed") in the explore feed.
- *
- * Never renders: title, brand/model, badges, "Ukjent bil", category overlay.
- * Always renders: image (4/3) → reactions → caption → "Kjenner du til bilen?".
+ * Unified observation post core. Finn.no-native feel:
+ *  - Fixed-aspect viewport (4/5) on black, so both portrait & landscape fit
+ *    with object-contain — no cropping, no click-to-open required.
+ *  - Horizontal swipe through all images directly in the hero.
  */
 export function ObservationPostCore({
   carId,
   imageUrl,
   imageAlt,
   caption,
+  media,
   onImageClick,
   onKnowCar,
   onShare,
@@ -35,6 +45,35 @@ export function ObservationPostCore({
   showKnowCarCta,
   landingAck,
 }: Props) {
+  const items: MediaItem[] =
+    media && media.length > 0
+      ? media
+      : imageUrl
+        ? [{ id: "main", image_url: imageUrl, alt_text: imageAlt }]
+        : [];
+
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    loop: false,
+    align: "start",
+    containScroll: "trimSnaps",
+    dragFree: false,
+  });
+  const [selected, setSelected] = useState(0);
+
+  useEffect(() => {
+    if (!emblaApi) return;
+    const onSelect = () => setSelected(emblaApi.selectedScrollSnap());
+    onSelect();
+    emblaApi.on("select", onSelect);
+    emblaApi.on("reInit", onSelect);
+    return () => {
+      emblaApi.off("select", onSelect);
+      emblaApi.off("reInit", onSelect);
+    };
+  }, [emblaApi]);
+
+  const total = items.length;
+
   return (
     <div className="container mx-auto px-4 pt-6 pb-8 md:pt-10 md:pb-12 max-w-3xl">
       {landingAck && (
@@ -47,22 +86,65 @@ export function ObservationPostCore({
       )}
 
       <div className="relative">
-        {imageUrl ? (
-          <button
-            type="button"
-            onClick={onImageClick}
-            className="block w-full overflow-hidden rounded-2xl border border-white/[0.06] bg-black focus:outline-none focus:ring-2 focus:ring-[#34eab8]/40"
-          >
-            <img
-              {...getResponsiveImageProps(imageUrl, imageAlt, {
-                sizes: IMAGE_SIZES.hero,
-                priority: true,
-              })}
-              className="w-full aspect-[4/3] object-cover transition-transform duration-500 hover:scale-[1.01]"
-            />
-          </button>
+        {total > 0 ? (
+          <div className="relative overflow-hidden rounded-2xl border border-white/[0.06] bg-black">
+            <div ref={emblaRef} className="overflow-hidden">
+              <div className="flex touch-pan-y">
+                {items.map((img, i) => (
+                  <div
+                    key={img.id}
+                    className="relative shrink-0 grow-0 basis-full"
+                  >
+                    <button
+                      type="button"
+                      onClick={() => onImageClick?.(i)}
+                      className="block w-full aspect-[4/5] md:aspect-[4/3] bg-black focus:outline-none"
+                      aria-label={`Bilde ${i + 1} av ${total}`}
+                    >
+                      <img
+                        {...getResponsiveImageProps(
+                          img.image_url,
+                          img.alt_text || `${imageAlt} – bilde ${i + 1}`,
+                          {
+                            sizes: IMAGE_SIZES.hero,
+                            priority: i === 0,
+                            loading: i === 0 ? undefined : "lazy",
+                          },
+                        )}
+                        className="w-full h-full object-contain"
+                      />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {total > 1 && (
+              <>
+                {/* counter — finn-style */}
+                <div
+                  className="pointer-events-none absolute bottom-3 right-3 rounded-full bg-black/65 backdrop-blur-sm px-2.5 py-1 text-[11px] tracking-[0.14em] text-white/90"
+                  style={oswald}
+                >
+                  {selected + 1} / {total}
+                </div>
+
+                {/* dots */}
+                <div className="pointer-events-none absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
+                  {items.map((_, i) => (
+                    <span
+                      key={i}
+                      className={`h-1.5 rounded-full transition-all ${
+                        i === selected ? "w-4 bg-white" : "w-1.5 bg-white/40"
+                      }`}
+                    />
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
         ) : (
-          <div className="w-full aspect-[4/3] rounded-2xl border border-white/[0.06] bg-white/[0.03] flex items-center justify-center">
+          <div className="w-full aspect-[4/5] md:aspect-[4/3] rounded-2xl border border-white/[0.06] bg-white/[0.03] flex items-center justify-center">
             <Car className="w-14 h-14 text-white/30" />
           </div>
         )}
