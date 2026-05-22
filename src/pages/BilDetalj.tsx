@@ -437,10 +437,14 @@ const BilDetalj = () => {
 
   // Build OG meta data
   const displayYear = car.year != null ? ` (${car.year})` : "";
-  const ogTitle = `${car.title}${displayYear} – Bilhistorie fra Norge | Bilgarasje.no`;
+  const ogTitle = isSpottingView
+    ? `${presentation?.displayTitle ?? car.title} – observert | Bilgarasje.no`
+    : `${car.title}${displayYear} – Bilhistorie fra Norge | Bilgarasje.no`;
   const yearLabel = car.year != null ? ` fra ${car.year}` : "";
   const storySnippet = car.story?.trim();
-  const ogDescription = storySnippet
+  const ogDescription = isSpottingView && observationCaption
+    ? observationCaption.slice(0, 160)
+    : storySnippet
     ? `Les historien om ${car.title}${yearLabel}. ${storySnippet.slice(0, 150).trim()}${storySnippet.length > 150 ? "…" : ""}`
     : `Les historien om ${car.title}${yearLabel} på Bilgarasje.no.`;
   const functionsHost = (import.meta.env.VITE_SUPABASE_URL ?? "").replace(/\/$/, "");
