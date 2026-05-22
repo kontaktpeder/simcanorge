@@ -25,6 +25,8 @@ type Props = {
   variant: string | null;
   body_type: string | null;
   year: number | null;
+  category?: string | null;
+  tags?: string[] | null;
   galleryImages: GalleryImage[];
   enrichment: CarEnrichment;
   heroCaptionEventId?: string | null;
@@ -38,6 +40,7 @@ type Props = {
   showKnowCarCta: boolean;
   landingAck?: string | null;
 };
+
 
 const SectionDivider = () => (
   <div className="border-t border-white/[0.06]" />
@@ -64,6 +67,8 @@ export function CarObservationPage(props: Props) {
     variant,
     body_type,
     year,
+    category,
+    tags,
     galleryImages,
     enrichment,
     heroCaptionEventId,
@@ -76,6 +81,7 @@ export function CarObservationPage(props: Props) {
     showKnowCarCta,
     landingAck,
   } = props;
+
 
   const titleParts = [
     brand,
@@ -104,8 +110,42 @@ export function CarObservationPage(props: Props) {
   };
 
   // Shared right-column sections (timeline, story, owner, identify) – used in both layouts
+  const cleanTags = (tags ?? []).filter((t) => typeof t === "string" && t.trim().length > 0);
+  const hasMeta = (category && category.trim().length > 0) || cleanTags.length > 0;
+
   const RightSections = (
     <>
+      {hasMeta && (
+        <>
+          <SectionDivider />
+          <section className="py-8">
+            <div className="container mx-auto px-4 max-w-3xl lg:px-0 lg:mx-0 lg:max-w-none">
+              <AnimatedSection>
+                <div className="flex flex-wrap items-center gap-2">
+                  {category && category.trim().length > 0 && (
+                    <span
+                      className="inline-flex items-center rounded-full border border-white/15 bg-white/[0.04] px-3 py-1 text-[11px] uppercase tracking-[0.22em] text-white/85"
+                      style={oswald}
+                    >
+                      {category}
+                    </span>
+                  )}
+                  {cleanTags.map((t) => (
+                    <span
+                      key={t}
+                      className="inline-flex items-center rounded-full border border-white/10 bg-white/[0.02] px-3 py-1 text-[11px] uppercase tracking-[0.18em] text-white/65"
+                      style={oswald}
+                    >
+                      #{t}
+                    </span>
+                  ))}
+                </div>
+              </AnimatedSection>
+            </div>
+          </section>
+        </>
+      )}
+
       {enrichment.showTimeline && (
         <>
           <SectionDivider />
@@ -120,6 +160,7 @@ export function CarObservationPage(props: Props) {
         </>
       )}
 
+
       {enrichment.showStory && story && (
         <>
           <SectionDivider />
@@ -132,34 +173,9 @@ export function CarObservationPage(props: Props) {
               >
                 {story}
               </p>
-
-              {enrichment.showQuickFacts && (
-                <dl
-                  className="mt-6 grid grid-cols-3 gap-x-6 gap-y-2 text-[12px]"
-                  style={oswald}
-                >
-                  {brand && (
-                    <div>
-                      <dt className="uppercase tracking-[0.18em] text-white/35">Merke</dt>
-                      <dd className="text-white/85 mt-0.5">{brand}</dd>
-                    </div>
-                  )}
-                  {model && (
-                    <div>
-                      <dt className="uppercase tracking-[0.18em] text-white/35">Modell</dt>
-                      <dd className="text-white/85 mt-0.5">{model}</dd>
-                    </div>
-                  )}
-                  {year != null && (
-                    <div>
-                      <dt className="uppercase tracking-[0.18em] text-white/35">År</dt>
-                      <dd className="text-white/85 mt-0.5">{year}</dd>
-                    </div>
-                  )}
-                </dl>
-              )}
             </div>
           </section>
+
         </>
       )}
 
