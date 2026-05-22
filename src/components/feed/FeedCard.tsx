@@ -364,13 +364,8 @@ export function FeedCard({ post, variant = "default" }: { post: FeedPost; varian
               <MessageSquare className="w-4 h-4" />
               <span className="text-[11px] uppercase tracking-[0.1em] font-bold" style={oswald}>Kommentar</span>
             </button>
-            <button
-              onClick={() => { if (!user) return; toggleLike({ postId: post.id, liked }); }}
-              className={`flex items-center gap-1.5 transition-colors ${liked ? "text-red-500" : "text-white/25 hover:text-white/55"}`}>
-              <Heart className={`w-4 h-4 ${liked ? "fill-current" : ""}`} />
-              {likeCount > 0 && <span className="text-[12px] font-bold" style={oswald}>{likeCount}</span>}
-            </button>
           </div>
+
 
           {showComments && <CommentSection feedPostId={post.id} />}
         </article>
