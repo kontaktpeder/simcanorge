@@ -16,6 +16,7 @@ type Props = {
   imageUrl: string | null;
   imageAlt: string;
   caption: string | null;
+  title: string | null;
   /** All images in display order. If omitted, falls back to imageUrl. */
   media?: MediaItem[];
   onImageClick?: (index: number) => void;
