@@ -88,32 +88,29 @@ export function ObservationPostCore({
       <div className="relative">
         {total > 0 ? (
           <div className="relative overflow-hidden rounded-2xl border border-white/[0.06] bg-black">
-            <div ref={emblaRef} className="overflow-hidden">
-              <div className="flex touch-pan-y">
+            <div ref={emblaRef} className="overflow-hidden touch-pan-y">
+              <div className="flex">
                 {items.map((img, i) => (
                   <div
                     key={img.id}
-                    className="relative shrink-0 grow-0 basis-full"
+                    className="relative shrink-0 grow-0 basis-full aspect-[4/5] md:aspect-[4/3] bg-black"
+                    onClick={() => onImageClick?.(i)}
+                    role="button"
+                    aria-label={`Bilde ${i + 1} av ${total}`}
                   >
-                    <button
-                      type="button"
-                      onClick={() => onImageClick?.(i)}
-                      className="block w-full aspect-[4/5] md:aspect-[4/3] bg-black focus:outline-none"
-                      aria-label={`Bilde ${i + 1} av ${total}`}
-                    >
-                      <img
-                        {...getResponsiveImageProps(
-                          img.image_url,
-                          img.alt_text || `${imageAlt} – bilde ${i + 1}`,
-                          {
-                            sizes: IMAGE_SIZES.hero,
-                            priority: i === 0,
-                            loading: i === 0 ? undefined : "lazy",
-                          },
-                        )}
-                        className="w-full h-full object-contain"
-                      />
-                    </button>
+                    <img
+                      {...getResponsiveImageProps(
+                        img.image_url,
+                        img.alt_text || `${imageAlt} – bilde ${i + 1}`,
+                        {
+                          sizes: IMAGE_SIZES.hero,
+                          priority: i === 0,
+                          loading: i === 0 ? undefined : "lazy",
+                        },
+                      )}
+                      draggable={false}
+                      className="w-full h-full object-contain pointer-events-none select-none"
+                    />
                   </div>
                 ))}
               </div>
