@@ -634,56 +634,8 @@ const BilDetalj = () => {
         </div>
       )}
 
-      {/* Fixed Scroll Indicator - follows user until CTA section */}
-      {showScrollIndicator && (
-        <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-40 pointer-events-none">
-          <div 
-            className="animate-[bounce_2.5s_ease-in-out_infinite]"
-          >
-            <ChevronDown className="w-8 h-8 text-primary/50" />
-          </div>
-        </div>
-      )}
 
-      {/* CTA Section */}
-      {!isSpottingView && (
-      <section ref={ctaSectionRef} className="py-16 bg-accent">
-        <div className="container mx-auto px-4 text-center">
-          <AnimatedSection delay={700}>
-            <h2 className="headline-md text-accent-foreground mb-4">Har du en bil å dele?</h2>
-            <p className="font-serif text-xl text-accent-foreground/90 mb-8 max-w-xl mx-auto">
-              Kanskje blir din bil neste månedens bil! Send inn historien din og la oss løfte den frem.
-            </p>
-            <Link 
-              to="/send-inn" 
-              className="inline-flex items-center gap-2 bg-foreground text-background px-8 py-4 font-display uppercase text-lg border-2 border-foreground hover-lift"
-            >
-              Send inn din bil
-              <ArrowRight className="w-5 h-5" />
-            </Link>
-            <p className="text-sm text-accent-foreground/70 mt-6">
-              Eier du denne bilen?{' '}
-              <Link to="/login" className="underline hover:text-accent-foreground transition-colors">
-                Logg inn i din bil
-              </Link>
-            </p>
-          </AnimatedSection>
-        </div>
-      </section>
-      )}
 
-      {/* Comments moved under story */}
-
-      {!user && (
-        <div className="max-w-2xl mx-auto px-4 py-6">
-          <CreateCTA
-            createUrl="/send-inn"
-            label="Del din bil"
-            description="Har du en klassiker du vil vise frem?"
-            variant="card"
-          />
-        </div>
-      )}
 
       {!isLinkedToCar && FEATURES.relationshipRequestsV1 && (
         FEATURES.knowledgeHubV1 ? (
