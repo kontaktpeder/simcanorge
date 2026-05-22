@@ -1,9 +1,14 @@
-import { NavLink } from "react-router-dom";
-import { EXPLORE_SECTION_NAV_HEIGHT_PX } from "@/lib/exploreNav";
+import { NavLink, useLocation } from "react-router-dom";
+import {
+  EXPLORE_SECTION_NAV_HEIGHT_PX,
+  shouldShowExploreSectionNav,
+} from "@/lib/exploreNav";
 
 const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
 
 export function ExploreSectionNav() {
+  const { pathname } = useLocation();
+  if (!shouldShowExploreSectionNav(pathname)) return null;
 
   const tabClass = ({ isActive }: { isActive: boolean }) =>
     `flex-1 sm:flex-none text-center px-4 py-2 text-[11px] sm:text-[12px] uppercase tracking-[0.14em] font-bold transition-colors rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#34eab8] ${
@@ -34,7 +39,7 @@ export function ExploreSectionNav() {
           <NavLink to="/hjem" end={false} className={tabClass} style={oswald}>
             Feed
           </NavLink>
-          <NavLink to="/biler" end={false} className={tabClass} style={oswald}>
+          <NavLink to="/biler" end className={tabClass} style={oswald}>
             Biler
           </NavLink>
         </div>
