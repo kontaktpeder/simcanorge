@@ -35,6 +35,7 @@ import { resolveCarPageViewMode } from "@/lib/carPageViewMode";
 import { buildCarPagePresentation, pickLatestObservationCaption } from "@/lib/carPagePresentation";
 import { SpottingCarHero } from "@/components/car/detail/SpottingCarHero";
 import { SpottingCarDetailBody } from "@/components/car/detail/SpottingCarDetailBody";
+import { SpottingCommentsSheet } from "@/components/car/detail/SpottingCommentsSheet";
 
 const SITE_URL = (() => {
   if (typeof window !== "undefined") {
@@ -142,6 +143,7 @@ const BilDetalj = () => {
   const [showPostPublishOverlay, setShowPostPublishOverlay] = useState(false);
   const [relationshipDialogOpen, setRelationshipDialogOpen] = useState(false);
   const [editAccessDialogOpen, setEditAccessDialogOpen] = useState(false);
+  const [commentsSheetOpen, setCommentsSheetOpen] = useState(false);
 
   const [searchParams, setSearchParams] = useSearchParams();
 
