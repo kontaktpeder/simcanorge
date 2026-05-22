@@ -9,9 +9,11 @@ interface TimelineSectionProps {
   carId: string;
   createdAt?: string;
   publishedAt?: string | null;
+  mode?: "default" | "spotting";
 }
 
-export function TimelineSection({ carId, createdAt, publishedAt }: TimelineSectionProps) {
+export function TimelineSection({ carId, createdAt, publishedAt, mode = "default" }: TimelineSectionProps) {
+
   // Public timeline: only public events. Private drives must never leak here.
   const { data: events, isLoading } = useCarEvents(carId, { includePrivate: false });
   const [lightboxImages, setLightboxImages] = useState<{ url: string; alt?: string }[]>([]);
