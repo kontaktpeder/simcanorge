@@ -4,7 +4,7 @@ import { Warehouse, Route, Compass, User } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useFeatures } from "@/hooks/useFeatures";
 import { useActivitySession } from "@/hooks/useActivitySession";
-import { useHideOnScroll } from "@/hooks/useHideOnScroll";
+
 import { CaptureCameraButton } from "@/components/capture/CaptureCameraButton";
 
 const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
