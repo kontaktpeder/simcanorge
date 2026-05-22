@@ -140,8 +140,8 @@ export function FeedCard({ post, variant = "default" }: { post: FeedPost; varian
     navigate(entityLink!);
   }
 
-  // ─── Spotting: render exactly like the car observation page (both variants) ───
-  if (isCarSpotting && car) {
+  // ─── Unified observation-style render for any post with a car ───
+  if (car) {
     const mediaItems = allImages.map((img, i) => ({
       id: String(i),
       image_url: img.url,
@@ -149,8 +149,8 @@ export function FeedCard({ post, variant = "default" }: { post: FeedPost; varian
     }));
     const c = car as any;
     const titleParts = [c?.brand, c?.model, c?.year != null ? String(c.year) : null, c?.variant, c?.body_type].filter(Boolean);
-    const spottingTitle = titleParts.length > 0 ? titleParts.join(" ") : (c?.title ?? post.snapshot_title ?? null);
-    const spottingCaption = post.body ?? (post as any).source_event?.description ?? null;
+    const unifiedTitle = titleParts.length > 0 ? titleParts.join(" ") : (c?.title ?? post.snapshot_title ?? null);
+    const unifiedCaption = post.body ?? (post as any).source_event?.description ?? null;
     const goToCar = () => entityLink && navigate(entityLink);
 
     return (
@@ -160,19 +160,19 @@ export function FeedCard({ post, variant = "default" }: { post: FeedPost; varian
           <ObservationPostCore
             carId={car.id}
             imageUrl={heroImage}
-            imageAlt={spottingTitle ?? ""}
+            imageAlt={unifiedTitle ?? ""}
             caption={null}
-            title={spottingTitle}
+            title={unifiedTitle}
             media={mediaItems}
             onImageClick={goToCar}
             onKnowCar={goToCar}
             onShare={goToCar}
             onOpenComments={() => setShowComments(true)}
-            showKnowCarCta
+            showKnowCarCta={isCarSpotting}
             className="max-w-none p-0"
           />
 
-          {spottingCaption && author && (
+          {unifiedCaption && author && (
             <p className="mt-3 text-lg md:text-xl leading-relaxed text-white/85" style={{ fontFamily: "'Oswald', sans-serif", fontWeight: 300 }}>
               <Link
                 to={`/profil/${author.slug}`}
@@ -182,12 +182,12 @@ export function FeedCard({ post, variant = "default" }: { post: FeedPost; varian
               >
                 {author.display_name}
               </Link>
-              {spottingCaption}
+              {unifiedCaption}
             </p>
           )}
-          {spottingCaption && !author && (
+          {unifiedCaption && !author && (
             <p className="mt-3 text-lg md:text-xl leading-relaxed text-white/85" style={{ fontFamily: "'Oswald', sans-serif", fontWeight: 300 }}>
-              {spottingCaption}
+              {unifiedCaption}
             </p>
           )}
 
@@ -203,6 +203,7 @@ export function FeedCard({ post, variant = "default" }: { post: FeedPost; varian
       </>
     );
   }
+
 
   // ─── Explore variant: image-first, compact ───
   if (variant === "explore") {
@@ -363,13 +364,8 @@ export function FeedCard({ post, variant = "default" }: { post: FeedPost; varian
               <MessageSquare className="w-4 h-4" />
               <span className="text-[11px] uppercase tracking-[0.1em] font-bold" style={oswald}>Kommentar</span>
             </button>
-            <button
-              onClick={() => { if (!user) return; toggleLike({ postId: post.id, liked }); }}
-              className={`flex items-center gap-1.5 transition-colors ${liked ? "text-red-500" : "text-white/25 hover:text-white/55"}`}>
-              <Heart className={`w-4 h-4 ${liked ? "fill-current" : ""}`} />
-              {likeCount > 0 && <span className="text-[12px] font-bold" style={oswald}>{likeCount}</span>}
-            </button>
           </div>
+
 
           {showComments && <CommentSection feedPostId={post.id} />}
         </article>
@@ -555,16 +551,8 @@ export function FeedCard({ post, variant = "default" }: { post: FeedPost; varian
             <MessageSquare className="w-4.5 h-4.5" />
             <span className="text-[11px] uppercase tracking-[0.12em] font-bold" style={oswald}>Kommentar</span>
           </button>
-
-          <button
-            onClick={() => { if (!user) return; toggleLike({ postId: post.id, liked }); }}
-            className={`flex items-center gap-1.5 transition-colors duration-200 ${
-              liked ? "text-red-500" : "text-white/20 hover:text-white/50"
-            } ${!user ? "cursor-default" : "cursor-pointer"}`}>
-            <Heart className={`w-4.5 h-4.5 ${liked ? "fill-current" : ""}`} />
-            {likeCount > 0 && <span className="text-[12px] font-bold" style={oswald}>{likeCount}</span>}
-          </button>
         </div>
+
 
         {showComments && <CommentSection feedPostId={post.id} />}
       </article>
