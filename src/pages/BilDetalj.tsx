@@ -539,11 +539,15 @@ const BilDetalj = () => {
         </script>
       </Helmet>
 
-      <PageHeader 
-        title="BILHISTORIE" 
-        subtitle="En unik historie fra vårt fellesskap" 
-      />
-      <PlatformContextBanner />
+      {!isSpottingView && (
+        <>
+          <PageHeader
+            title="BILHISTORIE"
+            subtitle="En unik historie fra vårt fellesskap"
+          />
+          <PlatformContextBanner />
+        </>
+      )}
 
       {canEditCar && (
         <div className="bg-[#111315] border-b border-white/[0.08]">
