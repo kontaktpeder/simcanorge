@@ -16,12 +16,14 @@ interface BuildArgs {
   events: CarEvent[];
   creatorNames?: Record<string, string>;
   heroCaptionEventId?: string | null;
+  carCreatedAt?: string | null;
 }
 
 export function buildCarTimeline({
   events,
   creatorNames = {},
   heroCaptionEventId = null,
+  carCreatedAt = null,
 }: BuildArgs): TimelineItem[] {
   const publicEvents = events.filter((e) => (e.visibility ?? "public") === "public");
 
@@ -47,6 +49,18 @@ export function buildCarTimeline({
       thumbnailUrl: thumbFromEvent(birth),
       authorName: authorName ?? null,
       suppressCaption: birth.id === heroCaptionEventId,
+      category: "birth",
+    });
+  } else if (carCreatedAt) {
+    const d = new Date(carCreatedAt);
+    items.push({
+      id: `birth-car-${carCreatedAt}`,
+      kind: "birth",
+      pinTop: true,
+      sortYear: d.getFullYear(),
+      sortTimestamp: d.getTime(),
+      yearLabel: String(d.getFullYear()),
+      headline: "Lagt til i Bilgarasje",
       category: "birth",
     });
   }
