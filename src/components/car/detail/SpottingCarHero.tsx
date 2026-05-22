@@ -83,21 +83,21 @@ export function SpottingCarHero({
           </h1>
         )}
 
+        <SpottingReactionsRow
+          carId={carId}
+          onOpenComments={onOpenComments}
+          onShare={onShare}
+          className={`${hideTitle ? "mt-6" : "mt-5"}`}
+        />
+
         {caption && (
           <p
-            className={`${hideTitle ? "mt-6" : "mt-3"} text-lg md:text-xl leading-relaxed text-white/85`}
+            className="mt-3 text-lg md:text-xl leading-relaxed text-white/85"
             style={{ fontFamily: "'Oswald', sans-serif", fontWeight: 300 }}
           >
             {caption}
           </p>
         )}
-
-        <SpottingReactionsRow
-          carId={carId}
-          onOpenComments={onOpenComments}
-          onShare={onShare}
-          className="mt-5"
-        />
 
         {showKnowCarCta && onKnowCar && (
           <button
