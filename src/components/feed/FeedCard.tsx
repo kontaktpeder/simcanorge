@@ -84,10 +84,11 @@ export function FeedCard({ post, variant = "default" }: { post: FeedPost; varian
   const event = (post as any).event;
   const isOwn = !!(myProfile && author?.id === myProfile.id);
 
-  const isUnknownSpotting =
-    car?.source === "spotting" &&
-    (car?.identification_status === "unknown" || car?.identification_status === "needs_review");
-  const entityTitle = isUnknownSpotting ? "Ukjent bil" : (car?.title ?? marketItem?.title ?? event?.title ?? post.snapshot_title ?? null);
+  const isCarSpotting = post.post_type === "car_spotting" || car?.source === "spotting";
+  const entityTitle = isCarSpotting
+    ? null
+    : (car?.title ?? marketItem?.title ?? event?.title ?? post.snapshot_title ?? null);
+
   const allImages = getAllImages(post);
   const heroImage = allImages[0]?.url ?? null;
   const entityLink =
@@ -156,17 +157,18 @@ export function FeedCard({ post, variant = "default" }: { post: FeedPost; varian
               entityLink ? (
                 <Link to={entityLink} className="block">
                   <img src={heroImage} alt={entityTitle ?? ""}
-                    className="w-full aspect-[4/5] sm:aspect-video object-cover transition-transform duration-700 group-hover:scale-[1.02]" />
+                    className={`w-full ${isCarSpotting ? 'aspect-[4/3]' : 'aspect-[4/5] sm:aspect-video'} object-cover transition-transform duration-700 group-hover:scale-[1.02]`} />
                 </Link>
               ) : (
                 <img src={heroImage} alt={entityTitle ?? ""}
-                  className="w-full aspect-[4/5] sm:aspect-video object-cover" />
+                  className={`w-full ${isCarSpotting ? 'aspect-[4/3]' : 'aspect-[4/5] sm:aspect-video'} object-cover`} />
               )
             ) : (
-              <div className="w-full aspect-[4/5] sm:aspect-video flex items-center justify-center">
+              <div className={`w-full ${isCarSpotting ? 'aspect-[4/3]' : 'aspect-[4/5] sm:aspect-video'} flex items-center justify-center`}>
                 <Car className="w-12 h-12 text-white/15" />
               </div>
             )}
+
 
             {/* Type badge overlay top-left */}
             <div className="absolute top-2 left-2 flex items-center gap-1.5 px-2 py-1 rounded-md bg-black/60 backdrop-blur-sm">
