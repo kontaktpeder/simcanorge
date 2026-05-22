@@ -595,6 +595,30 @@ const BilDetalj = () => {
         </div>
       )}
 
+      {isSpottingView ? (
+        <>
+          <SpottingCarHero
+            imageUrl={mainImage?.image_url ?? null}
+            imageAlt={mainImage?.alt_text || presentation!.displayTitle}
+            displayTitle={presentation!.displayTitle}
+            caption={observationCaption}
+            onImageClick={() => mainImage && setSelectedImageIndex(0)}
+            onKnowCar={() => setRelationshipDialogOpen(true)}
+            showKnowCarCta={presentation!.showHeroRelationshipCta}
+            landingAck={landingAck}
+          />
+          <SpottingCarDetailBody
+            carId={car.id}
+            createdAt={car.created_at}
+            publishedAt={car.published_at}
+            showIdentifyHelpLink={
+              car.identification_status === "unknown" ||
+              car.identification_status === "needs_review"
+            }
+          />
+        </>
+      ) : (
+      <>
       {/* Hero Section */}
       <section className="py-8 md:py-16">
         <div className="container mx-auto px-4">
