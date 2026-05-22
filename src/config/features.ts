@@ -46,4 +46,9 @@ export const FEATURES = {
    * Default: OFF. Enable with VITE_FEATURE_ACTIVITY_SESSIONS=true.
    */
   activitySessions: import.meta.env.VITE_FEATURE_ACTIVITY_SESSIONS === "true",
+  /**
+   * Editorial car page modes (spotting / story / project) on /biler/:slug.
+   * Default OFF. Enable with VITE_FEATURE_CAR_PAGE_MODES=true.
+   */
+  carPageModes: import.meta.env.VITE_FEATURE_CAR_PAGE_MODES === "true",
 };
