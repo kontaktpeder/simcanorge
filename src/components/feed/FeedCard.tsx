@@ -160,7 +160,7 @@ export function FeedCard({ post, variant = "default" }: { post: FeedPost; varian
             carId={car.id}
             imageUrl={heroImage}
             imageAlt={spottingTitle ?? ""}
-            caption={spottingCaption}
+            caption={null}
             title={spottingTitle}
             media={mediaItems}
             onImageClick={goToCar}
@@ -171,8 +171,27 @@ export function FeedCard({ post, variant = "default" }: { post: FeedPost; varian
             className="max-w-none p-0"
           />
 
+          {spottingCaption && author && (
+            <p className="mt-3 text-lg md:text-xl leading-relaxed text-white/85" style={{ fontFamily: "'Oswald', sans-serif", fontWeight: 300 }}>
+              <Link
+                to={`/profil/${author.slug}`}
+                onClick={(e) => e.stopPropagation()}
+                className="font-semibold text-white hover:text-[#34eab8] transition-colors mr-2"
+                style={oswald}
+              >
+                {author.display_name}
+              </Link>
+              {spottingCaption}
+            </p>
+          )}
+          {spottingCaption && !author && (
+            <p className="mt-3 text-lg md:text-xl leading-relaxed text-white/85" style={{ fontFamily: "'Oswald', sans-serif", fontWeight: 300 }}>
+              {spottingCaption}
+            </p>
+          )}
+
           {author && (
-            <Link to={`/profil/${author.slug}`} className="flex items-center gap-2 mt-4 group/author">
+            <Link to={`/profil/${author.slug}`} className="flex items-center gap-2 mt-4 group/author" onClick={(e) => e.stopPropagation()}>
               {author.avatar_url ? (
                 <img src={author.avatar_url} alt="" className="w-7 h-7 rounded-full object-cover ring-1 ring-white/10" />
               ) : (
