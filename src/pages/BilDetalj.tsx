@@ -143,7 +143,6 @@ const BilDetalj = () => {
   const [relationshipDialogOpen, setRelationshipDialogOpen] = useState(false);
   const [editAccessDialogOpen, setEditAccessDialogOpen] = useState(false);
 
-  // Owner / edit access detection: car_owners join from query
   const [searchParams, setSearchParams] = useSearchParams();
   const useModes = FEATURES.carPageModes;
 
@@ -156,6 +155,39 @@ const BilDetalj = () => {
   const isLinkedToCar =
     !!(myProfile && car?.owner_profile_id === myProfile.id) || userHasAnyCarOwnerRow;
   const firstCarImage = car ? [...car.car_images].sort((a, b) => a.sort_order - b.sort_order)[0]?.image_url ?? null : null;
+
+  const viewMode = useModes && car
+    ? resolveCarPageViewMode({
+        source: car.source,
+        category: car.category,
+        story: car.story,
+        carOwners,
+      })
+    : "story";
+  const observationCaption = pickLatestObservationCaption(car?.car_events);
+  const presentation = car && useModes
+    ? buildCarPagePresentation({
+        mode: viewMode,
+        car,
+        observationCaption,
+        isLinkedToCar,
+        relationshipRequestsEnabled: FEATURES.relationshipRequestsV1,
+      })
+    : null;
+  const isSpottingView = useModes && viewMode === "spotting";
+  const landingAck =
+    isSpottingView && searchParams.get("observed") === "1"
+      ? "Takk — observasjonen din er med."
+      : null;
+
+  useEffect(() => {
+    if (searchParams.get("observed") !== "1") return;
+    const t = window.setTimeout(() => {
+      searchParams.delete("observed");
+      setSearchParams(searchParams, { replace: true });
+    }, 4000);
+    return () => window.clearTimeout(t);
+  }, [searchParams, setSearchParams]);
 
   // Show post-publish overlay once per car for users with edit access
   useEffect(() => {
