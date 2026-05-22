@@ -212,16 +212,18 @@ export function CarObservationPage(props: Props) {
       {/* Desktop: Finn-style split — sticky images left, scrollable details right */}
       <div className="hidden lg:block">
         <div className="mx-auto max-w-7xl px-6 pt-8 pb-12">
-          <div className="grid grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] gap-10 xl:gap-14 items-start">
+          <div className="grid grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] gap-10 xl:gap-14">
             {/* Left: sticky image carousel */}
-            <div className="sticky top-24 self-start">
-              <div className="h-[calc(100vh-8rem)] max-h-[820px] min-h-[520px]">
-                <ObservationMediaCarousel
-                  items={media}
-                  imageAlt={imageAlt}
-                  onImageClick={handleMediaClick}
-                  aspect="auto"
-                />
+            <div>
+              <div className="sticky top-24">
+                <div className="h-[calc(100vh-8rem)] max-h-[820px] min-h-[520px]">
+                  <ObservationMediaCarousel
+                    items={media}
+                    imageAlt={imageAlt}
+                    onImageClick={handleMediaClick}
+                    aspect="auto"
+                  />
+                </div>
               </div>
             </div>
 
