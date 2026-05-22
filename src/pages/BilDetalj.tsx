@@ -619,8 +619,6 @@ const BilDetalj = () => {
             carId={car.id}
             createdAt={car.created_at}
             publishedAt={car.published_at}
-            onKnowHistory={() => setRelationshipDialogOpen(true)}
-            showKnowHistoryCta={presentation!.showHeroRelationshipCta}
             showIdentifyHelpLink={
               car.identification_status === "unknown" ||
               car.identification_status === "needs_review"
