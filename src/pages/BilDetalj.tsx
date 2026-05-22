@@ -601,6 +601,7 @@ const BilDetalj = () => {
       {isSpottingView ? (
         <>
           <SpottingCarHero
+            carId={car.id}
             imageUrl={mainImage?.image_url ?? null}
             imageAlt={mainImage?.alt_text || presentation!.displayTitle}
             displayTitle={presentation!.displayTitle}
@@ -608,6 +609,7 @@ const BilDetalj = () => {
             onImageClick={() => mainImage && setSelectedImageIndex(0)}
             onKnowCar={() => setRelationshipDialogOpen(true)}
             onShare={handleNativeShare}
+            onOpenComments={() => setCommentsSheetOpen(true)}
             showKnowCarCta={presentation!.showHeroRelationshipCta}
             landingAck={landingAck}
           />
@@ -621,6 +623,11 @@ const BilDetalj = () => {
               car.identification_status === "unknown" ||
               car.identification_status === "needs_review"
             }
+          />
+          <SpottingCommentsSheet
+            carId={car.id}
+            open={commentsSheetOpen}
+            onOpenChange={setCommentsSheetOpen}
           />
         </>
 
