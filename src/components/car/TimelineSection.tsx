@@ -78,6 +78,40 @@ export function TimelineSection({ carId, createdAt, publishedAt, mode = "default
     );
   }
 
+  // Spotting mode: ultra-subtle metadata, no caption/image repeat from hero
+  if (mode === "spotting") {
+    return (
+      <div className="space-y-3">
+        {events.map((event, index) => {
+          const category = event.category as EventCategory;
+          const eventType = event.event_type as EventType;
+          const timeDisplay = formatTimeDisplay(event);
+          const label =
+            category === "gjenoppdagelse"
+              ? "Lagt til i Bilgarasje"
+              : getCategoryLabel(category);
+          const title = event.title || getEventLabel(category, eventType);
+
+          return (
+            <motion.div
+              key={event.id}
+              initial={{ opacity: 0, y: 4 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: index * 0.05 }}
+              className="text-[12px] uppercase tracking-[0.16em] text-neutral-500"
+              style={{ fontFamily: "'Oswald', sans-serif" }}
+            >
+              {timeDisplay && <span className="text-neutral-700">{timeDisplay}</span>}
+              {timeDisplay && <span className="mx-2 text-neutral-400">·</span>}
+              <span>{category === "gjenoppdagelse" ? label : title}</span>
+            </motion.div>
+          );
+        })}
+      </div>
+    );
+  }
+
   return (
     <>
       <div className="relative">
@@ -115,20 +149,12 @@ export function TimelineSection({ carId, createdAt, publishedAt, mode = "default
                       {timeDisplay}
                     </span>
                     <span className="text-xs px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
-                      {mode === "spotting" && category === "gjenoppdagelse"
-                        ? "Lagt til i Bilgarasje"
-                        : getCategoryLabel(category)}
+                      {getCategoryLabel(category)}
                     </span>
                   </div>
-                  
 
+                  <h4 className="text-lg font-semibold">{displayTitle}</h4>
 
-                  
-                  {!(mode === "spotting" && category === "gjenoppdagelse") && (
-                    <h4 className="text-lg font-semibold">{displayTitle}</h4>
-                  )}
-
-                  
                   {event.description && (
                     <p className="text-muted-foreground mt-2 leading-relaxed">
                       {event.description}

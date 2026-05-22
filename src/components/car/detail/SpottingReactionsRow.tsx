@@ -32,10 +32,10 @@ export function SpottingReactionsRow({ carId, onOpenComments, onShare, className
   };
 
   const iconBtn =
-    "inline-flex items-center gap-1.5 text-white/70 hover:text-white transition-colors text-[13px]";
+    "inline-flex items-center gap-1.5 text-white/80 hover:text-white transition-colors text-[13px] leading-none";
 
   return (
-    <div className={`flex items-center gap-6 ${className ?? ""}`}>
+    <div className={`flex items-center gap-7 ${className ?? ""}`}>
       {savedEnabled && (
         <button
           type="button"
@@ -46,7 +46,7 @@ export function SpottingReactionsRow({ carId, onOpenComments, onShare, className
           className={iconBtn}
         >
           <Heart
-            className={`w-[22px] h-[22px] transition-colors ${
+            className={`w-6 h-6 transition-colors ${
               saved ? "fill-[#ff5a5f] stroke-[#ff5a5f]" : ""
             }`}
             strokeWidth={1.75}
@@ -60,12 +60,12 @@ export function SpottingReactionsRow({ carId, onOpenComments, onShare, className
         aria-label="Kommentarer"
         className={iconBtn}
       >
-        <MessageCircle className="w-[22px] h-[22px]" strokeWidth={1.75} />
+        <MessageCircle className="w-6 h-6" strokeWidth={1.75} />
         {commentCount > 0 && <span className="tabular-nums">{commentCount}</span>}
       </button>
 
       <button type="button" onClick={onShare} aria-label="Del" className={iconBtn}>
-        <Share2 className="w-[22px] h-[22px]" strokeWidth={1.75} />
+        <Share2 className="w-6 h-6" strokeWidth={1.75} />
       </button>
     </div>
   );
