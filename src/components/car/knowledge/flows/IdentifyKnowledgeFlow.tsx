@@ -25,7 +25,7 @@ export function IdentifyKnowledgeFlow({ carId, onDone }: Props) {
   const queryClient = useQueryClient();
 
   const { data: brands = [], isLoading: brandsLoading } = useCarBrands();
-  const [brandId, setBrandId] = useState<string | null>(null);
+  const [brandId, setBrandId] = useState<number | null>(null);
   const [brand, setBrand] = useState("");
   const [brandMode, setBrandMode] = useState<"select" | "other">("select");
 
