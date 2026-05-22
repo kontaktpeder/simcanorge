@@ -313,6 +313,60 @@ export function FeedCard({ post, variant = "default" }: { post: FeedPost; varian
     );
   }
 
+  // ─── Spotting variant: mirror the car observation page exactly ───
+  if (isCarSpotting && car) {
+    const mediaItems = allImages.map((img, i) => ({
+      id: String(i),
+      image_url: img.url,
+      alt_text: img.alt ?? null,
+    }));
+    const spottingTitle = (car as any)?.title ?? post.snapshot_title ?? null;
+    const spottingCaption = post.body ?? (post as any).source_event?.description ?? null;
+    const goToCar = () => entityLink && navigate(entityLink);
+
+    return (
+      <>
+        <article className={`group ${cardClickable ? 'cursor-pointer' : ''}`} onClick={handleCardClick}>
+          <ObservationPostCore
+            carId={car.id}
+            imageUrl={heroImage}
+            imageAlt={spottingTitle ?? ""}
+            caption={spottingCaption}
+            title={spottingTitle}
+            media={mediaItems}
+            onImageClick={() => setLightboxOpen(true)}
+            onKnowCar={goToCar}
+            onShare={goToCar}
+            onOpenComments={() => setShowComments(true)}
+            showKnowCarCta
+            className="max-w-none p-0"
+          />
+
+          {/* Author / time row, matching observation tone */}
+          {author && (
+            <Link to={`/profil/${author.slug}`} className="flex items-center gap-2 mt-4 group/author">
+              {author.avatar_url ? (
+                <img src={author.avatar_url} alt="" className="w-7 h-7 rounded-full object-cover ring-1 ring-white/10" />
+              ) : (
+                <div className="w-7 h-7 rounded-full bg-white/[0.08] flex items-center justify-center">
+                  <span className="text-[11px] font-bold text-white/50" style={oswald}>{author.display_name?.[0] ?? "?"}</span>
+                </div>
+              )}
+              <span className="text-[12px] uppercase tracking-[0.1em] text-white/60 group-hover/author:text-white font-bold" style={oswald}>
+                {author.display_name}
+              </span>
+              <span className="text-[11px] text-white/20">·</span>
+              <span className="text-[11px] text-white/35">{timeAgo}</span>
+            </Link>
+          )}
+
+          {showComments && <CommentSection feedPostId={post.id} />}
+        </article>
+        <ImageLightbox images={allImages} initialIndex={0} isOpen={lightboxOpen} onClose={() => setLightboxOpen(false)} />
+      </>
+    );
+  }
+
   return (
     <>
       <article className={`group ${cardClickable ? 'cursor-pointer' : ''}`} onClick={handleCardClick}>
