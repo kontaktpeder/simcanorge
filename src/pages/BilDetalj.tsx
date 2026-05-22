@@ -1181,7 +1181,16 @@ const BilDetalj = () => {
       )}
 
       {!isLinkedToCar && FEATURES.relationshipRequestsV1 && (
-        <>
+        FEATURES.knowledgeHubV1 ? (
+          <CarKnowledgeDialog
+            open={knowledgeDialogOpen}
+            onOpenChange={setKnowledgeDialogOpen}
+            carId={car.id}
+            carTitle={presentation?.displayTitle ?? car.title}
+            carSlug={car.slug}
+            source="bil_detalj"
+          />
+        ) : (
           <RelationshipRequestDialog
             open={relationshipDialogOpen}
             onOpenChange={setRelationshipDialogOpen}
@@ -1189,13 +1198,7 @@ const BilDetalj = () => {
             carTitle={car.title}
             source="bil_detalj"
           />
-          <RequestEditAccessDialog
-            open={editAccessDialogOpen}
-            onOpenChange={setEditAccessDialogOpen}
-            carId={car.id}
-            carTitle={car.title}
-          />
-        </>
+        )
       )}
     </Layout>
   );
