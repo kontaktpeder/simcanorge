@@ -28,7 +28,7 @@ import { CreateCTA } from "@/components/ui/CreateCTA";
 import { BrandLoader } from "@/components/brand/BrandLoader";
 import { FEATURES } from "@/config/features";
 import { RelationshipRequestDialog } from "@/components/car/relationship/RelationshipRequestDialog";
-import { RequestEditAccessDialog } from "@/components/car/relationship/RequestEditAccessDialog";
+import { CarKnowledgeDialog } from "@/components/car/knowledge/CarKnowledgeDialog";
 import { canEditCarInDashboard, type CarOwnerAccessRow } from "@/lib/carEditAccess";
 import { ExploreSectionNav } from "@/components/explore/ExploreSectionNav";
 import { resolveCarPageViewMode } from "@/lib/carPageViewMode";
