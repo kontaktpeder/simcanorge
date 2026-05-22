@@ -93,7 +93,7 @@ export function IdentifyKnowledgeFlow({ carId, onDone }: Props) {
         <Textarea id="ik-comment" rows={3} value={comment} onChange={(e) => setComment(e.target.value)} placeholder="Hva fikk deg til å gjenkjenne den?" />
       </div>
       <Button type="submit" disabled={submitting} className="w-full min-h-[48px]">
-        {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : "Send forslag"}
+        {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : "Send inn"}
       </Button>
     </form>
   );

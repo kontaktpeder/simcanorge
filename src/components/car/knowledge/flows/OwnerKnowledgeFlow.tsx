@@ -142,10 +142,8 @@ export function OwnerKnowledgeFlow({ carId, source = "bil_detalj", sourceEventId
         >
           {mutation.isPending ? (
             <Loader2 className="w-4 h-4 animate-spin" />
-          ) : mode === "owner" ? (
-            "Jeg eier denne bilen nå"
           ) : (
-            "Send bidrag"
+            "Send inn"
           )}
         </Button>
         <button

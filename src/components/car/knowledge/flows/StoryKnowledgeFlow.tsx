@@ -61,7 +61,7 @@ export function StoryKnowledgeFlow({ carId, source = "bil_detalj", sourceEventId
         disabled={mutation.isPending}
         className="w-full min-h-[48px]"
       >
-        {mutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Del historien"}
+        {mutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Send inn"}
       </Button>
     </div>
   );

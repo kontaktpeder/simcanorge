@@ -107,7 +107,7 @@ export function AddObservationSheet({ open, onOpenChange, carId, carSlug, onSucc
             disabled={isSubmitting || !file}
             className="w-full min-h-[48px] bg-[#34eab8] text-[#070b10] hover:bg-[#2dd4a8] font-semibold"
           >
-            {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : "Legg til"}
+            {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : "Send inn"}
           </Button>
         </div>
       </SheetContent>
