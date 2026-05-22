@@ -115,9 +115,11 @@ export function TimelineSection({ carId, createdAt, publishedAt, mode = "default
                       {timeDisplay}
                     </span>
                     <span className="text-xs px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
-                      {getCategoryLabel(category)}
+                      {mode === "spotting" && category === "gjenoppdagelse"
+                        ? "Lagt til i Bilgarasje"
+                        : getCategoryLabel(category)}
                     </span>
-                  </div>
+
                   
                   <h4 className="text-lg font-semibold">{displayTitle}</h4>
                   
