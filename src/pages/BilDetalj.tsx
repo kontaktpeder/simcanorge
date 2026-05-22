@@ -554,6 +554,8 @@ const BilDetalj = () => {
         story={car.story}
         brand={car.brand}
         model={car.model}
+        variant={car.variant}
+        body_type={car.body_type}
         year={car.year}
         galleryImages={galleryImages}
         enrichment={resolveCarEnrichment({
