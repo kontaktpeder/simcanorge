@@ -60,6 +60,8 @@ export function CarObservationPage(props: Props) {
     story,
     brand,
     model,
+    variant,
+    body_type,
     year,
     galleryImages,
     enrichment,
@@ -72,6 +74,15 @@ export function CarObservationPage(props: Props) {
     showKnowCarCta,
     landingAck,
   } = props;
+
+  const titleParts = [
+    brand,
+    model,
+    year != null ? String(year) : null,
+    variant,
+    body_type,
+  ].filter(Boolean);
+  const title = titleParts.join(" ") || null;
 
   return (
     <div style={{ backgroundColor: OBSERVATION_BG }} className="text-white">
