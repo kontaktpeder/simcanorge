@@ -111,41 +111,10 @@ export function CarObservationPage(props: Props) {
 
   // Shared right-column sections (timeline, story, owner, identify) – used in both layouts
   const cleanTags = (tags ?? []).filter((t) => typeof t === "string" && t.trim().length > 0);
-  const hasMeta = (category && category.trim().length > 0) || cleanTags.length > 0;
+  const showStoryBlock = (enrichment.showStory && !!story) || cleanTags.length > 0;
 
   const RightSections = (
     <>
-      {hasMeta && (
-        <>
-          <SectionDivider />
-          <section className="py-8">
-            <div className="container mx-auto px-4 max-w-3xl lg:px-0 lg:mx-0 lg:max-w-none">
-              <AnimatedSection>
-                <div className="flex flex-wrap items-center gap-2">
-                  {category && category.trim().length > 0 && (
-                    <span
-                      className="inline-flex items-center rounded-full border border-white/15 bg-white/[0.04] px-3 py-1 text-[11px] uppercase tracking-[0.22em] text-white/85"
-                      style={oswald}
-                    >
-                      {category}
-                    </span>
-                  )}
-                  {cleanTags.map((t) => (
-                    <span
-                      key={t}
-                      className="inline-flex items-center rounded-full border border-white/10 bg-white/[0.02] px-3 py-1 text-[11px] uppercase tracking-[0.18em] text-white/65"
-                      style={oswald}
-                    >
-                      #{t}
-                    </span>
-                  ))}
-                </div>
-              </AnimatedSection>
-            </div>
-          </section>
-        </>
-      )}
-
       {enrichment.showTimeline && (
         <>
           <SectionDivider />
@@ -161,23 +130,40 @@ export function CarObservationPage(props: Props) {
       )}
 
 
-      {enrichment.showStory && story && (
+      {showStoryBlock && (
         <>
           <SectionDivider />
           <section className="py-8">
             <div className="container mx-auto px-4 max-w-3xl lg:px-0 lg:mx-0 lg:max-w-none">
               <SectionLabel>Om bilen</SectionLabel>
-              <p
-                className="text-[17px] md:text-[18px] leading-[1.65] text-white/85 whitespace-pre-wrap"
-                style={oswaldLight}
-              >
-                {story}
-              </p>
+              {enrichment.showStory && story && (
+                <p
+                  className="text-[17px] md:text-[18px] leading-[1.65] text-white/85 whitespace-pre-wrap"
+                  style={oswaldLight}
+                >
+                  {story}
+                </p>
+              )}
+
+              {cleanTags.length > 0 && (
+                <div className={`flex flex-wrap items-center gap-2 ${enrichment.showStory && story ? "mt-6" : ""}`}>
+                  {cleanTags.map((t) => (
+                    <span
+                      key={t}
+                      className="inline-flex items-center rounded-full border border-white/10 bg-white/[0.02] px-3 py-1 text-[11px] uppercase tracking-[0.18em] text-white/65"
+                      style={oswald}
+                    >
+                      #{t}
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
           </section>
 
         </>
       )}
+
 
       {enrichment.showOwnerCard && (
         <>
