@@ -23,7 +23,7 @@ export function ExploreSectionNav() {
       role="navigation"
       aria-label="Velg visning i Utforsk"
     >
-      <div className="max-w-[1400px] mx-auto h-full px-3 sm:px-5 md:px-8 flex items-center gap-2 sm:gap-3">
+      <div className="max-w-[720px] mx-auto h-full px-5 md:px-8 flex items-center gap-2 sm:gap-3">
         <span
           className="hidden sm:inline text-[10px] uppercase tracking-[0.28em] text-white/35 font-bold pr-2"
           style={oswald}
