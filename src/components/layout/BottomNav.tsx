@@ -4,6 +4,7 @@ import { Warehouse, Route, Compass, User } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useFeatures } from "@/hooks/useFeatures";
 import { useActivitySession } from "@/hooks/useActivitySession";
+import { isUtforskNavActive } from "@/lib/exploreNav";
 
 import { CaptureCameraButton } from "@/components/capture/CaptureCameraButton";
 
@@ -92,6 +93,8 @@ export function BottomNav() {
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(href + "/");
 
+  const utforskActive = isUtforskNavActive(pathname);
+
   return (
     <>
       <nav
@@ -108,7 +111,11 @@ export function BottomNav() {
         <div className="relative flex items-stretch h-16">
           <div className="flex flex-1">
             {left.map((it) => (
-              <NavBtn key={it.href} item={it} active={isActive(it.href)} />
+              <NavBtn
+                key={it.href}
+                item={it}
+                active={it.href === "/hjem" ? utforskActive : isActive(it.href)}
+              />
             ))}
           </div>
 

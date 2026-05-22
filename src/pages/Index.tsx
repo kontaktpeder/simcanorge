@@ -8,6 +8,7 @@ import { FeedCard } from "@/components/feed/FeedCard";
 import { ExploreMomentCta } from "@/components/explore/ExploreMomentCta";
 import { ExploreInlineComposer } from "@/components/explore/ExploreInlineComposer";
 import { ExploreSectionNav } from "@/components/explore/ExploreSectionNav";
+import { ExploreArchiveLink } from "@/components/explore/ExploreArchiveLink";
 import { RecentQuestionsBlock } from "@/components/questions/RecentQuestionsBlock";
 import { AddMomentDialog } from "@/components/activity/AddMomentDialog";
 
@@ -49,6 +50,8 @@ export default function Index() {
           <div className="mb-5">
             <ExploreInlineComposer />
           </div>
+
+          <ExploreArchiveLink className="mb-4" />
 
           {/* Recent questions */}
           <div className="mb-6">
