@@ -134,12 +134,25 @@ export function ObservationPostCore({
         )}
       </div>
 
-      <SpottingReactionsRow
-        carId={carId}
-        onOpenComments={onOpenComments}
-        onShare={onShare}
-        className="mt-3"
-      />
+      <div className="flex items-center justify-between mt-3">
+        <SpottingReactionsRow
+          carId={carId}
+          onOpenComments={onOpenComments}
+          onShare={onShare}
+        />
+
+        {showKnowCarCta && onKnowCar && (
+          <button
+            type="button"
+            onClick={onKnowCar}
+            className="inline-flex items-center gap-1.5 text-[#34eab8] hover:text-[#34eab8]/80 transition-colors text-[13px] leading-none"
+            style={oswald}
+          >
+            <CarFront className="w-5 h-5" strokeWidth={1.75} />
+            <span className="hidden sm:inline">Kjenner du til bilen?</span>
+          </button>
+        )}
+      </div>
 
       {title && (
         <h1
@@ -157,18 +170,6 @@ export function ObservationPostCore({
         >
           {caption}
         </p>
-      )}
-
-      {showKnowCarCta && onKnowCar && (
-        <button
-          type="button"
-          onClick={onKnowCar}
-          className="mt-5 mx-auto inline-flex items-center gap-2.5 rounded-full px-5 py-2.5 bg-[#34eab8]/15 text-[#34eab8] border border-[#34eab8]/40 hover:bg-[#34eab8]/25 hover:border-[#34eab8]/60 transition-all text-sm uppercase tracking-[0.18em]"
-          style={oswald}
-        >
-          <CarFront size={18} strokeWidth={2} />
-          Kjenner du til bilen?
-        </button>
       )}
     </div>
   );
