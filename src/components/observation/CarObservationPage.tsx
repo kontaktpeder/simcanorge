@@ -67,6 +67,8 @@ export function CarObservationPage(props: Props) {
     variant,
     body_type,
     year,
+    category,
+    tags,
     galleryImages,
     enrichment,
     heroCaptionEventId,
@@ -79,6 +81,7 @@ export function CarObservationPage(props: Props) {
     showKnowCarCta,
     landingAck,
   } = props;
+
 
   const titleParts = [
     brand,
