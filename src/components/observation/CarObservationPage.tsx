@@ -200,6 +200,8 @@ export function CarObservationPage(props: Props) {
           imageAlt={imageAlt}
           caption={caption}
           title={title}
+          category={category}
+
           media={media}
           onImageClick={handleMediaClick}
           onKnowCar={onKnowCar}
