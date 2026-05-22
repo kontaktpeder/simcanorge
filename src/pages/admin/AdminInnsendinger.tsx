@@ -355,7 +355,7 @@ export default function AdminInnsendinger() {
                   {/* Story */}
                   {selectedSubmission.car_story && (
                     <div>
-                      <h4 className="font-display text-lg mb-2">Historien</h4>
+                      <h4 className="font-display text-lg mb-2">Om bilen</h4>
                       <div className="bg-muted/50 rounded-lg p-4 whitespace-pre-wrap">
                         {selectedSubmission.car_story}
                       </div>

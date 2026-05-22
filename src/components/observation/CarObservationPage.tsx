@@ -137,7 +137,7 @@ export function CarObservationPage(props: Props) {
           <SectionDivider />
           <section className="py-8">
             <div className="container mx-auto px-4 max-w-3xl">
-              <SectionLabel>Historien</SectionLabel>
+              <SectionLabel>Om bilen</SectionLabel>
               <p
                 className="text-[17px] md:text-[18px] leading-[1.65] text-white/85 whitespace-pre-wrap"
                 style={oswaldLight}

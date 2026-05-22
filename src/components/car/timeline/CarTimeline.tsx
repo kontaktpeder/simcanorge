@@ -68,7 +68,7 @@ export function CarTimeline({ carId, heroCaptionEventId = null, carCreatedAt = n
   if (items.length === 0) {
     return (
       <div className="py-6 text-[13px] text-white/40 italic">
-        Historien bygges når folk bidrar.
+        Om bilen bygges når folk bidrar.
       </div>
     );
   }

@@ -141,7 +141,7 @@ export default function DashboardBilDetalj() {
     try {
       const { error } = await supabase.from('cars').update({ story: storyForm || null }).eq('id', car.id);
       if (error) { toast.error(`Kunne ikke lagre: ${error.message}`); return; }
-      toast.success('Historien er lagret!');
+      toast.success('Om bilen er lagret!');
       setIsEditingStory(false);
       queryClient.invalidateQueries({ queryKey: ['my-car', carId, user?.id] });
     } catch { toast.error('Uventet feil ved lagring'); }

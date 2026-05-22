@@ -332,7 +332,7 @@ const AdminBilProfil = () => {
     if (error) {
       toast.error('Kunne ikke lagre');
     } else {
-      toast.success('Historien lagret!');
+      toast.success('Om bilen lagret!');
       setIsEditingStory(false);
       queryClient.invalidateQueries({ queryKey: ['admin-car', carId] });
     }
@@ -1120,10 +1120,10 @@ const AdminBilProfil = () => {
           </div>
         </div>
 
-        {/* Historien */}
+        {/* Om bilen */}
         <div className="bg-card border border-border rounded-xl p-4 md:p-6">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="font-display text-lg">HISTORIEN</h3>
+            <h3 className="font-display text-lg">OM BILEN</h3>
             {!isEditingStory ? (
               <Button variant="ghost" size="sm" onClick={() => { initStoryForm(); setIsEditingStory(true); }}>
                 <Pencil className="w-4 h-4 mr-1" />
