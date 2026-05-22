@@ -9,6 +9,7 @@ import { TimelineLine } from "./TimelineLine";
 interface Props {
   carId: string;
   heroCaptionEventId?: string | null;
+  carCreatedAt?: string | null;
 }
 
 function useCreatorNames(userIds: string[]) {
