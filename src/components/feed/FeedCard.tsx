@@ -155,7 +155,8 @@ export function FeedCard({ post, variant = "default" }: { post: FeedPost; varian
 
     return (
       <>
-        <article className={`group ${cardClickable ? 'cursor-pointer' : ''}`} onClick={handleCardClick}>
+        <article className={`group lg:max-w-sm lg:mx-auto ${cardClickable ? 'cursor-pointer' : ''}`} onClick={handleCardClick}>
+
           <ObservationPostCore
             carId={car.id}
             imageUrl={heroImage}
