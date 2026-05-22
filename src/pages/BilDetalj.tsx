@@ -370,7 +370,7 @@ const BilDetalj = () => {
   if (isLoading) {
     return (
       <Layout>
-        <ExploreSectionNav />
+        <ExploreDetailBackBar />
         <div className="min-h-[60vh] flex items-center justify-center">
           <BrandLoader size={220} />
         </div>
@@ -381,7 +381,7 @@ const BilDetalj = () => {
   if (!car) {
     return (
       <Layout>
-        <ExploreSectionNav />
+        <ExploreDetailBackBar />
         <section className="poster-section min-h-[60vh] flex items-center justify-center">
           <div className="text-center animate-fade-in">
             <Car className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
@@ -477,7 +477,7 @@ const BilDetalj = () => {
 
   return (
     <Layout>
-      <ExploreSectionNav />
+      <ExploreDetailBackBar />
       {showPostPublishOverlay && (
         <PostPublishOnboardingOverlay
           carTitle={car.title}
