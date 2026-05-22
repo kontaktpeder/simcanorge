@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useSearchParams } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { Layout } from "@/components/layout/Layout";
 import { PageHeader } from "@/components/layout/PageHeader";
@@ -31,6 +31,10 @@ import { RelationshipRequestDialog } from "@/components/car/relationship/Relatio
 import { RequestEditAccessDialog } from "@/components/car/relationship/RequestEditAccessDialog";
 import { canEditCarInDashboard, type CarOwnerAccessRow } from "@/lib/carEditAccess";
 import { ExploreSectionNav } from "@/components/explore/ExploreSectionNav";
+import { resolveCarPageViewMode } from "@/lib/carPageViewMode";
+import { buildCarPagePresentation, pickLatestObservationCaption } from "@/lib/carPagePresentation";
+import { SpottingCarHero } from "@/components/car/detail/SpottingCarHero";
+import { SpottingCarDetailBody } from "@/components/car/detail/SpottingCarDetailBody";
 
 const SITE_URL = (() => {
   if (typeof window !== "undefined") {
@@ -84,6 +88,16 @@ interface CarDetail {
   owner_profile_id: string | null;
   source?: string | null;
   identification_status?: "unknown" | "needs_review" | "identified" | null;
+  car_events?: Array<{
+    id: string;
+    description: string | null;
+    occurred_at: string | null;
+    category: string;
+    event_type: string;
+    visibility: string;
+    data?: Record<string, unknown> | null;
+    car_event_images?: { image_url: string; alt_text: string | null; sort_order: number }[];
+  }>;
 }
 
 const CATEGORY_LABELS: Record<string, { label: string; color: string }> = {
@@ -191,7 +205,7 @@ const BilDetalj = () => {
           overhauled, tags, featured, published_at, created_at, updated_at, category,
           external_links, timeline_events, source, identification_status,
           car_images(id, image_url, alt_text, sort_order),
-          car_events(visibility, occurred_at, car_event_images(image_url, alt_text, sort_order)),
+          car_events(id, description, category, event_type, visibility, occurred_at, data, car_event_images(image_url, alt_text, sort_order)),
           car_owners!car_owners_car_id_fkey(user_id, role)
         `)
         .eq("slug", slug)
