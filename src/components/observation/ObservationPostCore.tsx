@@ -97,13 +97,25 @@ export function ObservationPostCore({
       </div>
 
       {title && (
-        <h1
-          className="mt-3 text-[22px] md:text-[26px] leading-tight text-white"
-          style={oswald}
-        >
-          {title}
-        </h1>
+        <div className="mt-3">
+          {cleanCategory && (
+            <span
+              className="inline-flex items-center gap-1.5 rounded-sm border border-[color:var(--observation-accent,#34eab8)]/40 bg-[color:var(--observation-accent,#34eab8)]/10 px-2.5 py-1 text-[10px] uppercase tracking-[0.28em] mb-2"
+              style={{ ...oswald, color: OBSERVATION_ACCENT }}
+            >
+              <span className="inline-block w-1.5 h-1.5 rounded-full bg-current" />
+              {cleanCategory}
+            </span>
+          )}
+          <h1
+            className="text-[22px] md:text-[26px] leading-tight text-white"
+            style={oswald}
+          >
+            {title}
+          </h1>
+        </div>
       )}
+
 
       {caption && (
         <p
