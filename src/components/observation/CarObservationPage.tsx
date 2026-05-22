@@ -173,34 +173,9 @@ export function CarObservationPage(props: Props) {
               >
                 {story}
               </p>
-
-              {enrichment.showQuickFacts && (
-                <dl
-                  className="mt-6 grid grid-cols-3 gap-x-6 gap-y-2 text-[12px]"
-                  style={oswald}
-                >
-                  {brand && (
-                    <div>
-                      <dt className="uppercase tracking-[0.18em] text-white/35">Merke</dt>
-                      <dd className="text-white/85 mt-0.5">{brand}</dd>
-                    </div>
-                  )}
-                  {model && (
-                    <div>
-                      <dt className="uppercase tracking-[0.18em] text-white/35">Modell</dt>
-                      <dd className="text-white/85 mt-0.5">{model}</dd>
-                    </div>
-                  )}
-                  {year != null && (
-                    <div>
-                      <dt className="uppercase tracking-[0.18em] text-white/35">År</dt>
-                      <dd className="text-white/85 mt-0.5">{year}</dd>
-                    </div>
-                  )}
-                </dl>
-              )}
             </div>
           </section>
+
         </>
       )}
 
