@@ -44,7 +44,7 @@ export default function Index() {
             "linear-gradient(180deg, #0c1219 0%, #0a0f15 50%, #070b10 100%)",
         }}
       >
-        <div className="max-w-[720px] mx-auto px-3 sm:px-5 pt-4 sm:pt-6">
+        <div className="max-w-[600px] mx-auto px-3 sm:px-5 pt-4 sm:pt-6">
           {/* Inline composer */}
           <div className="mb-5">
             <ExploreInlineComposer />
