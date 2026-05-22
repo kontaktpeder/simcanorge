@@ -1,5 +1,5 @@
 import type { CarEvent } from "@/hooks/useCarEvents";
-import type { CommentWithReplies } from "@/hooks/useComments";
+import type { EventCategory } from "@/data/carEventCategories";
 import {
   classifyCarEvent,
   formatYearRange,
@@ -7,7 +7,6 @@ import {
   milestoneHeadline,
   placeOrCaption,
   thumbFromEvent,
-  truncate,
   tsFromEvent,
   yearFromEvent,
   type TimelineItem,
@@ -15,18 +14,14 @@ import {
 
 interface BuildArgs {
   events: CarEvent[];
-  comments: CommentWithReplies[];
   creatorNames?: Record<string, string>;
   heroCaptionEventId?: string | null;
-  maxTimelineComments?: number;
 }
 
 export function buildCarTimeline({
   events,
-  comments,
   creatorNames = {},
   heroCaptionEventId = null,
-  maxTimelineComments = 2,
 }: BuildArgs): TimelineItem[] {
   const publicEvents = events.filter((e) => (e.visibility ?? "public") === "public");
 
@@ -52,6 +47,7 @@ export function buildCarTimeline({
       thumbnailUrl: thumbFromEvent(birth),
       authorName: authorName ?? null,
       suppressCaption: birth.id === heroCaptionEventId,
+      category: "birth",
     });
   }
 
@@ -68,6 +64,7 @@ export function buildCarTimeline({
         headline: "Observert igjen",
         subline: placeOrCaption(e),
         thumbnailUrl: thumbFromEvent(e),
+        category: e.category as EventCategory,
       });
       continue;
     }
@@ -81,25 +78,9 @@ export function buildCarTimeline({
         yearLabel: formatYearRange(e),
         headline: milestoneHeadline(e),
         subline: src ? `kilde: ${src}` : undefined,
+        category: e.category as EventCategory,
       });
     }
-  }
-
-  const eligible = comments
-    .filter((c) => !c.parent_id && !c.is_deleted)
-    .slice(-maxTimelineComments);
-
-  for (const c of eligible) {
-    const name = c.author?.display_name ?? "Noen";
-    items.push({
-      id: `comment-${c.id}`,
-      kind: "comment",
-      sortYear: new Date(c.created_at).getFullYear(),
-      sortTimestamp: new Date(c.created_at).getTime(),
-      yearLabel: "",
-      headline: "Kommentar",
-      subline: `${name}: «${truncate(c.body ?? "", 80)}»`,
-    });
   }
 
   const pinned = items.filter((i) => i.pinTop);
