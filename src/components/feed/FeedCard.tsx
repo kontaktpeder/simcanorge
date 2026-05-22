@@ -84,10 +84,11 @@ export function FeedCard({ post, variant = "default" }: { post: FeedPost; varian
   const event = (post as any).event;
   const isOwn = !!(myProfile && author?.id === myProfile.id);
 
-  const isUnknownSpotting =
-    car?.source === "spotting" &&
-    (car?.identification_status === "unknown" || car?.identification_status === "needs_review");
-  const entityTitle = isUnknownSpotting ? "Ukjent bil" : (car?.title ?? marketItem?.title ?? event?.title ?? post.snapshot_title ?? null);
+  const isCarSpotting = post.post_type === "car_spotting" || car?.source === "spotting";
+  const entityTitle = isCarSpotting
+    ? null
+    : (car?.title ?? marketItem?.title ?? event?.title ?? post.snapshot_title ?? null);
+
   const allImages = getAllImages(post);
   const heroImage = allImages[0]?.url ?? null;
   const entityLink =
