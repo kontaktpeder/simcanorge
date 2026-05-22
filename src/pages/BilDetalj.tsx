@@ -33,9 +33,10 @@ import { canEditCarInDashboard, type CarOwnerAccessRow } from "@/lib/carEditAcce
 import { ExploreSectionNav } from "@/components/explore/ExploreSectionNav";
 import { resolveCarPageViewMode } from "@/lib/carPageViewMode";
 import { buildCarPagePresentation, pickLatestObservationCaption, pickHeroSpottingEventId } from "@/lib/carPagePresentation";
-import { SpottingCarHero } from "@/components/car/detail/SpottingCarHero";
-import { SpottingCarDetailBody } from "@/components/car/detail/SpottingCarDetailBody";
 import { SpottingCommentsSheet } from "@/components/car/detail/SpottingCommentsSheet";
+import { CarObservationPage } from "@/components/observation/CarObservationPage";
+import { resolveCarEnrichment } from "@/lib/carEnrichment";
+
 
 const SITE_URL = (() => {
   if (typeof window !== "undefined") {
