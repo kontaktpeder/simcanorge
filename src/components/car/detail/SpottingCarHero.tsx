@@ -1,17 +1,20 @@
 import { getResponsiveImageProps, IMAGE_SIZES } from "@/lib/imageUtils";
-import { Car, Share2 } from "lucide-react";
+import { Car } from "lucide-react";
+import { SpottingReactionsRow } from "./SpottingReactionsRow";
 
 const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
 const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
 
 type Props = {
+  carId: string;
   imageUrl: string | null;
   imageAlt: string;
   displayTitle: string;
   caption: string | null;
   onImageClick?: () => void;
   onKnowCar?: () => void;
-  onShare?: () => void;
+  onShare: () => void;
+  onOpenComments: () => void;
   showKnowCarCta: boolean;
   /** Valgfri: «Takk — observasjonen din er med» etter ?observed=1 */
   landingAck?: string | null;
@@ -23,6 +26,7 @@ function isUnknownTitle(t: string) {
 }
 
 export function SpottingCarHero({
+  carId,
   imageUrl,
   imageAlt,
   displayTitle,
@@ -30,6 +34,7 @@ export function SpottingCarHero({
   onImageClick,
   onKnowCar,
   onShare,
+  onOpenComments,
   showKnowCarCta,
   landingAck,
 }: Props) {
@@ -69,22 +74,6 @@ export function SpottingCarHero({
           )}
         </div>
 
-        {/* Subtle share link under image */}
-        {onShare && (
-          <div className="mt-3 flex justify-end">
-            <button
-              type="button"
-              onClick={onShare}
-              className="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-[0.18em] text-white/45 hover:text-white/85 transition-colors"
-              style={oswald}
-              aria-label="Del"
-            >
-              <Share2 className="w-3.5 h-3.5" />
-              Del
-            </button>
-          </div>
-        )}
-
         {!hideTitle && (
           <h1
             className="mt-5 text-2xl md:text-3xl font-bold tracking-wide text-white"
@@ -103,11 +92,18 @@ export function SpottingCarHero({
           </p>
         )}
 
+        <SpottingReactionsRow
+          carId={carId}
+          onOpenComments={onOpenComments}
+          onShare={onShare}
+          className="mt-5"
+        />
+
         {showKnowCarCta && onKnowCar && (
           <button
             type="button"
             onClick={onKnowCar}
-            className="mt-6 inline-flex items-center gap-2 text-sm uppercase tracking-[0.18em] text-[#34eab8] hover:text-white transition-colors border-b border-[#34eab8]/40 hover:border-white pb-0.5"
+            className="mt-5 inline-flex items-center gap-2 text-sm uppercase tracking-[0.18em] text-[#34eab8] hover:text-white transition-colors border-b border-[#34eab8]/40 hover:border-white pb-0.5"
             style={oswald}
           >
             Kjenner du til bilen?
