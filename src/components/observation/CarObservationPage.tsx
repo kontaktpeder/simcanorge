@@ -92,6 +92,7 @@ export function CarObservationPage(props: Props) {
         imageUrl={imageUrl}
         imageAlt={imageAlt}
         caption={caption}
+        title={title}
         media={(() => {
           const main = imageUrl
             ? [{ id: "main", image_url: imageUrl, alt_text: imageAlt }]
