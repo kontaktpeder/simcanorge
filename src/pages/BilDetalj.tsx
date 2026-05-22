@@ -32,7 +32,7 @@ import { CarKnowledgeDialog } from "@/components/car/knowledge/CarKnowledgeDialo
 import { canEditCarInDashboard, type CarOwnerAccessRow } from "@/lib/carEditAccess";
 import { ExploreSectionNav } from "@/components/explore/ExploreSectionNav";
 import { resolveCarPageViewMode } from "@/lib/carPageViewMode";
-import { buildCarPagePresentation, pickLatestObservationCaption } from "@/lib/carPagePresentation";
+import { buildCarPagePresentation, pickLatestObservationCaption, pickHeroSpottingEventId } from "@/lib/carPagePresentation";
 import { SpottingCarHero } from "@/components/car/detail/SpottingCarHero";
 import { SpottingCarDetailBody } from "@/components/car/detail/SpottingCarDetailBody";
 import { SpottingCommentsSheet } from "@/components/car/detail/SpottingCommentsSheet";
@@ -166,6 +166,7 @@ const BilDetalj = () => {
       })
     : "story";
   const observationCaption = pickLatestObservationCaption(car?.car_events);
+  const heroCaptionEventId = pickHeroSpottingEventId(car?.car_events);
   const presentation = car
     ? buildCarPagePresentation({
         mode: viewMode,

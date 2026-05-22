@@ -11,14 +11,14 @@ type Props = {
   publishedAt?: string | null;
   galleryBlock?: React.ReactNode;
   showIdentifyHelpLink?: boolean;
+  heroCaptionEventId?: string | null;
 };
 
 export function SpottingCarDetailBody({
   carId,
-  createdAt,
-  publishedAt,
   galleryBlock,
   showIdentifyHelpLink,
+  heroCaptionEventId = null,
 }: Props) {
   return (
     <div style={{ backgroundColor: PAPER_BG }} className="text-neutral-900">
@@ -27,12 +27,7 @@ export function SpottingCarDetailBody({
       <section className="py-6 md:py-8">
         <div className="container mx-auto px-4 max-w-3xl">
           <AnimatedSection>
-            <TimelineSection
-              carId={carId}
-              createdAt={createdAt}
-              publishedAt={publishedAt}
-              mode="spotting"
-            />
+            <TimelineSection carId={carId} heroCaptionEventId={heroCaptionEventId} />
           </AnimatedSection>
         </div>
       </section>
