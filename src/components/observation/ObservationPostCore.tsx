@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
-import { Car, CarFront } from "lucide-react";
+import { Car, Search } from "lucide-react";
 import { getResponsiveImageProps, IMAGE_SIZES } from "@/lib/imageUtils";
 import { SpottingReactionsRow } from "@/components/car/detail/SpottingReactionsRow";
 import { oswald, oswaldLight, OBSERVATION_ACCENT } from "@/lib/observationPostTokens";
@@ -148,8 +148,8 @@ export function ObservationPostCore({
             className="inline-flex items-center gap-1.5 text-[#34eab8] hover:text-[#34eab8]/80 transition-colors text-[13px] leading-none"
             style={oswald}
           >
-            <CarFront className="w-5 h-5" strokeWidth={1.75} />
-            <span className="hidden sm:inline">Kjenner du til bilen?</span>
+            <Search className="w-5 h-5" strokeWidth={1.75} />
+            <span>Kjenner du til bilen?</span>
           </button>
         )}
       </div>
