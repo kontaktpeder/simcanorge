@@ -11,8 +11,6 @@ type Props = {
   publishedAt?: string | null;
   galleryBlock?: React.ReactNode;
   showIdentifyHelpLink?: boolean;
-  onKnowHistory?: () => void;
-  showKnowHistoryCta?: boolean;
 };
 
 export function SpottingCarDetailBody({
@@ -21,14 +19,12 @@ export function SpottingCarDetailBody({
   publishedAt,
   galleryBlock,
   showIdentifyHelpLink,
-  onKnowHistory,
-  showKnowHistoryCta,
 }: Props) {
   return (
     <div style={{ backgroundColor: PAPER_BG }} className="text-neutral-900">
       {galleryBlock}
 
-      <section className="py-8 md:py-10">
+      <section className="py-6 md:py-8">
         <div className="container mx-auto px-4 max-w-3xl">
           <AnimatedSection>
             <TimelineSection
@@ -37,23 +33,11 @@ export function SpottingCarDetailBody({
               publishedAt={publishedAt}
               mode="spotting"
             />
-            {showKnowHistoryCta && onKnowHistory && (
-              <div className="mt-6">
-                <button
-                  type="button"
-                  onClick={onKnowHistory}
-                  className="text-[11px] uppercase tracking-[0.18em] text-neutral-500 hover:text-neutral-900 transition-colors border-b border-neutral-300 hover:border-neutral-700 pb-0.5"
-                  style={{ fontFamily: "'Oswald', sans-serif" }}
-                >
-                  Kjenner du historien?
-                </button>
-              </div>
-            )}
           </AnimatedSection>
         </div>
       </section>
 
-      <section className="py-8 md:py-10">
+      <section className="py-6 md:py-8">
         <div className="container mx-auto px-4 max-w-2xl">
           <OwnerCard carId={carId} heading="Eies av" />
         </div>
