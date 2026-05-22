@@ -147,7 +147,9 @@ export function FeedCard({ post, variant = "default" }: { post: FeedPost; varian
       image_url: img.url,
       alt_text: img.alt ?? null,
     }));
-    const spottingTitle = (car as any)?.title ?? post.snapshot_title ?? null;
+    const c = car as any;
+    const titleParts = [c?.brand, c?.model, c?.year != null ? String(c.year) : null, c?.variant, c?.body_type].filter(Boolean);
+    const spottingTitle = titleParts.length > 0 ? titleParts.join(" ") : (c?.title ?? post.snapshot_title ?? null);
     const spottingCaption = post.body ?? (post as any).source_event?.description ?? null;
     const goToCar = () => entityLink && navigate(entityLink);
 
