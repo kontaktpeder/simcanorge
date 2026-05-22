@@ -72,7 +72,7 @@ export function Header() {
         }}
       />
 
-      <div className="relative max-w-[1400px] mx-auto px-5 md:px-8">
+      <div className="relative max-w-[960px] mx-auto px-5 md:px-8">
         <div className="grid grid-cols-[auto_1fr_auto] items-center h-14 md:h-16 gap-3">
           {/* LEFT — Profile icon only */}
           <Link
