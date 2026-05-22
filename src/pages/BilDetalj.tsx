@@ -144,7 +144,6 @@ const BilDetalj = () => {
   const [editAccessDialogOpen, setEditAccessDialogOpen] = useState(false);
 
   const [searchParams, setSearchParams] = useSearchParams();
-  const useModes = FEATURES.carPageModes;
 
   // Owner / edit access detection: car_owners join from query
   const carOwners = (car as { car_owners?: CarOwnerAccessRow[] } | null)?.car_owners;
@@ -156,7 +155,7 @@ const BilDetalj = () => {
     !!(myProfile && car?.owner_profile_id === myProfile.id) || userHasAnyCarOwnerRow;
   const firstCarImage = car ? [...car.car_images].sort((a, b) => a.sort_order - b.sort_order)[0]?.image_url ?? null : null;
 
-  const viewMode = useModes && car
+  const viewMode = car
     ? resolveCarPageViewMode({
         source: car.source,
         category: car.category,
@@ -165,7 +164,7 @@ const BilDetalj = () => {
       })
     : "story";
   const observationCaption = pickLatestObservationCaption(car?.car_events);
-  const presentation = car && useModes
+  const presentation = car
     ? buildCarPagePresentation({
         mode: viewMode,
         car,
@@ -174,7 +173,7 @@ const BilDetalj = () => {
         relationshipRequestsEnabled: FEATURES.relationshipRequestsV1,
       })
     : null;
-  const isSpottingView = useModes && viewMode === "spotting";
+  const isSpottingView = viewMode === "spotting";
   const landingAck =
     isSpottingView && searchParams.get("observed") === "1"
       ? "Takk — observasjonen din er med."
