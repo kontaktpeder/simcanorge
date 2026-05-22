@@ -10,11 +10,10 @@ export type SpottingEventRow = {
   data?: Record<string, unknown> | null;
 };
 
-export function pickLatestObservationCaption(
+function pickHeroSpottingEvent(
   events: SpottingEventRow[] | null | undefined,
-): string | null {
+): SpottingEventRow | null {
   if (!events?.length) return null;
-
   const publicSpotting = events
     .filter((e) => e.visibility === "public")
     .filter(
@@ -28,9 +27,20 @@ export function pickLatestObservationCaption(
       (a, b) =>
         new Date(b.occurred_at ?? 0).getTime() - new Date(a.occurred_at ?? 0).getTime(),
     );
+  return publicSpotting[0] ?? null;
+}
 
-  const text = publicSpotting[0]?.description?.trim();
+export function pickLatestObservationCaption(
+  events: SpottingEventRow[] | null | undefined,
+): string | null {
+  const text = pickHeroSpottingEvent(events)?.description?.trim();
   return text || null;
+}
+
+export function pickHeroSpottingEventId(
+  events: SpottingEventRow[] | null | undefined,
+): string | null {
+  return pickHeroSpottingEvent(events)?.id ?? null;
 }
 
 export function buildCarDisplayTitle(car: {

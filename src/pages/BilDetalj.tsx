@@ -32,7 +32,7 @@ import { CarKnowledgeDialog } from "@/components/car/knowledge/CarKnowledgeDialo
 import { canEditCarInDashboard, type CarOwnerAccessRow } from "@/lib/carEditAccess";
 import { ExploreSectionNav } from "@/components/explore/ExploreSectionNav";
 import { resolveCarPageViewMode } from "@/lib/carPageViewMode";
-import { buildCarPagePresentation, pickLatestObservationCaption } from "@/lib/carPagePresentation";
+import { buildCarPagePresentation, pickLatestObservationCaption, pickHeroSpottingEventId } from "@/lib/carPagePresentation";
 import { SpottingCarHero } from "@/components/car/detail/SpottingCarHero";
 import { SpottingCarDetailBody } from "@/components/car/detail/SpottingCarDetailBody";
 import { SpottingCommentsSheet } from "@/components/car/detail/SpottingCommentsSheet";
@@ -166,6 +166,7 @@ const BilDetalj = () => {
       })
     : "story";
   const observationCaption = pickLatestObservationCaption(car?.car_events);
+  const heroCaptionEventId = pickHeroSpottingEventId(car?.car_events);
   const presentation = car
     ? buildCarPagePresentation({
         mode: viewMode,
@@ -623,6 +624,7 @@ const BilDetalj = () => {
             carId={car.id}
             createdAt={car.created_at}
             publishedAt={car.published_at}
+            heroCaptionEventId={heroCaptionEventId}
             showIdentifyHelpLink={
               car.identification_status === "unknown" ||
               car.identification_status === "needs_review"
@@ -862,10 +864,9 @@ const BilDetalj = () => {
           <AnimatedSection delay={400}>
             <h2 className="headline-sm mb-8 text-center">Bilens reise</h2>
             <div className="max-w-2xl mx-auto">
-              <TimelineSection 
-                carId={car.id} 
-                createdAt={car.created_at} 
-                publishedAt={car.published_at} 
+              <TimelineSection
+                carId={car.id}
+                heroCaptionEventId={heroCaptionEventId}
               />
             </div>
           </AnimatedSection>
