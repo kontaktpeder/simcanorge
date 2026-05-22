@@ -2,7 +2,6 @@ import { Link } from "react-router-dom";
 import { TimelineSection } from "@/components/car/TimelineSection";
 import { OwnerCard } from "@/components/car/OwnerCard";
 import { AnimatedSection } from "@/components/layout/AnimatedSection";
-import { SpottingCommentsBlock } from "./SpottingCommentsBlock";
 
 const PAPER_BG = "#f3f1ea";
 
@@ -27,15 +26,9 @@ export function SpottingCarDetailBody({
 }: Props) {
   return (
     <div style={{ backgroundColor: PAPER_BG }} className="text-neutral-900">
-      <section className="py-6 md:py-8">
-        <div className="container mx-auto px-4 max-w-3xl">
-          <SpottingCommentsBlock carId={carId} />
-        </div>
-      </section>
-
       {galleryBlock}
 
-      <section className="py-8 md:py-10 border-t border-neutral-300/50">
+      <section className="py-8 md:py-10">
         <div className="container mx-auto px-4 max-w-3xl">
           <AnimatedSection>
             <TimelineSection
