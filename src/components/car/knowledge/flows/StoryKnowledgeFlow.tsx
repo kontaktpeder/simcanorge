@@ -50,7 +50,7 @@ export function StoryKnowledgeFlow({ carId, source = "bil_detalj", sourceEventId
         value={text}
         onChange={(e) => setText(e.target.value.slice(0, RELATIONSHIP_NOTE_MAX))}
         rows={6}
-        placeholder="Historien slik du kjenner den — hvem eide den, hva skjedde, hva er spesielt?"
+        placeholder="Om bilen slik du kjenner den — hvem eide den, hva skjedde, hva er spesielt?"
       />
       <p className="text-[11px] text-muted-foreground text-right">
         {text.length}/{RELATIONSHIP_NOTE_MAX}
