@@ -22,6 +22,8 @@ type Props = {
   story: string | null;
   brand: string | null;
   model: string | null;
+  variant: string | null;
+  body_type: string | null;
   year: number | null;
   galleryImages: GalleryImage[];
   enrichment: CarEnrichment;
@@ -58,6 +60,8 @@ export function CarObservationPage(props: Props) {
     story,
     brand,
     model,
+    variant,
+    body_type,
     year,
     galleryImages,
     enrichment,
@@ -71,6 +75,15 @@ export function CarObservationPage(props: Props) {
     landingAck,
   } = props;
 
+  const titleParts = [
+    brand,
+    model,
+    year != null ? String(year) : null,
+    variant,
+    body_type,
+  ].filter(Boolean);
+  const title = titleParts.join(" ") || null;
+
   return (
     <div style={{ backgroundColor: OBSERVATION_BG }} className="text-white">
       {/* 1) Observation post core (emotion) — all images swipeable inline */}
@@ -79,6 +92,7 @@ export function CarObservationPage(props: Props) {
         imageUrl={imageUrl}
         imageAlt={imageAlt}
         caption={caption}
+        title={title}
         media={(() => {
           const main = imageUrl
             ? [{ id: "main", image_url: imageUrl, alt_text: imageAlt }]

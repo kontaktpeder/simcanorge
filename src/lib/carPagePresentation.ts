@@ -47,10 +47,18 @@ export function buildCarDisplayTitle(car: {
   brand: string | null;
   model: string;
   variant: string | null;
+  body_type: string | null;
   year: number | null;
   title: string;
 }): string {
-  const fromFields = [car.brand, car.model, car.variant].filter(Boolean).join(" ");
+  const parts = [
+    car.brand,
+    car.model,
+    car.year != null ? String(car.year) : null,
+    car.variant,
+    car.body_type,
+  ].filter(Boolean);
+  const fromFields = parts.join(" ");
   if (fromFields) return fromFields;
   if (car.title && !/^ukjent bil$/i.test(car.title)) return car.title;
   return car.model || car.title || "Ukjent bil";
