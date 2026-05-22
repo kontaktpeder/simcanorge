@@ -4,7 +4,7 @@ import { Warehouse, Route, Compass, User } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useFeatures } from "@/hooks/useFeatures";
 import { useActivitySession } from "@/hooks/useActivitySession";
-import { useHideOnScroll } from "@/hooks/useHideOnScroll";
+
 import { CaptureCameraButton } from "@/components/capture/CaptureCameraButton";
 
 const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
@@ -66,7 +66,7 @@ export function BottomNav() {
   const { activeSession } = useActivitySession({ enabled: activitiesEnabled });
   const effectiveActiveSession = activitiesEnabled ? activeSession : null;
   const [pickerOpen, setPickerOpen] = useState(false);
-  const visible = useHideOnScroll(10);
+  const visible = true;
 
   // Hide entirely when no user, on auth/onboarding routes, or in focus mode (active session)
   const hidden =
