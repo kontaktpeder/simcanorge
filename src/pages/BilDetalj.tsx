@@ -144,6 +144,10 @@ const BilDetalj = () => {
   const [editAccessDialogOpen, setEditAccessDialogOpen] = useState(false);
 
   // Owner / edit access detection: car_owners join from query
+  const [searchParams, setSearchParams] = useSearchParams();
+  const useModes = FEATURES.carPageModes;
+
+  // Owner / edit access detection: car_owners join from query
   const carOwners = (car as { car_owners?: CarOwnerAccessRow[] } | null)?.car_owners;
   const canEditCar = canEditCarInDashboard(user?.id, carOwners);
   const userHasAnyCarOwnerRow = !!(
