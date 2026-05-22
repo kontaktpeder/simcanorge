@@ -28,6 +28,7 @@ type Props = {
   galleryImages: GalleryImage[];
   enrichment: CarEnrichment;
   heroCaptionEventId?: string | null;
+  carCreatedAt?: string | null;
 
   onImageClick?: () => void;
   onGalleryImageClick?: (index: number) => void;
@@ -66,6 +67,7 @@ export function CarObservationPage(props: Props) {
     galleryImages,
     enrichment,
     heroCaptionEventId,
+    carCreatedAt,
     onImageClick,
     onGalleryImageClick,
     onKnowCar,
@@ -123,7 +125,7 @@ export function CarObservationPage(props: Props) {
           <div className="container mx-auto px-4 max-w-3xl">
             <AnimatedSection>
               <SectionLabel>Historikk</SectionLabel>
-              <CarTimeline carId={carId} heroCaptionEventId={heroCaptionEventId} />
+              <CarTimeline carId={carId} heroCaptionEventId={heroCaptionEventId} carCreatedAt={carCreatedAt} />
             </AnimatedSection>
           </div>
         </section>

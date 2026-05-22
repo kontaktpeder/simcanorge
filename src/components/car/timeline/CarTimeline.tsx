@@ -9,6 +9,7 @@ import { TimelineLine } from "./TimelineLine";
 interface Props {
   carId: string;
   heroCaptionEventId?: string | null;
+  carCreatedAt?: string | null;
 }
 
 function useCreatorNames(userIds: string[]) {
@@ -34,7 +35,7 @@ function useCreatorNames(userIds: string[]) {
   });
 }
 
-export function CarTimeline({ carId, heroCaptionEventId = null }: Props) {
+export function CarTimeline({ carId, heroCaptionEventId = null, carCreatedAt = null }: Props) {
   const { data: events = [], isLoading: eventsLoading } = useCarEvents(carId, {
     includePrivate: false,
   });
@@ -51,8 +52,9 @@ export function CarTimeline({ carId, heroCaptionEventId = null }: Props) {
         events,
         creatorNames,
         heroCaptionEventId,
+        carCreatedAt,
       }),
-    [events, creatorNames, heroCaptionEventId],
+    [events, creatorNames, heroCaptionEventId, carCreatedAt],
   );
 
   if (eventsLoading) {

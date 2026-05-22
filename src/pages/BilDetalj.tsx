@@ -567,6 +567,7 @@ const BilDetalj = () => {
           car_owners: carOwners,
         })}
         heroCaptionEventId={heroCaptionEventId}
+        carCreatedAt={car.created_at ?? null}
         onImageClick={() => mainImage && setSelectedImageIndex(0)}
         onGalleryImageClick={(i) => setSelectedImageIndex(i)}
         onKnowCar={() =>
