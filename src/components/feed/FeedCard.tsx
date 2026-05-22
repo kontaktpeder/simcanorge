@@ -191,20 +191,9 @@ export function FeedCard({ post, variant = "default" }: { post: FeedPost; varian
           )}
 
           {author && (
-            <Link to={`/profil/${author.slug}`} className="flex items-center gap-2 mt-4 group/author" onClick={(e) => e.stopPropagation()}>
-              {author.avatar_url ? (
-                <img src={author.avatar_url} alt="" className="w-7 h-7 rounded-full object-cover ring-1 ring-white/10" />
-              ) : (
-                <div className="w-7 h-7 rounded-full bg-white/[0.08] flex items-center justify-center">
-                  <span className="text-[11px] font-bold text-white/50" style={oswald}>{author.display_name?.[0] ?? "?"}</span>
-                </div>
-              )}
-              <span className="text-[12px] uppercase tracking-[0.1em] text-white/60 group-hover/author:text-white font-bold" style={oswald}>
-                {author.display_name}
-              </span>
-              <span className="text-[11px] text-white/20">·</span>
+            <div className="flex items-center gap-2 mt-4">
               <span className="text-[11px] text-white/35">{timeAgo}</span>
-            </Link>
+            </div>
           )}
 
           {showComments && <CommentSection feedPostId={post.id} />}
