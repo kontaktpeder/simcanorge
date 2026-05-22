@@ -28,6 +28,7 @@ type Props = {
   galleryImages: GalleryImage[];
   enrichment: CarEnrichment;
   heroCaptionEventId?: string | null;
+  carCreatedAt?: string | null;
 
   onImageClick?: () => void;
   onGalleryImageClick?: (index: number) => void;
