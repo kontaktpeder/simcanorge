@@ -609,7 +609,11 @@ const BilDetalj = () => {
             displayTitle={presentation!.displayTitle}
             caption={observationCaption}
             onImageClick={() => mainImage && setSelectedImageIndex(0)}
-            onKnowCar={() => setRelationshipDialogOpen(true)}
+            onKnowCar={() =>
+              FEATURES.knowledgeHubV1
+                ? setKnowledgeDialogOpen(true)
+                : setRelationshipDialogOpen(true)
+            }
             onShare={handleNativeShare}
             onOpenComments={() => setCommentsSheetOpen(true)}
             showKnowCarCta={presentation!.showHeroRelationshipCta}
