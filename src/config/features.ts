@@ -46,4 +46,10 @@ export const FEATURES = {
    * Default: OFF. Enable with VITE_FEATURE_ACTIVITY_SESSIONS=true.
    */
   activitySessions: import.meta.env.VITE_FEATURE_ACTIVITY_SESSIONS === "true",
+  /**
+   * Knowledge Hub V1 — replaces RelationshipRequestDialog on public car pages
+   * with a low-friction "Hva vet du om bilen?" chip menu (observation,
+   * identification, story, ownership). No new DB tables.
+   */
+  knowledgeHubV1: import.meta.env.VITE_FEATURE_KNOWLEDGE_HUB_V1 !== "false",
 };

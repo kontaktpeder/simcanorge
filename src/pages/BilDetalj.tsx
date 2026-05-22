@@ -28,7 +28,7 @@ import { CreateCTA } from "@/components/ui/CreateCTA";
 import { BrandLoader } from "@/components/brand/BrandLoader";
 import { FEATURES } from "@/config/features";
 import { RelationshipRequestDialog } from "@/components/car/relationship/RelationshipRequestDialog";
-import { RequestEditAccessDialog } from "@/components/car/relationship/RequestEditAccessDialog";
+import { CarKnowledgeDialog } from "@/components/car/knowledge/CarKnowledgeDialog";
 import { canEditCarInDashboard, type CarOwnerAccessRow } from "@/lib/carEditAccess";
 import { ExploreSectionNav } from "@/components/explore/ExploreSectionNav";
 import { resolveCarPageViewMode } from "@/lib/carPageViewMode";
@@ -142,7 +142,7 @@ const BilDetalj = () => {
   const [composerInitialBody, setComposerInitialBody] = useState<string | undefined>(undefined);
   const [showPostPublishOverlay, setShowPostPublishOverlay] = useState(false);
   const [relationshipDialogOpen, setRelationshipDialogOpen] = useState(false);
-  const [editAccessDialogOpen, setEditAccessDialogOpen] = useState(false);
+  const [knowledgeDialogOpen, setKnowledgeDialogOpen] = useState(false);
   const [commentsSheetOpen, setCommentsSheetOpen] = useState(false);
 
   const [searchParams, setSearchParams] = useSearchParams();
@@ -609,7 +609,11 @@ const BilDetalj = () => {
             displayTitle={presentation!.displayTitle}
             caption={observationCaption}
             onImageClick={() => mainImage && setSelectedImageIndex(0)}
-            onKnowCar={() => setRelationshipDialogOpen(true)}
+            onKnowCar={() =>
+              FEATURES.knowledgeHubV1
+                ? setKnowledgeDialogOpen(true)
+                : setRelationshipDialogOpen(true)
+            }
             onShare={handleNativeShare}
             onOpenComments={() => setCommentsSheetOpen(true)}
             showKnowCarCta={presentation!.showHeroRelationshipCta}
@@ -730,7 +734,11 @@ const BilDetalj = () => {
                   <div className="mb-6 flex flex-wrap gap-2">
                     <button
                       type="button"
-                      onClick={() => setRelationshipDialogOpen(true)}
+                      onClick={() =>
+                        FEATURES.knowledgeHubV1
+                          ? setKnowledgeDialogOpen(true)
+                          : setRelationshipDialogOpen(true)
+                      }
                       className="inline-flex items-center gap-2 px-4 py-2.5 text-[12px] uppercase tracking-[0.15em] text-[#070b10] font-bold transition-all hover:scale-[1.02] rounded-full"
                       style={{
                         fontFamily: "'Chakra Petch', sans-serif",
@@ -1173,7 +1181,16 @@ const BilDetalj = () => {
       )}
 
       {!isLinkedToCar && FEATURES.relationshipRequestsV1 && (
-        <>
+        FEATURES.knowledgeHubV1 ? (
+          <CarKnowledgeDialog
+            open={knowledgeDialogOpen}
+            onOpenChange={setKnowledgeDialogOpen}
+            carId={car.id}
+            carTitle={presentation?.displayTitle ?? car.title}
+            carSlug={car.slug}
+            source="bil_detalj"
+          />
+        ) : (
           <RelationshipRequestDialog
             open={relationshipDialogOpen}
             onOpenChange={setRelationshipDialogOpen}
@@ -1181,13 +1198,7 @@ const BilDetalj = () => {
             carTitle={car.title}
             source="bil_detalj"
           />
-          <RequestEditAccessDialog
-            open={editAccessDialogOpen}
-            onOpenChange={setEditAccessDialogOpen}
-            carId={car.id}
-            carTitle={car.title}
-          />
-        </>
+        )
       )}
     </Layout>
   );
