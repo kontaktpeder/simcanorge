@@ -6,7 +6,7 @@ import {
   type EventType,
 } from "@/data/carEventCategories";
 
-export type TimelineItemKind = "birth" | "milestone" | "observation" | "comment";
+export type TimelineItemKind = "birth" | "milestone" | "observation";
 
 export type TimelineItem = {
   id: string;
@@ -20,6 +20,7 @@ export type TimelineItem = {
   thumbnailUrl?: string | null;
   authorName?: string | null;
   suppressCaption?: boolean;
+  category?: EventCategory | "birth";
 };
 
 const MILESTONE_CATEGORIES = new Set<EventCategory>([
