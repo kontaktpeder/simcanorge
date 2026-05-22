@@ -1112,6 +1112,7 @@ const BilDetalj = () => {
       )}
 
       {/* CTA Section */}
+      {!isSpottingView && (
       <section ref={ctaSectionRef} className="py-16 bg-accent">
         <div className="container mx-auto px-4 text-center">
           <AnimatedSection delay={700}>
@@ -1135,6 +1136,7 @@ const BilDetalj = () => {
           </AnimatedSection>
         </div>
       </section>
+      )}
 
       {/* Comments moved under story */}
 
