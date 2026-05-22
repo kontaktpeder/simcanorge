@@ -125,7 +125,7 @@ export function CarObservationPage(props: Props) {
           <div className="container mx-auto px-4 max-w-3xl">
             <AnimatedSection>
               <SectionLabel>Historikk</SectionLabel>
-              <CarTimeline carId={carId} heroCaptionEventId={heroCaptionEventId} />
+              <CarTimeline carId={carId} heroCaptionEventId={heroCaptionEventId} carCreatedAt={carCreatedAt} />
             </AnimatedSection>
           </div>
         </section>
