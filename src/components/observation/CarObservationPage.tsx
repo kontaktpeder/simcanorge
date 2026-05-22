@@ -67,6 +67,7 @@ export function CarObservationPage(props: Props) {
     galleryImages,
     enrichment,
     heroCaptionEventId,
+    carCreatedAt,
     onImageClick,
     onGalleryImageClick,
     onKnowCar,
