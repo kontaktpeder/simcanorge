@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
-import { Car } from "lucide-react";
+import { Car, CarFront } from "lucide-react";
 import { getResponsiveImageProps, IMAGE_SIZES } from "@/lib/imageUtils";
 import { SpottingReactionsRow } from "@/components/car/detail/SpottingReactionsRow";
 import { oswald, oswaldLight, OBSERVATION_ACCENT } from "@/lib/observationPostTokens";
@@ -163,9 +163,10 @@ export function ObservationPostCore({
         <button
           type="button"
           onClick={onKnowCar}
-          className="mt-5 inline-flex items-center gap-2 text-sm uppercase tracking-[0.18em] text-[#34eab8] hover:text-white transition-colors border-b border-[#34eab8]/40 hover:border-white pb-0.5"
+          className="mt-5 mx-auto inline-flex items-center gap-2.5 rounded-full px-5 py-2.5 bg-[#34eab8]/15 text-[#34eab8] border border-[#34eab8]/40 hover:bg-[#34eab8]/25 hover:border-[#34eab8]/60 transition-all text-sm uppercase tracking-[0.18em]"
           style={oswald}
         >
+          <CarFront size={18} strokeWidth={2} />
           Kjenner du til bilen?
         </button>
       )}
