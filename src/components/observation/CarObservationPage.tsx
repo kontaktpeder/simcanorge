@@ -73,13 +73,27 @@ export function CarObservationPage(props: Props) {
 
   return (
     <div style={{ backgroundColor: OBSERVATION_BG }} className="text-white">
-      {/* 1) Observation post core (emotion) */}
+      {/* 1) Observation post core (emotion) — all images swipeable inline */}
       <ObservationPostCore
         carId={carId}
         imageUrl={imageUrl}
         imageAlt={imageAlt}
         caption={caption}
-        onImageClick={onImageClick}
+        media={(() => {
+          const main = imageUrl
+            ? [{ id: "main", image_url: imageUrl, alt_text: imageAlt }]
+            : [];
+          const rest = galleryImages.map((g) => ({
+            id: g.id,
+            image_url: g.image_url,
+            alt_text: g.alt_text,
+          }));
+          return [...main, ...rest];
+        })()}
+        onImageClick={(i) => {
+          if (i === 0) onImageClick?.();
+          else onGalleryImageClick?.(i);
+        }}
         onKnowCar={onKnowCar}
         onShare={onShare}
         onOpenComments={onOpenComments}
@@ -145,36 +159,8 @@ export function CarObservationPage(props: Props) {
         </>
       )}
 
-      {/* 4) Gallery (only if more than 1 image) */}
-      {enrichment.showGallery && galleryImages.length > 0 && (
-        <>
-          <SectionDivider />
-          <section className="py-8">
-            <div className="container mx-auto px-4 max-w-3xl">
-              <SectionLabel>Flere bilder</SectionLabel>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                {galleryImages.map((img, index) => (
-                  <button
-                    key={img.id}
-                    type="button"
-                    onClick={() => onGalleryImageClick?.(index + 1)}
-                    className="block aspect-square overflow-hidden rounded-md border border-white/[0.06] bg-black focus:outline-none focus:ring-2 focus:ring-[#34eab8]/40"
-                  >
-                    <img
-                      {...getResponsiveImageProps(
-                        img.image_url,
-                        img.alt_text || `Bilde ${index + 2}`,
-                        { sizes: IMAGE_SIZES.thumbnail, loading: "lazy" },
-                      )}
-                      className="w-full h-full object-cover hover:scale-[1.02] transition-transform duration-500"
-                    />
-                  </button>
-                ))}
-              </div>
-            </div>
-          </section>
-        </>
-      )}
+      {/* 4) Gallery er nå inline i hero (swipe) — egen seksjon fjernet */}
+
 
       {/* 5) Owner (only if has owner) */}
       {enrichment.showOwnerCard && (
