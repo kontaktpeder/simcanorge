@@ -119,6 +119,9 @@ export function TimelineSection({ carId, createdAt, publishedAt, mode = "default
                         ? "Lagt til i Bilgarasje"
                         : getCategoryLabel(category)}
                     </span>
+                  </div>
+                  
+
 
                   
                   <h4 className="text-lg font-semibold">{displayTitle}</h4>
