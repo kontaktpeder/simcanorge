@@ -173,7 +173,7 @@ export function ObservationComposeSheet({
       car_id: successResult.carId,
       has_slug: true,
     });
-    navigate(`/biler/${successResult.slug}`);
+    navigate(`/biler/${successResult.slug}?observed=1`);
     finish();
   };
 
@@ -244,7 +244,7 @@ export function ObservationComposeSheet({
                 className="text-2xl sm:text-3xl font-bold uppercase tracking-wider mb-2"
                 style={chakra}
               >
-                Bilen finnes nå i arkivet
+                Den er med nå.
               </h2>
               <p className="text-white/60 text-sm max-w-xs mb-1">
                 {isMatched

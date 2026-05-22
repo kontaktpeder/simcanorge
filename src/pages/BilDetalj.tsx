@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useSearchParams } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { Layout } from "@/components/layout/Layout";
 import { PageHeader } from "@/components/layout/PageHeader";
@@ -31,6 +31,10 @@ import { RelationshipRequestDialog } from "@/components/car/relationship/Relatio
 import { RequestEditAccessDialog } from "@/components/car/relationship/RequestEditAccessDialog";
 import { canEditCarInDashboard, type CarOwnerAccessRow } from "@/lib/carEditAccess";
 import { ExploreSectionNav } from "@/components/explore/ExploreSectionNav";
+import { resolveCarPageViewMode } from "@/lib/carPageViewMode";
+import { buildCarPagePresentation, pickLatestObservationCaption } from "@/lib/carPagePresentation";
+import { SpottingCarHero } from "@/components/car/detail/SpottingCarHero";
+import { SpottingCarDetailBody } from "@/components/car/detail/SpottingCarDetailBody";
 
 const SITE_URL = (() => {
   if (typeof window !== "undefined") {
@@ -84,6 +88,16 @@ interface CarDetail {
   owner_profile_id: string | null;
   source?: string | null;
   identification_status?: "unknown" | "needs_review" | "identified" | null;
+  car_events?: Array<{
+    id: string;
+    description: string | null;
+    occurred_at: string | null;
+    category: string;
+    event_type: string;
+    visibility: string;
+    data?: Record<string, unknown> | null;
+    car_event_images?: { image_url: string; alt_text: string | null; sort_order: number }[];
+  }>;
 }
 
 const CATEGORY_LABELS: Record<string, { label: string; color: string }> = {
@@ -129,6 +143,9 @@ const BilDetalj = () => {
   const [relationshipDialogOpen, setRelationshipDialogOpen] = useState(false);
   const [editAccessDialogOpen, setEditAccessDialogOpen] = useState(false);
 
+  const [searchParams, setSearchParams] = useSearchParams();
+  const useModes = FEATURES.carPageModes;
+
   // Owner / edit access detection: car_owners join from query
   const carOwners = (car as { car_owners?: CarOwnerAccessRow[] } | null)?.car_owners;
   const canEditCar = canEditCarInDashboard(user?.id, carOwners);
@@ -138,6 +155,39 @@ const BilDetalj = () => {
   const isLinkedToCar =
     !!(myProfile && car?.owner_profile_id === myProfile.id) || userHasAnyCarOwnerRow;
   const firstCarImage = car ? [...car.car_images].sort((a, b) => a.sort_order - b.sort_order)[0]?.image_url ?? null : null;
+
+  const viewMode = useModes && car
+    ? resolveCarPageViewMode({
+        source: car.source,
+        category: car.category,
+        story: car.story,
+        carOwners,
+      })
+    : "story";
+  const observationCaption = pickLatestObservationCaption(car?.car_events);
+  const presentation = car && useModes
+    ? buildCarPagePresentation({
+        mode: viewMode,
+        car,
+        observationCaption,
+        isLinkedToCar,
+        relationshipRequestsEnabled: FEATURES.relationshipRequestsV1,
+      })
+    : null;
+  const isSpottingView = useModes && viewMode === "spotting";
+  const landingAck =
+    isSpottingView && searchParams.get("observed") === "1"
+      ? "Takk — observasjonen din er med."
+      : null;
+
+  useEffect(() => {
+    if (searchParams.get("observed") !== "1") return;
+    const t = window.setTimeout(() => {
+      searchParams.delete("observed");
+      setSearchParams(searchParams, { replace: true });
+    }, 4000);
+    return () => window.clearTimeout(t);
+  }, [searchParams, setSearchParams]);
 
   // Show post-publish overlay once per car for users with edit access
   useEffect(() => {
@@ -191,7 +241,7 @@ const BilDetalj = () => {
           overhauled, tags, featured, published_at, created_at, updated_at, category,
           external_links, timeline_events, source, identification_status,
           car_images(id, image_url, alt_text, sort_order),
-          car_events(visibility, occurred_at, car_event_images(image_url, alt_text, sort_order)),
+          car_events(id, description, category, event_type, visibility, occurred_at, data, car_event_images(image_url, alt_text, sort_order)),
           car_owners!car_owners_car_id_fkey(user_id, role)
         `)
         .eq("slug", slug)
@@ -387,10 +437,14 @@ const BilDetalj = () => {
 
   // Build OG meta data
   const displayYear = car.year != null ? ` (${car.year})` : "";
-  const ogTitle = `${car.title}${displayYear} – Bilhistorie fra Norge | Bilgarasje.no`;
+  const ogTitle = isSpottingView
+    ? `${presentation?.displayTitle ?? car.title} – observert | Bilgarasje.no`
+    : `${car.title}${displayYear} – Bilhistorie fra Norge | Bilgarasje.no`;
   const yearLabel = car.year != null ? ` fra ${car.year}` : "";
   const storySnippet = car.story?.trim();
-  const ogDescription = storySnippet
+  const ogDescription = isSpottingView && observationCaption
+    ? observationCaption.slice(0, 160)
+    : storySnippet
     ? `Les historien om ${car.title}${yearLabel}. ${storySnippet.slice(0, 150).trim()}${storySnippet.length > 150 ? "…" : ""}`
     : `Les historien om ${car.title}${yearLabel} på Bilgarasje.no.`;
   const functionsHost = (import.meta.env.VITE_SUPABASE_URL ?? "").replace(/\/$/, "");
@@ -420,7 +474,7 @@ const BilDetalj = () => {
 
   return (
     <Layout>
-      <ExploreSectionNav />
+      {!isSpottingView && <ExploreSectionNav />}
       {showPostPublishOverlay && (
         <PostPublishOnboardingOverlay
           carTitle={car.title}
@@ -489,11 +543,15 @@ const BilDetalj = () => {
         </script>
       </Helmet>
 
-      <PageHeader 
-        title="BILHISTORIE" 
-        subtitle="En unik historie fra vårt fellesskap" 
-      />
-      <PlatformContextBanner />
+      {!isSpottingView && (
+        <>
+          <PageHeader
+            title="BILHISTORIE"
+            subtitle="En unik historie fra vårt fellesskap"
+          />
+          <PlatformContextBanner />
+        </>
+      )}
 
       {canEditCar && (
         <div className="bg-[#111315] border-b border-white/[0.08]">
@@ -541,6 +599,30 @@ const BilDetalj = () => {
         </div>
       )}
 
+      {isSpottingView ? (
+        <>
+          <SpottingCarHero
+            imageUrl={mainImage?.image_url ?? null}
+            imageAlt={mainImage?.alt_text || presentation!.displayTitle}
+            displayTitle={presentation!.displayTitle}
+            caption={observationCaption}
+            onImageClick={() => mainImage && setSelectedImageIndex(0)}
+            onKnowCar={() => setRelationshipDialogOpen(true)}
+            showKnowCarCta={presentation!.showHeroRelationshipCta}
+            landingAck={landingAck}
+          />
+          <SpottingCarDetailBody
+            carId={car.id}
+            createdAt={car.created_at}
+            publishedAt={car.published_at}
+            showIdentifyHelpLink={
+              car.identification_status === "unknown" ||
+              car.identification_status === "needs_review"
+            }
+          />
+        </>
+      ) : (
+      <>
       {/* Hero Section */}
       <section className="py-8 md:py-16">
         <div className="container mx-auto px-4">
@@ -648,14 +730,6 @@ const BilDetalj = () => {
                     >
                       <Link2 className="w-4 h-4" />
                       Kjenner du denne bilen?
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setEditAccessDialogOpen(true)}
-                      className="inline-flex items-center justify-center gap-2 px-4 py-2.5 text-[12px] uppercase tracking-[0.15em] text-white/90 font-bold rounded-full border border-white/25 hover:bg-white/10 transition-all"
-                      style={{ fontFamily: "'Chakra Petch', sans-serif" }}
-                    >
-                      Be om redigeringstilgang
                     </button>
                   </div>
                 )}
@@ -788,6 +862,8 @@ const BilDetalj = () => {
           </div>
         </div>
       </section>
+      </>
+      )}
 
       {/* External Links Section */}
       {externalLinks.length > 0 && (
@@ -1040,6 +1116,7 @@ const BilDetalj = () => {
       )}
 
       {/* CTA Section */}
+      {!isSpottingView && (
       <section ref={ctaSectionRef} className="py-16 bg-accent">
         <div className="container mx-auto px-4 text-center">
           <AnimatedSection delay={700}>
@@ -1063,6 +1140,7 @@ const BilDetalj = () => {
           </AnimatedSection>
         </div>
       </section>
+      )}
 
       {/* Comments moved under story */}
 
