@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
-import { Car } from "lucide-react";
+import { Car, CarFront } from "lucide-react";
 import { getResponsiveImageProps, IMAGE_SIZES } from "@/lib/imageUtils";
 import { SpottingReactionsRow } from "@/components/car/detail/SpottingReactionsRow";
 import { oswald, oswaldLight, OBSERVATION_ACCENT } from "@/lib/observationPostTokens";
