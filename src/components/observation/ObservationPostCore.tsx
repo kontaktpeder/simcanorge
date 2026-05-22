@@ -38,6 +38,7 @@ export function ObservationPostCore({
   imageUrl,
   imageAlt,
   caption,
+  title,
   media,
   onImageClick,
   onKnowCar,
@@ -133,11 +134,20 @@ export function ObservationPostCore({
         )}
       </div>
 
+      {title && (
+        <h1
+          className="mt-5 text-[22px] md:text-[26px] leading-tight text-white"
+          style={oswald}
+        >
+          {title}
+        </h1>
+      )}
+
       <SpottingReactionsRow
         carId={carId}
         onOpenComments={onOpenComments}
         onShare={onShare}
-        className="mt-6"
+        className="mt-5"
       />
 
       {caption && (
