@@ -31,6 +31,7 @@ export function ObservationPostCore({
   imageAlt,
   caption,
   title,
+  category,
   media,
   onImageClick,
   onKnowCar,
@@ -41,6 +42,8 @@ export function ObservationPostCore({
   hideMedia = false,
   className,
 }: Props) {
+  const cleanCategory = category && category.trim().length > 0 ? category.trim() : null;
+
   const items: MediaItem[] =
     media && media.length > 0
       ? media
