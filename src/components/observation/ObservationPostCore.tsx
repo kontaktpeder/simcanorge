@@ -93,7 +93,7 @@ export function ObservationPostCore({
                 {items.map((img, i) => (
                   <div
                     key={img.id}
-                    className="relative shrink-0 grow-0 basis-full aspect-[4/5] md:aspect-[4/3] bg-black"
+                    className="relative shrink-0 grow-0 basis-full aspect-[4/5] bg-black"
                     onClick={() => onImageClick?.(i)}
                     role="button"
                     aria-label={`Bilde ${i + 1} av ${total}`}
@@ -117,31 +117,16 @@ export function ObservationPostCore({
             </div>
 
             {total > 1 && (
-              <>
-                {/* counter — finn-style */}
-                <div
-                  className="pointer-events-none absolute bottom-3 right-3 rounded-full bg-black/65 backdrop-blur-sm px-2.5 py-1 text-[11px] tracking-[0.14em] text-white/90"
-                  style={oswald}
-                >
-                  {selected + 1} / {total}
-                </div>
-
-                {/* dots */}
-                <div className="pointer-events-none absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
-                  {items.map((_, i) => (
-                    <span
-                      key={i}
-                      className={`h-1.5 rounded-full transition-all ${
-                        i === selected ? "w-4 bg-white" : "w-1.5 bg-white/40"
-                      }`}
-                    />
-                  ))}
-                </div>
-              </>
+              <div
+                className="pointer-events-none absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full bg-black/65 backdrop-blur-sm px-3 py-1 text-[11px] tracking-[0.14em] text-white/90"
+                style={oswald}
+              >
+                {selected + 1} / {total}
+              </div>
             )}
           </div>
         ) : (
-          <div className="w-full aspect-[4/5] md:aspect-[4/3] rounded-2xl border border-white/[0.06] bg-white/[0.03] flex items-center justify-center">
+          <div className="w-full aspect-[4/5] rounded-2xl border border-white/[0.06] bg-white/[0.03] flex items-center justify-center">
             <Car className="w-14 h-14 text-white/30" />
           </div>
         )}
