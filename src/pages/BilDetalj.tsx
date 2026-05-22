@@ -477,7 +477,7 @@ const BilDetalj = () => {
 
   return (
     <Layout>
-      {!isSpottingView && <ExploreSectionNav />}
+      <ExploreSectionNav />
       {showPostPublishOverlay && (
         <PostPublishOnboardingOverlay
           carTitle={car.title}
