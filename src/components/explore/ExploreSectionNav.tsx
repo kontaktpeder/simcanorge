@@ -1,11 +1,9 @@
-import { NavLink, useLocation } from "react-router-dom";
-import { isExploreSectionPath, EXPLORE_SECTION_NAV_HEIGHT_PX } from "@/lib/exploreNav";
+import { NavLink } from "react-router-dom";
+import { EXPLORE_SECTION_NAV_HEIGHT_PX } from "@/lib/exploreNav";
 
 const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
 
 export function ExploreSectionNav() {
-  const { pathname } = useLocation();
-  if (!isExploreSectionPath(pathname)) return null;
 
   const tabClass = ({ isActive }: { isActive: boolean }) =>
     `flex-1 sm:flex-none text-center px-4 py-2 text-[11px] sm:text-[12px] uppercase tracking-[0.14em] font-bold transition-colors rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#34eab8] ${
@@ -25,7 +23,7 @@ export function ExploreSectionNav() {
       role="navigation"
       aria-label="Velg visning i Utforsk"
     >
-      <div className="max-w-[1400px] mx-auto h-full px-3 sm:px-5 md:px-8 flex items-center gap-2 sm:gap-3">
+      <div className="max-w-[720px] mx-auto h-full px-5 md:px-8 flex items-center gap-2 sm:gap-3">
         <span
           className="hidden sm:inline text-[10px] uppercase tracking-[0.28em] text-white/35 font-bold pr-2"
           style={oswald}
