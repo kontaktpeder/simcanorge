@@ -73,13 +73,27 @@ export function CarObservationPage(props: Props) {
 
   return (
     <div style={{ backgroundColor: OBSERVATION_BG }} className="text-white">
-      {/* 1) Observation post core (emotion) */}
+      {/* 1) Observation post core (emotion) — all images swipeable inline */}
       <ObservationPostCore
         carId={carId}
         imageUrl={imageUrl}
         imageAlt={imageAlt}
         caption={caption}
-        onImageClick={onImageClick}
+        media={(() => {
+          const main = imageUrl
+            ? [{ id: "main", image_url: imageUrl, alt_text: imageAlt }]
+            : [];
+          const rest = galleryImages.map((g) => ({
+            id: g.id,
+            image_url: g.image_url,
+            alt_text: g.alt_text,
+          }));
+          return [...main, ...rest];
+        })()}
+        onImageClick={(i) => {
+          if (i === 0) onImageClick?.();
+          else onGalleryImageClick?.(i);
+        }}
         onKnowCar={onKnowCar}
         onShare={onShare}
         onOpenComments={onOpenComments}
