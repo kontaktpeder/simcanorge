@@ -13,6 +13,7 @@ import { ImageLightbox } from "@/components/ui/image-lightbox";
 import { CommentSection } from "@/components/comments/CommentSection";
 import type { FeedPost } from "@/hooks/useFeedPosts";
 import { resolveSpottingCoverFromRow } from "@/lib/spottingMedia";
+import { ObservationPostCore } from "@/components/observation/ObservationPostCore";
 
 const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
 
