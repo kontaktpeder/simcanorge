@@ -161,7 +161,7 @@ export function FeedCard({ post, variant = "default" }: { post: FeedPost; varian
             caption={spottingCaption}
             title={spottingTitle}
             media={mediaItems}
-            onImageClick={() => setLightboxOpen(true)}
+            onImageClick={goToCar}
             onKnowCar={goToCar}
             onShare={goToCar}
             onOpenComments={() => setShowComments(true)}
