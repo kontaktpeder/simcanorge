@@ -22,6 +22,8 @@ type Props = {
   story: string | null;
   brand: string | null;
   model: string | null;
+  variant: string | null;
+  body_type: string | null;
   year: number | null;
   galleryImages: GalleryImage[];
   enrichment: CarEnrichment;
