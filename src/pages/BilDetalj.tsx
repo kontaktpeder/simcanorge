@@ -30,7 +30,7 @@ import { FEATURES } from "@/config/features";
 import { RelationshipRequestDialog } from "@/components/car/relationship/RelationshipRequestDialog";
 import { CarKnowledgeDialog } from "@/components/car/knowledge/CarKnowledgeDialog";
 import { canEditCarInDashboard, type CarOwnerAccessRow } from "@/lib/carEditAccess";
-import { ExploreSectionNav } from "@/components/explore/ExploreSectionNav";
+import { ExploreDetailBackBar } from "@/components/explore/ExploreDetailBackBar";
 import { resolveCarPageViewMode } from "@/lib/carPageViewMode";
 import { buildCarPagePresentation, pickLatestObservationCaption, pickHeroSpottingEventId } from "@/lib/carPagePresentation";
 import { SpottingCommentsSheet } from "@/components/car/detail/SpottingCommentsSheet";
