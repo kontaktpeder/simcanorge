@@ -868,8 +868,11 @@ const BilDetalj = () => {
       </>
       )}
 
+      {!isSpottingView && (
+      <>
       {/* External Links Section */}
       {externalLinks.length > 0 && (
+
         <section className="py-8 md:py-12 bg-muted/50">
           <div className="container mx-auto px-4">
             <AnimatedSection delay={500}>
@@ -1061,7 +1064,11 @@ const BilDetalj = () => {
         </div>
       </section>
 
+      </>
+      )}
+
       {/* Lightbox */}
+
       {selectedImageIndex !== null && (
         <div 
           className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center animate-fade-in"

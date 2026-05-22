@@ -124,7 +124,10 @@ export function TimelineSection({ carId, createdAt, publishedAt, mode = "default
 
 
                   
-                  <h4 className="text-lg font-semibold">{displayTitle}</h4>
+                  {!(mode === "spotting" && category === "gjenoppdagelse") && (
+                    <h4 className="text-lg font-semibold">{displayTitle}</h4>
+                  )}
+
                   
                   {event.description && (
                     <p className="text-muted-foreground mt-2 leading-relaxed">
