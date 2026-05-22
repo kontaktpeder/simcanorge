@@ -1,9 +1,9 @@
 import { Link } from "react-router-dom";
 import { ObservationPostCore } from "./ObservationPostCore";
+import { ObservationMediaCarousel, type MediaItem } from "./ObservationMediaCarousel";
 import { CarTimeline } from "@/components/car/timeline/CarTimeline";
 import { OwnerCard } from "@/components/car/OwnerCard";
 import { AnimatedSection } from "@/components/layout/AnimatedSection";
-import { getResponsiveImageProps, IMAGE_SIZES } from "@/lib/imageUtils";
 import { oswald, oswaldLight, OBSERVATION_BG } from "@/lib/observationPostTokens";
 import type { CarEnrichment } from "@/lib/carEnrichment";
 
@@ -86,57 +86,45 @@ export function CarObservationPage(props: Props) {
   ].filter(Boolean);
   const title = titleParts.join(" ") || null;
 
-  return (
-    <div style={{ backgroundColor: OBSERVATION_BG }} className="text-white">
-      {/* 1) Observation post core (emotion) — all images swipeable inline */}
-      <ObservationPostCore
-        carId={carId}
-        imageUrl={imageUrl}
-        imageAlt={imageAlt}
-        caption={caption}
-        title={title}
-        media={(() => {
-          const main = imageUrl
-            ? [{ id: "main", image_url: imageUrl, alt_text: imageAlt }]
-            : [];
-          const rest = galleryImages.map((g) => ({
-            id: g.id,
-            image_url: g.image_url,
-            alt_text: g.alt_text,
-          }));
-          return [...main, ...rest];
-        })()}
-        onImageClick={(i) => {
-          if (i === 0) onImageClick?.();
-          else onGalleryImageClick?.(i);
-        }}
-        onKnowCar={onKnowCar}
-        onShare={onShare}
-        onOpenComments={onOpenComments}
-        showKnowCarCta={showKnowCarCta}
-        landingAck={landingAck}
-      />
+  const media: MediaItem[] = (() => {
+    const main = imageUrl
+      ? [{ id: "main", image_url: imageUrl, alt_text: imageAlt }]
+      : [];
+    const rest = galleryImages.map((g) => ({
+      id: g.id,
+      image_url: g.image_url,
+      alt_text: g.alt_text,
+    }));
+    return [...main, ...rest];
+  })();
 
-      <SectionDivider />
+  const handleMediaClick = (i: number) => {
+    if (i === 0) onImageClick?.();
+    else onGalleryImageClick?.(i);
+  };
 
-      {/* 2) Historikk (archival) */}
+  // Shared right-column sections (timeline, story, owner, identify) – used in both layouts
+  const RightSections = (
+    <>
       {enrichment.showTimeline && (
-        <section className="py-8">
-          <div className="container mx-auto px-4 max-w-3xl">
-            <AnimatedSection>
-              <SectionLabel>Historikk</SectionLabel>
-              <CarTimeline carId={carId} heroCaptionEventId={heroCaptionEventId} carCreatedAt={carCreatedAt} />
-            </AnimatedSection>
-          </div>
-        </section>
+        <>
+          <SectionDivider />
+          <section className="py-8">
+            <div className="container mx-auto px-4 max-w-3xl lg:px-0 lg:mx-0 lg:max-w-none">
+              <AnimatedSection>
+                <SectionLabel>Historikk</SectionLabel>
+                <CarTimeline carId={carId} heroCaptionEventId={heroCaptionEventId} carCreatedAt={carCreatedAt} />
+              </AnimatedSection>
+            </div>
+          </section>
+        </>
       )}
 
-      {/* 3) Story (only if meaningful) */}
       {enrichment.showStory && story && (
         <>
           <SectionDivider />
           <section className="py-8">
-            <div className="container mx-auto px-4 max-w-3xl">
+            <div className="container mx-auto px-4 max-w-3xl lg:px-0 lg:mx-0 lg:max-w-none">
               <SectionLabel>Om bilen</SectionLabel>
               <p
                 className="text-[17px] md:text-[18px] leading-[1.65] text-white/85 whitespace-pre-wrap"
@@ -175,24 +163,19 @@ export function CarObservationPage(props: Props) {
         </>
       )}
 
-      {/* 4) Gallery er nå inline i hero (swipe) — egen seksjon fjernet */}
-
-
-      {/* 5) Owner (only if has owner) */}
       {enrichment.showOwnerCard && (
         <>
           <SectionDivider />
           <section className="py-8">
-            <div className="container mx-auto px-4 max-w-2xl">
+            <div className="container mx-auto px-4 max-w-2xl lg:px-0 lg:mx-0 lg:max-w-none">
               <OwnerCard carId={carId} heading="Eies av" />
             </div>
           </section>
         </>
       )}
 
-      {/* 6) Identify link (diskret) */}
       {enrichment.showIdentifyLink && (
-        <div className="container mx-auto px-4 pb-12 pt-4 text-center">
+        <div className="container mx-auto px-4 pb-12 pt-4 text-center lg:px-0 lg:mx-0 lg:text-left">
           <Link
             to="/ukjente-biler"
             className="text-[11px] uppercase tracking-[0.22em] text-white/35 hover:text-white/85 transition-colors"
@@ -202,6 +185,68 @@ export function CarObservationPage(props: Props) {
           </Link>
         </div>
       )}
+    </>
+  );
+
+  return (
+    <div style={{ backgroundColor: OBSERVATION_BG }} className="text-white">
+      {/* Mobile / tablet: original stacked layout */}
+      <div className="lg:hidden">
+        <ObservationPostCore
+          carId={carId}
+          imageUrl={imageUrl}
+          imageAlt={imageAlt}
+          caption={caption}
+          title={title}
+          media={media}
+          onImageClick={handleMediaClick}
+          onKnowCar={onKnowCar}
+          onShare={onShare}
+          onOpenComments={onOpenComments}
+          showKnowCarCta={showKnowCarCta}
+          landingAck={landingAck}
+        />
+        {RightSections}
+      </div>
+
+      {/* Desktop: Finn-style split — sticky images left, scrollable details right */}
+      <div className="hidden lg:block">
+        <div className="mx-auto max-w-7xl px-6 pt-8 pb-12">
+          <div className="grid grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] gap-10 xl:gap-14 items-start">
+            {/* Left: sticky image carousel */}
+            <div className="sticky top-24 self-start">
+              <div className="h-[calc(100vh-8rem)] max-h-[820px] min-h-[520px]">
+                <ObservationMediaCarousel
+                  items={media}
+                  imageAlt={imageAlt}
+                  onImageClick={handleMediaClick}
+                  aspect="auto"
+                />
+              </div>
+            </div>
+
+            {/* Right: scrollable content */}
+            <div className="min-w-0">
+              <ObservationPostCore
+                carId={carId}
+                imageUrl={imageUrl}
+                imageAlt={imageAlt}
+                caption={caption}
+                title={title}
+                media={media}
+                onKnowCar={onKnowCar}
+                onShare={onShare}
+                onOpenComments={onOpenComments}
+                showKnowCarCta={showKnowCarCta}
+                landingAck={landingAck}
+                hideMedia
+                className="pb-2"
+              />
+              {RightSections}
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
