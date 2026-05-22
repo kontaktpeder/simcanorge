@@ -4,6 +4,8 @@ import { OwnerCard } from "@/components/car/OwnerCard";
 import { AnimatedSection } from "@/components/layout/AnimatedSection";
 import { SpottingCommentsBlock } from "./SpottingCommentsBlock";
 
+const PAPER_BG = "#f3f1ea";
+
 type Props = {
   carId: string;
   createdAt?: string;
@@ -24,8 +26,8 @@ export function SpottingCarDetailBody({
   showKnowHistoryCta,
 }: Props) {
   return (
-    <>
-      <section className="py-6 md:py-8 bg-white">
+    <div style={{ backgroundColor: PAPER_BG }} className="text-neutral-900">
+      <section className="py-6 md:py-8">
         <div className="container mx-auto px-4 max-w-3xl">
           <SpottingCommentsBlock carId={carId} />
         </div>
@@ -33,17 +35,17 @@ export function SpottingCarDetailBody({
 
       {galleryBlock}
 
-      <section className="py-8 md:py-10 bg-white border-t border-neutral-200/70">
+      <section className="py-8 md:py-10 border-t border-neutral-300/50">
         <div className="container mx-auto px-4 max-w-3xl">
           <AnimatedSection>
-            <div className="flex items-baseline justify-between mb-4 gap-3">
-              <h2
-                className="text-[12px] uppercase tracking-[0.2em] text-neutral-600"
-                style={{ fontFamily: "'Oswald', sans-serif" }}
-              >
-                Tidslinje
-              </h2>
-              {showKnowHistoryCta && onKnowHistory && (
+            <TimelineSection
+              carId={carId}
+              createdAt={createdAt}
+              publishedAt={publishedAt}
+              mode="spotting"
+            />
+            {showKnowHistoryCta && onKnowHistory && (
+              <div className="mt-6">
                 <button
                   type="button"
                   onClick={onKnowHistory}
@@ -52,26 +54,20 @@ export function SpottingCarDetailBody({
                 >
                   Kjenner du historien?
                 </button>
-              )}
-            </div>
-            <TimelineSection
-              carId={carId}
-              createdAt={createdAt}
-              publishedAt={publishedAt}
-              mode="spotting"
-            />
+              </div>
+            )}
           </AnimatedSection>
         </div>
       </section>
 
-      <section className="py-8 md:py-10 bg-white">
+      <section className="py-8 md:py-10">
         <div className="container mx-auto px-4 max-w-2xl">
           <OwnerCard carId={carId} heading="Eies av" />
         </div>
       </section>
 
       {showIdentifyHelpLink && (
-        <div className="container mx-auto px-4 pb-10 text-center bg-white">
+        <div className="container mx-auto px-4 pb-10 text-center">
           <Link
             to="/ukjente-biler"
             className="text-xs uppercase tracking-[0.18em] text-neutral-500 hover:text-neutral-900 transition-colors"
@@ -81,6 +77,6 @@ export function SpottingCarDetailBody({
           </Link>
         </div>
       )}
-    </>
+    </div>
   );
 }
