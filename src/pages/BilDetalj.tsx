@@ -858,6 +858,8 @@ const BilDetalj = () => {
           </div>
         </div>
       </section>
+      </>
+      )}
 
       {/* External Links Section */}
       {externalLinks.length > 0 && (
