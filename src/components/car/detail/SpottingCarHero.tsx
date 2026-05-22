@@ -96,10 +96,10 @@ export function SpottingCarHero({
 
         {caption && (
           <p
-            className={`${hideTitle ? "mt-6" : "mt-3"} text-lg md:text-xl leading-relaxed text-white/85 italic`}
+            className={`${hideTitle ? "mt-6" : "mt-3"} text-lg md:text-xl leading-relaxed text-white/85`}
             style={{ fontFamily: "'Oswald', sans-serif", fontWeight: 300 }}
           >
-            «{caption}»
+            {caption}
           </p>
         )}
 
