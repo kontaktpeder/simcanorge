@@ -734,7 +734,11 @@ const BilDetalj = () => {
                   <div className="mb-6 flex flex-wrap gap-2">
                     <button
                       type="button"
-                      onClick={() => setRelationshipDialogOpen(true)}
+                      onClick={() =>
+                        FEATURES.knowledgeHubV1
+                          ? setKnowledgeDialogOpen(true)
+                          : setRelationshipDialogOpen(true)
+                      }
                       className="inline-flex items-center gap-2 px-4 py-2.5 text-[12px] uppercase tracking-[0.15em] text-[#070b10] font-bold transition-all hover:scale-[1.02] rounded-full"
                       style={{
                         fontFamily: "'Chakra Petch', sans-serif",
