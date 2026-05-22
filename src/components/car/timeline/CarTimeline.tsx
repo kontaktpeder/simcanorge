@@ -3,7 +3,6 @@ import { useMemo } from "react";
 import { Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useCarEvents } from "@/hooks/useCarEvents";
-import { useComments } from "@/hooks/useComments";
 import { buildCarTimeline } from "@/lib/buildCarTimeline";
 import { TimelineLine } from "./TimelineLine";
 
@@ -39,7 +38,6 @@ export function CarTimeline({ carId, heroCaptionEventId = null }: Props) {
   const { data: events = [], isLoading: eventsLoading } = useCarEvents(carId, {
     includePrivate: false,
   });
-  const { data: comments = [], isLoading: commentsLoading } = useComments({ carId });
 
   const userIds = useMemo(
     () => events.map((e) => e.created_by).filter((x): x is string => !!x),
@@ -51,34 +49,33 @@ export function CarTimeline({ carId, heroCaptionEventId = null }: Props) {
     () =>
       buildCarTimeline({
         events,
-        comments,
         creatorNames,
         heroCaptionEventId,
       }),
-    [events, comments, creatorNames, heroCaptionEventId],
+    [events, creatorNames, heroCaptionEventId],
   );
 
-  if (eventsLoading || commentsLoading) {
+  if (eventsLoading) {
     return (
       <div className="flex justify-center py-8">
-        <Loader2 className="h-5 w-5 animate-spin text-neutral-400" />
+        <Loader2 className="h-5 w-5 animate-spin text-white/40" />
       </div>
     );
   }
 
   if (items.length === 0) {
     return (
-      <div className="py-6 text-[13px] text-neutral-500 italic">
+      <div className="py-6 text-[13px] text-white/40 italic">
         Historien bygges når folk bidrar.
       </div>
     );
   }
 
   return (
-    <div className="relative">
+    <ol className="relative">
       {items.map((item, i) => (
         <TimelineLine key={item.id} item={item} index={i} isLast={i === items.length - 1} />
       ))}
-    </div>
+    </ol>
   );
 }
