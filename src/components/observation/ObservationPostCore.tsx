@@ -145,10 +145,10 @@ export function ObservationPostCore({
           <button
             type="button"
             onClick={onKnowCar}
-            className="inline-flex items-center gap-1.5 text-[#34eab8] hover:text-[#34eab8]/80 transition-colors text-[13px] leading-none"
+            className="inline-flex items-center gap-1.5 text-white/80 hover:text-white transition-colors text-[13px] leading-none"
             style={oswald}
           >
-            <Search className="w-5 h-5" strokeWidth={1.75} />
+            <Search className="w-6 h-6" strokeWidth={1.75} />
             <span>Kjenner du til bilen?</span>
           </button>
         )}
