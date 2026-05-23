@@ -6,7 +6,6 @@ import {
   CheckCircle2,
   ImagePlus,
   Loader2,
-  X,
   ArrowRight,
   ExternalLink,
 } from "lucide-react";
