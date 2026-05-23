@@ -195,7 +195,6 @@ export function InAppCameraModal({ open, onClose, onCapture, onPickGallery }: Pr
             />
           )}
 
-
           {error && (
             <div
               className="absolute inset-x-4 top-4 rounded-lg p-3 text-[12px] text-neutral-900"
