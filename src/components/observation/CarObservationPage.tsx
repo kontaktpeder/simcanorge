@@ -86,7 +86,9 @@ export function CarObservationPage(props: Props) {
     onOpenComments,
     showKnowCarCta,
     landingAck,
+    theme = "dark",
   } = props;
+  const isLight = theme === "light";
 
 
   const titleParts = [
