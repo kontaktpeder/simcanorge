@@ -566,9 +566,45 @@ const BilDetalj = () => {
         carId={car.id}
         open={commentsSheetOpen}
         onOpenChange={setCommentsSheetOpen}
-      />
+
+      {/* CTA: Legg ut innlegg om denne bilen — alle innloggede, utlogget → login */}
+      <section className="px-4 py-8 sm:py-10 flex justify-center">
+        <div className="w-full max-w-xl rounded-2xl border border-black/10 bg-white p-5 sm:p-6 text-center shadow-sm">
+          <h2 className="text-[18px] sm:text-[20px] font-bold text-neutral-900 mb-1.5">
+            Har du sett eller kjent denne bilen?
+          </h2>
+          <p className="text-[13px] sm:text-sm text-neutral-600 mb-4 leading-relaxed">
+            Del et innlegg — historie, observasjon eller bilde. Du velger selv om det er offentlig eller privat.
+          </p>
+          {user ? (
+            <button
+              type="button"
+              onClick={() =>
+                openPublishComposer({
+                  prefillCarId: car.id,
+                  prefillCarTitle: car.title,
+                  source: "bil_detalj_cta",
+                })
+              }
+              className="inline-flex items-center justify-center h-11 px-5 rounded-xl text-sm font-semibold text-white hover:brightness-110 transition"
+              style={{ backgroundColor: "#2b2b2b" }}
+            >
+              Legg ut innlegg om denne bilen
+            </button>
+          ) : (
+            <Link
+              to={`/login?returnUrl=${encodeURIComponent(`/biler/${car.slug}`)}`}
+              className="inline-flex items-center justify-center h-11 px-5 rounded-xl text-sm font-semibold text-white hover:brightness-110 transition"
+              style={{ backgroundColor: "#2b2b2b" }}
+            >
+              Logg inn for å legge ut innlegg
+            </Link>
+          )}
+        </div>
+      </section>
 
       <RelatedCarsSection carId={car.id} brand={car.brand} model={car.model} />
+
 
 
 
