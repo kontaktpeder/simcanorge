@@ -90,7 +90,7 @@ export function PublishComposer() {
   useEffect(() => {
     if (!isOpen) return;
     setImageFile(props.initialImageFile ?? null);
-    setCaption("");
+    setCaption(props.initialCaption ?? "");
     setVisibility(props.defaultVisibility ?? "public");
     setSelectedCarId(props.prefillCarId ?? null);
     setSelectedCarTitle(props.prefillCarTitle ?? null);
