@@ -12,8 +12,7 @@ export interface OpenPublishComposerProps {
   prefillCarTitle?: string | null;
   /** Aktiv tur — sendes til car_event som activity_session_id. */
   prefillSessionId?: string | null;
-  /** Default chip-valg. */
-  defaultType?: PublishComposerType;
+  /** Default synlighet. */
   defaultVisibility?: PublishComposerVisibility;
   /** Analytics-kontekst. */
   source?: string;
