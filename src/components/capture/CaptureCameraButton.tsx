@@ -179,7 +179,7 @@ export function CaptureCameraButton({ size = "hero", onOpenChange, screen, varia
         <button
           type="button"
           onClick={handleClick}
-          aria-label="Fang bil"
+          aria-label="Nytt innlegg"
           className="w-16 h-16 rounded-full flex items-center justify-center transition-all hover:scale-[1.04] active:scale-[0.97]"
           style={fabCircleStyle}
         >
