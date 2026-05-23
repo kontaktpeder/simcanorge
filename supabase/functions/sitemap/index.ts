@@ -111,7 +111,14 @@ serve(async (req: Request) => {
       priority: "0.6",
     }));
 
-    const urls = [...staticEntries, ...carEntries, ...ownerEntries];
+    const brandHubEntries = brandHubList.map((p) => ({
+      loc: `${siteUrl}/merker/${String(p.brand_key).toLowerCase()}`,
+      lastmod: formatLastmod(p.updated_at),
+      changefreq: "monthly",
+      priority: "0.75",
+    }));
+
+    const urls = [...staticEntries, ...carEntries, ...ownerEntries, ...brandHubEntries];
 
     const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
