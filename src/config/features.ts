@@ -7,6 +7,8 @@ export const PUBLIC_SITE_URL: string =
   (import.meta.env.VITE_PUBLIC_SITE_URL as string | undefined)?.replace(/\/$/, "") ||
   "https://bilgarasje.no";
 
+export const FEATURES = {
+
   /**
    * Hides/de-prioritises secondary modules (marketplace, clubs, events, aktører)
    * to focus the launch on the core "share your car" flow.
