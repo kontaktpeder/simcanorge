@@ -187,6 +187,7 @@ export default function Login() {
 
   return (
     <Layout>
+      <SeoHead title="Logg inn | Bilgarasje.no" canonicalPath="/login" noindex />
       <div className="min-h-[calc(100vh-4rem)] relative overflow-hidden flex items-center justify-center"
         style={{ background: 'linear-gradient(135deg, #070b10 0%, #0c1219 40%, #060a0f 100%)' }}>
 
