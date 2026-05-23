@@ -75,33 +75,16 @@ export function CaptureCameraButton({ size = "hero", onOpenChange, screen, varia
     const file = e.target.files?.[0] ?? null;
     e.target.value = ""; // tillat samme fil igjen
     if (!file) return;
-    if (useV1) {
-      openPublishComposer({
-        initialImageFile: file,
-        source: screen ?? "capture",
-      });
-      onOpenChange?.(true);
-      return;
-    }
-    setPrefillFile(file);
-    setDialogOpen(true);
+    openPublishComposer({
+      initialImageFile: file,
+      source: screen ?? "capture",
+    });
     onOpenChange?.(true);
-  };
-
-  const handleOpenChange = (next: boolean) => {
-    setDialogOpen(next);
-    onOpenChange?.(next);
-    if (!next) setPrefillFile(null);
   };
 
   const handleCameraCapture = (file: File) => {
     setCameraOpen(false);
-    if (useV1) {
-      openPublishComposer({ initialImageFile: file, source: screen ?? "capture" });
-    } else {
-      setPrefillFile(file);
-      setDialogOpen(true);
-    }
+    openPublishComposer({ initialImageFile: file, source: screen ?? "capture" });
     onOpenChange?.(true);
   };
 
