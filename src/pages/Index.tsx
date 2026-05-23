@@ -25,7 +25,7 @@ export default function Index() {
     <Layout>
       <SeoHead {...SEO_COPY.utforsk} />
 
-      <ExploreSectionNav light />
+      
 
       <section
         className="relative pb-24"
