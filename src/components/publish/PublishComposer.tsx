@@ -342,7 +342,7 @@ export function PublishComposer() {
                     <button
                       type="button"
                       onClick={pickFile}
-                      className="absolute top-2 left-2 inline-flex items-center gap-1.5 rounded-full bg-white/85 backdrop-blur px-3 py-1.5 text-xs text-neutral-800 hover:bg-white transition-colors border border-black/10 shadow-sm"
+                      className="absolute top-2 left-2 inline-flex items-center gap-1.5 rounded-full bg-white/90 backdrop-blur-sm px-3 py-1.5 text-xs font-medium text-neutral-800 hover:bg-white hover:text-neutral-900 transition-colors border border-black/10 shadow-sm"
                     >
                       <ImagePlus className="w-3.5 h-3.5" />
                       Bytt bilde
