@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams, Link, useSearchParams } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
+import { SeoHead } from "@/components/seo";
 import { Layout } from "@/components/layout/Layout";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { PlatformContextBanner } from "@/components/layout/PlatformContextBanner";
@@ -36,16 +36,10 @@ import { buildCarPagePresentation, pickLatestObservationCaption, pickHeroSpottin
 import { SpottingCommentsSheet } from "@/components/car/detail/SpottingCommentsSheet";
 import { CarObservationPage } from "@/components/observation/CarObservationPage";
 import { resolveCarEnrichment } from "@/lib/carEnrichment";
+import { getSiteUrl } from "@/lib/siteUrl";
 
 
-const SITE_URL = (() => {
-  if (typeof window !== "undefined") {
-    const host = window.location.hostname;
-    if (host.includes("bilgarasje.no")) return "https://bilgarasje.no";
-    if (host.includes("simcanorge.no")) return "https://simcanorge.no";
-  }
-  return "https://bilgarasje.no";
-})();
+const SITE_URL = getSiteUrl();
 interface CarImage {
   id: string;
   image_url: string;
@@ -493,40 +487,21 @@ const BilDetalj = () => {
           }}
         />
       )}
-      <Helmet>
-        <title>{ogTitle}</title>
-        <meta name="description" content={ogDescription} />
-        <link rel="canonical" href={canonicalUrl} />
-        
-        {/* Open Graph */}
-        <meta property="og:title" content={ogTitle} />
-        <meta property="og:description" content={ogDescription} />
-        <meta property="og:image" content={ogImage} />
-        <meta property="og:image:width" content="1200" />
-        <meta property="og:image:height" content="630" />
-        <meta property="og:url" content={canonicalUrl} />
-        <meta property="og:type" content="article" />
-        <meta property="og:site_name" content="Bilgarasje.no" />
-        
-        {/* Twitter Card */}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={ogTitle} />
-        <meta name="twitter:description" content={ogDescription} />
-        <meta name="twitter:image" content={ogImage} />
-
-        {/* JSON-LD Structured Data – Article */}
-        <script type="application/ld+json">
-          {JSON.stringify({
+      <SeoHead
+        title={ogTitle}
+        description={ogDescription}
+        canonicalPath={`/biler/${car.slug}`}
+        image={ogImage}
+        ogType="article"
+        jsonLd={[
+          {
             "@context": "https://schema.org",
             "@type": "Article",
             "headline": car.year != null ? `${car.title} (${car.year})` : car.title,
             "description": ogDescription,
             "image": ogImage,
             "mainEntityOfPage": canonicalUrl,
-            "author": {
-              "@type": "Organization",
-              "name": "Bilgarasje.no",
-            },
+            "author": { "@type": "Organization", "name": "Bilgarasje.no" },
             "publisher": {
               "@type": "Organization",
               "name": "Bilgarasje.no",
@@ -537,14 +512,10 @@ const BilDetalj = () => {
             },
             "datePublished": car.published_at ?? car.created_at ?? null,
             "dateModified": car.updated_at ?? car.published_at ?? car.created_at ?? null,
-          })}
-        </script>
-
-        {/* JSON-LD BreadcrumbList */}
-        <script type="application/ld+json">
-          {JSON.stringify(breadcrumbJsonLd)}
-        </script>
-      </Helmet>
+          },
+          breadcrumbJsonLd,
+        ]}
+      />
 
       <CarObservationPage
         carId={car.id}
