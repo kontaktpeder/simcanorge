@@ -62,7 +62,10 @@ function getAllImages(post: FeedPost) {
   return imgs as { url: string; alt?: string }[];
 }
 
-export function FeedCard({ post, variant = "default" }: { post: FeedPost; variant?: "default" | "explore" }) {
+export function FeedCard({ post, variant = "default", theme = "dark" }: { post: FeedPost; variant?: "default" | "explore"; theme?: "light" | "dark" }) {
+  const isLight = theme === "light";
+  const inter = { fontFamily: "'Inter', system-ui, -apple-system, sans-serif" } as const;
+  const titleFont = isLight ? inter : oswald;
   const { user } = useAuth();
   const navigate = useNavigate();
   const { data: myProfile } = useMyPersonProfile();
@@ -170,15 +173,21 @@ export function FeedCard({ post, variant = "default" }: { post: FeedPost; varian
             onOpenComments={() => setShowComments(true)}
             showKnowCarCta={isCarSpotting}
             className="max-w-none p-0"
+            theme={theme}
           />
 
           {unifiedCaption && author && (
-            <p className="mt-3 text-lg md:text-xl leading-relaxed text-white/85" style={{ fontFamily: "'Oswald', sans-serif", fontWeight: 300 }}>
+            <p
+              className={`mt-3 text-base md:text-lg leading-relaxed ${isLight ? "text-neutral-800" : "text-white/85"}`}
+              style={isLight ? inter : { fontFamily: "'Oswald', sans-serif", fontWeight: 300 }}
+            >
               <Link
                 to={`/profil/${author.slug}`}
                 onClick={(e) => e.stopPropagation()}
-                className="font-semibold text-white hover:text-[#34eab8] transition-colors mr-2"
-                style={oswald}
+                className={`font-semibold mr-2 transition-colors ${
+                  isLight ? "text-[#2b2b2b] hover:text-[#ff8a00]" : "text-white hover:text-[#34eab8]"
+                }`}
+                style={titleFont}
               >
                 {author.display_name}
               </Link>
@@ -186,14 +195,19 @@ export function FeedCard({ post, variant = "default" }: { post: FeedPost; varian
             </p>
           )}
           {unifiedCaption && !author && (
-            <p className="mt-3 text-lg md:text-xl leading-relaxed text-white/85" style={{ fontFamily: "'Oswald', sans-serif", fontWeight: 300 }}>
+            <p
+              className={`mt-3 text-base md:text-lg leading-relaxed ${isLight ? "text-neutral-800" : "text-white/85"}`}
+              style={isLight ? inter : { fontFamily: "'Oswald', sans-serif", fontWeight: 300 }}
+            >
               {unifiedCaption}
             </p>
           )}
 
           {author && (
             <div className="flex items-center gap-2 mt-4">
-              <span className="text-[11px] text-white/35">{timeAgo}</span>
+              <span className={`text-[11px] ${isLight ? "text-neutral-500" : "text-white/35"}`} style={isLight ? inter : undefined}>
+                {timeAgo}
+              </span>
             </div>
           )}
 
@@ -218,7 +232,9 @@ export function FeedCard({ post, variant = "default" }: { post: FeedPost; varian
       <>
         <article className={`group ${cardClickable ? 'cursor-pointer' : ''}`} onClick={handleCardClick}>
           {/* Image */}
-          <div className="relative overflow-hidden rounded-lg mb-3 bg-white/[0.04] border border-white/[0.06]">
+          <div className={`relative overflow-hidden rounded-xl mb-3 border ${
+            isLight ? "bg-neutral-100 border-black/[0.08]" : "bg-white/[0.04] border-white/[0.06]"
+          }`}>
             {heroImage ? (
               entityLink ? (
                 <Link to={entityLink} className="block">
@@ -231,15 +247,23 @@ export function FeedCard({ post, variant = "default" }: { post: FeedPost; varian
               )
             ) : (
               <div className={`w-full ${isCarSpotting ? 'aspect-[4/3]' : 'aspect-[4/5] sm:aspect-video'} flex items-center justify-center`}>
-                <Car className="w-12 h-12 text-white/15" />
+                <Car className={`w-12 h-12 ${isLight ? "text-neutral-300" : "text-white/15"}`} />
               </div>
             )}
 
 
             {/* Type badge overlay top-left */}
-            <div className="absolute top-2 left-2 flex items-center gap-1.5 px-2 py-1 rounded-md bg-black/60 backdrop-blur-sm">
-              <Icon className={`w-3 h-3 ${meta.color}`} />
-              <span className={`text-[9px] uppercase tracking-[0.16em] font-bold ${meta.color}`} style={oswald}>
+            <div
+              className={`absolute top-2 left-2 flex items-center gap-1.5 px-2 py-1 rounded-md ${
+                isLight ? "" : "bg-black/60 backdrop-blur-sm"
+              }`}
+              style={isLight ? { background: "#fcc419" } : undefined}
+            >
+              <Icon className={`w-3 h-3 ${isLight ? "" : meta.color}`} style={isLight ? { color: "#2b2b2b" } : undefined} />
+              <span
+                className={`text-[9px] uppercase tracking-[0.16em] font-bold ${isLight ? "" : meta.color}`}
+                style={isLight ? { ...inter, color: "#2b2b2b" } : oswald}
+              >
                 {meta.label}
               </span>
             </div>
@@ -248,17 +272,33 @@ export function FeedCard({ post, variant = "default" }: { post: FeedPost; varian
             {isOwn && !isEditing && !showDeleteConfirm && (
               <div className="absolute top-2 right-2">
                 <button onClick={() => setShowMenu(!showMenu)}
-                  className="p-1.5 rounded-md bg-black/60 backdrop-blur-sm text-white/70 hover:text-white">
+                  className={
+                    isLight
+                      ? "p-1.5 rounded-md bg-white/95 backdrop-blur-sm text-neutral-700 hover:text-neutral-900 shadow-sm"
+                      : "p-1.5 rounded-md bg-black/60 backdrop-blur-sm text-white/70 hover:text-white"
+                  }>
                   <MoreHorizontal className="w-4 h-4" />
                 </button>
                 {showMenu && (
-                  <div className="absolute right-0 top-full mt-1 bg-[#1a2332] border border-white/[0.1] py-1 z-20 min-w-[130px] rounded-lg shadow-lg">
+                  <div className={
+                    isLight
+                      ? "absolute right-0 top-full mt-1 bg-white border border-black/[0.08] py-1 z-20 min-w-[130px] rounded-lg shadow-lg"
+                      : "absolute right-0 top-full mt-1 bg-[#1a2332] border border-white/[0.1] py-1 z-20 min-w-[130px] rounded-lg shadow-lg"
+                  }>
                     <button onClick={() => { setIsEditing(true); setShowMenu(false); }}
-                      className="flex items-center gap-2 w-full px-4 py-2.5 text-[12px] uppercase tracking-[0.1em] text-white/50 hover:text-white hover:bg-white/[0.06] font-bold" style={oswald}>
+                      className={
+                        isLight
+                          ? "flex items-center gap-2 w-full px-4 py-2.5 text-[12px] uppercase tracking-[0.1em] text-neutral-600 hover:text-neutral-900 hover:bg-black/[0.04] font-bold"
+                          : "flex items-center gap-2 w-full px-4 py-2.5 text-[12px] uppercase tracking-[0.1em] text-white/50 hover:text-white hover:bg-white/[0.06] font-bold"
+                      } style={isLight ? inter : oswald}>
                       <Pencil className="w-3 h-3" /> Rediger
                     </button>
                     <button onClick={handleDelete}
-                      className="flex items-center gap-2 w-full px-4 py-2.5 text-[12px] uppercase tracking-[0.1em] text-red-500/60 hover:text-red-400 hover:bg-white/[0.06] font-bold" style={oswald}>
+                      className={
+                        isLight
+                          ? "flex items-center gap-2 w-full px-4 py-2.5 text-[12px] uppercase tracking-[0.1em] text-red-600 hover:text-red-700 hover:bg-black/[0.04] font-bold"
+                          : "flex items-center gap-2 w-full px-4 py-2.5 text-[12px] uppercase tracking-[0.1em] text-red-500/60 hover:text-red-400 hover:bg-white/[0.06] font-bold"
+                      } style={isLight ? inter : oswald}>
                       <Trash2 className="w-3 h-3" /> Slett
                     </button>
                   </div>
@@ -271,12 +311,22 @@ export function FeedCard({ post, variant = "default" }: { post: FeedPost; varian
           {entityTitle && (
             entityLink ? (
               <Link to={entityLink}>
-                <h3 className="text-[1.05rem] sm:text-[1.2rem] font-bold text-white hover:text-[#2dd4a8] transition-colors leading-snug" style={oswald}>
+                <h3
+                  className={`text-[1.05rem] sm:text-[1.25rem] font-extrabold transition-colors leading-snug tracking-tight ${
+                    isLight ? "text-[#2b2b2b] hover:text-[#ff8a00]" : "text-white hover:text-[#2dd4a8]"
+                  }`}
+                  style={titleFont}
+                >
                   {entityTitle}
                 </h3>
               </Link>
             ) : (
-              <h3 className="text-[1.05rem] sm:text-[1.2rem] font-bold text-white leading-snug" style={oswald}>
+              <h3
+                className={`text-[1.05rem] sm:text-[1.25rem] font-extrabold leading-snug tracking-tight ${
+                  isLight ? "text-[#2b2b2b]" : "text-white"
+                }`}
+                style={titleFont}
+              >
                 {entityTitle}
               </h3>
             )
@@ -284,7 +334,12 @@ export function FeedCard({ post, variant = "default" }: { post: FeedPost; varian
 
           {/* Subline */}
           {subline && (
-            <p className="text-[12px] uppercase tracking-[0.1em] text-white/45 mt-0.5" style={oswald}>
+            <p
+              className={`text-[12px] uppercase tracking-[0.12em] mt-0.5 font-semibold ${
+                isLight ? "text-neutral-500" : "text-white/45"
+              }`}
+              style={isLight ? inter : oswald}
+            >
               {subline}
             </p>
           )}
@@ -293,22 +348,38 @@ export function FeedCard({ post, variant = "default" }: { post: FeedPost; varian
           {isEditing ? (
             <div className="mt-2">
               <textarea value={editBody} onChange={(e) => setEditBody(e.target.value)} rows={3} autoFocus
-                className="w-full bg-transparent border-b-2 border-white/[0.12] focus:border-[#2dd4a8] text-white/80 text-[14px] px-0 py-2 resize-none focus:outline-none" />
+                className={
+                  isLight
+                    ? "w-full bg-transparent border-b-2 border-black/[0.12] focus:border-[#fcc419] text-neutral-900 text-[14px] px-0 py-2 resize-none focus:outline-none"
+                    : "w-full bg-transparent border-b-2 border-white/[0.12] focus:border-[#2dd4a8] text-white/80 text-[14px] px-0 py-2 resize-none focus:outline-none"
+                } />
               <div className="flex items-center gap-3 mt-2">
                 <button onClick={handleSaveEdit} disabled={isEditPending}
-                  className="text-[11px] uppercase tracking-[0.12em] text-[#0c1117] px-4 py-1.5 font-bold rounded"
-                  style={{ ...oswald, background: 'linear-gradient(135deg, #2dd4a8, #14b8a6)' }}>
+                  className={
+                    isLight
+                      ? "text-[11px] uppercase tracking-[0.12em] px-4 py-1.5 font-bold rounded-full"
+                      : "text-[11px] uppercase tracking-[0.12em] text-[#0c1117] px-4 py-1.5 font-bold rounded"
+                  }
+                  style={
+                    isLight
+                      ? { ...inter, background: "#2b2b2b", color: "#fcc419" }
+                      : { ...oswald, background: 'linear-gradient(135deg, #2dd4a8, #14b8a6)' }
+                  }>
                   <Check className="w-3 h-3 inline mr-1" />{isEditPending ? "Lagrer…" : "Lagre"}
                 </button>
                 <button onClick={() => { setIsEditing(false); setEditBody(post.body ?? ""); }}
-                  className="text-[11px] uppercase tracking-[0.1em] text-white/40 hover:text-white/70 font-bold" style={oswald}>
+                  className={
+                    isLight
+                      ? "text-[11px] uppercase tracking-[0.1em] text-neutral-500 hover:text-neutral-800 font-bold"
+                      : "text-[11px] uppercase tracking-[0.1em] text-white/40 hover:text-white/70 font-bold"
+                  } style={isLight ? inter : oswald}>
                   Avbryt
                 </button>
               </div>
             </div>
           ) : (
             bodyText && (
-              <p className="text-[13.5px] text-white/65 leading-snug mt-2 line-clamp-2">
+              <p className={`text-[13.5px] leading-snug mt-2 line-clamp-2 ${isLight ? "text-neutral-700" : "text-white/65"}`} style={isLight ? inter : undefined}>
                 {bodyText}
               </p>
             )
@@ -318,7 +389,13 @@ export function FeedCard({ post, variant = "default" }: { post: FeedPost; varian
           {carTags.length > 0 && (
             <div className="flex flex-wrap gap-1.5 mt-2">
               {carTags.slice(0, 3).map((t) => (
-                <span key={t} className="text-[10px] uppercase tracking-[0.1em] text-[#2dd4a8]/80" style={oswald}>
+                <span
+                  key={t}
+                  className={`text-[10px] uppercase tracking-[0.12em] font-bold px-2 py-0.5 rounded-full ${
+                    isLight ? "" : "text-[#2dd4a8]/80"
+                  }`}
+                  style={isLight ? { ...inter, background: "#fff4d1", color: "#2b2b2b" } : oswald}
+                >
                   #{t}
                 </span>
               ))}
@@ -329,29 +406,34 @@ export function FeedCard({ post, variant = "default" }: { post: FeedPost; varian
           {author && (
             <Link to={`/profil/${author.slug}`} className="flex items-center gap-2 mt-3 group/author">
               {author.avatar_url ? (
-                <img src={author.avatar_url} alt="" className="w-6 h-6 rounded-full object-cover ring-1 ring-white/10" />
+                <img src={author.avatar_url} alt="" className={`w-6 h-6 rounded-full object-cover ring-1 ${isLight ? "ring-black/10" : "ring-white/10"}`} />
               ) : (
-                <div className="w-6 h-6 rounded-full bg-white/[0.08] flex items-center justify-center">
-                  <span className="text-[10px] font-bold text-white/50" style={oswald}>{author.display_name?.[0] ?? "?"}</span>
+                <div className={`w-6 h-6 rounded-full flex items-center justify-center ${isLight ? "bg-neutral-200" : "bg-white/[0.08]"}`}>
+                  <span className={`text-[10px] font-bold ${isLight ? "text-neutral-600" : "text-white/50"}`} style={isLight ? inter : oswald}>{author.display_name?.[0] ?? "?"}</span>
                 </div>
               )}
-              <span className="text-[11px] uppercase tracking-[0.08em] text-white/55 group-hover/author:text-white font-bold" style={oswald}>
+              <span
+                className={`text-[11px] uppercase tracking-[0.1em] font-bold ${
+                  isLight ? "text-neutral-700 group-hover/author:text-[#2b2b2b]" : "text-white/55 group-hover/author:text-white"
+                }`}
+                style={isLight ? inter : oswald}
+              >
                 {author.display_name}
               </span>
-              <span className="text-[10px] text-white/20">·</span>
-              <span className="text-[10px] text-white/35">{timeAgo}</span>
+              <span className={isLight ? "text-[10px] text-neutral-400" : "text-[10px] text-white/20"}>·</span>
+              <span className={isLight ? "text-[10px] text-neutral-500" : "text-[10px] text-white/35"} style={isLight ? inter : undefined}>{timeAgo}</span>
             </Link>
           )}
 
           {/* Inline delete confirm */}
           {showDeleteConfirm && (
             <div className="flex items-center gap-3 mt-3">
-              <span className="text-[11px] uppercase tracking-[0.12em] text-red-400 font-bold" style={oswald}>Slett?</span>
+              <span className={`text-[11px] uppercase tracking-[0.12em] font-bold ${isLight ? "text-red-600" : "text-red-400"}`} style={isLight ? inter : oswald}>Slett?</span>
               <button onClick={confirmDelete}
-                className="text-[11px] uppercase tracking-[0.12em] text-white bg-red-600 hover:bg-red-700 px-3 py-1 font-bold rounded" style={oswald}>
+                className="text-[11px] uppercase tracking-[0.12em] text-white bg-red-600 hover:bg-red-700 px-3 py-1 font-bold rounded-full" style={isLight ? inter : oswald}>
                 Ja, slett
               </button>
-              <button onClick={() => setShowDeleteConfirm(false)} className="text-white/25 hover:text-white/60">
+              <button onClick={() => setShowDeleteConfirm(false)} className={isLight ? "text-neutral-400 hover:text-neutral-700" : "text-white/25 hover:text-white/60"}>
                 <X className="w-4 h-4" />
               </button>
             </div>
@@ -360,11 +442,16 @@ export function FeedCard({ post, variant = "default" }: { post: FeedPost; varian
           {/* Actions */}
           <div className="flex items-center gap-5 mt-3">
             <button onClick={() => setShowComments(!showComments)}
-              className={`flex items-center gap-1.5 transition-colors ${showComments ? "text-white/60" : "text-white/25 hover:text-white/55"}`}>
+              className={`flex items-center gap-1.5 transition-colors ${
+                isLight
+                  ? (showComments ? "text-[#2b2b2b]" : "text-neutral-500 hover:text-neutral-800")
+                  : (showComments ? "text-white/60" : "text-white/25 hover:text-white/55")
+              }`}>
               <MessageSquare className="w-4 h-4" />
-              <span className="text-[11px] uppercase tracking-[0.1em] font-bold" style={oswald}>Kommentar</span>
+              <span className="text-[11px] uppercase tracking-[0.12em] font-bold" style={isLight ? inter : oswald}>Kommentar</span>
             </button>
           </div>
+
 
 
           {showComments && <CommentSection feedPostId={post.id} />}

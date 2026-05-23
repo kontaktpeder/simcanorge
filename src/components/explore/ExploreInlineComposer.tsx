@@ -13,6 +13,7 @@ import { SpotCarDialog } from "@/components/car/SpotCarDialog";
 import { track } from "@/lib/analytics";
 
 const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
+const inter = { fontFamily: "'Inter', system-ui, -apple-system, sans-serif" } as const;
 
 const MAX_LEN = 500;
 
@@ -23,7 +24,7 @@ function supportsInAppCamera() {
     && (typeof window === "undefined" || window.isSecureContext !== false);
 }
 
-export function ExploreInlineComposer() {
+export function ExploreInlineComposer({ light = false }: { light?: boolean }) {
   const { user } = useAuth();
   const { data: profile } = useMyPersonProfile();
   const { mutateAsync, isPending } = useCreateFeedPost();
@@ -92,18 +93,59 @@ export function ExploreInlineComposer() {
     if (f) routeFile(f);
   }
 
+  // ── Theme tokens ──
+  const containerCls = light
+    ? "rounded-2xl border bg-white"
+    : "rounded-xl border border-white/[0.10] bg-white/[0.03]";
+  const containerStyle = light ? { borderColor: "rgba(0,0,0,0.08)" } : undefined;
+  const placeholderCls = light ? "text-neutral-500" : "text-white/45";
+  const dividerCls = light ? "bg-black/[0.08]" : "bg-white/[0.08]";
+  const camBtnCls = light
+    ? "shrink-0 px-3.5 hover:bg-black/[0.04] text-[#ff8a00] transition-colors rounded-r-2xl flex items-center"
+    : "shrink-0 px-3.5 hover:bg-white/[0.06] text-[#2dd4a8] transition-colors rounded-r-xl flex items-center";
+  const textBtnCls = light
+    ? "flex-1 text-left px-3 py-3 hover:bg-black/[0.03] transition-colors rounded-l-2xl"
+    : "flex-1 text-left px-3 py-2.5 hover:bg-white/[0.04] transition-colors rounded-l-xl";
+  const fontStyle = light ? inter : chakra;
+  const textareaCls = light
+    ? "w-full resize-none bg-transparent text-[14px] text-neutral-900 placeholder:text-neutral-400 focus:outline-none leading-snug"
+    : "w-full resize-none bg-transparent text-[14px] text-white placeholder:text-white/30 focus:outline-none leading-snug";
+  const cancelCls = light
+    ? "px-3 py-1.5 text-[11px] uppercase tracking-[0.12em] font-bold text-neutral-500 hover:text-neutral-900"
+    : "px-3 py-1.5 text-[11px] uppercase tracking-[0.12em] font-bold text-white/40 hover:text-white/70";
+  const publishStyle = light
+    ? { ...inter, background: "#2b2b2b", color: "#fcc419" }
+    : { ...chakra, background: "linear-gradient(135deg, #34eab8, #2dd4a8)" };
+  const publishCls = light
+    ? "px-4 py-1.5 rounded-full text-[11px] uppercase tracking-[0.12em] font-bold disabled:opacity-30 transition hover:brightness-105"
+    : "px-4 py-1.5 rounded-lg text-[11px] uppercase tracking-[0.12em] font-bold text-[#070b10] disabled:opacity-30 transition hover:brightness-110";
+  const profileLabelCls = light ? "text-[10px] text-neutral-400 truncate max-w-[50%]" : "text-[10px] text-white/25 truncate max-w-[50%]";
+
   if (!user) {
     return (
       <Link
         to="/login?returnUrl=/hjem"
-        className="flex items-center justify-between gap-2 rounded-xl border border-white/[0.10] bg-white/[0.03] px-3 py-2.5 hover:bg-white/[0.06] transition-colors"
+        className={
+          light
+            ? "flex items-center justify-between gap-2 rounded-2xl border bg-white px-3 py-3 hover:bg-black/[0.02] transition-colors"
+            : "flex items-center justify-between gap-2 rounded-xl border border-white/[0.10] bg-white/[0.03] px-3 py-2.5 hover:bg-white/[0.06] transition-colors"
+        }
+        style={containerStyle}
       >
-        <span className="text-[13px] text-white/45 truncate" style={chakra}>
+        <span className={`text-[13px] truncate ${placeholderCls}`} style={fontStyle}>
           Hva har du sett i dag?
         </span>
         <span
-          className="shrink-0 px-2.5 py-1 text-[10px] uppercase tracking-[0.12em] font-bold text-[#2dd4a8]"
-          style={chakra}
+          className={
+            light
+              ? "shrink-0 px-3 py-1 rounded-full text-[10px] uppercase tracking-[0.14em] font-bold"
+              : "shrink-0 px-2.5 py-1 text-[10px] uppercase tracking-[0.12em] font-bold text-[#2dd4a8]"
+          }
+          style={
+            light
+              ? { ...inter, background: "#2b2b2b", color: "#fcc419" }
+              : fontStyle
+          }
         >
           Logg inn
         </span>
@@ -112,7 +154,7 @@ export function ExploreInlineComposer() {
   }
 
   return (
-    <div className="rounded-xl border border-white/[0.10] bg-white/[0.03]">
+    <div className={containerCls} style={containerStyle}>
       <input
         ref={fileInputRef}
         type="file"
@@ -127,17 +169,17 @@ export function ExploreInlineComposer() {
           <button
             type="button"
             onClick={() => setTextMode(true)}
-            className="flex-1 text-left px-3 py-2.5 hover:bg-white/[0.04] transition-colors rounded-l-xl"
+            className={textBtnCls}
           >
-            <span className="text-[13px] text-white/45" style={chakra}>
+            <span className={`text-[13px] ${placeholderCls}`} style={fontStyle}>
               Hva har du sett i dag?
             </span>
           </button>
-          <div className="w-px bg-white/[0.08]" />
+          <div className={`w-px ${dividerCls}`} />
           <button
             type="button"
             onClick={handleCameraClick}
-            className="shrink-0 px-3.5 hover:bg-white/[0.06] text-[#2dd4a8] transition-colors rounded-r-xl flex items-center"
+            className={camBtnCls}
             aria-label="Åpne kamera"
           >
             <Camera className="w-4 h-4" />
@@ -152,19 +194,19 @@ export function ExploreInlineComposer() {
             placeholder="Skriv en oppdatering…"
             rows={3}
             maxLength={MAX_LEN}
-            className="w-full resize-none bg-transparent text-[14px] text-white placeholder:text-white/30 focus:outline-none leading-snug"
-            style={chakra}
+            className={textareaCls}
+            style={fontStyle}
           />
           <div className="flex items-center justify-between gap-2 pt-1">
-            <span className="text-[10px] text-white/25 truncate max-w-[50%]" style={chakra}>
+            <span className={profileLabelCls} style={fontStyle}>
               {profile?.display_name ?? ""}
             </span>
             <div className="flex items-center gap-2 shrink-0">
               <button
                 type="button"
                 onClick={handleCancelText}
-                className="px-3 py-1.5 text-[11px] uppercase tracking-[0.12em] font-bold text-white/40 hover:text-white/70"
-                style={chakra}
+                className={cancelCls}
+                style={fontStyle}
               >
                 Avbryt
               </button>
@@ -172,8 +214,8 @@ export function ExploreInlineComposer() {
                 type="button"
                 onClick={() => void handlePublish()}
                 disabled={isPending || !body.trim()}
-                className="px-4 py-1.5 rounded-lg text-[11px] uppercase tracking-[0.12em] font-bold text-[#070b10] disabled:opacity-30 transition hover:brightness-110"
-                style={{ ...chakra, background: "linear-gradient(135deg, #34eab8, #2dd4a8)" }}
+                className={publishCls}
+                style={publishStyle}
               >
                 {isPending ? "…" : "Publiser"}
               </button>
