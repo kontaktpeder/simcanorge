@@ -202,7 +202,7 @@ export function FeedPostCard({
               <img
                 src={heroImage}
                 alt={entityTitle ?? ""}
-                className="w-full aspect-[4/5] sm:aspect-video object-cover transition-transform duration-700 group-hover:scale-[1.02]"
+                className="w-full aspect-[4/5] object-cover transition-transform duration-700 group-hover:scale-[1.02]"
               />
             </Link>
           ) : (
