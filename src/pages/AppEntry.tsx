@@ -3,6 +3,7 @@ import { Navigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import Start from "@/pages/Start";
 import { BrandLoader } from "@/components/brand/BrandLoader";
+import { SeoHead } from "@/components/seo/SeoHead";
 
 /**
  * App entry "/app".
@@ -38,5 +39,15 @@ export default function AppEntry() {
     );
   }
 
-  return <Start />;
+  return (
+    <>
+      <SeoHead
+        title="Bilgarasje – Min app"
+        canonicalPath="/app"
+        noindex
+      />
+      <Start />
+    </>
+  );
 }
+

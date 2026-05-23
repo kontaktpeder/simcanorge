@@ -164,7 +164,7 @@ const rawRoutes: RouteConfig[] = [
   { path: "/sok-om-tilgang", element: SokOmTilgang, isPublic: true },
   { path: "/registrer", element: RegistrerBruker, isPublic: true },
   { path: "/start-annonse", element: StartAnnonse, isPublic: true },
-  { path: "/registrer-bil", element: RegistrerBil, isPublic: true },
+  { path: "/registrer-bil", element: lazy(() => import("@/pages/RegistrerBilRedirect")), isPublic: true },
   { path: "/s/:slug", element: PublicPagePage, isPublic: true },
   { path: "/e/:slug", element: PublicEventPage, isPublic: true },
   { path: "/aktoerer", element: AktoererPage, label: "Aktører", description: "Verksteder, forhandlere og andre aktører", isPublic: true, showInNav: false },
