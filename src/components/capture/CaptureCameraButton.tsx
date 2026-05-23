@@ -217,12 +217,16 @@ export function CaptureCameraButton({ size = "hero", onOpenChange, screen, varia
         />
       )}
 
-      <InAppCameraModal
-        open={cameraOpen}
-        onClose={handleCameraClose}
-        onCapture={handleCameraCapture}
-        onPickGallery={handleCameraGalleryFallback}
-      />
+      {cameraOpen && typeof document !== "undefined" &&
+        createPortal(
+          <InAppCameraModal
+            open={cameraOpen}
+            onClose={handleCameraClose}
+            onCapture={handleCameraCapture}
+            onPickGallery={handleCameraGalleryFallback}
+          />,
+          document.body,
+        )}
     </>
   );
 }
