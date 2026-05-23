@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
+import { SeoHead } from "@/components/seo";
 import { Layout } from "@/components/layout/Layout";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
@@ -69,9 +69,10 @@ export default function SporsmalDetalj() {
 
   return (
     <Layout>
-      <Helmet>
-        <title>{q.title} — Spørsmål — Bilgarasje.no</title>
-      </Helmet>
+      <SeoHead
+        title={`${q.title} — Spørsmål — Bilgarasje.no`}
+        canonicalPath={`/sporsmal/${slug}`}
+      />
       <PageHeader title={q.title} />
       <section className="bg-[#070b10] py-8">
         <div className="max-w-[720px] mx-auto px-5 space-y-6">

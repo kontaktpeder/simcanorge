@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Helmet } from "react-helmet-async";
+import { SeoHead } from "@/components/seo";
 import { User, LogOut, Shield, Trash2, Mail, Calendar, Loader2, AlertTriangle, Bookmark, ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useMySavedQuestions } from "@/hooks/useQuestionSave";
@@ -138,10 +138,12 @@ export default function Konto() {
 
   return (
     <Layout>
-      <Helmet>
-        <title>Konto | Bilgarasje.no</title>
-        <meta name="description" content="Administrer kontoen din på Bilgarasje.no" />
-      </Helmet>
+      <SeoHead
+        title="Konto | Bilgarasje.no"
+        description="Administrer kontoen din på Bilgarasje.no"
+        canonicalPath="/konto"
+        noindex
+      />
 
       <div className="container max-w-2xl mx-auto py-8 px-4">
         <motion.div
