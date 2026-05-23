@@ -3,6 +3,11 @@ import { SpottingReactionsRow } from "@/components/car/detail/SpottingReactionsR
 import { oswald, oswaldLight, OBSERVATION_ACCENT } from "@/lib/observationPostTokens";
 import { ObservationMediaCarousel, type MediaItem } from "./ObservationMediaCarousel";
 
+const VV_YELLOW = "#fcc419";
+const VV_ORANGE = "#ff8a00";
+const VV_DARK = "#2b2b2b";
+const inter = { fontFamily: "'Inter', 'Helvetica Neue', Arial, sans-serif" } as const;
+
 type Props = {
   carId: string;
   imageUrl: string | null;
