@@ -161,7 +161,7 @@ export default function Start() {
     <Layout>
       <Helmet>
         <title>Hjem — Bilgarasje.no</title>
-        <meta name="description" content="Fang biler rundt deg — Norges levende bilearkiv." />
+        <meta name="description" content="Innlegg om biler i Norge — bilder, historier og spor du har sett." />
       </Helmet>
 
       <div className="car-paper-theme min-h-screen bg-[#e9e7e1] text-neutral-900 pb-32">
