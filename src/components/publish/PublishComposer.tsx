@@ -819,3 +819,30 @@ function VVSegment({
     </button>
   );
 }
+
+function ShareTile({
+  label,
+  iconBg,
+  children,
+}: {
+  label: string;
+  iconBg: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      className="flex flex-col items-center justify-center gap-1.5 rounded-xl border border-black/10 bg-white px-2 py-3 hover:bg-neutral-50 transition-colors"
+    >
+      <span
+        className="w-9 h-9 rounded-lg flex items-center justify-center"
+        style={{ backgroundColor: iconBg }}
+      >
+        {children}
+      </span>
+      <span className="text-[11px] font-medium text-neutral-700 truncate w-full text-center">
+        {label}
+      </span>
+    </button>
+  );
+}
