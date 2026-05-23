@@ -510,7 +510,7 @@ export function PublishComposer() {
                     type="text"
                     value={caption}
                     onChange={(e) => setCaption(e.target.value.slice(0, 100))}
-                    placeholder="Hva tenker du på?"
+                    placeholder="Hva har du sett i dag?"
                     className="w-full bg-transparent text-[16px] text-neutral-900 placeholder:text-neutral-400 focus:outline-none mt-1"
                   />
                 </div>
