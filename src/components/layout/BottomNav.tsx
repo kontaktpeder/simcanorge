@@ -31,17 +31,13 @@ function NavBtn({ item, active }: { item: Item; active: boolean }) {
       <span className="relative">
         <Icon
           className={`w-[22px] h-[22px] transition-all ${
-            active ? "text-[#34eab8]" : "text-white/45 group-hover:text-white/75"
+            active ? "text-white" : "text-white/70 group-hover:text-white"
           }`}
         />
         {item.badge && (
           <span
-            className="absolute -top-1.5 -right-3 px-1.5 py-[1px] rounded-full text-[8px] font-bold uppercase tracking-[0.08em] leading-none text-[#070b10]"
-            style={{
-              ...chakra,
-              background: "linear-gradient(135deg,#34eab8,#2ab89a)",
-              boxShadow: "0 0 8px rgba(52,234,184,0.5)",
-            }}
+            className="absolute -top-1.5 -right-3 px-1.5 py-[1px] rounded-full text-[8px] font-bold uppercase tracking-[0.08em] leading-none text-white"
+            style={{ ...chakra, background: "#f08a24" }}
           >
             {item.badge}
           </span>
@@ -49,12 +45,19 @@ function NavBtn({ item, active }: { item: Item; active: boolean }) {
       </span>
       <span
         className={`text-[10px] tracking-[0.08em] uppercase font-bold transition-colors ${
-          active ? "text-white" : "text-white/45 group-hover:text-white/70"
+          active ? "text-white" : "text-white/70 group-hover:text-white"
         }`}
         style={chakra}
       >
         {item.label}
       </span>
+      {active && (
+        <span
+          aria-hidden="true"
+          className="absolute bottom-1 h-[2px] w-7 rounded-full"
+          style={{ background: "#f08a24" }}
+        />
+      )}
     </Link>
   );
 }
@@ -98,11 +101,11 @@ export function BottomNav() {
   return (
     <>
       <nav
-        className="md:hidden fixed bottom-0 left-0 right-0 z-40 backdrop-blur-xl border-t border-white/[0.06] transition-transform duration-300 ease-out will-change-transform"
+        className="md:hidden fixed bottom-0 left-0 right-0 z-40 backdrop-blur-xl border-t border-white/10 transition-transform duration-300 ease-out will-change-transform"
         style={{
-          background: "rgba(8,12,17,0.92)",
+          background: "#4a5560",
           paddingBottom: "env(safe-area-inset-bottom, 0px)",
-          boxShadow: "0 -2px 20px rgba(0,0,0,0.4)",
+          boxShadow: "0 -2px 20px rgba(0,0,0,0.25)",
           transform: visible || pickerOpen ? "translateY(0)" : "translateY(110%)",
         }}
         aria-label="Hovednavigasjon"
