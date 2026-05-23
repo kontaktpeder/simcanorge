@@ -6,8 +6,16 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { track } from "@/lib/analytics";
 import { FEATURES } from "@/config/features";
 import { usePublishComposer } from "@/contexts/PublishComposerContext";
+import { InAppCameraModal } from "@/components/capture/InAppCameraModal";
 
 const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
+
+function supportsInAppCamera() {
+  return typeof navigator !== "undefined"
+    && !!navigator.mediaDevices
+    && typeof navigator.mediaDevices.getUserMedia === "function"
+    && (typeof window === "undefined" || window.isSecureContext !== false);
+}
 
 interface Props {
   /** "hero" = stor rund knapp på Start, "fab" = 64px senter i BottomNav. */
@@ -35,8 +43,10 @@ export function CaptureCameraButton({ size = "hero", onOpenChange, screen, varia
   const galleryRef = useRef<HTMLInputElement>(null);
   const [prefillFile, setPrefillFile] = useState<File | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [cameraOpen, setCameraOpen] = useState(false);
   const { openPublishComposer } = usePublishComposer();
   const useV1 = FEATURES.publishComposerV1;
+  const inAppCamera = supportsInAppCamera();
 
   const isLight = variant === "light";
 
@@ -51,7 +61,12 @@ export function CaptureCameraButton({ size = "hero", onOpenChange, screen, varia
   const handleClick = () => {
     void track("capture_intent_click", screen ?? "start", { path: location.pathname, source: "camera" });
     if (!requireAuth()) return;
-    inputRef.current?.click();
+    if (inAppCamera) {
+      setCameraOpen(true);
+      onOpenChange?.(true);
+    } else {
+      inputRef.current?.click();
+    }
   };
 
   const handleGalleryClick = () => {
@@ -81,6 +96,27 @@ export function CaptureCameraButton({ size = "hero", onOpenChange, screen, varia
     setDialogOpen(next);
     onOpenChange?.(next);
     if (!next) setPrefillFile(null);
+  };
+
+  const handleCameraCapture = (file: File) => {
+    setCameraOpen(false);
+    if (useV1) {
+      openPublishComposer({ initialImageFile: file, source: screen ?? "capture" });
+    } else {
+      setPrefillFile(file);
+      setDialogOpen(true);
+    }
+    onOpenChange?.(true);
+  };
+
+  const handleCameraClose = () => {
+    setCameraOpen(false);
+    onOpenChange?.(false);
+  };
+
+  const handleCameraGalleryFallback = () => {
+    setCameraOpen(false);
+    galleryRef.current?.click();
   };
 
   const isHero = size === "hero";
@@ -179,6 +215,13 @@ export function CaptureCameraButton({ size = "hero", onOpenChange, screen, varia
           initialImageFile={prefillFile}
         />
       )}
+
+      <InAppCameraModal
+        open={cameraOpen}
+        onClose={handleCameraClose}
+        onCapture={handleCameraCapture}
+        onPickGallery={handleCameraGalleryFallback}
+      />
     </>
   );
 }

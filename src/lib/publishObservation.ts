@@ -1,13 +1,13 @@
 /**
- * publishObservation — central publish motor for PublishComposer v1.
+ * publishObservation — central publish motor for PublishComposer v1 (MVP).
  *
- * Ansvar:
- *   1. Last opp media
- *   2. Resolve car_id (valgt bil → opprett tynn spotting-bil hvis ikke)
- *   3. Opprett car_event (DB-trigger oppretter feed_post når visibility=public)
- *   4. Hvis type === "question": opprett questions-rad koblet til car_id
- *
- * Ingen UI. Ingen toasts. Ren motor — kall fra hook/komponent.
+ * Produktregel: Alt er innlegg. Noen innlegg er knyttet til bil.
+ *   - Tekst ELLER bilde må finnes.
+ *   - attachCar default FALSE (bil er et valg, ikke tvang).
+ *   - Uten bil → feed_posts (manual). Med bilde lastes det opp først.
+ *   - Med bil → car_event (DB-trigger oppretter feed_post når visibility=public).
+ *   - Ingen question-modus i UI; feltet beholdes for bakoverkompatibilitet
+ *     men brukes ikke fra composer i MVP.
  */
 
 import { supabase } from "@/integrations/supabase/client";
@@ -24,13 +24,14 @@ export type PublishVisibility = "public" | "private";
 
 export interface PublishObservationInput {
   userId: string;
-  imageFile: File;
+  /** Valgfritt — tekst eller bilde må finnes. */
+  imageFile?: File | null;
   caption?: string | null;
   type?: PublishType;
   visibility?: PublishVisibility;
   /** Valgt eksisterende bil. */
   carId?: string | null;
-  /** Hvis false: ikke knytt til bil — publiser kun feed_post med bilde. Standard true. */
+  /** Hvis false: ikke knytt til bil — publiser kun feed_post. Default FALSE. */
   attachCar?: boolean;
   /** Valgfritt regnr for å matche/opprette bil hvis carId ikke er satt. */
   registrationNumber?: string | null;
@@ -67,41 +68,25 @@ function slugify(input: string): string {
       .replace(/[øØ]/g, "o")
       .replace(/[åÅ]/g, "a")
       .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-+|-+$/g, "") || "observasjon"
+      .replace(/^-+|-+$/g, "") || "innlegg"
   );
-}
-
-function randSuffix(n = 6) {
-  return Math.random().toString(36).slice(2, 2 + n);
 }
 
 export async function publishObservation(
   input: PublishObservationInput,
 ): Promise<PublishObservationResult> {
   if (!input.userId) throw new Error("not_authenticated");
-  if (!input.imageFile) throw new Error("image_required");
 
   const type: PublishType = input.type ?? "moment";
   const visibility: PublishVisibility = input.visibility ?? "public";
   const caption = (input.caption ?? "").trim();
-  const attachCar = input.attachCar !== false; // default true
+  const hasImage = !!input.imageFile;
+  if (!caption && !hasImage) throw new Error("text_or_image_required");
+
+  const attachCar = input.attachCar === true; // default FALSE i MVP
 
   // ─── Feed-only modus (ingen bil knyttet) ─────────────────────────────
   if (!attachCar && !input.carId) {
-    const compressed = await compressImage(input.imageFile);
-    const imageId = generateImageId();
-    const storagePath = `feed-posts/${input.userId}/${imageId}.webp`;
-    const { error: upErr } = await supabase.storage
-      .from("simca-images")
-      .upload(storagePath, compressed.file, {
-        contentType: "image/webp",
-        upsert: false,
-      });
-    if (upErr) throw upErr;
-    const { data: urlData } = supabase.storage
-      .from("simca-images")
-      .getPublicUrl(storagePath);
-
     const { data: profile } = await supabase
       .from("person_profiles")
       .select("id")
@@ -109,13 +94,31 @@ export async function publishObservation(
       .maybeSingle();
     if (!profile?.id) throw new Error("profile_required");
 
+    let snapshotImageUrl: string | null = null;
+    if (input.imageFile) {
+      const compressed = await compressImage(input.imageFile);
+      const imageId = generateImageId();
+      const storagePath = `feed-posts/${input.userId}/${imageId}.webp`;
+      const { error: upErr } = await supabase.storage
+        .from("simca-images")
+        .upload(storagePath, compressed.file, {
+          contentType: "image/webp",
+          upsert: false,
+        });
+      if (upErr) throw upErr;
+      const { data: urlData } = supabase.storage
+        .from("simca-images")
+        .getPublicUrl(storagePath);
+      snapshotImageUrl = urlData.publicUrl;
+    }
+
     const { data: feedRow, error: feedErr } = await supabase
       .from("feed_posts")
       .insert({
         author_profile_id: profile.id,
         post_type: "manual",
         body: caption || null,
-        snapshot_image_url: urlData.publicUrl,
+        snapshot_image_url: snapshotImageUrl,
         snapshot_title: caption.slice(0, 80) || "Innlegg",
         snapshot_entity_type: "manual",
       })
@@ -157,7 +160,6 @@ export async function publishObservation(
       ? normalizeRegnr(input.registrationNumber)
       : "";
 
-    // Forsøk regnr-match først
     if (regnrNormalized.length >= 2) {
       const { data: matches } = await supabase.rpc(
         "find_cars_by_registration_number",
@@ -173,7 +175,6 @@ export async function publishObservation(
       }
     }
 
-    // Opprett tynn spotting-bil
     if (!carId) {
       const meta = buildSpottingCarInsertMeta({
         registrationNumberRaw: input.registrationNumber,
@@ -193,7 +194,6 @@ export async function publishObservation(
           category: "registrert",
           created_by_user_id: input.userId,
           identification_status: meta.identification_status,
-          // Privat spotting: ikke publiser bilen.
           published_at: isPrivateSpotting ? null : new Date().toISOString(),
           ...(meta.registration_number
             ? { registration_number: meta.registration_number }
@@ -217,20 +217,15 @@ export async function publishObservation(
   if (!carId) throw new Error("car_resolve_failed");
 
   // ─── 2) Opprett car_event ────────────────────────────────────────────
-  const eventCategory = type === "question" ? "kunnskap" : "bruk";
-  const eventType = type === "question" ? "sporsmal" : "moment";
-  const eventTitle =
-    type === "question"
-      ? caption.slice(0, 80) || "Spørsmål"
-      : caption.slice(0, 80) || "Øyeblikk";
+  const eventTitle = caption.slice(0, 80) || "Innlegg";
 
   const { data: eventRow, error: eventErr } = await supabase
     .from("car_events")
     .insert({
       car_id: carId,
       activity_session_id: input.activitySessionId ?? null,
-      category: eventCategory,
-      event_type: eventType,
+      category: "bruk",
+      event_type: "moment",
       title: eventTitle,
       visibility,
       occurred_at: new Date().toISOString(),
@@ -248,74 +243,36 @@ export async function publishObservation(
   if (eventErr || !eventRow) throw eventErr ?? new Error("event_create_failed");
   const eventId = (eventRow as { id: string }).id;
 
-  // ─── 3) Last opp og koble bilde ──────────────────────────────────────
-  const compressed = await compressImage(input.imageFile);
-  const imageId = generateImageId();
-  const storagePath = getCarEventImagePath(carId, eventId, imageId);
-  const { error: upErr } = await supabase.storage
-    .from("simca-images")
-    .upload(storagePath, compressed.file, {
-      contentType: "image/webp",
-      upsert: false,
+  // ─── 3) Last opp og koble bilde (hvis satt) ──────────────────────────
+  if (input.imageFile) {
+    const compressed = await compressImage(input.imageFile);
+    const imageId = generateImageId();
+    const storagePath = getCarEventImagePath(carId, eventId, imageId);
+    const { error: upErr } = await supabase.storage
+      .from("simca-images")
+      .upload(storagePath, compressed.file, {
+        contentType: "image/webp",
+        upsert: false,
+      });
+    if (upErr) throw upErr;
+    const { data: urlData } = supabase.storage
+      .from("simca-images")
+      .getPublicUrl(storagePath);
+
+    const { error: imgErr } = await supabase.from("car_event_images").insert({
+      car_event_id: eventId,
+      image_url: urlData.publicUrl,
+      sort_order: 0,
+      alt_text: caption.slice(0, 120) || "Observasjon",
     });
-  if (upErr) throw upErr;
-  const { data: urlData } = supabase.storage
-    .from("simca-images")
-    .getPublicUrl(storagePath);
-
-  const { error: imgErr } = await supabase.from("car_event_images").insert({
-    car_event_id: eventId,
-    image_url: urlData.publicUrl,
-    sort_order: 0,
-    alt_text: caption.slice(0, 120) || "Observasjon",
-  });
-  if (imgErr) throw imgErr;
-
-  // ─── 4) Spørsmål-kobling (kunnskap på bilen) ─────────────────────────
-  let questionId: string | null = null;
-  let questionSlug: string | null = null;
-  if (type === "question") {
-    // Hent author_profile_id
-    const { data: profile } = await supabase
-      .from("person_profiles")
-      .select("id")
-      .eq("user_id", input.userId)
-      .maybeSingle();
-
-    if (profile?.id) {
-      const baseSlug = slugify(eventTitle) || "sporsmal";
-      for (let attempt = 0; attempt < 3; attempt++) {
-        const slug = `${baseSlug}-${randSuffix()}`;
-        const { data: qRow, error: qErr } = await supabase
-          .from("questions")
-          .insert({
-            title: eventTitle,
-            body: caption || eventTitle,
-            slug,
-            car_id: carId,
-            author_profile_id: profile.id,
-          })
-          .select("id, slug")
-          .single();
-        if (!qErr && qRow) {
-          questionId = (qRow as { id: string }).id;
-          questionSlug = (qRow as { slug: string }).slug;
-          break;
-        }
-        if (!String(qErr?.message ?? "").toLowerCase().includes("duplicate")) {
-          // Ikke fatal — spørsmål-raden er en bonus, car_event finnes allerede.
-          console.warn("question insert failed", qErr);
-          break;
-        }
-      }
-    }
+    if (imgErr) throw imgErr;
   }
 
   return {
     carId,
     eventId,
-    questionId,
-    questionSlug,
+    questionId: null,
+    questionSlug: null,
     carSlug,
     feedPostId: null,
     matchedExistingCar,
