@@ -22,3 +22,11 @@ Hjelper dette noen å legge ut eller oppdage et innlegg knyttet til en bil?
 - `post_type` / `car_events` kan variere i DB; UI sier «Innlegg» der det er brukerinnhold.
 - Canonical garasje = `/min-garasje`. `/garasje` og `/dashboard` redirecter dit.
 - Privat innlegg: `feed_posts.is_visible = false` for feed-only manual posts.
+
+## Innhold først (feed)
+
+- Brukeren ser **innlegg** — ikke post_type-navn.
+- Rendering: tekst? · media? · kobling? · system-badge?
+- `post_type` / `event_type` er backend og filtrering, ikke UI-identitet.
+- Spotting, moment, manual = samme kort; metadata skjult eller i chip.
+- Upubliserte biler: chip «Koblet til bilutkast», ingen lenke til `/biler/...`.
