@@ -28,8 +28,10 @@ export interface PublishObservationInput {
   caption?: string | null;
   type?: PublishType;
   visibility?: PublishVisibility;
-  /** Valgt eksisterende bil. Hvis null/undefined ⇒ opprett tynn spotting-bil. */
+  /** Valgt eksisterende bil. */
   carId?: string | null;
+  /** Hvis false: ikke knytt til bil — publiser kun feed_post med bilde. Standard true. */
+  attachCar?: boolean;
   /** Valgfritt regnr for å matche/opprette bil hvis carId ikke er satt. */
   registrationNumber?: string | null;
   /** Valgfri tittel/modell brukt ved opprettelse av ny bil. */
@@ -39,11 +41,14 @@ export interface PublishObservationInput {
 }
 
 export interface PublishObservationResult {
-  carId: string;
-  eventId: string;
+  /** null når feed-only. */
+  carId: string | null;
+  /** null når feed-only. */
+  eventId: string | null;
   questionId: string | null;
   questionSlug: string | null;
   carSlug: string | null;
+  feedPostId: string | null;
   matchedExistingCar: boolean;
   createdNewCar: boolean;
   visibility: PublishVisibility;
@@ -79,6 +84,58 @@ export async function publishObservation(
   const type: PublishType = input.type ?? "moment";
   const visibility: PublishVisibility = input.visibility ?? "public";
   const caption = (input.caption ?? "").trim();
+  const attachCar = input.attachCar !== false; // default true
+
+  // ─── Feed-only modus (ingen bil knyttet) ─────────────────────────────
+  if (!attachCar && !input.carId) {
+    const compressed = await compressImage(input.imageFile);
+    const imageId = generateImageId();
+    const storagePath = `feed-posts/${input.userId}/${imageId}.webp`;
+    const { error: upErr } = await supabase.storage
+      .from("simca-images")
+      .upload(storagePath, compressed.file, {
+        contentType: "image/webp",
+        upsert: false,
+      });
+    if (upErr) throw upErr;
+    const { data: urlData } = supabase.storage
+      .from("simca-images")
+      .getPublicUrl(storagePath);
+
+    const { data: profile } = await supabase
+      .from("person_profiles")
+      .select("id")
+      .eq("user_id", input.userId)
+      .maybeSingle();
+    if (!profile?.id) throw new Error("profile_required");
+
+    const { data: feedRow, error: feedErr } = await supabase
+      .from("feed_posts")
+      .insert({
+        author_profile_id: profile.id,
+        post_type: "manual",
+        body: caption || null,
+        snapshot_image_url: urlData.publicUrl,
+        snapshot_title: caption.slice(0, 80) || "Innlegg",
+        snapshot_entity_type: "manual",
+      })
+      .select("id")
+      .single();
+    if (feedErr || !feedRow) throw feedErr ?? new Error("feed_post_failed");
+
+    return {
+      carId: null,
+      eventId: null,
+      questionId: null,
+      questionSlug: null,
+      carSlug: null,
+      feedPostId: (feedRow as { id: string }).id,
+      matchedExistingCar: false,
+      createdNewCar: false,
+      visibility,
+      type,
+    };
+  }
 
   // ─── 1) Resolve car_id ────────────────────────────────────────────────
   let carId: string | null = input.carId ?? null;
@@ -124,6 +181,7 @@ export async function publishObservation(
         titleOrModel: input.titleOrModel ?? caption.slice(0, 60) ?? null,
       });
       const baseSlug = slugify(`${meta.displayTitle}-${Date.now()}`);
+      const isPrivateSpotting = visibility === "private";
       const { data: created, error: createErr } = await supabase
         .from("cars")
         .insert({
@@ -135,7 +193,8 @@ export async function publishObservation(
           category: "registrert",
           created_by_user_id: input.userId,
           identification_status: meta.identification_status,
-          published_at: new Date().toISOString(),
+          // Privat spotting: ikke publiser bilen.
+          published_at: isPrivateSpotting ? null : new Date().toISOString(),
           ...(meta.registration_number
             ? { registration_number: meta.registration_number }
             : {}),
@@ -148,8 +207,10 @@ export async function publishObservation(
       carId = row.id;
       carSlug = row.slug ?? null;
       createdNewCar = true;
-      const pub = await publishCarOnObservation(carId);
-      if (pub.ok) carSlug = pub.slug;
+      if (!isPrivateSpotting) {
+        const pub = await publishCarOnObservation(carId);
+        if (pub.ok) carSlug = pub.slug;
+      }
     }
   }
 
@@ -256,6 +317,7 @@ export async function publishObservation(
     questionId,
     questionSlug,
     carSlug,
+    feedPostId: null,
     matchedExistingCar,
     createdNewCar,
     visibility,
