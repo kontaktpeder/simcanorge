@@ -44,18 +44,34 @@ type Props = {
 };
 
 
-const PAPER_BG = "#e9e7e1";
+// Vegvesen-inspirert lys palett (matcher /min-garasje og PublishComposer)
+const VV_BG = "#f3f3f3";
+const VV_YELLOW = "#fcc419";
+const VV_YELLOW_SOFT = "#fff4d1";
+const VV_DARK = "#2b2b2b";
+const PAPER_BG = VV_BG;
 
-const SectionDivider = ({ isLight }: { isLight: boolean }) => (
-  <div className={isLight ? "border-t border-neutral-900/10" : "border-t border-white/[0.06]"} />
-);
+const inter = { fontFamily: "'Inter', 'Helvetica Neue', Arial, sans-serif" } as const;
+
+const SectionDivider = ({ isLight }: { isLight: boolean }) =>
+  isLight ? null : <div className="border-t border-white/[0.06]" />;
 
 const SectionLabel = ({ children, isLight }: { children: React.ReactNode; isLight: boolean }) => (
   <div
-    className={`text-[11px] uppercase tracking-[0.22em] mb-4 ${
+    className={`text-[11px] uppercase tracking-[0.18em] font-semibold mb-4 ${
       isLight ? "text-neutral-500" : "text-white/35"
     }`}
-    style={oswald}
+    style={isLight ? inter : oswald}
+  >
+    {children}
+  </div>
+);
+
+// Lett kortwrapper for lys variant – speiler "white card"-mønsteret fra /min-garasje
+const LightCard = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
+  <div
+    className={`rounded-2xl bg-white border border-black/[0.08] p-5 sm:p-6 ${className}`}
+    style={inter}
   >
     {children}
   </div>
@@ -122,97 +138,135 @@ export function CarObservationPage(props: Props) {
   const showStoryBlock = (enrichment.showStory && !!story) || cleanTags.length > 0;
 
   const RightSections = (
-    <>
+    <div className={isLight ? "container mx-auto px-4 max-w-3xl lg:px-0 lg:mx-0 lg:max-w-none space-y-3 pb-10 pt-2" : ""}>
       {brand && (
-        <section className="pt-2 pb-4">
-          <div className="container mx-auto px-4 max-w-3xl lg:px-0 lg:mx-0 lg:max-w-none">
-            <BrandHubLink brand={brand} variant="chip" />
-          </div>
+        <section className={isLight ? "" : "pt-2 pb-4"}>
+          {isLight ? (
+            <div className="px-1">
+              <BrandHubLink brand={brand} variant="chip" />
+            </div>
+          ) : (
+            <div className="container mx-auto px-4 max-w-3xl lg:px-0 lg:mx-0 lg:max-w-none">
+              <BrandHubLink brand={brand} variant="chip" />
+            </div>
+          )}
         </section>
       )}
+
       {enrichment.showTimeline && (
         <>
           <SectionDivider isLight={isLight} />
-          <section className="py-8">
-            <div className="container mx-auto px-4 max-w-3xl lg:px-0 lg:mx-0 lg:max-w-none">
+          {isLight ? (
+            <LightCard>
               <AnimatedSection>
                 <SectionLabel isLight={isLight}>Historikk</SectionLabel>
                 <CarTimeline carId={carId} heroCaptionEventId={heroCaptionEventId} carCreatedAt={carCreatedAt} />
               </AnimatedSection>
-            </div>
-          </section>
+            </LightCard>
+          ) : (
+            <section className="py-8">
+              <div className="container mx-auto px-4 max-w-3xl lg:px-0 lg:mx-0 lg:max-w-none">
+                <AnimatedSection>
+                  <SectionLabel isLight={isLight}>Historikk</SectionLabel>
+                  <CarTimeline carId={carId} heroCaptionEventId={heroCaptionEventId} carCreatedAt={carCreatedAt} />
+                </AnimatedSection>
+              </div>
+            </section>
+          )}
         </>
       )}
-
 
       {showStoryBlock && (
         <>
           <SectionDivider isLight={isLight} />
-          <section className="py-8">
-            <div className="container mx-auto px-4 max-w-3xl lg:px-0 lg:mx-0 lg:max-w-none">
-              <SectionLabel isLight={isLight}>Om bilen</SectionLabel>
-              {enrichment.showStory && story && (
-                <p
-                  className={`text-[17px] md:text-[18px] leading-[1.65] whitespace-pre-wrap ${
-                    isLight ? "text-neutral-800" : "text-white/85"
-                  }`}
-                  style={oswaldLight}
-                >
-                  {story}
-                </p>
-              )}
+          {(() => {
+            const inner = (
+              <>
+                <SectionLabel isLight={isLight}>Om bilen</SectionLabel>
+                {enrichment.showStory && story && (
+                  <p
+                    className={`text-[16px] md:text-[17px] leading-[1.65] whitespace-pre-wrap ${
+                      isLight ? "text-neutral-800" : "text-white/85"
+                    }`}
+                    style={isLight ? inter : oswaldLight}
+                  >
+                    {story}
+                  </p>
+                )}
 
-              {cleanTags.length > 0 && (
-                <div className={`flex flex-wrap items-center gap-2 ${enrichment.showStory && story ? "mt-6" : ""}`}>
-                  {cleanTags.map((t) => (
-                    <span
-                      key={t}
-                      className={`inline-flex items-center rounded-full px-3 py-1 text-[11px] uppercase tracking-[0.18em] ${
-                        isLight
-                          ? "border border-neutral-900/15 bg-neutral-900/[0.03] text-neutral-700"
-                          : "border border-white/10 bg-white/[0.02] text-white/65"
-                      }`}
-                      style={oswald}
-                    >
-                      #{t}
-                    </span>
-                  ))}
-                </div>
-              )}
-            </div>
-          </section>
-
+                {cleanTags.length > 0 && (
+                  <div className={`flex flex-wrap items-center gap-2 ${enrichment.showStory && story ? "mt-6" : ""}`}>
+                    {cleanTags.map((t) => (
+                      <span
+                        key={t}
+                        className={`inline-flex items-center rounded-full px-3 py-1 text-[11px] uppercase tracking-[0.14em] font-semibold ${
+                          isLight
+                            ? "border text-neutral-900"
+                            : "border border-white/10 bg-white/[0.02] text-white/65"
+                        }`}
+                        style={
+                          isLight
+                            ? { ...inter, backgroundColor: VV_YELLOW_SOFT, borderColor: VV_YELLOW }
+                            : oswald
+                        }
+                      >
+                        #{t}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </>
+            );
+            return isLight ? (
+              <LightCard>{inner}</LightCard>
+            ) : (
+              <section className="py-8">
+                <div className="container mx-auto px-4 max-w-3xl lg:px-0 lg:mx-0 lg:max-w-none">{inner}</div>
+              </section>
+            );
+          })()}
         </>
       )}
-
 
       {enrichment.showOwnerCard && (
         <>
           <SectionDivider isLight={isLight} />
-          <section className="py-8">
-            <div className="container mx-auto px-4 max-w-2xl lg:px-0 lg:mx-0 lg:max-w-none">
+          {isLight ? (
+            <LightCard>
               <OwnerCard carId={carId} heading="Eies av" />
-            </div>
-          </section>
+            </LightCard>
+          ) : (
+            <section className="py-8">
+              <div className="container mx-auto px-4 max-w-2xl lg:px-0 lg:mx-0 lg:max-w-none">
+                <OwnerCard carId={carId} heading="Eies av" />
+              </div>
+            </section>
+          )}
         </>
       )}
 
       {enrichment.showIdentifyLink && (
-        <div className="container mx-auto px-4 pb-12 pt-4 text-center lg:px-0 lg:mx-0 lg:text-left">
+        <div
+          className={
+            isLight
+              ? "pt-3 pb-2 text-center lg:text-left px-1"
+              : "container mx-auto px-4 pb-12 pt-4 text-center lg:px-0 lg:mx-0 lg:text-left"
+          }
+        >
           <Link
             to="/ukjente-biler"
-            className={`text-[11px] uppercase tracking-[0.22em] transition-colors ${
+            className={`text-[11px] uppercase tracking-[0.18em] font-semibold transition-colors ${
               isLight
                 ? "text-neutral-500 hover:text-neutral-900"
                 : "text-white/35 hover:text-white/85"
             }`}
-            style={oswald}
+            style={isLight ? inter : oswald}
           >
             Hjelp fellesskapet å identifisere bilen
           </Link>
         </div>
       )}
-    </>
+    </div>
   );
 
   return (
