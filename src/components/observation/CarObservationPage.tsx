@@ -44,7 +44,7 @@ type Props = {
 };
 
 
-const PAPER_BG = "#f1ede4";
+const PAPER_BG = "#e9e7e1";
 
 const SectionDivider = ({ isLight }: { isLight: boolean }) => (
   <div className={isLight ? "border-t border-neutral-900/10" : "border-t border-white/[0.06]"} />
@@ -218,7 +218,7 @@ export function CarObservationPage(props: Props) {
   return (
     <div
       style={{ backgroundColor: isLight ? PAPER_BG : OBSERVATION_BG }}
-      className={isLight ? "text-neutral-900" : "text-white"}
+      className={isLight ? "car-paper-theme text-neutral-900" : "text-white"}
     >
       {/* Mobile / tablet: original stacked layout */}
       <div className="lg:hidden">
