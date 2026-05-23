@@ -433,10 +433,10 @@ export function PublishComposer() {
                 </button>
                 <div className="flex-1 px-2">
                   <h1 className="text-[17px] font-bold text-neutral-900 leading-tight">
-                    Del observasjon
+                    Legg ut innlegg
                   </h1>
                   <p className="text-[12px] text-neutral-500 leading-tight">
-                    {imageFile ? "Klar til å dele" : "Legg til bilde og detaljer"}
+                    {imageFile ? "Klar til å publisere" : "Skriv noe — bilde er valgfritt"}
                   </p>
                 </div>
                 <div className="w-10" aria-hidden="true" />
