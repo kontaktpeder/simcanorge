@@ -1,22 +1,14 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { LicensePlateInput } from "@/components/car/wizard/LicensePlateInput";
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import {
-  Camera,
   CheckCircle2,
   ImagePlus,
   Loader2,
-  Lock,
-  Globe,
-  MessageCircle,
-  Sparkles,
   X,
   ArrowRight,
-  Car as CarIcon,
+  ExternalLink,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -33,40 +25,22 @@ import {
   type PublishComposerVisibility,
 } from "@/contexts/PublishComposerContext";
 
-const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
-const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
-
-const SPOT_NEW = "__spot_new__";
-
 interface MyCar {
   id: string;
   title: string;
   slug: string | null;
 }
 
-function Chip({
-  active,
-  onClick,
-  children,
-  variant = "default",
-}: {
-  active?: boolean;
-  onClick?: () => void;
-  children: React.ReactNode;
-  variant?: "default" | "primary";
-}) {
-  const base =
-    "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[11px] uppercase tracking-[0.14em] font-bold transition-colors";
-  const styles = active
-    ? variant === "primary"
-      ? "bg-[#34eab8] text-[#070b10]"
-      : "bg-white/[0.14] text-white border border-white/20"
-    : "bg-white/[0.04] text-white/55 border border-white/10 hover:bg-white/[0.08] hover:text-white/80";
-  return (
-    <button type="button" onClick={onClick} className={`${base} ${styles}`} style={chakra}>
-      {children}
-    </button>
-  );
+interface RegHit {
+  id: string;
+  slug: string;
+  title: string;
+}
+
+type CarMode = "none" | "spot" | "garage";
+
+function normalizePlate(raw: string): string {
+  return raw.replace(/[\s\-]/g, "").toUpperCase();
 }
 
 export function PublishComposer() {
@@ -81,14 +55,20 @@ export function PublishComposer() {
   const [type, setType] = useState<PublishComposerType>("moment");
   const [visibility, setVisibility] =
     useState<PublishComposerVisibility>("public");
+
+  const [carMode, setCarMode] = useState<CarMode>("none");
   const [selectedCarId, setSelectedCarId] = useState<string | null>(null);
   const [selectedCarTitle, setSelectedCarTitle] = useState<string | null>(null);
+  const [regnr, setRegnr] = useState("");
+  const [regHits, setRegHits] = useState<RegHit[]>([]);
+  const [regThumbs, setRegThumbs] = useState<Record<string, string>>({});
+  const [regSearching, setRegSearching] = useState(false);
+
   const [myCars, setMyCars] = useState<MyCar[]>([]);
-  const [carPickerOpen, setCarPickerOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [result, setResult] = useState<PublishObservationResult | null>(null);
 
-  // ─── Initialiser fra openPublishComposer-props ──────────────────────────
+  // ─── Init ved åpning ─────────────────────────────────────────────────
   useEffect(() => {
     if (!isOpen) return;
     setImageFile(props.initialImageFile ?? null);
@@ -97,11 +77,15 @@ export function PublishComposer() {
     setVisibility(props.defaultVisibility ?? "public");
     setSelectedCarId(props.prefillCarId ?? null);
     setSelectedCarTitle(props.prefillCarTitle ?? null);
+    setCarMode(props.prefillCarId ? "garage" : "none");
+    setRegnr("");
+    setRegHits([]);
+    setRegThumbs({});
     setResult(null);
     setIsSubmitting(false);
   }, [isOpen, props]);
 
-  // ─── Hent brukerens biler (for popover-velger) ──────────────────────────
+  // ─── Hent egne biler ─────────────────────────────────────────────────
   useEffect(() => {
     if (!isOpen || !user) return;
     let cancelled = false;
@@ -123,6 +107,50 @@ export function PublishComposer() {
     };
   }, [isOpen, user]);
 
+  // ─── Debounced regnr-søk ─────────────────────────────────────────────
+  useEffect(() => {
+    if (carMode !== "spot") return;
+    const norm = normalizePlate(regnr).toLowerCase();
+    if (norm.length < 4) {
+      setRegHits([]);
+      setRegThumbs({});
+      return;
+    }
+    const t = setTimeout(async () => {
+      setRegSearching(true);
+      try {
+        const { data } = await supabase.rpc(
+          "find_cars_by_registration_number",
+          { p_normalized: norm },
+        );
+        const hits = ((data as RegHit[]) || []).slice(0, 4);
+        setRegHits(hits);
+        if (hits.length > 0) {
+          const { data: imgs } = await supabase
+            .from("car_images")
+            .select("car_id, image_url, sort_order")
+            .in(
+              "car_id",
+              hits.map((h) => h.id),
+            )
+            .order("sort_order", { ascending: true });
+          const map: Record<string, string> = {};
+          (imgs || []).forEach((row: any) => {
+            if (!map[row.car_id]) map[row.car_id] = row.image_url;
+          });
+          setRegThumbs(map);
+        } else {
+          setRegThumbs({});
+        }
+      } catch (err) {
+        console.warn("regnr lookup failed", err);
+      } finally {
+        setRegSearching(false);
+      }
+    }, 350);
+    return () => clearTimeout(t);
+  }, [regnr, carMode]);
+
   const previewUrl = useMemo(() => {
     if (!imageFile) return null;
     return URL.createObjectURL(imageFile);
@@ -134,29 +162,26 @@ export function PublishComposer() {
     };
   }, [previewUrl]);
 
-  const carChipLabel = selectedCarId
-    ? selectedCarTitle ?? "På denne bilen"
-    : "Spotta ny bil";
-
   function pickFile() {
     fileInputRef.current?.click();
   }
 
-  function handleSelectCar(carId: string, title: string) {
-    setSelectedCarId(carId);
-    setSelectedCarTitle(title);
-    setCarPickerOpen(false);
+  function handleSelectGarageCar(c: MyCar) {
+    setSelectedCarId(c.id);
+    setSelectedCarTitle(c.title);
   }
 
-  function handleClearCar() {
-    setSelectedCarId(null);
-    setSelectedCarTitle(null);
-    setCarPickerOpen(false);
+  function handleSelectRegHit(hit: RegHit) {
+    setSelectedCarId(hit.id);
+    setSelectedCarTitle(hit.title);
+    setCarMode("garage"); // visuelt: bilen er nå valgt
   }
 
   async function handlePublish() {
     if (!user) {
-      navigate("/login?returnUrl=" + encodeURIComponent(window.location.pathname));
+      navigate(
+        "/login?returnUrl=" + encodeURIComponent(window.location.pathname),
+      );
       return;
     }
     if (!imageFile) {
@@ -165,20 +190,24 @@ export function PublishComposer() {
     }
     setIsSubmitting(true);
     try {
+      const attachCar = carMode !== "none";
       const res = await publishObservation({
         userId: user.id,
         imageFile,
         caption,
         type,
         visibility,
+        attachCar,
         carId: selectedCarId,
+        registrationNumber:
+          carMode === "spot" && !selectedCarId ? regnr || null : null,
         activitySessionId: props.prefillSessionId ?? null,
         titleOrModel: caption || null,
       });
       setResult(res);
-
-      // Invalidations
-      queryClient.invalidateQueries({ queryKey: ["car-events", res.carId] });
+      if (res.carId) {
+        queryClient.invalidateQueries({ queryKey: ["car-events", res.carId] });
+      }
       queryClient.invalidateQueries({ queryKey: ["feed_posts"] });
       if (res.type === "question") {
         queryClient.invalidateQueries({ queryKey: ["questions"] });
@@ -198,12 +227,9 @@ export function PublishComposer() {
 
   function handleOpenChange(next: boolean) {
     if (isSubmitting) return;
-    if (!next) {
-      closePublishComposer();
-    }
+    if (!next) closePublishComposer();
   }
 
-  // ─── Post-publish CTA (én subtil nudge) ─────────────────────────────────
   function handleViewResult() {
     if (!result) return;
     if (result.type === "question" && result.questionSlug) {
@@ -214,17 +240,20 @@ export function PublishComposer() {
     closePublishComposer();
   }
 
+  const canPublish = !!imageFile && !isSubmitting;
+
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogContent
         onInteractOutside={(e) => isSubmitting && e.preventDefault()}
         onEscapeKeyDown={(e) => isSubmitting && e.preventDefault()}
-        className="p-0 gap-0 border-0 bg-[#070b10] text-white max-w-full w-screen h-[100dvh] sm:h-auto sm:max-h-[92vh] sm:max-w-lg sm:rounded-2xl sm:border sm:border-white/10 overflow-hidden flex flex-col"
+        className="car-paper-theme text-neutral-900 p-0 gap-0 border-0 max-w-full w-screen h-[100dvh] sm:h-auto sm:max-h-[92vh] sm:max-w-lg sm:rounded-2xl sm:border sm:border-black/10 overflow-hidden flex flex-col"
+        style={{ backgroundColor: "#e9e7e1" }}
       >
         <button
           type="button"
           onClick={() => handleOpenChange(false)}
-          className="absolute right-3 top-3 z-30 rounded-full p-2 text-white/70 hover:text-white hover:bg-white/10 backdrop-blur-sm"
+          className="absolute right-3 top-3 z-30 rounded-full p-2 text-neutral-600 hover:text-neutral-900 hover:bg-black/5 transition-colors"
           style={{ top: "max(0.75rem, env(safe-area-inset-top))" }}
           aria-label="Lukk"
         >
@@ -245,245 +274,379 @@ export function PublishComposer() {
         />
 
         {result ? (
-          // ═══════════════ POST-PUBLISH (én nudge) ═══════════════
+          // ═══════════════ POST-PUBLISH ═══════════════
           <div className="flex-1 flex flex-col items-center justify-center text-center px-6 py-12 animate-fade-in">
             <div className="relative mb-6">
               {previewUrl && (
-                <div className="w-40 h-40 rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
-                  <img src={previewUrl} alt="" className="w-full h-full object-cover" />
+                <div className="w-40 h-40 rounded-2xl overflow-hidden border border-black/10 shadow-lg">
+                  <img
+                    src={previewUrl}
+                    alt=""
+                    className="w-full h-full object-cover"
+                  />
                 </div>
               )}
-              <div className="absolute -bottom-3 -right-3 w-11 h-11 rounded-full flex items-center justify-center bg-[#34eab8] border-4 border-[#070b10]">
-                <CheckCircle2 className="w-5 h-5 text-[#070b10]" strokeWidth={2.5} />
+              <div
+                className="absolute -bottom-3 -right-3 w-11 h-11 rounded-full flex items-center justify-center border-4"
+                style={{
+                  backgroundColor: "#1f3a34",
+                  borderColor: "#e9e7e1",
+                }}
+              >
+                <CheckCircle2 className="w-5 h-5 text-white" strokeWidth={2.5} />
               </div>
             </div>
-            <h2 className="text-2xl font-bold uppercase tracking-wider mb-1" style={chakra}>
-              Delt
+            <h2 className="font-display text-2xl text-neutral-900 mb-1">
+              Takk — det er med.
             </h2>
-            <p className="text-white/55 text-sm max-w-xs mb-8">
-              {result.type === "question"
-                ? "Spørsmålet ligger på bilen og i feeden."
-                : result.visibility === "public"
-                  ? "Lagt til på bilen og i feeden."
-                  : "Lagt til på bilen — kun synlig for deg."}
+            <p className="text-neutral-600 text-sm max-w-xs mb-8">
+              {result.carId
+                ? result.type === "question"
+                  ? "Spørsmålet ligger på bilen og i feeden."
+                  : result.visibility === "public"
+                    ? "Lagt til på bilen og i feeden."
+                    : "Lagt til på bilen — kun synlig for deg."
+                : "Innlegget er i feeden. Knytt til bil for å lagre det i arkivet."}
             </p>
             <div className="flex flex-col gap-2 w-full max-w-xs">
               {(result.questionSlug || result.carSlug) && (
-                <button
+                <Button
                   type="button"
                   onClick={handleViewResult}
-                  className="w-full min-h-[48px] rounded-xl bg-[#34eab8] text-[#070b10] font-bold uppercase tracking-wider text-sm inline-flex items-center justify-center gap-2 hover:brightness-110 active:scale-[0.98] transition-all"
-                  style={chakra}
+                  className="btn-enamel-blue h-12 w-full text-base"
                 >
                   {result.type === "question" ? "Se spørsmål" : "Se bilen"}
-                  <ArrowRight className="w-4 h-4" />
-                </button>
+                  <ArrowRight className="ml-2 w-4 h-4" />
+                </Button>
               )}
-              <button
+              <Button
                 type="button"
+                variant="ghost"
                 onClick={closePublishComposer}
-                className="w-full min-h-[44px] text-white/55 hover:text-white text-xs uppercase tracking-[0.2em]"
-                style={oswald}
+                className="h-11 w-full text-neutral-600"
               >
                 Ferdig
-              </button>
+              </Button>
             </div>
           </div>
         ) : (
           // ═══════════════ COMPOSE ═══════════════
-          <div className="flex-1 flex flex-col min-h-0">
-            {/* Bilde */}
-            <div className="relative flex-1 min-h-0 bg-black flex items-center justify-center overflow-hidden">
-              {previewUrl ? (
-                <>
-                  <img
-                    src={previewUrl}
-                    alt="Forhåndsvisning"
-                    className="w-full h-full object-contain animate-fade-in"
-                  />
+          <div className="flex-1 overflow-y-auto">
+            <div
+              className="px-4 pt-4 pb-4 space-y-5"
+              style={{
+                paddingTop: "max(1rem, env(safe-area-inset-top))",
+                paddingBottom: "calc(1rem + 80px + env(safe-area-inset-bottom))",
+              }}
+            >
+              {/* Bilde */}
+              <div className="relative rounded-xl overflow-hidden bg-neutral-200/60 aspect-[4/5] sm:aspect-video">
+                {previewUrl ? (
+                  <>
+                    <img
+                      src={previewUrl}
+                      alt="Forhåndsvisning"
+                      className="w-full h-full object-cover animate-fade-in"
+                    />
+                    <button
+                      type="button"
+                      onClick={pickFile}
+                      className="absolute top-2 left-2 inline-flex items-center gap-1.5 rounded-full bg-white/85 backdrop-blur px-3 py-1.5 text-xs text-neutral-800 hover:bg-white transition-colors border border-black/10 shadow-sm"
+                    >
+                      <ImagePlus className="w-3.5 h-3.5" />
+                      Bytt bilde
+                    </button>
+                  </>
+                ) : (
                   <button
                     type="button"
                     onClick={pickFile}
-                    className="absolute top-3 left-3 inline-flex items-center gap-1.5 rounded-full bg-black/55 backdrop-blur-md px-3 py-1.5 text-xs text-white/85 hover:bg-black/70 transition-colors"
-                    style={oswald}
+                    className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-neutral-500 hover:text-neutral-700"
                   >
-                    <ImagePlus className="w-3.5 h-3.5" />
-                    Bytt bilde
+                    <ImagePlus className="w-8 h-8" />
+                    <span className="text-sm">Velg et bilde</span>
                   </button>
-                </>
-              ) : (
-                <button
-                  type="button"
-                  onClick={pickFile}
-                  className="flex flex-col items-center gap-3 text-white/55 hover:text-white px-8 py-12 transition-colors"
-                >
-                  <div
-                    className="w-20 h-20 rounded-full flex items-center justify-center"
-                    style={{ background: "linear-gradient(135deg, #34eab8, #1cb896)" }}
-                  >
-                    <Camera className="w-9 h-9 text-[#070b10]" strokeWidth={2.25} />
-                  </div>
-                  <span
-                    className="text-sm uppercase tracking-[0.18em] font-bold text-white/80"
-                    style={chakra}
-                  >
-                    Velg et bilde
-                  </span>
-                </button>
-              )}
-            </div>
+                )}
+              </div>
 
-            {/* Caption + chips + publish */}
-            <div
-              className="shrink-0 px-4 pt-3 pb-4 border-t border-white/[0.06] bg-[#070b10] space-y-3"
-              style={{ paddingBottom: "max(1rem, env(safe-area-inset-bottom))" }}
-            >
+              {/* Caption */}
               <textarea
                 value={caption}
                 onChange={(e) => setCaption(e.target.value.slice(0, 500))}
                 placeholder={
-                  type === "question" ? "Hva lurer du på?" : "Skriv noe…"
+                  type === "question"
+                    ? "Hva lurer du på?"
+                    : "Skriv noe om bildet…"
                 }
                 rows={2}
-                className="w-full resize-none bg-transparent text-[15px] text-white placeholder:text-white/30 focus:outline-none leading-snug"
-                style={chakra}
+                className="w-full resize-none bg-transparent text-[15px] text-neutral-900 placeholder:text-neutral-500 focus:outline-none leading-snug px-1"
               />
 
-              {/* Chip-rader */}
-              <div className="space-y-2">
-                {/* Bil */}
-                <div className="flex items-center gap-2">
-                  <span
-                    className="text-[10px] uppercase tracking-[0.18em] text-white/35 w-16 shrink-0"
-                    style={oswald}
-                  >
-                    Bil
-                  </span>
-                  <Popover open={carPickerOpen} onOpenChange={setCarPickerOpen}>
-                    <PopoverTrigger asChild>
-                      <button
-                        type="button"
-                        className="inline-flex items-center gap-1.5 rounded-full bg-white/[0.06] text-white/85 border border-white/12 hover:bg-white/[0.10] px-3 py-1.5 text-[11px] uppercase tracking-[0.14em] font-bold transition-colors"
-                        style={chakra}
-                      >
-                        <CarIcon className="w-3 h-3" />
-                        {carChipLabel}
-                      </button>
-                    </PopoverTrigger>
-                    <PopoverContent
-                      align="start"
-                      className="w-64 p-1 bg-[#0c1219] border-white/10"
-                    >
-                      <button
-                        type="button"
-                        onClick={() => {
-                          handleClearCar();
-                        }}
-                        className={`w-full text-left px-3 py-2 rounded-md text-xs hover:bg-white/[0.06] ${
-                          !selectedCarId ? "text-[#34eab8]" : "text-white/85"
-                        }`}
-                        style={chakra}
-                      >
-                        Spotta ny bil
-                      </button>
-                      {myCars.length > 0 && (
-                        <div className="my-1 border-t border-white/[0.06]" />
-                      )}
-                      {myCars.map((c) => (
-                        <button
-                          key={c.id}
-                          type="button"
-                          onClick={() => handleSelectCar(c.id, c.title)}
-                          className={`w-full text-left px-3 py-2 rounded-md text-xs hover:bg-white/[0.06] truncate ${
-                            selectedCarId === c.id
-                              ? "text-[#34eab8]"
-                              : "text-white/85"
-                          }`}
-                          style={chakra}
-                        >
-                          {c.title}
-                        </button>
-                      ))}
-                      {myCars.length === 0 && (
-                        <p
-                          className="px-3 py-2 text-[10px] uppercase tracking-[0.14em] text-white/35"
-                          style={oswald}
-                        >
-                          Ingen biler i garasjen ennå
+              {/* Knytt til bil */}
+              <section className="space-y-2">
+                <div>
+                  <h3 className="text-[11px] uppercase tracking-[0.14em] font-semibold text-neutral-500">
+                    Knytt til bil
+                  </h3>
+                  <p className="text-xs text-neutral-500 mt-0.5">
+                    Knyttes til bilens historie. Hopp over hvis du bare vil dele i feeden.
+                  </p>
+                </div>
+
+                <div className="rounded-2xl border border-black/10 bg-white overflow-hidden">
+                  <CarOption
+                    active={carMode === "none"}
+                    onClick={() => {
+                      setCarMode("none");
+                      setSelectedCarId(null);
+                      setSelectedCarTitle(null);
+                    }}
+                    title="Ikke knytt til bil"
+                    subtitle="Innlegg vises kun i feeden."
+                  />
+                  <CarOption
+                    active={carMode === "spot"}
+                    onClick={() => {
+                      setCarMode("spot");
+                      setSelectedCarId(null);
+                      setSelectedCarTitle(null);
+                    }}
+                    title="Spotta ny bil"
+                    subtitle="Skriv inn regnr — vi sjekker arkivet."
+                  />
+                  {carMode === "spot" && (
+                    <div className="px-4 pb-4 pt-1 space-y-3 border-t border-black/5 bg-neutral-50/60">
+                      <div className="flex flex-col items-center gap-2 pt-3">
+                        <LicensePlateInput value={regnr} onChange={setRegnr} />
+                        <p className="text-[11px] text-neutral-500">
+                          Valgfritt — du kan dele bildet uten regnr.
                         </p>
+                      </div>
+                      {regSearching && (
+                        <div className="flex items-center justify-center gap-2 text-xs text-neutral-500 py-1">
+                          <Loader2 className="h-3.5 w-3.5 animate-spin" /> Søker…
+                        </div>
                       )}
-                    </PopoverContent>
-                  </Popover>
+                      {regHits.length > 0 && (
+                        <div className="space-y-2">
+                          <p className="text-[11px] uppercase tracking-[0.12em] text-neutral-500">
+                            Vi fant dette i arkivet
+                          </p>
+                          {regHits.map((hit) => {
+                            const picked = selectedCarId === hit.id;
+                            return (
+                              <button
+                                key={hit.id}
+                                type="button"
+                                onClick={() => handleSelectRegHit(hit)}
+                                className={`w-full flex items-center gap-3 p-2 rounded-lg border transition-colors text-left ${
+                                  picked
+                                    ? "border-primary bg-primary/5"
+                                    : "border-black/10 bg-white hover:bg-neutral-50"
+                                }`}
+                              >
+                                <div className="h-12 w-16 shrink-0 rounded-md overflow-hidden bg-neutral-200 flex items-center justify-center">
+                                  {regThumbs[hit.id] ? (
+                                    <img
+                                      src={regThumbs[hit.id]}
+                                      alt=""
+                                      className="h-full w-full object-cover"
+                                    />
+                                  ) : (
+                                    <ExternalLink className="w-3 h-3 text-neutral-400" />
+                                  )}
+                                </div>
+                                <div className="min-w-0 flex-1">
+                                  <p className="text-sm font-medium truncate text-neutral-900">
+                                    {hit.title}
+                                  </p>
+                                  <p className="text-[11px] text-neutral-500">
+                                    {picked ? "Valgt" : "Trykk for å velge"}
+                                  </p>
+                                </div>
+                              </button>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  {myCars.length > 0 && (
+                    <>
+                      <CarOption
+                        active={carMode === "garage" && !!selectedCarId}
+                        onClick={() => {
+                          setCarMode("garage");
+                          if (!selectedCarId && myCars[0]) {
+                            handleSelectGarageCar(myCars[0]);
+                          }
+                        }}
+                        title={
+                          carMode === "garage" && selectedCarTitle
+                            ? selectedCarTitle
+                            : "Velg fra garasjen"
+                        }
+                        subtitle={
+                          carMode === "garage" && selectedCarTitle
+                            ? "Valgt fra din garasje."
+                            : `${myCars.length} ${myCars.length === 1 ? "bil" : "biler"} i garasjen`
+                        }
+                      />
+                      {carMode === "garage" && (
+                        <div className="px-2 pb-2 pt-1 border-t border-black/5 bg-neutral-50/60 space-y-1">
+                          {myCars.map((c) => {
+                            const picked = selectedCarId === c.id;
+                            return (
+                              <button
+                                key={c.id}
+                                type="button"
+                                onClick={() => handleSelectGarageCar(c)}
+                                className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${
+                                  picked
+                                    ? "bg-primary/5 text-primary border border-primary/30"
+                                    : "text-neutral-800 hover:bg-white border border-transparent"
+                                }`}
+                              >
+                                {c.title}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </>
+                  )}
                 </div>
+              </section>
 
-                {/* Type */}
-                <div className="flex items-center gap-2">
-                  <span
-                    className="text-[10px] uppercase tracking-[0.18em] text-white/35 w-16 shrink-0"
-                    style={oswald}
-                  >
-                    Type
-                  </span>
-                  <Chip
-                    active={type === "moment"}
-                    onClick={() => setType("moment")}
-                    variant="primary"
-                  >
-                    <Sparkles className="w-3 h-3" />
-                    Øyeblikk
-                  </Chip>
-                  <Chip
-                    active={type === "question"}
-                    onClick={() => setType("question")}
-                    variant="primary"
-                  >
-                    <MessageCircle className="w-3 h-3" />
-                    Spørsmål
-                  </Chip>
-                </div>
-
-                {/* Synlighet */}
-                <div className="flex items-center gap-2">
-                  <span
-                    className="text-[10px] uppercase tracking-[0.18em] text-white/35 w-16 shrink-0"
-                    style={oswald}
-                  >
-                    Vises
-                  </span>
-                  <Chip
+              {/* Synlighet */}
+              <section className="space-y-2">
+                <h3 className="text-[11px] uppercase tracking-[0.14em] font-semibold text-neutral-500">
+                  Vises
+                </h3>
+                <div className="inline-flex w-full rounded-full border border-black/10 bg-white p-1">
+                  <SegmentButton
                     active={visibility === "public"}
                     onClick={() => setVisibility("public")}
                   >
-                    <Globe className="w-3 h-3" />
                     Offentlig
-                  </Chip>
-                  <Chip
+                  </SegmentButton>
+                  <SegmentButton
                     active={visibility === "private"}
                     onClick={() => setVisibility("private")}
                   >
-                    <Lock className="w-3 h-3" />
                     Privat
-                  </Chip>
+                  </SegmentButton>
                 </div>
-              </div>
+              </section>
 
+              {/* Spørsmål sekundært */}
               <button
                 type="button"
+                onClick={() =>
+                  setType(type === "question" ? "moment" : "question")
+                }
+                disabled={carMode === "none"}
+                className="text-sm text-neutral-700 hover:text-neutral-900 underline underline-offset-4 disabled:opacity-40 disabled:no-underline disabled:cursor-not-allowed"
+              >
+                {type === "question"
+                  ? "Tilbake til vanlig innlegg"
+                  : "Gjør til spørsmål"}
+              </button>
+              {carMode === "none" && (
+                <p className="text-[11px] text-neutral-500 -mt-3">
+                  Knytt til bil for å gjøre dette til et spørsmål.
+                </p>
+              )}
+            </div>
+
+            {/* Sticky publish-bar */}
+            <div
+              className="absolute left-0 right-0 bottom-0 px-4 pt-3 pb-4 border-t border-black/10 bg-[#e9e7e1]"
+              style={{
+                paddingBottom: "max(1rem, env(safe-area-inset-bottom))",
+              }}
+            >
+              <Button
+                type="button"
                 onClick={handlePublish}
-                disabled={!imageFile || isSubmitting}
-                className="w-full min-h-[54px] rounded-xl bg-[#34eab8] text-[#070b10] font-bold uppercase tracking-wider text-sm inline-flex items-center justify-center gap-2 hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-40 disabled:cursor-not-allowed"
-                style={chakra}
+                disabled={!canPublish}
+                className="btn-enamel-blue h-12 w-full text-base"
               >
                 {isSubmitting ? (
                   <Loader2 className="w-5 h-5 animate-spin" />
                 ) : (
-                  <>Del</>
+                  "Del"
                 )}
-              </button>
+              </Button>
             </div>
           </div>
         )}
       </DialogContent>
     </Dialog>
+  );
+}
+
+function CarOption({
+  active,
+  onClick,
+  title,
+  subtitle,
+}: {
+  active: boolean;
+  onClick: () => void;
+  title: string;
+  subtitle: string;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`w-full flex items-start gap-3 px-4 py-3 text-left border-b border-black/5 last:border-b-0 transition-colors ${
+        active ? "bg-primary/5" : "hover:bg-neutral-50"
+      }`}
+    >
+      <span
+        className={`mt-1 w-4 h-4 rounded-full border-2 shrink-0 flex items-center justify-center ${
+          active ? "border-primary" : "border-neutral-400"
+        }`}
+      >
+        {active && (
+          <span
+            className="w-2 h-2 rounded-full"
+            style={{ backgroundColor: "hsl(var(--primary))" }}
+          />
+        )}
+      </span>
+      <span className="min-w-0 flex-1">
+        <span className="block text-sm font-medium text-neutral-900 truncate">
+          {title}
+        </span>
+        <span className="block text-xs text-neutral-500 mt-0.5">{subtitle}</span>
+      </span>
+    </button>
+  );
+}
+
+function SegmentButton({
+  active,
+  onClick,
+  children,
+}: {
+  active: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`flex-1 h-10 rounded-full text-sm font-medium transition-all ${
+        active
+          ? "bg-neutral-900 text-white shadow-sm"
+          : "text-neutral-600 hover:text-neutral-900"
+      }`}
+    >
+      {children}
+    </button>
   );
 }
