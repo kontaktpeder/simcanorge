@@ -81,7 +81,7 @@ export const SEO_COPY = {
   utforsk: {
     title: "Utforsk — Bilgarasje.no",
     description:
-      "Utforsk øyeblikk fra norske bileiere — biler, spotting og hverdagshistorier.",
+      "Se innlegg fra norske bileiere — bilder, historier og oppdateringer om biler.",
     canonicalPath: "/hjem",
   },
   markedsplass: {
