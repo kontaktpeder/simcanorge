@@ -91,7 +91,9 @@ export function BottomNav() {
     { href: "/min-garasje", label: "Garasje", Icon: Warehouse },
   ];
   const right: Item[] = [
-    { href: "/turer", label: "Turer", Icon: Route, badge: "Ny" },
+    ...(features.activitySessions
+      ? [{ href: "/turer", label: "Turer", Icon: Route } as Item]
+      : []),
     { href: "/dashboard/min-profil", label: "Profil", Icon: User },
   ];
 
