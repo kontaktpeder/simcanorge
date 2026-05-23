@@ -99,7 +99,7 @@ export function FeedCard({ post, variant = "default", theme = "dark" }: Props) {
         onCancelDelete={() => setShowDeleteConfirm(false)}
         showComments={showComments}
         onToggleComments={() => setShowComments(!showComments)}
-        onImageClick={() => setLightboxOpen(true)}
+        onImageClick={canRequestRelationship ? handleKnowCar : undefined}
         onShare={() => { void shareFeedPost(post); }}
         onKnowCar={canRequestRelationship ? handleKnowCar : undefined}
       />
