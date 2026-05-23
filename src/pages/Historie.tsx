@@ -1,4 +1,5 @@
 import { Layout } from "@/components/layout/Layout";
+import { SeoHead } from "@/components/seo";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { AnimatedSection } from "@/components/layout/AnimatedSection";
 import { useInView } from "@/hooks/useInView";
@@ -28,6 +29,11 @@ function TimelineItem({
 }
 export default function Historie() {
   return <Layout contained>
+      <SeoHead
+        title="Historie | Bilgarasje.no"
+        description="Fra 1934 til i dag — historien om Simca, Talbot og Matra og bilarven i Norge."
+        canonicalPath="/historie"
+      />
       <PageHeader title="HISTORIE" subtitle="Fra 1934 til i dag – historien om et bilmerke med sjel" />
 
       {/* Intro */}
