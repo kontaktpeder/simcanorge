@@ -200,8 +200,8 @@ const rawRoutes: RouteConfig[] = [
   { path: "/dashboard/events/ny", element: CreateEventPage, requiresAuth: true },
   { path: "/dashboard/events/:eventId", element: EditEventPage, requiresAuth: true },
   { path: "/relasjon-sendt/:requestId", element: RelasjonSendt, requiresAuth: true },
-  { path: "/sporsmal/ny", element: NyttSporsmal, requiresAuth: true },
-  { path: "/sporsmal/:slug", element: SporsmalDetalj, isPublic: true },
+  { path: "/sporsmal/ny", element: SporsmalRedirect, isPublic: true },
+  { path: "/sporsmal/:slug", element: SporsmalRedirect, isPublic: true },
 
   // Admin
   { path: "/admin/login", element: AdminLogin, isPublic: true },
