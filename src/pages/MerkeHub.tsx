@@ -110,94 +110,129 @@ export default function MerkeHub() {
       />
 
       <div className="min-h-screen bg-[#F7F4EF]">
-        {/* ── HERO ── */}
-        <section className="relative overflow-hidden" style={{ minHeight: "60vh" }}>
+        {/* ── TOPP-BAND (vegvesen-stil chrome) ── */}
+        <div style={{ background: "#3d4a52" }}>
+          <div className="max-w-6xl mx-auto px-6 md:px-10 py-3 flex items-center justify-between">
+            <Link
+              to="/biler"
+              className="text-white/85 hover:text-white text-xs uppercase tracking-[0.18em]"
+              style={oswald}
+            >
+              ← Bilgarasjen · Merker
+            </Link>
+            <span
+              className="text-white/55 text-[11px] tracking-[0.1em]"
+              style={mono}
+            >
+              {hub.title}
+            </span>
+          </div>
+        </div>
+
+        {/* ── HERO (fullsize bilde, nøytral fyll) ── */}
+        <section
+          className="relative w-full overflow-hidden flex items-center justify-center"
+          style={{
+            background: "#e9e4d8",
+            height: "clamp(260px, 42vw, 420px)",
+          }}
+        >
           {hub.cover_url ? (
-            <>
-              <img src={hub.cover_url} alt="" className="absolute inset-0 w-full h-full object-cover" />
-              <div
-                className="absolute inset-0"
-                style={{
-                  background:
-                    "linear-gradient(to bottom, rgba(247,244,239,0.1) 0%, rgba(247,244,239,0.3) 50%, rgba(247,244,239,0.92) 85%, #F7F4EF 100%)",
-                }}
-              />
-            </>
+            <img
+              src={hub.cover_url}
+              alt={hub.title}
+              className="w-full h-full object-contain"
+              style={{ objectPosition: "center" }}
+            />
           ) : (
             <div
               className="absolute inset-0"
-              style={{ background: "linear-gradient(135deg, #0F3E7A 0%, #1F66B5 40%, #4FA0FF 70%, #1F66B5 100%)" }}
+              style={{
+                background:
+                  "linear-gradient(135deg, #3d4a52 0%, #4f5e67 60%, #2a353c 100%)",
+              }}
             />
           )}
-
-          <div className="relative z-10 flex items-center gap-3 px-6 md:px-12 pt-6">
-            <div className="h-px flex-1" style={{ background: "linear-gradient(90deg, transparent, #B8C0CC, #FFFFFF, #B8C0CC, transparent)" }} />
-            <span className="text-[#3a2e24]/30 text-[10px] uppercase tracking-[0.3em]" style={mono}>
-              Bilgarasjen · Merker
-            </span>
-            <div className="h-px flex-1" style={{ background: "linear-gradient(90deg, transparent, #B8C0CC, #FFFFFF, #B8C0CC, transparent)" }} />
-          </div>
         </section>
 
         {/* ── IDENTITY ── */}
-        <div className="max-w-5xl mx-auto px-6 md:px-10 relative" style={{ marginTop: "-80px" }}>
-          {hub.logo_url && (
-            <img
-              src={hub.logo_url}
-              alt={hub.title}
-              className="w-28 h-28 md:w-32 md:h-32 rounded-2xl object-cover border-4 border-[#F7F4EF] shadow-xl mb-5"
-              style={{ transform: "translateY(-36%)" }}
-            />
-          )}
-
-          <div style={{ paddingTop: hub.logo_url ? "0" : "24px" }}>
-            {hub.founded_year && (
-              <p className="text-[10px] uppercase tracking-[0.35em] text-[#3a2e24]/30 mb-1" style={mono}>
-                Est. {hub.founded_year}
-              </p>
+        <div className="max-w-5xl mx-auto px-6 md:px-10 pt-10 md:pt-12">
+          <div className="flex items-start gap-5 md:gap-6">
+            {hub.logo_url && (
+              <img
+                src={hub.logo_url}
+                alt={hub.title}
+                className="w-20 h-20 md:w-24 md:h-24 rounded-xl object-cover bg-white border border-[#B8C0CC]/30 shadow-sm shrink-0"
+              />
             )}
-            <h1
-              className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#1B5FA0] uppercase tracking-wide leading-[0.95]"
-              style={bebas}
-            >
-              {hub.title}
-            </h1>
-            {hub.tagline && (
-              <p className="text-[#3a2e24]/50 text-base md:text-lg mt-3 max-w-xl italic" style={serif}>
-                {hub.tagline}
-              </p>
-            )}
-
-            <div className="flex flex-wrap items-center gap-3 mt-6">
-              <a
-                href="#biler"
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold text-white transition-colors"
-                style={{ ...oswald, background: "#1B5FA0", letterSpacing: "0.05em" }}
-              >
-                Se biler
-              </a>
-              {firstEvent && (
-                <Link
-                  to={`/e/${firstEvent.slug}`}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold border transition-colors"
-                  style={{ ...oswald, borderColor: "#C21212", color: "#C21212", letterSpacing: "0.05em" }}
+            <div className="min-w-0 flex-1">
+              {hub.founded_year && (
+                <p
+                  className="text-[11px] uppercase tracking-[0.22em] text-[#3a2e24]/45 mb-1.5"
+                  style={mono}
                 >
-                  <Calendar className="w-3.5 h-3.5" />
-                  Neste arrangement
-                </Link>
+                  Est. {hub.founded_year}
+                </p>
               )}
-            </div>
+              <h1
+                className="text-3xl md:text-4xl lg:text-5xl font-semibold text-[#2a353c] leading-[1.05]"
+                style={{ fontFamily: "'Source Serif 4', 'Georgia', serif" }}
+              >
+                {hub.title}
+              </h1>
+              {hub.tagline && (
+                <p
+                  className="text-[#3a2e24]/70 text-base md:text-lg mt-3 max-w-2xl"
+                  style={{ fontFamily: "'Source Sans 3', 'Source Sans Pro', sans-serif" }}
+                >
+                  {hub.tagline}
+                </p>
+              )}
 
-            <div className="flex items-center gap-4 mt-5 text-[#3a2e24]/35 text-xs" style={mono}>
-              {hub.location && (
-                <span className="flex items-center gap-1">
-                  <MapPin className="w-3 h-3" /> {hub.location}
-                </span>
-              )}
-              {carCount > 0 && <span>{carCount} biler registrert</span>}
+              <div className="flex flex-wrap items-center gap-3 mt-6">
+                <a
+                  href="#biler"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-md text-sm font-semibold text-white transition-colors hover:opacity-90"
+                  style={{
+                    ...oswald,
+                    background: "#3d4a52",
+                    letterSpacing: "0.05em",
+                  }}
+                >
+                  Se biler
+                </a>
+                {firstEvent && (
+                  <Link
+                    to={`/e/${firstEvent.slug}`}
+                    className="inline-flex items-center gap-2 px-6 py-3 rounded-md text-sm font-semibold border-2 transition-colors hover:bg-[#3d4a52] hover:text-white"
+                    style={{
+                      ...oswald,
+                      borderColor: "#3d4a52",
+                      color: "#3d4a52",
+                      letterSpacing: "0.05em",
+                    }}
+                  >
+                    <Calendar className="w-3.5 h-3.5" />
+                    Neste arrangement
+                  </Link>
+                )}
+              </div>
+
+              <div
+                className="flex items-center gap-4 mt-5 text-[#3a2e24]/45 text-xs"
+                style={mono}
+              >
+                {hub.location && (
+                  <span className="flex items-center gap-1">
+                    <MapPin className="w-3 h-3" /> {hub.location}
+                  </span>
+                )}
+                {carCount > 0 && <span>{carCount} biler registrert</span>}
+              </div>
             </div>
           </div>
         </div>
+
 
         {/* ── BODY ── */}
         <div className="max-w-5xl mx-auto px-6 md:px-10 pt-12 pb-16 md:pb-20 space-y-0">
