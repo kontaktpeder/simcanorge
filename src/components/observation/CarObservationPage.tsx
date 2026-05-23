@@ -40,16 +40,21 @@ type Props = {
   onOpenComments: () => void;
   showKnowCarCta: boolean;
   landingAck?: string | null;
+  theme?: "dark" | "light";
 };
 
 
-const SectionDivider = () => (
-  <div className="border-t border-white/[0.06]" />
+const PAPER_BG = "#f1ede4";
+
+const SectionDivider = ({ isLight }: { isLight: boolean }) => (
+  <div className={isLight ? "border-t border-neutral-900/10" : "border-t border-white/[0.06]"} />
 );
 
-const SectionLabel = ({ children }: { children: React.ReactNode }) => (
+const SectionLabel = ({ children, isLight }: { children: React.ReactNode; isLight: boolean }) => (
   <div
-    className="text-[11px] uppercase tracking-[0.22em] text-white/35 mb-4"
+    className={`text-[11px] uppercase tracking-[0.22em] mb-4 ${
+      isLight ? "text-neutral-500" : "text-white/35"
+    }`}
     style={oswald}
   >
     {children}
