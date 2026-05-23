@@ -2,14 +2,10 @@ import { useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Camera } from "lucide-react";
-import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { useMyPersonProfile } from "@/hooks/useMyPersonProfile";
-import { useCreateFeedPost } from "@/hooks/useCreateFeedPost";
 import { usePublishComposer } from "@/contexts/PublishComposerContext";
 import { InAppCameraModal } from "@/components/capture/InAppCameraModal";
-import { FEATURES } from "@/config/features";
-import { SpotCarDialog } from "@/components/car/SpotCarDialog";
 import { track } from "@/lib/analytics";
 
 const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
