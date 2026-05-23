@@ -2,6 +2,7 @@ import { Camera } from "lucide-react";
 
 const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
 const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
+const inter = { fontFamily: "'Inter', system-ui, -apple-system, sans-serif" } as const;
 
 type Variant = "top" | "mid";
 
@@ -10,10 +11,50 @@ interface Props {
   title?: string;
   subtitle?: string;
   onClick: () => void;
+  light?: boolean;
 }
 
-export function ExploreMomentCta({ variant = "top", title, subtitle, onClick }: Props) {
+export function ExploreMomentCta({ variant = "top", title, subtitle, onClick, light = false }: Props) {
   const isMid = variant === "mid";
+
+  if (light) {
+    return (
+      <div
+        className={`relative rounded-2xl border bg-white ${
+          isMid ? "px-4 py-5" : "px-5 py-6 sm:px-6 sm:py-7"
+        }`}
+        style={{ borderColor: "rgba(0,0,0,0.08)" }}
+      >
+        <p
+          className={`font-extrabold leading-tight tracking-tight ${
+            isMid ? "text-[15px]" : "text-[17px] sm:text-[19px]"
+          }`}
+          style={{ ...inter, color: "#2b2b2b" }}
+        >
+          {title ?? (isMid ? "Har du sett noe i dag?" : "Hva har du sett i dag?")}
+        </p>
+        {subtitle && (
+          <p className="text-[13px] text-neutral-500 mt-1" style={inter}>
+            {subtitle}
+          </p>
+        )}
+        <button
+          onClick={onClick}
+          className={`mt-3 w-full flex items-center justify-center gap-2 rounded-full font-bold uppercase tracking-[0.14em] transition hover:brightness-105 active:scale-[0.98] ${
+            isMid ? "py-2.5 text-[11px]" : "py-3 text-[12px]"
+          }`}
+          style={{
+            ...inter,
+            background: "#2b2b2b",
+            color: "#fcc419",
+          }}
+        >
+          <Camera className="w-4 h-4" />
+          Del øyeblikk
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div

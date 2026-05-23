@@ -5,41 +5,54 @@ import {
 } from "@/lib/exploreNav";
 
 const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
+const inter = { fontFamily: "'Inter', system-ui, -apple-system, sans-serif" } as const;
 
-export function ExploreSectionNav() {
+export function ExploreSectionNav({ light = false }: { light?: boolean }) {
   const { pathname } = useLocation();
   if (!shouldShowExploreSectionNav(pathname)) return null;
 
   const tabClass = ({ isActive }: { isActive: boolean }) =>
-    `flex-1 sm:flex-none text-center px-4 py-2 text-[11px] sm:text-[12px] uppercase tracking-[0.14em] font-bold transition-colors rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#34eab8] ${
-      isActive
-        ? "text-[#070b10] bg-[#34eab8] shadow-[0_0_16px_rgba(52,234,184,0.25)]"
-        : "text-white/55 hover:text-white/90 hover:bg-white/[0.04]"
-    }`;
+    light
+      ? `flex-1 sm:flex-none text-center px-4 py-2 text-[11px] sm:text-[12px] uppercase tracking-[0.14em] font-bold transition-colors rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#fcc419] ${
+          isActive
+            ? "text-[#2b2b2b] bg-[#fcc419]"
+            : "text-neutral-500 hover:text-neutral-900 hover:bg-black/[0.04]"
+        }`
+      : `flex-1 sm:flex-none text-center px-4 py-2 text-[11px] sm:text-[12px] uppercase tracking-[0.14em] font-bold transition-colors rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#34eab8] ${
+          isActive
+            ? "text-[#070b10] bg-[#34eab8] shadow-[0_0_16px_rgba(52,234,184,0.25)]"
+            : "text-white/55 hover:text-white/90 hover:bg-white/[0.04]"
+        }`;
+
+  const labelFont = light ? inter : oswald;
 
   return (
     <div
-      className="w-full border-b border-white/[0.06]"
+      className={`w-full ${light ? "border-b border-black/[0.08] bg-white" : "border-b border-white/[0.06]"}`}
       style={{
         height: `${EXPLORE_SECTION_NAV_HEIGHT_PX}px`,
-        background: "linear-gradient(180deg, rgba(10,15,21,0.96) 0%, rgba(7,11,16,0.92) 100%)",
-        backdropFilter: "blur(8px)",
+        background: light
+          ? "#ffffff"
+          : "linear-gradient(180deg, rgba(10,15,21,0.96) 0%, rgba(7,11,16,0.92) 100%)",
+        backdropFilter: light ? undefined : "blur(8px)",
       }}
       role="navigation"
       aria-label="Velg visning i Utforsk"
     >
       <div className="max-w-[720px] mx-auto h-full px-5 md:px-8 flex items-center gap-2 sm:gap-3">
         <span
-          className="hidden sm:inline text-[10px] uppercase tracking-[0.28em] text-white/35 font-bold pr-2"
-          style={oswald}
+          className={`hidden sm:inline text-[10px] uppercase tracking-[0.28em] font-bold pr-2 ${
+            light ? "text-neutral-400" : "text-white/35"
+          }`}
+          style={labelFont}
         >
           Utforsk
         </span>
         <div className="flex flex-1 sm:flex-none items-center gap-1 sm:gap-1.5" role="tablist">
-          <NavLink to="/hjem" end={false} className={tabClass} style={oswald}>
+          <NavLink to="/hjem" end={false} className={tabClass} style={labelFont}>
             Feed
           </NavLink>
-          <NavLink to="/biler" end className={tabClass} style={oswald}>
+          <NavLink to="/biler" end className={tabClass} style={labelFont}>
             Biler
           </NavLink>
         </div>
