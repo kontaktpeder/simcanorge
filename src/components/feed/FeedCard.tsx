@@ -10,7 +10,7 @@ import { CommentSection } from "@/components/comments/CommentSection";
 import { Drawer, DrawerContent, DrawerTitle } from "@/components/ui/drawer";
 import { RelationshipRequestDialog } from "@/components/car/relationship/RelationshipRequestDialog";
 import type { FeedPost } from "@/hooks/useFeedPosts";
-import { getPostImages, isCarUnknown, type CarRow } from "@/lib/feedPostPresentation";
+import { isCarUnknown, type CarRow } from "@/lib/feedPostPresentation";
 import { shareFeedPost } from "@/lib/shareFeedPost";
 import { FeedPostCard } from "./FeedPostCard";
 
