@@ -22,6 +22,7 @@ type Props = {
   hideMedia?: boolean;
   /** Container className override (mobile uses default centered max-w-3xl). */
   className?: string;
+  theme?: "dark" | "light";
 };
 
 
@@ -41,8 +42,10 @@ export function ObservationPostCore({
   landingAck,
   hideMedia = false,
   className,
+  theme = "dark",
 }: Props) {
   const cleanCategory = category && category.trim().length > 0 ? category.trim() : null;
+  const isLight = theme === "light";
 
   const items: MediaItem[] =
     media && media.length > 0
@@ -81,13 +84,18 @@ export function ObservationPostCore({
           carId={carId}
           onOpenComments={onOpenComments}
           onShare={onShare}
+          theme={theme}
         />
 
         {showKnowCarCta && onKnowCar && (
           <button
             type="button"
             onClick={onKnowCar}
-            className="inline-flex items-center gap-1.5 text-white/80 hover:text-white transition-colors text-[13px] leading-none"
+            className={`inline-flex items-center gap-1.5 transition-colors text-[13px] leading-none ${
+              isLight
+                ? "text-neutral-700 hover:text-neutral-950"
+                : "text-white/80 hover:text-white"
+            }`}
             style={oswald}
           >
             <Search className="w-6 h-6" strokeWidth={1.75} />
@@ -108,7 +116,9 @@ export function ObservationPostCore({
             </span>
           )}
           <h1
-            className="text-[22px] md:text-[26px] leading-tight text-white"
+            className={`text-[22px] md:text-[26px] leading-tight ${
+              isLight ? "text-neutral-950" : "text-white"
+            }`}
             style={oswald}
           >
             {title}
@@ -119,7 +129,9 @@ export function ObservationPostCore({
 
       {caption && (
         <p
-          className="mt-3 text-lg md:text-xl leading-relaxed text-white/85"
+          className={`mt-3 text-lg md:text-xl leading-relaxed ${
+            isLight ? "text-neutral-800" : "text-white/85"
+          }`}
           style={oswaldLight}
         >
           {caption}
