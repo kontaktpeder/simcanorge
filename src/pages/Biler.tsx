@@ -5,7 +5,7 @@ import { Footer } from "@/components/layout/Footer";
 import { supabase } from "@/integrations/supabase/client";
 import { Car, ChevronLeft, ChevronRight, SlidersHorizontal, X, Link2 } from "lucide-react";
 import { RelationshipRequestDialog } from "@/components/car/relationship/RelationshipRequestDialog";
-import { Helmet } from "react-helmet-async";
+import { SeoHead, SEO_COPY } from "@/components/seo";
 import {
   groupCarsByModule,
   type EditorialModule
@@ -241,10 +241,7 @@ const Biler = () => {
 
   return (
     <Layout hideFooter>
-      <Helmet>
-        <title>Arkivet — Biler dokumentert i Norge | Bilgarasje.no</title>
-        <meta name="description" content="Utforsk historier om biler i Norge. Søk etter merke, modell og årstall i bilarkivet." />
-      </Helmet>
+      <SeoHead {...SEO_COPY.biler} />
 
       <ExploreSectionNav />
 

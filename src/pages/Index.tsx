@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
-import { Helmet } from "react-helmet-async";
+import { SeoHead, SEO_COPY } from "@/components/seo";
 import { useAuth } from "@/hooks/useAuth";
 import { useFeedPosts } from "@/hooks/useFeedPosts";
 import { FeedCard } from "@/components/feed/FeedCard";
@@ -28,13 +28,7 @@ export default function Index() {
 
   return (
     <Layout>
-      <Helmet>
-        <title>Utforsk — Bilgarasje.no</title>
-        <meta
-          name="description"
-          content="Utforsk øyeblikk fra norske bileiere — biler, spotting og hverdagshistorier."
-        />
-      </Helmet>
+      <SeoHead {...SEO_COPY.utforsk} />
 
       <ExploreSectionNav />
 
