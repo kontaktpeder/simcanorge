@@ -335,7 +335,7 @@ function AlreadyConnectedCard({
               <Link to={`/dashboard/bil/${hit.id}`}>Åpne i garasje</Link>
             </Button>
             <Button asChild variant="outline" className="h-10 w-full">
-              <Link to="/garasje">Til min garasje</Link>
+              <Link to="/min-garasje">Til min garasje</Link>
             </Button>
           </>
         ) : (
@@ -346,7 +346,7 @@ function AlreadyConnectedCard({
               </Button>
             ) : null}
             <Button asChild variant="outline" className="h-10 w-full">
-              <Link to="/garasje">Til min garasje</Link>
+              <Link to="/min-garasje">Til min garasje</Link>
             </Button>
           </>
         )}

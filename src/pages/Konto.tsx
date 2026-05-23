@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { SeoHead } from "@/components/seo";
 import { User, LogOut, Shield, Trash2, Mail, Calendar, Loader2, AlertTriangle, Bookmark, ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useMySavedQuestions } from "@/hooks/useQuestionSave";
+
 import { Layout } from "@/components/layout/Layout";
 import { EnamelCard, SectionHeader, BigActionButton } from "@/components/ui/garage";
 import { Input } from "@/components/ui/input";
@@ -265,8 +265,6 @@ export default function Konto() {
           </motion.div>
 
 
-          {/* Mine lagrede spørsmål */}
-          {user && <SavedQuestionsCard />}
 
           {/* Personvern og kontroll - kun synlig når innlogget */}
           {user && (
@@ -457,37 +455,4 @@ export default function Konto() {
   );
 }
 
-function SavedQuestionsCard() {
-  const { data, isLoading } = useMySavedQuestions();
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3, delay: 0.15 }}
-    >
-      <EnamelCard>
-        <SectionHeader title="Mine lagrede spørsmål" icon={<Bookmark className="h-5 w-5" />} />
-        {isLoading ? (
-          <p className="text-sm text-muted-foreground">Laster...</p>
-        ) : !data || data.length === 0 ? (
-          <p className="text-sm text-muted-foreground">Du har ikke lagret noen spørsmål ennå.</p>
-        ) : (
-          <ul className="divide-y divide-border">
-            {data.map((q: any) => (
-              <li key={q.id}>
-                <Link
-                  to={`/sporsmal/${q.slug}`}
-                  className="flex items-center justify-between py-2 group"
-                >
-                  <span className="text-sm group-hover:underline truncate pr-3">{q.title}</span>
-                  <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                </Link>
-              </li>
-            ))}
-          </ul>
-        )}
-      </EnamelCard>
-    </motion.div>
-  );
-}
 

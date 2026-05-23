@@ -121,6 +121,7 @@ export async function publishObservation(
         snapshot_image_url: snapshotImageUrl,
         snapshot_title: caption.slice(0, 80) || "Innlegg",
         snapshot_entity_type: "manual",
+        is_visible: visibility === "public",
       })
       .select("id")
       .single();

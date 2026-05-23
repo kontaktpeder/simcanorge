@@ -115,7 +115,7 @@ export default function RelasjonSendt() {
               Det kan hende lenken er gammel, eller at den tilhører en annen bruker.
             </p>
             <Button asChild className="btn-enamel-blue">
-              <Link to="/garasje">
+              <Link to="/min-garasje">
                 <Home className="mr-2 h-4 w-4" /> Til min garasje
               </Link>
             </Button>
@@ -188,7 +188,7 @@ export default function RelasjonSendt() {
                   </p>
                   <p className="text-muted-foreground text-xs sm:text-sm mt-0.5">
                     En ansvarlig vurderer forespørselen. Når den er behandlet, dukker oppdateringen opp under{" "}
-                    <Link to="/garasje" className="underline underline-offset-2 hover:text-foreground">
+                    <Link to="/min-garasje" className="underline underline-offset-2 hover:text-foreground">
                       Min garasje
                     </Link>
                     .
@@ -208,7 +208,7 @@ export default function RelasjonSendt() {
                 </Button>
               )}
               <Button asChild variant={isPublished ? "outline" : "default"} className={isPublished ? "h-12 text-base w-full" : "btn-enamel-blue h-12 text-base w-full"}>
-                <Link to="/garasje">
+                <Link to="/min-garasje">
                   <Home className="mr-2 h-5 w-5" /> Min garasje
                 </Link>
               </Button>

@@ -1,16 +1,13 @@
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
 import { Link } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { SeoHead, SEO_COPY } from "@/components/seo";
 import { useAuth } from "@/hooks/useAuth";
 import { useFeedPosts } from "@/hooks/useFeedPosts";
 import { FeedCard } from "@/components/feed/FeedCard";
-import { ExploreMomentCta } from "@/components/explore/ExploreMomentCta";
 import { ExploreInlineComposer } from "@/components/explore/ExploreInlineComposer";
 import { ExploreSectionNav } from "@/components/explore/ExploreSectionNav";
 import { ExploreArchiveLink } from "@/components/explore/ExploreArchiveLink";
-import { RecentQuestionsBlock } from "@/components/questions/RecentQuestionsBlock";
-import { AddMomentDialog } from "@/components/activity/AddMomentDialog";
 
 // Vegvesen-light palette
 const VV_BG = "#f3f3f3";
@@ -21,13 +18,8 @@ const inter = "'Inter', system-ui, -apple-system, sans-serif";
 export default function Index() {
   const { user } = useAuth();
   const { data: feedPosts, isLoading: feedLoading } = useFeedPosts();
-  const [momentOpen, setMomentOpen] = useState(false);
 
   const posts = useMemo(() => feedPosts ?? [], [feedPosts]);
-
-  function openMoment() {
-    setMomentOpen(true);
-  }
 
   return (
     <Layout>
@@ -67,11 +59,6 @@ export default function Index() {
             <ExploreInlineComposer light />
           </div>
 
-          {/* Recent questions */}
-          <div className="mb-6">
-            <RecentQuestionsBlock light />
-          </div>
-
           {/* Loading */}
           {feedLoading && (
             <div className="space-y-4">
@@ -88,30 +75,14 @@ export default function Index() {
           {/* Feed */}
           {!feedLoading && posts.length > 0 && (
             <div className="space-y-4">
-              {posts.map((post, i) => (
-                <div key={post.id}>
-                  {i > 0 && i % 4 === 0 && (
-                    <div className="my-4">
-                      <ExploreMomentCta
-                        variant="mid"
-                        light
-                        onClick={() => {
-                          if (!user) {
-                            window.location.href = "/login?returnUrl=/hjem";
-                            return;
-                          }
-                          openMoment();
-                        }}
-                      />
-                    </div>
-                  )}
-                  <article
-                    className="rounded-2xl border bg-white p-4 sm:p-5 shadow-sm"
-                    style={{ borderColor: "rgba(0,0,0,0.08)" }}
-                  >
-                    <FeedCard post={post} variant="explore" theme="light" />
-                  </article>
-                </div>
+              {posts.map((post) => (
+                <article
+                  key={post.id}
+                  className="rounded-2xl border bg-white p-4 sm:p-5 shadow-sm"
+                  style={{ borderColor: "rgba(0,0,0,0.08)" }}
+                >
+                  <FeedCard post={post} variant="explore" theme="light" />
+                </article>
               ))}
             </div>
           )}
@@ -126,7 +97,7 @@ export default function Index() {
                 className="text-[1.05rem] uppercase font-bold tracking-[0.08em]"
                 style={{ color: VV_DARK, fontFamily: inter }}
               >
-                Ingen har delt noe ennå.
+                Ingen innlegg ennå.
               </p>
               <p
                 className="text-[12px] text-neutral-500 mt-2 mb-5"
@@ -151,12 +122,6 @@ export default function Index() {
           )}
         </div>
       </section>
-
-      <AddMomentDialog
-        sessionId={null}
-        open={momentOpen}
-        onOpenChange={setMomentOpen}
-      />
     </Layout>
   );
 }

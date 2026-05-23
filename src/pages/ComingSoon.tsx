@@ -48,7 +48,7 @@ export default function ComingSoon() {
             </Link>
           </div>
           <Link
-            to="/garasje"
+            to="/min-garasje"
             className="inline-flex items-center gap-1.5 mt-6 text-[11px] tracking-[0.15em] uppercase text-white/30 hover:text-white/60 transition-colors"
             style={oswald}
           >

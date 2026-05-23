@@ -18,11 +18,11 @@ import { ObservationPostCore } from "@/components/observation/ObservationPostCor
 const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
 
 const TYPE_META: Record<string, { label: string; icon: typeof Pencil; color: string }> = {
-  manual:                { label: "Oppdatering",  icon: Pencil,       color: "text-white/40" },
+  manual:                { label: "Innlegg",       icon: Pencil,       color: "text-white/40" },
   car_published:         { label: "Ny bil",        icon: Car,          color: "text-[#2dd4a8]" },
   car_update:            { label: "Bil oppdatert", icon: Car,          color: "text-[#2dd4a8]" },
-  car_moment:            { label: "Øyeblikk",      icon: Camera,       color: "text-[#2dd4a8]" },
-  car_spotting:          { label: "Spotting",      icon: Eye,          color: "text-[#2dd4a8]" },
+  car_moment:            { label: "Innlegg",       icon: Camera,       color: "text-[#2dd4a8]" },
+  car_spotting:          { label: "Innlegg",       icon: Camera,       color: "text-[#2dd4a8]" },
   marketplace_published: { label: "Til salgs",     icon: ShoppingBag,  color: "text-[#2dd4a8]" },
   event_published:       { label: "Arrangement",   icon: CalendarDays, color: "text-[#2dd4a8]" },
 };
