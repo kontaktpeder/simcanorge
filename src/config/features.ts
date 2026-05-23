@@ -60,4 +60,10 @@ export const FEATURES = {
    * identification, story, ownership). No new DB tables.
    */
   knowledgeHubV1: import.meta.env.VITE_FEATURE_KNOWLEDGE_HUB_V1 !== "false",
+  /**
+   * Brand hubs (/merker/:brand) get full SEO indexing (canonical + indexable).
+   * OFF by default — gated per-hub by content quality (about >= 400 chars, >= 3 cars).
+   * Enable with VITE_FEATURE_SEO_HUB_INDEXING=true once Simca/Talbot/Matra/Opel are curated.
+   */
+  seoHubIndexing: import.meta.env.VITE_FEATURE_SEO_HUB_INDEXING === "true",
 };

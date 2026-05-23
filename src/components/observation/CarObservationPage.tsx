@@ -6,6 +6,7 @@ import { OwnerCard } from "@/components/car/OwnerCard";
 import { AnimatedSection } from "@/components/layout/AnimatedSection";
 import { oswald, oswaldLight, OBSERVATION_BG } from "@/lib/observationPostTokens";
 import type { CarEnrichment } from "@/lib/carEnrichment";
+import { BrandHubLink } from "@/components/car/BrandHubLink";
 
 type GalleryImage = {
   id: string;
