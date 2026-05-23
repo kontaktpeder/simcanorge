@@ -4,6 +4,8 @@ import { SpotCarDialog } from "@/components/car/SpotCarDialog";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate, useLocation } from "react-router-dom";
 import { track } from "@/lib/analytics";
+import { FEATURES } from "@/config/features";
+import { usePublishComposer } from "@/contexts/PublishComposerContext";
 
 const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
 
@@ -33,6 +35,8 @@ export function CaptureCameraButton({ size = "hero", onOpenChange, screen, varia
   const galleryRef = useRef<HTMLInputElement>(null);
   const [prefillFile, setPrefillFile] = useState<File | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const { openPublishComposer } = usePublishComposer();
+  const useV1 = FEATURES.publishComposerV1;
 
   const isLight = variant === "light";
 
@@ -60,6 +64,14 @@ export function CaptureCameraButton({ size = "hero", onOpenChange, screen, varia
     const file = e.target.files?.[0] ?? null;
     e.target.value = ""; // tillat samme fil igjen
     if (!file) return;
+    if (useV1) {
+      openPublishComposer({
+        initialImageFile: file,
+        source: screen ?? "capture",
+      });
+      onOpenChange?.(true);
+      return;
+    }
     setPrefillFile(file);
     setDialogOpen(true);
     onOpenChange?.(true);
@@ -161,11 +173,13 @@ export function CaptureCameraButton({ size = "hero", onOpenChange, screen, varia
         </button>
       )}
 
-      <SpotCarDialog
-        open={dialogOpen}
-        onOpenChange={handleOpenChange}
-        initialImageFile={prefillFile}
-      />
+      {!useV1 && (
+        <SpotCarDialog
+          open={dialogOpen}
+          onOpenChange={handleOpenChange}
+          initialImageFile={prefillFile}
+        />
+      )}
     </>
   );
 }

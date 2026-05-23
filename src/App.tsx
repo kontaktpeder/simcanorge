@@ -7,6 +7,8 @@ import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import { GuideProvider } from "@/hooks/useGuide";
 import { CartProvider } from "@/contexts/CartContext";
+import { PublishComposerProvider } from "@/contexts/PublishComposerContext";
+import { PublishComposer } from "@/components/publish/PublishComposer";
 import { ScrollToTop } from "@/components/layout/ScrollToTop";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { GarasjeGuide } from "@/components/guide";
@@ -24,12 +26,15 @@ const App = () => (
         <ScrollToTop />
         <AuthProvider>
           <CartProvider>
-            <GuideProvider>
-              <GarasjeGuide />
-              <ErrorBoundary>
-                <AppRoutes />
-              </ErrorBoundary>
-            </GuideProvider>
+            <PublishComposerProvider>
+              <GuideProvider>
+                <GarasjeGuide />
+                <ErrorBoundary>
+                  <AppRoutes />
+                </ErrorBoundary>
+              </GuideProvider>
+              <PublishComposer />
+            </PublishComposerProvider>
           </CartProvider>
         </AuthProvider>
       </BrowserRouter>

@@ -66,4 +66,10 @@ export const FEATURES = {
    * Enable with VITE_FEATURE_SEO_HUB_INDEXING=true once Simca/Talbot/Matra/Opel are curated.
    */
   seoHubIndexing: import.meta.env.VITE_FEATURE_SEO_HUB_INDEXING === "true",
+  /**
+   * PublishComposer v1 — én felles publish-sheet (kamera, Utforsk, bilside,
+   * aktiv tur). Wraps gamle composers gradvis. Default ON; sett
+   * VITE_FEATURE_PUBLISH_COMPOSER_V1=false for å rulle tilbake.
+   */
+  publishComposerV1: import.meta.env.VITE_FEATURE_PUBLISH_COMPOSER_V1 !== "false",
 };
