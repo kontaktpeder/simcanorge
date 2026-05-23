@@ -28,8 +28,10 @@ export interface PublishObservationInput {
   caption?: string | null;
   type?: PublishType;
   visibility?: PublishVisibility;
-  /** Valgt eksisterende bil. Hvis null/undefined ⇒ opprett tynn spotting-bil. */
+  /** Valgt eksisterende bil. */
   carId?: string | null;
+  /** Hvis false: ikke knytt til bil — publiser kun feed_post med bilde. Standard true. */
+  attachCar?: boolean;
   /** Valgfritt regnr for å matche/opprette bil hvis carId ikke er satt. */
   registrationNumber?: string | null;
   /** Valgfri tittel/modell brukt ved opprettelse av ny bil. */
@@ -39,11 +41,14 @@ export interface PublishObservationInput {
 }
 
 export interface PublishObservationResult {
-  carId: string;
-  eventId: string;
+  /** null når feed-only. */
+  carId: string | null;
+  /** null når feed-only. */
+  eventId: string | null;
   questionId: string | null;
   questionSlug: string | null;
   carSlug: string | null;
+  feedPostId: string | null;
   matchedExistingCar: boolean;
   createdNewCar: boolean;
   visibility: PublishVisibility;
