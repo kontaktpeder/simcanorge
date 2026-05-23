@@ -10,9 +10,10 @@ interface Props {
   onOpenComments: () => void;
   onShare: () => void;
   className?: string;
+  theme?: "dark" | "light";
 }
 
-export function SpottingReactionsRow({ carId, onOpenComments, onShare, className }: Props) {
+export function SpottingReactionsRow({ carId, onOpenComments, onShare, className, theme = "dark" }: Props) {
   const navigate = useNavigate();
   const location = useLocation();
   const { user } = useAuth();
@@ -32,7 +33,9 @@ export function SpottingReactionsRow({ carId, onOpenComments, onShare, className
   };
 
   const iconBtn =
-    "inline-flex items-center gap-1.5 text-white/80 hover:text-white transition-colors text-[13px] leading-none";
+    theme === "light"
+      ? "inline-flex items-center gap-1.5 text-neutral-700 hover:text-neutral-950 transition-colors text-[13px] leading-none"
+      : "inline-flex items-center gap-1.5 text-white/80 hover:text-white transition-colors text-[13px] leading-none";
 
   return (
     <div className={`flex items-center gap-7 ${className ?? ""}`}>
