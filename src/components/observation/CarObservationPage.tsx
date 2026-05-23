@@ -116,6 +116,13 @@ export function CarObservationPage(props: Props) {
 
   const RightSections = (
     <>
+      {brand && (
+        <section className="pt-2 pb-4">
+          <div className="container mx-auto px-4 max-w-3xl lg:px-0 lg:mx-0 lg:max-w-none">
+            <BrandHubLink brand={brand} variant="chip" />
+          </div>
+        </section>
+      )}
       {enrichment.showTimeline && (
         <>
           <SectionDivider />
