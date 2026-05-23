@@ -349,23 +349,39 @@ export function FeedPostCard({
       )}
 
       {/* Actions */}
-      {onToggleComments && (
+      {(onToggleComments || onShare) && (
         <div className="flex items-center gap-4 mt-4">
-          <button
-            type="button"
-            onClick={(e) => { e.stopPropagation(); onToggleComments(); }}
-            className={`flex items-center gap-1.5 text-[11px] uppercase font-bold tracking-wide transition-colors ${
-              showComments
-                ? (t.isLight ? "text-neutral-800" : "text-white/60")
-                : t.muted
-            }`}
-            style={t.isLight ? t.inter : t.oswald}
-          >
-            <MessageSquare className="w-4 h-4" />
-            Kommentar
-          </button>
+          {onToggleComments && (
+            <button
+              type="button"
+              onClick={(e) => { e.stopPropagation(); onToggleComments(); }}
+              className={`flex items-center gap-1.5 text-[11px] uppercase font-bold tracking-wide transition-colors ${
+                showComments
+                  ? (t.isLight ? "text-neutral-800" : "text-white/60")
+                  : t.muted
+              }`}
+              style={t.isLight ? t.inter : t.oswald}
+            >
+              <MessageSquare className="w-4 h-4" />
+              Kommentar
+            </button>
+          )}
+          {onShare && (
+            <button
+              type="button"
+              onClick={(e) => { e.stopPropagation(); onShare(); }}
+              className={`flex items-center gap-1.5 text-[11px] uppercase font-bold tracking-wide transition-colors ${t.muted} ${
+                t.isLight ? "hover:text-neutral-800" : "hover:text-white/80"
+              }`}
+              style={t.isLight ? t.inter : t.oswald}
+            >
+              <Share2 className="w-4 h-4" />
+              Del
+            </button>
+          )}
         </div>
       )}
+
 
       {children}
     </article>
