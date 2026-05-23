@@ -87,17 +87,18 @@ export function CaptureCameraButton({ size = "hero", onOpenChange, screen, varia
 
   const fabCircleStyle: React.CSSProperties = isLight
     ? {
-        background: "linear-gradient(135deg, #3d6b5e 0%, #2c5c50 60%, #1f3a34 100%)",
-        boxShadow: "0 0 24px rgba(31,58,52,0.25), 0 6px 16px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.2)",
-        border: "3px solid rgba(233,231,225,0.95)",
+        background: "#4a5560",
+        boxShadow: "0 6px 16px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.08)",
+        border: "3px solid #ffffff",
       }
     : {
-        background: "linear-gradient(135deg, #34eab8 0%, #2ab89a 60%, #1cb896 100%)",
-        boxShadow: "0 0 28px rgba(52,234,184,0.45), 0 6px 18px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.25)",
-        border: "3px solid rgba(8,12,17,0.95)",
+        background: "#4a5560",
+        boxShadow: "0 6px 18px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.08)",
+        border: "3px solid rgba(255,255,255,0.95)",
       };
 
-  const iconColor = isLight ? "#f1ede4" : "#070b10";
+  const iconColor = "#ffffff";
+
 
   return (
     <>
