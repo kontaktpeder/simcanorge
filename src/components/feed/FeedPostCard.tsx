@@ -1,8 +1,8 @@
-import type { ReactNode, MouseEvent } from "react";
+import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { formatDistanceToNow } from "date-fns";
 import { nb } from "date-fns/locale";
-import { MessageSquare, MoreHorizontal, Pencil, Trash2, Check, X } from "lucide-react";
+import { MessageSquare, MoreHorizontal, Pencil, Trash2, Check, X, Share2 } from "lucide-react";
 import type { FeedPost } from "@/hooks/useFeedPosts";
 import {
   getPostImages,
@@ -11,7 +11,9 @@ import {
   getEntityHref,
   getEntityTitle,
   getCarSubline,
-  getCarDraftLabel,
+  getCarUnknownPrimaryLabel,
+  CAR_UNKNOWN_SECONDARY_LABEL,
+  isCarUnknown,
   shouldShowTypeBadge,
   getTypeBadgeLabel,
   type CarRow,
@@ -46,7 +48,8 @@ export type FeedPostCardProps = {
   showComments?: boolean;
   onToggleComments?: () => void;
   onImageClick?: () => void;
-  onCardClick?: (e: MouseEvent<HTMLElement>) => void;
+  onShare?: () => void;
+  onKnowCar?: () => void;
   children?: ReactNode;
 };
 
@@ -71,7 +74,8 @@ export function FeedPostCard({
   showComments,
   onToggleComments,
   onImageClick,
-  onCardClick,
+  onShare,
+  onKnowCar,
   children,
 }: FeedPostCardProps) {
   const t = feedThemeTokens(theme);
@@ -79,20 +83,20 @@ export function FeedPostCard({
   const hasMedia = postHasMedia(post);
   const heroImage = images[0]?.url ?? null;
   const body = getPostBody(post);
-  const entityHref = getEntityHref(post);
-  const entityTitle = getEntityTitle(post);
-  const subline = getCarSubline(post);
-  const draftLabel = getCarDraftLabel((post as { car?: CarRow }).car);
+  const car = (post as { car?: CarRow }).car ?? null;
+  const carUnknown = isCarUnknown(car);
+  const entityHref = carUnknown ? null : getEntityHref(post);
+  // Anonymiser entitetsdata for upubliserte biler — vis kun «Ukjent bil» under media.
+  const entityTitle = carUnknown ? null : getEntityTitle(post);
+  const subline = carUnknown ? null : getCarSubline(post);
+  const unknownPrimary = getCarUnknownPrimaryLabel(car);
   const timeAgo = formatDistanceToNow(new Date(post.created_at), { locale: nb, addSuffix: true });
   const showBadge = shouldShowTypeBadge(post.post_type);
   const badgeLabel = getTypeBadgeLabel(post.post_type);
-  const cardClickable = !!entityHref && !!onCardClick;
 
   return (
-    <article
-      className={`group ${cardClickable ? "cursor-pointer" : ""}`}
-      onClick={onCardClick}
-    >
+    <article className="group">
+
       {/* Author + meta */}
       <div className="flex items-start justify-between mb-3 gap-3">
         {author ? (
