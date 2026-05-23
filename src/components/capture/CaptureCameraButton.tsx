@@ -1,11 +1,9 @@
 import { useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Camera, Images } from "lucide-react";
-import { SpotCarDialog } from "@/components/car/SpotCarDialog";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate, useLocation } from "react-router-dom";
 import { track } from "@/lib/analytics";
-import { FEATURES } from "@/config/features";
 import { usePublishComposer } from "@/contexts/PublishComposerContext";
 import { InAppCameraModal } from "@/components/capture/InAppCameraModal";
 
