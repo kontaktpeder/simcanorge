@@ -149,7 +149,7 @@ export function CaptureCameraButton({ size = "hero", onOpenChange, screen, varia
           <button
             type="button"
             onClick={handleClick}
-            aria-label="Fang bil"
+            aria-label="Nytt innlegg"
             className="group relative flex flex-col items-center gap-3 active:scale-[0.97] transition-transform"
           >
             <span
@@ -162,7 +162,7 @@ export function CaptureCameraButton({ size = "hero", onOpenChange, screen, varia
               className="text-[12px] uppercase tracking-[0.18em] font-bold text-white/85"
               style={chakra}
             >
-              Fang bil
+              Nytt innlegg
             </span>
           </button>
           <button
