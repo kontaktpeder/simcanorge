@@ -1,4 +1,4 @@
-import { Helmet } from "react-helmet-async";
+import { SeoHead } from "@/components/seo";
 import { Layout } from "@/components/layout/Layout";
 import { useParams, Link } from "react-router-dom";
 import { usePublicEventBySlug } from "@/hooks/useEventBySlug";
@@ -115,10 +115,11 @@ export default function PublicEventPage() {
           )}
         </div>
       )}
-      <Helmet>
-        <title>{event.title} | Bilgarasje</title>
-        <meta name="description" content={event.short_description || `${event.title} – ${event.location}`} />
-      </Helmet>
+      <SeoHead
+        title={`${event.title} | Bilgarasje`}
+        description={event.short_description || `${event.title} – ${event.location}`}
+        canonicalPath={`/e/${event.slug}`}
+      />
 
       {/* ── HERO — compact two-column ── */}
       <div className="max-w-6xl mx-auto px-6 sm:px-10 pt-6 md:pt-8">

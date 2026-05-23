@@ -1,4 +1,4 @@
-import { Helmet } from "react-helmet-async";
+import { SeoHead } from "@/components/seo";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { format } from "date-fns";
@@ -31,10 +31,11 @@ export default function EventsPage() {
 
   return (
     <Layout>
-      <Helmet>
-        <title>Arrangement | Bilgarasje.no</title>
-        <meta name="description" content="Kommende biltreff, show og events i Norge" />
-      </Helmet>
+      <SeoHead
+        title="Arrangement | Bilgarasje.no"
+        description="Kommende biltreff, show og events i Norge"
+        canonicalPath="/arrangement"
+      />
 
       <div className="min-h-screen" style={{ background: 'linear-gradient(180deg, #eee7dd 0%, #ebe4da 40%, #e8e1d6 100%)' }}>
 

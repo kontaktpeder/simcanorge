@@ -1,0 +1,23 @@
+/** Paths som alltid skal ha noindex (prefix-match) */
+export const NOINDEX_PATH_PREFIXES = [
+  "/login",
+  "/registrer",
+  "/glemt-passord",
+  "/nytt-passord",
+  "/sok-om-tilgang",
+  "/garasje",
+  "/dashboard",
+  "/min-garasje",
+  "/konto",
+  "/kom-i-gang",
+  "/aktiv",
+  "/turer",
+  "/tur/",
+  "/admin",
+  "/foresporsel",
+  "/relasjon-sendt",
+  "/accept-invitation",
+  "/i/",
+  "/app",
+  "/legg-til-bil",
+] as const;

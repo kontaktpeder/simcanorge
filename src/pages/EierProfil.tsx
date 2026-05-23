@@ -1,5 +1,6 @@
 import { useParams, Link, useLocation, Navigate } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
+import { SeoHead } from '@/components/seo';
+import { buildCanonicalUrl } from '@/lib/siteUrl';
 import { motion } from 'framer-motion';
 import { User, MapPin, Heart, Car, ChevronRight, ShoppingBag } from 'lucide-react';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
@@ -38,7 +39,7 @@ export default function EierProfil() {
   if (!owner) {
     return (
       <Layout>
-        <Helmet><title>Profil ikke funnet | Bilgarasje.no</title></Helmet>
+        <SeoHead title="Profil ikke funnet | Bilgarasje.no" canonicalPath="/biler" noindex />
         <PageHeader title="Profil ikke funnet" subtitle="Denne profilen finnes ikke eller er ikke offentlig." />
         <div className="container py-12 text-center">
           <Link to="/biler" className="text-primary hover:underline inline-flex items-center gap-2">
@@ -49,35 +50,28 @@ export default function EierProfil() {
     );
   }
 
-  const SITE_URL = (import.meta.env.VITE_SITE_URL ?? "https://simcanorge.no").replace(/\/$/, "");
-
-  const profileUrl = `${SITE_URL}/profil/${owner.slug}`;
+  const canonicalPath = `/profil/${owner.slug}`;
+  const profileUrl = buildCanonicalUrl(canonicalPath);
   const personDescription = owner.bio?.slice(0, 160) || `Bilentusiast i Norge – profil for ${owner.display_name}`;
 
   return (
     <Layout>
-      <Helmet>
-        <title>{owner.display_name} – Bilentusiast i Norge | Bilgarasje.no</title>
-        <meta name="description" content={personDescription} />
-        <link rel="canonical" href={profileUrl} />
-        <meta property="og:title" content={`${owner.display_name} – Bilentusiast i Norge | Bilgarasje.no`} />
-        <meta property="og:description" content={personDescription} />
-        <meta property="og:url" content={profileUrl} />
-        <meta property="og:type" content="profile" />
-        {owner.avatar_url && <meta property="og:image" content={owner.avatar_url} />}
-
-        <script type="application/ld+json">
-          {JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "Person",
-            "name": owner.display_name,
-            "description": personDescription,
-            "url": profileUrl,
-            ...(owner.avatar_url ? { "image": owner.avatar_url } : {}),
-            ...(owner.location ? { "address": { "@type": "PostalAddress", "addressLocality": owner.location } } : {}),
-          })}
-        </script>
-      </Helmet>
+      <SeoHead
+        title={`${owner.display_name} – Bilentusiast i Norge | Bilgarasje.no`}
+        description={personDescription}
+        canonicalPath={canonicalPath}
+        image={owner.avatar_url ?? undefined}
+        ogType="profile"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "Person",
+          name: owner.display_name,
+          description: personDescription,
+          url: profileUrl,
+          ...(owner.avatar_url ? { image: owner.avatar_url } : {}),
+          ...(owner.location ? { address: { "@type": "PostalAddress", addressLocality: owner.location } } : {}),
+        }}
+      />
 
       {/* Hero Section */}
       <section className="bg-gradient-to-b from-muted/50 to-background py-12 sm:py-16 md:py-20">

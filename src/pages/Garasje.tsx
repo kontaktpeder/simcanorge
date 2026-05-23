@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useMyPersonProfile } from '@/hooks/useMyPersonProfile';
 import { Layout } from '@/components/layout/Layout';
-import { Helmet } from 'react-helmet-async';
+import { SeoHead } from '@/components/seo';
 import { Plus, Car, Eye, Pencil, Upload, BookOpen, User, ChevronRight, MapPin, CalendarPlus, Users, Settings, UserCircle } from 'lucide-react';
 import { BrandLoader } from '@/components/brand/BrandLoader';
 import { motion } from 'framer-motion';
@@ -115,9 +115,7 @@ export default function Garasje() {
 
   return (
     <Layout>
-      <Helmet>
-        <title>Min garasje — Bilgarasje.no</title>
-      </Helmet>
+      <SeoHead title="Min garasje — Bilgarasje.no" canonicalPath="/garasje" noindex />
 
       <div className="min-h-[calc(100vh-4rem)] relative">
         {/* Garage background */}

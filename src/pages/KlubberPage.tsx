@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
+import { SeoHead } from "@/components/seo";
 import { Layout } from "@/components/layout/Layout";
 import { CreateCTA } from "@/components/ui/CreateCTA";
 import { MapPin, Calendar, Users } from "lucide-react";
@@ -27,10 +27,11 @@ export default function KlubberPage() {
 
   return (
     <Layout>
-      <Helmet>
-        <title>Klubber | Bilgarasje.no</title>
-        <meta name="description" content="Bilklubber og entusiastforeninger i det norske bilmiljøet." />
-      </Helmet>
+      <SeoHead
+        title="Klubber | Bilgarasje.no"
+        description="Bilklubber og entusiastforeninger i det norske bilmiljøet."
+        canonicalPath="/klubber"
+      />
 
       <div className="min-h-screen" style={{ background: 'linear-gradient(180deg, #eee7dd 0%, #ebe4da 40%, #e8e1d6 100%)' }}>
 

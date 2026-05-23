@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
+import { SeoHead } from "@/components/seo";
 import { motion } from "framer-motion";
 import { Layout } from "@/components/layout/Layout";
 import { Footer } from "@/components/layout/Footer";
@@ -141,10 +141,11 @@ export default function Markedsplass() {
 
   return (
     <Layout hideFooter>
-      <Helmet>
-        <title>{branchType ? `${branchType.label} | Markedsplass` : 'Markedsplass'} | Bilgarasje.no</title>
-        <meta name="description" content="Kjøp og selg deler, tilbehør og biler fra entusiaster i hele Norge." />
-      </Helmet>
+      <SeoHead
+        title={branchType ? `${branchType.label} | Markedsplass | Bilgarasje.no` : "Markedsplass | Bilgarasje.no"}
+        description="Kjøp og selg deler, tilbehør og biler fra entusiaster i hele Norge."
+        canonicalPath="/markedsplass"
+      />
 
 
       {/* Toolbox Banner */}

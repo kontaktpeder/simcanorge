@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
+import { SeoHead } from "@/components/seo";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { AnimatedSection } from "@/components/layout/AnimatedSection";
 import { Send, CheckCircle, MessageSquare, Phone, MessageCircle } from "lucide-react";
@@ -135,6 +136,7 @@ export default function Kontakt() {
       </Layout>;
   }
   return <Layout contained>
+      <SeoHead title="Kontakt | Bilgarasje.no" description="Ta kontakt med Bilgarasje.no." canonicalPath="/kontakt" />
       <PageHeader title="KONTAKT OSS" subtitle="Har du spørsmål eller tilbakemeldinger? Send oss en melding!" />
 
       {/* Quick Contact Banner */}

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
+import { SeoHead } from "@/components/seo";
 import { motion } from "framer-motion";
 import { Layout } from "@/components/layout/Layout";
 import { PageHeader } from "@/components/layout/PageHeader";
@@ -99,7 +99,7 @@ export default function AnnonseDetalj() {
   // Not found
   return (
     <Layout>
-      <Helmet><title>Ikke funnet | Bilgarasje.no</title></Helmet>
+      <SeoHead title="Ikke funnet | Bilgarasje.no" canonicalPath="/markedsplass" noindex />
       <PageHeader title="Ikke funnet" subtitle="Denne varen finnes ikke eller er ikke publisert." />
       <div className="container py-12 text-center">
         <Link to="/markedsplass" className="text-primary hover:underline inline-flex items-center gap-2">
@@ -139,10 +139,11 @@ function PartDetailView({ part, category }: { part: any; category: any }) {
 
   return (
     <Layout>
-      <Helmet>
-        <title>{part.title} | Markedsplass – Bilgarasje.no</title>
-        <meta name="description" content={part.description?.slice(0, 160) || `${part.title} – bildel på Bilgarasje.no`} />
-      </Helmet>
+      <SeoHead
+        title={`${part.title} | Markedsplass – Bilgarasje.no`}
+        description={part.description?.slice(0, 160) || `${part.title} – bildel på Bilgarasje.no`}
+        canonicalPath={`/annonse/${part.slug || part.id}`}
+      />
       <PageHeader title="MARKEDSPLASS" subtitle={category?.name || "Bildel"} />
 
       <section className="poster-section pb-[max(2rem,env(safe-area-inset-bottom))] sm:pb-[max(5rem,env(safe-area-inset-bottom))]">
@@ -258,10 +259,11 @@ function MarketplaceDetailView({ item }: { item: any }) {
 
   return (
     <Layout>
-      <Helmet>
-        <title>{item.title} | Markedsplass – Bilgarasje.no</title>
-        <meta name="description" content={item.description?.slice(0, 160) || `${item.title} til salgs på Bilgarasje.no`} />
-      </Helmet>
+      <SeoHead
+        title={`${item.title} | Markedsplass – Bilgarasje.no`}
+        description={item.description?.slice(0, 160) || `${item.title} til salgs på Bilgarasje.no`}
+        canonicalPath={`/annonse/${item.slug}`}
+      />
       <PageHeader title="MARKEDSPLASS" subtitle={category?.name || "Annonse"} />
 
       <section className="poster-section pb-[max(2rem,env(safe-area-inset-bottom))] sm:pb-[max(5rem,env(safe-area-inset-bottom))]">

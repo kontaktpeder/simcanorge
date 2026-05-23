@@ -1,4 +1,5 @@
 import { Layout } from "@/components/layout/Layout";
+import { SeoHead } from "@/components/seo";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -85,6 +86,11 @@ const ManedensBil = () => {
     return sorted[0];
   };
   return <Layout contained>
+      <SeoHead
+        title="Månedens bil | Bilgarasje.no"
+        description="Hver måned løfter vi frem én bil fra vårt fellesskap."
+        canonicalPath="/manedens-bil"
+      />
       <PageHeader 
         title="MÅNEDENS BIL" 
         subtitle="Hver måned løfter vi frem én bil fra vårt fellesskap – en kilde til inspirasjon, glede og ekte kjøreglede" 

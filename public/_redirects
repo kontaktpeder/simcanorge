@@ -1,0 +1,11 @@
+# Duplikat-onboarding
+/registrer-bil     /legg-inn-bil     301
+
+# Profil legacy
+/eier/*            /profil/:splat    301
+
+# Klubb short URL (samme slug)
+/s/:slug           /klubber/:slug    301
+
+# SPA fallback (må være sist)
+/*    /index.html   200

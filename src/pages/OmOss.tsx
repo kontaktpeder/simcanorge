@@ -1,4 +1,5 @@
 import { Layout } from "@/components/layout/Layout";
+import { SeoHead } from "@/components/seo";
 import { AnimatedSection } from "@/components/layout/AnimatedSection";
 import { Facebook, Heart, Users, Car, Wrench, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -9,6 +10,11 @@ const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
 export default function OmOss() {
   return (
     <Layout contained>
+      <SeoHead
+        title="Om oss | Bilgarasje.no"
+        description="Bilgarasje.no startet med Simca-entusiastene i Norge og er i dag åpen for alle bilentusiaster."
+        canonicalPath="/om-oss"
+      />
       {/* ─── HERO ─── */}
       <section className="relative overflow-hidden bg-[#0a0a0a]">
         <div className="absolute inset-0 pointer-events-none" style={{

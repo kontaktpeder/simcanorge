@@ -1,6 +1,6 @@
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useEffect } from "react";
-import { Helmet } from "react-helmet-async";
+import { SeoHead } from "@/components/seo";
 import { usePublicPageBySlug } from "@/hooks/usePageBySlug";
 import { PublicPageHero } from "@/components/pages/PublicPageHero";
 import { PublicPageAbout } from "@/components/pages/PublicPageAbout";
@@ -56,10 +56,11 @@ export default function PublicPagePage() {
   if (page.page_type === "club" && (page as any).page_template === "classic") {
     return (
       <Layout shortPage>
-        <Helmet>
-          <title>{page.title} | Bilgarasjen</title>
-          {page.tagline && <meta name="description" content={page.tagline} />}
-        </Helmet>
+        <SeoHead
+          title={`${page.title} | Bilgarasjen`}
+          description={page.tagline || undefined}
+          canonicalPath={page.page_type === "club" ? `/klubber/${page.slug}` : `/s/${page.slug}`}
+        />
         <PlatformContextBanner light />
         <ClubClassicTemplate page={page} />
       </Layout>
@@ -72,10 +73,11 @@ export default function PublicPagePage() {
   if (isClub) {
     return (
       <Layout shortPage>
-        <Helmet>
-          <title>{page.title} | Bilgarasjen</title>
-          {page.tagline && <meta name="description" content={page.tagline} />}
-        </Helmet>
+        <SeoHead
+          title={`${page.title} | Bilgarasjen`}
+          description={page.tagline || undefined}
+          canonicalPath={`/klubber/${page.slug}`}
+        />
 
         <div>
           {/* ─── HERO ─── */}
@@ -226,10 +228,11 @@ export default function PublicPagePage() {
 
   return (
     <Layout>
-      <Helmet>
-        <title>{page.title} | Bilgarasjen</title>
-        {page.tagline && <meta name="description" content={page.tagline} />}
-      </Helmet>
+      <SeoHead
+        title={`${page.title} | Bilgarasjen`}
+        description={page.tagline || undefined}
+        canonicalPath={page.page_type === "club" ? `/klubber/${page.slug}` : `/s/${page.slug}`}
+      />
 
       <div className="min-h-screen bg-[#0B0B0C]" style={themeStyle}>
         <PublicPageHero page={page} />

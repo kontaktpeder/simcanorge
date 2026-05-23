@@ -1,5 +1,5 @@
 import { useParams, Link } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
+import { SeoHead } from "@/components/seo";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Layout } from "@/components/layout/Layout";
@@ -117,10 +117,11 @@ export default function MerkeHub() {
 
   return (
     <Layout>
-      <Helmet>
-        <title>{hub.title} — Bilgarasjen</title>
-        {hub.tagline && <meta name="description" content={hub.tagline} />}
-      </Helmet>
+      <SeoHead
+        title={`${hub.title} — Bilgarasjen`}
+        description={hub.tagline || undefined}
+        canonicalPath="/biler"
+      />
 
       <div className="min-h-screen bg-[#F7F4EF]">
 

@@ -3,6 +3,7 @@ import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { Layout } from '@/components/layout/Layout';
+import { SeoHead } from '@/components/seo';
 import { Loader2, LogIn, ArrowRight, Mail, KeyRound, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -186,6 +187,7 @@ export default function Login() {
 
   return (
     <Layout>
+      <SeoHead title="Logg inn | Bilgarasje.no" canonicalPath="/login" noindex />
       <div className="min-h-[calc(100vh-4rem)] relative overflow-hidden flex items-center justify-center"
         style={{ background: 'linear-gradient(135deg, #070b10 0%, #0c1219 40%, #060a0f 100%)' }}>
 

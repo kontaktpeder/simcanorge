@@ -3,7 +3,7 @@ import React from "https://esm.sh/react@18.2.0";
 import { ImageResponse } from "https://deno.land/x/og_edge@0.0.4/mod.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const SITE_URL = (Deno.env.get("SITE_URL") ?? "https://simcanorge.no").replace(/\/$/, "");
+const SITE_URL = (Deno.env.get("SITE_URL") ?? "https://bilgarasje.no").replace(/\/$/, "");
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
