@@ -195,12 +195,12 @@ export function ExploreInlineComposer({ light = false }: { light?: boolean }) {
               </button>
               <button
                 type="button"
-                onClick={() => void handlePublish()}
-                disabled={isPending || !body.trim()}
+                onClick={handlePublish}
+                disabled={!body.trim()}
                 className={publishCls}
                 style={publishStyle}
               >
-                {isPending ? "…" : "Publiser"}
+                Publiser
               </button>
             </div>
           </div>
