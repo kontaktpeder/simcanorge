@@ -220,17 +220,6 @@ export function ExploreInlineComposer({ light = false }: { light?: boolean }) {
           />,
           document.body,
         )}
-
-      {!useV1 && (
-        <SpotCarDialog
-          open={fallbackOpen}
-          onOpenChange={(next) => {
-            setFallbackOpen(next);
-            if (!next) setPrefillFile(null);
-          }}
-          initialImageFile={prefillFile}
-        />
-      )}
     </div>
   );
 }
