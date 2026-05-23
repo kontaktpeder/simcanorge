@@ -16,6 +16,12 @@ import {
   Globe,
   Lock,
   ChevronRight,
+  Link as LinkIcon,
+  Instagram,
+  Facebook,
+  Share2,
+  FileText,
+  RotateCw,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -271,54 +277,140 @@ export function PublishComposer() {
 
         {result ? (
           // ═══════════════ POST-PUBLISH ═══════════════
-          <div className="flex-1 flex flex-col items-center justify-center text-center px-6 py-12 animate-fade-in bg-white">
-            <div className="relative mb-6">
+          <div className="flex-1 overflow-y-auto bg-white animate-fade-in relative">
+            <button
+              type="button"
+              onClick={closePublishComposer}
+              className="absolute top-3 right-3 z-10 w-10 h-10 inline-flex items-center justify-center rounded-full hover:bg-black/5 text-neutral-700"
+              style={{ top: "max(0.75rem, env(safe-area-inset-top))" }}
+              aria-label="Lukk"
+            >
+              <X className="w-5 h-5" strokeWidth={2} />
+            </button>
+
+            <div className="px-6 pt-10 pb-8 flex flex-col items-center text-center">
+              {/* Sjekkmerke */}
+              <div className="relative w-20 h-20 mb-5">
+                <span
+                  className="absolute inset-0 rounded-full"
+                  style={{ backgroundColor: "#d6f3e0" }}
+                />
+                <span className="absolute inset-2 rounded-full flex items-center justify-center" style={{ backgroundColor: "#22c55e" }}>
+                  <CheckCircle2 className="w-9 h-9 text-white" strokeWidth={3} />
+                </span>
+                {/* stråler */}
+                <span className="absolute -left-3 top-3 w-3 h-0.5 rounded-full" style={{ backgroundColor: "#22c55e" }} />
+                <span className="absolute -left-2 top-8 w-4 h-0.5 rounded-full rotate-[20deg]" style={{ backgroundColor: "#22c55e" }} />
+                <span className="absolute -right-3 top-3 w-3 h-0.5 rounded-full" style={{ backgroundColor: "#22c55e" }} />
+                <span className="absolute -right-2 top-8 w-4 h-0.5 rounded-full -rotate-[20deg]" style={{ backgroundColor: "#22c55e" }} />
+                <span className="absolute left-1 -top-1 w-0.5 h-3 rounded-full" style={{ backgroundColor: "#22c55e" }} />
+                <span className="absolute right-1 -top-1 w-0.5 h-3 rounded-full" style={{ backgroundColor: "#22c55e" }} />
+              </div>
+
+              <h2 className="text-[26px] font-bold text-neutral-900 mb-2 leading-tight">
+                Takk! Innlegget er delt.
+              </h2>
+              <p className="text-neutral-600 text-sm max-w-sm mb-6 leading-relaxed">
+                {result.carId
+                  ? result.visibility === "public"
+                    ? "Innlegget er lagt til i feeden og på bilen. Tusen takk for bidraget!"
+                    : "Innlegget er lagret på bilen — kun synlig for deg. Tusen takk!"
+                  : "Innlegget er i feeden. Tusen takk for bidraget!"}
+              </p>
+
+              {/* Bildekort med tag */}
               {previewUrl && (
-                <div className="w-40 h-40 rounded-2xl overflow-hidden border border-black/10 shadow-lg">
-                  <img
-                    src={previewUrl}
-                    alt=""
-                    className="w-full h-full object-cover"
-                  />
+                <div className="relative w-full max-w-[280px] mb-8">
+                  <div className="rounded-2xl overflow-hidden border border-black/10 shadow-sm aspect-[4/5] bg-neutral-100">
+                    <img src={previewUrl} alt="" className="w-full h-full object-cover" />
+                  </div>
+                  <div
+                    className="absolute bottom-3 right-3 inline-flex items-center gap-1.5 rounded-full bg-white px-2.5 py-1.5 text-[12px] font-semibold text-neutral-900 shadow-md border border-black/5"
+                  >
+                    <span
+                      className="w-5 h-5 rounded flex items-center justify-center"
+                      style={{ backgroundColor: VV_YELLOW_SOFT }}
+                    >
+                      <Car className="w-3 h-3 text-neutral-800" strokeWidth={2.5} />
+                    </span>
+                    <span className="truncate max-w-[140px]">
+                      {selectedCarTitle ?? (carMode === "none" ? "Ikke knyttet til bil" : "Bil")}
+                    </span>
+                  </div>
                 </div>
               )}
-              <div
-                className="absolute -bottom-3 -right-3 w-11 h-11 rounded-full flex items-center justify-center border-4 border-white"
-                style={{ backgroundColor: VV_YELLOW }}
-              >
-                <CheckCircle2 className="w-5 h-5 text-neutral-900" strokeWidth={2.5} />
+
+              {/* Del innlegget — visuelt grid */}
+              <div className="w-full text-left mb-6">
+                <h3 className="text-[11px] uppercase tracking-[0.14em] font-bold text-neutral-500 mb-3">
+                  Del innlegget
+                </h3>
+                <div className="grid grid-cols-4 gap-2">
+                  <ShareTile label="Kopier lenke" iconBg="#f3f3f3">
+                    <LinkIcon className="w-5 h-5 text-neutral-700" strokeWidth={2} />
+                  </ShareTile>
+                  <ShareTile label="Instagram" iconBg="transparent">
+                    <span
+                      className="w-7 h-7 rounded-md flex items-center justify-center"
+                      style={{
+                        background:
+                          "linear-gradient(135deg,#f7c14b 0%,#ea4c89 45%,#9c2bc1 100%)",
+                      }}
+                    >
+                      <Instagram className="w-4 h-4 text-white" strokeWidth={2.25} />
+                    </span>
+                  </ShareTile>
+                  <ShareTile label="Facebook" iconBg="transparent">
+                    <span
+                      className="w-7 h-7 rounded-full flex items-center justify-center"
+                      style={{ backgroundColor: "#1877f2" }}
+                    >
+                      <Facebook className="w-4 h-4 text-white fill-white" strokeWidth={0} />
+                    </span>
+                  </ShareTile>
+                  <ShareTile label="Flere valg" iconBg="#f3f3f3">
+                    <Share2 className="w-5 h-5 text-neutral-700" strokeWidth={2} />
+                  </ShareTile>
+                </div>
               </div>
-            </div>
-            <h2 className="text-2xl font-bold text-neutral-900 mb-1">
-              Takk — det er med.
-            </h2>
-            <p className="text-neutral-600 text-sm max-w-xs mb-8">
-              {result.carId
-                ? result.visibility === "public"
-                  ? "Lagt til på bilen og i feeden."
-                  : "Lagt til på bilen — kun synlig for deg."
-                : "Innlegget er i feeden. Knytt til bil for å lagre det i arkivet."}
-            </p>
-            <div className="flex flex-col gap-2 w-full max-w-xs">
-              {result.carSlug && (
+
+              {/* Primær + sekundær CTA */}
+              <div className="w-full flex flex-col gap-2">
+                {result.carSlug ? (
+                  <Button
+                    type="button"
+                    onClick={handleViewResult}
+                    className="h-12 w-full text-base font-semibold text-white hover:brightness-110 rounded-xl"
+                    style={{ backgroundColor: VV_DARK }}
+                  >
+                    <FileText className="mr-2 w-4 h-4" strokeWidth={2.25} />
+                    Se innlegget
+                  </Button>
+                ) : (
+                  <Button
+                    type="button"
+                    onClick={closePublishComposer}
+                    className="h-12 w-full text-base font-semibold text-white hover:brightness-110 rounded-xl"
+                    style={{ backgroundColor: VV_DARK }}
+                  >
+                    <FileText className="mr-2 w-4 h-4" strokeWidth={2.25} />
+                    Se innlegget
+                  </Button>
+                )}
                 <Button
                   type="button"
-                  onClick={handleViewResult}
-                  className="h-12 w-full text-base font-semibold text-neutral-900 hover:brightness-95"
-                  style={{ backgroundColor: VV_YELLOW }}
+                  variant="outline"
+                  onClick={closePublishComposer}
+                  className="h-12 w-full text-base font-semibold text-neutral-900 rounded-xl border-black/10 bg-white hover:bg-neutral-50"
                 >
-                  Se bilen
-                  <ArrowRight className="ml-2 w-4 h-4" />
+                  Fortsett å bruke appen
                 </Button>
-              )}
-              <Button
-                type="button"
-                variant="ghost"
-                onClick={closePublishComposer}
-                className="h-11 w-full text-neutral-600"
-              >
-                Ferdig
-              </Button>
+              </div>
+
+              <p className="mt-5 inline-flex items-center gap-1.5 text-[12px] text-neutral-400">
+                <RotateCw className="w-3.5 h-3.5" strokeWidth={2} />
+                Du kan alltid finne innlegget i arkivet ditt
+              </p>
             </div>
           </div>
         ) : (
@@ -724,6 +816,33 @@ function VVSegment({
     >
       {icon}
       {label}
+    </button>
+  );
+}
+
+function ShareTile({
+  label,
+  iconBg,
+  children,
+}: {
+  label: string;
+  iconBg: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      className="flex flex-col items-center justify-center gap-1.5 rounded-xl border border-black/10 bg-white px-2 py-3 hover:bg-neutral-50 transition-colors"
+    >
+      <span
+        className="w-9 h-9 rounded-lg flex items-center justify-center"
+        style={{ backgroundColor: iconBg }}
+      >
+        {children}
+      </span>
+      <span className="text-[11px] font-medium text-neutral-700 truncate w-full text-center">
+        {label}
+      </span>
     </button>
   );
 }
