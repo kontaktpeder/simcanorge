@@ -62,7 +62,10 @@ function getAllImages(post: FeedPost) {
   return imgs as { url: string; alt?: string }[];
 }
 
-export function FeedCard({ post, variant = "default" }: { post: FeedPost; variant?: "default" | "explore" }) {
+export function FeedCard({ post, variant = "default", theme = "dark" }: { post: FeedPost; variant?: "default" | "explore"; theme?: "light" | "dark" }) {
+  const isLight = theme === "light";
+  const inter = { fontFamily: "'Inter', system-ui, -apple-system, sans-serif" } as const;
+  const titleFont = isLight ? inter : oswald;
   const { user } = useAuth();
   const navigate = useNavigate();
   const { data: myProfile } = useMyPersonProfile();
