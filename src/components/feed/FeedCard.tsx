@@ -7,6 +7,7 @@ import { useEditFeedPost } from "@/hooks/useEditFeedPost";
 import { useDeleteFeedPost } from "@/hooks/useDeleteFeedPost";
 import { ImageLightbox } from "@/components/ui/image-lightbox";
 import { CommentSection } from "@/components/comments/CommentSection";
+import { Drawer, DrawerContent, DrawerTitle } from "@/components/ui/drawer";
 import { RelationshipRequestDialog } from "@/components/car/relationship/RelationshipRequestDialog";
 import type { FeedPost } from "@/hooks/useFeedPosts";
 import { getPostImages, isCarUnknown, type CarRow } from "@/lib/feedPostPresentation";
