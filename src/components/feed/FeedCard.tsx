@@ -102,9 +102,29 @@ export function FeedCard({ post, variant = "default", theme = "dark" }: Props) {
         onImageClick={() => setLightboxOpen(true)}
         onShare={() => { void shareFeedPost(post); }}
         onKnowCar={canRequestRelationship ? handleKnowCar : undefined}
-      >
-        {showComments && <CommentSection feedPostId={post.id} />}
-      </FeedPostCard>
+      />
+
+      {/* Kommentarer åpnes som et bunnark (Instagram-stil). */}
+      <Drawer open={showComments} onOpenChange={setShowComments}>
+        <DrawerContent
+          className={
+            resolvedTheme === "light"
+              ? "max-h-[88vh] bg-white border-black/[0.08] text-neutral-900"
+              : "max-h-[88vh] bg-[#0a1218] border-white/[0.06] text-white"
+          }
+        >
+          <DrawerTitle className="sr-only">Kommentarer</DrawerTitle>
+          <div
+            className="overflow-y-auto px-4 sm:px-6 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-2"
+            style={{ maxHeight: "calc(88vh - 1.5rem)" }}
+          >
+            <CommentSection
+              feedPostId={post.id}
+              variant={resolvedTheme === "light" ? "light" : "dark"}
+            />
+          </div>
+        </DrawerContent>
+      </Drawer>
 
       <ImageLightbox
         images={images}
