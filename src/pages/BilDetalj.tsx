@@ -15,7 +15,7 @@ import { useMyPersonProfile } from "@/hooks/useMyPersonProfile";
 import { PostComposer } from "@/components/feed/PostComposer";
 import { PostPublishOnboardingOverlay } from "@/components/car/PostPublishOnboardingOverlay";
 import { CommentSection } from "@/components/comments/CommentSection";
-import { CarQuestionsSection } from "@/components/questions/CarQuestionsSection";
+
 import { supabase } from "@/integrations/supabase/client";
 import { getResponsiveImageProps, IMAGE_SIZES, getThumbnailUrl } from "@/lib/imageUtils";
 import { 
