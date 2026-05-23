@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import { Car, Plus } from "lucide-react";
+import { Car, Plus, ChevronRight, ArrowLeft } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { Layout } from "@/components/layout/Layout";
@@ -12,8 +12,14 @@ import { track, trackScreenViewOnce } from "@/lib/analytics";
 
 const SCREEN = "garage";
 
-const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
-const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
+// Vegvesen-inspirert palett (samme som PublishComposer)
+const VV_BG = "#f3f3f3";
+const VV_YELLOW = "#fcc419";
+const VV_YELLOW_SOFT = "#fff4d1";
+const VV_DARK = "#2b2b2b";
+const VV_ORANGE = "#ff8a00";
+
+const fontStack = { fontFamily: "'Inter', 'Helvetica Neue', Arial, sans-serif" } as const;
 
 interface CarImage {
   id: string;
@@ -72,7 +78,7 @@ export default function MinGarasje() {
   if (authLoading || isLoading) {
     return (
       <Layout>
-        <div className="min-h-[60vh] flex items-center justify-center bg-[#070b10]">
+        <div className="min-h-[60vh] flex items-center justify-center" style={{ backgroundColor: VV_BG }}>
           <BrandLoader />
         </div>
       </Layout>
@@ -81,6 +87,8 @@ export default function MinGarasje() {
   if (!user) return null;
 
   const cars = (myCars ?? []).map((c) => c.cars).filter(Boolean);
+  const published = cars.filter((c) => !!c.published_at).length;
+  const drafts = cars.length - published;
 
   return (
     <Layout>
@@ -88,60 +96,74 @@ export default function MinGarasje() {
         <title>Min garasje — Bilgarasje.no</title>
       </Helmet>
 
-      <div className="min-h-screen bg-[#070b10] pb-32">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 pt-6">
-          {/* Page heading */}
-          <div className="mb-6">
-            <div className="text-[10px] uppercase tracking-[0.22em] text-white/40" style={oswald}>
+      <div className="min-h-screen pb-32 text-neutral-900" style={{ backgroundColor: VV_BG, ...fontStack }}>
+        {/* Topbar */}
+        <div className="bg-white border-b border-black/[0.06]">
+          <div className="max-w-3xl mx-auto px-4 sm:px-6 h-14 flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => navigate(-1)}
+              className="w-9 h-9 -ml-2 inline-flex items-center justify-center rounded-full hover:bg-black/5 text-neutral-700"
+              aria-label="Tilbake"
+            >
+              <ArrowLeft className="w-5 h-5" strokeWidth={2} />
+            </button>
+            <h1 className="text-[15px] font-semibold tracking-tight">Min garasje</h1>
+            <div className="ml-auto h-1.5 w-24 rounded-full overflow-hidden bg-black/5">
+              <div className="h-full w-full" style={{ backgroundColor: VV_ORANGE }} />
+            </div>
+          </div>
+        </div>
+
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 pt-5">
+          {/* Heading + stats */}
+          <div className="mb-5">
+            <p className="text-[11px] uppercase tracking-[0.18em] font-semibold text-neutral-500">
               Mine biler
-            </div>
-            <div className="flex items-end justify-between gap-4 mt-1">
-              <h1 className="text-2xl sm:text-3xl text-white font-bold" style={chakra}>
-                Min garasje
-              </h1>
-              <Link
-                to="/legg-til-bil"
-                onClick={() => void track("garage_add_car_click", "garage", { intent: "add_car", source: "header" })}
-                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg text-[11px] tracking-[0.1em] uppercase font-bold text-[#070b10]"
-                style={{
-                  ...chakra,
-                  background: "linear-gradient(135deg, #34eab8 0%, #2ab89a 100%)",
-                  boxShadow: "0 0 18px rgba(45,212,168,0.28)",
-                }}
-              >
-                <Plus className="w-3.5 h-3.5" />
-                Ny bil
-              </Link>
-            </div>
-            <p className="text-[12px] text-white/45 mt-1.5" style={oswald}>
-              {cars.length === 0
-                ? "Garasjen er tom — legg inn din første bil."
-                : `${cars.length} ${cars.length === 1 ? "bil" : "biler"} i garasjen din.`}
             </p>
+            <h2 className="text-[26px] sm:text-[30px] font-bold leading-tight mt-1">
+              {cars.length === 0 ? "Garasjen din er tom" : `${cars.length} ${cars.length === 1 ? "bil" : "biler"} i garasjen`}
+            </h2>
+            {cars.length > 0 && (
+              <p className="text-sm text-neutral-600 mt-1.5">
+                {published} publisert · {drafts} kladd
+              </p>
+            )}
           </div>
 
-          {/* Cars grid */}
+          {/* Primary action card */}
+          <Link
+            to="/legg-til-bil"
+            onClick={() => void track("garage_add_car_click", "garage", { intent: "add_car", source: "primary_card" })}
+            className="group flex items-center gap-4 rounded-2xl bg-white border border-black/[0.08] p-4 sm:p-5 mb-6 hover:border-black/20 transition-colors"
+          >
+            <div
+              className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 border border-black/5"
+              style={{ backgroundColor: VV_YELLOW_SOFT }}
+            >
+              <Plus className="w-6 h-6" style={{ color: VV_DARK }} strokeWidth={2.5} />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-[15px] font-semibold leading-snug">Legg til en bil</p>
+              <p className="text-[13px] text-neutral-600 mt-0.5">Start historien til en ny bil i garasjen.</p>
+            </div>
+            <ChevronRight className="w-5 h-5 text-neutral-400 group-hover:text-neutral-700 transition-colors shrink-0" />
+          </Link>
+
+          {/* Cars */}
           {cars.length === 0 ? (
             <EmptyState />
           ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-              {cars.map((car, i) => (
-                <CarTile key={car.id} car={car} index={i} />
-              ))}
-              <Link
-                to="/legg-til-bil"
-                onClick={() => void track("garage_add_car_click", "garage", { intent: "add_car", source: "tile" })}
-                className="group flex flex-col items-center justify-center rounded-xl border border-dashed border-white/[0.08] hover:border-[#2dd4a8]/40 transition-all aspect-[16/11]"
-              >
-                <Plus className="w-5 h-5 text-white/20 group-hover:text-[#2dd4a8]/70 mb-1 transition-colors" />
-                <span
-                  className="text-[10px] uppercase tracking-[0.12em] text-white/30 group-hover:text-white/55"
-                  style={oswald}
-                >
-                  Legg til bil
-                </span>
-              </Link>
-            </div>
+            <>
+              <p className="text-[11px] uppercase tracking-[0.18em] font-semibold text-neutral-500 mb-2.5 px-1">
+                Bilene dine
+              </p>
+              <div className="grid grid-cols-2 gap-3">
+                {cars.map((car, i) => (
+                  <CarTile key={car.id} car={car} index={i} />
+                ))}
+              </div>
+            </>
           )}
         </div>
       </div>
@@ -163,39 +185,36 @@ function CarTile({ car, index }: { car: CarData; index: number }) {
       <Link
         to={to}
         onClick={() => void track("garage_car_click", "garage", { car_id: car.id, published: isPublished })}
-        className="group block rounded-xl overflow-hidden border border-white/[0.06] hover:border-[#2dd4a8]/40 transition-all"
-        style={{ background: "hsl(215 25% 10%)" }}
+        className="group block rounded-2xl overflow-hidden border border-black/[0.08] bg-white hover:border-black/20 transition-colors"
       >
-        <div className="aspect-[16/11] relative overflow-hidden bg-black/30">
+        <div className="aspect-[4/3] relative overflow-hidden bg-neutral-100">
           {img ? (
             <img
               src={img.image_url}
               alt={car.title}
-              className="absolute inset-0 w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-500"
+              className="absolute inset-0 w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-500"
             />
           ) : (
             <div className="absolute inset-0 flex items-center justify-center">
-              <Car className="w-7 h-7 text-white/10" />
+              <Car className="w-8 h-8 text-neutral-300" />
             </div>
           )}
           {!isPublished && (
             <span
-              className="absolute top-2 left-2 px-2 py-0.5 rounded text-[9px] uppercase tracking-wider font-bold bg-amber-500/20 text-amber-300 backdrop-blur-sm"
-              style={oswald}
+              className="absolute top-2 left-2 px-2 py-0.5 rounded-full text-[10px] uppercase tracking-wider font-bold border border-black/5"
+              style={{ backgroundColor: VV_YELLOW, color: VV_DARK }}
             >
               Kladd
             </span>
           )}
         </div>
-        <div className="p-2.5">
-          <p className="text-[12px] text-white/80 font-semibold truncate" style={chakra}>
+        <div className="p-3">
+          <p className="text-[13px] font-semibold text-neutral-900 truncate leading-snug">
             {car.title}
           </p>
-          {car.year && (
-            <p className="text-[10px] text-white/35 mt-0.5" style={oswald}>
-              {car.year}
-            </p>
-          )}
+          <p className="text-[11px] text-neutral-500 mt-0.5">
+            {car.year ?? (isPublished ? "Publisert" : "Kladd")}
+          </p>
         </div>
       </Link>
     </motion.div>
@@ -204,28 +223,24 @@ function CarTile({ car, index }: { car: CarData; index: number }) {
 
 function EmptyState() {
   return (
-    <div
-      className="rounded-2xl border border-dashed border-white/10 p-10 text-center"
-      style={{ background: "hsl(215 25% 9%)" }}
-    >
-      <Car className="w-10 h-10 text-white/10 mx-auto mb-4" />
-      <h2 className="text-white font-bold text-[16px]" style={chakra}>
-        Ingen biler ennå
-      </h2>
-      <p className="text-[12px] text-white/45 mt-1.5 mb-5 max-w-xs mx-auto" style={oswald}>
-        Legg inn din første bil og start historien.
+    <div className="rounded-2xl border border-dashed border-black/15 bg-white p-8 text-center">
+      <div
+        className="w-14 h-14 mx-auto rounded-2xl flex items-center justify-center mb-4 border border-black/5"
+        style={{ backgroundColor: VV_YELLOW_SOFT }}
+      >
+        <Car className="w-7 h-7" style={{ color: VV_DARK }} />
+      </div>
+      <h3 className="text-[17px] font-bold text-neutral-900">Ingen biler ennå</h3>
+      <p className="text-[13px] text-neutral-600 mt-1.5 mb-5 max-w-xs mx-auto">
+        Legg inn din første bil og bygg historien dens her i garasjen.
       </p>
       <Link
         to="/legg-til-bil"
         onClick={() => void track("garage_add_car_click", "garage", { intent: "add_car", source: "empty_state" })}
-        className="inline-flex items-center gap-2 px-6 py-3 rounded-lg text-[12px] tracking-[0.1em] uppercase font-bold text-[#070b10]"
-        style={{
-          ...chakra,
-          background: "linear-gradient(135deg, #34eab8 0%, #2ab89a 100%)",
-          boxShadow: "0 0 20px rgba(45,212,168,0.3)",
-        }}
+        className="inline-flex items-center gap-2 px-5 h-11 rounded-full text-[14px] font-bold"
+        style={{ backgroundColor: VV_DARK, color: VV_YELLOW }}
       >
-        <Plus className="w-4 h-4" />
+        <Plus className="w-4 h-4" strokeWidth={2.5} />
         Legg inn bilen din
       </Link>
     </div>
