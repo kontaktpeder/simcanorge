@@ -45,11 +45,6 @@ export default function Hjem() {
   );
 }
 
-// Old export kept for back-compat – moved below to avoid breaking the default flow.
-function _unused() {
-
-  return <RegistrerBil />;
-}
 
 // Back-compat helper for places that explicitly want the old onboarding redirect.
 export function LeggInnBilRedirect() {
