@@ -250,21 +250,10 @@ export function PublishComposer() {
         className="car-paper-theme text-neutral-900 p-0 gap-0 border-0 max-w-full w-screen h-[100dvh] sm:h-auto sm:max-h-[92vh] sm:max-w-lg sm:rounded-2xl sm:border sm:border-black/10 overflow-hidden flex flex-col"
         style={{ backgroundColor: "#e9e7e1" }}
       >
-        <button
-          type="button"
-          onClick={() => handleOpenChange(false)}
-          className="absolute right-3 top-3 z-30 rounded-full p-2 text-neutral-600 hover:text-neutral-900 hover:bg-black/5 transition-colors"
-          style={{ top: "max(0.75rem, env(safe-area-inset-top))" }}
-          aria-label="Lukk"
-        >
-          <X className="w-5 h-5" />
-        </button>
-
         <input
           ref={fileInputRef}
           type="file"
           accept="image/*"
-          capture="environment"
           className="hidden"
           onChange={(e) => {
             const f = e.target.files?.[0] ?? null;
@@ -272,6 +261,7 @@ export function PublishComposer() {
             if (f) setImageFile(f);
           }}
         />
+
 
         {result ? (
           // ═══════════════ POST-PUBLISH ═══════════════
