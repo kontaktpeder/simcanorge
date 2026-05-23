@@ -99,6 +99,7 @@ export type CarRow = {
   model?: string | null;
   year?: number | null;
   source?: string | null;
+  identification_status?: string | null;
 };
 
 export function resolveCarPublicHref(car: CarRow | null | undefined): string | null {
@@ -106,17 +107,31 @@ export function resolveCarPublicHref(car: CarRow | null | undefined): string | n
   return `/biler/${car.slug}`;
 }
 
-/** Upublisert bil i feed: vis nøytral «Ukjent bil» i stedet for å avsløre utkast. */
+/**
+ * Skal bilen anonymiseres i feed?
+ * Dekker både upubliserte utkast og publiserte «ukjent»-spottinger,
+ * så vi unngår å rendere «Ukjent» som både tittel og subline.
+ */
+export function shouldAnonymizeCarInFeed(car: CarRow | null | undefined): boolean {
+  if (!car?.id) return false;
+  if (!car.published_at) return true;
+  const status = car.identification_status;
+  if (status === "unknown" || status === "needs_review") return true;
+  if (car.title === "Ukjent bil") return true;
+  if (car.model === "Ukjent" && !car.brand) return true;
+  return false;
+}
+
+/** Vis nøytral «Ukjent bil»-chip når bilen skal anonymiseres i feed. */
 export function getCarUnknownPrimaryLabel(car: CarRow | null | undefined): string | null {
-  if (!car?.id) return null;
-  if (car.published_at) return null;
-  return "Ukjent bil";
+  return shouldAnonymizeCarInFeed(car) ? "Ukjent bil" : null;
 }
 
 export const CAR_UNKNOWN_SECONDARY_LABEL = "Kjenner du bilen?";
 
+/** @deprecated Bruk shouldAnonymizeCarInFeed for klarere navn. Beholdes for bakoverkompatibilitet. */
 export function isCarUnknown(car: CarRow | null | undefined): boolean {
-  return !!car?.id && !car.published_at;
+  return shouldAnonymizeCarInFeed(car);
 }
 
 export function getEntityHref(post: FeedPost): string | null {
