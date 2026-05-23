@@ -149,7 +149,7 @@ export default function Start() {
   if (authLoading || !user) {
     return (
       <Layout>
-        <div className="min-h-[60vh] flex items-center justify-center bg-[#070b10]">
+        <div className="min-h-[60vh] flex items-center justify-center bg-[#e9e7e1]">
           <BrandLoader />
         </div>
       </Layout>
@@ -165,7 +165,7 @@ export default function Start() {
         <meta name="description" content="Fang biler rundt deg — Norges levende bilearkiv." />
       </Helmet>
 
-      <div className="min-h-screen bg-[#070b10] pb-32">
+      <div className="car-paper-theme min-h-screen bg-[#e9e7e1] text-neutral-900 pb-32">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 pt-6 space-y-8">
           {/* ── Header ─────────────────────────────────────────── */}
           <header className="text-center sm:text-left">
@@ -353,7 +353,7 @@ function SectionHeader({
         <Link
           to={actionHref}
           onClick={onAction}
-          className="inline-flex items-center gap-0.5 text-[11px] uppercase tracking-[0.12em] font-bold text-[#34eab8] hover:text-[#5aedc4] transition-colors"
+          className="inline-flex items-center gap-0.5 text-[11px] uppercase tracking-[0.12em] font-bold text-[#1f3a34] hover:text-[#2c5c50] transition-colors"
           style={chakra}
         >
           {actionLabel}
@@ -373,10 +373,10 @@ function IntentBody({
 }) {
   return (
     <div
-      className="flex flex-col items-center justify-center gap-1 rounded-xl border border-white/[0.08] hover:border-[#2dd4a8]/40 hover:bg-white/[0.02] transition-all h-[68px] px-2 py-2"
-      style={{ background: "hsl(215 25% 10%)" }}
+      className="flex flex-col items-center justify-center gap-1 rounded-xl border border-white/[0.08] hover:border-[#1f3a34]/40 hover:bg-white/[0.02] transition-all h-[68px] px-2 py-2"
+      style={{ background: "#f1ede4" }}
     >
-      <span className="text-[#34eab8]">{icon}</span>
+      <span className="text-[#1f3a34]">{icon}</span>
       <span
         className="text-[10px] uppercase tracking-[0.08em] text-white/85 font-bold text-center leading-tight"
         style={chakra}
@@ -398,7 +398,7 @@ function DisabledIntentTile({
   return (
     <div
       className="flex flex-col items-center justify-center gap-1 rounded-xl border border-white/[0.04] h-[68px] px-2 py-2 opacity-40 cursor-not-allowed"
-      style={{ background: "hsl(215 25% 9%)" }}
+      style={{ background: "#ebe7dd" }}
       aria-disabled="true"
       title="Kommer snart"
     >
@@ -451,8 +451,8 @@ function PreviewCarTile({
       <Link
         to={href}
         onClick={onClick}
-        className="group block rounded-xl overflow-hidden border border-white/[0.06] hover:border-[#2dd4a8]/40 transition-all"
-        style={{ background: "hsl(215 25% 10%)" }}
+        className="group block rounded-xl overflow-hidden border border-white/[0.06] hover:border-[#1f3a34]/40 transition-all"
+        style={{ background: "#f1ede4" }}
       >
         <div className="aspect-[16/11] relative overflow-hidden bg-black/30">
           {coverUrl ? (
@@ -484,7 +484,7 @@ function PreviewCarTile({
             {isUnknownSpotting ? "Ukjent bil" : car.title}
           </p>
           {isUnknownSpotting ? (
-            <p className="text-[10px] text-[#34eab8] mt-0.5 uppercase tracking-wider" style={oswald}>
+            <p className="text-[10px] text-[#1f3a34] mt-0.5 uppercase tracking-wider" style={oswald}>
               Hjelp med å identifisere bil
             </p>
           ) : car.year && (
@@ -505,16 +505,16 @@ function EmptyMyCars() {
       onClick={() =>
         void track("garage_intent_click", "start", { intent: "add_car", source: "start_empty" })
       }
-      className="flex items-center gap-3 rounded-xl border border-dashed border-white/10 hover:border-[#2dd4a8]/40 transition-all p-4"
-      style={{ background: "hsl(215 25% 9%)" }}
+      className="flex items-center gap-3 rounded-xl border border-dashed border-white/10 hover:border-[#1f3a34]/40 transition-all p-4"
+      style={{ background: "#ebe7dd" }}
     >
       <div
         className="w-10 h-10 rounded-lg flex items-center justify-center"
         style={{
-          background: "linear-gradient(135deg, #34eab8 0%, #2ab89a 100%)",
+          background: "linear-gradient(135deg, #1f3a34 0%, #2c5c50 100%)",
         }}
       >
-        <Plus className="w-5 h-5 text-[#070b10]" />
+        <Plus className="w-5 h-5 text-[#f1ede4]" />
       </div>
       <div className="flex-1 min-w-0">
         <p className="text-[13px] text-white font-semibold" style={chakra}>
