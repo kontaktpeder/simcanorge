@@ -16,6 +16,12 @@ import {
   Globe,
   Lock,
   ChevronRight,
+  Link as LinkIcon,
+  Instagram,
+  Facebook,
+  Share2,
+  FileText,
+  RotateCw,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
