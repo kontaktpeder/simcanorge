@@ -278,6 +278,7 @@ export function CarObservationPage(props: Props) {
                 landingAck={landingAck}
                 hideMedia
                 className="pb-2"
+                theme={theme}
               />
               {RightSections}
             </div>
