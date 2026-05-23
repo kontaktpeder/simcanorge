@@ -43,8 +43,10 @@ export function CaptureCameraButton({ size = "hero", onOpenChange, screen, varia
   const galleryRef = useRef<HTMLInputElement>(null);
   const [prefillFile, setPrefillFile] = useState<File | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [cameraOpen, setCameraOpen] = useState(false);
   const { openPublishComposer } = usePublishComposer();
   const useV1 = FEATURES.publishComposerV1;
+  const inAppCamera = supportsInAppCamera();
 
   const isLight = variant === "light";
 
@@ -59,7 +61,12 @@ export function CaptureCameraButton({ size = "hero", onOpenChange, screen, varia
   const handleClick = () => {
     void track("capture_intent_click", screen ?? "start", { path: location.pathname, source: "camera" });
     if (!requireAuth()) return;
-    inputRef.current?.click();
+    if (inAppCamera) {
+      setCameraOpen(true);
+      onOpenChange?.(true);
+    } else {
+      inputRef.current?.click();
+    }
   };
 
   const handleGalleryClick = () => {
