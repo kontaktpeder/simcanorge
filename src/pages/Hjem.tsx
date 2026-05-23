@@ -3,6 +3,7 @@ import { Navigate } from "react-router-dom";
 import RegistrerBil from "@/pages/RegistrerBil";
 import { useAuth } from "@/hooks/useAuth";
 import { BrandLoader } from "@/components/brand/BrandLoader";
+import { SeoHead } from "@/components/seo/SeoHead";
 
 /**
  * Root entry "/" for bilgarasje.no.
@@ -31,6 +32,21 @@ export default function Hjem() {
   if (user) {
     return <Navigate to="/app" replace />;
   }
+
+  return (
+    <>
+      <SeoHead
+        title="Bilgarasje.no – Norges digitale bilgarasje"
+        description="Legg inn bilen din, dokumenter historien og bli en del av Norges bilfellesskap på Bilgarasje.no."
+        canonicalPath="/"
+      />
+      <RegistrerBil />
+    </>
+  );
+}
+
+// Old export kept for back-compat – moved below to avoid breaking the default flow.
+function _unused() {
 
   return <RegistrerBil />;
 }
