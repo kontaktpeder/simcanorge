@@ -40,11 +40,8 @@ export function CaptureCameraButton({ size = "hero", onOpenChange, screen, varia
   const location = useLocation();
   const inputRef = useRef<HTMLInputElement>(null);
   const galleryRef = useRef<HTMLInputElement>(null);
-  const [prefillFile, setPrefillFile] = useState<File | null>(null);
-  const [dialogOpen, setDialogOpen] = useState(false);
   const [cameraOpen, setCameraOpen] = useState(false);
   const { openPublishComposer } = usePublishComposer();
-  const useV1 = FEATURES.publishComposerV1;
   const inAppCamera = supportsInAppCamera();
 
   const isLight = variant === "light";
