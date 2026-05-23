@@ -23,7 +23,6 @@ function supportsInAppCamera() {
 export function ExploreInlineComposer({ light = false }: { light?: boolean }) {
   const { user } = useAuth();
   const { data: profile } = useMyPersonProfile();
-  const { mutateAsync, isPending } = useCreateFeedPost();
   const { openPublishComposer } = usePublishComposer();
   const navigate = useNavigate();
   const location = useLocation();
@@ -31,24 +30,16 @@ export function ExploreInlineComposer({ light = false }: { light?: boolean }) {
   const [textMode, setTextMode] = useState(false);
   const [body, setBody] = useState("");
   const [cameraOpen, setCameraOpen] = useState(false);
-  const [fallbackOpen, setFallbackOpen] = useState(false);
-  const [prefillFile, setPrefillFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const useV1 = FEATURES.publishComposerV1;
   const inAppCamera = supportsInAppCamera();
 
-  async function handlePublish() {
+  function handlePublish() {
     const t = body.trim();
     if (!t) return;
-    try {
-      await mutateAsync({ post_type: "manual", body: t });
-      setBody("");
-      setTextMode(false);
-      toast.success("Publisert i Utforsk");
-    } catch {
-      toast.error("Noe gikk galt");
-    }
+    openPublishComposer({ initialCaption: t, source: "explore_inline" });
+    setBody("");
+    setTextMode(false);
   }
 
   function handleCancelText() {
@@ -70,12 +61,7 @@ export function ExploreInlineComposer({ light = false }: { light?: boolean }) {
   }
 
   function routeFile(file: File) {
-    if (useV1) {
-      openPublishComposer({ initialImageFile: file, source: "explore_inline" });
-    } else {
-      setPrefillFile(file);
-      setFallbackOpen(true);
-    }
+    openPublishComposer({ initialImageFile: file, source: "explore_inline" });
   }
 
   function handleCameraCapture(file: File) {
@@ -88,6 +74,7 @@ export function ExploreInlineComposer({ light = false }: { light?: boolean }) {
     e.target.value = "";
     if (f) routeFile(f);
   }
+
 
   // ── Theme tokens ──
   const containerCls = light
