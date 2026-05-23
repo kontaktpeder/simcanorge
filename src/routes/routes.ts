@@ -175,7 +175,7 @@ const rawRoutes: RouteConfig[] = [
   { path: "/merker/:brand", element: MerkeHub, isPublic: true },
 
   // Auth required
-  { path: "/garasje", element: Garasje, requiresAuth: true },
+  { path: "/garasje", element: GarasjeRedirect, requiresAuth: true },
   { path: "/aktiv", element: AktivTur, requiresAuth: true },
   { path: "/turer", element: MineTurer, requiresAuth: true },
   { path: "/tur/:id", element: TurDetalj, requiresAuth: true },
