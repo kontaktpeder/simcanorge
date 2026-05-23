@@ -176,12 +176,17 @@ export function FeedCard({ post, variant = "default", theme = "dark" }: { post: 
           />
 
           {unifiedCaption && author && (
-            <p className="mt-3 text-lg md:text-xl leading-relaxed text-white/85" style={{ fontFamily: "'Oswald', sans-serif", fontWeight: 300 }}>
+            <p
+              className={`mt-3 text-base md:text-lg leading-relaxed ${isLight ? "text-neutral-800" : "text-white/85"}`}
+              style={isLight ? inter : { fontFamily: "'Oswald', sans-serif", fontWeight: 300 }}
+            >
               <Link
                 to={`/profil/${author.slug}`}
                 onClick={(e) => e.stopPropagation()}
-                className="font-semibold text-white hover:text-[#34eab8] transition-colors mr-2"
-                style={oswald}
+                className={`font-semibold mr-2 transition-colors ${
+                  isLight ? "text-[#2b2b2b] hover:text-[#ff8a00]" : "text-white hover:text-[#34eab8]"
+                }`}
+                style={titleFont}
               >
                 {author.display_name}
               </Link>
@@ -189,14 +194,19 @@ export function FeedCard({ post, variant = "default", theme = "dark" }: { post: 
             </p>
           )}
           {unifiedCaption && !author && (
-            <p className="mt-3 text-lg md:text-xl leading-relaxed text-white/85" style={{ fontFamily: "'Oswald', sans-serif", fontWeight: 300 }}>
+            <p
+              className={`mt-3 text-base md:text-lg leading-relaxed ${isLight ? "text-neutral-800" : "text-white/85"}`}
+              style={isLight ? inter : { fontFamily: "'Oswald', sans-serif", fontWeight: 300 }}
+            >
               {unifiedCaption}
             </p>
           )}
 
           {author && (
             <div className="flex items-center gap-2 mt-4">
-              <span className="text-[11px] text-white/35">{timeAgo}</span>
+              <span className={`text-[11px] ${isLight ? "text-neutral-500" : "text-white/35"}`} style={isLight ? inter : undefined}>
+                {timeAgo}
+              </span>
             </div>
           )}
 
