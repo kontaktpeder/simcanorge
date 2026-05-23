@@ -566,6 +566,9 @@ const BilDetalj = () => {
         carId={car.id}
         open={commentsSheetOpen}
         onOpenChange={setCommentsSheetOpen}
+      />
+
+
 
       {/* CTA: Legg ut innlegg om denne bilen — alle innloggede, utlogget → login */}
       <section className="px-4 py-8 sm:py-10 flex justify-center">
