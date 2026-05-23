@@ -7,8 +7,15 @@ import {
   ImagePlus,
   Loader2,
   ArrowRight,
+  ArrowLeft,
   ExternalLink,
   X,
+  Car,
+  Binoculars,
+  Warehouse,
+  Globe,
+  Lock,
+  ChevronRight,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -37,6 +44,13 @@ interface RegHit {
 }
 
 type CarMode = "none" | "spot" | "garage";
+
+// Vegvesen-inspired palette
+const VV_BG = "#f3f3f3";
+const VV_YELLOW = "#fcc419";
+const VV_YELLOW_SOFT = "#fff4d1";
+const VV_DARK = "#2b2b2b";
+const VV_ORANGE = "#ff8a00";
 
 function normalizePlate(raw: string): string {
   return raw.replace(/[\s\-]/g, "").toUpperCase();
@@ -171,7 +185,7 @@ export function PublishComposer() {
   function handleSelectRegHit(hit: RegHit) {
     setSelectedCarId(hit.id);
     setSelectedCarTitle(hit.title);
-    setCarMode("garage"); // visuelt: bilen er nå valgt
+    setCarMode("garage");
   }
 
   async function handlePublish() {
@@ -233,26 +247,16 @@ export function PublishComposer() {
   }
 
   const canPublish = (!!imageFile || caption.trim().length > 0) && !isSubmitting;
+  const garageCount = myCars.length;
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogContent
         onInteractOutside={(e) => isSubmitting && e.preventDefault()}
         onEscapeKeyDown={(e) => isSubmitting && e.preventDefault()}
-        className="car-paper-theme text-neutral-900 p-0 gap-0 border-0 max-w-full w-screen h-[100dvh] sm:h-auto sm:max-h-[92vh] sm:max-w-lg sm:rounded-2xl sm:border sm:border-black/10 overflow-hidden flex flex-col"
-        style={{ backgroundColor: "#e9e7e1" }}
+        className="text-neutral-900 p-0 gap-0 border-0 max-w-full w-screen h-[100dvh] sm:h-auto sm:max-h-[92vh] sm:max-w-lg sm:rounded-2xl sm:border sm:border-black/10 overflow-hidden flex flex-col"
+        style={{ backgroundColor: VV_BG, fontFamily: "'Inter', 'Helvetica Neue', Arial, sans-serif" }}
       >
-        {/* Lukk-knapp */}
-        <button
-          type="button"
-          onClick={closePublishComposer}
-          disabled={isSubmitting}
-          className="absolute top-3 right-3 z-50 inline-flex items-center justify-center w-9 h-9 rounded-full bg-white/85 backdrop-blur border border-black/10 shadow-sm text-neutral-700 hover:text-neutral-900 hover:bg-white transition-colors"
-          style={{ top: "max(0.75rem, env(safe-area-inset-top))" }}
-        >
-          <X className="w-4 h-4" strokeWidth={2.5} />
-        </button>
-
         <input
           ref={fileInputRef}
           type="file"
@@ -265,10 +269,9 @@ export function PublishComposer() {
           }}
         />
 
-
         {result ? (
           // ═══════════════ POST-PUBLISH ═══════════════
-          <div className="flex-1 flex flex-col items-center justify-center text-center px-6 py-12 animate-fade-in">
+          <div className="flex-1 flex flex-col items-center justify-center text-center px-6 py-12 animate-fade-in bg-white">
             <div className="relative mb-6">
               {previewUrl && (
                 <div className="w-40 h-40 rounded-2xl overflow-hidden border border-black/10 shadow-lg">
@@ -280,16 +283,13 @@ export function PublishComposer() {
                 </div>
               )}
               <div
-                className="absolute -bottom-3 -right-3 w-11 h-11 rounded-full flex items-center justify-center border-4"
-                style={{
-                  backgroundColor: "#1f3a34",
-                  borderColor: "#e9e7e1",
-                }}
+                className="absolute -bottom-3 -right-3 w-11 h-11 rounded-full flex items-center justify-center border-4 border-white"
+                style={{ backgroundColor: VV_YELLOW }}
               >
-                <CheckCircle2 className="w-5 h-5 text-white" strokeWidth={2.5} />
+                <CheckCircle2 className="w-5 h-5 text-neutral-900" strokeWidth={2.5} />
               </div>
             </div>
-            <h2 className="font-display text-2xl text-neutral-900 mb-1">
+            <h2 className="text-2xl font-bold text-neutral-900 mb-1">
               Takk — det er med.
             </h2>
             <p className="text-neutral-600 text-sm max-w-xs mb-8">
@@ -304,7 +304,8 @@ export function PublishComposer() {
                 <Button
                   type="button"
                   onClick={handleViewResult}
-                  className="btn-enamel-blue h-12 w-full text-base"
+                  className="h-12 w-full text-base font-semibold text-neutral-900 hover:brightness-95"
+                  style={{ backgroundColor: VV_YELLOW }}
                 >
                   Se bilen
                   <ArrowRight className="ml-2 w-4 h-4" />
@@ -322,247 +323,337 @@ export function PublishComposer() {
           </div>
         ) : (
           // ═══════════════ COMPOSE ═══════════════
-          <div className="flex-1 overflow-y-auto">
-            <div
-              className="px-4 pt-4 pb-4 space-y-5"
-              style={{
-                paddingTop: "max(1rem, env(safe-area-inset-top))",
-                paddingBottom: "calc(1rem + 80px + env(safe-area-inset-bottom))",
-              }}
+          <>
+            {/* ─── Top bar ─── */}
+            <header
+              className="relative bg-white border-b border-black/5"
+              style={{ paddingTop: "max(0.5rem, env(safe-area-inset-top))" }}
             >
-              {/* Bilde */}
-              <div className="relative rounded-xl overflow-hidden bg-neutral-200/60 aspect-[4/5] sm:aspect-video">
-                {previewUrl ? (
-                  <>
-                    <img
-                      src={previewUrl}
-                      alt="Forhåndsvisning"
-                      className="w-full h-full object-cover animate-fade-in"
-                    />
+              <div className="flex items-center justify-between px-3 py-3">
+                <button
+                  type="button"
+                  onClick={closePublishComposer}
+                  disabled={isSubmitting}
+                  className="w-10 h-10 -ml-1 flex items-center justify-center rounded-full hover:bg-black/5 text-neutral-900"
+                  aria-label="Lukk"
+                >
+                  <ArrowLeft className="w-5 h-5" strokeWidth={2} />
+                </button>
+                <div className="flex-1 px-2">
+                  <h1 className="text-[17px] font-bold text-neutral-900 leading-tight">
+                    Del observasjon
+                  </h1>
+                  <p className="text-[12px] text-neutral-500 leading-tight">
+                    {imageFile ? "Klar til å dele" : "Legg til bilde og detaljer"}
+                  </p>
+                </div>
+                <div className="flex items-center gap-2 pr-1">
+                  <div
+                    className="w-8 h-8 rounded flex items-center justify-center text-white text-[10px] font-bold"
+                    style={{ backgroundColor: VV_DARK }}
+                  >
+                    BG
+                  </div>
+                </div>
+              </div>
+              {/* Progress bar */}
+              <div className="h-1.5 w-full bg-neutral-200">
+                <div
+                  className="h-full transition-all"
+                  style={{
+                    width: canPublish ? "100%" : imageFile || caption ? "50%" : "15%",
+                    backgroundColor: VV_ORANGE,
+                  }}
+                />
+              </div>
+            </header>
+
+            {/* ─── Scroll body ─── */}
+            <div className="flex-1 overflow-y-auto">
+              <div
+                className="px-4 pt-4 space-y-4"
+                style={{
+                  paddingBottom: "calc(1rem + 96px + env(safe-area-inset-bottom))",
+                }}
+              >
+                {/* Bilde */}
+                <div className="relative rounded-2xl overflow-hidden bg-neutral-200/70 aspect-[4/5] sm:aspect-video shadow-sm">
+                  {previewUrl ? (
+                    <>
+                      <img
+                        src={previewUrl}
+                        alt="Forhåndsvisning"
+                        className="w-full h-full object-cover animate-fade-in"
+                      />
+                      <button
+                        type="button"
+                        onClick={pickFile}
+                        className="absolute top-3 left-3 inline-flex items-center gap-1.5 rounded-full bg-white/95 px-3 py-1.5 text-xs font-semibold text-neutral-900 hover:bg-white border border-black/10 shadow-sm"
+                      >
+                        <ImagePlus className="w-3.5 h-3.5" />
+                        Bytt bilde
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setImageFile(null)}
+                        className="absolute top-3 right-3 w-9 h-9 inline-flex items-center justify-center rounded-full bg-white/95 hover:bg-white border border-black/10 shadow-sm text-neutral-700"
+                        aria-label="Fjern bilde"
+                      >
+                        <X className="w-4 h-4" strokeWidth={2.5} />
+                      </button>
+                    </>
+                  ) : (
                     <button
                       type="button"
                       onClick={pickFile}
-                      className="absolute top-2 left-2 inline-flex items-center gap-1.5 rounded-full bg-white/90 backdrop-blur-sm px-3 py-1.5 text-xs font-medium text-neutral-800 hover:bg-white hover:text-neutral-900 transition-colors border border-black/10 shadow-sm"
+                      className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-neutral-500 hover:text-neutral-700"
                     >
-                      <ImagePlus className="w-3.5 h-3.5" />
-                      Bytt bilde
+                      <ImagePlus className="w-8 h-8" />
+                      <span className="text-sm font-medium">Velg et bilde</span>
                     </button>
-                  </>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={pickFile}
-                    className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-neutral-500 hover:text-neutral-700"
-                  >
-                    <ImagePlus className="w-8 h-8" />
-                    <span className="text-sm">Velg et bilde</span>
-                  </button>
-                )}
-              </div>
+                  )}
+                </div>
 
-              {/* Caption */}
-              <textarea
-                value={caption}
-                onChange={(e) => setCaption(e.target.value.slice(0, 500))}
-                placeholder="Tenker du på noe i dag?"
-                rows={2}
-                className="w-full resize-none bg-transparent text-[15px] text-neutral-900 placeholder:text-neutral-500 focus:outline-none leading-snug px-1"
-              />
+                {/* Tittel-kort */}
+                <div className="rounded-2xl bg-white border border-black/10 shadow-sm px-4 py-3">
+                  <div className="flex items-baseline justify-between">
+                    <label className="text-[11px] uppercase tracking-[0.14em] font-bold text-neutral-900">
+                      Tittel
+                    </label>
+                    <span className="text-[11px] text-neutral-400 tabular-nums">
+                      {caption.length}/100
+                    </span>
+                  </div>
+                  <input
+                    type="text"
+                    value={caption}
+                    onChange={(e) => setCaption(e.target.value.slice(0, 100))}
+                    placeholder="Hva tenker du på?"
+                    className="w-full bg-transparent text-[16px] text-neutral-900 placeholder:text-neutral-400 focus:outline-none mt-1"
+                  />
+                </div>
 
-              {/* Knytt til bil */}
-              <section className="space-y-2">
-                <div>
-                  <h3 className="text-[11px] uppercase tracking-[0.14em] font-semibold text-neutral-500">
-                    Knytt til bil
+                {/* Hva gjelder det */}
+                <section className="space-y-2">
+                  <h3 className="text-[11px] uppercase tracking-[0.14em] font-bold text-neutral-900 px-1">
+                    Hva gjelder det?
                   </h3>
-                  <p className="text-xs text-neutral-500 mt-0.5">
-                    Knyttes til bilens historie. Hopp over hvis du bare vil dele i feeden.
-                  </p>
-                </div>
 
-                <div className="rounded-2xl border border-black/10 bg-white overflow-hidden">
-                  <CarOption
-                    active={carMode === "none"}
-                    onClick={() => {
-                      setCarMode("none");
-                      setSelectedCarId(null);
-                      setSelectedCarTitle(null);
-                    }}
-                    title="Ikke knytt til bil"
-                    subtitle="Innlegg vises kun i feeden."
-                  />
-                  <CarOption
-                    active={carMode === "spot"}
-                    onClick={() => {
-                      setCarMode("spot");
-                      setSelectedCarId(null);
-                      setSelectedCarTitle(null);
-                    }}
-                    title="Spotta ny bil"
-                    subtitle="Skriv inn regnr — vi sjekker arkivet."
-                  />
-                  {carMode === "spot" && (
-                    <div className="px-4 pb-4 pt-1 space-y-3 border-t border-black/5 bg-neutral-50/60">
-                      <div className="flex flex-col items-center gap-2 pt-3">
-                        <LicensePlateInput value={regnr} onChange={setRegnr} />
-                        <p className="text-[11px] text-neutral-500">
-                          Valgfritt — du kan dele bildet uten regnr.
-                        </p>
-                      </div>
-                      {regSearching && (
-                        <div className="flex items-center justify-center gap-2 text-xs text-neutral-500 py-1">
-                          <Loader2 className="h-3.5 w-3.5 animate-spin" /> Søker…
-                        </div>
-                      )}
-                      {regHits.length > 0 && (
-                        <div className="space-y-2">
-                          <p className="text-[11px] uppercase tracking-[0.12em] text-neutral-500">
-                            Vi fant dette i arkivet
+                  <div className="space-y-2">
+                    <VVOption
+                      active={carMode === "none"}
+                      onClick={() => {
+                        setCarMode("none");
+                        setSelectedCarId(null);
+                        setSelectedCarTitle(null);
+                      }}
+                      icon={<Car className="w-5 h-5" strokeWidth={2} />}
+                      title="Ikke knyttet til bil"
+                      subtitle="Innlegg vises kun i feeden."
+                    />
+                    <VVOption
+                      active={carMode === "spot"}
+                      onClick={() => {
+                        setCarMode("spot");
+                        setSelectedCarId(null);
+                        setSelectedCarTitle(null);
+                      }}
+                      icon={<Binoculars className="w-5 h-5" strokeWidth={2} />}
+                      title="Spotta en bil"
+                      subtitle="Skriv inn regnr – vi sjekker arkivet."
+                    />
+                    {carMode === "spot" && (
+                      <div className="rounded-2xl bg-white border border-black/10 shadow-sm px-4 py-4 space-y-3">
+                        <div className="flex flex-col items-center gap-2">
+                          <LicensePlateInput value={regnr} onChange={setRegnr} />
+                          <p className="text-[11px] text-neutral-500">
+                            Valgfritt — du kan dele bildet uten regnr.
                           </p>
-                          {regHits.map((hit) => {
-                            const picked = selectedCarId === hit.id;
-                            return (
-                              <button
-                                key={hit.id}
-                                type="button"
-                                onClick={() => handleSelectRegHit(hit)}
-                                className={`w-full flex items-center gap-3 p-2 rounded-lg border transition-colors text-left ${
-                                  picked
-                                    ? "border-primary bg-primary/5"
-                                    : "border-black/10 bg-white hover:bg-neutral-50"
-                                }`}
-                              >
-                                <div className="h-12 w-16 shrink-0 rounded-md overflow-hidden bg-neutral-200 flex items-center justify-center">
-                                  {regThumbs[hit.id] ? (
-                                    <img
-                                      src={regThumbs[hit.id]}
-                                      alt=""
-                                      className="h-full w-full object-cover"
-                                    />
-                                  ) : (
-                                    <ExternalLink className="w-3 h-3 text-neutral-400" />
-                                  )}
-                                </div>
-                                <div className="min-w-0 flex-1">
-                                  <p className="text-sm font-medium truncate text-neutral-900">
-                                    {hit.title}
-                                  </p>
-                                  <p className="text-[11px] text-neutral-500">
-                                    {picked ? "Valgt" : "Trykk for å velge"}
-                                  </p>
-                                </div>
-                              </button>
-                            );
-                          })}
                         </div>
-                      )}
-                    </div>
-                  )}
-                  {myCars.length > 0 && (
-                    <>
-                      <CarOption
-                        active={carMode === "garage" && !!selectedCarId}
-                        onClick={() => {
-                          setCarMode("garage");
-                          if (!selectedCarId && myCars[0]) {
-                            handleSelectGarageCar(myCars[0]);
+                        {regSearching && (
+                          <div className="flex items-center justify-center gap-2 text-xs text-neutral-500 py-1">
+                            <Loader2 className="h-3.5 w-3.5 animate-spin" /> Søker…
+                          </div>
+                        )}
+                        {regHits.length > 0 && (
+                          <div className="space-y-2 pt-1">
+                            <p className="text-[11px] uppercase tracking-[0.12em] text-neutral-500 font-semibold">
+                              Vi fant dette i arkivet
+                            </p>
+                            {regHits.map((hit) => {
+                              const picked = selectedCarId === hit.id;
+                              return (
+                                <button
+                                  key={hit.id}
+                                  type="button"
+                                  onClick={() => handleSelectRegHit(hit)}
+                                  className={`w-full flex items-center gap-3 p-2 rounded-lg border transition-colors text-left ${
+                                    picked
+                                      ? "bg-[color:var(--vv-soft)]"
+                                      : "border-black/10 bg-white hover:bg-neutral-50"
+                                  }`}
+                                  style={
+                                    picked
+                                      ? ({
+                                          borderColor: VV_YELLOW,
+                                          backgroundColor: VV_YELLOW_SOFT,
+                                          "--vv-soft": VV_YELLOW_SOFT,
+                                        } as React.CSSProperties)
+                                      : undefined
+                                  }
+                                >
+                                  <div className="h-12 w-16 shrink-0 rounded-md overflow-hidden bg-neutral-200 flex items-center justify-center">
+                                    {regThumbs[hit.id] ? (
+                                      <img
+                                        src={regThumbs[hit.id]}
+                                        alt=""
+                                        className="h-full w-full object-cover"
+                                      />
+                                    ) : (
+                                      <ExternalLink className="w-3 h-3 text-neutral-400" />
+                                    )}
+                                  </div>
+                                  <div className="min-w-0 flex-1">
+                                    <p className="text-sm font-semibold truncate text-neutral-900">
+                                      {hit.title}
+                                    </p>
+                                    <p className="text-[11px] text-neutral-500">
+                                      {picked ? "Valgt" : "Trykk for å velge"}
+                                    </p>
+                                  </div>
+                                </button>
+                              );
+                            })}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                    {garageCount > 0 && (
+                      <>
+                        <VVOption
+                          active={carMode === "garage" && !!selectedCarId}
+                          onClick={() => {
+                            setCarMode("garage");
+                            if (!selectedCarId && myCars[0]) {
+                              handleSelectGarageCar(myCars[0]);
+                            }
+                          }}
+                          icon={<Warehouse className="w-5 h-5" strokeWidth={2} />}
+                          title={
+                            carMode === "garage" && selectedCarTitle
+                              ? selectedCarTitle
+                              : "Velg fra garasjen"
                           }
-                        }}
-                        title={
-                          carMode === "garage" && selectedCarTitle
-                            ? selectedCarTitle
-                            : "Velg fra garasjen"
-                        }
-                        subtitle={
-                          carMode === "garage" && selectedCarTitle
-                            ? "Valgt fra din garasje."
-                            : `${myCars.length} ${myCars.length === 1 ? "bil" : "biler"} i garasjen`
-                        }
-                      />
-                      {carMode === "garage" && (
-                        <div className="px-2 pb-2 pt-1 border-t border-black/5 bg-neutral-50/60 space-y-1">
-                          {myCars.map((c) => {
-                            const picked = selectedCarId === c.id;
-                            return (
-                              <button
-                                key={c.id}
-                                type="button"
-                                onClick={() => handleSelectGarageCar(c)}
-                                className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${
-                                  picked
-                                    ? "bg-primary/5 text-primary border border-primary/30"
-                                    : "text-neutral-800 hover:bg-white border border-transparent"
-                                }`}
-                              >
-                                {c.title}
-                              </button>
-                            );
-                          })}
-                        </div>
-                      )}
-                    </>
-                  )}
-                </div>
-              </section>
+                          subtitle={
+                            carMode === "garage" && selectedCarTitle
+                              ? "Valgt fra din garasje."
+                              : `${garageCount} ${garageCount === 1 ? "bil" : "biler"} i din garasje.`
+                          }
+                        />
+                        {carMode === "garage" && garageCount > 1 && (
+                          <div className="rounded-2xl bg-white border border-black/10 shadow-sm px-2 py-2 space-y-1">
+                            {myCars.map((c) => {
+                              const picked = selectedCarId === c.id;
+                              return (
+                                <button
+                                  key={c.id}
+                                  type="button"
+                                  onClick={() => handleSelectGarageCar(c)}
+                                  className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${
+                                    picked
+                                      ? "font-semibold text-neutral-900"
+                                      : "text-neutral-700 hover:bg-neutral-50"
+                                  }`}
+                                  style={
+                                    picked
+                                      ? { backgroundColor: VV_YELLOW_SOFT }
+                                      : undefined
+                                  }
+                                >
+                                  {c.title}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </div>
+                </section>
 
-              {/* Synlighet */}
-              <section className="space-y-2">
-                <h3 className="text-[11px] uppercase tracking-[0.14em] font-semibold text-neutral-500">
-                  Vises
-                </h3>
-                <div className="inline-flex w-full rounded-full border border-black/10 bg-white p-1">
-                  <SegmentButton
-                    active={visibility === "public"}
-                    onClick={() => setVisibility("public")}
-                  >
-                    Offentlig
-                  </SegmentButton>
-                  <SegmentButton
-                    active={visibility === "private"}
-                    onClick={() => setVisibility("private")}
-                  >
-                    Privat
-                  </SegmentButton>
-                </div>
-              </section>
-
+                {/* Synlighet */}
+                <section className="space-y-2">
+                  <h3 className="text-[11px] uppercase tracking-[0.14em] font-bold text-neutral-900 px-1">
+                    Synlighet
+                  </h3>
+                  <div className="grid grid-cols-2 gap-2">
+                    <VVSegment
+                      active={visibility === "public"}
+                      onClick={() => setVisibility("public")}
+                      icon={<Globe className="w-4 h-4" strokeWidth={2.25} />}
+                      label="Offentlig"
+                    />
+                    <VVSegment
+                      active={visibility === "private"}
+                      onClick={() => setVisibility("private")}
+                      icon={<Lock className="w-4 h-4" strokeWidth={2.25} />}
+                      label="Privat"
+                    />
+                  </div>
+                </section>
+              </div>
             </div>
 
-            {/* Sticky publish-bar */}
+            {/* ─── Sticky bottom bar ─── */}
             <div
-              className="absolute left-0 right-0 bottom-0 px-4 pt-3 pb-4 border-t border-black/10 bg-[#e9e7e1]"
+              className="absolute left-0 right-0 bottom-0 px-4 pt-3 pb-4 flex items-center justify-between gap-3"
               style={{
+                backgroundColor: VV_DARK,
                 paddingBottom: "max(1rem, env(safe-area-inset-bottom))",
               }}
             >
+              <div className="flex items-center gap-1.5">
+                <span
+                  className="block h-1.5 w-7 rounded-full"
+                  style={{ backgroundColor: VV_YELLOW }}
+                />
+                <span className="block h-1.5 w-5 rounded-full bg-white/20" />
+                <span className="block h-1.5 w-5 rounded-full bg-white/20" />
+              </div>
               <Button
                 type="button"
                 onClick={handlePublish}
                 disabled={!canPublish}
-                className="btn-enamel-blue h-12 w-full text-base"
+                className="h-12 px-5 text-base font-semibold text-neutral-900 hover:brightness-95 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg"
+                style={{ backgroundColor: VV_YELLOW }}
               >
                 {isSubmitting ? (
                   <Loader2 className="w-5 h-5 animate-spin" />
                 ) : (
-                  "Del"
+                  <>
+                    Del
+                    <ArrowRight className="ml-2 w-4 h-4" />
+                  </>
                 )}
               </Button>
             </div>
-          </div>
+          </>
         )}
       </DialogContent>
     </Dialog>
   );
 }
 
-function CarOption({
+function VVOption({
   active,
   onClick,
+  icon,
   title,
   subtitle,
 }: {
   active: boolean;
   onClick: () => void;
+  icon: React.ReactNode;
   title: string;
   subtitle: string;
 }) {
@@ -570,52 +661,69 @@ function CarOption({
     <button
       type="button"
       onClick={onClick}
-      className={`w-full flex items-start gap-3 px-4 py-3 text-left border-b border-black/5 last:border-b-0 transition-colors ${
-        active ? "bg-primary/5" : "hover:bg-neutral-50"
-      }`}
+      className="w-full flex items-center gap-3 px-3 py-3 rounded-2xl bg-white border shadow-sm transition-all text-left"
+      style={{
+        borderColor: active ? VV_YELLOW : "rgba(0,0,0,0.08)",
+        backgroundColor: active ? VV_YELLOW_SOFT : "#ffffff",
+        boxShadow: active
+          ? `0 0 0 1px ${VV_YELLOW} inset, 0 1px 2px rgba(0,0,0,0.04)`
+          : "0 1px 2px rgba(0,0,0,0.04)",
+      }}
     >
       <span
-        className={`mt-1 w-4 h-4 rounded-full border-2 shrink-0 flex items-center justify-center ${
-          active ? "border-primary" : "border-neutral-400"
-        }`}
+        className="w-5 h-5 rounded-full border-2 shrink-0 flex items-center justify-center"
+        style={{ borderColor: active ? VV_YELLOW : "#bdbdbd" }}
       >
         {active && (
           <span
-            className="w-2 h-2 rounded-full"
-            style={{ backgroundColor: "hsl(var(--primary))" }}
+            className="w-2.5 h-2.5 rounded-full"
+            style={{ backgroundColor: VV_YELLOW }}
           />
         )}
       </span>
+      <span
+        className="w-10 h-10 rounded-lg shrink-0 flex items-center justify-center text-neutral-800"
+        style={{ backgroundColor: active ? "#ffe79a" : "#ececec" }}
+      >
+        {icon}
+      </span>
       <span className="min-w-0 flex-1">
-        <span className="block text-sm font-medium text-neutral-900 truncate">
+        <span className="block text-[15px] font-bold text-neutral-900 truncate leading-tight">
           {title}
         </span>
-        <span className="block text-xs text-neutral-500 mt-0.5">{subtitle}</span>
+        <span className="block text-[12px] text-neutral-600 mt-0.5">
+          {subtitle}
+        </span>
       </span>
+      <ChevronRight className="w-5 h-5 text-neutral-400 shrink-0" />
     </button>
   );
 }
 
-function SegmentButton({
+function VVSegment({
   active,
   onClick,
-  children,
+  icon,
+  label,
 }: {
   active: boolean;
   onClick: () => void;
-  children: React.ReactNode;
+  icon: React.ReactNode;
+  label: string;
 }) {
   return (
     <button
       type="button"
       onClick={onClick}
-      className={`flex-1 h-9 rounded-full text-sm font-medium transition-all select-none ${
-        active
-          ? "bg-[#1a3a34] text-white shadow-sm"
-          : "text-neutral-500 hover:text-neutral-800 hover:bg-white/40"
-      }`}
+      className="h-12 rounded-lg flex items-center justify-center gap-2 text-sm font-semibold transition-colors select-none border"
+      style={{
+        backgroundColor: active ? VV_DARK : "#ffffff",
+        color: active ? "#ffffff" : "#3a3a3a",
+        borderColor: active ? VV_DARK : "rgba(0,0,0,0.1)",
+      }}
     >
-      {children}
+      {icon}
+      {label}
     </button>
   );
 }
