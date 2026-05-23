@@ -6,6 +6,7 @@ import { OwnerCard } from "@/components/car/OwnerCard";
 import { AnimatedSection } from "@/components/layout/AnimatedSection";
 import { oswald, oswaldLight, OBSERVATION_BG } from "@/lib/observationPostTokens";
 import type { CarEnrichment } from "@/lib/carEnrichment";
+import { BrandHubLink } from "@/components/car/BrandHubLink";
 
 type GalleryImage = {
   id: string;
@@ -115,6 +116,13 @@ export function CarObservationPage(props: Props) {
 
   const RightSections = (
     <>
+      {brand && (
+        <section className="pt-2 pb-4">
+          <div className="container mx-auto px-4 max-w-3xl lg:px-0 lg:mx-0 lg:max-w-none">
+            <BrandHubLink brand={brand} variant="chip" />
+          </div>
+        </section>
+      )}
       {enrichment.showTimeline && (
         <>
           <SectionDivider />

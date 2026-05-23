@@ -125,7 +125,30 @@ async function main() {
         }));
     }
 
-    const urls = [...staticEntries, ...carEntries, ...ownerEntries];
+    // Fetch brand hubs (pages where page_type_variant = 'brand')
+    let brandHubEntries = [];
+    const { data: brandHubs, error: brandError } = await supabase
+      .from("pages")
+      .select("brand_key, updated_at")
+      .eq("is_public", true)
+      .eq("status", "active")
+      .eq("page_type_variant", "brand")
+      .not("brand_key", "is", null);
+
+    if (brandError) {
+      console.warn("[generate-sitemap] Supabase brand hubs fetch error:", brandError.message, "– skipping brand hub URLs.");
+    } else {
+      brandHubEntries = (brandHubs || [])
+        .filter((p) => p?.brand_key && String(p.brand_key).trim())
+        .map((p) => ({
+          loc: `${SITE_URL}/merker/${String(p.brand_key).toLowerCase()}`,
+          lastmod: formatLastmod(p.updated_at),
+          changefreq: "monthly",
+          priority: "0.75",
+        }));
+    }
+
+    const urls = [...staticEntries, ...carEntries, ...ownerEntries, ...brandHubEntries];
     const outPath = writeSitemap(urls);
     console.log(`✅ Sitemap generated: ${outPath} (${urls.length} URLs)`);
   } catch (err) {

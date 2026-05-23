@@ -1,7 +1,5 @@
 import { useParams, Link } from "react-router-dom";
 import { SeoHead } from "@/components/seo";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { Layout } from "@/components/layout/Layout";
 import { FeedCard } from "@/components/feed/FeedCard";
 import { useFeedPosts } from "@/hooks/useFeedPosts";
@@ -10,83 +8,48 @@ import { MapPin, ExternalLink, Calendar, MapPinIcon } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
 import { nb } from "date-fns/locale";
+import { FEATURES } from "@/config/features";
+import { buildCanonicalUrl } from "@/lib/siteUrl";
+import {
+  isBrandHubIndexable,
+  brandHubSeoTitle,
+  brandHubSeoDescription,
+} from "@/lib/brandHubSeo";
+import {
+  useBrandHubPage,
+  useBrandHubCars,
+  useBrandHubModels,
+  useBrandHubClubs,
+  useBrandHubRelated,
+} from "@/hooks/useBrandHub";
+import { toBrandKey, brandHubPath } from "@/lib/brandSlug";
 
 const serif = { fontFamily: "'Playfair Display', 'Georgia', serif" } as const;
 const mono = { fontFamily: "'Courier New', 'Courier', monospace" } as const;
 const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
 const bebas = { fontFamily: "'Bebas Neue', 'Oswald', 'Impact', sans-serif" } as const;
 
-/* ─── Hooks ─── */
-
-function useBrandHub(brandKey: string | undefined) {
-  return useQuery({
-    queryKey: ["brand-hub", brandKey],
-    queryFn: async () => {
-      if (!brandKey) return null;
-      const normalized = brandKey.toLowerCase();
-
-      // Primary: page_type_variant = 'brand' + brand_key match
-      const { data, error } = await supabase
-        .from("pages")
-        .select("*")
-        .eq("is_public", true)
-        .eq("status", "active")
-        .eq("page_type", "club")
-        .limit(10);
-      if (error) throw error;
-
-      // Prefer brand variant match
-      const brandMatch = (data ?? []).find(
-        (p: any) => p.page_type_variant === "brand" && p.brand_key?.toLowerCase() === normalized
-      );
-      if (brandMatch) return brandMatch;
-
-      // Fallback: any page with matching brand_key
-      const fallback = (data ?? []).find(
-        (p: any) => p.brand_key?.toLowerCase() === normalized
-      );
-      return fallback ?? null;
-    },
-    enabled: !!brandKey,
-  });
-}
-
-function useBrandCars(brandKey: string | undefined) {
-  return useQuery({
-    queryKey: ["brand-cars", brandKey],
-    queryFn: async () => {
-      if (!brandKey) return [];
-      const { data, error } = await supabase
-        .from("cars")
-        .select(`id, title, slug, brand, model, year, car_images(image_url, sort_order)`)
-        .ilike("brand", brandKey)
-        .not("published_at", "is", null)
-        .lte("published_at", new Date().toISOString())
-        .order("published_at", { ascending: false })
-        .limit(25);
-      if (error) throw error;
-      return data ?? [];
-    },
-    enabled: !!brandKey,
-  });
-}
-
-/* ─── Helpers ─── */
-
-function getFirstImage(images: { image_url: string; sort_order: number }[] | null) {
+function getFirstImage(images: { image_url: string; sort_order: number }[] | null | undefined) {
   if (!images || images.length === 0) return null;
   return [...images].sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))[0]?.image_url ?? null;
 }
 
-/* ─── Component ─── */
-
 export default function MerkeHub() {
   const { brand } = useParams<{ brand: string }>();
+  const brandKey = toBrandKey(brand);
 
-  const { data: hub, isLoading: hubLoading } = useBrandHub(brand);
-  const { data: cars, isLoading: carsLoading } = useBrandCars(brand);
+  const { data: hub, isLoading: hubLoading } = useBrandHubPage(brandKey);
+  const { data: cars, isLoading: carsLoading } = useBrandHubCars(brandKey);
+  const { data: models } = useBrandHubModels(brandKey);
+  const { data: clubs } = useBrandHubClubs(brandKey);
+  const { data: related } = useBrandHubRelated(brandKey, (hub as any)?.related_brand_keys);
   const { data: events } = usePageEvents(hub?.id);
-  const { data: feedPosts } = useFeedPosts({ pageId: hub?.id, limit: 5 });
+
+  const isBrandVariant = (hub as any)?.page_type_variant === "brand";
+  const { data: feedPosts } = useFeedPosts({
+    pageId: !isBrandVariant ? hub?.id : undefined,
+    limit: 5,
+  });
 
   const firstEvent = events?.[0];
 
@@ -103,41 +66,60 @@ export default function MerkeHub() {
   if (!hub) {
     return (
       <Layout>
+        <SeoHead
+          title={`Merke ikke funnet | Bilgarasje.no`}
+          canonicalPath="/biler"
+          noindex
+        />
         <div className="min-h-screen bg-[#F7F4EF] flex flex-col items-center justify-center gap-4 px-6">
           <h1 className="text-4xl font-bold text-[#1B5FA0] uppercase tracking-wider" style={oswald}>
             Merke ikke funnet
           </h1>
           <p className="text-[#3a2e24]/60 text-lg capitalize">{brand}</p>
           <p className="text-[#3a2e24]/40">Denne merkesiden er ikke opprettet ennå.</p>
-          <Link to="/biler" className="text-[#1B5FA0] hover:underline mt-4">← Se alle biler</Link>
+          <Link to="/biler" className="text-[#1B5FA0] hover:underline mt-4">← Søk i arkivet</Link>
         </div>
       </Layout>
     );
   }
 
+  const carCount = cars?.length ?? 0;
+  const indexable = FEATURES.seoHubIndexing && isBrandHubIndexable(hub, carCount);
+  const canonicalPath = indexable ? `/merker/${brandKey}` : "/biler";
+
   return (
     <Layout>
       <SeoHead
-        title={`${hub.title} — Bilgarasjen`}
-        description={hub.tagline || undefined}
-        canonicalPath="/biler"
+        title={brandHubSeoTitle(hub.title)}
+        description={brandHubSeoDescription(hub.title, hub.tagline, (hub as any).about)}
+        canonicalPath={canonicalPath}
+        noindex={!indexable}
+        image={hub.cover_url ?? hub.logo_url ?? undefined}
+        jsonLd={
+          indexable
+            ? {
+                "@context": "https://schema.org",
+                "@type": "Brand",
+                name: hub.title,
+                url: buildCanonicalUrl(`/merker/${brandKey}`),
+                description: hub.tagline ?? undefined,
+                logo: hub.logo_url ?? undefined,
+              }
+            : undefined
+        }
       />
 
       <div className="min-h-screen bg-[#F7F4EF]">
-
-        {/* ── HERO — tall image, light gradient ── */}
+        {/* ── HERO ── */}
         <section className="relative overflow-hidden" style={{ minHeight: "60vh" }}>
           {hub.cover_url ? (
             <>
-              <img
-                src={hub.cover_url}
-                alt=""
-                className="absolute inset-0 w-full h-full object-cover"
-              />
+              <img src={hub.cover_url} alt="" className="absolute inset-0 w-full h-full object-cover" />
               <div
                 className="absolute inset-0"
                 style={{
-                  background: "linear-gradient(to bottom, rgba(247,244,239,0.1) 0%, rgba(247,244,239,0.3) 50%, rgba(247,244,239,0.92) 85%, #F7F4EF 100%)",
+                  background:
+                    "linear-gradient(to bottom, rgba(247,244,239,0.1) 0%, rgba(247,244,239,0.3) 50%, rgba(247,244,239,0.92) 85%, #F7F4EF 100%)",
                 }}
               />
             </>
@@ -148,7 +130,6 @@ export default function MerkeHub() {
             />
           )}
 
-          {/* Top chrome rule */}
           <div className="relative z-10 flex items-center gap-3 px-6 md:px-12 pt-6">
             <div className="h-px flex-1" style={{ background: "linear-gradient(90deg, transparent, #B8C0CC, #FFFFFF, #B8C0CC, transparent)" }} />
             <span className="text-[#3a2e24]/30 text-[10px] uppercase tracking-[0.3em]" style={mono}>
@@ -158,7 +139,7 @@ export default function MerkeHub() {
           </div>
         </section>
 
-        {/* ── IDENTITY BLOCK — logo overlaps hero ── */}
+        {/* ── IDENTITY ── */}
         <div className="max-w-5xl mx-auto px-6 md:px-10 relative" style={{ marginTop: "-80px" }}>
           {hub.logo_url && (
             <img
@@ -187,7 +168,6 @@ export default function MerkeHub() {
               </p>
             )}
 
-            {/* CTAs */}
             <div className="flex flex-wrap items-center gap-3 mt-6">
               <a
                 href="#biler"
@@ -208,30 +188,26 @@ export default function MerkeHub() {
               )}
             </div>
 
-            {/* Meta */}
             <div className="flex items-center gap-4 mt-5 text-[#3a2e24]/35 text-xs" style={mono}>
               {hub.location && (
                 <span className="flex items-center gap-1">
                   <MapPin className="w-3 h-3" /> {hub.location}
                 </span>
               )}
-              {cars && cars.length > 0 && (
-                <span>{cars.length} biler registrert</span>
-              )}
+              {carCount > 0 && <span>{carCount} biler registrert</span>}
             </div>
           </div>
         </div>
 
         {/* ── BODY ── */}
         <div className="max-w-5xl mx-auto px-6 md:px-10 pt-12 pb-16 md:pb-20 space-y-0">
-
-          {/* Om merket */}
-          {hub.about && (
+          {/* Om merket / Historie */}
+          {(hub as any).about && (
             <section className="mb-14">
               <div className="flex flex-col md:flex-row gap-8 md:gap-12">
                 <div className="md:w-1/3 shrink-0">
                   <p className="text-[10px] uppercase tracking-[0.35em] text-[#3a2e24]/30 mb-1" style={mono}>
-                    Om merket
+                    Historie
                   </p>
                   <h2 className="text-2xl text-[#1B5FA0]" style={serif}>
                     {hub.title}
@@ -253,7 +229,7 @@ export default function MerkeHub() {
                     className="text-[#3a2e24]/65 leading-[1.85] text-[15px] whitespace-pre-line"
                     style={{ fontFamily: "'Source Sans 3', 'Source Sans Pro', sans-serif" }}
                   >
-                    {hub.about}
+                    {(hub as any).about}
                   </p>
                 </div>
               </div>
@@ -262,7 +238,47 @@ export default function MerkeHub() {
 
           <SparseDot />
 
-          {/* ── BILER — warm framed panel ── */}
+          {/* ── POPULÆRE MODELLER ── */}
+          {models && models.length > 0 && (
+            <section className="py-14">
+              <p className="text-[10px] uppercase tracking-[0.35em] text-[#3a2e24]/30 mb-1" style={mono}>
+                Populære
+              </p>
+              <h2 className="text-2xl text-[#1B5FA0] mb-6" style={serif}>
+                Modeller
+              </h2>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                {models.map((m) => (
+                  <Link
+                    key={m.model}
+                    to={m.sampleSlug ? `/biler/${m.sampleSlug}` : "#biler"}
+                    className="group rounded-xl overflow-hidden bg-white hover:shadow-md transition-shadow border border-[#B8C0CC]/15"
+                  >
+                    {m.sampleImage ? (
+                      <img
+                        src={m.sampleImage}
+                        alt={m.model}
+                        loading="lazy"
+                        className="w-full aspect-[4/3] object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                    ) : (
+                      <div className="w-full aspect-[4/3] bg-[#F2F4F7]" />
+                    )}
+                    <div className="p-3">
+                      <p className="font-semibold text-sm text-[#3a2e24] truncate group-hover:text-[#1B5FA0] transition-colors" style={oswald}>
+                        {m.model}
+                      </p>
+                      <p className="text-[11px] text-[#3a2e24]/40 mt-0.5" style={mono}>
+                        {m.count} {m.count === 1 ? "bil" : "biler"}
+                      </p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* ── BILER ── */}
           <section id="biler" className="py-14">
             <div className="flex items-end justify-between mb-8">
               <div>
@@ -273,16 +289,15 @@ export default function MerkeHub() {
                   {hub.title} i Norge
                 </h2>
               </div>
-              <Link
-                to={`/biler?brand=${brand}`}
+              <a
+                href="#biler"
                 className="text-xs text-[#1B5FA0]/50 hover:text-[#1B5FA0] transition-colors"
                 style={mono}
               >
-                Se alle →
-              </Link>
+                Se alle i arkivet →
+              </a>
             </div>
 
-            {/* Warm panel wrapper */}
             <div className="rounded-2xl p-4 md:p-6" style={{ background: "linear-gradient(135deg, #e8e1d6 0%, #dfd5c7 100%)" }}>
               {carsLoading && (
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
@@ -294,15 +309,11 @@ export default function MerkeHub() {
 
               {!carsLoading && cars && cars.length > 0 && (
                 <div className="space-y-4">
-                  {/* First car — large */}
                   {(() => {
                     const first = cars[0];
                     const img = getFirstImage(first.car_images as any);
                     return (
-                      <Link
-                        to={`/biler/${first.slug}`}
-                        className="block group rounded-xl overflow-hidden bg-white/60"
-                      >
+                      <Link to={`/biler/${first.slug}`} className="block group rounded-xl overflow-hidden bg-white/60">
                         {img ? (
                           <img
                             src={img}
@@ -326,7 +337,6 @@ export default function MerkeHub() {
                     );
                   })()}
 
-                  {/* Rest — grid */}
                   {cars.length > 1 && (
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                       {cars.slice(1).map((car) => {
@@ -338,7 +348,7 @@ export default function MerkeHub() {
                             className="group rounded-xl overflow-hidden bg-white/60 hover:shadow-md transition-shadow"
                           >
                             {img ? (
-                              <img src={img} alt={car.title} className="w-full aspect-[4/3] object-cover group-hover:scale-105 transition-transform duration-500" />
+                              <img src={img} alt={car.title} loading="lazy" className="w-full aspect-[4/3] object-cover group-hover:scale-105 transition-transform duration-500" />
                             ) : (
                               <div className="w-full aspect-[4/3] bg-[#F2F4F7] flex items-center justify-center text-[#B8C0CC] text-xs">
                                 Ingen bilde
@@ -368,7 +378,75 @@ export default function MerkeHub() {
             </div>
           </section>
 
-          {/* ── ARRANGEMENTER — accent border style ── */}
+          {/* ── KLUBBER ── */}
+          {clubs && clubs.length > 0 && (
+            <section className="py-14">
+              <p className="text-[10px] uppercase tracking-[0.35em] text-[#3a2e24]/30 mb-1" style={mono}>
+                Fellesskap
+              </p>
+              <h2 className="text-2xl text-[#1B5FA0] mb-6" style={serif}>
+                Klubber
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {clubs.map((club: any) => (
+                  <Link
+                    key={club.id}
+                    to={`/klubber/${club.slug}`}
+                    className="group flex items-center gap-4 rounded-xl p-4 bg-white border border-[#B8C0CC]/15 hover:border-[#1B5FA0]/30 transition-colors"
+                  >
+                    {club.logo_url ? (
+                      <img src={club.logo_url} alt="" className="w-12 h-12 rounded-lg object-cover shrink-0" />
+                    ) : (
+                      <div className="w-12 h-12 rounded-lg bg-[#F2F4F7] shrink-0" />
+                    )}
+                    <div className="min-w-0 flex-1">
+                      <p className="font-bold text-[#3a2e24] group-hover:text-[#1B5FA0] transition-colors truncate" style={oswald}>
+                        {club.title}
+                      </p>
+                      {club.location && (
+                        <p className="text-xs text-[#3a2e24]/40 mt-0.5 flex items-center gap-1">
+                          <MapPinIcon className="w-3 h-3" /> {club.location}
+                        </p>
+                      )}
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* ── RELATERTE MERKER ── */}
+          {related && related.length > 0 && (
+            <section className="py-14">
+              <p className="text-[10px] uppercase tracking-[0.35em] text-[#3a2e24]/30 mb-1" style={mono}>
+                I slekt
+              </p>
+              <h2 className="text-2xl text-[#1B5FA0] mb-6" style={serif}>
+                Relaterte merker
+              </h2>
+              <div className="flex flex-wrap gap-3">
+                {related.map((r: any) => (
+                  <Link
+                    key={r.id}
+                    to={brandHubPath(r.brand_key ?? r.title)}
+                    className="group inline-flex items-center gap-3 rounded-full bg-white border border-[#B8C0CC]/20 hover:border-[#1B5FA0]/40 px-4 py-2 transition-colors"
+                  >
+                    {r.logo_url && (
+                      <img src={r.logo_url} alt="" className="w-7 h-7 rounded-full object-cover" />
+                    )}
+                    <span
+                      className="text-sm font-semibold text-[#3a2e24] group-hover:text-[#1B5FA0]"
+                      style={oswald}
+                    >
+                      {r.title}
+                    </span>
+                  </Link>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* ── ARRANGEMENTER ── */}
           <section className="py-14">
             <p className="text-[10px] uppercase tracking-[0.35em] text-[#3a2e24]/30 mb-1" style={mono}>
               Kommende
@@ -387,13 +465,8 @@ export default function MerkeHub() {
                       to={`/e/${event.slug}`}
                       className="group flex items-stretch rounded-sm overflow-hidden bg-white border border-[#B8C0CC]/20 hover:border-[#1B5FA0]/30 transition-colors"
                     >
-                      {/* Left accent rail */}
                       <div className="w-1.5 shrink-0" style={{ background: "linear-gradient(180deg, #C21212, #9A0A0A)" }} />
-
-                      {img && (
-                        <img src={img} alt="" className="w-24 md:w-32 h-auto object-cover shrink-0" />
-                      )}
-
+                      {img && <img src={img} alt="" className="w-24 md:w-32 h-auto object-cover shrink-0" />}
                       <div className="flex-1 p-4 min-w-0">
                         <p className="text-[11px] uppercase tracking-wider text-[#C21212]/70 font-semibold mb-1" style={mono}>
                           {format(new Date(event.starts_at), "d. MMM yyyy", { locale: nb })}
@@ -412,14 +485,12 @@ export default function MerkeHub() {
                 })}
               </div>
             ) : (
-              <p className="text-[#3a2e24]/35 text-sm py-8">
-                Ingen kommende arrangementer.
-              </p>
+              <p className="text-[#3a2e24]/35 text-sm py-8">Ingen kommende arrangementer.</p>
             )}
           </section>
 
-          {/* ── FEED ── */}
-          {feedPosts && feedPosts.length > 0 && (
+          {/* ── FEED (kun for ikke-brand variants) ── */}
+          {!isBrandVariant && feedPosts && feedPosts.length > 0 && (
             <>
               <SparseDot />
               <section className="py-14">
@@ -441,10 +512,10 @@ export default function MerkeHub() {
           )}
         </div>
 
-        {/* ── FOOTER ── */}
         <div className="border-t border-[#B8C0CC]/20 py-8 text-center bg-[#F7F4EF]">
           <span className="text-xs text-[#3a2e24]/25" style={mono}>
-            {hub.title}{hub.founded_year ? ` · Est. ${hub.founded_year}` : ""} — Bilgarasjen.no
+            {hub.title}
+            {hub.founded_year ? ` · Est. ${hub.founded_year}` : ""} — Bilgarasje.no
           </span>
         </div>
       </div>
@@ -452,7 +523,6 @@ export default function MerkeHub() {
   );
 }
 
-/* ─── Sparse dot divider ─── */
 function SparseDot() {
   return (
     <div className="flex items-center justify-center py-2">

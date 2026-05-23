@@ -54,11 +54,22 @@ serve(async (req: Request) => {
       .not("approved_at", "is", null)
       .not("slug", "is", null);
 
+    const { data: brandHubs, error: brandHubsError } = await supabase
+      .from("pages")
+      .select("brand_key, updated_at")
+      .eq("is_public", true)
+      .eq("status", "active")
+      .eq("page_type_variant", "brand")
+      .not("brand_key", "is", null);
+
     if (error) {
       console.error("Sitemap fetch error:", error);
     }
     if (ownersError) {
       console.error("Sitemap owners fetch error:", ownersError);
+    }
+    if (brandHubsError) {
+      console.error("Sitemap brand hubs fetch error:", brandHubsError);
     }
 
     const carList = (cars ?? []) as {
@@ -68,6 +79,10 @@ serve(async (req: Request) => {
     }[];
     const ownerList = (owners ?? []) as {
       slug: string;
+      updated_at?: string;
+    }[];
+    const brandHubList = (brandHubs ?? []) as {
+      brand_key: string;
       updated_at?: string;
     }[];
     const nowIso = new Date().toISOString().slice(0, 10);
@@ -96,7 +111,14 @@ serve(async (req: Request) => {
       priority: "0.6",
     }));
 
-    const urls = [...staticEntries, ...carEntries, ...ownerEntries];
+    const brandHubEntries = brandHubList.map((p) => ({
+      loc: `${siteUrl}/merker/${String(p.brand_key).toLowerCase()}`,
+      lastmod: formatLastmod(p.updated_at),
+      changefreq: "monthly",
+      priority: "0.75",
+    }));
+
+    const urls = [...staticEntries, ...carEntries, ...ownerEntries, ...brandHubEntries];
 
     const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">

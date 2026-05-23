@@ -35,6 +35,7 @@ import { resolveCarPageViewMode } from "@/lib/carPageViewMode";
 import { buildCarPagePresentation, pickLatestObservationCaption, pickHeroSpottingEventId } from "@/lib/carPagePresentation";
 import { SpottingCommentsSheet } from "@/components/car/detail/SpottingCommentsSheet";
 import { CarObservationPage } from "@/components/observation/CarObservationPage";
+import { RelatedCarsSection } from "@/components/car/RelatedCarsSection";
 import { resolveCarEnrichment } from "@/lib/carEnrichment";
 import { getSiteUrl } from "@/lib/siteUrl";
 
@@ -562,6 +563,10 @@ const BilDetalj = () => {
         open={commentsSheetOpen}
         onOpenChange={setCommentsSheetOpen}
       />
+
+      <RelatedCarsSection carId={car.id} brand={car.brand} model={car.model} />
+
+
 
 
       {/* Lightbox */}
