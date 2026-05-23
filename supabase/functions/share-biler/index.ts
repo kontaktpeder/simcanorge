@@ -23,7 +23,7 @@ serve(async (req: Request) => {
     return new Response(null, { headers: corsHeaders });
   }
 
-  const siteUrl = (Deno.env.get("SITE_URL") ?? "https://simcanorge.no").replace(/\/$/, "");
+  const siteUrl = (Deno.env.get("SITE_URL") ?? "https://bilgarasje.no").replace(/\/$/, "");
   const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
   const supabaseKey =
     Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? Deno.env.get("SUPABASE_ANON_KEY")!;

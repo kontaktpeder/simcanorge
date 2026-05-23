@@ -33,7 +33,7 @@ serve(async (req: Request) => {
   }
 
   try {
-    const siteUrl = Deno.env.get("SITE_URL") ?? "https://simcanorge.lovable.app";
+    const siteUrl = Deno.env.get("SITE_URL") ?? "https://bilgarasje.no";
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseKey =
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ??
@@ -111,7 +111,7 @@ ${urls
     return new Response(xml, { status: 200, headers: XML_HEADERS });
   } catch (e) {
     console.error("Sitemap error:", e);
-    const siteUrl = Deno.env.get("SITE_URL") ?? "https://simcanorge.lovable.app";
+    const siteUrl = Deno.env.get("SITE_URL") ?? "https://bilgarasje.no";
     const nowIso = new Date().toISOString().slice(0, 10);
     const fallback =
       `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>${escapeXml(siteUrl)}</loc><lastmod>${nowIso}</lastmod></url></urlset>`;
