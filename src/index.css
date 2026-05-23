@@ -1289,31 +1289,4 @@ input, textarea, select, [contenteditable="true"] {
 .car-paper-theme .text-white\/10 { color: rgb(38 38 38 / 0.30); }
 .car-paper-theme .text-white\/15 { color: rgb(38 38 38 / 0.30); }
 .car-paper-theme .text-white\/25 { color: rgb(38 38 38 / 0.42); }
-.car-paper-theme .text-white\/30 { color: rgb(38 38 38 / 0.50); }
-.car-paper-theme .text-white\/35 { color: rgb(38 38 38 / 0.55); }
-.car-paper-theme .text-white\/40 { color: rgb(38 38 38 / 0.60); }
-.car-paper-theme .text-white\/45 { color: rgb(38 38 38 / 0.62); }
-.car-paper-theme .text-white\/55 { color: rgb(38 38 38 / 0.70); }
-.car-paper-theme .text-white\/65 { color: rgb(38 38 38 / 0.78); }
-.car-paper-theme .text-white\/70 { color: rgb(38 38 38 / 0.82); }
-.car-paper-theme .text-white\/75 { color: rgb(38 38 38 / 0.85); }
-.car-paper-theme .text-white\/80 { color: rgb(23 23 23 / 0.88); }
-.car-paper-theme .text-white\/85 { color: rgb(23 23 23 / 0.92); }
-.car-paper-theme .text-white\/90 { color: rgb(23 23 23 / 0.94); }
-.car-paper-theme .text-white { color: rgb(15 15 15); }
-.car-paper-theme .hover\:text-white:hover { color: rgb(15 15 15); }
-.car-paper-theme .bg-white\/\[0\.02\] { background-color: rgb(0 0 0 / 0.03); }
-.car-paper-theme .bg-white\/\[0\.03\] { background-color: rgb(0 0 0 / 0.04); }
-.car-paper-theme .bg-white\/\[0\.04\] { background-color: rgb(0 0 0 / 0.05); }
-.car-paper-theme .bg-white\/\[0\.06\] { background-color: rgb(0 0 0 / 0.06); }
-.car-paper-theme .bg-white\/\[0\.08\] { background-color: rgb(0 0 0 / 0.08); }
-.car-paper-theme .hover\:bg-white\/\[0\.08\]:hover { background-color: rgb(0 0 0 / 0.08); }
-.car-paper-theme .border-white\/\[0\.06\] { border-color: rgb(0 0 0 / 0.08); }
-.car-paper-theme .border-white\/10 { border-color: rgb(0 0 0 / 0.12); }
-.car-paper-theme .border-white\/15 { border-color: rgb(0 0 0 / 0.18); }
-.car-paper-theme .border-white\/20 { border-color: rgb(0 0 0 / 0.22); }
-.car-paper-theme .ring-white\/10 { --tw-ring-color: rgb(0 0 0 / 0.12); }
-.car-paper-theme .border-white\/\[0\.04\] { border-color: rgb(0 0 0 / 0.06); }
-.car-paper-theme .border-white\/\[0\.08\] { border-color: rgb(0 0 0 / 0.10); }
-.car-paper-theme .border-dashed.border-white\/10 { border-color: rgb(0 0 0 / 0.18); }
 
