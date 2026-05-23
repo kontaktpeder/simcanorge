@@ -44,18 +44,34 @@ type Props = {
 };
 
 
-const PAPER_BG = "#e9e7e1";
+// Vegvesen-inspirert lys palett (matcher /min-garasje og PublishComposer)
+const VV_BG = "#f3f3f3";
+const VV_YELLOW = "#fcc419";
+const VV_YELLOW_SOFT = "#fff4d1";
+const VV_DARK = "#2b2b2b";
+const PAPER_BG = VV_BG;
 
-const SectionDivider = ({ isLight }: { isLight: boolean }) => (
-  <div className={isLight ? "border-t border-neutral-900/10" : "border-t border-white/[0.06]"} />
-);
+const inter = { fontFamily: "'Inter', 'Helvetica Neue', Arial, sans-serif" } as const;
+
+const SectionDivider = ({ isLight }: { isLight: boolean }) =>
+  isLight ? null : <div className="border-t border-white/[0.06]" />;
 
 const SectionLabel = ({ children, isLight }: { children: React.ReactNode; isLight: boolean }) => (
   <div
-    className={`text-[11px] uppercase tracking-[0.22em] mb-4 ${
+    className={`text-[11px] uppercase tracking-[0.18em] font-semibold mb-4 ${
       isLight ? "text-neutral-500" : "text-white/35"
     }`}
-    style={oswald}
+    style={isLight ? inter : oswald}
+  >
+    {children}
+  </div>
+);
+
+// Lett kortwrapper for lys variant – speiler "white card"-mønsteret fra /min-garasje
+const LightCard = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
+  <div
+    className={`rounded-2xl bg-white border border-black/[0.08] p-5 sm:p-6 ${className}`}
+    style={inter}
   >
     {children}
   </div>
