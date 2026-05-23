@@ -8,6 +8,7 @@ import {
   Loader2,
   ArrowRight,
   ExternalLink,
+  X,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -241,6 +242,17 @@ export function PublishComposer() {
         className="car-paper-theme text-neutral-900 p-0 gap-0 border-0 max-w-full w-screen h-[100dvh] sm:h-auto sm:max-h-[92vh] sm:max-w-lg sm:rounded-2xl sm:border sm:border-black/10 overflow-hidden flex flex-col"
         style={{ backgroundColor: "#e9e7e1" }}
       >
+        {/* Lukk-knapp */}
+        <button
+          type="button"
+          onClick={closePublishComposer}
+          disabled={isSubmitting}
+          className="absolute top-3 right-3 z-50 inline-flex items-center justify-center w-9 h-9 rounded-full bg-white/85 backdrop-blur border border-black/10 shadow-sm text-neutral-700 hover:text-neutral-900 hover:bg-white transition-colors"
+          style={{ top: "max(0.75rem, env(safe-area-inset-top))" }}
+        >
+          <X className="w-4 h-4" strokeWidth={2.5} />
+        </button>
+
         <input
           ref={fileInputRef}
           type="file"
@@ -330,7 +342,7 @@ export function PublishComposer() {
                     <button
                       type="button"
                       onClick={pickFile}
-                      className="absolute top-2 left-2 inline-flex items-center gap-1.5 rounded-full bg-white/85 backdrop-blur px-3 py-1.5 text-xs text-neutral-800 hover:bg-white transition-colors border border-black/10 shadow-sm"
+                      className="absolute top-2 left-2 inline-flex items-center gap-1.5 rounded-full bg-white/90 backdrop-blur-sm px-3 py-1.5 text-xs font-medium text-neutral-800 hover:bg-white hover:text-neutral-900 transition-colors border border-black/10 shadow-sm"
                     >
                       <ImagePlus className="w-3.5 h-3.5" />
                       Bytt bilde
@@ -597,12 +609,11 @@ function SegmentButton({
     <button
       type="button"
       onClick={onClick}
-      className="flex-1 h-10 rounded-full text-sm font-medium transition-all"
-      style={
+      className={`flex-1 h-9 rounded-full text-sm font-medium transition-all select-none ${
         active
-          ? { backgroundColor: "#171717", color: "#ffffff" }
-          : { backgroundColor: "transparent", color: "#525252" }
-      }
+          ? "bg-[#1a3a34] text-white shadow-sm"
+          : "text-neutral-500 hover:text-neutral-800 hover:bg-white/40"
+      }`}
     >
       {children}
     </button>
