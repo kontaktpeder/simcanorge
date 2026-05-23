@@ -181,6 +181,7 @@ export async function publishObservation(
         titleOrModel: input.titleOrModel ?? caption.slice(0, 60) ?? null,
       });
       const baseSlug = slugify(`${meta.displayTitle}-${Date.now()}`);
+      const isPrivateSpotting = visibility === "private";
       const { data: created, error: createErr } = await supabase
         .from("cars")
         .insert({
@@ -192,7 +193,8 @@ export async function publishObservation(
           category: "registrert",
           created_by_user_id: input.userId,
           identification_status: meta.identification_status,
-          published_at: new Date().toISOString(),
+          // Privat spotting: ikke publiser bilen.
+          published_at: isPrivateSpotting ? null : new Date().toISOString(),
           ...(meta.registration_number
             ? { registration_number: meta.registration_number }
             : {}),
@@ -205,8 +207,10 @@ export async function publishObservation(
       carId = row.id;
       carSlug = row.slug ?? null;
       createdNewCar = true;
-      const pub = await publishCarOnObservation(carId);
-      if (pub.ok) carSlug = pub.slug;
+      if (!isPrivateSpotting) {
+        const pub = await publishCarOnObservation(carId);
+        if (pub.ok) carSlug = pub.slug;
+      }
     }
   }
 
