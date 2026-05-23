@@ -317,6 +317,7 @@ export async function publishObservation(
     questionId,
     questionSlug,
     carSlug,
+    feedPostId: null,
     matchedExistingCar,
     createdNewCar,
     visibility,
