@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { Camera, Images } from "lucide-react";
 import { SpotCarDialog } from "@/components/car/SpotCarDialog";
 import { useAuth } from "@/hooks/useAuth";
@@ -216,12 +217,16 @@ export function CaptureCameraButton({ size = "hero", onOpenChange, screen, varia
         />
       )}
 
-      <InAppCameraModal
-        open={cameraOpen}
-        onClose={handleCameraClose}
-        onCapture={handleCameraCapture}
-        onPickGallery={handleCameraGalleryFallback}
-      />
+      {cameraOpen && typeof document !== "undefined" &&
+        createPortal(
+          <InAppCameraModal
+            open={cameraOpen}
+            onClose={handleCameraClose}
+            onCapture={handleCameraCapture}
+            onPickGallery={handleCameraGalleryFallback}
+          />,
+          document.body,
+        )}
     </>
   );
 }
