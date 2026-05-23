@@ -136,6 +136,7 @@ export default function Kontakt() {
       </Layout>;
   }
   return <Layout contained>
+      <SeoHead title="Kontakt | Bilgarasje.no" description="Ta kontakt med Bilgarasje.no." canonicalPath="/kontakt" />
       <PageHeader title="KONTAKT OSS" subtitle="Har du spørsmål eller tilbakemeldinger? Send oss en melding!" />
 
       {/* Quick Contact Banner */}
