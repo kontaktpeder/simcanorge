@@ -98,6 +98,27 @@ export function CaptureCameraButton({ size = "hero", onOpenChange, screen, varia
     if (!next) setPrefillFile(null);
   };
 
+  const handleCameraCapture = (file: File) => {
+    setCameraOpen(false);
+    if (useV1) {
+      openPublishComposer({ initialImageFile: file, source: screen ?? "capture" });
+    } else {
+      setPrefillFile(file);
+      setDialogOpen(true);
+    }
+    onOpenChange?.(true);
+  };
+
+  const handleCameraClose = () => {
+    setCameraOpen(false);
+    onOpenChange?.(false);
+  };
+
+  const handleCameraGalleryFallback = () => {
+    setCameraOpen(false);
+    galleryRef.current?.click();
+  };
+
   const isHero = size === "hero";
 
   const heroCircleStyle: React.CSSProperties = isLight
