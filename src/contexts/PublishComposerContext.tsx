@@ -1,11 +1,12 @@
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from "react";
 
-export type PublishComposerType = "moment" | "question";
 export type PublishComposerVisibility = "public" | "private";
 
 export interface OpenPublishComposerProps {
   /** Pre-utfylt bilde (kamera/galleri). */
   initialImageFile?: File | null;
+  /** Pre-utfylt tekst (caption). */
+  initialCaption?: string;
   /** Lås composer til en bestemt bil ("På denne bilen"). */
   prefillCarId?: string | null;
   /** Vises som tittel på bil-chipen når carId er satt. */

@@ -1,11 +1,9 @@
 import { useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Camera, Images } from "lucide-react";
-import { SpotCarDialog } from "@/components/car/SpotCarDialog";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate, useLocation } from "react-router-dom";
 import { track } from "@/lib/analytics";
-import { FEATURES } from "@/config/features";
 import { usePublishComposer } from "@/contexts/PublishComposerContext";
 import { InAppCameraModal } from "@/components/capture/InAppCameraModal";
 
@@ -42,11 +40,8 @@ export function CaptureCameraButton({ size = "hero", onOpenChange, screen, varia
   const location = useLocation();
   const inputRef = useRef<HTMLInputElement>(null);
   const galleryRef = useRef<HTMLInputElement>(null);
-  const [prefillFile, setPrefillFile] = useState<File | null>(null);
-  const [dialogOpen, setDialogOpen] = useState(false);
   const [cameraOpen, setCameraOpen] = useState(false);
   const { openPublishComposer } = usePublishComposer();
-  const useV1 = FEATURES.publishComposerV1;
   const inAppCamera = supportsInAppCamera();
 
   const isLight = variant === "light";
@@ -80,33 +75,16 @@ export function CaptureCameraButton({ size = "hero", onOpenChange, screen, varia
     const file = e.target.files?.[0] ?? null;
     e.target.value = ""; // tillat samme fil igjen
     if (!file) return;
-    if (useV1) {
-      openPublishComposer({
-        initialImageFile: file,
-        source: screen ?? "capture",
-      });
-      onOpenChange?.(true);
-      return;
-    }
-    setPrefillFile(file);
-    setDialogOpen(true);
+    openPublishComposer({
+      initialImageFile: file,
+      source: screen ?? "capture",
+    });
     onOpenChange?.(true);
-  };
-
-  const handleOpenChange = (next: boolean) => {
-    setDialogOpen(next);
-    onOpenChange?.(next);
-    if (!next) setPrefillFile(null);
   };
 
   const handleCameraCapture = (file: File) => {
     setCameraOpen(false);
-    if (useV1) {
-      openPublishComposer({ initialImageFile: file, source: screen ?? "capture" });
-    } else {
-      setPrefillFile(file);
-      setDialogOpen(true);
-    }
+    openPublishComposer({ initialImageFile: file, source: screen ?? "capture" });
     onOpenChange?.(true);
   };
 
@@ -209,13 +187,6 @@ export function CaptureCameraButton({ size = "hero", onOpenChange, screen, varia
         </button>
       )}
 
-      {!useV1 && (
-        <SpotCarDialog
-          open={dialogOpen}
-          onOpenChange={handleOpenChange}
-          initialImageFile={prefillFile}
-        />
-      )}
 
       {cameraOpen && typeof document !== "undefined" &&
         createPortal(

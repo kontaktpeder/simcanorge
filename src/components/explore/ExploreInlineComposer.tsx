@@ -2,14 +2,10 @@ import { useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Camera } from "lucide-react";
-import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { useMyPersonProfile } from "@/hooks/useMyPersonProfile";
-import { useCreateFeedPost } from "@/hooks/useCreateFeedPost";
 import { usePublishComposer } from "@/contexts/PublishComposerContext";
 import { InAppCameraModal } from "@/components/capture/InAppCameraModal";
-import { FEATURES } from "@/config/features";
-import { SpotCarDialog } from "@/components/car/SpotCarDialog";
 import { track } from "@/lib/analytics";
 
 const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
@@ -27,7 +23,6 @@ function supportsInAppCamera() {
 export function ExploreInlineComposer({ light = false }: { light?: boolean }) {
   const { user } = useAuth();
   const { data: profile } = useMyPersonProfile();
-  const { mutateAsync, isPending } = useCreateFeedPost();
   const { openPublishComposer } = usePublishComposer();
   const navigate = useNavigate();
   const location = useLocation();
@@ -35,24 +30,16 @@ export function ExploreInlineComposer({ light = false }: { light?: boolean }) {
   const [textMode, setTextMode] = useState(false);
   const [body, setBody] = useState("");
   const [cameraOpen, setCameraOpen] = useState(false);
-  const [fallbackOpen, setFallbackOpen] = useState(false);
-  const [prefillFile, setPrefillFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const useV1 = FEATURES.publishComposerV1;
   const inAppCamera = supportsInAppCamera();
 
-  async function handlePublish() {
+  function handlePublish() {
     const t = body.trim();
     if (!t) return;
-    try {
-      await mutateAsync({ post_type: "manual", body: t });
-      setBody("");
-      setTextMode(false);
-      toast.success("Publisert i Utforsk");
-    } catch {
-      toast.error("Noe gikk galt");
-    }
+    openPublishComposer({ initialCaption: t, source: "explore_inline" });
+    setBody("");
+    setTextMode(false);
   }
 
   function handleCancelText() {
@@ -74,12 +61,7 @@ export function ExploreInlineComposer({ light = false }: { light?: boolean }) {
   }
 
   function routeFile(file: File) {
-    if (useV1) {
-      openPublishComposer({ initialImageFile: file, source: "explore_inline" });
-    } else {
-      setPrefillFile(file);
-      setFallbackOpen(true);
-    }
+    openPublishComposer({ initialImageFile: file, source: "explore_inline" });
   }
 
   function handleCameraCapture(file: File) {
@@ -92,6 +74,7 @@ export function ExploreInlineComposer({ light = false }: { light?: boolean }) {
     e.target.value = "";
     if (f) routeFile(f);
   }
+
 
   // ── Theme tokens ──
   const containerCls = light
@@ -212,12 +195,12 @@ export function ExploreInlineComposer({ light = false }: { light?: boolean }) {
               </button>
               <button
                 type="button"
-                onClick={() => void handlePublish()}
-                disabled={isPending || !body.trim()}
+                onClick={handlePublish}
+                disabled={!body.trim()}
                 className={publishCls}
                 style={publishStyle}
               >
-                {isPending ? "…" : "Publiser"}
+                Publiser
               </button>
             </div>
           </div>
@@ -237,17 +220,6 @@ export function ExploreInlineComposer({ light = false }: { light?: boolean }) {
           />,
           document.body,
         )}
-
-      {!useV1 && (
-        <SpotCarDialog
-          open={fallbackOpen}
-          onOpenChange={(next) => {
-            setFallbackOpen(next);
-            if (!next) setPrefillFile(null);
-          }}
-          initialImageFile={prefillFile}
-        />
-      )}
     </div>
   );
 }
