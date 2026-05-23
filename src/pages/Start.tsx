@@ -149,7 +149,7 @@ export default function Start() {
   if (authLoading || !user) {
     return (
       <Layout>
-        <div className="min-h-[60vh] flex items-center justify-center bg-[#070b10]">
+        <div className="min-h-[60vh] flex items-center justify-center bg-[#e9e7e1]">
           <BrandLoader />
         </div>
       </Layout>
@@ -165,7 +165,7 @@ export default function Start() {
         <meta name="description" content="Fang biler rundt deg — Norges levende bilearkiv." />
       </Helmet>
 
-      <div className="min-h-screen bg-[#070b10] pb-32">
+      <div className="car-paper-theme min-h-screen bg-[#e9e7e1] text-neutral-900 pb-32">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 pt-6 space-y-8">
           {/* ── Header ─────────────────────────────────────────── */}
           <header className="text-center sm:text-left">
