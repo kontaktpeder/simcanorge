@@ -136,7 +136,6 @@ const BilDetalj = () => {
   const { data: myProfile } = useMyPersonProfile();
   const { openPublishComposer } = usePublishComposer();
   const [showPostPublishOverlay, setShowPostPublishOverlay] = useState(false);
-  const [showPostPublishOverlay, setShowPostPublishOverlay] = useState(false);
   const [relationshipDialogOpen, setRelationshipDialogOpen] = useState(false);
   const [knowledgeDialogOpen, setKnowledgeDialogOpen] = useState(false);
   const [commentsSheetOpen, setCommentsSheetOpen] = useState(false);
