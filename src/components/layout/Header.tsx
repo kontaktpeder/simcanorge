@@ -7,7 +7,26 @@ import { useAuth } from "@/hooks/useAuth";
 import { useFeatures } from "@/hooks/useFeatures";
 import bilgarasjeLogo from "@/assets/bilgarasje-logo.png";
 
-const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
+// Vegvesen-inspirert lys palett (matcher /min-garasje, PublishComposer, BilDetalj)
+const VV_BG = "#f3f3f3";
+const VV_YELLOW = "#fcc419";
+const VV_DARK = "#2b2b2b";
+const VV_ORANGE = "#ff8a00";
+
+const inter = { fontFamily: "'Inter', 'Helvetica Neue', Arial, sans-serif" } as const;
+
+const navLinkClass = ({ isActive }: { isActive: boolean }) =>
+  `relative text-[12px] uppercase tracking-[0.12em] font-bold px-2.5 py-1.5 rounded-md transition-colors ${
+    isActive ? "text-neutral-900" : "text-neutral-500 hover:text-neutral-900"
+  }`;
+
+const ActiveDot = ({ active }: { active: boolean }) =>
+  active ? (
+    <span
+      className="absolute left-1/2 -translate-x-1/2 -bottom-0.5 h-[3px] w-5 rounded-full"
+      style={{ backgroundColor: VV_YELLOW }}
+    />
+  ) : null;
 
 export function Header() {
   const location = useLocation();
@@ -31,7 +50,6 @@ export function Header() {
     return () => window.removeEventListener("scroll", onScroll);
   }, [isHome]);
 
-  // Close mobile search on route change
   useEffect(() => {
     setMobileSearchOpen(false);
   }, [location.pathname]);
@@ -44,31 +62,24 @@ export function Header() {
 
   return (
     <header
-      className="fixed top-0 left-0 right-0 z-50 backdrop-blur-2xl transition-transform duration-300 ease-out will-change-transform"
+      className="fixed top-0 left-0 right-0 z-50 transition-transform duration-300 ease-out will-change-transform"
       style={{
-        background:
-          "linear-gradient(180deg, rgba(14,20,28,0.96) 0%, rgba(10,14,20,0.92) 60%, rgba(8,12,17,0.88) 100%)",
-        boxShadow:
-          "0 8px 32px rgba(0,0,0,0.55), 0 1px 0 rgba(255,255,255,0.04) inset, 0 -1px 0 rgba(52,234,184,0.18)",
+        backgroundColor: "rgba(255,255,255,0.92)",
+        backdropFilter: "saturate(180%) blur(14px)",
+        WebkitBackdropFilter: "saturate(180%) blur(14px)",
+        borderBottom: "1px solid rgba(0,0,0,0.08)",
+        boxShadow: "0 1px 0 rgba(0,0,0,0.02), 0 8px 24px -16px rgba(0,0,0,0.12)",
         transform: navVisible || mobileSearchOpen ? "translateY(0)" : "translateY(-110%)",
+        ...inter,
       }}
     >
-      {/* Glassy top sheen */}
+      {/* Subtil oransje top-stripe (samme aksent som composer-progress) */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 h-[60%]"
+        className="absolute inset-x-0 top-0 h-[2px]"
         style={{
-          background:
-            "linear-gradient(180deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.015) 50%, transparent 100%)",
-        }}
-      />
-      {/* Soft teal aura behind logo */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0"
-        style={{
-          background:
-            "radial-gradient(ellipse 420px 80px at 50% 0%, rgba(52,234,184,0.18) 0%, rgba(52,234,184,0.06) 40%, transparent 70%)",
+          background: `linear-gradient(90deg, transparent 0%, ${VV_ORANGE} 35%, ${VV_YELLOW} 65%, transparent 100%)`,
+          opacity: 0.7,
         }}
       />
 
@@ -77,14 +88,13 @@ export function Header() {
           {/* LEFT — Profile icon only */}
           <Link
             to={profileHref}
-            className="relative p-2 -ml-2 text-white/65 hover:text-[#34eab8] transition-all flex-shrink-0 rounded-full hover:bg-white/[0.04]"
+            className="relative p-2 -ml-2 text-neutral-600 hover:text-neutral-950 transition-colors flex-shrink-0 rounded-full hover:bg-black/[0.04]"
             aria-label={user ? "Min profil" : "Logg inn"}
-            style={{ filter: "drop-shadow(0 1px 2px rgba(0,0,0,0.5))" }}
           >
-            <User className="w-5 h-5 md:w-[22px] md:h-[22px]" />
+            <User className="w-5 h-5 md:w-[22px] md:h-[22px]" strokeWidth={2} />
           </Link>
 
-          {/* CENTER — Logo (constrained to header height so it doesn't overlap nav below) */}
+          {/* CENTER — Logo */}
           <Link
             to="/"
             className="flex justify-center items-center group min-w-0 h-14 md:h-16 overflow-hidden"
@@ -93,96 +103,46 @@ export function Header() {
             <img
               src={bilgarasjeLogo}
               alt="Bilgarasje.no"
-              className="h-24 md:h-28 w-auto transition-all duration-300 group-hover:opacity-90 pointer-events-none"
-              style={{
-                filter:
-                  "brightness(1.9) invert(1) drop-shadow(0 0 14px rgba(52,234,184,0.35)) drop-shadow(0 2px 6px rgba(0,0,0,0.5))",
-                opacity: 0.7,
-              }}
+              className="h-20 md:h-24 w-auto transition-opacity duration-200 group-hover:opacity-80 pointer-events-none"
+              style={{ filter: "contrast(1.05)" }}
             />
           </Link>
 
-          {/* RIGHT — Desktop nav links + Search */}
+          {/* RIGHT — Desktop nav + Search */}
           <div className="flex items-center justify-end flex-shrink-0 gap-2 md:gap-3">
-            {/* Desktop nav links */}
             <nav className="hidden md:flex items-center gap-0.5 lg:gap-1" aria-label="Hovedmeny">
-              <NavLink
-                to="/hjem"
-                className={({ isActive }) =>
-                  `text-[11px] uppercase tracking-[0.14em] font-bold px-2 py-1 rounded transition-colors ${
-                    isActive || location.pathname.startsWith("/biler")
-                      ? "text-[#34eab8]"
-                      : "text-white/55 hover:text-white/90"
-                  }`
-                }
-                style={oswald}
-              >
-                Utforsk
+              <NavLink to="/hjem" className={navLinkClass} style={inter}>
+                {({ isActive }) => (
+                  <>
+                    Utforsk
+                    <ActiveDot active={isActive || location.pathname.startsWith("/biler")} />
+                  </>
+                )}
               </NavLink>
               {!features.simpleLaunchMode && (
                 <>
-                  <NavLink
-                    to="/markedsplass"
-                    className={({ isActive }) =>
-                      `text-[11px] uppercase tracking-[0.14em] font-bold px-2 py-1 rounded transition-colors ${
-                        isActive ? "text-[#34eab8]" : "text-white/55 hover:text-white/90"
-                      }`
-                    }
-                    style={oswald}
-                  >
-                    Marked
+                  <NavLink to="/markedsplass" className={navLinkClass} style={inter}>
+                    {({ isActive }) => (<>Marked<ActiveDot active={isActive} /></>)}
                   </NavLink>
-                  <NavLink
-                    to="/arrangement"
-                    className={({ isActive }) =>
-                      `text-[11px] uppercase tracking-[0.14em] font-bold px-2 py-1 rounded transition-colors ${
-                        isActive ? "text-[#34eab8]" : "text-white/55 hover:text-white/90"
-                      }`
-                    }
-                    style={oswald}
-                  >
-                    Treff
+                  <NavLink to="/arrangement" className={navLinkClass} style={inter}>
+                    {({ isActive }) => (<>Treff<ActiveDot active={isActive} /></>)}
                   </NavLink>
-                  <NavLink
-                    to="/klubber"
-                    className={({ isActive }) =>
-                      `text-[11px] uppercase tracking-[0.14em] font-bold px-2 py-1 rounded transition-colors ${
-                        isActive ? "text-[#34eab8]" : "text-white/55 hover:text-white/90"
-                      }`
-                    }
-                    style={oswald}
-                  >
-                    Klubber
+                  <NavLink to="/klubber" className={navLinkClass} style={inter}>
+                    {({ isActive }) => (<>Klubber<ActiveDot active={isActive} /></>)}
                   </NavLink>
                 </>
               )}
               {user && (
-                <NavLink
-                  to="/min-garasje"
-                  className={({ isActive }) =>
-                    `text-[11px] uppercase tracking-[0.14em] font-bold px-2 py-1 rounded transition-colors ${
-                      isActive ? "text-[#34eab8]" : "text-white/55 hover:text-white/90"
-                    }`
-                  }
-                  style={oswald}
-                >
-                  Min garasje
+                <NavLink to="/min-garasje" className={navLinkClass} style={inter}>
+                  {({ isActive }) => (<>Min garasje<ActiveDot active={isActive} /></>)}
                 </NavLink>
               )}
-              <NavLink
-                to="/om-oss"
-                className={({ isActive }) =>
-                  `text-[11px] uppercase tracking-[0.14em] font-bold px-2 py-1 rounded transition-colors ${
-                    isActive ? "text-[#34eab8]" : "text-white/55 hover:text-white/90"
-                  }`
-                }
-                style={oswald}
-              >
-                Om oss
+              <NavLink to="/om-oss" className={navLinkClass} style={inter}>
+                {({ isActive }) => (<>Om oss<ActiveDot active={isActive} /></>)}
               </NavLink>
             </nav>
 
-            {/* Desktop / tablet */}
+            {/* Desktop / tablet search */}
             <div className="hidden md:flex items-center justify-end">
               <div className="w-full max-w-xl">
                 {(showFullNavSearch || showExpandedNavSearch) && (
@@ -193,11 +153,10 @@ export function Header() {
                 {showCompactIcon && (
                   <button
                     onClick={() => setNavSearchOpen((v) => !v)}
-                    className="p-2 text-white/65 hover:text-[#34eab8] transition-all rounded-full hover:bg-white/[0.04]"
+                    className="p-2 text-neutral-600 hover:text-neutral-950 transition-colors rounded-full hover:bg-black/[0.04]"
                     aria-label="Søk"
-                    style={{ filter: "drop-shadow(0 1px 2px rgba(0,0,0,0.5))" }}
                   >
-                    <SearchIcon className="w-5 h-5" />
+                    <SearchIcon className="w-5 h-5" strokeWidth={2} />
                   </button>
                 )}
               </div>
@@ -206,31 +165,20 @@ export function Header() {
             {/* Mobile search toggle */}
             <button
               onClick={() => setMobileSearchOpen((v) => !v)}
-              className="md:hidden p-2 -mr-2 text-white/65 hover:text-[#34eab8] transition-all rounded-full hover:bg-white/[0.04]"
+              className="md:hidden p-2 -mr-2 text-neutral-600 hover:text-neutral-950 transition-colors rounded-full hover:bg-black/[0.04]"
               aria-label={mobileSearchOpen ? "Lukk søk" : "Søk"}
-              style={{ filter: "drop-shadow(0 1px 2px rgba(0,0,0,0.5))" }}
             >
-              {mobileSearchOpen ? <X className="w-5 h-5" /> : <SearchIcon className="w-5 h-5" />}
+              {mobileSearchOpen ? <X className="w-5 h-5" strokeWidth={2} /> : <SearchIcon className="w-5 h-5" strokeWidth={2} />}
             </button>
           </div>
         </div>
       </div>
 
-      {/* Glowing teal underline */}
-      <div
-        className="relative h-[2px] overflow-hidden"
-        style={{
-          background:
-            "linear-gradient(90deg, transparent 0%, rgba(52,234,184,0.55) 30%, rgba(52,234,184,0.85) 50%, rgba(52,234,184,0.55) 70%, transparent 100%)",
-          boxShadow: "0 0 12px rgba(52,234,184,0.45)",
-        }}
-      />
-
       {/* Desktop compact-icon expanded panel */}
       {navSearchOpen && showCompactIcon && (
         <div
-          className="hidden md:block border-t border-white/[0.06] px-5 md:px-8 py-3"
-          style={{ background: "rgba(12,17,23,0.95)" }}
+          className="hidden md:block border-t border-black/[0.06] px-5 md:px-8 py-3"
+          style={{ backgroundColor: VV_BG }}
         >
           <div className="max-w-xl ml-auto">
             <HeroSearch compact />
@@ -241,8 +189,8 @@ export function Header() {
       {/* Mobile expanded search */}
       {mobileSearchOpen && (
         <div
-          className="md:hidden border-t border-white/[0.06] px-5 py-3"
-          style={{ background: "rgba(12,17,23,0.98)" }}
+          className="md:hidden border-t border-black/[0.06] px-5 py-3"
+          style={{ backgroundColor: VV_BG }}
         >
           <HeroSearch compact />
         </div>
