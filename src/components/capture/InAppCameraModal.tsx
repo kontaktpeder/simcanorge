@@ -61,18 +61,33 @@ export function InAppCameraModal({ open, onClose, onCapture, onPickGallery }: Pr
     if (open && !previewUrl) {
       void startStream(facing);
     }
-    return () => {
-      if (!open) stopStream();
-    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, facing]);
+
+  // Re-attach stream to <video> when element mounts after stream is ready
+  useEffect(() => {
+    if (open && !previewUrl && streamRef.current && videoRef.current && videoRef.current.srcObject !== streamRef.current) {
+      videoRef.current.srcObject = streamRef.current;
+      void videoRef.current.play().catch(() => {});
+    }
+  }, [open, previewUrl, starting]);
+
+  // Always stop tracks when modal closes or unmounts
+  useEffect(() => {
+    if (!open) stopStream();
+  }, [open, stopStream]);
 
   useEffect(() => {
     return () => {
       stopStream();
+    };
+  }, [stopStream]);
+
+  useEffect(() => {
+    return () => {
       if (previewUrl) URL.revokeObjectURL(previewUrl);
     };
-  }, [stopStream, previewUrl]);
+  }, [previewUrl]);
 
   function handleClose() {
     stopStream();
