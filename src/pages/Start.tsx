@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import { Car, ChevronRight, Plus, Shield, Loader2 } from "lucide-react";
+import { Car, ChevronRight, Plus, Shield } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useFeatures } from "@/hooks/useFeatures";
@@ -11,7 +11,6 @@ import { useActivitySession } from "@/hooks/useActivitySession";
 import { Layout } from "@/components/layout/Layout";
 import { BrandLoader } from "@/components/brand/BrandLoader";
 import { LastTripCard } from "@/components/activity/LastTripCard";
-import { CaptureCameraButton } from "@/components/capture/CaptureCameraButton";
 import { useLatestCompletedSession } from "@/hooks/useLatestCompletedSession";
 import { track, trackScreenViewOnce } from "@/lib/analytics";
 import { resolveSpottingCoverFromRow } from "@/lib/spottingMedia";
@@ -169,82 +168,36 @@ export default function Start() {
         <div className="max-w-3xl mx-auto px-4 sm:px-6 pt-6 space-y-8">
           {/* ── Header ─────────────────────────────────────────── */}
           <header className="text-center sm:text-left">
-            <div
-              className="text-[10px] uppercase tracking-[0.22em] text-white/40"
-              style={oswald}
-            >
-              {greeting}
-            </div>
-            <h1
-              className="text-2xl sm:text-3xl text-white font-bold mt-1"
-              style={chakra}
-            >
-              Bilgarasje
-            </h1>
-          </header>
-
-          {/* ── 1. Fang bil — capture-first ────────────────────── */}
-          <section
-            aria-label="Fang bil"
-            className="flex flex-col items-center text-center gap-5 py-4"
-          >
-            <div className="max-w-md">
-              <p className="text-white/70 text-base" style={chakra}>
-                Fang biler rundt deg.
-              </p>
-              <p className="text-white/40 text-xs mt-1" style={oswald}>
-                Ta et bilde. Resten av historien kan komme senere.
-              </p>
-            </div>
-
-            <CaptureCameraButton size="hero" screen="start" variant="light" />
-
-            <div className="flex items-center gap-4 mt-1 flex-wrap justify-center">
-              {activitiesEnabled && (
-                <button
-                  type="button"
-                  onClick={handleStartDrive}
-                  disabled={isStarting}
-                  className="inline-flex items-center gap-1.5 text-[12px] uppercase tracking-[0.14em] font-bold text-white/55 hover:text-white/85 transition-colors disabled:opacity-50"
+            <div className="flex items-center justify-between">
+              <div>
+                <div
+                  className="text-[10px] uppercase tracking-[0.22em] text-white/40"
+                  style={oswald}
+                >
+                  {greeting}
+                </div>
+                <h1
+                  className="text-2xl sm:text-3xl text-white font-bold mt-1"
                   style={chakra}
                 >
-                  {isStarting ? (
-                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                  ) : (
-                    <Car className="w-3.5 h-3.5" />
-                  )}
-                  Start kjøretur
-                </button>
-              )}
-              <span className="text-white/15">·</span>
-              <Link
-                to="/min-garasje"
-                onClick={() =>
-                  void track("garage_intent_click", "start", { intent: "garage" })
-                }
-                className="text-[12px] uppercase tracking-[0.14em] font-bold text-white/55 hover:text-white/85 transition-colors"
-                style={chakra}
-              >
-                Garasje
-              </Link>
+                  Bilgarasje
+                </h1>
+              </div>
               {isAdmin && (
-                <>
-                  <span className="text-white/15">·</span>
-                  <Link
-                    to="/admin/dashboard"
-                    onClick={() =>
-                      void track("admin_intent_click", "start", { intent: "admin" })
-                    }
-                    className="inline-flex items-center gap-1.5 text-[12px] uppercase tracking-[0.14em] font-bold text-white/55 hover:text-white/85 transition-colors"
-                    style={chakra}
-                  >
-                    <Shield className="w-3.5 h-3.5" />
-                    Admin
-                  </Link>
-                </>
+                <Link
+                  to="/admin/dashboard"
+                  onClick={() =>
+                    void track("admin_intent_click", "start", { intent: "admin" })
+                  }
+                  className="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-[0.12em] font-bold text-white/55 hover:text-white/85 transition-colors"
+                  style={chakra}
+                >
+                  <Shield className="w-3.5 h-3.5" />
+                  Admin
+                </Link>
               )}
             </div>
-          </section>
+          </header>
 
 
           {/* ── 2. Siste aktivitet ─────────────────────────────── */}
