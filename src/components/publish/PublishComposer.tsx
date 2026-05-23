@@ -282,21 +282,19 @@ export function PublishComposer() {
             </h2>
             <p className="text-neutral-600 text-sm max-w-xs mb-8">
               {result.carId
-                ? result.type === "question"
-                  ? "Spørsmålet ligger på bilen og i feeden."
-                  : result.visibility === "public"
-                    ? "Lagt til på bilen og i feeden."
-                    : "Lagt til på bilen — kun synlig for deg."
+                ? result.visibility === "public"
+                  ? "Lagt til på bilen og i feeden."
+                  : "Lagt til på bilen — kun synlig for deg."
                 : "Innlegget er i feeden. Knytt til bil for å lagre det i arkivet."}
             </p>
             <div className="flex flex-col gap-2 w-full max-w-xs">
-              {(result.questionSlug || result.carSlug) && (
+              {result.carSlug && (
                 <Button
                   type="button"
                   onClick={handleViewResult}
                   className="btn-enamel-blue h-12 w-full text-base"
                 >
-                  {result.type === "question" ? "Se spørsmål" : "Se bilen"}
+                  Se bilen
                   <ArrowRight className="ml-2 w-4 h-4" />
                 </Button>
               )}
@@ -354,11 +352,7 @@ export function PublishComposer() {
               <textarea
                 value={caption}
                 onChange={(e) => setCaption(e.target.value.slice(0, 500))}
-                placeholder={
-                  type === "question"
-                    ? "Hva lurer du på?"
-                    : "Skriv noe om bildet…"
-                }
+                placeholder="Tenker du på noe i dag?"
                 rows={2}
                 className="w-full resize-none bg-transparent text-[15px] text-neutral-900 placeholder:text-neutral-500 focus:outline-none leading-snug px-1"
               />
@@ -520,24 +514,6 @@ export function PublishComposer() {
                 </div>
               </section>
 
-              {/* Spørsmål sekundært */}
-              <button
-                type="button"
-                onClick={() =>
-                  setType(type === "question" ? "moment" : "question")
-                }
-                disabled={carMode === "none"}
-                className="text-sm text-neutral-700 hover:text-neutral-900 underline underline-offset-4 disabled:opacity-40 disabled:no-underline disabled:cursor-not-allowed"
-              >
-                {type === "question"
-                  ? "Tilbake til vanlig innlegg"
-                  : "Gjør til spørsmål"}
-              </button>
-              {carMode === "none" && (
-                <p className="text-[11px] text-neutral-500 -mt-3">
-                  Knytt til bil for å gjøre dette til et spørsmål.
-                </p>
-              )}
             </div>
 
             {/* Sticky publish-bar */}
