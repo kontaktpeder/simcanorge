@@ -1,20 +1,22 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { X, Camera, RefreshCw, Images, Check } from "lucide-react";
 
-const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
+// Vegvesen-lys palett — matcher Header, BottomNav og resten av appen
+const VV_YELLOW = "#fcc419";
+const VV_DARK = "#2b2b2b";
+const inter = { fontFamily: "'Inter', 'Helvetica Neue', Arial, sans-serif" } as const;
 
 interface Props {
   open: boolean;
   onClose: () => void;
   onCapture: (file: File) => void;
-  /** Lar bruker velge fra galleri i stedet */
+  /** Åpner systemets bildevelger direkte (ingen mellomvalg). */
   onPickGallery?: () => void;
 }
 
 /**
- * In-app camera UI using getUserMedia. Streams video into a <video> element,
- * captures a frame to a JPEG File, lets user accept/retake before passing on.
- * Falls back to the gallery picker if camera permission is denied.
+ * Lys, museums-inspirert kamera-UI. Bruker getUserMedia for live preview.
+ * Galleri-knappen åpner systemets bildevelger direkte — ingen mellomdialog.
  */
 export function InAppCameraModal({ open, onClose, onCapture, onPickGallery }: Props) {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -64,7 +66,6 @@ export function InAppCameraModal({ open, onClose, onCapture, onPickGallery }: Pr
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, facing]);
 
-  // Re-attach stream to <video> when element mounts after stream is ready
   useEffect(() => {
     if (open && !previewUrl && streamRef.current && videoRef.current && videoRef.current.srcObject !== streamRef.current) {
       videoRef.current.srcObject = streamRef.current;
@@ -72,7 +73,6 @@ export function InAppCameraModal({ open, onClose, onCapture, onPickGallery }: Pr
     }
   }, [open, previewUrl, starting]);
 
-  // Always stop tracks when modal closes or unmounts
   useEffect(() => {
     if (!open) stopStream();
   }, [open, stopStream]);
@@ -138,115 +138,213 @@ export function InAppCameraModal({ open, onClose, onCapture, onPickGallery }: Pr
     setFacing((f) => (f === "environment" ? "user" : "environment"));
   }
 
+  function handleGalleryDirect() {
+    // Åpner systemets bildevelger direkte — ingen mellomvalg
+    stopStream();
+    onPickGallery?.();
+    onClose();
+  }
+
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] bg-black flex flex-col" role="dialog" aria-label="Kamera">
-      {/* Top bar */}
+    <div
+      className="fixed inset-0 z-[100] flex flex-col"
+      role="dialog"
+      aria-label="Kamera"
+      style={{ background: "#f3f3f3" }}
+    >
+      {/* Top bar — hvit, museums-stil */}
       <div
-        className="flex items-center justify-between px-4 pt-3 pb-2"
-        style={{ paddingTop: "calc(env(safe-area-inset-top, 0px) + 12px)" }}
+        className="flex items-center justify-between px-4 pt-3 pb-3 bg-white"
+        style={{
+          paddingTop: "calc(env(safe-area-inset-top, 0px) + 12px)",
+          borderBottom: "1px solid rgba(0,0,0,0.08)",
+        }}
       >
         <button
           type="button"
           onClick={handleClose}
-          className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/15 flex items-center justify-center text-white"
+          className="w-10 h-10 rounded-full flex items-center justify-center text-neutral-800 hover:bg-neutral-100 transition-colors"
           aria-label="Lukk kamera"
         >
-          <X className="w-5 h-5" />
+          <X className="w-5 h-5" strokeWidth={2.25} />
         </button>
-        <span
-          className="text-[11px] uppercase tracking-[0.16em] font-bold text-white/80"
-          style={chakra}
-        >
-          Fang bil
-        </span>
+        <div className="flex items-center gap-2">
+          <span
+            aria-hidden="true"
+            className="h-[3px] w-6 rounded-full"
+            style={{ background: VV_YELLOW }}
+          />
+          <span
+            className="text-[11px] uppercase tracking-[0.18em] font-bold text-neutral-900"
+            style={inter}
+          >
+            Fang bil
+          </span>
+        </div>
         <button
           type="button"
           onClick={handleFlip}
           disabled={!!previewUrl || starting}
-          className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/15 flex items-center justify-center text-white disabled:opacity-40"
+          className="w-10 h-10 rounded-full flex items-center justify-center text-neutral-800 hover:bg-neutral-100 transition-colors disabled:opacity-30"
           aria-label="Snu kamera"
         >
-          <RefreshCw className="w-5 h-5" />
+          <RefreshCw className="w-5 h-5" strokeWidth={2.25} />
         </button>
       </div>
 
-      {/* Viewport */}
-      <div className="relative flex-1 overflow-hidden bg-black flex items-center justify-center">
-        {previewUrl ? (
-          <img src={previewUrl} alt="Forhåndsvisning" className="max-h-full max-w-full object-contain" />
-        ) : (
-          <video
-            ref={videoRef}
-            playsInline
-            muted
-            autoPlay
-            className="w-full h-full object-cover"
-            style={{ transform: facing === "user" ? "scaleX(-1)" : undefined }}
-          />
-        )}
+      {/* Viewport — sort innramming på lys bakgrunn */}
+      <div className="relative flex-1 overflow-hidden flex items-center justify-center p-3">
+        <div
+          className="relative w-full h-full overflow-hidden bg-black rounded-2xl"
+          style={{
+            boxShadow: "0 12px 32px rgba(0,0,0,0.18), 0 0 0 1px rgba(0,0,0,0.06)",
+          }}
+        >
+          {previewUrl ? (
+            <img
+              src={previewUrl}
+              alt="Forhåndsvisning"
+              className="absolute inset-0 w-full h-full object-contain"
+            />
+          ) : (
+            <video
+              ref={videoRef}
+              playsInline
+              muted
+              autoPlay
+              className="absolute inset-0 w-full h-full object-cover"
+              style={{ transform: facing === "user" ? "scaleX(-1)" : undefined }}
+            />
+          )}
 
-        {error && (
-          <div className="absolute inset-x-4 top-4 rounded-lg bg-black/80 border border-white/15 p-3 text-[12px] text-white/90" style={chakra}>
-            {error}
-          </div>
-        )}
+          {/* Subtilt søkerramme-overlegg */}
+          {!previewUrl && !error && (
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-4 rounded-xl"
+              style={{
+                border: "1px solid rgba(255,255,255,0.35)",
+                boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.15)",
+              }}
+            />
+          )}
+
+          {error && (
+            <div
+              className="absolute inset-x-4 top-4 rounded-lg p-3 text-[12px] text-neutral-900"
+              style={{
+                ...inter,
+                background: "rgba(255,255,255,0.96)",
+                border: "1px solid rgba(0,0,0,0.08)",
+                boxShadow: "0 6px 18px rgba(0,0,0,0.18)",
+              }}
+            >
+              {error}
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* Controls */}
+      {/* Kontroll-panel — hvit, kortbasert */}
       <div
-        className="px-6 pt-4 pb-6 bg-black"
-        style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 20px)" }}
+        className="px-6 pt-5 pb-6 bg-white"
+        style={{
+          paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 20px)",
+          borderTop: "1px solid rgba(0,0,0,0.08)",
+        }}
       >
         {previewUrl ? (
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between max-w-md mx-auto">
             <button
               type="button"
               onClick={handleRetake}
-              className="px-5 py-3 rounded-full bg-white/10 hover:bg-white/15 text-white text-[12px] uppercase tracking-[0.14em] font-bold"
-              style={chakra}
+              className="px-5 py-3 rounded-full text-[12px] uppercase tracking-[0.14em] font-bold text-neutral-900 hover:bg-neutral-100 transition-colors"
+              style={{ ...inter, border: "1px solid rgba(0,0,0,0.12)" }}
             >
               Ta nytt
             </button>
             <button
               type="button"
               onClick={handleAccept}
-              className="w-16 h-16 rounded-full flex items-center justify-center text-[#070b10] hover:scale-[1.04] transition"
-              style={{ background: "linear-gradient(135deg, #34eab8, #2dd4a8)", boxShadow: "0 0 24px rgba(52,234,184,0.4)" }}
+              className="w-16 h-16 rounded-full flex items-center justify-center text-neutral-900 hover:scale-[1.04] active:scale-[0.97] transition"
+              style={{
+                background: VV_YELLOW,
+                boxShadow: "0 6px 20px rgba(252,196,25,0.45), inset 0 1px 0 rgba(255,255,255,0.6)",
+                border: `2px solid ${VV_DARK}`,
+              }}
               aria-label="Bruk bilde"
             >
-              <Check className="w-7 h-7" strokeWidth={2.5} />
+              <Check className="w-7 h-7" strokeWidth={2.75} />
             </button>
             <div className="w-[88px]" aria-hidden />
           </div>
         ) : (
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between max-w-md mx-auto">
             <button
               type="button"
-              onClick={() => {
-                stopStream();
-                onPickGallery?.();
-                onClose();
-              }}
-              className="w-12 h-12 rounded-full bg-white/10 hover:bg-white/15 flex items-center justify-center text-white"
+              onClick={handleGalleryDirect}
+              className="flex flex-col items-center gap-1 group"
               aria-label="Velg fra bilder"
             >
-              <Images className="w-5 h-5" />
+              <span
+                className="w-12 h-12 rounded-full flex items-center justify-center text-neutral-800 transition-colors group-hover:bg-neutral-100"
+                style={{ border: "1px solid rgba(0,0,0,0.12)" }}
+              >
+                <Images className="w-5 h-5" strokeWidth={2.25} />
+              </span>
+              <span
+                className="text-[9px] uppercase tracking-[0.12em] font-bold text-neutral-500"
+                style={inter}
+              >
+                Bibliotek
+              </span>
             </button>
+
             <button
               type="button"
               onClick={handleShoot}
               disabled={!!error || starting}
-              className="w-[78px] h-[78px] rounded-full flex items-center justify-center bg-white text-black disabled:opacity-40 hover:scale-[1.03] active:scale-[0.97] transition"
-              style={{ boxShadow: "0 0 0 4px rgba(255,255,255,0.18), 0 0 0 8px rgba(0,0,0,0.4) inset" }}
+              className="w-[82px] h-[82px] rounded-full flex items-center justify-center disabled:opacity-40 hover:scale-[1.03] active:scale-[0.96] transition"
+              style={{
+                background: "#ffffff",
+                border: `4px solid ${VV_DARK}`,
+                boxShadow: "0 8px 22px rgba(0,0,0,0.18)",
+              }}
               aria-label="Ta bilde"
             >
-              <span className="block w-[62px] h-[62px] rounded-full bg-white border-[3px] border-black/80">
-                <Camera className="w-6 h-6 mx-auto mt-[15px] text-black/70" />
+              <span
+                className="block w-[58px] h-[58px] rounded-full flex items-center justify-center"
+                style={{
+                  background: VV_YELLOW,
+                  boxShadow: "inset 0 1px 0 rgba(255,255,255,0.55)",
+                }}
+              >
+                <Camera className="w-6 h-6 text-neutral-900" strokeWidth={2.5} />
               </span>
             </button>
-            <div className="w-12" aria-hidden />
+
+            <button
+              type="button"
+              onClick={handleFlip}
+              disabled={starting}
+              className="flex flex-col items-center gap-1 group disabled:opacity-30"
+              aria-label="Snu kamera"
+            >
+              <span
+                className="w-12 h-12 rounded-full flex items-center justify-center text-neutral-800 transition-colors group-hover:bg-neutral-100"
+                style={{ border: "1px solid rgba(0,0,0,0.12)" }}
+              >
+                <RefreshCw className="w-5 h-5" strokeWidth={2.25} />
+              </span>
+              <span
+                className="text-[9px] uppercase tracking-[0.12em] font-bold text-neutral-500"
+                style={inter}
+              >
+                Snu
+              </span>
+            </button>
           </div>
         )}
       </div>
