@@ -28,8 +28,7 @@ import { FEATURES } from "@/config/features";
 import carSilhouette from "@/assets/car-silhouette.png";
 import { BrandLoader } from "@/components/brand/BrandLoader";
 import { resolveSpottingCoverFromRow } from "@/lib/spottingMedia";
-import { ExploreSectionNav } from "@/components/explore/ExploreSectionNav";
-import { EXPLORE_SECTION_NAV_HEIGHT_PX } from "@/lib/exploreNav";
+// ExploreSectionNav fjernet i PR-I.1.
 
 const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
 const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
@@ -243,13 +242,12 @@ const Biler = () => {
     <Layout hideFooter>
       <SeoHead {...SEO_COPY.biler} />
 
-      <ExploreSectionNav />
 
-      {/* Subtract global header (4rem) AND ExploreSectionNav (52px) so split panel + scroll works */}
-      <div className="flex relative lg:h-[calc(100vh-4rem-52px)] lg:overflow-hidden" style={{ background: '#070b10' }}>
+      {/* Subtract only global header (4rem) — Utforsk-faner er fjernet i PR-I.1 */}
+      <div className="flex relative lg:h-[calc(100vh-4rem)] lg:overflow-hidden" style={{ background: '#070b10' }}>
         {/* Side Panel — desktop only, mobile uses drawer */}
         <div className="hidden lg:block shrink-0">
-          <div className="lg:h-[calc(100vh-4rem-52px)] lg:overflow-y-auto">
+          <div className="lg:h-[calc(100vh-4rem)] lg:overflow-y-auto">
             <BilerSidePanel
               open={sidePanelOpen}
               onOpenChange={setSidePanelOpen}

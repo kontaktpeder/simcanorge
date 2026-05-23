@@ -1,8 +1,8 @@
-import type { ReactNode, MouseEvent } from "react";
+import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { formatDistanceToNow } from "date-fns";
 import { nb } from "date-fns/locale";
-import { MessageSquare, MoreHorizontal, Pencil, Trash2, Check, X } from "lucide-react";
+import { MessageSquare, MoreHorizontal, Pencil, Trash2, Check, X, Share2 } from "lucide-react";
 import type { FeedPost } from "@/hooks/useFeedPosts";
 import {
   getPostImages,
@@ -11,7 +11,9 @@ import {
   getEntityHref,
   getEntityTitle,
   getCarSubline,
-  getCarDraftLabel,
+  getCarUnknownPrimaryLabel,
+  CAR_UNKNOWN_SECONDARY_LABEL,
+  isCarUnknown,
   shouldShowTypeBadge,
   getTypeBadgeLabel,
   type CarRow,
@@ -46,7 +48,8 @@ export type FeedPostCardProps = {
   showComments?: boolean;
   onToggleComments?: () => void;
   onImageClick?: () => void;
-  onCardClick?: (e: MouseEvent<HTMLElement>) => void;
+  onShare?: () => void;
+  onKnowCar?: () => void;
   children?: ReactNode;
 };
 
@@ -71,7 +74,8 @@ export function FeedPostCard({
   showComments,
   onToggleComments,
   onImageClick,
-  onCardClick,
+  onShare,
+  onKnowCar,
   children,
 }: FeedPostCardProps) {
   const t = feedThemeTokens(theme);
@@ -79,20 +83,20 @@ export function FeedPostCard({
   const hasMedia = postHasMedia(post);
   const heroImage = images[0]?.url ?? null;
   const body = getPostBody(post);
-  const entityHref = getEntityHref(post);
-  const entityTitle = getEntityTitle(post);
-  const subline = getCarSubline(post);
-  const draftLabel = getCarDraftLabel((post as { car?: CarRow }).car);
+  const car = (post as { car?: CarRow }).car ?? null;
+  const carUnknown = isCarUnknown(car);
+  const entityHref = carUnknown ? null : getEntityHref(post);
+  // Anonymiser entitetsdata for upubliserte biler — vis kun «Ukjent bil» under media.
+  const entityTitle = carUnknown ? null : getEntityTitle(post);
+  const subline = carUnknown ? null : getCarSubline(post);
+  const unknownPrimary = getCarUnknownPrimaryLabel(car);
   const timeAgo = formatDistanceToNow(new Date(post.created_at), { locale: nb, addSuffix: true });
   const showBadge = shouldShowTypeBadge(post.post_type);
   const badgeLabel = getTypeBadgeLabel(post.post_type);
-  const cardClickable = !!entityHref && !!onCardClick;
 
   return (
-    <article
-      className={`group ${cardClickable ? "cursor-pointer" : ""}`}
-      onClick={onCardClick}
-    >
+    <article className="group">
+
       {/* Author + meta */}
       <div className="flex items-start justify-between mb-3 gap-3">
         {author ? (
@@ -198,7 +202,7 @@ export function FeedPostCard({
               <img
                 src={heroImage}
                 alt={entityTitle ?? ""}
-                className="w-full aspect-[4/5] sm:aspect-video object-cover transition-transform duration-700 group-hover:scale-[1.02]"
+                className="w-full aspect-[4/5] object-cover transition-transform duration-700 group-hover:scale-[1.02]"
               />
             </Link>
           ) : (
@@ -210,7 +214,7 @@ export function FeedPostCard({
               <img
                 src={heroImage}
                 alt={entityTitle ?? ""}
-                className="w-full aspect-[4/5] sm:aspect-video object-cover"
+                className="w-full aspect-[4/5] object-cover"
               />
             </button>
           )}
@@ -247,14 +251,29 @@ export function FeedPostCard({
         </p>
       )}
 
-      {draftLabel && (
-        <span
-          className={`inline-block mt-2 text-[10px] uppercase tracking-[0.14em] font-bold px-2 py-0.5 rounded-full border ${t.draftChip}`}
-          style={t.isLight ? t.inter : t.oswald}
-        >
-          {draftLabel}
-        </span>
+      {unknownPrimary && (
+        <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1">
+          <span
+            className={`inline-block text-[10px] uppercase tracking-[0.14em] font-bold px-2 py-0.5 rounded-full border ${t.draftChip}`}
+            style={t.isLight ? t.inter : t.oswald}
+          >
+            {unknownPrimary}
+          </span>
+          {onKnowCar && (
+            <button
+              type="button"
+              onClick={(e) => { e.stopPropagation(); onKnowCar(); }}
+              className={`text-[10px] uppercase tracking-[0.14em] font-bold underline-offset-4 hover:underline transition-colors ${
+                t.isLight ? "text-neutral-700 hover:text-neutral-900" : "text-white/70 hover:text-[#34eab8]"
+              }`}
+              style={t.isLight ? t.inter : t.oswald}
+            >
+              {CAR_UNKNOWN_SECONDARY_LABEL}
+            </button>
+          )}
+        </div>
       )}
+
 
       {/* Body */}
       {isEditing ? (
@@ -330,23 +349,39 @@ export function FeedPostCard({
       )}
 
       {/* Actions */}
-      {onToggleComments && (
+      {(onToggleComments || onShare) && (
         <div className="flex items-center gap-4 mt-4">
-          <button
-            type="button"
-            onClick={(e) => { e.stopPropagation(); onToggleComments(); }}
-            className={`flex items-center gap-1.5 text-[11px] uppercase font-bold tracking-wide transition-colors ${
-              showComments
-                ? (t.isLight ? "text-neutral-800" : "text-white/60")
-                : t.muted
-            }`}
-            style={t.isLight ? t.inter : t.oswald}
-          >
-            <MessageSquare className="w-4 h-4" />
-            Kommentar
-          </button>
+          {onToggleComments && (
+            <button
+              type="button"
+              onClick={(e) => { e.stopPropagation(); onToggleComments(); }}
+              className={`flex items-center gap-1.5 text-[11px] uppercase font-bold tracking-wide transition-colors ${
+                showComments
+                  ? (t.isLight ? "text-neutral-800" : "text-white/60")
+                  : t.muted
+              }`}
+              style={t.isLight ? t.inter : t.oswald}
+            >
+              <MessageSquare className="w-4 h-4" />
+              Kommentar
+            </button>
+          )}
+          {onShare && (
+            <button
+              type="button"
+              onClick={(e) => { e.stopPropagation(); onShare(); }}
+              className={`flex items-center gap-1.5 text-[11px] uppercase font-bold tracking-wide transition-colors ${t.muted} ${
+                t.isLight ? "hover:text-neutral-800" : "hover:text-white/80"
+              }`}
+              style={t.isLight ? t.inter : t.oswald}
+            >
+              <Share2 className="w-4 h-4" />
+              Del
+            </button>
+          )}
         </div>
       )}
+
 
       {children}
     </article>

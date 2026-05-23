@@ -1,4 +1,4 @@
-import { useState, type MouseEvent } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
@@ -7,8 +7,10 @@ import { useEditFeedPost } from "@/hooks/useEditFeedPost";
 import { useDeleteFeedPost } from "@/hooks/useDeleteFeedPost";
 import { ImageLightbox } from "@/components/ui/image-lightbox";
 import { CommentSection } from "@/components/comments/CommentSection";
+import { RelationshipRequestDialog } from "@/components/car/relationship/RelationshipRequestDialog";
 import type { FeedPost } from "@/hooks/useFeedPosts";
-import { getEntityHref, getPostImages } from "@/lib/feedPostPresentation";
+import { getPostImages, isCarUnknown, type CarRow } from "@/lib/feedPostPresentation";
+import { shareFeedPost } from "@/lib/shareFeedPost";
 import { FeedPostCard } from "./FeedPostCard";
 
 type Props = {
@@ -18,7 +20,7 @@ type Props = {
 };
 
 export function FeedCard({ post, variant = "default", theme = "dark" }: Props) {
-  const { user: _user } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const { data: myProfile } = useMyPersonProfile();
   const { mutateAsync: editPost, isPending: isEditPending } = useEditFeedPost();
@@ -30,13 +32,15 @@ export function FeedCard({ post, variant = "default", theme = "dark" }: Props) {
   const [editBody, setEditBody] = useState(post.body ?? "");
   const [showComments, setShowComments] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showRelationship, setShowRelationship] = useState(false);
 
   const author = (post as { author?: { id?: string; slug?: string; display_name?: string; avatar_url?: string | null } }).author ?? null;
   const isOwn = !!(myProfile && author?.id === myProfile.id);
   const resolvedTheme = variant === "explore" ? "light" : theme;
 
-  const entityHref = getEntityHref(post);
   const images = getPostImages(post);
+  const car = (post as { car?: CarRow | null }).car ?? null;
+  const canRequestRelationship = !!car?.id && isCarUnknown(car);
 
   async function handleSaveEdit() {
     try {
@@ -63,13 +67,13 @@ export function FeedCard({ post, variant = "default", theme = "dark" }: Props) {
     }
   }
 
-  function handleCardClick(e: MouseEvent<HTMLElement>) {
-    if (!entityHref) return;
-    if (isEditing || showDeleteConfirm || showMenu) return;
-    const target = e.target as HTMLElement;
-    if (target.closest('a,button,textarea,input,select,label,[role="button"]')) return;
-    if (window.getSelection()?.toString()) return;
-    navigate(entityHref);
+  function handleKnowCar() {
+    if (!canRequestRelationship) return;
+    if (!user) {
+      navigate(`/login?returnUrl=${encodeURIComponent(window.location.pathname + window.location.search)}`);
+      return;
+    }
+    setShowRelationship(true);
   }
 
   return (
@@ -95,7 +99,8 @@ export function FeedCard({ post, variant = "default", theme = "dark" }: Props) {
         showComments={showComments}
         onToggleComments={() => setShowComments(!showComments)}
         onImageClick={() => setLightboxOpen(true)}
-        onCardClick={handleCardClick}
+        onShare={() => { void shareFeedPost(post); }}
+        onKnowCar={canRequestRelationship ? handleKnowCar : undefined}
       >
         {showComments && <CommentSection feedPostId={post.id} />}
       </FeedPostCard>
@@ -106,6 +111,16 @@ export function FeedCard({ post, variant = "default", theme = "dark" }: Props) {
         isOpen={lightboxOpen}
         onClose={() => setLightboxOpen(false)}
       />
+
+      {canRequestRelationship && car?.id && (
+        <RelationshipRequestDialog
+          open={showRelationship}
+          onOpenChange={setShowRelationship}
+          carId={car.id}
+          carTitle="Ukjent bil"
+          source="manual"
+        />
+      )}
     </>
   );
 }
