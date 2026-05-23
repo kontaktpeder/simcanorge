@@ -173,11 +173,13 @@ export function CaptureCameraButton({ size = "hero", onOpenChange, screen, varia
         </button>
       )}
 
-      <SpotCarDialog
-        open={dialogOpen}
-        onOpenChange={handleOpenChange}
-        initialImageFile={prefillFile}
-      />
+      {!useV1 && (
+        <SpotCarDialog
+          open={dialogOpen}
+          onOpenChange={handleOpenChange}
+          initialImageFile={prefillFile}
+        />
+      )}
     </>
   );
 }
