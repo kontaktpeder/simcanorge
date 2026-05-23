@@ -144,7 +144,7 @@ export function BottomNav() {
               className="mt-1 text-[9px] uppercase tracking-[0.12em] font-bold text-white/70"
               style={chakra}
             >
-              Fang
+              Del
             </span>
           </div>
         </div>
