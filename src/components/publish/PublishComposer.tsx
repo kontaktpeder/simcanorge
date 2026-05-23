@@ -609,12 +609,11 @@ function SegmentButton({
     <button
       type="button"
       onClick={onClick}
-      className="flex-1 h-10 rounded-full text-sm font-medium transition-all"
-      style={
+      className={`flex-1 h-9 rounded-full text-sm font-medium transition-all select-none ${
         active
-          ? { backgroundColor: "#171717", color: "#ffffff" }
-          : { backgroundColor: "transparent", color: "#525252" }
-      }
+          ? "bg-[#1a3a34] text-white shadow-sm"
+          : "text-neutral-500 hover:text-neutral-800 hover:bg-white/40"
+      }`}
     >
       {children}
     </button>
