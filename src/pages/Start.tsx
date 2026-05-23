@@ -201,7 +201,7 @@ export default function Start() {
 
 
           {/* ── 2. Siste aktivitet ─────────────────────────────── */}
-          {lastSession && (
+          {activitiesEnabled && lastSession && (
             <section aria-label="Siste tur">
               <SectionHeader title="Siste aktivitet" />
               <LastTripCard
