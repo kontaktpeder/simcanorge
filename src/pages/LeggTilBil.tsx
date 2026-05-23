@@ -11,7 +11,8 @@ export default function LeggTilBil() {
       <>
         <Helmet>
           <title>Legg inn bilen din – Bilgarasje.no</title>
-          <meta name="robots" content="noindex" />
+          <meta name="robots" content="noindex, follow" />
+          <link rel="canonical" href="https://bilgarasje.no/legg-inn-bil" />
         </Helmet>
         <div
           className="fixed inset-0 flex items-center justify-center"
