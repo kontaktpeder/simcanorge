@@ -251,14 +251,29 @@ export function FeedPostCard({
         </p>
       )}
 
-      {draftLabel && (
-        <span
-          className={`inline-block mt-2 text-[10px] uppercase tracking-[0.14em] font-bold px-2 py-0.5 rounded-full border ${t.draftChip}`}
-          style={t.isLight ? t.inter : t.oswald}
-        >
-          {draftLabel}
-        </span>
+      {unknownPrimary && (
+        <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1">
+          <span
+            className={`inline-block text-[10px] uppercase tracking-[0.14em] font-bold px-2 py-0.5 rounded-full border ${t.draftChip}`}
+            style={t.isLight ? t.inter : t.oswald}
+          >
+            {unknownPrimary}
+          </span>
+          {onKnowCar && (
+            <button
+              type="button"
+              onClick={(e) => { e.stopPropagation(); onKnowCar(); }}
+              className={`text-[10px] uppercase tracking-[0.14em] font-bold underline-offset-4 hover:underline transition-colors ${
+                t.isLight ? "text-neutral-700 hover:text-neutral-900" : "text-white/70 hover:text-[#34eab8]"
+              }`}
+              style={t.isLight ? t.inter : t.oswald}
+            >
+              {CAR_UNKNOWN_SECONDARY_LABEL}
+            </button>
+          )}
+        </div>
       )}
+
 
       {/* Body */}
       {isEditing ? (
