@@ -106,10 +106,17 @@ export function resolveCarPublicHref(car: CarRow | null | undefined): string | n
   return `/biler/${car.slug}`;
 }
 
-export function getCarDraftLabel(car: CarRow | null | undefined): string | null {
+/** Upublisert bil i feed: vis nøytral «Ukjent bil» i stedet for å avsløre utkast. */
+export function getCarUnknownPrimaryLabel(car: CarRow | null | undefined): string | null {
   if (!car?.id) return null;
   if (car.published_at) return null;
-  return "Koblet til bilutkast";
+  return "Ukjent bil";
+}
+
+export const CAR_UNKNOWN_SECONDARY_LABEL = "Kjenner du bilen?";
+
+export function isCarUnknown(car: CarRow | null | undefined): boolean {
+  return !!car?.id && !car.published_at;
 }
 
 export function getEntityHref(post: FeedPost): string | null {
