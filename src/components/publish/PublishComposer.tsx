@@ -439,14 +439,7 @@ export function PublishComposer() {
                     {imageFile ? "Klar til å dele" : "Legg til bilde og detaljer"}
                   </p>
                 </div>
-                <div className="flex items-center gap-2 pr-1">
-                  <div
-                    className="w-8 h-8 rounded flex items-center justify-center text-white text-[10px] font-bold"
-                    style={{ backgroundColor: VV_DARK }}
-                  >
-                    BG
-                  </div>
-                </div>
+                <div className="w-10" aria-hidden="true" />
               </div>
               {/* Progress bar */}
               <div className="h-1.5 w-full bg-neutral-200">
@@ -508,10 +501,7 @@ export function PublishComposer() {
 
                 {/* Tittel-kort */}
                 <div className="rounded-2xl bg-white border border-black/10 shadow-sm px-4 py-3">
-                  <div className="flex items-baseline justify-between">
-                    <label className="text-[11px] uppercase tracking-[0.14em] font-bold text-neutral-900">
-                      Tittel
-                    </label>
+                  <div className="flex items-baseline justify-end">
                     <span className="text-[11px] text-neutral-400 tabular-nums">
                       {caption.length}/100
                     </span>
@@ -704,14 +694,7 @@ export function PublishComposer() {
                 paddingBottom: "max(1rem, env(safe-area-inset-bottom))",
               }}
             >
-              <div className="flex items-center gap-1.5">
-                <span
-                  className="block h-1.5 w-7 rounded-full"
-                  style={{ backgroundColor: VV_YELLOW }}
-                />
-                <span className="block h-1.5 w-5 rounded-full bg-white/20" />
-                <span className="block h-1.5 w-5 rounded-full bg-white/20" />
-              </div>
+              <div aria-hidden="true" />
               <Button
                 type="button"
                 onClick={handlePublish}
