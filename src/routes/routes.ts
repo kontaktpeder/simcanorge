@@ -220,6 +220,9 @@ const rawRoutes: RouteConfig[] = [
   { path: "/admin/markedsplass/:itemId", element: AdminAnnonseProfil, requiresAdmin: true },
   { path: "/admin/brukerprofiler", element: AdminPersonProfiles, requiresAdmin: true },
   { path: "/admin/relasjoner", element: AdminCarRelationshipRequests, requiresAdmin: true },
+  { path: "/admin/merkehubber", element: AdminMerkehubber, requiresAdmin: true },
+  { path: "/admin/merkehubber/ny", element: AdminMerkehubEditor, requiresAdmin: true },
+  { path: "/admin/merkehubber/:id", element: AdminMerkehubEditor, requiresAdmin: true },
 
   // 404
   { path: "*", element: NotFound, isPublic: true },
