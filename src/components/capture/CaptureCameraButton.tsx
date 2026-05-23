@@ -6,8 +6,16 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { track } from "@/lib/analytics";
 import { FEATURES } from "@/config/features";
 import { usePublishComposer } from "@/contexts/PublishComposerContext";
+import { InAppCameraModal } from "@/components/capture/InAppCameraModal";
 
 const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
+
+function supportsInAppCamera() {
+  return typeof navigator !== "undefined"
+    && !!navigator.mediaDevices
+    && typeof navigator.mediaDevices.getUserMedia === "function"
+    && (typeof window === "undefined" || window.isSecureContext !== false);
+}
 
 interface Props {
   /** "hero" = stor rund knapp på Start, "fab" = 64px senter i BottomNav. */
