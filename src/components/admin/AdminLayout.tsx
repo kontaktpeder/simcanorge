@@ -18,6 +18,7 @@ import {
   Mail,
   ShoppingBag,
   Handshake,
+  Tag,
 } from "lucide-react";
 import simcaBadgeLogo from "@/assets/simca-badge-logo.png";
 
@@ -38,6 +39,7 @@ const navItems = [
   { href: "/admin/kategorier", label: "Kategorier", icon: FolderTree },
   { href: "/admin/brukerprofiler", label: "Brukerprofiler", icon: User },
   { href: "/admin/relasjoner", label: "Relasjoner", icon: Handshake },
+  { href: "/admin/merkehubber", label: "Merkehubber", icon: Tag },
 ];
 
 export function AdminLayout({ children, title }: AdminLayoutProps) {

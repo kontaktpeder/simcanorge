@@ -1893,6 +1893,7 @@ export type Database = {
           page_template: string | null
           page_type: string
           page_type_variant: string | null
+          related_brand_keys: string[]
           slug: string
           status: string
           tagline: string | null
@@ -1917,6 +1918,7 @@ export type Database = {
           page_template?: string | null
           page_type: string
           page_type_variant?: string | null
+          related_brand_keys?: string[]
           slug: string
           status?: string
           tagline?: string | null
@@ -1941,6 +1943,7 @@ export type Database = {
           page_template?: string | null
           page_type?: string
           page_type_variant?: string | null
+          related_brand_keys?: string[]
           slug?: string
           status?: string
           tagline?: string | null

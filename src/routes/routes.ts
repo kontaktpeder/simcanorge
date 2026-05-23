@@ -116,6 +116,8 @@ const AdminMarkedsplass = lazy(() => import("@/pages/admin/AdminMarkedsplass"));
 const AdminAnnonseProfil = lazy(() => import("@/pages/admin/AdminAnnonseProfil"));
 const AdminPersonProfiles = lazy(() => import("@/pages/admin/AdminPersonProfiles"));
 const AdminCarRelationshipRequests = lazy(() => import("@/pages/admin/AdminCarRelationshipRequests"));
+const AdminMerkehubber = lazy(() => import("@/pages/admin/AdminMerkehubber"));
+const AdminMerkehubEditor = lazy(() => import("@/pages/admin/AdminMerkehubEditor"));
 
 export interface RouteConfig {
   path: string;
@@ -218,6 +220,9 @@ const rawRoutes: RouteConfig[] = [
   { path: "/admin/markedsplass/:itemId", element: AdminAnnonseProfil, requiresAdmin: true },
   { path: "/admin/brukerprofiler", element: AdminPersonProfiles, requiresAdmin: true },
   { path: "/admin/relasjoner", element: AdminCarRelationshipRequests, requiresAdmin: true },
+  { path: "/admin/merkehubber", element: AdminMerkehubber, requiresAdmin: true },
+  { path: "/admin/merkehubber/ny", element: AdminMerkehubEditor, requiresAdmin: true },
+  { path: "/admin/merkehubber/:id", element: AdminMerkehubEditor, requiresAdmin: true },
 
   // 404
   { path: "*", element: NotFound, isPublic: true },
