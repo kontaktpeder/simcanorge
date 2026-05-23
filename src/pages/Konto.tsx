@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { SeoHead } from "@/components/seo";
 import { User, LogOut, Shield, Trash2, Mail, Calendar, Loader2, AlertTriangle, Bookmark, ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useMySavedQuestions } from "@/hooks/useQuestionSave";
+
 import { Layout } from "@/components/layout/Layout";
 import { EnamelCard, SectionHeader, BigActionButton } from "@/components/ui/garage";
 import { Input } from "@/components/ui/input";
