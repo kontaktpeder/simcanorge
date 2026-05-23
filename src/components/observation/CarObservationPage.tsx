@@ -44,7 +44,7 @@ type Props = {
 };
 
 
-const PAPER_BG = "#f1ede4";
+const PAPER_BG = "#e9e7e1";
 
 const SectionDivider = ({ isLight }: { isLight: boolean }) => (
   <div className={isLight ? "border-t border-neutral-900/10" : "border-t border-white/[0.06]"} />
