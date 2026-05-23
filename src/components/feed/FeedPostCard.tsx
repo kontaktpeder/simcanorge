@@ -194,7 +194,7 @@ export function FeedPostCard({
         )}
       </div>
 
-      {/* Media — only if present */}
+      {/* Media — only if present. Klikk navigerer til bil/entitet, ellers ingen handling. */}
       {hasMedia && heroImage && (
         <div className={`relative overflow-hidden rounded-xl mb-3 border ${t.cardBorder}`}>
           {entityHref ? (
@@ -205,11 +205,11 @@ export function FeedPostCard({
                 className="w-full aspect-[4/5] object-cover transition-transform duration-700 group-hover:scale-[1.02]"
               />
             </Link>
-          ) : (
+          ) : onImageClick ? (
             <button
               type="button"
-              onClick={(e) => { e.stopPropagation(); onImageClick?.(); }}
-              className="block w-full"
+              onClick={(e) => { e.stopPropagation(); onImageClick(); }}
+              className="block w-full text-left"
             >
               <img
                 src={heroImage}
@@ -217,6 +217,12 @@ export function FeedPostCard({
                 className="w-full aspect-[4/5] object-cover"
               />
             </button>
+          ) : (
+            <img
+              src={heroImage}
+              alt={entityTitle ?? ""}
+              className="w-full aspect-[4/5] object-cover"
+            />
           )}
         </div>
       )}

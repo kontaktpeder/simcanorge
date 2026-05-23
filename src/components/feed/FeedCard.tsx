@@ -5,12 +5,12 @@ import { useAuth } from "@/hooks/useAuth";
 import { useMyPersonProfile } from "@/hooks/useMyPersonProfile";
 import { useEditFeedPost } from "@/hooks/useEditFeedPost";
 import { useDeleteFeedPost } from "@/hooks/useDeleteFeedPost";
-import { ImageLightbox } from "@/components/ui/image-lightbox";
+
 import { CommentSection } from "@/components/comments/CommentSection";
 import { Drawer, DrawerContent, DrawerTitle } from "@/components/ui/drawer";
 import { RelationshipRequestDialog } from "@/components/car/relationship/RelationshipRequestDialog";
 import type { FeedPost } from "@/hooks/useFeedPosts";
-import { getPostImages, isCarUnknown, type CarRow } from "@/lib/feedPostPresentation";
+import { isCarUnknown, type CarRow } from "@/lib/feedPostPresentation";
 import { shareFeedPost } from "@/lib/shareFeedPost";
 import { FeedPostCard } from "./FeedPostCard";
 
@@ -27,7 +27,7 @@ export function FeedCard({ post, variant = "default", theme = "dark" }: Props) {
   const { mutateAsync: editPost, isPending: isEditPending } = useEditFeedPost();
   const { mutate: deletePost } = useDeleteFeedPost();
 
-  const [lightboxOpen, setLightboxOpen] = useState(false);
+  
   const [showMenu, setShowMenu] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editBody, setEditBody] = useState(post.body ?? "");
@@ -39,7 +39,6 @@ export function FeedCard({ post, variant = "default", theme = "dark" }: Props) {
   const isOwn = !!(myProfile && author?.id === myProfile.id);
   const resolvedTheme = variant === "explore" ? "light" : theme;
 
-  const images = getPostImages(post);
   const car = (post as { car?: CarRow | null }).car ?? null;
   const canRequestRelationship = !!car?.id && isCarUnknown(car);
 
@@ -99,7 +98,7 @@ export function FeedCard({ post, variant = "default", theme = "dark" }: Props) {
         onCancelDelete={() => setShowDeleteConfirm(false)}
         showComments={showComments}
         onToggleComments={() => setShowComments(!showComments)}
-        onImageClick={() => setLightboxOpen(true)}
+        onImageClick={canRequestRelationship ? handleKnowCar : undefined}
         onShare={() => { void shareFeedPost(post); }}
         onKnowCar={canRequestRelationship ? handleKnowCar : undefined}
       />
@@ -126,12 +125,6 @@ export function FeedCard({ post, variant = "default", theme = "dark" }: Props) {
         </DrawerContent>
       </Drawer>
 
-      <ImageLightbox
-        images={images}
-        initialIndex={0}
-        isOpen={lightboxOpen}
-        onClose={() => setLightboxOpen(false)}
-      />
 
       {canRequestRelationship && car?.id && (
         <RelationshipRequestDialog
