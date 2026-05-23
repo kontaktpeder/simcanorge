@@ -134,8 +134,8 @@ const BilDetalj = () => {
   const { data: ownerProfile } = useCarOwnerProfile(car?.id ?? undefined);
   const { user } = useAuth();
   const { data: myProfile } = useMyPersonProfile();
-  const [showFeedComposer, setShowFeedComposer] = useState(false);
-  const [composerInitialBody, setComposerInitialBody] = useState<string | undefined>(undefined);
+  const { openPublishComposer } = usePublishComposer();
+  const [showPostPublishOverlay, setShowPostPublishOverlay] = useState(false);
   const [showPostPublishOverlay, setShowPostPublishOverlay] = useState(false);
   const [relationshipDialogOpen, setRelationshipDialogOpen] = useState(false);
   const [knowledgeDialogOpen, setKnowledgeDialogOpen] = useState(false);
