@@ -12,7 +12,7 @@ import { DriveControls } from "@/components/car/DriveControls";
 import { useCarOwnerProfile } from "@/hooks/useOwnerProfile";
 import { useAuth } from "@/hooks/useAuth";
 import { useMyPersonProfile } from "@/hooks/useMyPersonProfile";
-import { PostComposer } from "@/components/feed/PostComposer";
+import { usePublishComposer } from "@/contexts/PublishComposerContext";
 import { PostPublishOnboardingOverlay } from "@/components/car/PostPublishOnboardingOverlay";
 import { CommentSection } from "@/components/comments/CommentSection";
 
