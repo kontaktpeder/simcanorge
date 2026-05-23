@@ -2,7 +2,5 @@
   path = "/biler/:slug"
   function = "og-redirect"
 
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
+# SPA fallback og duplikat-redirects flyttet til public/_redirects
+# slik at de prosesseres i riktig rekkefølge.
