@@ -20,7 +20,6 @@ import {
 } from "@/lib/publishObservation";
 import {
   usePublishComposer,
-  type PublishComposerType,
   type PublishComposerVisibility,
 } from "@/contexts/PublishComposerContext";
 
@@ -51,7 +50,6 @@ export function PublishComposer() {
 
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [caption, setCaption] = useState("");
-  const [type, setType] = useState<PublishComposerType>("moment");
   const [visibility, setVisibility] =
     useState<PublishComposerVisibility>("public");
 
@@ -72,7 +70,6 @@ export function PublishComposer() {
     if (!isOpen) return;
     setImageFile(props.initialImageFile ?? null);
     setCaption("");
-    setType(props.defaultType ?? "moment");
     setVisibility(props.defaultVisibility ?? "public");
     setSelectedCarId(props.prefillCarId ?? null);
     setSelectedCarTitle(props.prefillCarTitle ?? null);
@@ -183,8 +180,9 @@ export function PublishComposer() {
       );
       return;
     }
-    if (!imageFile) {
-      toast.error("Velg et bilde først");
+    const hasText = caption.trim().length > 0;
+    if (!imageFile && !hasText) {
+      toast.error("Skriv noe eller legg til et bilde");
       return;
     }
     setIsSubmitting(true);
@@ -192,9 +190,8 @@ export function PublishComposer() {
       const attachCar = carMode !== "none";
       const res = await publishObservation({
         userId: user.id,
-        imageFile,
+        imageFile: imageFile ?? null,
         caption,
-        type,
         visibility,
         attachCar,
         carId: selectedCarId,
@@ -208,9 +205,6 @@ export function PublishComposer() {
         queryClient.invalidateQueries({ queryKey: ["car-events", res.carId] });
       }
       queryClient.invalidateQueries({ queryKey: ["feed_posts"] });
-      if (res.type === "question") {
-        queryClient.invalidateQueries({ queryKey: ["questions"] });
-      }
       if (props.prefillSessionId) {
         queryClient.invalidateQueries({
           queryKey: ["activity-moments", props.prefillSessionId],
@@ -231,15 +225,13 @@ export function PublishComposer() {
 
   function handleViewResult() {
     if (!result) return;
-    if (result.type === "question" && result.questionSlug) {
-      navigate(`/sporsmal/${result.questionSlug}`);
-    } else if (result.carSlug) {
+    if (result.carSlug) {
       navigate(`/biler/${result.carSlug}`);
     }
     closePublishComposer();
   }
 
-  const canPublish = !!imageFile && !isSubmitting;
+  const canPublish = (!!imageFile || caption.trim().length > 0) && !isSubmitting;
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
