@@ -1,24 +1,45 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useRef, useState } from "react";
+import { createPortal } from "react-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Camera } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { useMyPersonProfile } from "@/hooks/useMyPersonProfile";
 import { useCreateFeedPost } from "@/hooks/useCreateFeedPost";
-import { AddMomentDialog } from "@/components/activity/AddMomentDialog";
+import { usePublishComposer } from "@/contexts/PublishComposerContext";
+import { InAppCameraModal } from "@/components/capture/InAppCameraModal";
+import { FEATURES } from "@/config/features";
+import { SpotCarDialog } from "@/components/car/SpotCarDialog";
+import { track } from "@/lib/analytics";
 
 const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
 
 const MAX_LEN = 500;
 
+function supportsInAppCamera() {
+  return typeof navigator !== "undefined"
+    && !!navigator.mediaDevices
+    && typeof navigator.mediaDevices.getUserMedia === "function"
+    && (typeof window === "undefined" || window.isSecureContext !== false);
+}
+
 export function ExploreInlineComposer() {
   const { user } = useAuth();
   const { data: profile } = useMyPersonProfile();
   const { mutateAsync, isPending } = useCreateFeedPost();
+  const { openPublishComposer } = usePublishComposer();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const [textMode, setTextMode] = useState(false);
   const [body, setBody] = useState("");
-  const [momentOpen, setMomentOpen] = useState(false);
+  const [cameraOpen, setCameraOpen] = useState(false);
+  const [fallbackOpen, setFallbackOpen] = useState(false);
+  const [prefillFile, setPrefillFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const useV1 = FEATURES.publishComposerV1;
+  const inAppCamera = supportsInAppCamera();
 
   async function handlePublish() {
     const t = body.trim();
@@ -36,6 +57,39 @@ export function ExploreInlineComposer() {
   function handleCancelText() {
     setBody("");
     setTextMode(false);
+  }
+
+  function handleCameraClick() {
+    void track("capture_intent_click", "explore_inline", { path: location.pathname, source: "camera" });
+    if (!user) {
+      navigate(`/login?returnUrl=${encodeURIComponent(location.pathname)}`);
+      return;
+    }
+    if (inAppCamera) {
+      setCameraOpen(true);
+    } else {
+      fileInputRef.current?.click();
+    }
+  }
+
+  function routeFile(file: File) {
+    if (useV1) {
+      openPublishComposer({ initialImageFile: file, source: "explore_inline" });
+    } else {
+      setPrefillFile(file);
+      setFallbackOpen(true);
+    }
+  }
+
+  function handleCameraCapture(file: File) {
+    setCameraOpen(false);
+    routeFile(file);
+  }
+
+  function handleFileInput(e: React.ChangeEvent<HTMLInputElement>) {
+    const f = e.target.files?.[0] ?? null;
+    e.target.value = "";
+    if (f) routeFile(f);
   }
 
   if (!user) {
@@ -59,6 +113,15 @@ export function ExploreInlineComposer() {
 
   return (
     <div className="rounded-xl border border-white/[0.10] bg-white/[0.03]">
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        capture="environment"
+        className="hidden"
+        onChange={handleFileInput}
+      />
+
       {!textMode ? (
         <div className="flex items-stretch">
           <button
@@ -73,9 +136,9 @@ export function ExploreInlineComposer() {
           <div className="w-px bg-white/[0.08]" />
           <button
             type="button"
-            onClick={() => setMomentOpen(true)}
+            onClick={handleCameraClick}
             className="shrink-0 px-3.5 hover:bg-white/[0.06] text-[#2dd4a8] transition-colors rounded-r-xl flex items-center"
-            aria-label="Del øyeblikk"
+            aria-label="Åpne kamera"
           >
             <Camera className="w-4 h-4" />
           </button>
@@ -119,11 +182,30 @@ export function ExploreInlineComposer() {
         </div>
       )}
 
-      <AddMomentDialog
-        sessionId={null}
-        open={momentOpen}
-        onOpenChange={setMomentOpen}
-      />
+      {cameraOpen && typeof document !== "undefined" &&
+        createPortal(
+          <InAppCameraModal
+            open={cameraOpen}
+            onClose={() => setCameraOpen(false)}
+            onCapture={handleCameraCapture}
+            onPickGallery={() => {
+              setCameraOpen(false);
+              fileInputRef.current?.click();
+            }}
+          />,
+          document.body,
+        )}
+
+      {!useV1 && (
+        <SpotCarDialog
+          open={fallbackOpen}
+          onOpenChange={(next) => {
+            setFallbackOpen(next);
+            if (!next) setPrefillFile(null);
+          }}
+          initialImageFile={prefillFile}
+        />
+      )}
     </div>
   );
 }
