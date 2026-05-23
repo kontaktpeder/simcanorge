@@ -28,8 +28,7 @@ import { FEATURES } from "@/config/features";
 import carSilhouette from "@/assets/car-silhouette.png";
 import { BrandLoader } from "@/components/brand/BrandLoader";
 import { resolveSpottingCoverFromRow } from "@/lib/spottingMedia";
-import { ExploreSectionNav } from "@/components/explore/ExploreSectionNav";
-import { EXPLORE_SECTION_NAV_HEIGHT_PX } from "@/lib/exploreNav";
+// ExploreSectionNav fjernet i PR-I.1.
 
 const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
 const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
