@@ -6,7 +6,6 @@ import {
   CheckCircle2,
   ImagePlus,
   Loader2,
-  X,
   ArrowRight,
   ExternalLink,
 } from "lucide-react";
@@ -250,21 +249,10 @@ export function PublishComposer() {
         className="car-paper-theme text-neutral-900 p-0 gap-0 border-0 max-w-full w-screen h-[100dvh] sm:h-auto sm:max-h-[92vh] sm:max-w-lg sm:rounded-2xl sm:border sm:border-black/10 overflow-hidden flex flex-col"
         style={{ backgroundColor: "#e9e7e1" }}
       >
-        <button
-          type="button"
-          onClick={() => handleOpenChange(false)}
-          className="absolute right-3 top-3 z-30 rounded-full p-2 text-neutral-600 hover:text-neutral-900 hover:bg-black/5 transition-colors"
-          style={{ top: "max(0.75rem, env(safe-area-inset-top))" }}
-          aria-label="Lukk"
-        >
-          <X className="w-5 h-5" />
-        </button>
-
         <input
           ref={fileInputRef}
           type="file"
           accept="image/*"
-          capture="environment"
           className="hidden"
           onChange={(e) => {
             const f = e.target.files?.[0] ?? null;
@@ -272,6 +260,7 @@ export function PublishComposer() {
             if (f) setImageFile(f);
           }}
         />
+
 
         {result ? (
           // ═══════════════ POST-PUBLISH ═══════════════
@@ -640,11 +629,12 @@ function SegmentButton({
     <button
       type="button"
       onClick={onClick}
-      className={`flex-1 h-10 rounded-full text-sm font-medium transition-all ${
+      className="flex-1 h-10 rounded-full text-sm font-medium transition-all"
+      style={
         active
-          ? "bg-neutral-900 text-white shadow-sm"
-          : "text-neutral-600 hover:text-neutral-900"
-      }`}
+          ? { backgroundColor: "#171717", color: "#ffffff" }
+          : { backgroundColor: "transparent", color: "#525252" }
+      }
     >
       {children}
     </button>

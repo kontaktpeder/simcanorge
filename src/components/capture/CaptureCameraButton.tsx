@@ -118,7 +118,6 @@ export function CaptureCameraButton({ size = "hero", onOpenChange, screen, varia
         ref={inputRef}
         type="file"
         accept="image/*"
-        capture="environment"
         className="hidden"
         onChange={handleFile}
       />
