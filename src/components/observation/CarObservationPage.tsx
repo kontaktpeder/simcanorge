@@ -216,7 +216,10 @@ export function CarObservationPage(props: Props) {
   );
 
   return (
-    <div style={{ backgroundColor: OBSERVATION_BG }} className="text-white">
+    <div
+      style={{ backgroundColor: isLight ? PAPER_BG : OBSERVATION_BG }}
+      className={isLight ? "text-neutral-900" : "text-white"}
+    >
       {/* Mobile / tablet: original stacked layout */}
       <div className="lg:hidden">
         <ObservationPostCore
@@ -234,6 +237,7 @@ export function CarObservationPage(props: Props) {
           onOpenComments={onOpenComments}
           showKnowCarCta={showKnowCarCta}
           landingAck={landingAck}
+          theme={theme}
         />
         {RightSections}
       </div>
