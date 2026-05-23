@@ -215,6 +215,13 @@ export function CaptureCameraButton({ size = "hero", onOpenChange, screen, varia
           initialImageFile={prefillFile}
         />
       )}
+
+      <InAppCameraModal
+        open={cameraOpen}
+        onClose={handleCameraClose}
+        onCapture={handleCameraCapture}
+        onPickGallery={handleCameraGalleryFallback}
+      />
     </>
   );
 }
