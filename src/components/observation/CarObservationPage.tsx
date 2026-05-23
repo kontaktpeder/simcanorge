@@ -218,7 +218,7 @@ export function CarObservationPage(props: Props) {
   return (
     <div
       style={{ backgroundColor: isLight ? PAPER_BG : OBSERVATION_BG }}
-      className={isLight ? "text-neutral-900" : "text-white"}
+      className={isLight ? "car-paper-theme text-neutral-900" : "text-white"}
     >
       {/* Mobile / tablet: original stacked layout */}
       <div className="lg:hidden">
