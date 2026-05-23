@@ -173,6 +173,7 @@ export function FeedCard({ post, variant = "default", theme = "dark" }: { post: 
             onOpenComments={() => setShowComments(true)}
             showKnowCarCta={isCarSpotting}
             className="max-w-none p-0"
+            theme={theme}
           />
 
           {unifiedCaption && author && (
