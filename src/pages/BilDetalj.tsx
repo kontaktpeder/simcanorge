@@ -482,8 +482,12 @@ const BilDetalj = () => {
           hasPersonProfile={!!myProfile}
           onDismiss={() => setShowPostPublishOverlay(false)}
           onOpenComposer={() => {
-            setComposerInitialBody("Hva er historien bak denne bilen? ");
-            setShowFeedComposer(true);
+            openPublishComposer({
+              prefillCarId: car.id,
+              prefillCarTitle: car.title,
+              initialCaption: "Hva er historien bak denne bilen? ",
+              source: "bil_detalj_overlay",
+            });
           }}
         />
       )}
