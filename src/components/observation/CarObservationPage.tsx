@@ -40,16 +40,21 @@ type Props = {
   onOpenComments: () => void;
   showKnowCarCta: boolean;
   landingAck?: string | null;
+  theme?: "dark" | "light";
 };
 
 
-const SectionDivider = () => (
-  <div className="border-t border-white/[0.06]" />
+const PAPER_BG = "#f1ede4";
+
+const SectionDivider = ({ isLight }: { isLight: boolean }) => (
+  <div className={isLight ? "border-t border-neutral-900/10" : "border-t border-white/[0.06]"} />
 );
 
-const SectionLabel = ({ children }: { children: React.ReactNode }) => (
+const SectionLabel = ({ children, isLight }: { children: React.ReactNode; isLight: boolean }) => (
   <div
-    className="text-[11px] uppercase tracking-[0.22em] text-white/35 mb-4"
+    className={`text-[11px] uppercase tracking-[0.22em] mb-4 ${
+      isLight ? "text-neutral-500" : "text-white/35"
+    }`}
     style={oswald}
   >
     {children}
@@ -81,7 +86,9 @@ export function CarObservationPage(props: Props) {
     onOpenComments,
     showKnowCarCta,
     landingAck,
+    theme = "dark",
   } = props;
+  const isLight = theme === "light";
 
 
   const titleParts = [
@@ -125,11 +132,11 @@ export function CarObservationPage(props: Props) {
       )}
       {enrichment.showTimeline && (
         <>
-          <SectionDivider />
+          <SectionDivider isLight={isLight} />
           <section className="py-8">
             <div className="container mx-auto px-4 max-w-3xl lg:px-0 lg:mx-0 lg:max-w-none">
               <AnimatedSection>
-                <SectionLabel>Historikk</SectionLabel>
+                <SectionLabel isLight={isLight}>Historikk</SectionLabel>
                 <CarTimeline carId={carId} heroCaptionEventId={heroCaptionEventId} carCreatedAt={carCreatedAt} />
               </AnimatedSection>
             </div>
@@ -140,13 +147,15 @@ export function CarObservationPage(props: Props) {
 
       {showStoryBlock && (
         <>
-          <SectionDivider />
+          <SectionDivider isLight={isLight} />
           <section className="py-8">
             <div className="container mx-auto px-4 max-w-3xl lg:px-0 lg:mx-0 lg:max-w-none">
-              <SectionLabel>Om bilen</SectionLabel>
+              <SectionLabel isLight={isLight}>Om bilen</SectionLabel>
               {enrichment.showStory && story && (
                 <p
-                  className="text-[17px] md:text-[18px] leading-[1.65] text-white/85 whitespace-pre-wrap"
+                  className={`text-[17px] md:text-[18px] leading-[1.65] whitespace-pre-wrap ${
+                    isLight ? "text-neutral-800" : "text-white/85"
+                  }`}
                   style={oswaldLight}
                 >
                   {story}
@@ -158,7 +167,11 @@ export function CarObservationPage(props: Props) {
                   {cleanTags.map((t) => (
                     <span
                       key={t}
-                      className="inline-flex items-center rounded-full border border-white/10 bg-white/[0.02] px-3 py-1 text-[11px] uppercase tracking-[0.18em] text-white/65"
+                      className={`inline-flex items-center rounded-full px-3 py-1 text-[11px] uppercase tracking-[0.18em] ${
+                        isLight
+                          ? "border border-neutral-900/15 bg-neutral-900/[0.03] text-neutral-700"
+                          : "border border-white/10 bg-white/[0.02] text-white/65"
+                      }`}
                       style={oswald}
                     >
                       #{t}
@@ -175,7 +188,7 @@ export function CarObservationPage(props: Props) {
 
       {enrichment.showOwnerCard && (
         <>
-          <SectionDivider />
+          <SectionDivider isLight={isLight} />
           <section className="py-8">
             <div className="container mx-auto px-4 max-w-2xl lg:px-0 lg:mx-0 lg:max-w-none">
               <OwnerCard carId={carId} heading="Eies av" />
@@ -188,7 +201,11 @@ export function CarObservationPage(props: Props) {
         <div className="container mx-auto px-4 pb-12 pt-4 text-center lg:px-0 lg:mx-0 lg:text-left">
           <Link
             to="/ukjente-biler"
-            className="text-[11px] uppercase tracking-[0.22em] text-white/35 hover:text-white/85 transition-colors"
+            className={`text-[11px] uppercase tracking-[0.22em] transition-colors ${
+              isLight
+                ? "text-neutral-500 hover:text-neutral-900"
+                : "text-white/35 hover:text-white/85"
+            }`}
             style={oswald}
           >
             Hjelp fellesskapet å identifisere bilen
@@ -199,7 +216,10 @@ export function CarObservationPage(props: Props) {
   );
 
   return (
-    <div style={{ backgroundColor: OBSERVATION_BG }} className="text-white">
+    <div
+      style={{ backgroundColor: isLight ? PAPER_BG : OBSERVATION_BG }}
+      className={isLight ? "text-neutral-900" : "text-white"}
+    >
       {/* Mobile / tablet: original stacked layout */}
       <div className="lg:hidden">
         <ObservationPostCore
@@ -217,6 +237,7 @@ export function CarObservationPage(props: Props) {
           onOpenComments={onOpenComments}
           showKnowCarCta={showKnowCarCta}
           landingAck={landingAck}
+          theme={theme}
         />
         {RightSections}
       </div>
@@ -257,6 +278,7 @@ export function CarObservationPage(props: Props) {
                 landingAck={landingAck}
                 hideMedia
                 className="pb-2"
+                theme={theme}
               />
               {RightSections}
             </div>

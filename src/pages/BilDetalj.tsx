@@ -557,6 +557,7 @@ const BilDetalj = () => {
           (!isLinkedToCar && FEATURES.relationshipRequestsV1)
         }
         landingAck={landingAck}
+        theme="light"
       />
       <SpottingCommentsSheet
         carId={car.id}
