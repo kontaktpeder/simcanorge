@@ -170,37 +170,13 @@ export function InAppCameraModal({ open, onClose, onCapture, onPickGallery }: Pr
         >
           <X className="w-5 h-5" strokeWidth={2.25} />
         </button>
-        <div className="flex items-center gap-2">
-          <span
-            aria-hidden="true"
-            className="h-[3px] w-6 rounded-full"
-            style={{ background: VV_YELLOW }}
-          />
-          <span
-            className="text-[11px] uppercase tracking-[0.18em] font-bold text-neutral-900"
-            style={inter}
-          >
-            Fang bil
-          </span>
-        </div>
-        <button
-          type="button"
-          onClick={handleFlip}
-          disabled={!!previewUrl || starting}
-          className="w-10 h-10 rounded-full flex items-center justify-center text-neutral-800 hover:bg-neutral-100 transition-colors disabled:opacity-30"
-          aria-label="Snu kamera"
-        >
-          <RefreshCw className="w-5 h-5" strokeWidth={2.25} />
-        </button>
+        <div aria-hidden className="w-10" />
       </div>
 
       {/* Viewport — sort innramming på lys bakgrunn */}
       <div className="relative flex-1 overflow-hidden flex items-center justify-center p-3">
         <div
           className="relative w-full h-full overflow-hidden bg-black rounded-2xl"
-          style={{
-            boxShadow: "0 12px 32px rgba(0,0,0,0.18), 0 0 0 1px rgba(0,0,0,0.06)",
-          }}
         >
           {previewUrl ? (
             <img
@@ -219,17 +195,6 @@ export function InAppCameraModal({ open, onClose, onCapture, onPickGallery }: Pr
             />
           )}
 
-          {/* Subtilt søkerramme-overlegg */}
-          {!previewUrl && !error && (
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute inset-4 rounded-xl"
-              style={{
-                border: "1px solid rgba(255,255,255,0.35)",
-                boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.15)",
-              }}
-            />
-          )}
 
           {error && (
             <div
