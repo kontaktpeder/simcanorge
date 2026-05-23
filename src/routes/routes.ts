@@ -116,6 +116,8 @@ const AdminMarkedsplass = lazy(() => import("@/pages/admin/AdminMarkedsplass"));
 const AdminAnnonseProfil = lazy(() => import("@/pages/admin/AdminAnnonseProfil"));
 const AdminPersonProfiles = lazy(() => import("@/pages/admin/AdminPersonProfiles"));
 const AdminCarRelationshipRequests = lazy(() => import("@/pages/admin/AdminCarRelationshipRequests"));
+const AdminMerkehubber = lazy(() => import("@/pages/admin/AdminMerkehubber"));
+const AdminMerkehubEditor = lazy(() => import("@/pages/admin/AdminMerkehubEditor"));
 
 export interface RouteConfig {
   path: string;
