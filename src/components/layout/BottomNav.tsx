@@ -8,8 +8,11 @@ import { isUtforskNavActive } from "@/lib/exploreNav";
 
 import { CaptureCameraButton } from "@/components/capture/CaptureCameraButton";
 
-const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
+// Vegvesen-inspirert lys palett — matcher Header og resten av appen
+const VV_YELLOW = "#fcc419";
+const VV_DARK = "#2b2b2b";
 
+const inter = { fontFamily: "'Inter', 'Helvetica Neue', Arial, sans-serif" } as const;
 
 type Item = {
   href: string;
@@ -17,7 +20,6 @@ type Item = {
   Icon: React.ComponentType<{ className?: string }>;
   badge?: string;
 };
-
 
 function NavBtn({ item, active }: { item: Item; active: boolean }) {
   const { Icon } = item;
@@ -31,13 +33,13 @@ function NavBtn({ item, active }: { item: Item; active: boolean }) {
       <span className="relative">
         <Icon
           className={`w-[22px] h-[22px] transition-all ${
-            active ? "text-white" : "text-white/70 group-hover:text-white"
+            active ? "text-neutral-900" : "text-neutral-400 group-hover:text-neutral-700"
           }`}
         />
         {item.badge && (
           <span
             className="absolute -top-1.5 -right-3 px-1.5 py-[1px] rounded-full text-[8px] font-bold uppercase tracking-[0.08em] leading-none text-white"
-            style={{ ...chakra, background: "#f08a24" }}
+            style={{ ...inter, background: VV_DARK }}
           >
             {item.badge}
           </span>
@@ -45,17 +47,17 @@ function NavBtn({ item, active }: { item: Item; active: boolean }) {
       </span>
       <span
         className={`text-[10px] tracking-[0.08em] uppercase font-bold transition-colors ${
-          active ? "text-white" : "text-white/70 group-hover:text-white"
+          active ? "text-neutral-900" : "text-neutral-400 group-hover:text-neutral-700"
         }`}
-        style={chakra}
+        style={inter}
       >
         {item.label}
       </span>
       {active && (
         <span
           aria-hidden="true"
-          className="absolute bottom-1 h-[2px] w-7 rounded-full"
-          style={{ background: "#f08a24" }}
+          className="absolute bottom-1 h-[2.5px] w-6 rounded-full"
+          style={{ background: VV_YELLOW }}
         />
       )}
     </Link>
@@ -101,11 +103,14 @@ export function BottomNav() {
   return (
     <>
       <nav
-        className="md:hidden fixed bottom-0 left-0 right-0 z-40 backdrop-blur-xl border-t border-white/10 transition-transform duration-300 ease-out will-change-transform"
+        className="md:hidden fixed bottom-0 left-0 right-0 z-40 backdrop-blur-xl transition-transform duration-300 ease-out will-change-transform"
         style={{
-          background: "#4a5560",
+          background: "rgba(255,255,255,0.92)",
+          backdropFilter: "saturate(180%) blur(14px)",
+          WebkitBackdropFilter: "saturate(180%) blur(14px)",
+          borderTop: "1px solid rgba(0,0,0,0.08)",
+          boxShadow: "0 -2px 20px rgba(0,0,0,0.06)",
           paddingBottom: "env(safe-area-inset-bottom, 0px)",
-          boxShadow: "0 -2px 20px rgba(0,0,0,0.25)",
           transform: visible || pickerOpen ? "translateY(0)" : "translateY(110%)",
         }}
         aria-label="Hovednavigasjon"
@@ -138,11 +143,12 @@ export function BottomNav() {
                 size="fab"
                 screen="bottom_nav"
                 onOpenChange={setPickerOpen}
+                variant="light"
               />
             </div>
             <span
-              className="mt-1 text-[9px] uppercase tracking-[0.12em] font-bold text-white/70"
-              style={chakra}
+              className="mt-1 text-[9px] uppercase tracking-[0.12em] font-bold text-neutral-400"
+              style={inter}
             >
               Del
             </span>
