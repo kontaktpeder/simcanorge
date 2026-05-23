@@ -27,7 +27,7 @@ export function FeedCard({ post, variant = "default", theme = "dark" }: Props) {
   const { mutateAsync: editPost, isPending: isEditPending } = useEditFeedPost();
   const { mutate: deletePost } = useDeleteFeedPost();
 
-  const [lightboxOpen, setLightboxOpen] = useState(false);
+  
   const [showMenu, setShowMenu] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editBody, setEditBody] = useState(post.body ?? "");
