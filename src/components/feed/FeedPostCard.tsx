@@ -214,7 +214,7 @@ export function FeedPostCard({
               <img
                 src={heroImage}
                 alt={entityTitle ?? ""}
-                className="w-full aspect-[4/5] sm:aspect-video object-cover"
+                className="w-full aspect-[4/5] object-cover"
               />
             </button>
           )}
