@@ -511,10 +511,10 @@ function EmptyMyCars() {
       <div
         className="w-10 h-10 rounded-lg flex items-center justify-center"
         style={{
-          background: "linear-gradient(135deg, #1f3a34 0%, #2ab89a 100%)",
+          background: "linear-gradient(135deg, #1f3a34 0%, #2c5c50 100%)",
         }}
       >
-        <Plus className="w-5 h-5 text-[#070b10]" />
+        <Plus className="w-5 h-5 text-[#f1ede4]" />
       </div>
       <div className="flex-1 min-w-0">
         <p className="text-[13px] text-white font-semibold" style={chakra}>
