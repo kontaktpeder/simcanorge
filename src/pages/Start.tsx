@@ -197,7 +197,7 @@ export default function Start() {
               </p>
             </div>
 
-            <CaptureCameraButton size="hero" screen="start" />
+            <CaptureCameraButton size="hero" screen="start" variant="light" />
 
             <div className="flex items-center gap-4 mt-1 flex-wrap justify-center">
               {activitiesEnabled && (
@@ -259,6 +259,7 @@ export default function Start() {
                   });
                   navigate(`/turer`);
                 }}
+                variant="light"
               />
             </section>
           )}

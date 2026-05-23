@@ -1286,8 +1286,7 @@ input, textarea, select, [contenteditable="true"] {
 .car-paper-theme .bg-black { background-color: rgb(229 227 222); }
 .car-paper-theme .bg-black\/30 { background-color: rgb(229 227 222); }
 .car-paper-theme .bg-black\/65 { background-color: rgb(38 38 38 / 0.72); }
+.car-paper-theme .text-white\/10 { color: rgb(38 38 38 / 0.30); }
 .car-paper-theme .text-white\/15 { color: rgb(38 38 38 / 0.30); }
-.car-paper-theme .border-white\/\[0\.04\] { border-color: rgb(0 0 0 / 0.06); }
-.car-paper-theme .border-white\/\[0\.08\] { border-color: rgb(0 0 0 / 0.10); }
-.car-paper-theme .border-dashed.border-white\/10 { border-color: rgb(0 0 0 / 0.18); }
+.car-paper-theme .text-white\/25 { color: rgb(38 38 38 / 0.42); }
 
