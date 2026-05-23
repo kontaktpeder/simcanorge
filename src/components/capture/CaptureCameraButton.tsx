@@ -14,6 +14,8 @@ interface Props {
   onOpenChange?: (open: boolean) => void;
   /** Skjermkontekst for analytics. */
   screen?: string;
+  /** Light = museumspalett, dark = standard mørk. */
+  variant?: "dark" | "light";
 }
 
 /**
@@ -23,7 +25,7 @@ interface Props {
  * Brukes både frå Start (hero) og BottomNav (fab) slik at "Fang bil" er
  * éin og same flyt overalt.
  */
-export function CaptureCameraButton({ size = "hero", onOpenChange, screen }: Props) {
+export function CaptureCameraButton({ size = "hero", onOpenChange, screen, variant = "dark" }: Props) {
   const { user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -31,6 +33,8 @@ export function CaptureCameraButton({ size = "hero", onOpenChange, screen }: Pro
   const galleryRef = useRef<HTMLInputElement>(null);
   const [prefillFile, setPrefillFile] = useState<File | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+
+  const isLight = variant === "light";
 
   const requireAuth = () => {
     if (!user) {
@@ -69,6 +73,32 @@ export function CaptureCameraButton({ size = "hero", onOpenChange, screen }: Pro
 
   const isHero = size === "hero";
 
+  const heroCircleStyle: React.CSSProperties = isLight
+    ? {
+        background: "linear-gradient(135deg, #3d6b5e 0%, #2c5c50 55%, #1f3a34 100%)",
+        boxShadow: "0 0 32px rgba(31,58,52,0.25), 0 8px 24px rgba(0,0,0, 0.15), inset 0 1px 0 rgba(255,255,255,0.2)",
+        border: "4px solid rgba(233,231,225,0.95)",
+      }
+    : {
+        background: "linear-gradient(135deg, #34eab8 0%, #2ab89a 55%, #1cb896 100%)",
+        boxShadow: "0 0 48px rgba(52,234,184,0.45), 0 12px 30px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.25)",
+        border: "4px solid rgba(8,12,17,0.95)",
+      };
+
+  const fabCircleStyle: React.CSSProperties = isLight
+    ? {
+        background: "linear-gradient(135deg, #3d6b5e 0%, #2c5c50 60%, #1f3a34 100%)",
+        boxShadow: "0 0 24px rgba(31,58,52,0.25), 0 6px 16px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.2)",
+        border: "3px solid rgba(233,231,225,0.95)",
+      }
+    : {
+        background: "linear-gradient(135deg, #34eab8 0%, #2ab89a 60%, #1cb896 100%)",
+        boxShadow: "0 0 28px rgba(52,234,184,0.45), 0 6px 18px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.25)",
+        border: "3px solid rgba(8,12,17,0.95)",
+      };
+
+  const iconColor = isLight ? "#f1ede4" : "#070b10";
+
   return (
     <>
       <input
@@ -97,15 +127,9 @@ export function CaptureCameraButton({ size = "hero", onOpenChange, screen }: Pro
           >
             <span
               className="w-[132px] h-[132px] rounded-full flex items-center justify-center transition-all group-hover:scale-[1.03]"
-              style={{
-                background:
-                  "linear-gradient(135deg, #34eab8 0%, #2ab89a 55%, #1cb896 100%)",
-                boxShadow:
-                  "0 0 48px rgba(52,234,184,0.45), 0 12px 30px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.25)",
-                border: "4px solid rgba(8,12,17,0.95)",
-              }}
+              style={heroCircleStyle}
             >
-              <Camera className="w-12 h-12 text-[#070b10]" strokeWidth={2.25} />
+              <Camera className="w-12 h-12" style={{ color: iconColor }} strokeWidth={2.25} />
             </span>
             <span
               className="text-[12px] uppercase tracking-[0.18em] font-bold text-white/85"
@@ -130,15 +154,9 @@ export function CaptureCameraButton({ size = "hero", onOpenChange, screen }: Pro
           onClick={handleClick}
           aria-label="Fang bil"
           className="w-16 h-16 rounded-full flex items-center justify-center transition-all hover:scale-[1.04] active:scale-[0.97]"
-          style={{
-            background:
-              "linear-gradient(135deg, #34eab8 0%, #2ab89a 60%, #1cb896 100%)",
-            boxShadow:
-              "0 0 28px rgba(52,234,184,0.45), 0 6px 18px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.25)",
-            border: "3px solid rgba(8,12,17,0.95)",
-          }}
+          style={fabCircleStyle}
         >
-          <Camera className="w-6 h-6 text-[#070b10]" strokeWidth={2.5} />
+          <Camera className="w-6 h-6" style={{ color: iconColor }} strokeWidth={2.5} />
         </button>
       )}
 
