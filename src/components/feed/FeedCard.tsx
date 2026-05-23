@@ -39,7 +39,6 @@ export function FeedCard({ post, variant = "default", theme = "dark" }: Props) {
   const isOwn = !!(myProfile && author?.id === myProfile.id);
   const resolvedTheme = variant === "explore" ? "light" : theme;
 
-  const images = getPostImages(post);
   const car = (post as { car?: CarRow | null }).car ?? null;
   const canRequestRelationship = !!car?.id && isCarUnknown(car);
 
