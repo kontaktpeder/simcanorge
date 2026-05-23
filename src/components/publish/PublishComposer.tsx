@@ -242,6 +242,17 @@ export function PublishComposer() {
         className="car-paper-theme text-neutral-900 p-0 gap-0 border-0 max-w-full w-screen h-[100dvh] sm:h-auto sm:max-h-[92vh] sm:max-w-lg sm:rounded-2xl sm:border sm:border-black/10 overflow-hidden flex flex-col"
         style={{ backgroundColor: "#e9e7e1" }}
       >
+        {/* Lukk-knapp */}
+        <button
+          type="button"
+          onClick={closePublishComposer}
+          disabled={isSubmitting}
+          className="absolute top-3 right-3 z-50 inline-flex items-center justify-center w-9 h-9 rounded-full bg-white/85 backdrop-blur border border-black/10 shadow-sm text-neutral-700 hover:text-neutral-900 hover:bg-white transition-colors"
+          style={{ top: "max(0.75rem, env(safe-area-inset-top))" }}
+        >
+          <X className="w-4 h-4" strokeWidth={2.5} />
+        </button>
+
         <input
           ref={fileInputRef}
           type="file"
