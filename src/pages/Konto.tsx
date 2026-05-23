@@ -265,8 +265,6 @@ export default function Konto() {
           </motion.div>
 
 
-          {/* Mine lagrede spørsmål */}
-          {user && <SavedQuestionsCard />}
 
           {/* Personvern og kontroll - kun synlig når innlogget */}
           {user && (
