@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
+import { SeoHead } from "@/components/seo";
 import { Layout } from "@/components/layout/Layout";
 import { PageTypeBadge } from "@/components/pages/PageTypeBadge";
 import { MapPin, Building2 } from "lucide-react";
@@ -29,10 +29,11 @@ export default function AktoererPage() {
 
   return (
     <Layout>
-      <Helmet>
-        <title>Aktører | Bilgarasje.no</title>
-        <meta name="description" content="Utforsk verksteder, forhandlere, museer, samlinger og andre aktører i det norske bilmiljøet." />
-      </Helmet>
+      <SeoHead
+        title="Aktører | Bilgarasje.no"
+        description="Utforsk verksteder, forhandlere, museer, samlinger og andre aktører i det norske bilmiljøet."
+        canonicalPath="/aktoerer"
+      />
 
       <div className="min-h-screen" style={{ background: 'linear-gradient(180deg, #eee7dd 0%, #ebe4da 40%, #e8e1d6 100%)' }}>
 

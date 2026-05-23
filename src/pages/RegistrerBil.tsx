@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
+import { SeoHead, SEO_COPY } from "@/components/seo";
 import { ArrowRight, Car, Share2, Image as ImageIcon, Sparkles } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { SITE_NAME } from "@/config/site";
@@ -38,18 +39,9 @@ export default function RegistrerBil() {
 
   return (
     <div className="min-h-[100svh] bg-[#070b10] text-white">
+      <SeoHead {...SEO_COPY.onboarding} />
       <Helmet>
-        <title>Legg inn bilen din – {SITE_NAME}</title>
-        <meta
-          name="description"
-          content="Gi bilen din en skikkelig plass på nett. Legg inn bilder, historie og info – og få en profesjonell bilside du kan dele."
-        />
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-        <meta property="og:title" content={`Legg inn bilen din – ${SITE_NAME}`} />
-        <meta
-          property="og:description"
-          content="Gi bilen din en skikkelig plass på nett. Profesjonell bilside du kan dele."
-        />
         {/* Speed up Vimeo background video load */}
         <link rel="preconnect" href="https://player.vimeo.com" crossOrigin="" />
         <link rel="preconnect" href="https://i.vimeocdn.com" crossOrigin="" />
