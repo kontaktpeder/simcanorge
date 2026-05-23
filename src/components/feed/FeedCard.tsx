@@ -126,12 +126,6 @@ export function FeedCard({ post, variant = "default", theme = "dark" }: Props) {
         </DrawerContent>
       </Drawer>
 
-      <ImageLightbox
-        images={images}
-        initialIndex={0}
-        isOpen={lightboxOpen}
-        onClose={() => setLightboxOpen(false)}
-      />
 
       {canRequestRelationship && car?.id && (
         <RelationshipRequestDialog
