@@ -35,7 +35,6 @@ function NavBtn({ item, active }: { item: Item; active: boolean }) {
           className={`w-[22px] h-[22px] transition-all ${
             active ? "text-neutral-900" : "text-neutral-400 group-hover:text-neutral-700"
           }`}
-          strokeWidth={active ? 2.5 : 2}
         />
         {item.badge && (
           <span
