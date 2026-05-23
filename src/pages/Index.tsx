@@ -6,7 +6,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useFeedPosts } from "@/hooks/useFeedPosts";
 import { FeedCard } from "@/components/feed/FeedCard";
 import { ExploreInlineComposer } from "@/components/explore/ExploreInlineComposer";
-import { ExploreSectionNav } from "@/components/explore/ExploreSectionNav";
+// ExploreSectionNav fjernet i PR-I.1 — feed/biler er ikke to faner lenger.
 import { ExploreArchiveLink } from "@/components/explore/ExploreArchiveLink";
 
 // Vegvesen-light palette
