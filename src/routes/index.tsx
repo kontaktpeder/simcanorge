@@ -78,7 +78,7 @@ export function AppRoutes() {
     <Suspense fallback={<SuspenseFallback />}>
       <Routes>
         {/* Permanent redirect: /dashboard → /garasje */}
-        <Route path="/dashboard" element={<Navigate to="/garasje" replace />} />
+        <Route path="/dashboard" element={<Navigate to="/min-garasje" replace />} />
         {routes
           .filter((route) => route.path !== "/dashboard")
           .map((route) => (
