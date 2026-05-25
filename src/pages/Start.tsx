@@ -164,8 +164,8 @@ export default function Start() {
         <meta name="description" content="Innlegg om biler i Norge — bilder, historier og spor du har sett." />
       </Helmet>
 
-      <div className="car-paper-theme min-h-screen text-neutral-900 pb-32 bg-[#e9e7e1] sm:bg-[#444f55]">
-        <div className="max-w-2xl mx-auto px-4 sm:px-6 pt-6 space-y-8 bg-[#e9e7e1] sm:shadow-[0_0_0_1px_rgba(0,0,0,0.06)] min-h-screen">
+      <div className="car-paper-theme text-neutral-900 bg-[#e9e7e1] sm:bg-[#444f55]">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 pt-6 pb-32 space-y-8 bg-[#e9e7e1] sm:shadow-[0_0_0_1px_rgba(0,0,0,0.06)]">
           {/* ── Header ─────────────────────────────────────────── */}
           <header className="text-center sm:text-left">
             <div className="flex items-center justify-between">
