@@ -41,6 +41,9 @@ import { getSiteUrl } from "@/lib/siteUrl";
 import { resolveCarPageAudience, type ContributionActionId } from "@/lib/carPageAudience";
 import { CarContributionPanel } from "@/components/car/contribute/CarContributionPanel";
 import { AddObservationSheet } from "@/components/car/knowledge/AddObservationSheet";
+import { ShareStorySheet } from "@/components/car/contribute/ShareStorySheet";
+import { SuggestModelSheet } from "@/components/car/contribute/SuggestModelSheet";
+import { SuggestCorrectionSheet } from "@/components/car/contribute/SuggestCorrectionSheet";
 
 
 const SITE_URL = getSiteUrl();
