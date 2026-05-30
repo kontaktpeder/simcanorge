@@ -158,6 +158,9 @@ const BilDetalj = () => {
   const isLinkedToCar =
     !!(myProfile && car?.owner_profile_id === myProfile.id) || userHasAnyCarOwnerRow;
   const firstCarImage = car ? [...car.car_images].sort((a, b) => a.sort_order - b.sort_order)[0]?.image_url ?? null : null;
+  const audience = resolveCarPageAudience({ userId: user?.id, carOwners });
+  const stewardName = ownerProfile?.display_name ?? null;
+
 
   const viewMode = car
     ? resolveCarPageViewMode({
