@@ -23,7 +23,7 @@ export default function BidragSendt() {
 
   return (
     <Layout>
-      <SeoHead title="Takk for bidraget – Bilgarasje.no" description="Bidraget ditt er sendt inn." noindex />
+      <SeoHead title="Takk for bidraget – Bilgarasje.no" description="Bidraget ditt er sendt inn." canonicalPath="/bidrag-sendt" noindex />
       <section className="min-h-[60vh] flex items-center justify-center px-4 py-16">
         <div
           className="w-full max-w-md rounded-2xl border border-black/10 bg-white p-8 text-center shadow-sm"
