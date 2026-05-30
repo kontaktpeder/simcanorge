@@ -201,6 +201,7 @@ const rawRoutes: RouteConfig[] = [
   { path: "/dashboard/events/ny", element: CreateEventPage, requiresAuth: true },
   { path: "/dashboard/events/:eventId", element: EditEventPage, requiresAuth: true },
   { path: "/relasjon-sendt/:requestId", element: RelasjonSendt, requiresAuth: true },
+  { path: "/bidrag-sendt", element: BidragSendt, isPublic: true },
   { path: "/sporsmal/ny", element: SporsmalRedirect, isPublic: true },
   { path: "/sporsmal/:slug", element: SporsmalRedirect, isPublic: true },
 
