@@ -2534,6 +2534,10 @@ export type Database = {
         Args: { p_car_id: string }
         Returns: Json
       }
+      claim_car_as_steward: {
+        Args: { p_car_id: string; p_note?: string }
+        Returns: Json
+      }
       cleanup_old_inquiry_rate_limits: { Args: never; Returns: undefined }
       cleanup_old_page_views: { Args: never; Returns: undefined }
       create_car_relationship_request_safe: {
