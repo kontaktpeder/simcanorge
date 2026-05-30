@@ -61,6 +61,12 @@ export const FEATURES = {
    */
   knowledgeHubV1: import.meta.env.VITE_FEATURE_KNOWLEDGE_HUB_V1 !== "false",
   /**
+   * Contribution UX V1 — replaces "Kjenner du denne bilen?" CTA + Knowledge Hub
+   * dialog on /biler/:slug with a direct three-state contribution panel
+   * (unknown | stewarded | mine).
+   */
+  contributionUxV1: import.meta.env.VITE_FEATURE_CONTRIBUTION_UX_V1 !== "false",
+  /**
    * Brand hubs (/merker/:brand) get full SEO indexing (canonical + indexable).
    * OFF by default — gated per-hub by content quality (about >= 400 chars, >= 3 cars).
    * Enable with VITE_FEATURE_SEO_HUB_INDEXING=true once Simca/Talbot/Matra/Opel are curated.
