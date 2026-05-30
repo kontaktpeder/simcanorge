@@ -41,7 +41,6 @@ import { getSiteUrl } from "@/lib/siteUrl";
 import { resolveCarPageAudience, type ContributionActionId } from "@/lib/carPageAudience";
 import { CarContributionPanel } from "@/components/car/contribute/CarContributionPanel";
 import { AddObservationSheet } from "@/components/car/knowledge/AddObservationSheet";
-import { useNavigate, useLocation } from "react-router-dom";
 
 
 const SITE_URL = getSiteUrl();
