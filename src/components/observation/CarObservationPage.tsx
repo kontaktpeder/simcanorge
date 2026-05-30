@@ -233,12 +233,12 @@ export function CarObservationPage(props: Props) {
           <SectionDivider isLight={isLight} />
           {isLight ? (
             <LightCard>
-              <OwnerCard carId={carId} heading="Eies av" />
+              <OwnerCard carId={carId} heading="Forvaltes av" />
             </LightCard>
           ) : (
             <section className="py-8">
               <div className="container mx-auto px-4 max-w-2xl lg:px-0 lg:mx-0 lg:max-w-none">
-                <OwnerCard carId={carId} heading="Eies av" />
+                <OwnerCard carId={carId} heading="Forvaltes av" />
               </div>
             </section>
           )}
