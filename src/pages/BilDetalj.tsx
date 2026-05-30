@@ -44,6 +44,7 @@ import { AddObservationSheet } from "@/components/car/knowledge/AddObservationSh
 import { ShareStorySheet } from "@/components/car/contribute/ShareStorySheet";
 import { SuggestModelSheet } from "@/components/car/contribute/SuggestModelSheet";
 import { SuggestCorrectionSheet } from "@/components/car/contribute/SuggestCorrectionSheet";
+import { ClaimCarSheet } from "@/components/car/contribute/ClaimCarSheet";
 
 
 const SITE_URL = getSiteUrl();
@@ -149,6 +150,7 @@ const BilDetalj = () => {
   const [contributionStoryOpen, setContributionStoryOpen] = useState(false);
   const [contributionModelOpen, setContributionModelOpen] = useState(false);
   const [contributionCorrectionOpen, setContributionCorrectionOpen] = useState(false);
+  const [contributionClaimOpen, setContributionClaimOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -609,7 +611,12 @@ const BilDetalj = () => {
                 return;
               }
               if (a === "claim") {
-                toast.info("Snart kan du ta over forvaltningen av denne bilen.");
+                if (audience === "stewarded") {
+                  toast.info("Denne bilen forvaltes allerede. Send heller inn historie eller forslag til endring.");
+                  setContributionCorrectionOpen(true);
+                  return;
+                }
+                setContributionClaimOpen(true);
                 return;
               }
               if (a === "model") {
@@ -651,6 +658,12 @@ const BilDetalj = () => {
             carId={car.id}
             carSlug={car.slug}
             stewardName={stewardName}
+          />
+          <ClaimCarSheet
+            open={contributionClaimOpen}
+            onOpenChange={setContributionClaimOpen}
+            carId={car.id}
+            carSlug={car.slug}
           />
 
         </>
