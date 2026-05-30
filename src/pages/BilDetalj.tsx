@@ -41,6 +41,9 @@ import { getSiteUrl } from "@/lib/siteUrl";
 import { resolveCarPageAudience, type ContributionActionId } from "@/lib/carPageAudience";
 import { CarContributionPanel } from "@/components/car/contribute/CarContributionPanel";
 import { AddObservationSheet } from "@/components/car/knowledge/AddObservationSheet";
+import { ShareStorySheet } from "@/components/car/contribute/ShareStorySheet";
+import { SuggestModelSheet } from "@/components/car/contribute/SuggestModelSheet";
+import { SuggestCorrectionSheet } from "@/components/car/contribute/SuggestCorrectionSheet";
 
 
 const SITE_URL = getSiteUrl();
@@ -143,6 +146,9 @@ const BilDetalj = () => {
   const [knowledgeDialogOpen, setKnowledgeDialogOpen] = useState(false);
   const [commentsSheetOpen, setCommentsSheetOpen] = useState(false);
   const [contributionPhotosOpen, setContributionPhotosOpen] = useState(false);
+  const [contributionStoryOpen, setContributionStoryOpen] = useState(false);
+  const [contributionModelOpen, setContributionModelOpen] = useState(false);
+  const [contributionCorrectionOpen, setContributionCorrectionOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -606,8 +612,18 @@ const BilDetalj = () => {
                 toast.info("Snart kan du ta over forvaltningen av denne bilen.");
                 return;
               }
-              // model, story, correction — open existing knowledge dialog
-              setKnowledgeDialogOpen(true);
+              if (a === "model") {
+                setContributionModelOpen(true);
+                return;
+              }
+              if (a === "story") {
+                setContributionStoryOpen(true);
+                return;
+              }
+              if (a === "correction") {
+                setContributionCorrectionOpen(true);
+                return;
+              }
             }}
           />
           <AddObservationSheet
@@ -616,6 +632,27 @@ const BilDetalj = () => {
             carId={car.id}
             carSlug={car.slug}
           />
+          <ShareStorySheet
+            open={contributionStoryOpen}
+            onOpenChange={setContributionStoryOpen}
+            carId={car.id}
+            carSlug={car.slug}
+            stewardName={stewardName}
+          />
+          <SuggestModelSheet
+            open={contributionModelOpen}
+            onOpenChange={setContributionModelOpen}
+            carId={car.id}
+            carSlug={car.slug}
+          />
+          <SuggestCorrectionSheet
+            open={contributionCorrectionOpen}
+            onOpenChange={setContributionCorrectionOpen}
+            carId={car.id}
+            carSlug={car.slug}
+            stewardName={stewardName}
+          />
+
         </>
       ) : (
         /* CTA: Legg ut innlegg om denne bilen — alle innloggede, utlogget → login */
