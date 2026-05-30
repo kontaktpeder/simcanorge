@@ -612,8 +612,18 @@ const BilDetalj = () => {
                 toast.info("Snart kan du ta over forvaltningen av denne bilen.");
                 return;
               }
-              // model, story, correction — open existing knowledge dialog
-              setKnowledgeDialogOpen(true);
+              if (a === "model") {
+                setContributionModelOpen(true);
+                return;
+              }
+              if (a === "story") {
+                setContributionStoryOpen(true);
+                return;
+              }
+              if (a === "correction") {
+                setContributionCorrectionOpen(true);
+                return;
+              }
             }}
           />
           <AddObservationSheet
@@ -622,6 +632,27 @@ const BilDetalj = () => {
             carId={car.id}
             carSlug={car.slug}
           />
+          <ShareStorySheet
+            open={contributionStoryOpen}
+            onOpenChange={setContributionStoryOpen}
+            carId={car.id}
+            carSlug={car.slug}
+            stewardName={stewardName}
+          />
+          <SuggestModelSheet
+            open={contributionModelOpen}
+            onOpenChange={setContributionModelOpen}
+            carId={car.id}
+            carSlug={car.slug}
+          />
+          <SuggestCorrectionSheet
+            open={contributionCorrectionOpen}
+            onOpenChange={setContributionCorrectionOpen}
+            carId={car.id}
+            carSlug={car.slug}
+            stewardName={stewardName}
+          />
+
         </>
       ) : (
         /* CTA: Legg ut innlegg om denne bilen — alle innloggede, utlogget → login */
