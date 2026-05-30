@@ -146,6 +146,9 @@ const BilDetalj = () => {
   const [knowledgeDialogOpen, setKnowledgeDialogOpen] = useState(false);
   const [commentsSheetOpen, setCommentsSheetOpen] = useState(false);
   const [contributionPhotosOpen, setContributionPhotosOpen] = useState(false);
+  const [contributionStoryOpen, setContributionStoryOpen] = useState(false);
+  const [contributionModelOpen, setContributionModelOpen] = useState(false);
+  const [contributionCorrectionOpen, setContributionCorrectionOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
