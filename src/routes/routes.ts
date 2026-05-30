@@ -60,6 +60,7 @@ const AppEntry = lazy(() => import("@/pages/AppEntry"));
 const Konto = lazy(() => import("@/pages/Konto"));
 const Foresporsel = lazy(() => import("@/pages/Foresporsel"));
 const RelasjonSendt = lazy(() => import("@/pages/RelasjonSendt"));
+const BidragSendt = lazy(() => import("@/pages/BidragSendt"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
 const AktivTur = lazy(() => import("@/pages/AktivTur"));
 const MineTurer = lazy(() => import("@/pages/MineTurer"));
