@@ -9,6 +9,11 @@ const TYPE_LINE: Record<string, string> = {
   story: "Historien din er sendt inn.",
   model: "Forslaget ditt er mottatt.",
   correction: "Endringsforslaget ditt er sendt inn.",
+  claim: "Du forvalter nå bilen.",
+};
+
+const TYPE_TITLE: Record<string, string> = {
+  claim: "Velkommen som forvalter!",
 };
 
 export default function BidragSendt() {
@@ -16,14 +21,18 @@ export default function BidragSendt() {
   const carSlug = params.get("car");
   const steward = params.get("steward");
   const type = params.get("type") ?? "";
+  const isClaim = type === "claim";
 
-  const lead = steward
+  const title = TYPE_TITLE[type] ?? "Takk!";
+  const lead = isClaim
+    ? TYPE_LINE.claim
+    : steward
     ? `Bidraget ditt er sendt til ${steward}.`
     : TYPE_LINE[type] ?? "Bidraget ditt er sendt inn.";
 
   return (
     <Layout>
-      <SeoHead title="Takk for bidraget – Bilgarasje.no" description="Bidraget ditt er sendt inn." canonicalPath="/bidrag-sendt" noindex />
+      <SeoHead title={isClaim ? "Du forvalter nå bilen – Bilgarasje.no" : "Takk for bidraget – Bilgarasje.no"} description={lead} canonicalPath="/bidrag-sendt" noindex />
       <section className="min-h-[60vh] flex items-center justify-center px-4 py-16">
         <div
           className="w-full max-w-md rounded-2xl border border-black/10 bg-white p-8 text-center shadow-sm"
@@ -31,12 +40,28 @@ export default function BidragSendt() {
         >
           <CheckCircle2 className="w-12 h-12 mx-auto mb-4 text-emerald-600" strokeWidth={1.75} />
           <h1 className="text-[22px] sm:text-[24px] font-bold text-neutral-900 mb-2">
-            Takk!
+            {title}
           </h1>
           <p className="text-[15px] text-neutral-700 mb-6 leading-relaxed">
             {lead}
           </p>
-          {carSlug ? (
+          {isClaim && carSlug ? (
+            <div className="flex flex-col sm:flex-row gap-2 justify-center">
+              <Link
+                to={`/biler/${carSlug}`}
+                className="inline-flex items-center justify-center h-11 px-5 rounded-xl text-sm font-semibold text-white hover:brightness-110 transition"
+                style={{ backgroundColor: "#2b2b2b" }}
+              >
+                Gå til bilen
+              </Link>
+              <Link
+                to="/dashboard/mine-biler"
+                className="inline-flex items-center justify-center h-11 px-5 rounded-xl text-sm font-semibold border border-neutral-300 text-neutral-900 hover:bg-neutral-50 transition"
+              >
+                Rediger bilen
+              </Link>
+            </div>
+          ) : carSlug ? (
             <Link
               to={`/biler/${carSlug}`}
               className="inline-flex items-center justify-center h-11 px-5 rounded-xl text-sm font-semibold text-white hover:brightness-110 transition"
