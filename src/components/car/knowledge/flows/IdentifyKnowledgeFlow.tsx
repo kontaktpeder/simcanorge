@@ -73,8 +73,11 @@ export function IdentifyKnowledgeFlow({ carId, onDone }: Props) {
       navigate(`/login?returnUrl=${encodeURIComponent(location.pathname)}`);
       return;
     }
-    if (!brand.trim() || !model.trim()) {
-      toast.error("Merke og modell er påkrevd");
+    const hasAny =
+      brand.trim() || model.trim() || year.trim() ||
+      yearFrom.trim() || yearTo.trim() || comment.trim();
+    if (!hasAny) {
+      toast.error("Fyll inn minst ett felt");
       return;
     }
     setSubmitting(true);
