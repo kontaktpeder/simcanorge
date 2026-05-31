@@ -152,7 +152,7 @@ export function IdentifyKnowledgeFlow({ carId, onDone }: Props) {
           </select>
         ) : (
           <div className="flex gap-2">
-            <Input id="ik-model" value={model} onChange={(e) => setModel(e.target.value)} placeholder="Skriv inn modell…" disabled={!brand} />
+            <Input id="ik-model" value={model} onChange={(e) => setModel(e.target.value)} placeholder="Skriv inn modell…" />
             {brandId && (
               <button type="button" onClick={() => { setModelMode("select"); setModel(""); }} className="px-3 text-sm text-muted-foreground hover:text-foreground underline whitespace-nowrap">
                 Velg fra liste
