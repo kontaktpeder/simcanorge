@@ -135,7 +135,7 @@ export function IdentifyKnowledgeFlow({ carId, onDone }: Props) {
       </div>
 
       <div className="space-y-1.5">
-        <Label htmlFor="ik-model">Modell <span className="text-destructive">*</span></Label>
+        <Label htmlFor="ik-model">Modell</Label>
         {modelMode === "select" && brandId ? (
           <select
             id="ik-model"
