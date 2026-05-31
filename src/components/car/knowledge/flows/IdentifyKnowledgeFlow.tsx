@@ -94,7 +94,13 @@ export function IdentifyKnowledgeFlow({ carId, onDone }: Props) {
       if (error) throw error;
       const result = data as { ok: boolean; error?: string } | null;
       if (!result?.ok) {
-        toast.error(result?.error === "not_authenticated" ? "Du må være innlogget" : "Kunne ikke sende forslag");
+        const msg =
+          result?.error === "not_authenticated" ? "Du må være innlogget" :
+          result?.error === "already_identified" ? "Bilen er allerede identifisert" :
+          result?.error === "empty_submission" ? "Fyll inn minst ett felt" :
+          result?.error === "car_not_found" ? "Bilen finnes ikke" :
+          "Kunne ikke sende forslag";
+        toast.error(msg);
         return;
       }
       toast.success("Takk for bidraget!");
