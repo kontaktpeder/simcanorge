@@ -84,8 +84,8 @@ export function IdentifyKnowledgeFlow({ carId, onDone }: Props) {
     try {
       const { data, error } = await supabase.rpc("submit_car_identification_suggestion", {
         p_car_id: carId,
-        p_brand: brand.trim(),
-        p_model: model.trim(),
+        p_brand: brand.trim() || "",
+        p_model: model.trim() || "",
         p_year: year ? parseInt(year, 10) : null,
         p_year_from: yearFrom ? parseInt(yearFrom, 10) : null,
         p_year_to: yearTo ? parseInt(yearTo, 10) : null,
