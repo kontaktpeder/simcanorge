@@ -55,8 +55,8 @@ export function IdentifyCarDialog({ open, onOpenChange, carId, carTitle }: Ident
       navigate(`/login?returnUrl=${encodeURIComponent(location.pathname)}`);
       return;
     }
-    if (!brand.trim() || !model.trim()) {
-      toast.error("Merke og modell er påkrevd");
+    if (!brand.trim() && !model.trim() && !year && !yearFrom && !yearTo && !comment.trim()) {
+      toast.error("Fyll inn minst ett felt");
       return;
     }
 
