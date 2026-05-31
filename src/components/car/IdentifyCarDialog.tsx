@@ -104,29 +104,23 @@ export function IdentifyCarDialog({ open, onOpenChange, carId, carTitle }: Ident
         <form onSubmit={handleSubmit} className="flex flex-col gap-4 mt-2">
           <div className="grid grid-cols-2 gap-3">
             <div className="flex flex-col gap-2">
-              <Label htmlFor="ident-brand">
-                Merke <span className="text-destructive">*</span>
-              </Label>
+              <Label htmlFor="ident-brand">Merke</Label>
               <Input
                 id="ident-brand"
                 value={brand}
                 onChange={(e) => setBrand(e.target.value)}
                 placeholder="F.eks. Volvo"
                 className="min-h-[44px]"
-                required
               />
             </div>
             <div className="flex flex-col gap-2">
-              <Label htmlFor="ident-model">
-                Modell <span className="text-destructive">*</span>
-              </Label>
+              <Label htmlFor="ident-model">Modell</Label>
               <Input
                 id="ident-model"
                 value={model}
                 onChange={(e) => setModel(e.target.value)}
                 placeholder="F.eks. 240"
                 className="min-h-[44px]"
-                required
               />
             </div>
           </div>
