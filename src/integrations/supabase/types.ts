@@ -263,8 +263,8 @@ export type Database = {
           created_at: string
           id: string
           submitter_id: string | null
-          suggested_brand: string
-          suggested_model: string
+          suggested_brand: string | null
+          suggested_model: string | null
           suggested_year: number | null
           suggested_year_from: number | null
           suggested_year_to: number | null
@@ -275,8 +275,8 @@ export type Database = {
           created_at?: string
           id?: string
           submitter_id?: string | null
-          suggested_brand: string
-          suggested_model: string
+          suggested_brand?: string | null
+          suggested_model?: string | null
           suggested_year?: number | null
           suggested_year_from?: number | null
           suggested_year_to?: number | null
@@ -287,8 +287,8 @@ export type Database = {
           created_at?: string
           id?: string
           submitter_id?: string | null
-          suggested_brand?: string
-          suggested_model?: string
+          suggested_brand?: string | null
+          suggested_model?: string | null
           suggested_year?: number | null
           suggested_year_from?: number | null
           suggested_year_to?: number | null

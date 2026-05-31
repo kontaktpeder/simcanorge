@@ -73,16 +73,19 @@ export function IdentifyKnowledgeFlow({ carId, onDone }: Props) {
       navigate(`/login?returnUrl=${encodeURIComponent(location.pathname)}`);
       return;
     }
-    if (!brand.trim() || !model.trim()) {
-      toast.error("Merke og modell er påkrevd");
+    const hasAny =
+      brand.trim() || model.trim() || year.trim() ||
+      yearFrom.trim() || yearTo.trim() || comment.trim();
+    if (!hasAny) {
+      toast.error("Fyll inn minst ett felt");
       return;
     }
     setSubmitting(true);
     try {
       const { data, error } = await supabase.rpc("submit_car_identification_suggestion", {
         p_car_id: carId,
-        p_brand: brand.trim(),
-        p_model: model.trim(),
+        p_brand: brand.trim() || "",
+        p_model: model.trim() || "",
         p_year: year ? parseInt(year, 10) : null,
         p_year_from: yearFrom ? parseInt(yearFrom, 10) : null,
         p_year_to: yearTo ? parseInt(yearTo, 10) : null,
@@ -108,7 +111,7 @@ export function IdentifyKnowledgeFlow({ carId, onDone }: Props) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="space-y-1.5">
-        <Label htmlFor="ik-brand">Merke <span className="text-destructive">*</span></Label>
+        <Label htmlFor="ik-brand">Merke</Label>
         {brandMode === "select" ? (
           <select
             id="ik-brand"
@@ -132,7 +135,7 @@ export function IdentifyKnowledgeFlow({ carId, onDone }: Props) {
       </div>
 
       <div className="space-y-1.5">
-        <Label htmlFor="ik-model">Modell <span className="text-destructive">*</span></Label>
+        <Label htmlFor="ik-model">Modell</Label>
         {modelMode === "select" && brandId ? (
           <select
             id="ik-model"
@@ -149,7 +152,7 @@ export function IdentifyKnowledgeFlow({ carId, onDone }: Props) {
           </select>
         ) : (
           <div className="flex gap-2">
-            <Input id="ik-model" value={model} onChange={(e) => setModel(e.target.value)} placeholder="Skriv inn modell…" disabled={!brand} />
+            <Input id="ik-model" value={model} onChange={(e) => setModel(e.target.value)} placeholder="Skriv inn modell…" />
             {brandId && (
               <button type="button" onClick={() => { setModelMode("select"); setModel(""); }} className="px-3 text-sm text-muted-foreground hover:text-foreground underline whitespace-nowrap">
                 Velg fra liste
