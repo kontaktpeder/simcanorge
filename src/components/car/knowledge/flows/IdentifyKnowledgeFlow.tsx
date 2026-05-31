@@ -111,7 +111,7 @@ export function IdentifyKnowledgeFlow({ carId, onDone }: Props) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="space-y-1.5">
-        <Label htmlFor="ik-brand">Merke <span className="text-destructive">*</span></Label>
+        <Label htmlFor="ik-brand">Merke</Label>
         {brandMode === "select" ? (
           <select
             id="ik-brand"
