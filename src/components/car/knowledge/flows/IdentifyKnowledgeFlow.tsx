@@ -92,18 +92,21 @@ export function IdentifyKnowledgeFlow({ carId, onDone }: Props) {
         p_comment: comment.trim() || null,
       });
       if (error) throw error;
-      const result = data as { ok: boolean; error?: string } | null;
+      const result = data as { ok: boolean; error?: string; code?: string } | null;
       if (!result?.ok) {
         const msg =
           result?.error === "not_authenticated" ? "Du må være innlogget" :
-          result?.error === "already_identified" ? "Bilen er allerede identifisert" :
           result?.error === "empty_submission" ? "Fyll inn minst ett felt" :
           result?.error === "car_not_found" ? "Bilen finnes ikke" :
           "Kunne ikke sende forslag";
         toast.error(msg);
         return;
       }
-      toast.success("Takk for bidraget!");
+      const successMsg =
+        result.code === "stored_conflict" ? "Takk — forslaget er lagret. En forvalter kan vurdere det." :
+        result.code === "duplicate" ? "Dette ser allerede ut til å være registrert." :
+        "Takk — vi har lagret forslaget ditt.";
+      toast.success(successMsg);
       queryClient.invalidateQueries({ queryKey: ["unknown-cars"] });
       onDone();
     } catch (err) {

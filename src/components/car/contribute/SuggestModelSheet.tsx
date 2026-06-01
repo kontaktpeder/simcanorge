@@ -13,9 +13,10 @@ type Props = {
   onOpenChange: (open: boolean) => void;
   carId: string;
   carSlug: string;
+  onApplied?: () => void;
 };
 
-export function SuggestModelSheet({ open, onOpenChange, carId, carSlug }: Props) {
+export function SuggestModelSheet({ open, onOpenChange, carId, carSlug, onApplied }: Props) {
   const navigate = useNavigate();
 
   return (
@@ -24,13 +25,14 @@ export function SuggestModelSheet({ open, onOpenChange, carId, carSlug }: Props)
         <SheetHeader className="text-left">
           <SheetTitle>Vet du hvilken modell?</SheetTitle>
           <SheetDescription>
-            Foreslå merke, modell og år. Innsendingen vurderes før den vises offentlig.
+            Du kan sende flere forslag over tid — fyll inn det du vet nå.
           </SheetDescription>
         </SheetHeader>
         <div className="mt-4">
           <IdentifyKnowledgeFlow
             carId={carId}
             onDone={() => {
+              onApplied?.();
               onOpenChange(false);
               navigate(`/bidrag-sendt?car=${encodeURIComponent(carSlug)}&type=model`);
             }}

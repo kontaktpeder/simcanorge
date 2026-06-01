@@ -51,9 +51,10 @@ export function buildCarDisplayTitle(car: {
   year: number | null;
   title: string;
 }): string {
+  const cleanModel = car.model && !/^ukjent$/i.test(car.model.trim()) ? car.model : null;
   const parts = [
     car.brand,
-    car.model,
+    cleanModel,
     car.year != null ? String(car.year) : null,
     car.variant,
     car.body_type,
@@ -61,7 +62,7 @@ export function buildCarDisplayTitle(car: {
   const fromFields = parts.join(" ");
   if (fromFields) return fromFields;
   if (car.title && !/^ukjent bil$/i.test(car.title)) return car.title;
-  return car.model || car.title || "Ukjent bil";
+  return cleanModel || car.title || "Ukjent bil";
 }
 
 export type CarPagePresentation = {

@@ -2630,11 +2630,11 @@ export type Database = {
         Args: {
           p_brand: string
           p_car_id: string
-          p_comment?: string
+          p_comment: string
           p_model: string
-          p_year?: number
-          p_year_from?: number
-          p_year_to?: number
+          p_year: number
+          p_year_from: number
+          p_year_to: number
         }
         Returns: Json
       }

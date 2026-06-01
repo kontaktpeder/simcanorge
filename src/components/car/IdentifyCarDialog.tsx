@@ -72,12 +72,16 @@ export function IdentifyCarDialog({ open, onOpenChange, carId, carTitle }: Ident
         p_comment: comment.trim() || null,
       });
       if (error) throw error;
-      const result = data as { ok: boolean; error?: string } | null;
+      const result = data as { ok: boolean; error?: string; code?: string } | null;
       if (!result?.ok) {
         toast.error(result?.error === "not_authenticated" ? "Du må være innlogget" : "Kunne ikke sende forslag");
         return;
       }
-      toast.success("Takk! Du hjalp til med å identifisere bilen.");
+      const successMsg =
+        result.code === "stored_conflict" ? "Takk — forslaget er lagret. En forvalter kan vurdere det." :
+        result.code === "duplicate" ? "Dette ser allerede ut til å være registrert." :
+        "Takk — vi har lagret forslaget ditt.";
+      toast.success(successMsg);
       queryClient.invalidateQueries({ queryKey: ["unknown-cars"] });
       reset();
       onOpenChange(false);
