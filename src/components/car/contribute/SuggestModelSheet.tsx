@@ -25,7 +25,7 @@ export function SuggestModelSheet({ open, onOpenChange, carId, carSlug, onApplie
         <SheetHeader className="text-left">
           <SheetTitle>Vet du hvilken modell?</SheetTitle>
           <SheetDescription>
-            Foreslå merke, modell og år. Innsendingen vurderes før den vises offentlig.
+            Du kan sende flere forslag over tid — fyll inn det du vet nå.
           </SheetDescription>
         </SheetHeader>
         <div className="mt-4">
