@@ -19,11 +19,12 @@ type Props = {
   onOpenChange: (open: boolean) => void;
   carId: string;
   carSlug: string;
+  onClaimSuccess?: () => void;
 };
 
 const NOTE_MAX = 600;
 
-export function ClaimCarSheet({ open, onOpenChange, carId, carSlug }: Props) {
+export function ClaimCarSheet({ open, onOpenChange, carId, carSlug, onClaimSuccess }: Props) {
   const navigate = useNavigate();
   const [note, setNote] = useState("");
   const [confirmed, setConfirmed] = useState(false);
