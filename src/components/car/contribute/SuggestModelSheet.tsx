@@ -13,9 +13,10 @@ type Props = {
   onOpenChange: (open: boolean) => void;
   carId: string;
   carSlug: string;
+  onApplied?: () => void;
 };
 
-export function SuggestModelSheet({ open, onOpenChange, carId, carSlug }: Props) {
+export function SuggestModelSheet({ open, onOpenChange, carId, carSlug, onApplied }: Props) {
   const navigate = useNavigate();
 
   return (
