@@ -56,11 +56,12 @@ export function ClaimCarSheet({ open, onOpenChange, carId, carSlug, onClaimSucce
         } else if (res?.error === "car_not_found") {
           toast.error("Fant ikke bilen.");
         } else {
-          toast.error("Kunne ikke fullføre overtakelse.");
+          toast.error("Kunne ikke knytte deg til bilen. Prøv igjen.");
         }
         return;
       }
       reset();
+      onClaimSuccess?.();
       onOpenChange(false);
       const q = new URLSearchParams({ car: carSlug, type: "claim", steward: "1" });
       navigate(`/bidrag-sendt?${q.toString()}`);
