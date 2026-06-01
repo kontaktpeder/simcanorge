@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useParams, Link, useSearchParams, useNavigate, useLocation } from "react-router-dom";
 import { SeoHead } from "@/components/seo";
 import { Layout } from "@/components/layout/Layout";
@@ -244,70 +244,67 @@ const BilDetalj = () => {
 
   const currentUrl = typeof window !== "undefined" ? window.location.href : "";
 
-  useEffect(() => {
-    const fetchCar = async () => {
-      if (!slug) return;
+  const loadCar = useCallback(async () => {
+    if (!slug) return;
+    setIsLoading(true);
 
-      const { data, error } = await supabase
-        .from("cars")
-        .select(`
-          id, title, slug, brand, model, variant, body_type, year, story, 
-          overhauled, tags, featured, published_at, created_at, updated_at, category,
-          external_links, timeline_events, source, identification_status,
-          car_images(id, image_url, alt_text, sort_order),
-          car_events(id, description, category, event_type, visibility, occurred_at, data, car_event_images(image_url, alt_text, sort_order)),
-          car_owners!car_owners_car_id_fkey(user_id, role)
-        `)
-        .eq("slug", slug)
-        .not("published_at", "is", null)
-        .maybeSingle();
+    const { data, error } = await supabase
+      .from("cars")
+      .select(`
+        id, title, slug, brand, model, variant, body_type, year, story, 
+        overhauled, tags, featured, published_at, created_at, updated_at, category,
+        external_links, timeline_events, source, identification_status,
+        car_images(id, image_url, alt_text, sort_order),
+        car_events(id, description, category, event_type, visibility, occurred_at, data, car_event_images(image_url, alt_text, sort_order)),
+        car_owners!car_owners_car_id_fkey(user_id, role)
+      `)
+      .eq("slug", slug)
+      .not("published_at", "is", null)
+      .maybeSingle();
 
-      if (error) {
-        console.error("Error fetching car:", error);
-      } else {
-        // Parse JSONB fields
-        const parsed = data ? {
-          ...data,
-          external_links: (data.external_links as unknown) as ExternalLinkData[] | null,
-          timeline_events: (data.timeline_events as unknown) as TimelineEvent[] | null,
-          owner_profile_id: null as string | null,
-        } : null;
-        // Resolve owner_profile_id from car_owners join
-        if (parsed && (data as any).car_owners?.length > 0) {
-          // Look up person_profile by user_id
-          const ownerUserId = (data as any).car_owners[0].user_id;
-          const { data: pp } = await supabase
-            .from("public_person_profiles")
-            .select("id")
-            .eq("user_id", ownerUserId)
-            .maybeSingle();
-          if (pp) parsed.owner_profile_id = pp.id;
-        }
-        // Spotting fallback: if no car_images, build a synthetic one from latest public car_event image
-        if (parsed) {
-          const hasCarImages = Array.isArray(parsed.car_images) && parsed.car_images.length > 0;
-          if (!hasCarImages && (parsed as any).source === "spotting") {
-            const { resolveSpottingCoverFromRow } = await import("@/lib/spottingMedia");
-            const cover = resolveSpottingCoverFromRow(parsed as any);
-            if (cover?.image_url) {
-              (parsed as any).car_images = [
-                {
-                  id: "spotting-event-cover",
-                  image_url: cover.image_url,
-                  alt_text: cover.alt_text ?? parsed.title,
-                  sort_order: 0,
-                },
-              ];
-            }
+    if (error) {
+      console.error("Error fetching car:", error);
+    } else {
+      const parsed = data ? {
+        ...data,
+        external_links: (data.external_links as unknown) as ExternalLinkData[] | null,
+        timeline_events: (data.timeline_events as unknown) as TimelineEvent[] | null,
+        owner_profile_id: null as string | null,
+      } : null;
+      if (parsed && (data as any).car_owners?.length > 0) {
+        const ownerUserId = (data as any).car_owners[0].user_id;
+        const { data: pp } = await supabase
+          .from("public_person_profiles")
+          .select("id")
+          .eq("user_id", ownerUserId)
+          .maybeSingle();
+        if (pp) parsed.owner_profile_id = pp.id;
+      }
+      if (parsed) {
+        const hasCarImages = Array.isArray(parsed.car_images) && parsed.car_images.length > 0;
+        if (!hasCarImages && (parsed as any).source === "spotting") {
+          const { resolveSpottingCoverFromRow } = await import("@/lib/spottingMedia");
+          const cover = resolveSpottingCoverFromRow(parsed as any);
+          if (cover?.image_url) {
+            (parsed as any).car_images = [
+              {
+                id: "spotting-event-cover",
+                image_url: cover.image_url,
+                alt_text: cover.alt_text ?? parsed.title,
+                sort_order: 0,
+              },
+            ];
           }
         }
-        setCar(parsed as CarDetail | null);
       }
-      setIsLoading(false);
-    };
-
-    fetchCar();
+      setCar(parsed as CarDetail | null);
+    }
+    setIsLoading(false);
   }, [slug]);
+
+  useEffect(() => {
+    void loadCar();
+  }, [loadCar]);
 
   const cleanShareUrl = car ? `${SITE_URL}/biler/${car.slug}` : currentUrl;
   const crawlerShareUrl = car
@@ -664,7 +661,9 @@ const BilDetalj = () => {
             onOpenChange={setContributionClaimOpen}
             carId={car.id}
             carSlug={car.slug}
+            onClaimSuccess={() => { void loadCar(); }}
           />
+
 
         </>
       ) : (

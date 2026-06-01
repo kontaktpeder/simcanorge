@@ -19,11 +19,12 @@ type Props = {
   onOpenChange: (open: boolean) => void;
   carId: string;
   carSlug: string;
+  onClaimSuccess?: () => void;
 };
 
 const NOTE_MAX = 600;
 
-export function ClaimCarSheet({ open, onOpenChange, carId, carSlug }: Props) {
+export function ClaimCarSheet({ open, onOpenChange, carId, carSlug, onClaimSuccess }: Props) {
   const navigate = useNavigate();
   const [note, setNote] = useState("");
   const [confirmed, setConfirmed] = useState(false);
@@ -55,11 +56,12 @@ export function ClaimCarSheet({ open, onOpenChange, carId, carSlug }: Props) {
         } else if (res?.error === "car_not_found") {
           toast.error("Fant ikke bilen.");
         } else {
-          toast.error("Kunne ikke fullføre overtakelse.");
+          toast.error("Kunne ikke knytte deg til bilen. Prøv igjen.");
         }
         return;
       }
       reset();
+      onClaimSuccess?.();
       onOpenChange(false);
       const q = new URLSearchParams({ car: carSlug, type: "claim", steward: "1" });
       navigate(`/bidrag-sendt?${q.toString()}`);
@@ -77,9 +79,9 @@ export function ClaimCarSheet({ open, onOpenChange, carId, carSlug }: Props) {
         <SheetHeader className="text-left">
           <SheetTitle>Er dette din bil?</SheetTitle>
           <SheetDescription>
-            Når du overtar bilen, blir du forvalter av siden. Du kan redigere informasjon,
-            legge til bilder og bygge historien videre.
+            Du blir forvalter av bilsiden og kan legge til bilder, informasjon og innlegg.
           </SheetDescription>
+
         </SheetHeader>
         <div className="mt-4 space-y-4">
           <div>
@@ -102,7 +104,7 @@ export function ClaimCarSheet({ open, onOpenChange, carId, carSlug }: Props) {
               className="mt-0.5"
             />
             <span className="text-foreground/90 leading-snug">
-              Jeg har tilknytning til bilen og vil forvalte siden.
+              Jeg vil forvalte denne bilsiden.
             </span>
           </label>
 
@@ -112,7 +114,7 @@ export function ClaimCarSheet({ open, onOpenChange, carId, carSlug }: Props) {
             disabled={pending || !confirmed}
             className="w-full min-h-[48px]"
           >
-            {pending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Overta som forvalter"}
+            {pending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Dette er min bil"}
           </Button>
         </div>
       </SheetContent>
