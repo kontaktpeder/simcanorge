@@ -104,7 +104,7 @@ export function ClaimCarSheet({ open, onOpenChange, carId, carSlug, onClaimSucce
               className="mt-0.5"
             />
             <span className="text-foreground/90 leading-snug">
-              Jeg har tilknytning til bilen og vil forvalte siden.
+              Jeg vil forvalte denne bilsiden.
             </span>
           </label>
 
@@ -114,7 +114,7 @@ export function ClaimCarSheet({ open, onOpenChange, carId, carSlug, onClaimSucce
             disabled={pending || !confirmed}
             className="w-full min-h-[48px]"
           >
-            {pending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Overta som forvalter"}
+            {pending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Dette er min bil"}
           </Button>
         </div>
       </SheetContent>
