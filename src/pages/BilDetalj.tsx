@@ -648,6 +648,7 @@ const BilDetalj = () => {
             onOpenChange={setContributionModelOpen}
             carId={car.id}
             carSlug={car.slug}
+            onApplied={() => { void loadCar(); }}
           />
           <SuggestCorrectionSheet
             open={contributionCorrectionOpen}
