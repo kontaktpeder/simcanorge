@@ -79,9 +79,9 @@ export function ClaimCarSheet({ open, onOpenChange, carId, carSlug, onClaimSucce
         <SheetHeader className="text-left">
           <SheetTitle>Er dette din bil?</SheetTitle>
           <SheetDescription>
-            Når du overtar bilen, blir du forvalter av siden. Du kan redigere informasjon,
-            legge til bilder og bygge historien videre.
+            Du blir forvalter av bilsiden og kan legge til bilder, informasjon og innlegg.
           </SheetDescription>
+
         </SheetHeader>
         <div className="mt-4 space-y-4">
           <div>
