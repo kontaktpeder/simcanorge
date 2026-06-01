@@ -32,6 +32,7 @@ export function SuggestModelSheet({ open, onOpenChange, carId, carSlug, onApplie
           <IdentifyKnowledgeFlow
             carId={carId}
             onDone={() => {
+              onApplied?.();
               onOpenChange(false);
               navigate(`/bidrag-sendt?car=${encodeURIComponent(carSlug)}&type=model`);
             }}
