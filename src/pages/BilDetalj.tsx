@@ -661,7 +661,9 @@ const BilDetalj = () => {
             onOpenChange={setContributionClaimOpen}
             carId={car.id}
             carSlug={car.slug}
+            onClaimSuccess={() => { void loadCar(); }}
           />
+
 
         </>
       ) : (
