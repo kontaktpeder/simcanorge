@@ -10,8 +10,8 @@ export const PUBLIC_SITE_URL: string =
 export const FEATURES = {
 
   /**
-   * Hides/de-prioritises secondary modules (marketplace, clubs, events, aktører)
-   * to focus the launch on the core "share your car" flow.
+   * Hides secondary modules (marketplace, clubs, events, aktører, sider)
+   * while keeping core garage + account available.
    */
   simpleLaunchMode: import.meta.env.VITE_FEATURE_SIMPLE_LAUNCH_MODE !== "false",
   /**

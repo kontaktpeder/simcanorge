@@ -27,7 +27,7 @@ function routeToSection(pathname: string): string | null {
   return null;
 }
 
-export function GlobalSearch() {
+export function GlobalSearch({ variant = "light" }: { variant?: "light" | "dark" }) {
   const [inputValue, setInputValue] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
   const [open, setOpen] = useState(false);
@@ -35,6 +35,7 @@ export function GlobalSearch() {
   const containerRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const location = useLocation();
+  const isDark = variant === "dark";
 
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedQuery(inputValue), 300);
@@ -92,7 +93,11 @@ export function GlobalSearch() {
 
   return (
     <div ref={containerRef} className="relative w-full">
-      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#1a1a1a]/25" />
+      <Search
+        className={`absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 ${
+          isDark ? "text-white/70" : "text-[#1a1a1a]/25"
+        }`}
+      />
       <input
         ref={inputRef}
         type="text"
@@ -102,11 +107,20 @@ export function GlobalSearch() {
           setOpen(true);
         }}
         onFocus={() => setOpen(true)}
-        placeholder="Søk etter biler, deler, arrangement..."
-        className="w-full bg-transparent border-b border-[#1a1a1a]/[0.12] pl-9 pr-8 py-1.5 text-[12px] text-[#1a1a1a]/70 placeholder:text-[#1a1a1a]/25 focus:outline-none focus:border-[#c4962c]/50 transition-all tracking-wide"
+        placeholder="Søk etter biler…"
+        className={`w-full pl-9 pr-8 py-2 text-[14px] tracking-wide focus:outline-none transition-all rounded-md ${
+          isDark
+            ? "bg-white/10 border border-white/25 text-white placeholder:text-white/55 focus:border-white/50 focus:bg-white/15"
+            : "bg-transparent border-b border-[#1a1a1a]/[0.12] text-[#1a1a1a]/70 placeholder:text-[#1a1a1a]/25 focus:border-[#c4962c]/50"
+        }`}
       />
       {inputValue && (
-        <button onClick={handleClear} className="absolute right-2 top-1/2 -translate-y-1/2 text-[#1a1a1a]/25 hover:text-[#1a1a1a]/50 transition-colors">
+        <button
+          onClick={handleClear}
+          className={`absolute right-2 top-1/2 -translate-y-1/2 transition-colors ${
+            isDark ? "text-white/60 hover:text-white" : "text-[#1a1a1a]/25 hover:text-[#1a1a1a]/50"
+          }`}
+        >
           <X className="w-3.5 h-3.5" />
         </button>
       )}

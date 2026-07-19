@@ -3,12 +3,13 @@ import { Link, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import { Car, Plus, ChevronRight, ArrowLeft } from "lucide-react";
+import { Car, Plus, ChevronRight, ArrowLeft, User, Settings } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { Layout } from "@/components/layout/Layout";
 import { BrandLoader } from "@/components/brand/BrandLoader";
 import { track, trackScreenViewOnce } from "@/lib/analytics";
+import { SITE_NAME } from "@/config/site";
 
 const SCREEN = "garage";
 
@@ -17,7 +18,6 @@ const VV_BG = "#f3f3f3";
 const VV_YELLOW = "#fcc419";
 const VV_YELLOW_SOFT = "#fff4d1";
 const VV_DARK = "#2b2b2b";
-const VV_ORANGE = "#ff8a00";
 
 const fontStack = { fontFamily: "'Inter', 'Helvetica Neue', Arial, sans-serif" } as const;
 
@@ -93,7 +93,7 @@ export default function MinGarasje() {
   return (
     <Layout>
       <Helmet>
-        <title>Min garasje — Bilgarasje.no</title>
+        <title>Min garasje — {SITE_NAME}</title>
       </Helmet>
 
       <div className="min-h-screen pb-32 text-neutral-900" style={{ backgroundColor: VV_BG, ...fontStack }}>
@@ -109,8 +109,21 @@ export default function MinGarasje() {
               <ArrowLeft className="w-5 h-5" strokeWidth={2} />
             </button>
             <h1 className="text-[15px] font-semibold tracking-tight">Min garasje</h1>
-            <div className="ml-auto h-1.5 w-24 rounded-full overflow-hidden bg-black/5">
-              <div className="h-full w-full" style={{ backgroundColor: VV_ORANGE }} />
+            <div className="ml-auto flex items-center gap-2">
+              <Link
+                to="/dashboard/min-profil"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-semibold text-neutral-700 bg-black/[0.04] hover:bg-black/[0.07] transition-colors"
+              >
+                <User className="w-3.5 h-3.5" />
+                Profil
+              </Link>
+              <Link
+                to="/konto"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-semibold text-neutral-700 bg-black/[0.04] hover:bg-black/[0.07] transition-colors"
+              >
+                <Settings className="w-3.5 h-3.5" />
+                Konto
+              </Link>
             </div>
           </div>
         </div>
