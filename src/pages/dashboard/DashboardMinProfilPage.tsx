@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
-import { Link, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { useMyPersonProfile } from "@/hooks/useMyPersonProfile";
-import { useAuth } from "@/hooks/useAuth";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CompleteProfileForm } from "@/components/profile/CompleteProfileForm";
