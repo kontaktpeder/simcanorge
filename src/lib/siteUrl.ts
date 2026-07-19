@@ -6,16 +6,16 @@ const ENV_URL =
   (import.meta.env.VITE_PUBLIC_SITE_URL as string | undefined) ??
   (import.meta.env.VITE_SITE_URL as string | undefined);
 
-const DEFAULT_ORIGIN = "https://bilgarasje.no";
+const DEFAULT_ORIGIN = "https://simcanorge.no";
 
 export function getSiteUrl(): string {
   if (typeof window !== "undefined") {
     const host = window.location.hostname;
-    if (host === "bilgarasje.no" || host.endsWith(".bilgarasje.no")) {
+    if (host === "simcanorge.no" || host.endsWith(".simcanorge.no")) {
       return DEFAULT_ORIGIN;
     }
-    if (host === "simcanorge.no" || host.endsWith(".simcanorge.no")) {
-      // Under migrering; canonical skal fortsatt peke til hoveddomene
+    if (host === "bilgarasje.no" || host.endsWith(".bilgarasje.no")) {
+      // Legacy-domene under tilbakeføring til Simca Norge
       return DEFAULT_ORIGIN;
     }
   }
@@ -31,4 +31,4 @@ export function buildCanonicalUrl(path: string): string {
   return `${base}${normalized}`;
 }
 
-export const DEFAULT_OG_IMAGE = `${DEFAULT_ORIGIN}/og-image-bilgarasje-v2.png`;
+export const DEFAULT_OG_IMAGE = `${DEFAULT_ORIGIN}/og-image.png`;

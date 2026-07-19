@@ -73,26 +73,26 @@ export function SeoHead({
 /** Standard defaults for sider uten egen copy */
 export const SEO_COPY = {
   biler: {
-    title: "Arkivet — Biler dokumentert i Norge | Bilgarasje.no",
+    title: "Arkivet — Simca, Talbot og Matra i Norge | Simca Norge",
     description:
-      "Utforsk historier om biler i Norge. Søk etter merke, modell og årstall i bilarkivet.",
+      "Utforsk historier om Simca, Talbot og Matra i Norge. Søk etter modell og årstall i bilarkivet.",
     canonicalPath: "/biler",
   },
   utforsk: {
-    title: "Utforsk — Bilgarasje.no",
+    title: "Utforsk — Simca Norge",
     description:
-      "Se innlegg fra norske bileiere — bilder, historier og oppdateringer om biler.",
+      "Se innlegg fra Simca-miljøet i Norge — bilder, historier og oppdateringer.",
     canonicalPath: "/hjem",
   },
   markedsplass: {
-    title: "Markedsplass | Bilgarasje.no",
-    description: "Deler, tilbehør og annonser for bilentusiaster i Norge.",
+    title: "Markedsplass | Simca Norge",
+    description: "Deler, tilbehør og annonser for Simca, Talbot og Matra.",
     canonicalPath: "/markedsplass",
   },
   onboarding: {
-    title: "Legg inn bilen din | Bilgarasje.no",
+    title: "Legg inn bilen din | Simca Norge",
     description:
-      "Gi bilen din en skikkelig plass på nett. Bilder, historie og en delbar bilside.",
+      "Gi Simcaen din en skikkelig plass på nett. Bilder, historie og en delbar bilside.",
     canonicalPath: "/legg-inn-bil",
   },
 } as const;

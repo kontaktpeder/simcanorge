@@ -19,7 +19,7 @@ if (existsSync(envPath)) {
   }
 }
 
-const SITE_URL = (process.env.VITE_SITE_URL || "https://bilgarasje.no").replace(/\/$/, "");
+const SITE_URL = (process.env.VITE_SITE_URL || "https://simcanorge.no").replace(/\/$/, "");
 const supabaseUrl = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL;
 const supabaseKey = process.env.VITE_SUPABASE_PUBLISHABLE_KEY || process.env.SUPABASE_ANON_KEY;
 

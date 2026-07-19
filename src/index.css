@@ -37,10 +37,10 @@ input, textarea, select, [contenteditable="true"] {
 
 @layer base {
   :root {
-    /* Core metallic palette — modern dark teal */
-    --metal-blue: 200 70% 38%;
-    --metal-blue-dark: 205 75% 22%;
-    --metal-blue-light: 174 80% 50%;
+    /* Core metallic palette — Simca enamel blue */
+    --metal-blue: 210 75% 40%;
+    --metal-blue-dark: 212 80% 27%;
+    --metal-blue-light: 210 85% 62%;
     --badge-red: 2 85% 40%;
     --badge-red-dark: 2 85% 28%;
     --chrome-border: 210 8% 28%;
@@ -49,7 +49,7 @@ input, textarea, select, [contenteditable="true"] {
     --chrome-dark: 210 10% 12%;
     --offwhite: 210 15% 96%;
     
-    /* Semantic tokens — dark-first modern palette */
+    /* Semantic tokens — dark-first metallic blue */
     --background: 215 28% 7%;
     --foreground: 210 15% 92%;
 
@@ -59,8 +59,8 @@ input, textarea, select, [contenteditable="true"] {
     --popover: 215 25% 10%;
     --popover-foreground: 210 15% 92%;
 
-    --primary: 168 70% 42%;
-    --primary-foreground: 215 28% 7%;
+    --primary: 210 75% 40%;
+    --primary-foreground: 0 0% 100%;
 
     --secondary: 215 20% 14%;
     --secondary-foreground: 210 15% 85%;
@@ -68,30 +68,30 @@ input, textarea, select, [contenteditable="true"] {
     --muted: 215 18% 16%;
     --muted-foreground: 210 10% 55%;
 
-    --accent: 168 70% 42%;
-    --accent-foreground: 215 28% 7%;
+    --accent: 210 75% 40%;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
     --border: 215 15% 18%;
     --input: 215 15% 16%;
-    --ring: 168 70% 42%;
+    --ring: 210 75% 40%;
 
     --radius: 0.5rem;
 
     /* Sidebar tokens */
     --sidebar-background: 215 28% 9%;
     --sidebar-foreground: 210 15% 92%;
-    --sidebar-primary: 168 70% 42%;
-    --sidebar-primary-foreground: 215 28% 7%;
+    --sidebar-primary: 210 75% 40%;
+    --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 215 25% 14%;
     --sidebar-accent-foreground: 210 15% 92%;
     --sidebar-border: 215 15% 18%;
-    --sidebar-ring: 168 70% 42%;
+    --sidebar-ring: 210 75% 40%;
     
     /* Legacy simca tokens for backwards compatibility */
-    --simca-blue: 200 70% 38%;
+    --simca-blue: 210 75% 40%;
     --simca-red: 2 85% 40%;
     --simca-cream: 210 15% 96%;
     --simca-gray: 210 10% 55%;
@@ -100,8 +100,8 @@ input, textarea, select, [contenteditable="true"] {
     --page-bg: 215 28% 5%;
     --page-card: 215 25% 8%;
     --page-card-border: 215 15% 16%;
-    --page-accent: 168 70% 42%;
-    --page-accent-light: 168 80% 55%;
+    --page-accent: 210 75% 40%;
+    --page-accent-light: 210 85% 55%;
     --page-text: 0 0% 100%;
     --page-text-muted: 210 10% 55%;
   }
@@ -116,7 +116,7 @@ input, textarea, select, [contenteditable="true"] {
     --popover: 215 28% 8%;
     --popover-foreground: 210 15% 92%;
 
-    --primary: 168 70% 45%;
+    --primary: 210 85% 55%;
     --primary-foreground: 0 0% 100%;
 
     --secondary: 215 22% 12%;
@@ -125,7 +125,7 @@ input, textarea, select, [contenteditable="true"] {
     --muted: 215 22% 14%;
     --muted-foreground: 210 10% 60%;
 
-    --accent: 168 70% 45%;
+    --accent: 210 85% 55%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 62% 35%;
@@ -133,16 +133,16 @@ input, textarea, select, [contenteditable="true"] {
 
     --border: 215 18% 16%;
     --input: 215 18% 16%;
-    --ring: 168 70% 45%;
+    --ring: 210 85% 55%;
 
     --sidebar-background: 215 30% 5%;
     --sidebar-foreground: 210 15% 92%;
-    --sidebar-primary: 168 70% 45%;
+    --sidebar-primary: 210 85% 55%;
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 215 28% 12%;
     --sidebar-accent-foreground: 210 15% 92%;
     --sidebar-border: 215 18% 16%;
-    --sidebar-ring: 168 70% 45%;
+    --sidebar-ring: 210 85% 55%;
   }
 }
 

@@ -55,7 +55,7 @@ const SokOmTilgang = lazy(() => import("@/pages/SokOmTilgang"));
 const RegistrerBruker = lazy(() => import("@/pages/RegistrerBruker"));
 const StartAnnonse = lazy(() => import("@/pages/StartAnnonse"));
 const RegistrerBil = lazy(() => import("@/pages/RegistrerBil"));
-const Hjem = lazy(() => import("@/pages/Hjem"));
+const Forside = lazy(() => import("@/pages/Forside"));
 const AppEntry = lazy(() => import("@/pages/AppEntry"));
 const Konto = lazy(() => import("@/pages/Konto"));
 const Foresporsel = lazy(() => import("@/pages/Foresporsel"));
@@ -135,20 +135,20 @@ export interface RouteConfig {
 
 const rawRoutes: RouteConfig[] = [
   // Public routes with navigation
-  { path: "/", element: Hjem, label: "Hjem", description: "Min garasje", icon: Home, isPublic: true, showInNav: false },
+  { path: "/", element: Forside, label: "Hjem", description: "Simca Norge-forsiden", icon: Home, isPublic: true, showInNav: false },
   { path: "/app", element: AppEntry, isPublic: true, showInNav: false },
   { path: "/legg-inn-bil", element: RegistrerBil, label: "Legg inn bil", description: "Legg inn bilen din", icon: Home, isPublic: true, showInNav: true },
-  { path: "/hjem", element: Index, label: "Utforsk", description: "Forsiden med biler og historier", icon: Home, isPublic: true, showInNav: false },
+  { path: "/hjem", element: Index, label: "Utforsk", description: "Feed med biler og historier", icon: Home, isPublic: true, showInNav: false },
   { path: "/manedens-bil", element: ManedensBil, label: "Månedens bil", description: "Se denne månedens utvalgte bil", icon: Star, glow: true, isPublic: true, showInNav: true },
-  { path: "/biler", element: Biler, label: "Biler", description: "Utforsk biler og historier fra hele Norge", icon: Car, isPublic: true, showInNav: true },
+  { path: "/biler", element: Biler, label: "Biler", description: "Utforsk Simca, Talbot og Matra i Norge", icon: Car, isPublic: true, showInNav: true },
   { path: "/ukjente-biler", element: UkjenteBiler, label: "Ukjente biler", description: "Hjelp å identifisere spottede biler", icon: HelpCircle, isPublic: true, showInNav: false },
   { path: "/markedsplass/:branch", element: Markedsplass, isPublic: true },
   { path: "/markedsplass", element: Markedsplass, label: "Markedsplass", description: "Deler, tilbehør og annonser", icon: ShoppingBag, isPublic: true, showInNav: true },
   { path: "/arrangement", element: EventsPage, label: "Arrangement", description: "Kommende biltreff og events", icon: CalendarDays, isPublic: true, showInNav: true },
   { path: "/send-inn", element: SendInnBil, isPublic: true, showInNav: false },
   { path: "/legg-til-bil", element: LeggTilBil, isPublic: true, showInNav: false },
-  { path: "/historie", element: Historie, label: "Historie", description: "Lær om bilhistorien vår", icon: BookOpen, isPublic: true, showInNav: true },
-  { path: "/om-oss", element: OmOss, label: "Om oss", description: "Hvem står bak Bilgarasje.no", icon: Users, isPublic: true, showInNav: true },
+  { path: "/historie", element: Historie, label: "Historie", description: "Lær om Simca-historien", icon: BookOpen, isPublic: true, showInNav: true },
+  { path: "/om-oss", element: OmOss, label: "Om oss", description: "Hvem står bak Simca Norge", icon: Users, isPublic: true, showInNav: true },
   { path: "/kontakt", element: Kontakt, label: "Kontakt", description: "Ta kontakt med oss", icon: Mail, isPublic: true, showInNav: true },
 
   // Public routes without navigation

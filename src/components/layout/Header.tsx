@@ -5,7 +5,7 @@ import { HeroSearch } from "@/components/layout/HeroSearch";
 import { useHideOnScroll } from "@/hooks/useHideOnScroll";
 import { useAuth } from "@/hooks/useAuth";
 import { useFeatures } from "@/hooks/useFeatures";
-import bilgarasjeLogo from "@/assets/bilgarasje-logo.png";
+import simcaLogo from "@/assets/simca-norge-badge.png";
 
 // Vegvesen-inspirert lys palett (matcher /min-garasje, PublishComposer, BilDetalj)
 const VV_BG = "#f3f3f3";
@@ -98,13 +98,12 @@ export function Header() {
           <Link
             to="/"
             className="flex justify-center items-center group min-w-0 h-14 md:h-16 overflow-hidden"
-            aria-label="Bilgarasje.no — hjem"
+            aria-label="Simca Norge — hjem"
           >
             <img
-              src={bilgarasjeLogo}
-              alt="Bilgarasje.no"
-              className="h-20 md:h-24 w-auto transition-opacity duration-200 group-hover:opacity-80 pointer-events-none"
-              style={{ filter: "contrast(1.05)" }}
+              src={simcaLogo}
+              alt="Simca Norge"
+              className="h-12 md:h-14 w-auto transition-opacity duration-200 group-hover:opacity-80 pointer-events-none"
             />
           </Link>
 
