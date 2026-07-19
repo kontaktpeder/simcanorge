@@ -85,6 +85,7 @@ async function main() {
       .from("cars")
       .select("slug, updated_at, published_at")
       .not("published_at", "is", null)
+      .not("approved_at", "is", null)
       .lte("published_at", new Date().toISOString());
 
     if (error) {

@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 import { Calendar, ArrowRight, Star } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getResponsiveImageProps, IMAGE_SIZES } from "@/lib/imageUtils";
+import { applyPublicCarsApprovalFilter } from "@/lib/publicCarsFilter";
 interface Car {
   id: string;
   slug: string;
@@ -35,7 +36,8 @@ const ManedensBil = () => {
       const {
         data,
         error
-      } = await supabase.from("cars").select(`
+      } = await applyPublicCarsApprovalFilter(
+        supabase.from("cars").select(`
           *,
           car_images (
             image_url,
@@ -43,8 +45,9 @@ const ManedensBil = () => {
             sort_order
           )
         `).eq("featured", true).not("published_at", "is", null).lte("published_at", new Date().toISOString()).order("published_at", {
-        ascending: false
-      }).limit(1).maybeSingle();
+          ascending: false
+        }).limit(1)
+      ).maybeSingle();
       if (error) throw error;
       return data as Car | null;
     }
@@ -59,7 +62,8 @@ const ManedensBil = () => {
       const {
         data,
         error
-      } = await supabase.from("cars").select(`
+      } = await applyPublicCarsApprovalFilter(
+        supabase.from("cars").select(`
           *,
           car_images (
             image_url,
@@ -67,8 +71,9 @@ const ManedensBil = () => {
             sort_order
           )
         `).not("published_at", "is", null).lte("published_at", new Date().toISOString()).order("published_at", {
-        ascending: false
-      }).limit(6);
+          ascending: false
+        }).limit(6)
+      );
       if (error) throw error;
 
       // Filter out the current featured car if it exists

@@ -15,6 +15,10 @@ import {
 import { BrandLoader } from "@/components/brand/BrandLoader";
 import { track, trackScreenViewOnce } from "@/lib/analytics";
 import { SITE_NAME } from "@/config/site";
+import {
+  PUBLIC_CARS_REQUIRE_ADMIN_APPROVAL,
+  isCarAdminApproved,
+} from "@/lib/publicCarsFilter";
 
 const SCREEN = "garage";
 
@@ -36,6 +40,7 @@ interface CarData {
   brand: string | null;
   model: string;
   published_at: string | null;
+  approved_at: string | null;
   car_images: CarImage[];
 }
 interface MyCar {
@@ -64,7 +69,7 @@ export default function MinGarasje() {
         .from("car_owners")
         .select(
           `car_id, role,
-           cars:car_id (id, title, slug, status, year, brand, model, published_at,
+           cars:car_id (id, title, slug, status, year, brand, model, published_at, approved_at,
              car_images(id, image_url, sort_order))`
         )
         .eq("user_id", user.id)
@@ -90,6 +95,9 @@ export default function MinGarasje() {
   const cars = (myCars ?? []).map((c) => c.cars).filter(Boolean);
   const published = cars.filter((c) => !!c.published_at).length;
   const drafts = cars.length - published;
+  const hiddenFromPublic =
+    PUBLIC_CARS_REQUIRE_ADMIN_APPROVAL &&
+    cars.some((c) => !!c.published_at && !isCarAdminApproved(c));
 
   return (
     <Layout>
@@ -138,6 +146,23 @@ export default function MinGarasje() {
             </p>
           )}
         </div>
+
+        {hiddenFromPublic && (
+          <div
+            className="mb-5 rounded-2xl border border-black/[0.08] bg-white p-4 sm:p-5"
+            role="status"
+          >
+            <p className="text-[15px] font-semibold text-neutral-900 leading-snug">
+              Noen av bilene dine er skjult for gjester
+            </p>
+            <p className="text-[13px] text-neutral-600 mt-1.5 leading-relaxed">
+              Vi bygger Simca-siden nå, og slipper andre merker inn i garasjen senere.
+              Bilene dine er trygge her — de vises ikke i offentlige lister før admin
+              har godkjent dem, men du når dem fortsatt via direkte lenke og her i
+              garasjen.
+            </p>
+          </div>
+        )}
 
         {isAdmin && (
           <Link
@@ -210,6 +235,8 @@ export default function MinGarasje() {
 function CarTile({ car, index }: { car: CarData; index: number }) {
   const img = car.car_images?.sort((a, b) => (a.sort_order ?? 99) - (b.sort_order ?? 99))[0];
   const isPublished = !!car.published_at;
+  const isHiddenPublic =
+    PUBLIC_CARS_REQUIRE_ADMIN_APPROVAL && isPublished && !isCarAdminApproved(car);
   const to = isPublished ? `/biler/${car.slug}` : `/dashboard/bil/${car.id}`;
 
   return (
@@ -243,13 +270,20 @@ function CarTile({ car, index }: { car: CarData; index: number }) {
               Kladd
             </span>
           )}
+          {isHiddenPublic && (
+            <span className="absolute top-2 left-2 px-2 py-0.5 rounded-full text-[10px] uppercase tracking-wider font-bold bg-white/95 text-neutral-800 border border-black/10">
+              Skjult
+            </span>
+          )}
         </div>
         <div className="p-3">
           <p className="text-[13px] font-semibold text-neutral-900 truncate leading-snug">
             {car.title}
           </p>
           <p className="text-[11px] text-neutral-500 mt-0.5">
-            {car.year ?? (isPublished ? "Publisert" : "Kladd")}
+            {isHiddenPublic
+              ? "Venter på godkjenning"
+              : car.year ?? (isPublished ? "Publisert" : "Kladd")}
           </p>
         </div>
       </Link>

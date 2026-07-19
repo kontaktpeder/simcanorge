@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toBrandKey } from "@/lib/brandSlug";
 import { getRelatedBrandKeys } from "@/data/brandRelations";
+import { applyPublicCarsApprovalFilter } from "@/lib/publicCarsFilter";
 
 /** Brand hub page (pages where page_type_variant = 'brand') */
 export function useBrandHubPage(brandKey: string | undefined) {
@@ -33,14 +34,16 @@ export function useBrandHubCars(brandKey: string | undefined, limit = 25) {
     queryKey: ["brand-hub-cars", brandKey, limit],
     queryFn: async () => {
       if (!brandKey) return [];
-      const { data, error } = await supabase
-        .from("cars")
-        .select(`id, title, slug, brand, model, year, car_images(image_url, sort_order)`)
-        .ilike("brand", brandKey)
-        .not("published_at", "is", null)
-        .lte("published_at", new Date().toISOString())
-        .order("published_at", { ascending: false })
-        .limit(limit);
+      const { data, error } = await applyPublicCarsApprovalFilter(
+        supabase
+          .from("cars")
+          .select(`id, title, slug, brand, model, year, car_images(image_url, sort_order)`)
+          .ilike("brand", brandKey)
+          .not("published_at", "is", null)
+          .lte("published_at", new Date().toISOString())
+          .order("published_at", { ascending: false })
+          .limit(limit),
+      );
       if (error) throw error;
       return data ?? [];
     },
@@ -60,13 +63,15 @@ export function useBrandHubModels(brandKey: string | undefined) {
     queryKey: ["brand-hub-models", brandKey],
     queryFn: async (): Promise<BrandHubModel[]> => {
       if (!brandKey) return [];
-      const { data, error } = await supabase
-        .from("cars")
-        .select(`model, slug, car_images(image_url, sort_order)`)
-        .ilike("brand", brandKey)
-        .not("model", "is", null)
-        .not("published_at", "is", null)
-        .lte("published_at", new Date().toISOString());
+      const { data, error } = await applyPublicCarsApprovalFilter(
+        supabase
+          .from("cars")
+          .select(`model, slug, car_images(image_url, sort_order)`)
+          .ilike("brand", brandKey)
+          .not("model", "is", null)
+          .not("published_at", "is", null)
+          .lte("published_at", new Date().toISOString()),
+      );
       if (error) throw error;
       const grouped = new Map<string, BrandHubModel>();
       for (const row of data ?? []) {

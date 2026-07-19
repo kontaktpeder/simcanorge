@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { applyPublicCarsApprovalFilter } from "@/lib/publicCarsFilter";
 
 export interface SearchResult {
   id: string;
@@ -25,12 +26,14 @@ export function useGlobalSearch(debouncedQuery: string) {
     queryKey: ["global-search", q],
     queryFn: async () => {
       const [carsRes, eventsRes, marketRes, pagesRes, partsRes] = await Promise.allSettled([
-        supabase
-          .from("cars")
-          .select("id, title, slug, year, brand, model, car_images(image_url, sort_order)")
-          .eq("status", "published")
-          .or(`title.ilike.%${safe}%,model.ilike.%${safe}%,brand.ilike.%${safe}%`)
-          .limit(5),
+        applyPublicCarsApprovalFilter(
+          supabase
+            .from("cars")
+            .select("id, title, slug, year, brand, model, car_images(image_url, sort_order)")
+            .eq("status", "published")
+            .or(`title.ilike.%${safe}%,model.ilike.%${safe}%,brand.ilike.%${safe}%`)
+            .limit(5),
+        ),
         supabase
           .from("events")
           .select("id, title, slug, starts_at, location, event_images(image_url, sort_order)")

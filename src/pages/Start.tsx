@@ -14,6 +14,7 @@ import { LastTripCard } from "@/components/activity/LastTripCard";
 import { useLatestCompletedSession } from "@/hooks/useLatestCompletedSession";
 import { track, trackScreenViewOnce } from "@/lib/analytics";
 import { resolveSpottingCoverFromRow } from "@/lib/spottingMedia";
+import { applyPublicCarsApprovalFilter } from "@/lib/publicCarsFilter";
 
 const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
 const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
@@ -118,17 +119,19 @@ export default function Start() {
   const { data: worldCars } = useQuery({
     queryKey: ["start-world-preview"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("cars")
-        .select(
-          `id, title, slug, year, brand, published_at, source, identification_status,
+      const { data, error } = await applyPublicCarsApprovalFilter(
+        supabase
+          .from("cars")
+          .select(
+            `id, title, slug, year, brand, published_at, source, identification_status,
            car_images(id, image_url, sort_order),
            car_events(visibility, occurred_at, car_event_images(image_url, sort_order))`
-        )
-        .not("published_at", "is", null)
-        .lte("published_at", new Date().toISOString())
-        .order("published_at", { ascending: false })
-        .limit(2);
+          )
+          .not("published_at", "is", null)
+          .lte("published_at", new Date().toISOString())
+          .order("published_at", { ascending: false })
+          .limit(2),
+      );
       if (error) throw error;
       return (data ?? []) as unknown as CarMini[];
     },

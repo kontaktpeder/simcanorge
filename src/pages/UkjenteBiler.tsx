@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { IdentifyCarDialog } from "@/components/car/IdentifyCarDialog";
 import { RelationshipRequestDialog } from "@/components/car/relationship/RelationshipRequestDialog";
 import { FEATURES } from "@/config/features";
+import { applyPublicCarsApprovalFilter } from "@/lib/publicCarsFilter";
 import {
   resolveSpottingCoverFromRow,
   type CarWithSpottingMedia,
@@ -30,19 +31,21 @@ export default function UkjenteBiler() {
   const { data, isLoading } = useQuery({
     queryKey: ["unknown-cars"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("cars")
-        .select(
-          `id,title,slug,created_at,
+      const { data, error } = await applyPublicCarsApprovalFilter(
+        supabase
+          .from("cars")
+          .select(
+            `id,title,slug,created_at,
            car_images(image_url,sort_order),
            car_events(visibility,occurred_at,car_event_images(image_url,sort_order))`,
-        )
-        .in("identification_status", ["unknown", "needs_review"])
-        .eq("source", "spotting")
-        .not("published_at", "is", null)
-        .lte("published_at", new Date().toISOString())
-        .order("created_at", { ascending: false })
-        .limit(50);
+          )
+          .in("identification_status", ["unknown", "needs_review"])
+          .eq("source", "spotting")
+          .not("published_at", "is", null)
+          .lte("published_at", new Date().toISOString())
+          .order("created_at", { ascending: false })
+          .limit(50),
+      );
       if (error) throw error;
       return (data ?? []) as unknown as UnknownCar[];
     },

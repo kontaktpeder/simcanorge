@@ -1,5 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import {
+  PUBLIC_CARS_REQUIRE_ADMIN_APPROVAL,
+  isCarAdminApproved,
+} from "@/lib/publicCarsFilter";
 
 interface FeedFilters {
   pageId?: string;
@@ -10,7 +14,7 @@ export function useFeedPosts(filters?: FeedFilters) {
   const { pageId, limit = 30 } = filters ?? {};
 
   return useQuery({
-    queryKey: ["feed_posts", { pageId, limit }],
+    queryKey: ["feed_posts", { pageId, limit, requireApproval: PUBLIC_CARS_REQUIRE_ADMIN_APPROVAL }],
     queryFn: async () => {
       let query = supabase
         .from("feed_posts")
@@ -23,7 +27,7 @@ export function useFeedPosts(filters?: FeedFilters) {
           ),
           car:cars!feed_posts_car_id_fkey(
             id, title, slug, source, published_at, identification_status,
-            brand, model, year, tags,
+            brand, model, year, tags, approved_at,
             car_images(image_url, sort_order),
             car_events(visibility, occurred_at, car_event_images(image_url, sort_order))
           ),
@@ -53,7 +57,14 @@ export function useFeedPosts(filters?: FeedFilters) {
 
       const { data, error } = await query;
       if (error) throw error;
-      return data ?? [];
+      const rows = data ?? [];
+      if (!PUBLIC_CARS_REQUIRE_ADMIN_APPROVAL) return rows;
+      // Hide posts that point at a car that is not admin-approved yet.
+      return rows.filter((row) => {
+        const car = row.car as { approved_at?: string | null } | null;
+        if (!car) return true;
+        return isCarAdminApproved(car);
+      });
     },
     staleTime: 30_000,
   });

@@ -73,3 +73,10 @@ export const FEATURES = {
    */
   seoHubIndexing: import.meta.env.VITE_FEATURE_SEO_HUB_INDEXING === "true",
 };
+
+/**
+ * Temporary Simca Norge launch: public car listings only show admin-approved cars.
+ * Flip in `src/lib/publicCarsFilter.ts` (`PUBLIC_CARS_REQUIRE_ADMIN_APPROVAL`).
+ * Direct URL + own garage are unaffected.
+ */
+export { PUBLIC_CARS_REQUIRE_ADMIN_APPROVAL } from "@/lib/publicCarsFilter";

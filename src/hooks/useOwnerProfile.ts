@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { applyPublicCarsApprovalFilter } from '@/lib/publicCarsFilter';
 
 // Legacy: get owners.id for FK-dependent queries (inquiries, marketplace_items.owner_id)
 export function useLegacyOwnerId(userId: string | undefined) {
@@ -142,14 +143,16 @@ export function useOwnerCars(userId: string | undefined) {
 
       const carIds = ownerData.map(d => d.car_id);
 
-      const { data: cars, error: carsError } = await supabase
-        .from('cars')
-        .select(`
+      const { data: cars, error: carsError } = await applyPublicCarsApprovalFilter(
+        supabase
+          .from('cars')
+          .select(`
           id, title, slug, brand, model, year, category, published_at,
           car_images(id, image_url, sort_order)
         `)
-        .in('id', carIds)
-        .not('published_at', 'is', null);
+          .in('id', carIds)
+          .not('published_at', 'is', null),
+      );
 
       if (carsError) throw carsError;
       return cars || [];

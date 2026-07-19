@@ -25,6 +25,7 @@ import { BilerSidePanel, EMPTY_BILER_FILTER, type BilerFilterState } from "@/com
 import { SpotCarDialog } from "@/components/car/SpotCarDialog";
 import { SaveCarButton } from "@/components/car/SaveCarButton";
 import { FEATURES } from "@/config/features";
+import { applyPublicCarsApprovalFilter } from "@/lib/publicCarsFilter";
 import carSilhouette from "@/assets/car-silhouette.png";
 import { BrandLoader } from "@/components/brand/BrandLoader";
 import { resolveSpottingCoverFromRow } from "@/lib/spottingMedia";
@@ -97,18 +98,20 @@ const Biler = () => {
     const from = page * ITEMS_PER_PAGE;
     const to = from + ITEMS_PER_PAGE - 1;
 
-    let query = supabase
-      .from("cars")
-      .select(`
+    let query = applyPublicCarsApprovalFilter(
+      supabase
+        .from("cars")
+        .select(`
         id, title, slug, brand, model, year, story, tags, featured, 
         published_at, category, editorial_status, source, identification_status,
         car_images(image_url, alt_text, sort_order),
         car_events(visibility, occurred_at, car_event_images(image_url, sort_order))
       `, { count: 'exact' })
-      .not("published_at", "is", null)
-      .lte("published_at", new Date().toISOString())
-      .order("published_at", { ascending: false })
-      .range(from, to);
+        .not("published_at", "is", null)
+        .lte("published_at", new Date().toISOString())
+        .order("published_at", { ascending: false })
+        .range(from, to),
+    );
 
     // Apply filters
     if (filterState.category !== "alle") {
@@ -173,11 +176,13 @@ const Biler = () => {
 
   // Fetch category counts
   const fetchCategoryCounts = async () => {
-    const { data } = await supabase
-      .from("cars")
-      .select("category")
-      .not("published_at", "is", null)
-      .lte("published_at", new Date().toISOString());
+    const { data } = await applyPublicCarsApprovalFilter(
+      supabase
+        .from("cars")
+        .select("category")
+        .not("published_at", "is", null)
+        .lte("published_at", new Date().toISOString()),
+    );
 
     if (data) {
       const counts: Record<string, number> = { alle: data.length };

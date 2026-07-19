@@ -6,6 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useInView } from "@/hooks/useInView";
 import { useCarOwnerProfile } from "@/hooks/useOwnerProfile";
 import { getResponsiveImageProps, IMAGE_SIZES } from "@/lib/imageUtils";
+import { applyPublicCarsApprovalFilter } from "@/lib/publicCarsFilter";
 
 import simcaSwallow from "@/assets/simca-swallow.png";
 import checkeredFlag from "@/assets/checkered-flag.png";
@@ -42,7 +43,8 @@ export function HeroSection() {
       const {
         data,
         error
-      } = await supabase.from("cars").select(`
+      } = await applyPublicCarsApprovalFilter(
+        supabase.from("cars").select(`
           id,
           slug,
           title,
@@ -55,8 +57,9 @@ export function HeroSection() {
             sort_order
           )
         `).eq("featured", true).not("published_at", "is", null).lte("published_at", new Date().toISOString()).order("published_at", {
-        ascending: false
-      }).limit(1).maybeSingle();
+          ascending: false
+        }).limit(1)
+      ).maybeSingle();
       if (error) throw error;
       return data as FeaturedCar | null;
     }
