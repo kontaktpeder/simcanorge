@@ -472,9 +472,9 @@ input, textarea, select, [contenteditable="true"] {
   .poster-section-blue {
     @apply text-white;
     background:
-      radial-gradient(1000px 500px at 65% 15%, rgba(45,212,168,0.04), rgba(255,255,255,0) 60%),
-      radial-gradient(800px 500px at 20% 85%, rgba(0,0,0,0.30), rgba(0,0,0,0) 55%),
-      linear-gradient(175deg, #0a0f14 0%, #0c1117 30%, #111820 55%, #0c1117 80%, #0a0f14 100%);
+      radial-gradient(1000px 500px at 65% 15%, rgba(255,255,255,0.06), rgba(255,255,255,0) 60%),
+      radial-gradient(800px 500px at 20% 85%, rgba(0,0,0,0.22), rgba(0,0,0,0) 55%),
+      linear-gradient(175deg, #0B2A55 0%, #0d3568 28%, #0a2448 55%, #0c2f5c 80%, #0B2A55 100%);
   }
 
   .poster-section-red {

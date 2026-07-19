@@ -3,23 +3,24 @@ import { Link, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import { Car, Plus, ChevronRight, ArrowLeft, User, Settings } from "lucide-react";
+import { Car, Plus, ChevronRight, User, Settings } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { Layout } from "@/components/layout/Layout";
+import {
+  GarageChipLink,
+  GaragePageShell,
+  GARAGE_BG,
+} from "@/components/layout/GaragePageShell";
 import { BrandLoader } from "@/components/brand/BrandLoader";
 import { track, trackScreenViewOnce } from "@/lib/analytics";
 import { SITE_NAME } from "@/config/site";
 
 const SCREEN = "garage";
 
-// Vegvesen-inspirert palett (samme som PublishComposer)
-const VV_BG = "#f3f3f3";
 const VV_YELLOW = "#fcc419";
 const VV_YELLOW_SOFT = "#fff4d1";
 const VV_DARK = "#2b2b2b";
-
-const fontStack = { fontFamily: "'Inter', 'Helvetica Neue', Arial, sans-serif" } as const;
 
 interface CarImage {
   id: string;
@@ -78,7 +79,7 @@ export default function MinGarasje() {
   if (authLoading || isLoading) {
     return (
       <Layout>
-        <div className="min-h-[60vh] flex items-center justify-center" style={{ backgroundColor: VV_BG }}>
+        <div className="min-h-[60vh] flex items-center justify-center" style={{ backgroundColor: GARAGE_BG }}>
           <BrandLoader />
         </div>
       </Layout>
@@ -96,90 +97,81 @@ export default function MinGarasje() {
         <title>Min garasje — {SITE_NAME}</title>
       </Helmet>
 
-      <div className="min-h-screen pb-32 text-neutral-900" style={{ backgroundColor: VV_BG, ...fontStack }}>
-        {/* Topbar */}
-        <div className="bg-white border-b border-black/[0.06]">
-          <div className="max-w-3xl mx-auto px-4 sm:px-6 h-14 flex items-center gap-3">
-            <button
-              type="button"
-              onClick={() => navigate(-1)}
-              className="w-9 h-9 -ml-2 inline-flex items-center justify-center rounded-full hover:bg-black/5 text-neutral-700"
-              aria-label="Tilbake"
-            >
-              <ArrowLeft className="w-5 h-5" strokeWidth={2} />
-            </button>
-            <h1 className="text-[15px] font-semibold tracking-tight">Min garasje</h1>
-            <div className="ml-auto flex items-center gap-2">
-              <Link
-                to="/dashboard/min-profil"
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-semibold text-neutral-700 bg-black/[0.04] hover:bg-black/[0.07] transition-colors"
-              >
-                <User className="w-3.5 h-3.5" />
-                Profil
-              </Link>
-              <Link
-                to="/konto"
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-semibold text-neutral-700 bg-black/[0.04] hover:bg-black/[0.07] transition-colors"
-              >
-                <Settings className="w-3.5 h-3.5" />
-                Konto
-              </Link>
-            </div>
-          </div>
-        </div>
-
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 pt-5">
-          {/* Heading + stats */}
-          <div className="mb-5">
-            <p className="text-[11px] uppercase tracking-[0.18em] font-semibold text-neutral-500">
-              Mine biler
+      <GaragePageShell
+        title="Min garasje"
+        backTo="/"
+        backLabel="Til forsiden"
+        actions={
+          <>
+            <GarageChipLink
+              to="/dashboard/min-profil"
+              icon={<User className="w-3.5 h-3.5" />}
+              label="Profil"
+            />
+            <GarageChipLink
+              to="/konto"
+              icon={<Settings className="w-3.5 h-3.5" />}
+              label="Konto"
+            />
+          </>
+        }
+      >
+        <div className="mb-5">
+          <p className="text-[11px] uppercase tracking-[0.18em] font-semibold text-neutral-500">
+            Mine biler
+          </p>
+          <h2 className="text-[26px] sm:text-[30px] font-bold leading-tight mt-1">
+            {cars.length === 0
+              ? "Garasjen din er tom"
+              : `${cars.length} ${cars.length === 1 ? "bil" : "biler"} i garasjen`}
+          </h2>
+          {cars.length > 0 && (
+            <p className="text-sm text-neutral-600 mt-1.5">
+              {published} publisert · {drafts} kladd
             </p>
-            <h2 className="text-[26px] sm:text-[30px] font-bold leading-tight mt-1">
-              {cars.length === 0 ? "Garasjen din er tom" : `${cars.length} ${cars.length === 1 ? "bil" : "biler"} i garasjen`}
-            </h2>
-            {cars.length > 0 && (
-              <p className="text-sm text-neutral-600 mt-1.5">
-                {published} publisert · {drafts} kladd
-              </p>
-            )}
-          </div>
-
-          {/* Primary action card */}
-          <Link
-            to="/legg-til-bil"
-            onClick={() => void track("garage_add_car_click", "garage", { intent: "add_car", source: "primary_card" })}
-            className="group flex items-center gap-4 rounded-2xl bg-white border border-black/[0.08] p-4 sm:p-5 mb-6 hover:border-black/20 transition-colors"
-          >
-            <div
-              className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 border border-black/5"
-              style={{ backgroundColor: VV_YELLOW_SOFT }}
-            >
-              <Plus className="w-6 h-6" style={{ color: VV_DARK }} strokeWidth={2.5} />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-[15px] font-semibold leading-snug">Legg til en bil</p>
-              <p className="text-[13px] text-neutral-600 mt-0.5">Start historien til en ny bil i garasjen.</p>
-            </div>
-            <ChevronRight className="w-5 h-5 text-neutral-400 group-hover:text-neutral-700 transition-colors shrink-0" />
-          </Link>
-
-          {/* Cars */}
-          {cars.length === 0 ? (
-            <EmptyState />
-          ) : (
-            <>
-              <p className="text-[11px] uppercase tracking-[0.18em] font-semibold text-neutral-500 mb-2.5 px-1">
-                Bilene dine
-              </p>
-              <div className="grid grid-cols-2 gap-3">
-                {cars.map((car, i) => (
-                  <CarTile key={car.id} car={car} index={i} />
-                ))}
-              </div>
-            </>
           )}
         </div>
-      </div>
+
+        <Link
+          to="/legg-til-bil"
+          onClick={() =>
+            void track("garage_add_car_click", "garage", {
+              intent: "add_car",
+              source: "primary_card",
+            })
+          }
+          className="group flex items-center gap-4 rounded-2xl bg-white border border-black/[0.08] p-4 sm:p-5 mb-6 hover:border-black/20 transition-colors"
+        >
+          <div
+            className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 border border-black/5"
+            style={{ backgroundColor: VV_YELLOW_SOFT }}
+          >
+            <Plus className="w-6 h-6" style={{ color: VV_DARK }} strokeWidth={2.5} />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-[15px] font-semibold leading-snug">Legg til en bil</p>
+            <p className="text-[13px] text-neutral-600 mt-0.5">
+              Start historien til en ny bil i garasjen.
+            </p>
+          </div>
+          <ChevronRight className="w-5 h-5 text-neutral-400 group-hover:text-neutral-700 transition-colors shrink-0" />
+        </Link>
+
+        {cars.length === 0 ? (
+          <EmptyState />
+        ) : (
+          <>
+            <p className="text-[11px] uppercase tracking-[0.18em] font-semibold text-neutral-500 mb-2.5 px-1">
+              Bilene dine
+            </p>
+            <div className="grid grid-cols-2 gap-3">
+              {cars.map((car, i) => (
+                <CarTile key={car.id} car={car} index={i} />
+              ))}
+            </div>
+          </>
+        )}
+      </GaragePageShell>
     </Layout>
   );
 }

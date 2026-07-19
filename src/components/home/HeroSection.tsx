@@ -70,8 +70,6 @@ export function HeroSection() {
     return sorted[0];
   };
   return <section className="poster-section poster-section-blue hero-watermark relative overflow-hidden min-h-[60vh] md:min-h-[85vh] flex flex-col justify-start pt-2 md:pt-8">
-      {/* Gradient transition from sky header into deep navy hero */}
-      <div className="absolute inset-x-0 top-0 h-24 md:h-32 bg-gradient-to-b from-[#1a4a7a]/60 via-[#0B2A55]/80 to-transparent z-[1] pointer-events-none" />
       <div className="absolute inset-0 stripes-diagonal" />
       
       <div className="container mx-auto relative z-10">

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, LogIn, User, Warehouse } from "lucide-react";
+import { Menu, X, LogIn, Warehouse } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { GlobalSearch } from "@/components/layout/GlobalSearch";
 import { FEATURES } from "@/config/features";
@@ -30,7 +30,7 @@ export function Header() {
   const loginHref = `/login?returnUrl=${encodeURIComponent(garageHref)}`;
 
   return (
-    <header className="sticky top-0 z-50 bg-[#0B2A55] border-b border-white/15">
+    <header className="sticky top-0 z-50 bg-[#0B2A55]">
       <div className="max-w-[1400px] mx-auto px-4 md:px-8">
         <div className="flex items-center h-14 md:h-16 gap-4 md:gap-6">
           <Link
@@ -73,22 +73,13 @@ export function Header() {
 
           <div className="hidden lg:flex items-center gap-2 flex-shrink-0">
             {user ? (
-              <>
-                <Link
-                  to={garageHref}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-2 text-[13px] font-semibold text-white bg-white/15 hover:bg-white/25 border border-white/25 rounded-md transition-colors"
-                >
-                  <Warehouse className="w-4 h-4" />
-                  Min garasje
-                </Link>
-                <Link
-                  to="/konto"
-                  className="inline-flex items-center gap-1.5 px-3.5 py-2 text-[13px] font-semibold text-white/90 hover:text-white border border-white/25 hover:border-white/40 rounded-md transition-colors"
-                >
-                  <User className="w-4 h-4" />
-                  Konto
-                </Link>
-              </>
+              <Link
+                to={garageHref}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 text-[13px] font-semibold text-white bg-white/15 hover:bg-white/25 border border-white/25 rounded-md transition-colors"
+              >
+                <Warehouse className="w-4 h-4" />
+                Min garasje
+              </Link>
             ) : (
               <Link
                 to={loginHref}
@@ -140,22 +131,13 @@ export function Header() {
             })}
             <div className="flex flex-col gap-2 mt-4 pb-4">
               {user ? (
-                <>
-                  <Link
-                    to={garageHref}
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="py-3 text-center text-[14px] font-semibold text-white bg-white/15 border border-white/25 rounded-md"
-                  >
-                    Min garasje
-                  </Link>
-                  <Link
-                    to="/konto"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="py-3 text-center text-[14px] font-semibold text-white/90 border border-white/25 rounded-md"
-                  >
-                    Konto
-                  </Link>
-                </>
+                <Link
+                  to={garageHref}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="py-3 text-center text-[14px] font-semibold text-white bg-white/15 border border-white/25 rounded-md"
+                >
+                  Min garasje
+                </Link>
               ) : (
                 <Link
                   to={loginHref}
