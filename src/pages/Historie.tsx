@@ -1,7 +1,7 @@
 import { Layout } from "@/components/layout/Layout";
-import { SeoHead } from "@/components/seo";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { AnimatedSection } from "@/components/layout/AnimatedSection";
+import { SeoHead } from "@/components/seo";
 import { useInView } from "@/hooks/useInView";
 import { Calendar, MapPin, Car, History, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -30,8 +30,8 @@ function TimelineItem({
 export default function Historie() {
   return <Layout contained>
       <SeoHead
-        title="Historie | Bilgarasje.no"
-        description="Fra 1934 til i dag — historien om Simca, Talbot og Matra og bilarven i Norge."
+        title="Historie | Simca Norge"
+        description="Fra 1934 til i dag – historien om Simca, Talbot og Matra og bilarven i Norge."
         canonicalPath="/historie"
       />
       <PageHeader title="HISTORIE" subtitle="Fra 1934 til i dag – historien om et bilmerke med sjel" />
@@ -211,7 +211,7 @@ Simca ble i hovedsak produsert i Poissy/Paris, samt Spania, Stor-Britannia og Fi
                   Se bilene
                 </Link>
                 <Link to="/om-oss" className="btn-enamel-red">
-                  Om oss
+                  Om Simca Norge
                 </Link>
               </div>
             </AnimatedSection>

@@ -1,198 +1,150 @@
-import { useState, useEffect } from "react";
-import { Link, NavLink, useLocation } from "react-router-dom";
-import { Search as SearchIcon, X, User } from "lucide-react";
-import { HeroSearch } from "@/components/layout/HeroSearch";
-import { useHideOnScroll } from "@/hooks/useHideOnScroll";
+import { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { Menu, X, LogIn } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
-import { useFeatures } from "@/hooks/useFeatures";
+import { GlobalSearch } from "@/components/layout/GlobalSearch";
+import { FEATURES } from "@/config/features";
 import simcaLogo from "@/assets/simca-norge-badge.png";
 
-// Vegvesen-inspirert lys palett (matcher /min-garasje, PublishComposer, BilDetalj)
-const VV_BG = "#f3f3f3";
-const VV_YELLOW = "#fcc419";
-const VV_DARK = "#2b2b2b";
-const VV_ORANGE = "#ff8a00";
-
-const inter = { fontFamily: "'Inter', 'Helvetica Neue', Arial, sans-serif" } as const;
-
-const navLinkClass = ({ isActive }: { isActive: boolean }) =>
-  `relative text-[12px] uppercase tracking-[0.12em] font-bold px-2.5 py-1.5 rounded-md transition-colors ${
-    isActive ? "text-neutral-900" : "text-neutral-500 hover:text-neutral-900"
-  }`;
-
-const ActiveDot = ({ active }: { active: boolean }) =>
-  active ? (
-    <span
-      className="absolute left-1/2 -translate-x-1/2 -bottom-0.5 h-[3px] w-5 rounded-full"
-      style={{ backgroundColor: VV_YELLOW }}
-    />
-  ) : null;
+const allNavLinks = [
+  { href: "/", label: "Hjem" },
+  { href: "/biler", label: "Biler" },
+  { href: "/markedsplass", label: "Markedsplass", launchLocked: true },
+  { href: "/arrangement", label: "Arrangement", launchLocked: true },
+  { href: "/manedens-bil", label: "Månedens bil" },
+  { href: "/historie", label: "Historie" },
+  { href: "/om-oss", label: "Om oss" },
+  { href: "/kontakt", label: "Kontakt" },
+];
 
 export function Header() {
   const location = useLocation();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { user } = useAuth();
-  const features = useFeatures();
-  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
-  const [navSearchOpen, setNavSearchOpen] = useState(false);
-  const [heroVisible, setHeroVisible] = useState(true);
-  const navVisible = useHideOnScroll(10);
 
-  const isHome = location.pathname === "/";
-
-  useEffect(() => {
-    if (!isHome) {
-      setHeroVisible(false);
-      return;
-    }
-    const onScroll = () => setHeroVisible(window.scrollY < 200);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, [isHome]);
-
-  useEffect(() => {
-    setMobileSearchOpen(false);
-  }, [location.pathname]);
-
-  const showFullNavSearch = !isHome;
-  const showCompactIcon = isHome && heroVisible;
-  const showExpandedNavSearch = isHome && !heroVisible;
-
-  const profileHref = user ? "/konto" : "/login";
+  const navLinks = allNavLinks.filter(
+    (link) => !(FEATURES.simpleLaunchMode && link.launchLocked)
+  );
 
   return (
-    <header
-      className="fixed top-0 left-0 right-0 z-50 transition-transform duration-300 ease-out will-change-transform"
-      style={{
-        backgroundColor: "rgba(255,255,255,0.92)",
-        backdropFilter: "saturate(180%) blur(14px)",
-        WebkitBackdropFilter: "saturate(180%) blur(14px)",
-        borderBottom: "1px solid rgba(0,0,0,0.08)",
-        boxShadow: "0 1px 0 rgba(0,0,0,0.02), 0 8px 24px -16px rgba(0,0,0,0.12)",
-        transform: navVisible || mobileSearchOpen ? "translateY(0)" : "translateY(-110%)",
-        ...inter,
-      }}
-    >
-      {/* Subtil oransje top-stripe (samme aksent som composer-progress) */}
-      <div
-        aria-hidden
-        className="absolute inset-x-0 top-0 h-[2px]"
-        style={{
-          background: `linear-gradient(90deg, transparent 0%, ${VV_ORANGE} 35%, ${VV_YELLOW} 65%, transparent 100%)`,
-          opacity: 0.7,
-        }}
-      />
+    <header className="sticky top-0 z-50 bg-[#0a0a0a]">
+      <div className="max-w-[1400px] mx-auto px-5 md:px-8">
+        <div className="flex items-center h-14 md:h-16 gap-6">
 
-      <div className="relative max-w-[720px] mx-auto px-5 md:px-8">
-        <div className="grid grid-cols-[auto_1fr_auto] items-center h-14 md:h-16 gap-3">
-          {/* LEFT — Profile icon only */}
-          <Link
-            to={profileHref}
-            className="relative p-2 -ml-2 text-neutral-600 hover:text-neutral-950 transition-colors flex-shrink-0 rounded-full hover:bg-black/[0.04]"
-            aria-label={user ? "Min profil" : "Logg inn"}
-          >
-            <User className="w-5 h-5 md:w-[22px] md:h-[22px]" strokeWidth={2} />
-          </Link>
-
-          {/* CENTER — Logo */}
-          <Link
-            to="/"
-            className="flex justify-center items-center group min-w-0 h-14 md:h-16 overflow-hidden"
-            aria-label="Simca Norge — hjem"
-          >
+          <Link to="/" className="flex-shrink-0 group -my-2" aria-label="Simca Norge — hjem">
             <img
               src={simcaLogo}
               alt="Simca Norge"
-              className="h-12 md:h-14 w-auto transition-opacity duration-200 group-hover:opacity-80 pointer-events-none"
+              className="h-12 md:h-14 w-auto opacity-95 group-hover:opacity-100 transition-opacity duration-300"
             />
           </Link>
 
-          {/* RIGHT — Desktop nav + Search */}
-          <div className="flex items-center justify-end flex-shrink-0 gap-2 md:gap-3">
-            <nav className="hidden md:flex items-center gap-0.5 lg:gap-1" aria-label="Hovedmeny">
-              <NavLink to="/hjem" className={navLinkClass} style={inter}>
-                {({ isActive }) => (
-                  <>
-                    Utforsk
-                    <ActiveDot active={isActive || location.pathname.startsWith("/biler")} />
-                  </>
-                )}
-              </NavLink>
-              {!features.simpleLaunchMode && (
-                <>
-                  <NavLink to="/markedsplass" className={navLinkClass} style={inter}>
-                    {({ isActive }) => (<>Marked<ActiveDot active={isActive} /></>)}
-                  </NavLink>
-                  <NavLink to="/arrangement" className={navLinkClass} style={inter}>
-                    {({ isActive }) => (<>Treff<ActiveDot active={isActive} /></>)}
-                  </NavLink>
-                  <NavLink to="/klubber" className={navLinkClass} style={inter}>
-                    {({ isActive }) => (<>Klubber<ActiveDot active={isActive} /></>)}
-                  </NavLink>
-                </>
-              )}
-              {user && (
-                <NavLink to="/min-garasje" className={navLinkClass} style={inter}>
-                  {({ isActive }) => (<>Min garasje<ActiveDot active={isActive} /></>)}
-                </NavLink>
-              )}
-              <NavLink to="/om-oss" className={navLinkClass} style={inter}>
-                {({ isActive }) => (<>Om oss<ActiveDot active={isActive} /></>)}
-              </NavLink>
-            </nav>
+          <nav className="hidden lg:flex items-center gap-0 flex-shrink-0">
+            {navLinks.map((link, i) => {
+              const isActive = location.pathname === link.href;
+              return (
+                <Link
+                  key={link.href}
+                  to={link.href}
+                  className={`relative px-3 py-1 text-[10.5px] tracking-[0.18em] uppercase transition-all duration-300 ${
+                    isActive
+                      ? "text-white"
+                      : "text-white/30 hover:text-white/65"
+                  }`}
+                >
+                  {link.label}
+                  {isActive && (
+                    <span className="absolute -bottom-[7px] left-3 right-3 h-px bg-white/60" />
+                  )}
+                  {i < navLinks.length - 1 && (
+                    <span className="absolute right-0 top-1/2 -translate-y-1/2 w-px h-2.5 bg-white/[0.07]" />
+                  )}
+                </Link>
+              );
+            })}
+          </nav>
 
-            {/* Desktop / tablet search */}
-            <div className="hidden md:flex items-center justify-end">
-              <div className="w-full max-w-xl">
-                {(showFullNavSearch || showExpandedNavSearch) && (
-                  <div className={showExpandedNavSearch ? "animate-in fade-in duration-200" : ""}>
-                    <HeroSearch compact />
-                  </div>
-                )}
-                {showCompactIcon && (
-                  <button
-                    onClick={() => setNavSearchOpen((v) => !v)}
-                    className="p-2 text-neutral-600 hover:text-neutral-950 transition-colors rounded-full hover:bg-black/[0.04]"
-                    aria-label="Søk"
-                  >
-                    <SearchIcon className="w-5 h-5" strokeWidth={2} />
-                  </button>
-                )}
-              </div>
-            </div>
-
-            {/* Mobile search toggle */}
-            <button
-              onClick={() => setMobileSearchOpen((v) => !v)}
-              className="md:hidden p-2 -mr-2 text-neutral-600 hover:text-neutral-950 transition-colors rounded-full hover:bg-black/[0.04]"
-              aria-label={mobileSearchOpen ? "Lukk søk" : "Søk"}
-            >
-              {mobileSearchOpen ? <X className="w-5 h-5" strokeWidth={2} /> : <SearchIcon className="w-5 h-5" strokeWidth={2} />}
-            </button>
+          <div className="hidden md:flex flex-1 max-w-sm ml-auto">
+            <GlobalSearch />
           </div>
+
+          <div className="hidden lg:flex items-center gap-2 flex-shrink-0">
+            {user ? (
+              <Link
+                to="/dashboard"
+                className="px-4 py-1.5 text-[10.5px] tracking-[0.15em] uppercase text-white/40 hover:text-white/80 border border-white/10 hover:border-white/25 transition-all duration-300"
+              >
+                Min garasje
+              </Link>
+            ) : (
+              <Link
+                to="/login?returnUrl=/dashboard"
+                className="flex items-center gap-1.5 px-4 py-1.5 text-[10.5px] tracking-[0.15em] uppercase text-white/40 hover:text-white/80 border border-white/10 hover:border-white/25 transition-all duration-300"
+              >
+                <LogIn className="w-3 h-3" />
+                Logg inn
+              </Link>
+            )}
+            <Link
+              to="/send-inn"
+              className="px-4 py-1.5 text-[10.5px] tracking-[0.15em] uppercase text-[#0a0a0a] bg-white/85 hover:bg-white transition-all duration-300 font-semibold"
+            >
+              Send inn bil
+            </Link>
+          </div>
+
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="lg:hidden ml-auto p-2 text-white/35 hover:text-white transition-colors"
+            aria-label="Meny"
+          >
+            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
         </div>
       </div>
 
-      {/* Desktop compact-icon expanded panel */}
-      {navSearchOpen && showCompactIcon && (
-        <div
-          className="hidden md:block border-t border-black/[0.06] px-5 md:px-8 py-3"
-          style={{ backgroundColor: VV_BG }}
-        >
-          <div className="max-w-xl ml-auto">
-            <HeroSearch compact />
-          </div>
-        </div>
-      )}
+      <div className="h-px bg-white/[0.06]" />
 
-      {/* Mobile expanded search */}
-      {mobileSearchOpen && (
-        <div
-          className="md:hidden border-t border-black/[0.06] px-5 py-3"
-          style={{ backgroundColor: VV_BG }}
-        >
-          <HeroSearch compact />
-        </div>
+      {mobileMenuOpen && (
+        <nav className="lg:hidden bg-[#0a0a0a] border-t border-white/[0.04]">
+          <div className="px-5 pt-3 pb-2">
+            <GlobalSearch />
+          </div>
+          <div className="px-5 py-2 flex flex-col">
+            {navLinks.map((link) => {
+              const isActive = location.pathname === link.href;
+              return (
+                <Link
+                  key={link.href}
+                  to={link.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`py-2.5 text-[11px] tracking-[0.15em] uppercase border-b border-white/[0.03] transition-all ${
+                    isActive ? "text-white" : "text-white/25 hover:text-white/55"
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
+            <div className="flex flex-col gap-2 mt-3 pb-2">
+              {user ? (
+                <Link to="/dashboard" onClick={() => setMobileMenuOpen(false)}
+                  className="py-2 text-center text-[11px] tracking-[0.15em] uppercase text-white/40 border border-white/10">
+                  Min garasje
+                </Link>
+              ) : (
+                <Link to="/login?returnUrl=/dashboard" onClick={() => setMobileMenuOpen(false)}
+                  className="py-2 text-center text-[11px] tracking-[0.15em] uppercase text-white/40 border border-white/10 flex items-center justify-center gap-2">
+                  <LogIn className="w-3.5 h-3.5" /> Logg inn
+                </Link>
+              )}
+              <Link to="/send-inn" onClick={() => setMobileMenuOpen(false)}
+                className="py-2 text-center text-[11px] tracking-[0.15em] uppercase text-[#0a0a0a] bg-white/85 font-semibold">
+                Send inn bil
+              </Link>
+            </div>
+          </div>
+        </nav>
       )}
     </header>
   );
