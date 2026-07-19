@@ -51,14 +51,17 @@ export function Layout({ children, contained = false, hideFooter = false, shortP
   // (i.e. user is signed in and not in focus mode).
   const showBottomNav = !!user && !activeSession;
   const bottomPadClass = showBottomNav ? "pb-[calc(4rem+env(safe-area-inset-bottom,0px))] md:pb-0" : "";
+  // Forside: no top pad (hero runs under sticky header). Avoids a dark body-color seam.
+  const topPadClass = isIndex ? "" : "pt-14 md:pt-16";
+  const shellClass = isIndex ? "bg-[#071628]" : "";
 
   if (contained) {
     if (fillHeight) {
       return (
-        <div className="h-screen min-h-[100dvh] flex flex-col overflow-hidden">
+        <div className={`h-screen min-h-[100dvh] flex flex-col overflow-hidden ${shellClass}`}>
           <Header />
           {!isIndex && <SubpageSilhouette />}
-          <main className={`flex-1 min-h-0 flex flex-col relative z-10 pt-14 md:pt-16 ${bottomPadClass}`}>
+          <main className={`flex-1 min-h-0 flex flex-col relative z-10 ${topPadClass} ${bottomPadClass}`}>
             {children}
           </main>
           <BottomNav />
@@ -67,10 +70,10 @@ export function Layout({ children, contained = false, hideFooter = false, shortP
       );
     }
     return (
-    <div className="h-screen min-h-[100dvh] flex flex-col overflow-hidden">
+    <div className={`h-screen min-h-[100dvh] flex flex-col overflow-hidden ${shellClass}`}>
       <Header />
       {!isIndex && <SubpageSilhouette />}
-      <div className={`flex-1 min-h-0 overflow-y-auto overflow-x-hidden pt-14 md:pt-16 ${bottomPadClass}`}>
+      <div className={`flex-1 min-h-0 overflow-y-auto overflow-x-hidden ${topPadClass} ${bottomPadClass}`}>
         <main className="min-h-full relative z-10">
           {children}
         </main>
@@ -82,10 +85,10 @@ export function Layout({ children, contained = false, hideFooter = false, shortP
   }
 
   return (
-    <div className="min-h-screen flex flex-col overflow-x-hidden">
+    <div className={`min-h-screen flex flex-col overflow-x-hidden ${shellClass}`}>
       <Header />
       {!isIndex && <SubpageSilhouette />}
-      <main className={`${shortPage ? '' : 'flex-1'} overflow-x-hidden pt-14 md:pt-16 relative z-10 ${bottomPadClass}`}>
+      <main className={`${shortPage ? '' : 'flex-1'} overflow-x-hidden ${topPadClass} relative z-10 ${bottomPadClass}`}>
         {children}
       </main>
       <BottomNav />

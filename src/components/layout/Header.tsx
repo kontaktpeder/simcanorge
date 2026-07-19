@@ -30,7 +30,7 @@ export function Header() {
   const loginHref = `/login?returnUrl=${encodeURIComponent(garageHref)}`;
 
   return (
-    <header className="sticky top-0 z-50 bg-[#0B2A55]">
+    <header className="sticky top-0 z-50 bg-[#071628]">
       <div className="max-w-[1400px] mx-auto px-4 md:px-8">
         <div className="flex items-center h-14 md:h-16 gap-4 md:gap-6">
           <Link
@@ -91,7 +91,7 @@ export function Header() {
             )}
             <Link
               to="/send-inn"
-              className="px-3.5 py-2 text-[13px] font-bold text-[#0B2A55] bg-white hover:bg-white/90 rounded-md transition-colors"
+              className="px-3.5 py-2 text-[13px] font-bold text-[#071628] bg-white hover:bg-white/90 rounded-md transition-colors"
             >
               Send inn bil
             </Link>
@@ -109,7 +109,7 @@ export function Header() {
       </div>
 
       {mobileMenuOpen && (
-        <nav className="lg:hidden bg-[#0B2A55] border-t border-white/15" aria-label="Mobilmeny">
+        <nav className="lg:hidden bg-[#071628] border-t border-white/15" aria-label="Mobilmeny">
           <div className="px-4 pt-3 pb-2">
             <GlobalSearch variant="dark" />
           </div>
@@ -150,7 +150,7 @@ export function Header() {
               <Link
                 to="/send-inn"
                 onClick={() => setMobileMenuOpen(false)}
-                className="py-3 text-center text-[14px] font-bold text-[#0B2A55] bg-white rounded-md"
+                className="py-3 text-center text-[14px] font-bold text-[#071628] bg-white rounded-md"
               >
                 Send inn bil
               </Link>

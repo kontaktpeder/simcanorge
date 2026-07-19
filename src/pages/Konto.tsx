@@ -4,7 +4,8 @@ import { SeoHead } from "@/components/seo";
 import { User, LogOut, Shield, Trash2, Mail, Calendar, Loader2, AlertTriangle } from "lucide-react";
 
 import { Layout } from "@/components/layout/Layout";
-import { GaragePageShell, GaragePanel, GARAGE_BG } from "@/components/layout/GaragePageShell";
+import { GaragePageShell, GaragePanel, GARAGE_BG, garageBtn } from "@/components/layout/GaragePageShell";
+import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -197,7 +198,7 @@ export default function Konto() {
 
                 <Button
                   variant="outline"
-                  className="w-full justify-start h-11 rounded-xl"
+                  className={cn("w-full justify-start h-11 rounded-xl", garageBtn.outline)}
                   onClick={handleSignOut}
                 >
                   <LogOut className="h-4 w-4 mr-2" />
@@ -213,6 +214,7 @@ export default function Konto() {
                 </p>
                 <Button
                   variant="ghost"
+                  className={garageBtn.ghost}
                   onClick={() => {
                     setMagicLinkSent(false);
                     setEmail("");
@@ -235,7 +237,7 @@ export default function Konto() {
                   className="h-11 rounded-xl"
                 />
                 <Button
-                  className="w-full h-11 rounded-xl"
+                  className={cn("w-full h-11 rounded-xl", garageBtn.primary)}
                   onClick={handleSendMagicLink}
                   disabled={isSendingMagicLink || !email}
                 >
@@ -260,7 +262,7 @@ export default function Konto() {
               <div className="space-y-2">
                 <Button
                   variant="outline"
-                  className="w-full justify-start h-11 rounded-xl"
+                  className={cn("w-full justify-start h-11 rounded-xl", garageBtn.outline)}
                   onClick={() => navigate("/personvern")}
                 >
                   <Shield className="h-4 w-4 mr-2" />
@@ -269,7 +271,7 @@ export default function Konto() {
 
                 <Button
                   variant="outline"
-                  className="w-full justify-start h-11 rounded-xl"
+                  className={cn("w-full justify-start h-11 rounded-xl", garageBtn.outline)}
                   onClick={() => navigate("/vilkar")}
                 >
                   <Shield className="h-4 w-4 mr-2" />
@@ -294,7 +296,7 @@ export default function Konto() {
                       rows={3}
                     />
                     <div className="flex gap-2">
-                      <Button onClick={handleAnonymizeRequest} disabled={createRequest.isPending}>
+                      <Button className={cn("rounded-xl", garageBtn.primary)} onClick={handleAnonymizeRequest} disabled={createRequest.isPending}>
                         {createRequest.isPending ? (
                           <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                         ) : null}
@@ -302,6 +304,7 @@ export default function Konto() {
                       </Button>
                       <Button
                         variant="ghost"
+                        className={garageBtn.ghost}
                         onClick={() => {
                           setShowAnonymizeForm(false);
                           setAnonymizeMessage("");
@@ -314,7 +317,7 @@ export default function Konto() {
                 ) : (
                   <Button
                     variant="outline"
-                    className="w-full justify-start h-11 rounded-xl"
+                    className={cn("w-full justify-start h-11 rounded-xl", garageBtn.outline)}
                     onClick={() => setShowAnonymizeForm(true)}
                   >
                     <User className="h-4 w-4 mr-2" />
@@ -332,7 +335,7 @@ export default function Konto() {
                     <AlertDialogTrigger asChild>
                       <Button
                         variant="outline"
-                        className="w-full justify-start h-11 rounded-xl text-red-600 hover:text-red-700 border-red-200 hover:border-red-300 hover:bg-red-50"
+                        className={cn("w-full justify-start h-11 rounded-xl", garageBtn.danger)}
                       >
                         <Trash2 className="h-4 w-4 mr-2" />
                         Slett konto

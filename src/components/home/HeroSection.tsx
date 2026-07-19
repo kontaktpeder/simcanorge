@@ -69,7 +69,7 @@ export function HeroSection() {
     const sorted = [...car.car_images].sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
     return sorted[0];
   };
-  return <section className="poster-section poster-section-blue hero-watermark relative overflow-hidden min-h-[60vh] md:min-h-[85vh] flex flex-col justify-start pt-2 md:pt-8">
+  return <section className="poster-section poster-section-blue hero-watermark relative overflow-hidden min-h-[60vh] md:min-h-[85vh] flex flex-col justify-start pt-16 md:pt-20">
       <div className="absolute inset-0 stripes-diagonal" />
       
       <div className="container mx-auto relative z-10">

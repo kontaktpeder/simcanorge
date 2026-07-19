@@ -13,7 +13,9 @@ import {
   GaragePanel,
   GarageChipLink,
   GARAGE_BG,
+  garageBtn,
 } from "@/components/layout/GaragePageShell";
+import { cn } from "@/lib/utils";
 import { FEATURES } from "@/config/features";
 import { SITE_NAME } from "@/config/site";
 import {
@@ -81,7 +83,7 @@ function SellerReadinessCard({
               </li>
             ))}
           </ul>
-          <Button size="sm" className="mt-3 rounded-xl" onClick={onEdit}>
+          <Button size="sm" className={cn("mt-3 rounded-xl", garageBtn.primary)} onClick={onEdit}>
             <Pencil className="w-4 h-4 mr-1.5" />
             Fyll ut manglende felter
           </Button>
@@ -138,7 +140,7 @@ function ProfileCompletionCard({
           </li>
         ))}
       </ul>
-      <Button size="sm" className="mt-3 rounded-xl" onClick={onEdit}>
+      <Button size="sm" className={cn("mt-3 rounded-xl", garageBtn.primary)} onClick={onEdit}>
         <Pencil className="w-4 h-4 mr-1.5" />
         Fyll ut manglende felter
       </Button>
@@ -248,7 +250,7 @@ export default function DashboardMinProfilPage() {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="rounded-xl shrink-0"
+                  className={cn("rounded-xl shrink-0", garageBtn.outline)}
                   onClick={() => setEditing(true)}
                 >
                   <Pencil className="w-4 h-4 mr-1" />

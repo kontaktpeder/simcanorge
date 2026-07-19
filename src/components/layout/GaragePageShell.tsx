@@ -4,8 +4,20 @@ import type { ReactNode } from "react";
 
 /** Shared light garage chrome — used by Min garasje, Konto and Profil. */
 export const GARAGE_BG = "#f3f3f3";
+export const GARAGE_HEADER = "#071628";
 export const garageFont = {
   fontFamily: "'Inter', 'Helvetica Neue', Arial, sans-serif",
+} as const;
+
+/** Light-surface button styles (theme tokens are dark-first and unreadable here). */
+export const garageBtn = {
+  primary:
+    "!bg-[#0a1f3d] !text-white hover:!bg-[#071628] hover:!text-white border-transparent",
+  outline:
+    "!bg-white !text-neutral-900 border border-black/15 hover:!bg-neutral-100 hover:!text-neutral-950",
+  ghost: "!bg-transparent !text-neutral-700 hover:!bg-black/5 hover:!text-neutral-950",
+  danger:
+    "!bg-white !text-red-700 border border-red-200 hover:!bg-red-50 hover:!text-red-800",
 } as const;
 
 interface GaragePageShellProps {

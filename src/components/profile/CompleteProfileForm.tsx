@@ -9,6 +9,8 @@ import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { useUpsertPersonProfile } from "@/hooks/useMyPersonProfile";
 import { Button } from "@/components/ui/button";
+import { garageBtn } from "@/components/layout/GaragePageShell";
+import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -137,7 +139,7 @@ export function CompleteProfileForm() {
             />
           </div>
 
-          <Button type="submit" className="w-full" disabled={isPending}>
+          <Button type="submit" className={cn("w-full h-11 rounded-xl", garageBtn.primary)} disabled={isPending}>
             {isPending ? "Oppretter profil…" : "Kom i gang"}
           </Button>
         </form>

@@ -5,6 +5,8 @@ import { toast } from "sonner";
 import { useUpsertPersonProfile } from "@/hooks/useMyPersonProfile";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
+import { garageBtn } from "@/components/layout/GaragePageShell";
+import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -191,7 +193,7 @@ export function EditProfileForm({ profile, onSuccess }: Props) {
         </div>
       </div>
 
-      <Button type="submit" disabled={saving}>
+      <Button type="submit" disabled={saving} className={cn("h-11 rounded-xl", garageBtn.primary)}>
         {saving ? "Lagrer…" : "Lagre endringer"}
       </Button>
     </form>
