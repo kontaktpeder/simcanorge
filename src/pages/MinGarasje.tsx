@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import { Car, Plus, ChevronRight, User, Settings } from "lucide-react";
+import { Car, Plus, ChevronRight, User, Settings, Shield } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { Layout } from "@/components/layout/Layout";
@@ -45,7 +45,7 @@ interface MyCar {
 }
 
 export default function MinGarasje() {
-  const { user, isLoading: authLoading } = useAuth();
+  const { user, isAdmin, isLoading: authLoading } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -103,6 +103,13 @@ export default function MinGarasje() {
         backLabel="Til forsiden"
         actions={
           <>
+            {isAdmin && (
+              <GarageChipLink
+                to="/admin/dashboard"
+                icon={<Shield className="w-3.5 h-3.5" />}
+                label="Admin"
+              />
+            )}
             <GarageChipLink
               to="/dashboard/min-profil"
               icon={<User className="w-3.5 h-3.5" />}
@@ -131,6 +138,30 @@ export default function MinGarasje() {
             </p>
           )}
         </div>
+
+        {isAdmin && (
+          <Link
+            to="/admin/dashboard"
+            onClick={() =>
+              void track("admin_intent_click", "garage", { intent: "admin" })
+            }
+            className="group flex items-center gap-4 rounded-2xl bg-white border border-black/[0.08] p-4 sm:p-5 mb-4 hover:border-black/20 transition-colors"
+          >
+            <div
+              className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 border border-black/5"
+              style={{ backgroundColor: "#e8eef5" }}
+            >
+              <Shield className="w-6 h-6" style={{ color: "#071628" }} strokeWidth={2.25} />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-[15px] font-semibold leading-snug">Admin</p>
+              <p className="text-[13px] text-neutral-600 mt-0.5">
+                Åpne admin-dashboard for godkjenning og drift.
+              </p>
+            </div>
+            <ChevronRight className="w-5 h-5 text-neutral-400 group-hover:text-neutral-700 transition-colors shrink-0" />
+          </Link>
+        )}
 
         <Link
           to="/legg-til-bil"
