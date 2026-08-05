@@ -99,11 +99,11 @@ export function Header() {
 
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden ml-auto p-2 text-white/90 hover:text-white transition-colors"
+            className="lg:hidden ml-auto inline-flex items-center justify-center min-h-[44px] min-w-[44px] p-2.5 text-white/90 hover:text-white transition-colors"
             aria-label="Meny"
             aria-expanded={mobileMenuOpen}
           >
-            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
         </div>
       </div>

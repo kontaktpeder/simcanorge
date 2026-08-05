@@ -22,13 +22,13 @@ export function CTASection() {
                 <Send className="w-5 h-5 md:w-6 md:h-6 text-accent" />
               </div>
               <div className="flex-1 min-w-0">
-                <h3 className="font-display text-base md:text-lg mb-1">
+                <h3 className="font-display text-lg md:text-lg mb-1">
                   HAR DU EN SIMCA?
                 </h3>
-                <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
+                <p className="text-base text-foreground/75 mb-3 line-clamp-2">
                   Del historien om din klassiker med Simca-miljøet i Norge.
                 </p>
-                <Link to="/send-inn" className="inline-flex items-center gap-2 bg-accent text-accent-foreground px-4 py-2 rounded-full text-sm font-medium hover:opacity-90 transition-opacity">
+                <Link to="/send-inn" className="inline-flex items-center gap-2 bg-accent text-accent-foreground min-h-[44px] px-4 py-2.5 rounded-full text-sm font-medium hover:opacity-90 transition-opacity">
                   Send inn din bil
                   <ArrowRight className="w-4 h-4" />
                 </Link>
@@ -43,13 +43,13 @@ export function CTASection() {
                 <Wrench className="w-5 h-5 md:w-6 md:h-6 text-primary" />
               </div>
               <div className="flex-1 min-w-0">
-                <h3 className="font-display text-base md:text-lg mb-1">
+                <h3 className="font-display text-lg md:text-lg mb-1">
                   TRENGER DU DELER?
                 </h3>
-                <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
+                <p className="text-base text-foreground/75 mb-3 line-clamp-2">
                   Bla i vårt utvalg av deler og annonser.
                 </p>
-                <Link to="/markedsplass" className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-full text-sm font-medium hover:opacity-90 transition-opacity">
+                <Link to="/markedsplass" className="inline-flex items-center gap-2 bg-primary text-primary-foreground min-h-[44px] px-4 py-2.5 rounded-full text-sm font-medium hover:opacity-90 transition-opacity">
                   Markedsplass
                   <ArrowRight className="w-4 h-4" />
                 </Link>

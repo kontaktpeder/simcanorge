@@ -72,17 +72,17 @@ export function HeroSection() {
     const sorted = [...car.car_images].sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
     return sorted[0];
   };
-  return <section className="poster-section poster-section-blue hero-watermark relative overflow-hidden min-h-[60vh] md:min-h-[85vh] flex flex-col justify-start pt-16 md:pt-20">
+  return <section className="poster-section poster-section-blue hero-watermark relative overflow-hidden min-h-[56vh] md:min-h-[85vh] flex flex-col justify-start pt-14 md:pt-20">
       <div className="absolute inset-0 stripes-diagonal" />
       
       <div className="container mx-auto relative z-10">
         <div className="grid lg:grid-cols-2 gap-3 md:gap-8 items-start">
           <div className="text-center lg:text-left">
-            <div className="flex items-center justify-center mb-1 md:mb-4">
+            <div className="flex items-center justify-center mb-2 md:mb-4">
               <img 
                 src="/simca-badge.png" 
                 alt="Simca Norge" 
-                className="h-44 md:h-72 lg:h-96 xl:h-[28rem] w-auto" 
+                className="h-36 sm:h-40 md:h-72 lg:h-96 xl:h-[28rem] w-auto" 
                 loading="eager"
                 fetchPriority="high"
                 onError={(e) => {
@@ -95,18 +95,18 @@ export function HeroSection() {
                 }}
               />
             </div>
-            <p className="text-sm md:text-xl lg:text-3xl font-light mb-2 md:mb-6 max-w-lg mx-auto lg:mx-0 text-white/90 font-serif">
+            <p className="text-base md:text-xl lg:text-3xl leading-relaxed font-light mb-4 md:mb-6 max-w-lg mx-auto lg:mx-0 text-white/95 font-serif">
               Din kilde til Simca, Talbot og Matra klassikere. Bildeler og historier fra entusiaster i Norge.
             </p>
             
             {/* Featured Car - Månedens bil - MOBILE ONLY above CTA */}
-            <div ref={mobileCardRef} className={`lg:hidden mb-3 transition-all duration-700 ${isMobileInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+            <div ref={mobileCardRef} className={`lg:hidden mb-4 transition-all duration-700 ${isMobileInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
               <div className="text-center mb-1.5">
-                <h2 className="font-display text-base text-white flex items-center justify-center gap-2">
+                <h2 className="font-display text-lg text-white flex items-center justify-center gap-2">
                   <Star className="w-5 h-5 text-yellow-400 fill-yellow-400 drop-shadow-[0_0_6px_rgba(250,204,21,0.8)]" />
                   Månedens bil
                 </h2>
-                <p className="font-serif text-xs text-white/50 mt-0.5">
+                <p className="font-serif text-sm text-white/70 mt-0.5">
                   {new Date().toLocaleDateString('nb-NO', {
                   month: 'long',
                   year: 'numeric'
@@ -135,8 +135,8 @@ export function HeroSection() {
                     </div>}
                   
                   <div className="mt-1.5 text-center">
-                    <p className="font-display text-sm font-bold text-white">{featuredCar.title}</p>
-                    <p className="font-serif text-sm text-white/80 mt-0.5">
+                    <p className="font-display text-base font-bold text-white">{featuredCar.title}</p>
+                    <p className="font-serif text-base text-white/85 mt-0.5">
                       {ownerProfile 
                         ? `Lagt ut av ${ownerProfile.display_name}${ownerProfile.location ? `, ${ownerProfile.location}` : ''}` 
                         : `${featuredCar.year ? `${featuredCar.year} · ` : ''}${featuredCar.model}`}
@@ -154,29 +154,29 @@ export function HeroSection() {
             </div>
             
             {/* CTA buttons */}
-            <div className="flex flex-row gap-2 md:gap-4 justify-center lg:justify-start">
+            <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center lg:justify-start">
               <Link 
                 to="/biler" 
-                className="group inline-flex items-center justify-center min-h-[44px] px-5 py-2.5 md:min-h-[48px] md:px-8 md:py-4 font-display text-xs md:text-xl uppercase tracking-wide text-white rounded-full active:scale-[0.97] transition-all hover:brightness-110"
+                className="group inline-flex items-center justify-center min-h-[48px] px-5 py-3 md:min-h-[48px] md:px-8 md:py-4 font-display text-sm md:text-xl uppercase tracking-wide text-white rounded-full active:scale-[0.97] transition-all hover:brightness-110"
                 style={{
                   background: 'linear-gradient(135deg, #E52020 0%, #B80C0C 100%)',
                   boxShadow: '0 4px 20px rgba(229,32,32,0.5), inset 0 1px 0 rgba(255,255,255,0.2)',
                 }}
               >
                 <span className="drop-shadow-sm font-bold">Se alle biler</span>
-                <ArrowRight className="w-3.5 h-3.5 md:w-5 md:h-5 ml-1.5 group-hover:translate-x-0.5 transition-transform" />
+                <ArrowRight className="w-4 h-4 md:w-5 md:h-5 ml-1.5 group-hover:translate-x-0.5 transition-transform" />
               </Link>
               
               <Link 
                 to="/markedsplass" 
-                className="group inline-flex items-center justify-center min-h-[44px] px-5 py-2.5 md:min-h-[48px] md:px-6 md:py-3.5 font-display text-xs md:text-lg uppercase tracking-wide text-white rounded-full active:scale-[0.97] transition-all hover:brightness-110"
+                className="group inline-flex items-center justify-center min-h-[48px] px-5 py-3 md:min-h-[48px] md:px-6 md:py-3.5 font-display text-sm md:text-lg uppercase tracking-wide text-white rounded-full active:scale-[0.97] transition-all hover:brightness-110"
                 style={{
                   background: 'linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%)',
                   boxShadow: '0 4px 20px rgba(37,99,235,0.45), inset 0 1px 0 rgba(255,255,255,0.2)',
                 }}
               >
                 <span className="drop-shadow-sm font-bold">Markedsplass</span>
-                <Car className="w-3.5 h-3.5 md:w-5 md:h-5 ml-1.5 group-hover:scale-110 transition-transform" />
+                <Car className="w-4 h-4 md:w-5 md:h-5 ml-1.5 group-hover:scale-110 transition-transform" />
               </Link>
             </div>
           </div>
