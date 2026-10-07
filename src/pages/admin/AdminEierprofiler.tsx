@@ -7,14 +7,15 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
-import { useAllOwnerProfiles, useUpdateOwnerProfile } from '@/hooks/useOwnerProfile';
+import { useAllOwnerProfiles, useApproveOwnerProfile, useUpdateOwnerProfile } from '@/hooks/useOwnerProfile';
 import { supabase } from '@/integrations/supabase/client';
 import { useQuery } from '@tanstack/react-query';
 
 export default function AdminEierprofiler() {
   const [searchQuery, setSearchQuery] = useState('');
-  const { data: profiles, isLoading } = useAllOwnerProfiles();
+  const { data: profiles, isLoading, isError } = useAllOwnerProfiles();
   const updateProfile = useUpdateOwnerProfile();
+  const approveProfile = useApproveOwnerProfile();
 
   // Get car counts for each owner
   const { data: carCounts } = useQuery({
@@ -76,6 +77,10 @@ export default function AdminEierprofiler() {
           <div className="text-center py-12 text-muted-foreground">
             Laster profiler...
           </div>
+        ) : isError ? (
+          <div className="text-center py-12 bg-card border rounded-lg">
+            <p className="text-muted-foreground">Kunne ikke hente profiler.</p>
+          </div>
         ) : filteredProfiles && filteredProfiles.length > 0 ? (
           <div className="grid gap-4">
             {filteredProfiles.map((profile, index) => (
@@ -132,12 +137,12 @@ export default function AdminEierprofiler() {
                               variant="outline"
                               onClick={(e) => {
                                 e.stopPropagation();
-                                updateProfile.mutateAsync({
+                                approveProfile.mutate({
                                   id: profile.id,
-                                  updates: { approved_at: new Date().toISOString() },
+                                  userId: profile.user_id,
                                 });
                               }}
-                              disabled={updateProfile.isPending}
+                              disabled={approveProfile.isPending}
                               className="text-xs"
                             >
                               Godkjenn

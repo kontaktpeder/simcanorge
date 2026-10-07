@@ -62,7 +62,7 @@ const AdminDashboard = () => {
           supabase.from("support_tickets").select("id", { count: "exact", head: true }),
           supabase.from("support_tickets").select("id", { count: "exact", head: true }).eq("status", "new"),
           supabase.from("marketplace_items").select("id", { count: "exact", head: true }).eq("status", "submitted"),
-          supabase.from("owners").select("id", { count: "exact", head: true }).is("approved_at", null),
+          supabase.from("person_profiles").select("id", { count: "exact", head: true }).is("approved_at", null),
         ]);
 
         setStats({

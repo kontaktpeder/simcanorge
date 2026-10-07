@@ -64,6 +64,10 @@ export interface PublicOwnerProfile {
 const OWNER_PROFILE_COLUMNS =
   'id, user_id, display_name, slug, bio, location, avatar_url, cover_url, is_public, can_create_pages, contact_email, contact_phone, favorite_brands, visible_public, approved_at, requested_approval_at, created_at, updated_at';
 
+/** Columns authenticated clients may read. contact_email/contact_phone are revoked. */
+const ADMIN_PROFILE_COLUMNS =
+  'id, user_id, display_name, slug, bio, location, avatar_url, cover_url, is_public, can_create_pages, favorite_brands, visible_public, approved_at, requested_approval_at, created_at, updated_at';
+
 const PUBLIC_PERSON_PROFILE_COLUMNS =
   'id, user_id, display_name, slug, bio, avatar_url, cover_url, location, favorite_brands, is_public, can_create_pages, visible_public, approved_at, created_at, updated_at';
 
@@ -198,11 +202,15 @@ export function useUpdateOwnerProfile() {
 
   return useMutation({
     mutationFn: async ({ id, updates }: { id: string; updates: Partial<OwnerProfile> }) => {
+      const safeUpdates = { ...updates };
+      delete safeUpdates.approved_at;
+      delete safeUpdates.contact_email;
+      delete safeUpdates.contact_phone;
       const { data, error } = await supabase
         .from('person_profiles')
-        .update(updates as any)
+        .update(safeUpdates as any)
         .eq('id', id)
-        .select(OWNER_PROFILE_COLUMNS)
+        .select(ADMIN_PROFILE_COLUMNS)
         .single();
 
       if (error) throw error;
@@ -277,11 +285,66 @@ export function useAllOwnerProfiles() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('person_profiles')
-        .select(OWNER_PROFILE_COLUMNS)
+        .select(ADMIN_PROFILE_COLUMNS)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
       return (data as unknown as OwnerProfile[]) || [];
+    },
+  });
+}
+
+/** Admin approval. Writes both profile tables and does not send email or notifications. */
+export function useApproveOwnerProfile() {
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  return useMutation({
+    mutationFn: async ({ id, userId }: { id: string; userId: string }) => {
+      const { error } = await supabase.rpc('admin_approve_person_profile', {
+        _profile_id: id,
+      });
+      if (!error) return { id, userId };
+
+      const missingFn =
+        error.code === 'PGRST202' ||
+        /admin_approve_person_profile/i.test(error.message ?? '');
+      if (!missingFn) throw error;
+
+      const approvedAt = new Date().toISOString();
+      const { data: updated, error: profileError } = await supabase
+        .from('person_profiles')
+        .update({ approved_at: approvedAt })
+        .eq('id', id)
+        .select('id')
+        .maybeSingle();
+      if (profileError) throw profileError;
+      if (!updated) throw new Error('Kunne ikke godkjenne profil');
+
+      const { error: ownerError } = await supabase
+        .from('owners')
+        .update({ approved_at: approvedAt })
+        .eq('user_id', userId);
+      if (ownerError) throw ownerError;
+
+      return { id, userId };
+    },
+    onSuccess: ({ userId }) => {
+      queryClient.invalidateQueries({ queryKey: ['all-owner-profiles'] });
+      queryClient.invalidateQueries({ queryKey: ['owner-profile', userId] });
+      queryClient.invalidateQueries({ queryKey: ['owner-profile-slug'] });
+      toast({
+        title: 'Profil godkjent',
+        description: 'Profilen er godkjent.',
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: 'Feil',
+        description: 'Kunne ikke godkjenne profil.',
+        variant: 'destructive',
+      });
+      console.error('Approve profile error:', error);
     },
   });
 }
