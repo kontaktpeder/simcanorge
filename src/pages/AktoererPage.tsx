@@ -50,7 +50,7 @@ export default function AktoererPage() {
                 className="text-[10px] sm:text-[11px] tracking-[0.3em] uppercase mb-1.5"
                 style={{ ...oswald, fontWeight: 500, background: 'linear-gradient(135deg, #F5A623, #FFD166)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}
               >
-                bilgarasje.no
+                simcanorge.no
               </p>
               <h1
                 className="text-[1.5rem] sm:text-[1.9rem] md:text-[2.4rem] leading-[0.93] uppercase tracking-[0.02em] text-white font-bold italic"

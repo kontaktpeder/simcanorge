@@ -138,7 +138,7 @@ export default function AdminPersonProfiles() {
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium">{r.profile?.display_name ?? "Ukjent"}</p>
                     <p className="text-xs text-muted-foreground">
-                      bilgarasje.no/p/{r.profile?.slug}
+                      simcanorge.no/p/{r.profile?.slug}
                     </p>
                     <div className="flex items-center gap-2 mt-1">
                       <span className={`text-xs ${r.profile?.is_public ? "text-green-600" : "text-amber-600"}`}>
@@ -190,7 +190,7 @@ export default function AdminPersonProfiles() {
               <CardContent className="flex items-center justify-between p-4">
                 <div>
                   <p className="font-medium">{p.display_name}</p>
-                  <p className="text-sm text-muted-foreground">bilgarasje.no/p/{p.slug}</p>
+                  <p className="text-sm text-muted-foreground">simcanorge.no/p/{p.slug}</p>
                   <p className="text-xs text-muted-foreground">{p.email}</p>
                 </div>
 

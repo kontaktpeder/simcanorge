@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { getAuthRedirectOrigin } from "@/lib/siteUrl";
 
 interface StepVerifyProps {
   email: string;
@@ -75,7 +76,7 @@ export function StepVerify({ email, carId, onSkip, onVerified }: StepVerifyProps
 
     try {
       localStorage.setItem("pendingClaimCarId", carId);
-      const redirectUrl = new URL("/send-inn", window.location.origin);
+      const redirectUrl = new URL("/send-inn", getAuthRedirectOrigin());
       redirectUrl.searchParams.set("claimCarId", carId);
 
       const { error } = await supabase.auth.signInWithOtp({

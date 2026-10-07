@@ -137,7 +137,7 @@ export default function EditPagePage() {
             <p className="text-sm text-muted-foreground">
               Adresse:{" "}
               <span className="font-mono text-foreground">
-                bilgarasje.no/{page.page_type === "club" ? "klubber" : "s"}/{page.slug}
+                simcanorge.no/{page.page_type === "club" ? "klubber" : "s"}/{page.slug}
               </span>
             </p>
           </div>
@@ -213,7 +213,7 @@ export default function EditPagePage() {
                       {m.person_profiles?.display_name ?? "Ukjent"}
                     </p>
                     <p className="text-xs text-muted-foreground truncate">
-                      bilgarasje.no/p/{m.person_profiles?.slug}
+                      simcanorge.no/p/{m.person_profiles?.slug}
                     </p>
                   </div>
                   <Badge variant="secondary" className="text-xs">

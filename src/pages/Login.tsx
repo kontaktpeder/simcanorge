@@ -11,6 +11,7 @@ import { toast } from 'sonner';
 import { z } from 'zod';
 import { getBrowserAuthSupport } from '@/lib/browserSupport';
 import { safeInternalPath } from '@/lib/navigation';
+import { getAuthRedirectOrigin } from '@/lib/siteUrl';
 
 const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
 const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
@@ -42,7 +43,7 @@ export default function Login() {
   const inviteEmail = searchParams.get('inviteEmail') || '';
   const inviteCar = searchParams.get('inviteCar') || '';
   const useMagicLink = !showPasswordMode;
-  const publicBaseUrl = (import.meta.env.VITE_PUBLIC_SITE_URL as string | undefined) || window.location.origin;
+  const publicBaseUrl = getAuthRedirectOrigin();
 
   useEffect(() => {
     const support = getBrowserAuthSupport();
@@ -210,7 +211,7 @@ export default function Login() {
           <div className="text-center mb-8">
             <p className="text-[10px] tracking-[0.3em] uppercase mb-2"
               style={{ ...oswald, fontWeight: 500, background: 'linear-gradient(135deg, #34eab8, #2dd4a8)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-              bilgarasje.no
+              simcanorge.no
             </p>
             <h1 className="text-3xl sm:text-4xl uppercase tracking-wide text-foreground font-bold italic"
               style={chakra}>

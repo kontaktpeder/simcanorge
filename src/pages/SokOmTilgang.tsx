@@ -69,7 +69,7 @@ export default function SokOmTilgang() {
         <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(circle at 70% 50%, rgba(255,190,100,0.10) 0%, transparent 50%)' }} />
         <div className="relative z-10 max-w-[1200px] mx-auto px-5 md:px-8">
           <p className="text-[10px] tracking-[0.3em] uppercase mb-1" style={{ ...oswald, fontWeight: 500, background: 'linear-gradient(135deg, #F5A623, #FFD166)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-            bilgarasje.no
+            simcanorge.no
           </p>
           <h1 className="text-xl sm:text-2xl md:text-3xl uppercase tracking-wide text-white font-bold italic leading-tight" style={chakra}>
             Søk om tilgang

@@ -129,7 +129,7 @@ export function PageForm({ defaultValues, onSubmit, isPending, submitLabel = "La
         <div className="space-y-1">
           <Label htmlFor="slug">Adresse *</Label>
           <div className="flex items-center gap-1">
-            <span className="text-sm text-muted-foreground whitespace-nowrap">bilgarasje.no/s/</span>
+            <span className="text-sm text-muted-foreground whitespace-nowrap">simcanorge.no/s/</span>
             <Input id="slug" {...slugProps} placeholder="simca-klubben" />
           </div>
           {errors.slug && <p className="text-sm text-destructive">{errors.slug.message}</p>}

@@ -15,6 +15,7 @@ import { useAccountRequests, useCreateAccountRequest } from "@/hooks/useAccountR
 import { toast } from "sonner";
 import { getBrowserAuthSupport } from "@/lib/browserSupport";
 import { SITE_NAME } from "@/config/site";
+import { getAuthRedirectOrigin } from "@/lib/siteUrl";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -64,7 +65,7 @@ export default function Konto() {
       const { error } = await supabase.auth.signInWithOtp({
         email,
         options: {
-          emailRedirectTo: `${window.location.origin}/konto`,
+          emailRedirectTo: `${getAuthRedirectOrigin()}/konto`,
         },
       });
 

@@ -66,7 +66,7 @@ export function GarageLayout({
                   className="text-[10px] sm:text-[11px] tracking-[0.3em] uppercase mb-1"
                   style={{ ...oswald, fontWeight: 500, background: 'linear-gradient(135deg, #F5A623, #FFD166)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}
                 >
-                  bilgarasje.no
+                  simcanorge.no
                 </p>
                 <h1
                   className="text-[1.4rem] sm:text-[1.8rem] md:text-[2.2rem] leading-[0.93] uppercase tracking-[0.02em] text-white font-bold italic"

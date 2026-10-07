@@ -62,7 +62,7 @@ Deno.serve(async (req: Request): Promise<Response> => {
       );
     }
 
-    const siteUrl = Deno.env.get("SITE_URL") || "https://bilgarasje.no";
+    const siteUrl = Deno.env.get("SITE_URL") || "https://simcanorge.no";
 
     // Generate Supabase invite link
     const { data: linkData, error: linkError } =

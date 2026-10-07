@@ -8,19 +8,29 @@ const ENV_URL =
 
 const DEFAULT_ORIGIN = "https://simcanorge.no";
 
+function isPublicHost(host: string): boolean {
+  return (
+    host === "simcanorge.no" ||
+    host.endsWith(".simcanorge.no") ||
+    host === "bilgarasje.no" ||
+    host.endsWith(".bilgarasje.no")
+  );
+}
+
 export function getSiteUrl(): string {
-  if (typeof window !== "undefined") {
-    const host = window.location.hostname;
-    if (host === "simcanorge.no" || host.endsWith(".simcanorge.no")) {
-      return DEFAULT_ORIGIN;
-    }
-    if (host === "bilgarasje.no" || host.endsWith(".bilgarasje.no")) {
-      // Legacy-domene under tilbakeføring til Simca Norge
-      return DEFAULT_ORIGIN;
-    }
+  if (typeof window !== "undefined" && isPublicHost(window.location.hostname)) {
+    return DEFAULT_ORIGIN;
   }
   const fromEnv = ENV_URL?.trim();
   return (fromEnv ? fromEnv : DEFAULT_ORIGIN).replace(/\/$/, "");
+}
+
+/** Origin for innloggings- og tilbakestillingslenker. Offentlige domener lander på simcanorge.no. */
+export function getAuthRedirectOrigin(): string {
+  if (typeof window !== "undefined" && !isPublicHost(window.location.hostname)) {
+    return window.location.origin;
+  }
+  return getSiteUrl();
 }
 
 /** Path uten query/hash → absolutt canonical URL */

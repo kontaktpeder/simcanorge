@@ -19,4 +19,4 @@ Allow: /
 User-agent: LinkedInBot
 Allow: /
 
-Sitemap: https://bilgarasje.no/sitemap.xml
+Sitemap: https://simcanorge.no/sitemap.xml

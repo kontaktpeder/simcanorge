@@ -308,7 +308,7 @@ const Biler = () => {
                     className="text-[10px] sm:text-[11px] tracking-[0.35em] uppercase"
                     style={{ ...oswald, fontWeight: 600, color: '#34eab8' }}
                   >
-                    bilgarasje.no — arkivet
+                    simcanorge.no — arkivet
                   </p>
                 </div>
                 <h1

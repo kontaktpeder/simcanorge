@@ -4,9 +4,10 @@ import RegistrerBil from "@/pages/RegistrerBil";
 import { useAuth } from "@/hooks/useAuth";
 import { BrandLoader } from "@/components/brand/BrandLoader";
 import { SeoHead } from "@/components/seo/SeoHead";
+import { SITE_DESCRIPTION, SITE_NAME } from "@/config/site";
 
 /**
- * Root entry "/" for bilgarasje.no.
+ * Root entry "/" for simcanorge.no.
  *
  * - Logged out: shows the public onboarding flow (RegistrerBil).
  * - Logged in: redirects straight into the app at /app, so returning users
@@ -18,7 +19,7 @@ export default function Hjem() {
   const { user, isLoading } = useAuth();
 
   useEffect(() => {
-    document.title = "Bilgarasje.no";
+    document.title = SITE_NAME;
   }, []);
 
   if (isLoading) {
@@ -36,8 +37,8 @@ export default function Hjem() {
   return (
     <>
       <SeoHead
-        title="Bilgarasje.no – Norges digitale bilgarasje"
-        description="Legg inn bilen din, dokumenter historien og bli en del av Norges bilfellesskap på Bilgarasje.no."
+        title={`${SITE_NAME} – Din kilde til Simca, Talbot og Matra`}
+        description={SITE_DESCRIPTION}
         canonicalPath="/"
       />
       <RegistrerBil />

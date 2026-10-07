@@ -125,7 +125,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
               className="text-[10px] tracking-[0.3em] uppercase mb-2"
               style={{ ...oswald, fontWeight: 500, color: 'rgba(196,150,44,0.7)' }}
             >
-              bilgarasje.no
+              simcanorge.no
             </p>
             <h1
               className="text-[1.6rem] sm:text-[2rem] leading-[0.95] uppercase tracking-[0.02em] font-bold italic mb-3"

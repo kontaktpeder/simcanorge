@@ -111,7 +111,7 @@ export function CompleteProfileForm() {
           <div className="space-y-1">
             <Label htmlFor="slug">Brukernavn *</Label>
             <div className="flex items-center gap-1">
-              <span className="text-sm text-muted-foreground whitespace-nowrap">bilgarasje.no/p/</span>
+              <span className="text-sm text-muted-foreground whitespace-nowrap">simcanorge.no/p/</span>
               <Input id="slug" {...slugProps} placeholder="ditt-navn" />
             </div>
             {errors.slug && <p className="text-sm text-destructive">{errors.slug.message}</p>}

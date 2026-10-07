@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { useQueryClient } from "@tanstack/react-query";
 import { FEATURES } from "@/config/features";
 import { useAuth } from "@/hooks/useAuth";
+import { getAuthRedirectOrigin } from "@/lib/siteUrl";
 
 function ExistingUserLoginBanner() {
   return (
@@ -164,7 +165,7 @@ export default function SendInnBil() {
     try {
       await supabase.auth.signOut();
       localStorage.setItem("pendingClaimCarId", carId);
-      const redirectUrl = new URL("/send-inn", window.location.origin);
+      const redirectUrl = new URL("/send-inn", getAuthRedirectOrigin());
       redirectUrl.searchParams.set("claimCarId", carId);
       const { error } = await supabase.auth.signInWithOtp({
         email: trimmed,
@@ -206,7 +207,7 @@ export default function SendInnBil() {
     // Guest flow: send magic link
     try {
       localStorage.setItem("pendingClaimCarId", carId);
-      const redirectUrl = new URL("/send-inn", window.location.origin);
+      const redirectUrl = new URL("/send-inn", getAuthRedirectOrigin());
       redirectUrl.searchParams.set("claimCarId", carId);
 
       await supabase.auth.signInWithOtp({

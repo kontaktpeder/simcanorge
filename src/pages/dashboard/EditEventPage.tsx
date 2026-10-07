@@ -100,7 +100,7 @@ export default function EditEventPage() {
               {event.title}
             </h1>
             <p className="text-xs font-mono bg-muted px-1.5 py-0.5 rounded w-fit mt-1">
-              bilgarasje.no/e/{event.slug}
+              simcanorge.no/e/{event.slug}
             </p>
           </div>
           {event.status === "published" && (

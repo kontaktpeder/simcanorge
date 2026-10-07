@@ -7,6 +7,7 @@ import { Loader2, Mail, ArrowLeft, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { z } from 'zod';
+import { getAuthRedirectOrigin } from '@/lib/siteUrl';
 
 const schema = z.object({
   email: z.string().email('Ugyldig e-postadresse'),
@@ -29,7 +30,7 @@ export default function GlemtPassord() {
     setIsLoading(true);
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/nytt-passord`,
+        redirectTo: `${getAuthRedirectOrigin()}/nytt-passord`,
       });
       if (error) throw error;
       setSent(true);

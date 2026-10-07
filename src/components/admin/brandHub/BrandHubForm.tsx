@@ -79,8 +79,8 @@ export function BrandHubForm({ existing, onSaved }: Props) {
   );
 
   const preview = values.brand_key
-    ? `bilgarasje.no${brandHubPath(values.brand_key)}`
-    : "bilgarasje.no/merker/…";
+    ? `simcanorge.no${brandHubPath(values.brand_key)}`
+    : "simcanorge.no/merker/…";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

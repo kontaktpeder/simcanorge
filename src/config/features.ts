@@ -2,10 +2,10 @@
 // Toggle via Vite env vars (e.g. VITE_FEATURE_SIMPLE_LAUNCH_MODE=true).
 //
 // Canonical site URL (used by SeoHead/sitemap) is configured via
-// `VITE_PUBLIC_SITE_URL` (see src/lib/siteUrl.ts). Default: https://bilgarasje.no.
+// `VITE_PUBLIC_SITE_URL` (see src/lib/siteUrl.ts). Default: https://simcanorge.no.
 export const PUBLIC_SITE_URL: string =
   (import.meta.env.VITE_PUBLIC_SITE_URL as string | undefined)?.replace(/\/$/, "") ||
-  "https://bilgarasje.no";
+  "https://simcanorge.no";
 
 export const FEATURES = {
 

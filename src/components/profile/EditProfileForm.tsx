@@ -112,7 +112,7 @@ export function EditProfileForm({ profile, onSuccess }: Props) {
 
       <div className="space-y-1">
         <Label>Brukernavn (slug)</Label>
-        <p className="text-sm text-muted-foreground">bilgarasje.no/p/{profile.slug}</p>
+        <p className="text-sm text-muted-foreground">simcanorge.no/p/{profile.slug}</p>
         <p className="text-xs text-muted-foreground">Brukernavn kan ikke endres her.</p>
       </div>
 
