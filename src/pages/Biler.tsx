@@ -207,8 +207,9 @@ const Biler = () => {
   ].filter(Boolean).length;
 
   const handlePageChange = (newPage: number) => {
-    if (newPage >= 0 && newPage < totalPages) {
+    if (newPage >= 0 && newPage < totalPages && newPage !== currentPage) {
       setCurrentPage(newPage);
+      window.scrollTo({ top: 0, left: 0, behavior: "auto" });
     }
   };
 
