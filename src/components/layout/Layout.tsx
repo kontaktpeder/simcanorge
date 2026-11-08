@@ -52,7 +52,7 @@ export function Layout({ children, contained = false, hideFooter = false, shortP
   const showBottomNav = !!user && !activeSession;
   const bottomPadClass = showBottomNav ? "pb-[calc(4rem+env(safe-area-inset-bottom,0px))] md:pb-0" : "";
   // Forside: no top pad (hero runs under sticky header). Avoids a dark body-color seam.
-  const topPadClass = isIndex ? "" : "pt-14 md:pt-16";
+  const topPadClass = isIndex ? "" : "pt-16";
   const shellClass = isIndex ? "bg-[#071628]" : "";
 
   if (contained) {

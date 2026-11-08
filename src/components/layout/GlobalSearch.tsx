@@ -95,7 +95,7 @@ export function GlobalSearch({ variant = "light" }: { variant?: "light" | "dark"
     <div ref={containerRef} className="relative w-full">
       <Search
         className={`absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 ${
-          isDark ? "text-white/70" : "text-[#1a1a1a]/25"
+          isDark ? "text-[#071628]/45" : "text-[#1a1a1a]/25"
         }`}
       />
       <input
@@ -107,10 +107,10 @@ export function GlobalSearch({ variant = "light" }: { variant?: "light" | "dark"
           setOpen(true);
         }}
         onFocus={() => setOpen(true)}
-        placeholder="Søk etter biler…"
-        className={`w-full pl-9 pr-8 py-2 text-[14px] tracking-wide focus:outline-none transition-all rounded-md ${
+        placeholder="Søk etter biler"
+        className={`w-full pl-9 pr-8 py-2 font-sans text-base focus:outline-none transition-all rounded-xl ${
           isDark
-            ? "bg-white/10 border border-white/25 text-white placeholder:text-white/55 focus:border-white/50 focus:bg-white/15"
+            ? "bg-white text-[#071628] placeholder:text-[#071628]/50 border border-white shadow-sm focus:ring-2 focus:ring-white/70"
             : "bg-transparent border-b border-[#1a1a1a]/[0.12] text-[#1a1a1a]/70 placeholder:text-[#1a1a1a]/25 focus:border-[#c4962c]/50"
         }`}
       />
@@ -118,7 +118,7 @@ export function GlobalSearch({ variant = "light" }: { variant?: "light" | "dark"
         <button
           onClick={handleClear}
           className={`absolute right-2 top-1/2 -translate-y-1/2 transition-colors ${
-            isDark ? "text-white/60 hover:text-white" : "text-[#1a1a1a]/25 hover:text-[#1a1a1a]/50"
+            isDark ? "text-[#071628]/40 hover:text-[#071628]" : "text-[#1a1a1a]/25 hover:text-[#1a1a1a]/50"
           }`}
         >
           <X className="w-3.5 h-3.5" />
@@ -128,13 +128,13 @@ export function GlobalSearch({ variant = "light" }: { variant?: "light" | "dark"
       {showDropdown && (
         <div className="absolute top-full left-0 right-0 mt-1 bg-white/95 backdrop-blur-md border border-[#1a1a1a]/[0.1] shadow-2xl z-[100] max-h-[380px] overflow-y-auto rounded-lg">
           {isSearching && (
-            <div className="px-4 py-3 text-[12px] text-[#1a1a1a]/30 tracking-wide">
+            <div className="px-4 py-3 font-sans text-base text-[#1a1a1a]/60">
               Søker…
             </div>
           )}
 
           {!isSearching && debouncedQuery.length >= 2 && results.length === 0 && (
-            <div className="px-4 py-4 text-[12px] text-[#1a1a1a]/25 tracking-wide">
+            <div className="px-4 py-4 font-sans text-base text-[#1a1a1a]/60">
               Ingen treff for «{debouncedQuery}»
             </div>
           )}
@@ -143,7 +143,7 @@ export function GlobalSearch({ variant = "light" }: { variant?: "light" | "dark"
             <>
               {contextResults.length > 0 && currentSection && (
                 <div>
-                  <div className="px-4 pt-3 pb-1 text-[10px] tracking-[0.15em] uppercase text-[#1a1a1a]/30">
+                  <div className="px-4 pt-3 pb-1 font-display text-lg tracking-wide uppercase text-[#071628]/70">
                     I {SECTION_LABELS[currentSection]}
                   </div>
                   {contextResults.map((r) => (
@@ -155,7 +155,7 @@ export function GlobalSearch({ variant = "light" }: { variant?: "light" | "dark"
               {otherResults.length > 0 && (
                 <div>
                   {contextResults.length > 0 && (
-                    <div className="px-4 pt-3 pb-1 text-[10px] tracking-[0.15em] uppercase text-[#1a1a1a]/30">
+                    <div className="px-4 pt-3 pb-1 font-display text-lg tracking-wide uppercase text-[#071628]/70">
                       Resten av siden
                     </div>
                   )}
@@ -193,17 +193,17 @@ function ResultRow({
       </div>
 
       <div className="flex-1 min-w-0">
-        <div className="text-[12px] text-[#1a1a1a]/70 group-hover:text-[#1a1a1a]/90 truncate transition-colors">
+        <div className="font-sans text-base text-[#071628] group-hover:text-[#071628] truncate">
           {result.title}
         </div>
         {result.subtitle && (
-          <div className="text-[11px] text-[#1a1a1a]/35 truncate">
+          <div className="font-sans text-sm text-[#071628]/60 truncate">
             {result.subtitle}
           </div>
         )}
       </div>
 
-      <span className={`text-[9px] tracking-[0.12em] uppercase px-2 py-0.5 rounded-full flex-shrink-0 ${SECTION_COLORS[result.section] || "bg-[#1a1a1a]/10 text-[#1a1a1a]/40"}`}>
+      <span className={`font-display text-sm tracking-wide uppercase px-2 py-0.5 rounded-md flex-shrink-0 ${SECTION_COLORS[result.section] || "bg-[#1a1a1a]/10 text-[#1a1a1a]/70"}`}>
         {result.sectionLabel}
       </span>
     </button>

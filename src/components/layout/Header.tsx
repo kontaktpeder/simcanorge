@@ -1,13 +1,12 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, LogIn, Warehouse } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { GlobalSearch } from "@/components/layout/GlobalSearch";
 import { FEATURES } from "@/config/features";
 import simcaLogo from "@/assets/simca-norge-badge.png";
 
 const allNavLinks = [
-  { href: "/", label: "Hjem" },
   { href: "/biler", label: "Biler" },
   { href: "/markedsplass", label: "Markedsplass", launchLocked: true },
   { href: "/arrangement", label: "Arrangement", launchLocked: true },
@@ -28,11 +27,12 @@ export function Header() {
 
   const garageHref = "/min-garasje";
   const loginHref = `/login?returnUrl=${encodeURIComponent(garageHref)}`;
+  const submitHref = user ? "/legg-til-bil" : "/send-inn";
 
   return (
-    <header className="sticky top-0 z-50 bg-[#071628]">
+    <header className="sticky top-0 z-50 bg-[#071628] border-b border-white/10">
       <div className="max-w-[1400px] mx-auto px-4 md:px-8">
-        <div className="flex items-center h-14 md:h-16 gap-4 md:gap-6">
+        <div className="flex items-center h-16 gap-5 xl:gap-8">
           <Link
             to="/"
             className="flex-shrink-0 group"
@@ -41,57 +41,43 @@ export function Header() {
             <img
               src={simcaLogo}
               alt="Simca Norge"
-              className="h-11 md:h-12 w-auto opacity-100 group-hover:opacity-90 transition-opacity duration-200"
+              className="h-11 w-auto group-hover:opacity-90 transition-opacity duration-200"
             />
           </Link>
 
-          <nav className="hidden lg:flex items-center gap-1 flex-shrink-0" aria-label="Hovedmeny">
+          <nav className="hidden xl:flex items-center gap-5 flex-shrink-0" aria-label="Hovedmeny">
             {navLinks.map((link) => {
               const isActive = location.pathname === link.href;
               return (
                 <Link
                   key={link.href}
                   to={link.href}
-                  className={`relative px-3 py-2 text-[13px] font-semibold tracking-wide transition-colors ${
+                  className={`font-display text-xl leading-none tracking-wide uppercase transition-colors ${
                     isActive
-                      ? "text-white"
-                      : "text-white/80 hover:text-white"
+                      ? "text-white border-b-2 border-[#D41515] pb-0.5"
+                      : "text-white/90 hover:text-white border-b-2 border-transparent pb-0.5"
                   }`}
                 >
                   {link.label}
-                  {isActive && (
-                    <span className="absolute bottom-0 left-3 right-3 h-0.5 bg-white rounded-full" />
-                  )}
                 </Link>
               );
             })}
           </nav>
 
-          <div className="hidden md:flex flex-1 max-w-sm ml-auto">
+          <div className="hidden md:flex flex-1 min-w-[10rem] max-w-xs ml-auto">
             <GlobalSearch variant="dark" />
           </div>
 
-          <div className="hidden lg:flex items-center gap-2 flex-shrink-0">
-            {user ? (
-              <Link
-                to={garageHref}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 text-[13px] font-semibold text-white bg-white/15 hover:bg-white/25 border border-white/25 rounded-md transition-colors"
-              >
-                <Warehouse className="w-4 h-4" />
-                Min garasje
-              </Link>
-            ) : (
-              <Link
-                to={loginHref}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 text-[13px] font-semibold text-white/90 hover:text-white border border-white/25 hover:border-white/40 rounded-md transition-colors"
-              >
-                <LogIn className="w-4 h-4" />
-                Logg inn
-              </Link>
-            )}
+          <div className="hidden xl:flex items-center gap-5 flex-shrink-0">
             <Link
-              to={user ? "/legg-til-bil" : "/send-inn"}
-              className="px-3.5 py-2 text-[13px] font-bold text-[#071628] bg-white hover:bg-white/90 rounded-md transition-colors"
+              to={user ? garageHref : loginHref}
+              className="font-display text-xl leading-none tracking-wide uppercase text-white/90 hover:text-white transition-colors"
+            >
+              {user ? "Min garasje" : "Logg inn"}
+            </Link>
+            <Link
+              to={submitHref}
+              className="btn-enamel-red !px-4 !py-2 !text-lg !leading-none"
             >
               Legg inn bil
             </Link>
@@ -99,7 +85,7 @@ export function Header() {
 
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden ml-auto inline-flex items-center justify-center min-h-[44px] min-w-[44px] p-2.5 text-white/90 hover:text-white transition-colors"
+            className="xl:hidden ml-auto md:ml-0 inline-flex items-center justify-center min-h-[44px] min-w-[44px] p-2.5 text-white hover:text-white/80 transition-colors"
             aria-label="Meny"
             aria-expanded={mobileMenuOpen}
           >
@@ -109,7 +95,7 @@ export function Header() {
       </div>
 
       {mobileMenuOpen && (
-        <nav className="lg:hidden bg-[#071628] border-t border-white/15" aria-label="Mobilmeny">
+        <nav className="xl:hidden bg-[#071628] border-t border-white/15" aria-label="Mobilmeny">
           <div className="px-4 pt-3 pb-2">
             <GlobalSearch variant="dark" />
           </div>
@@ -121,7 +107,7 @@ export function Header() {
                   key={link.href}
                   to={link.href}
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`py-3 text-[15px] font-semibold border-b border-white/10 transition-colors ${
+                  className={`py-3 font-display text-2xl leading-none tracking-wide uppercase border-b border-white/10 transition-colors ${
                     isActive ? "text-white" : "text-white/85 hover:text-white"
                   }`}
                 >
@@ -129,28 +115,18 @@ export function Header() {
                 </Link>
               );
             })}
-            <div className="flex flex-col gap-2 mt-4 pb-4">
-              {user ? (
-                <Link
-                  to={garageHref}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="py-3 text-center text-[14px] font-semibold text-white bg-white/15 border border-white/25 rounded-md"
-                >
-                  Min garasje
-                </Link>
-              ) : (
-                <Link
-                  to={loginHref}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="py-3 text-center text-[14px] font-semibold text-white/90 border border-white/25 rounded-md inline-flex items-center justify-center gap-2"
-                >
-                  <LogIn className="w-4 h-4" /> Logg inn
-                </Link>
-              )}
+            <div className="flex flex-col gap-3 mt-4 pb-4">
               <Link
-                to={user ? "/legg-til-bil" : "/send-inn"}
+                to={user ? garageHref : loginHref}
                 onClick={() => setMobileMenuOpen(false)}
-                className="py-3 text-center text-[14px] font-bold text-[#071628] bg-white rounded-md"
+                className="py-3 text-center font-display text-2xl leading-none tracking-wide uppercase text-white border border-white/25 rounded-xl"
+              >
+                {user ? "Min garasje" : "Logg inn"}
+              </Link>
+              <Link
+                to={submitHref}
+                onClick={() => setMobileMenuOpen(false)}
+                className="btn-enamel-red w-full !text-xl"
               >
                 Legg inn bil
               </Link>
