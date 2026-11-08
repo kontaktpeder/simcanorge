@@ -378,9 +378,11 @@ const BilDetalj = () => {
   if (isLoading) {
     return (
       <Layout>
-        <ExploreDetailBackBar />
-        <div className="min-h-[60vh] flex items-center justify-center">
-          <BrandLoader size={220} />
+        <div className="-mt-16 pt-16 min-h-[calc(100vh-4rem)] bg-[#f6f3ee]">
+          <ExploreDetailBackBar />
+          <div className="min-h-[60vh] flex items-center justify-center">
+            <BrandLoader size={220} />
+          </div>
         </div>
       </Layout>
     );
@@ -389,12 +391,13 @@ const BilDetalj = () => {
   if (!car) {
     return (
       <Layout>
+        <div className="-mt-16 pt-16 min-h-[calc(100vh-4rem)] bg-[#f6f3ee] text-[#1c1917]">
         <ExploreDetailBackBar />
-        <section className="poster-section min-h-[60vh] flex items-center justify-center">
+        <section className="min-h-[60vh] flex items-center justify-center">
           <div className="text-center animate-fade-in">
-            <Car className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
-            <h1 className="headline-md mb-4">BIL IKKE FUNNET</h1>
-            <p className="text-muted-foreground mb-6">
+            <Car className="w-16 h-16 mx-auto mb-4 text-[#1c1917]/30" />
+            <h1 className="font-display text-4xl uppercase text-[#071628] mb-4">Bil ikke funnet</h1>
+            <p className="font-sans text-base text-[#1c1917]/70 mb-6">
               Bilen du leter etter eksisterer ikke eller er ikke publisert ennå.
             </p>
             <Link to="/biler" className="btn-enamel-blue">
@@ -403,6 +406,7 @@ const BilDetalj = () => {
             </Link>
           </div>
         </section>
+        </div>
       </Layout>
     );
   }
@@ -485,6 +489,7 @@ const BilDetalj = () => {
 
   return (
     <Layout>
+      <div className="-mt-16 pt-16 min-h-[calc(100vh-4rem)] bg-[#f6f3ee] text-[#1c1917]">
       <ExploreDetailBackBar />
       {showPostPublishOverlay && (
         <PostPublishOnboardingOverlay
@@ -782,6 +787,7 @@ const BilDetalj = () => {
           />
         )
       )}
+      </div>
     </Layout>
   );
 };

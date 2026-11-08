@@ -1,6 +1,5 @@
 import { Layout } from "@/components/layout/Layout";
 import { SeoHead } from "@/components/seo";
-import { PageHeader } from "@/components/layout/PageHeader";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Link } from "react-router-dom";
@@ -90,128 +89,156 @@ const ManedensBil = () => {
     const sorted = [...car.car_images].sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
     return sorted[0];
   };
-  return <Layout contained>
+  const featuredImage = featuredCar ? getMainImage(featuredCar) : null;
+
+  return (
+    <Layout>
       <SeoHead
-        title="Månedens bil | Bilgarasje.no"
-        description="Hver måned løfter vi frem én bil fra vårt fellesskap."
+        title="Månedens bil | Simca Norge"
+        description="Hver måned løfter vi frem én bil fra fellesskapet."
         canonicalPath="/manedens-bil"
       />
-      <PageHeader 
-        title="MÅNEDENS BIL" 
-        subtitle="Hver måned løfter vi frem én bil fra vårt fellesskap – en kilde til inspirasjon, glede og ekte kjøreglede" 
-      />
+      <div className="-mt-16 pt-16 min-h-full bg-[#f6f3ee] text-[#1c1917]">
+        <section className="border-b border-black/10">
+          <div className="max-w-[1100px] mx-auto px-4 sm:px-6 py-8 md:py-12">
+            <p className="font-display text-lg tracking-[0.12em] uppercase text-[#C10D0D]">
+              Simca Norge
+            </p>
+            <h1 className="font-display text-4xl sm:text-5xl md:text-6xl uppercase leading-none text-[#071628] mt-1">
+              Månedens bil
+            </h1>
+            <p className="font-sans text-base md:text-lg text-[#1c1917]/75 mt-3 max-w-xl leading-relaxed">
+              Hver måned løfter vi frem én bil fra fellesskapet.
+            </p>
+          </div>
+        </section>
 
-      {/* Featured Car */}
-      <section className="py-16">
-        <div className="container mx-auto px-4">
-          {isLoading ? <div className="grid lg:grid-cols-2 gap-12">
-              <Skeleton className="aspect-[4/3] w-full" />
-              <div className="space-y-4">
-                <Skeleton className="h-12 w-3/4" />
-                <Skeleton className="h-6 w-1/2" />
-                <Skeleton className="h-32 w-full" />
-              </div>
-            </div> : featuredCar ? <div className="grid lg:grid-cols-2 gap-12 items-start">
-              {/* Image */}
-              <div className="relative">
-                {getMainImage(featuredCar) ? <img 
-                    {...getResponsiveImageProps(getMainImage(featuredCar)!.image_url, getMainImage(featuredCar)!.alt_text || featuredCar.title, { sizes: IMAGE_SIZES.hero, priority: true })}
-                    className="w-full aspect-[4/3] object-cover border-4 border-foreground shadow-brutal" 
-                  /> : <div className="w-full aspect-[4/3] bg-muted border-4 border-foreground flex items-center justify-center">
-                    <span className="text-muted-foreground font-display">Ingen bilde</span>
-                  </div>}
-                <div className="absolute top-4 left-4 bg-accent text-accent-foreground px-4 py-2 font-display uppercase text-sm border-2 border-foreground">
-                  Månedens bil
+        <section className="px-4 sm:px-6 py-8 md:py-12">
+          <div className="max-w-[1100px] mx-auto">
+            {isLoading ? (
+              <div className="grid lg:grid-cols-2 gap-8">
+                <Skeleton className="aspect-[4/3] w-full rounded-xl bg-white" />
+                <div className="space-y-4">
+                  <Skeleton className="h-12 w-3/4 bg-white" />
+                  <Skeleton className="h-6 w-1/2 bg-white" />
+                  <Skeleton className="h-32 w-full bg-white" />
                 </div>
               </div>
-
-              {/* Content */}
-              <div>
-                <h2 className="headline-md mb-2">{featuredCar.title}</h2>
-                <div className="flex items-center gap-4 mb-6">
-                  <span className="font-display text-xl text-accent">{featuredCar.model}</span>
-                  {featuredCar.year && <span className="flex items-center gap-1 text-muted-foreground">
-                      <Calendar className="w-4 h-4" />
-                      {featuredCar.year}
-                    </span>}
+            ) : featuredCar ? (
+              <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start">
+                <div className="relative">
+                  {featuredImage ? (
+                    <img
+                      {...getResponsiveImageProps(featuredImage.image_url, featuredImage.alt_text || featuredCar.title, { sizes: IMAGE_SIZES.hero, priority: true })}
+                      className="w-full aspect-[4/3] object-cover rounded-xl border border-black/10 bg-white"
+                    />
+                  ) : (
+                    <div className="w-full aspect-[4/3] rounded-xl border border-black/10 bg-white flex items-center justify-center">
+                      <span className="font-sans text-[#1c1917]/40">Ingen bilde</span>
+                    </div>
+                  )}
+                  <span className="absolute top-4 left-4 bg-[#C10D0D] text-white px-3 py-1 font-display text-lg uppercase tracking-wide rounded-lg">
+                    Månedens bil
+                  </span>
                 </div>
 
-                {/* Tags */}
-                {featuredCar.tags && featuredCar.tags.length > 0 && <div className="flex flex-wrap gap-2 mb-6">
-                    {featuredCar.tags.map((tag, index) => <span key={index} className="bg-secondary text-secondary-foreground px-3 py-1 text-sm font-display uppercase">
-                        {tag}
-                      </span>)}
-                  </div>}
+                <div>
+                  <h2 className="font-display text-4xl md:text-5xl uppercase leading-none text-[#071628]">
+                    {featuredCar.title}
+                  </h2>
+                  <p className="font-sans text-base text-[#1c1917]/65 mt-3 flex items-center gap-3">
+                    <span>{featuredCar.model}</span>
+                    {featuredCar.year && (
+                      <span className="inline-flex items-center gap-1">
+                        <Calendar className="w-4 h-4" />
+                        {featuredCar.year}
+                      </span>
+                    )}
+                  </p>
 
-                {/* Story excerpt */}
-                {featuredCar.story && <div className="prose prose-lg mb-8">
-                    <p className="font-serif text-lg leading-relaxed">
+                  {featuredCar.tags && featuredCar.tags.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mt-5">
+                      {featuredCar.tags.map((tag, index) => (
+                        <span key={index} className="bg-white border border-black/10 text-[#071628] px-3 py-1 text-sm font-sans rounded-full">
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+
+                  {featuredCar.story && (
+                    <p className="font-sans text-base md:text-lg leading-relaxed text-[#1c1917]/80 mt-6">
                       {featuredCar.story.length > 500 ? `${featuredCar.story.substring(0, 500)}...` : featuredCar.story}
                     </p>
-                  </div>}
+                  )}
 
-                <Link to={`/biler/${featuredCar.slug}`} className="inline-flex items-center gap-2 bg-accent text-accent-foreground px-6 py-3 font-display uppercase text-lg border-2 border-foreground shadow-brutal hover-lift">
-                  Les hele historien
+                  <Link to={`/biler/${featuredCar.slug}`} className="btn-enamel-red mt-8">
+                    Les hele historien
+                    <ArrowRight className="w-5 h-5" />
+                  </Link>
+                </div>
+              </div>
+            ) : (
+              <div className="text-center py-16 bg-white rounded-xl border border-black/10">
+                <Star className="w-12 h-12 text-[#1c1917]/25 mx-auto mb-4" />
+                <h2 className="font-display text-3xl uppercase text-[#071628]">Ingen månedens bil akkurat nå</h2>
+                <p className="font-sans text-base text-[#1c1917]/65 mt-3 mb-6">
+                  Vi velger snart en ny bil å løfte frem.
+                </p>
+                <Link to="/biler" className="btn-enamel-red">
+                  Se alle biler
                   <ArrowRight className="w-5 h-5" />
                 </Link>
               </div>
-            </div> : <div className="text-center py-16 bg-card border-4 border-foreground">
-              <Star className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-              <h2 className="headline-sm mb-4">Ingen månedens bil akkurat nå</h2>
-              <p className="font-serif text-lg text-muted-foreground mb-6">
-                Vi velger snart en ny bil å løfte frem. Kom tilbake snart!
-              </p>
-              <Link to="/biler" className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-6 py-3 font-display uppercase border-2 border-foreground shadow-brutal hover-lift">
-                Se alle biler
-                <ArrowRight className="w-5 h-5" />
-              </Link>
-            </div>}
-        </div>
-      </section>
-
-      {/* Previous Cars */}
-      {previousCars && previousCars.length > 0 && <section className="py-16 bg-muted">
-          <div className="container mx-auto px-4">
-            <h2 className="headline-md mb-8 text-center">Tidligere biler</h2>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {previousCars.map(car => {
-            const mainImage = getMainImage(car);
-            return <Link key={car.id} to={`/biler/${car.slug}`} className="bg-card border-4 border-foreground shadow-brutal hover-lift block">
-                    {mainImage ? <img 
-                        {...getResponsiveImageProps(mainImage.image_url, mainImage.alt_text || car.title, { sizes: IMAGE_SIZES.card, loading: 'lazy' })}
-                        className="w-full aspect-[3/2] object-cover border-b-4 border-foreground" 
-                      /> : <div className="w-full aspect-[3/2] bg-muted flex items-center justify-center border-b-4 border-foreground">
-                        <span className="text-muted-foreground font-display">Ingen bilde</span>
-                      </div>}
-                    <div className="p-4">
-                      <h3 className="font-display text-lg uppercase mb-1">{car.title}</h3>
-                      <div className="flex items-center gap-2 text-muted-foreground text-sm">
-                        <span>{car.model}</span>
-                        {car.year && <>
-                            <span>•</span>
-                            <span>{car.year}</span>
-                          </>}
-                      </div>
-                    </div>
-                  </Link>;
-          })}
-            </div>
+            )}
           </div>
-        </section>}
+        </section>
 
-      {/* CTA */}
-      <section className="py-16 bg-accent">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="headline-md text-accent-foreground mb-4">Har du en bil å dele?</h2>
-          <p className="font-serif text-xl text-accent-foreground/90 mb-8 max-w-xl mx-auto">
-            Kanskje blir din bil neste månedens bil! Send inn historien din og la oss løfte den frem.
+        {previousCars && previousCars.length > 0 && (
+          <section className="px-3 sm:px-6 pb-10 md:pb-14">
+            <div className="max-w-[1100px] mx-auto">
+              <h2 className="font-display text-3xl md:text-4xl uppercase text-[#071628] mb-5">
+                Tidligere biler
+              </h2>
+              <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6">
+                {previousCars.map((car) => {
+                  const mainImage = getMainImage(car);
+                  const meta = [car.year, car.model].filter(Boolean).join(" · ");
+                  return (
+                    <Link key={car.id} to={`/biler/${car.slug}`} className="group block">
+                      {mainImage ? (
+                        <img
+                          {...getResponsiveImageProps(mainImage.image_url, mainImage.alt_text || car.title, { sizes: IMAGE_SIZES.card, loading: "lazy" })}
+                          className="w-full aspect-[4/3] object-cover rounded-xl border border-black/10 bg-white"
+                        />
+                      ) : (
+                        <div className="w-full aspect-[4/3] rounded-xl border border-black/10 bg-white" />
+                      )}
+                      <p className="font-sans text-sm text-[#1c1917]/60 mt-2">{meta}</p>
+                      <h3 className="font-display text-xl sm:text-2xl uppercase leading-none text-[#071628] mt-0.5 line-clamp-2 group-hover:text-[#C10D0D] transition-colors">
+                        {car.title}
+                      </h3>
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          </section>
+        )}
+
+        <section className="border-t border-black/10 bg-white px-4 py-12 md:py-16 text-center">
+          <h2 className="font-display text-3xl md:text-5xl uppercase text-[#071628]">
+            Har du en bil å dele?
+          </h2>
+          <p className="font-sans text-base text-[#1c1917]/70 mt-3 mb-6 max-w-md mx-auto">
+            Kanskje blir din bil neste månedens bil.
           </p>
-          <Link to="/legg-til-bil" className="inline-flex items-center gap-2 bg-foreground text-background px-8 py-4 font-display uppercase text-lg border-2 border-foreground hover-lift">
+          <Link to="/legg-til-bil" className="btn-enamel-red">
             Legg inn bilen din
-            <ArrowRight className="w-5 h-5" />
           </Link>
-        </div>
-      </section>
-    </Layout>;
+        </section>
+      </div>
+    </Layout>
+  );
 };
 export default ManedensBil;
