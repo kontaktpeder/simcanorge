@@ -37,8 +37,8 @@ function SellerReadinessCard({
   profile: { bio?: string | null; location?: string | null; is_public?: boolean | null; contact_email?: string | null; display_name?: string };
   onEdit: () => void;
 }) {
-  const sellerReady = isSellerMinimumComplete(profile);
-  const steps = getSellerMinimumSteps(profile);
+  const sellerReady = isSellerMinimumComplete(profile as Parameters<typeof isSellerMinimumComplete>[0]);
+  const steps = getSellerMinimumSteps(profile as Parameters<typeof getSellerMinimumSteps>[0]);
 
   return (
     <GaragePanel
