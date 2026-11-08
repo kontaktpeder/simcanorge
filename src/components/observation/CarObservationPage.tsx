@@ -7,6 +7,7 @@ import { AnimatedSection } from "@/components/layout/AnimatedSection";
 import { oswald, oswaldLight, OBSERVATION_BG } from "@/lib/observationPostTokens";
 import type { CarEnrichment } from "@/lib/carEnrichment";
 import { BrandHubLink } from "@/components/car/BrandHubLink";
+import { formatCarHeading } from "@/lib/carTitle";
 
 type GalleryImage = {
   id: string;
@@ -45,23 +46,20 @@ type Props = {
 
 
 // Vegvesen-inspirert lys palett (matcher /min-garasje og PublishComposer)
-const VV_BG = "#f3f3f3";
 const VV_YELLOW = "#fcc419";
 const VV_YELLOW_SOFT = "#fff4d1";
 const VV_DARK = "#2b2b2b";
-const PAPER_BG = VV_BG;
-
-const inter = { fontFamily: "'Inter', 'Helvetica Neue', Arial, sans-serif" } as const;
+const PAPER_BG = "#f6f3ee";
 
 const SectionDivider = ({ isLight }: { isLight: boolean }) =>
   isLight ? null : <div className="border-t border-white/[0.06]" />;
 
 const SectionLabel = ({ children, isLight }: { children: React.ReactNode; isLight: boolean }) => (
   <div
-    className={`text-[11px] uppercase tracking-[0.18em] font-semibold mb-4 ${
-      isLight ? "text-neutral-500" : "text-white/35"
+    className={`text-xs uppercase tracking-[0.14em] font-semibold mb-4 font-sans ${
+      isLight ? "text-[#071628]/70" : "text-white/35"
     }`}
-    style={isLight ? inter : oswald}
+    style={isLight ? undefined : oswald}
   >
     {children}
   </div>
@@ -70,8 +68,7 @@ const SectionLabel = ({ children, isLight }: { children: React.ReactNode; isLigh
 // Lett kortwrapper for lys variant – speiler "white card"-mønsteret fra /min-garasje
 const LightCard = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
   <div
-    className={`rounded-2xl bg-white border border-black/[0.08] p-5 sm:p-6 ${className}`}
-    style={inter}
+    className={`rounded-xl bg-white border border-black/10 p-5 sm:p-6 font-sans ${className}`}
   >
     {children}
   </div>
@@ -107,14 +104,13 @@ export function CarObservationPage(props: Props) {
   const isLight = theme === "light";
 
 
-  const titleParts = [
+  const title = formatCarHeading({
     brand,
     model,
-    year != null ? String(year) : null,
+    year,
     variant,
-    body_type,
-  ].filter(Boolean);
-  const title = titleParts.join(" ") || null;
+    bodyType: body_type,
+  }) || null;
 
   const media: MediaItem[] = (() => {
     const main = imageUrl
@@ -160,7 +156,7 @@ export function CarObservationPage(props: Props) {
             <LightCard>
               <AnimatedSection>
                 <SectionLabel isLight={isLight}>Historikk</SectionLabel>
-                <CarTimeline carId={carId} heroCaptionEventId={heroCaptionEventId} carCreatedAt={carCreatedAt} />
+                <CarTimeline carId={carId} heroCaptionEventId={heroCaptionEventId} carCreatedAt={carCreatedAt} tone="light" />
               </AnimatedSection>
             </LightCard>
           ) : (
@@ -185,10 +181,10 @@ export function CarObservationPage(props: Props) {
                 <SectionLabel isLight={isLight}>Om bilen</SectionLabel>
                 {enrichment.showStory && story && (
                   <p
-                    className={`text-[16px] md:text-[17px] leading-[1.65] whitespace-pre-wrap ${
-                      isLight ? "text-neutral-800" : "text-white/85"
+                    className={`text-base md:text-[17px] leading-relaxed whitespace-pre-wrap font-sans ${
+                      isLight ? "text-[#1c1917]" : "text-white/85"
                     }`}
-                    style={isLight ? inter : oswaldLight}
+                    style={isLight ? undefined : oswaldLight}
                   >
                     {story}
                   </p>
@@ -199,14 +195,14 @@ export function CarObservationPage(props: Props) {
                     {cleanTags.map((t) => (
                       <span
                         key={t}
-                        className={`inline-flex items-center rounded-full px-3 py-1 text-[11px] uppercase tracking-[0.14em] font-semibold ${
+                        className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold font-sans ${
                           isLight
-                            ? "border text-neutral-900"
+                            ? "border text-[#071628]"
                             : "border border-white/10 bg-white/[0.02] text-white/65"
                         }`}
                         style={
                           isLight
-                            ? { ...inter, backgroundColor: VV_YELLOW_SOFT, borderColor: VV_YELLOW }
+                            ? { backgroundColor: VV_YELLOW_SOFT, borderColor: VV_YELLOW }
                             : oswald
                         }
                       >
@@ -255,12 +251,12 @@ export function CarObservationPage(props: Props) {
         >
           <Link
             to="/ukjente-biler"
-            className={`text-[11px] uppercase tracking-[0.18em] font-semibold transition-colors ${
+            className={`text-sm font-semibold font-sans transition-colors ${
               isLight
-                ? "text-neutral-500 hover:text-neutral-900"
+                ? "text-[#071628]/75 hover:text-[#071628]"
                 : "text-white/35 hover:text-white/85"
             }`}
-            style={isLight ? inter : oswald}
+            style={isLight ? undefined : oswald}
           >
             Hjelp fellesskapet å identifisere bilen
           </Link>
@@ -303,14 +299,12 @@ export function CarObservationPage(props: Props) {
             {/* Left: sticky image carousel */}
             <div>
               <div className="sticky top-24">
-                <div className="h-[calc(100vh-8rem)] max-h-[820px] min-h-[520px]">
-                  <ObservationMediaCarousel
-                    items={media}
-                    imageAlt={imageAlt}
-                    onImageClick={handleMediaClick}
-                    aspect="auto"
-                  />
-                </div>
+                <ObservationMediaCarousel
+                  items={media}
+                  imageAlt={imageAlt}
+                  onImageClick={handleMediaClick}
+                  aspect="4/3"
+                />
               </div>
             </div>
 

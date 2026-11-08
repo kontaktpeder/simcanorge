@@ -52,7 +52,7 @@ export function Header() {
                 <Link
                   key={link.href}
                   to={link.href}
-                  className={`font-display text-xl leading-none tracking-wide uppercase transition-colors ${
+                  className={`font-display text-xl leading-none tracking-wide uppercase transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-4 ${
                     isActive
                       ? "text-white border-b-2 border-[#D41515] pb-0.5"
                       : "text-white/90 hover:text-white border-b-2 border-transparent pb-0.5"
@@ -71,7 +71,7 @@ export function Header() {
           <div className="hidden xl:flex items-center gap-5 flex-shrink-0">
             <Link
               to={user ? garageHref : loginHref}
-              className="font-display text-xl leading-none tracking-wide uppercase text-white/90 hover:text-white transition-colors"
+              className="font-display text-xl leading-none tracking-wide uppercase text-white/90 hover:text-white transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-4"
             >
               {user ? "Min garasje" : "Logg inn"}
             </Link>

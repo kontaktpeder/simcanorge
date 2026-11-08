@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useRelatedCars, type RelatedCar } from "@/hooks/useRelatedCars";
 import { brandHubPath } from "@/lib/brandSlug";
+import { formatCarHeading } from "@/lib/carTitle";
 
 function firstImage(car: RelatedCar): string | null {
   const sorted = [...(car.car_images ?? [])].sort(
@@ -33,7 +34,7 @@ function CarTile({ car }: { car: RelatedCar }) {
           <p className="font-sans text-sm text-[#1c1917]/60">{car.year}</p>
         )}
         <p className="font-display text-xl uppercase leading-none text-[#071628] mt-0.5 truncate group-hover:text-[#C10D0D] transition-colors">
-          {car.title}
+          {formatCarHeading({ title: car.title, brand: car.brand, model: car.model, year: car.year })}
         </p>
       </div>
     </Link>

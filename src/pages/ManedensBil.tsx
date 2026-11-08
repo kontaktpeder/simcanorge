@@ -7,10 +7,12 @@ import { Calendar, ArrowRight, Star } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getResponsiveImageProps, IMAGE_SIZES } from "@/lib/imageUtils";
 import { applyPublicCarsApprovalFilter } from "@/lib/publicCarsFilter";
+import { formatCarHeading } from "@/lib/carTitle";
 interface Car {
   id: string;
   slug: string;
   title: string;
+  brand?: string | null;
   model: string;
   year: number | null;
   story: string | null;
@@ -144,7 +146,7 @@ const ManedensBil = () => {
 
                 <div>
                   <h2 className="font-display text-4xl md:text-5xl uppercase leading-none text-[#071628]">
-                    {featuredCar.title}
+                    {formatCarHeading({ title: featuredCar.title, brand: featuredCar.brand, model: featuredCar.model, year: featuredCar.year })}
                   </h2>
                   <p className="font-sans text-base text-[#1c1917]/65 mt-3 flex items-center gap-3">
                     <span>{featuredCar.model}</span>
@@ -216,7 +218,7 @@ const ManedensBil = () => {
                       )}
                       <p className="font-sans text-sm text-[#1c1917]/60 mt-2">{meta}</p>
                       <h3 className="font-display text-xl sm:text-2xl uppercase leading-none text-[#071628] mt-0.5 line-clamp-2 group-hover:text-[#C10D0D] transition-colors">
-                        {car.title}
+                        {formatCarHeading({ title: car.title, brand: car.brand, model: car.model, year: car.year })}
                       </h3>
                     </Link>
                   );

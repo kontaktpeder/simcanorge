@@ -44,7 +44,7 @@ export function buildCarTimeline({
       sortYear: yearFromEvent(birth),
       sortTimestamp: tsFromEvent(birth),
       yearLabel: String(yearFromEvent(birth)),
-      headline: "Lagt til i Bilgarasje",
+      headline: "Lagt til på Simca Norge",
       subline: authorName ? `av ${authorName}` : undefined,
       thumbnailUrl: thumbFromEvent(birth),
       authorName: authorName ?? null,
@@ -60,7 +60,7 @@ export function buildCarTimeline({
       sortYear: d.getFullYear(),
       sortTimestamp: d.getTime(),
       yearLabel: String(d.getFullYear()),
-      headline: "Lagt til i Bilgarasje",
+      headline: "Lagt til på Simca Norge",
       category: "birth",
     });
   }

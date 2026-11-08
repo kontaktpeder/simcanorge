@@ -47,7 +47,13 @@ input, textarea, select, [contenteditable="true"] {
     --chrome-light: 210 10% 18%;
     --chrome-mid: 210 8% 28%;
     --chrome-dark: 210 10% 12%;
-    --offwhite: 210 15% 96%;
+    --offwhite: 36 33% 96%;
+    /* Magazine surfaces: warm paper, navy chrome, enamel red */
+    --paper: 36 33% 96%;
+    --ink: 24 18% 12%;
+    --navy: 213 73% 9%;
+    --accent-red: 2 82% 40%;
+    --accent-red-dark: 2 85% 32%;
     
     /* Semantic tokens — dark-first metallic blue */
     --background: 215 28% 7%;
@@ -312,34 +318,62 @@ input, textarea, select, [contenteditable="true"] {
     text-shadow: none;
   }
 
-  /* Red enamel button - mobile optimized */
+  /* Primary action: flat enamel red, no glow */
   .btn-enamel-red {
-    @apply inline-flex items-center justify-center px-5 py-3 md:px-8 md:py-4 font-display text-base md:text-xl uppercase tracking-wide;
+    @apply inline-flex items-center justify-center gap-2 px-5 py-3 font-display text-lg md:text-xl uppercase tracking-wide;
     @apply text-white border-0;
-    background: linear-gradient(180deg, #D41515 0%, #C10D0D 40%, #9A0A0A 100%);
-    border-radius: 12px;
-    box-shadow:
-      inset 0 1px 0 rgba(255,255,255,0.25),
-      inset 0 -2px 4px rgba(0,0,0,0.2),
-      0 4px 12px rgba(0,0,0,0.25);
-    transition: all 0.15s ease;
+    background: hsl(var(--accent-red));
+    border-radius: 0.75rem;
+    box-shadow: none;
+    transition: background-color 0.15s ease;
   }
 
   .btn-enamel-red:hover {
-    background: linear-gradient(180deg, #E52020 0%, #D41515 40%, #A50B0B 100%);
-    box-shadow:
-      inset 0 1px 0 rgba(255,255,255,0.3),
-      inset 0 -2px 4px rgba(0,0,0,0.15),
-      0 6px 20px rgba(193,13,13,0.35),
-      0 0 0 3px rgba(255,255,255,0.3);
-    transform: translateY(-1px);
+    background: hsl(var(--accent-red-dark));
+    box-shadow: none;
+    transform: none;
   }
 
   .btn-enamel-red:active {
-    transform: translateY(1px);
-    box-shadow:
-      inset 0 2px 4px rgba(0,0,0,0.3),
-      0 2px 8px rgba(0,0,0,0.2);
+    transform: none;
+    box-shadow: none;
+  }
+
+  .btn-enamel-red:focus-visible,
+  .btn-secondary:focus-visible {
+    outline: 2px solid hsl(var(--navy));
+    outline-offset: 3px;
+  }
+
+  /* Quiet secondary action */
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 px-5 py-3 font-display text-lg md:text-xl uppercase tracking-wide;
+    color: hsl(var(--navy));
+    background: #fff;
+    border: 1px solid hsl(var(--navy) / 0.18);
+    border-radius: 0.75rem;
+    box-shadow: none;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+  }
+
+  .btn-secondary:hover {
+    background: hsl(var(--paper));
+    border-color: hsl(var(--navy) / 0.35);
+  }
+
+  .btn-secondary-on-dark {
+    color: #fff;
+    background: transparent;
+    border-color: rgba(255, 255, 255, 0.45);
+  }
+
+  .btn-secondary-on-dark:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: #fff;
+  }
+
+  .btn-secondary-on-dark:focus-visible {
+    outline-color: #fff;
   }
 
   /* Blue enamel button variant - mobile optimized */

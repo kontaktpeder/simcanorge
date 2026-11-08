@@ -10,6 +10,7 @@ interface Props {
   carId: string;
   heroCaptionEventId?: string | null;
   carCreatedAt?: string | null;
+  tone?: "dark" | "light";
 }
 
 function useCreatorNames(userIds: string[]) {
@@ -35,7 +36,7 @@ function useCreatorNames(userIds: string[]) {
   });
 }
 
-export function CarTimeline({ carId, heroCaptionEventId = null, carCreatedAt = null }: Props) {
+export function CarTimeline({ carId, heroCaptionEventId = null, carCreatedAt = null, tone = "dark" }: Props) {
   const { data: events = [], isLoading: eventsLoading } = useCarEvents(carId, {
     includePrivate: false,
   });
@@ -60,14 +61,14 @@ export function CarTimeline({ carId, heroCaptionEventId = null, carCreatedAt = n
   if (eventsLoading) {
     return (
       <div className="flex justify-center py-8">
-        <Loader2 className="h-5 w-5 animate-spin text-white/40" />
+        <Loader2 className={`h-5 w-5 animate-spin ${tone === "light" ? "text-[#071628]/40" : "text-white/40"}`} />
       </div>
     );
   }
 
   if (items.length === 0) {
     return (
-      <div className="py-6 text-[13px] text-white/40 italic">
+      <div className={`py-6 font-sans text-base ${tone === "light" ? "text-[#1c1917]/70" : "text-white/40 italic"}`}>
         Om bilen bygges når folk bidrar.
       </div>
     );
@@ -76,7 +77,7 @@ export function CarTimeline({ carId, heroCaptionEventId = null, carCreatedAt = n
   return (
     <ol className="relative">
       {items.map((item, i) => (
-        <TimelineLine key={item.id} item={item} index={i} isLast={i === items.length - 1} />
+        <TimelineLine key={item.id} item={item} index={i} isLast={i === items.length - 1} tone={tone} />
       ))}
     </ol>
   );

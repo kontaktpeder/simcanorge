@@ -104,7 +104,7 @@ export function BilerSidePanel({
           )}
           <button
             onClick={() => onExpandedChange(!expanded)}
-            className="p-1.5 rounded text-[#071628]/60 hover:text-[#071628] hover:bg-black/5 transition-colors shrink-0"
+            className="p-1.5 rounded text-[#071628]/70 hover:text-[#071628] hover:bg-black/5 transition-colors shrink-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#071628]"
             title={expanded ? 'Skjul filter' : 'Vis filter'}
           >
             {expanded ? <PanelLeftClose className="w-4 h-4" /> : <PanelLeft className="w-4 h-4" />}

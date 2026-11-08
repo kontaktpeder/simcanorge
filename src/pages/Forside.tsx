@@ -3,7 +3,6 @@ import { SeoHead } from "@/components/seo";
 import { HeroSection } from "@/components/home/HeroSection";
 import { FunFactsSection } from "@/components/home/FunFactsSection";
 import { CTASection } from "@/components/home/CTASection";
-import { SimcaLive } from "@/components/home/SimcaLive";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_TAGLINE } from "@/config/site";
 
 /**
@@ -18,7 +17,6 @@ export default function Forside() {
         description={SITE_DESCRIPTION}
         canonicalPath="/"
       />
-      <SimcaLive />
       <HeroSection />
       <FunFactsSection />
       <CTASection />

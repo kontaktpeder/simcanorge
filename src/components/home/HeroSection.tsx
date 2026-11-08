@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, Car, Star } from "lucide-react";
+import { ArrowRight, Car } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -7,9 +7,9 @@ import { useInView } from "@/hooks/useInView";
 import { useCarOwnerProfile } from "@/hooks/useOwnerProfile";
 import { getResponsiveImageProps, IMAGE_SIZES } from "@/lib/imageUtils";
 import { applyPublicCarsApprovalFilter } from "@/lib/publicCarsFilter";
+import { formatCarHeading } from "@/lib/carTitle";
 
 import simcaSwallow from "@/assets/simca-swallow.png";
-import checkeredFlag from "@/assets/checkered-flag.png";
 
 interface FeaturedCar {
   id: string;
@@ -72,9 +72,7 @@ export function HeroSection() {
     const sorted = [...car.car_images].sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
     return sorted[0];
   };
-  return <section className="poster-section poster-section-blue hero-watermark relative overflow-hidden min-h-[56vh] md:min-h-[85vh] flex flex-col justify-start pt-14 md:pt-20">
-      <div className="absolute inset-0 stripes-diagonal" />
-      
+  return <section className="poster-section poster-section-blue relative overflow-hidden flex flex-col justify-start pt-10 md:pt-16 pb-12 md:pb-16">
       <div className="container mx-auto relative z-10">
         <div className="grid lg:grid-cols-2 gap-3 md:gap-8 items-start">
           <div className="text-center lg:text-left">
@@ -95,18 +93,17 @@ export function HeroSection() {
                 }}
               />
             </div>
-            <p className="text-base md:text-xl lg:text-3xl leading-relaxed font-light mb-4 md:mb-6 max-w-lg mx-auto lg:mx-0 text-white/95 font-serif">
+            <p className="font-sans text-base md:text-xl leading-relaxed mb-4 md:mb-6 max-w-lg mx-auto lg:mx-0 text-white/95">
               Din kilde til Simca, Talbot og Matra klassikere. Bildeler og historier fra entusiaster i Norge.
             </p>
             
             {/* Featured Car - Månedens bil - MOBILE ONLY above CTA */}
             <div ref={mobileCardRef} className={`lg:hidden mb-4 transition-all duration-700 ${isMobileInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
               <div className="text-center mb-1.5">
-                <h2 className="font-display text-lg text-white flex items-center justify-center gap-2">
-                  <Star className="w-5 h-5 text-yellow-400 fill-yellow-400 drop-shadow-[0_0_6px_rgba(250,204,21,0.8)]" />
+                <h2 className="font-display text-2xl text-white">
                   Månedens bil
                 </h2>
-                <p className="font-serif text-sm text-white/70 mt-0.5">
+                <p className="font-sans text-base text-white/75 mt-1">
                   {new Date().toLocaleDateString('nb-NO', {
                   month: 'long',
                   year: 'numeric'
@@ -115,7 +112,7 @@ export function HeroSection() {
               </div>
 
               {isLoading ? <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
-                  <Skeleton className="aspect-[16/10] w-full rounded-lg" />
+                  <Skeleton className="aspect-[4/3] w-full rounded-lg" />
                   <div className="mt-3">
                     <Skeleton className="h-5 w-3/4 mx-auto" />
                     <Skeleton className="h-4 w-1/2 mx-auto mt-1.5" />
@@ -128,26 +125,26 @@ export function HeroSection() {
                           getMainImage(featuredCar)!.alt_text || featuredCar.title,
                           { sizes: IMAGE_SIZES.featured, priority: true }
                         )}
-                        className="w-full aspect-[16/10] object-cover group-hover:scale-105 transition-transform duration-500"
+                        className="w-full aspect-[4/3] object-cover"
                       />
-                    </div> : <div className="aspect-[16/10] bg-white/20 rounded-lg flex items-center justify-center">
+                    </div> : <div className="aspect-[4/3] bg-white/20 rounded-lg flex items-center justify-center">
                       <Car className="w-16 h-16 opacity-50" />
                     </div>}
                   
                   <div className="mt-1.5 text-center">
-                    <p className="font-display text-base font-bold text-white">{featuredCar.title}</p>
-                    <p className="font-serif text-base text-white/85 mt-0.5">
+                    <p className="font-display text-2xl text-white">{formatCarHeading({ title: featuredCar.title, model: featuredCar.model, year: featuredCar.year })}</p>
+                    <p className="font-sans text-base text-white/85 mt-1">
                       {ownerProfile 
                         ? `Lagt ut av ${ownerProfile.display_name}${ownerProfile.location ? `, ${ownerProfile.location}` : ''}` 
                         : `${featuredCar.year ? `${featuredCar.year} · ` : ''}${featuredCar.model}`}
                     </p>
                   </div>
                 </Link> : <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
-                  <div className="aspect-[16/10] bg-white/20 rounded-lg flex items-center justify-center">
+                  <div className="aspect-[4/3] bg-white/20 rounded-lg flex items-center justify-center">
                     <div className="text-center">
                       <Car className="w-12 h-12 mx-auto mb-2 opacity-50" />
                       <p className="font-display text-lg text-white/75">MÅNEDENS BIL</p>
-                      <p className="font-serif italic text-sm text-white/60">Kommer snart...</p>
+                      <p className="font-sans text-base text-white/70">Kommer snart</p>
                     </div>
                   </div>
                 </div>}
@@ -155,28 +152,12 @@ export function HeroSection() {
             
             {/* CTA buttons */}
             <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center lg:justify-start">
-              <Link 
-                to="/biler" 
-                className="group inline-flex items-center justify-center min-h-[48px] px-5 py-3 md:min-h-[48px] md:px-8 md:py-4 font-display text-sm md:text-xl uppercase tracking-wide text-white rounded-full active:scale-[0.97] transition-all hover:brightness-110"
-                style={{
-                  background: 'linear-gradient(135deg, #E52020 0%, #B80C0C 100%)',
-                  boxShadow: '0 4px 20px rgba(229,32,32,0.5), inset 0 1px 0 rgba(255,255,255,0.2)',
-                }}
-              >
-                <span className="drop-shadow-sm font-bold">Se alle biler</span>
-                <ArrowRight className="w-4 h-4 md:w-5 md:h-5 ml-1.5 group-hover:translate-x-0.5 transition-transform" />
+              <Link to="/biler" className="btn-enamel-red">
+                Se alle biler
+                <ArrowRight className="w-5 h-5" />
               </Link>
-              
-              <Link 
-                to="/markedsplass" 
-                className="group inline-flex items-center justify-center min-h-[48px] px-5 py-3 md:min-h-[48px] md:px-6 md:py-3.5 font-display text-sm md:text-lg uppercase tracking-wide text-white rounded-full active:scale-[0.97] transition-all hover:brightness-110"
-                style={{
-                  background: 'linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%)',
-                  boxShadow: '0 4px 20px rgba(37,99,235,0.45), inset 0 1px 0 rgba(255,255,255,0.2)',
-                }}
-              >
-                <span className="drop-shadow-sm font-bold">Markedsplass</span>
-                <Car className="w-4 h-4 md:w-5 md:h-5 ml-1.5 group-hover:scale-110 transition-transform" />
+              <Link to="/markedsplass" className="btn-secondary btn-secondary-on-dark">
+                Markedsplass
               </Link>
             </div>
           </div>
@@ -184,11 +165,10 @@ export function HeroSection() {
           {/* Featured Car - DESKTOP ONLY */}
           <div ref={desktopCardRef} className={`hidden lg:block relative transition-all duration-700 ${isDesktopInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
             <div className="text-center mb-4 relative z-10">
-              <h2 className="font-display text-2xl md:text-3xl text-white flex items-center justify-center gap-2">
-                <Star className="w-6 h-6 text-yellow-400 fill-yellow-400 drop-shadow-[0_0_6px_rgba(250,204,21,0.8)]" />
+              <h2 className="font-display text-3xl text-white">
                 Månedens bil
               </h2>
-              <p className="font-serif text-sm text-white/50 mt-1">
+              <p className="font-sans text-base text-white/75 mt-1">
                 {new Date().toLocaleDateString('nb-NO', {
                 month: 'long',
                 year: 'numeric'
@@ -196,58 +176,40 @@ export function HeroSection() {
               </p>
             </div>
 
-            <div className="absolute inset-0 -inset-x-8 -inset-y-4 rounded-3xl bg-gradient-to-b from-white/[0.03] to-transparent pointer-events-none z-0" />
-
-            {isLoading ? <div className="featured-card-premium p-6 relative z-10">
+            {isLoading ? <div className="relative z-10">
                 <Skeleton className="aspect-[4/3] w-full rounded-lg" />
                 <div className="mt-4">
                   <Skeleton className="h-6 w-3/4 mx-auto" />
                   <Skeleton className="h-4 w-1/2 mx-auto mt-2" />
                 </div>
-              </div> : featuredCar ? <Link to={`/biler/${featuredCar.slug}`} className="block featured-card-premium p-5 transition-all duration-300 group relative overflow-hidden z-10">
-                <div className={`absolute inset-0 pointer-events-none checkered-flag-wave z-[1] ${isDesktopInView ? 'animate-flag-fade-in' : 'opacity-0'}`} style={{
-              backgroundImage: `url(${checkeredFlag})`,
-              backgroundSize: '150%',
-              backgroundPosition: 'top left',
-              backgroundRepeat: 'no-repeat'
-            }} />
-                
-                {getMainImage(featuredCar) ? <div className="overflow-hidden rounded-lg relative z-[2] car-finish-glow">
+              </div> : featuredCar ? <Link to={`/biler/${featuredCar.slug}`} className="block group relative z-10">
+                {getMainImage(featuredCar) ? <div className="overflow-hidden rounded-xl bg-white/10">
                     <img 
                       {...getResponsiveImageProps(
                         getMainImage(featuredCar)!.image_url,
                         getMainImage(featuredCar)!.alt_text || featuredCar.title,
                         { sizes: IMAGE_SIZES.featured, priority: true }
                       )}
-                      className="w-full aspect-[16/10] object-cover shadow-lg group-hover:scale-105 transition-transform duration-500"
+                      className="w-full aspect-[4/3] object-cover"
                     />
-                    <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
-                    <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                  </div> : <div className="aspect-[16/10] bg-white/20 rounded-lg flex items-center justify-center relative z-[2]">
-                    <Car className="w-24 h-24 opacity-50" />
+                  </div> : <div className="aspect-[4/3] bg-white/10 rounded-xl flex items-center justify-center">
+                    <Car className="w-16 h-16 opacity-50" />
                   </div>}
                 
-                <div className="mt-5 text-center relative z-[2] bg-black/50 backdrop-blur-sm rounded-lg px-4 py-3">
-                  <p className="font-display text-3xl font-bold text-white featured-title-glow">{featuredCar.title}</p>
-                  <p className="font-serif text-lg text-white mt-1" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.8)' }}>
+                <div className="mt-4 text-center">
+                  <p className="font-display text-3xl text-white">{formatCarHeading({ title: featuredCar.title, model: featuredCar.model, year: featuredCar.year })}</p>
+                  <p className="font-sans text-base text-white/80 mt-1">
                     {ownerProfile 
                       ? `Lagt ut av ${ownerProfile.display_name}${ownerProfile.location ? `, ${ownerProfile.location}` : ''}` 
                       : `${featuredCar.year ? `${featuredCar.year} · ` : ''}${featuredCar.model}`}
                   </p>
                 </div>
-              </Link> : <div className="featured-card-premium p-8 relative overflow-hidden z-10">
-                <div className="absolute inset-0 pointer-events-none checkered-flag-wave" style={{
-              backgroundImage: `url(${checkeredFlag})`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center'
-            }} />
-                <div className="absolute inset-0 pointer-events-none bg-gradient-to-br from-black/50 via-transparent to-black/60 z-[1]" />
-                
-                <div className="aspect-[16/10] bg-white/20 rounded-lg flex items-center justify-center relative z-[2]">
+              </Link> : <div className="relative z-10">
+                <div className="aspect-[4/3] bg-white/10 rounded-xl flex items-center justify-center">
                   <div className="text-center">
                     <Car className="w-24 h-24 mx-auto mb-4 opacity-50" />
                     <p className="font-display text-2xl text-white/75">MÅNEDENS BIL</p>
-                    <p className="font-serif italic text-white/60">Kommer snart...</p>
+                    <p className="font-sans text-base text-white/70">Kommer snart</p>
                   </div>
                 </div>
               </div>}

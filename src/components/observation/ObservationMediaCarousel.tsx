@@ -14,15 +14,15 @@ type Props = {
   items: MediaItem[];
   imageAlt: string;
   onImageClick?: (index: number) => void;
-  /** Aspect ratio of each slide. Defaults to 4/5 (mobile post). Use "auto" to fill parent height. */
-  aspect?: "4/5" | "auto";
+  /** Aspect ratio of each slide. "natural" keeps a 4:3 frame without cropping the car. */
+  aspect?: "4/5" | "4/3" | "auto";
 };
 
 export function ObservationMediaCarousel({
   items,
   imageAlt,
   onImageClick,
-  aspect = "4/5",
+  aspect = "4/3",
 }: Props) {
   const [emblaRef, emblaApi] = useEmblaCarousel({
     loop: false,
@@ -45,21 +45,24 @@ export function ObservationMediaCarousel({
   }, [emblaApi]);
 
   const total = items.length;
-  const slideClass =
+  const frame =
     aspect === "auto"
-      ? "relative shrink-0 grow-0 basis-full h-full bg-black"
-      : "relative shrink-0 grow-0 basis-full aspect-[4/5] bg-black";
+      ? "h-full"
+      : aspect === "4/3"
+        ? "aspect-[4/3]"
+        : "aspect-[4/5]";
+  const slideClass = `relative shrink-0 grow-0 basis-full ${frame} bg-[#f6f3ee]`;
 
   if (total === 0) {
     return (
-      <div className="w-full aspect-[4/5] rounded-2xl border border-white/[0.06] bg-white/[0.03] flex items-center justify-center">
-        <Car className="w-14 h-14 text-white/30" />
+      <div className="w-full aspect-[4/3] rounded-xl border border-black/10 bg-white flex items-center justify-center">
+        <Car className="w-12 h-12 text-[#1c1917]/25" />
       </div>
     );
   }
 
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-white/[0.06] bg-black h-full">
+    <div className={`relative overflow-hidden rounded-xl border border-black/10 bg-[#f6f3ee] ${aspect === "auto" ? "h-full" : ""}`}>
       <div ref={emblaRef} className="overflow-hidden touch-pan-y h-full">
         <div className="flex h-full">
           {items.map((img, i) => (

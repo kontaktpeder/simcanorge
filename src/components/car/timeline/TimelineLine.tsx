@@ -19,9 +19,8 @@ interface Props {
   item: TimelineItem;
   index: number;
   isLast: boolean;
+  tone?: "dark" | "light";
 }
-
-const oswald = { fontFamily: "'Oswald', sans-serif" } as const;
 
 const CATEGORY_ICON: Record<EventCategory | "birth", LucideIcon> = {
   birth: PlusCircle,
@@ -35,10 +34,11 @@ const CATEGORY_ICON: Record<EventCategory | "birth", LucideIcon> = {
   gjenoppdagelse: Eye,
 };
 
-export function TimelineLine({ item, index, isLast }: Props) {
+export function TimelineLine({ item, index, isLast, tone = "dark" }: Props) {
   const showThumb = (item.kind === "birth" || item.kind === "observation") && !!item.thumbnailUrl;
   const Icon = (item.category && CATEGORY_ICON[item.category]) || Sparkles;
   const accent = item.kind === "birth";
+  const light = tone === "light";
 
   return (
     <motion.li
@@ -52,7 +52,7 @@ export function TimelineLine({ item, index, isLast }: Props) {
       {!isLast && (
         <span
           aria-hidden
-          className="absolute left-[15px] top-9 bottom-0 w-px bg-white/[0.08]"
+          className={`absolute left-[15px] top-9 bottom-0 w-px ${light ? "bg-black/10" : "bg-white/[0.08]"}`}
         />
       )}
 
@@ -60,9 +60,13 @@ export function TimelineLine({ item, index, isLast }: Props) {
       <span
         aria-hidden
         className={`absolute left-0 top-3 flex h-[30px] w-[30px] items-center justify-center rounded-full border ${
-          accent
-            ? "border-white/20 bg-white/[0.06] text-white/90"
-            : "border-white/10 bg-white/[0.02] text-white/55"
+          light
+            ? accent
+              ? "border-[#C10D0D]/30 bg-[#C10D0D]/10 text-[#C10D0D]"
+              : "border-black/10 bg-[#f6f3ee] text-[#071628]/70"
+            : accent
+              ? "border-white/20 bg-white/[0.06] text-white/90"
+              : "border-white/10 bg-white/[0.02] text-white/55"
         }`}
       >
         <Icon className="h-[15px] w-[15px]" strokeWidth={1.6} />
@@ -71,21 +75,19 @@ export function TimelineLine({ item, index, isLast }: Props) {
       <div className="flex items-start gap-3">
         <div className="min-w-0 flex-1">
           <div
-            style={oswald}
-            className="flex items-baseline gap-2 text-[11px] uppercase tracking-[0.18em] text-white/40"
+            className={`flex items-baseline gap-2 font-sans text-sm ${light ? "text-[#071628]/60" : "text-white/40"}`}
           >
             {item.yearLabel && (
-              <span className="text-white/70">{item.yearLabel}</span>
+              <span className={light ? "text-[#071628]" : "text-white/70"}>{item.yearLabel}</span>
             )}
           </div>
           <div
-            style={oswald}
-            className="mt-1 text-[15px] leading-snug text-white/90"
+            className={`mt-1 font-sans text-base leading-snug ${light ? "text-[#1c1917]" : "text-white/90"}`}
           >
             {item.headline}
           </div>
           {item.subline && !item.suppressCaption && (
-            <div className="mt-1 text-[12.5px] leading-snug text-white/45">
+            <div className={`mt-1 font-sans text-sm leading-snug ${light ? "text-[#1c1917]/70" : "text-white/45"}`}>
               {item.subline}
             </div>
           )}

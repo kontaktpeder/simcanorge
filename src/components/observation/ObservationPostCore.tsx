@@ -4,9 +4,7 @@ import { oswald, oswaldLight, OBSERVATION_ACCENT } from "@/lib/observationPostTo
 import { ObservationMediaCarousel, type MediaItem } from "./ObservationMediaCarousel";
 
 const VV_YELLOW = "#fcc419";
-const VV_ORANGE = "#ff8a00";
 const VV_DARK = "#2b2b2b";
-const inter = { fontFamily: "'Inter', 'Helvetica Neue', Arial, sans-serif" } as const;
 
 type Props = {
   carId: string;
@@ -68,14 +66,14 @@ export function ObservationPostCore({
       {landingAck && (
         <div
           className="mb-5 text-center text-[11px] uppercase tracking-[0.2em] font-semibold animate-fade-in"
-          style={isLight ? { ...inter, color: VV_ORANGE } : { ...oswald, color: OBSERVATION_ACCENT }}
+          style={isLight ? { color: "#C10D0D" } : { ...oswald, color: OBSERVATION_ACCENT }}
         >
           {landingAck}
         </div>
       )}
 
       {!hideMedia && (
-        <div className={`relative ${isLight ? "rounded-2xl overflow-hidden border border-black/[0.08] bg-white" : ""}`}>
+        <div className={`relative ${isLight ? "rounded-xl overflow-hidden border border-black/10 bg-[#f6f3ee]" : ""}`}>
           <ObservationMediaCarousel
             items={items}
             imageAlt={imageAlt}
@@ -83,11 +81,11 @@ export function ObservationPostCore({
           />
           {cleanCategory && (
             <span
-              className="absolute top-3 left-3 z-10 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] uppercase tracking-[0.18em] font-bold"
+              className="absolute top-3 left-3 z-10 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-sans font-semibold"
               style={
                 isLight
-                  ? { ...inter, color: VV_DARK, backgroundColor: VV_YELLOW, boxShadow: "0 2px 6px rgba(0,0,0,0.12)" }
-                  : { ...oswald, color: "#ffffff", background: "rgba(74,85,96,0.92)", boxShadow: "0 2px 8px rgba(0,0,0,0.25)" }
+                  ? { color: VV_DARK, backgroundColor: VV_YELLOW }
+                  : { ...oswald, color: "#ffffff", background: "rgba(74,85,96,0.92)" }
               }
             >
               {!isLight && (
@@ -114,12 +112,12 @@ export function ObservationPostCore({
           <button
             type="button"
             onClick={onKnowCar}
-            className={`inline-flex items-center gap-1.5 transition-colors text-[13px] leading-none font-semibold ${
+            className={`inline-flex items-center gap-1.5 transition-colors text-sm leading-none font-semibold font-sans focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#071628] ${
               isLight
-                ? "text-neutral-700 hover:text-neutral-950"
+                ? "text-[#071628]/80 hover:text-[#071628]"
                 : "text-white/80 hover:text-white"
             }`}
-            style={isLight ? inter : oswald}
+            style={isLight ? undefined : oswald}
           >
             <Search className="w-5 h-5" strokeWidth={1.75} />
             <span>Kjenner du til bilen?</span>
@@ -130,12 +128,12 @@ export function ObservationPostCore({
       {title && (
         <div className="mt-3">
           <h1
-            className={`leading-tight ${
+            className={`leading-tight font-sans ${
               isLight
-                ? "text-[24px] md:text-[28px] font-bold text-neutral-950 tracking-tight"
+                ? "text-2xl md:text-3xl font-semibold text-[#071628] tracking-tight"
                 : "text-[22px] md:text-[26px] text-white"
             }`}
-            style={isLight ? inter : oswald}
+            style={isLight ? undefined : oswald}
           >
             {title}
           </h1>
@@ -144,10 +142,10 @@ export function ObservationPostCore({
 
       {caption && (
         <p
-          className={`mt-3 leading-relaxed ${
-            isLight ? "text-[16px] md:text-[17px] text-neutral-700" : "text-lg md:text-xl text-white/85"
+          className={`mt-3 leading-relaxed font-sans max-w-[42rem] ${
+            isLight ? "text-base md:text-[17px] text-[#1c1917]" : "text-lg md:text-xl text-white/85"
           }`}
-          style={isLight ? inter : oswaldLight}
+          style={isLight ? undefined : oswaldLight}
         >
           {caption}
         </p>

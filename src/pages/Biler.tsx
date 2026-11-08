@@ -9,6 +9,7 @@ import { SpotCarDialog } from "@/components/car/SpotCarDialog";
 import { applyPublicCarsApprovalFilter } from "@/lib/publicCarsFilter";
 import { BrandLoader } from "@/components/brand/BrandLoader";
 import { resolveSpottingCoverFromRow } from "@/lib/spottingMedia";
+import { formatCarHeading } from "@/lib/carTitle";
 
 interface CarPost {
   id: string;
@@ -47,7 +48,7 @@ const Biler = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [categoryCounts, setCategoryCounts] = useState<Record<string, number>>({});
   const [sidePanelOpen, setSidePanelOpen] = useState(false);
-  const [panelExpanded, setPanelExpanded] = useState(false);
+  const [panelExpanded, setPanelExpanded] = useState(true);
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(0);
@@ -407,7 +408,7 @@ function CarCard({ car }: { car: CarPost }) {
   const unknown =
     car.source === "spotting" &&
     (car.identification_status === "unknown" || car.identification_status === "needs_review");
-  const title = unknown ? "Ukjent bil" : car.title;
+  const title = unknown ? "Ukjent bil" : formatCarHeading({ title: car.title, brand: car.brand, model: car.model, year: car.year });
   const meta = [car.year, car.brand].filter(Boolean).join(" · ");
   const href = car.slug ? `/biler/${car.slug}` : null;
   const body = (

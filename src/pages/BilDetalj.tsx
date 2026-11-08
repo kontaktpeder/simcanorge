@@ -453,15 +453,15 @@ const BilDetalj = () => {
   // Build OG meta data
   const displayYear = car.year != null ? ` (${car.year})` : "";
   const ogTitle = isSpottingView
-    ? `${presentation?.displayTitle ?? car.title} – observert | Bilgarasje.no`
-    : `${car.title}${displayYear} – Bilhistorie fra Norge | Bilgarasje.no`;
+    ? `${presentation?.displayTitle ?? car.title} – observert | Simca Norge`
+    : `${car.title}${displayYear} – Bilhistorie fra Norge | Simca Norge`;
   const yearLabel = car.year != null ? ` fra ${car.year}` : "";
   const storySnippet = car.story?.trim();
   const ogDescription = isSpottingView && observationCaption
     ? observationCaption.slice(0, 160)
     : storySnippet
     ? `Les historien om ${car.title}${yearLabel}. ${storySnippet.slice(0, 150).trim()}${storySnippet.length > 150 ? "…" : ""}`
-    : `Les historien om ${car.title}${yearLabel} på Bilgarasje.no.`;
+    : `Les historien om ${car.title}${yearLabel} på Simca Norge.`;
   const functionsHost = (import.meta.env.VITE_SUPABASE_URL ?? "").replace(/\/$/, "");
   const ogImageFromEdge = functionsHost
     ? `${functionsHost}/functions/v1/og-bil?slug=${encodeURIComponent(car.slug)}${car.updated_at ? `&v=${encodeURIComponent(car.updated_at)}` : ""}`
@@ -524,10 +524,10 @@ const BilDetalj = () => {
             "description": ogDescription,
             "image": ogImage,
             "mainEntityOfPage": canonicalUrl,
-            "author": { "@type": "Organization", "name": "Bilgarasje.no" },
+            "author": { "@type": "Organization", "name": "Simca Norge" },
             "publisher": {
               "@type": "Organization",
-              "name": "Bilgarasje.no",
+              "name": "Simca Norge",
               "logo": {
                 "@type": "ImageObject",
                 "url": `${SITE_URL}/simca-norge-badge.png`,
