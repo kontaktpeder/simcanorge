@@ -90,10 +90,10 @@ export function Header() {
               </Link>
             )}
             <Link
-              to="/send-inn"
+              to={user ? "/legg-til-bil" : "/send-inn"}
               className="px-3.5 py-2 text-[13px] font-bold text-[#071628] bg-white hover:bg-white/90 rounded-md transition-colors"
             >
-              Send inn bil
+              Legg inn bil
             </Link>
           </div>
 
@@ -148,11 +148,11 @@ export function Header() {
                 </Link>
               )}
               <Link
-                to="/send-inn"
+                to={user ? "/legg-til-bil" : "/send-inn"}
                 onClick={() => setMobileMenuOpen(false)}
                 className="py-3 text-center text-[14px] font-bold text-[#071628] bg-white rounded-md"
               >
-                Send inn bil
+                Legg inn bil
               </Link>
             </div>
           </div>

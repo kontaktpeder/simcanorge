@@ -93,10 +93,10 @@ export default function OpprettAnnonse() {
               </Link>
               <div className="mt-4">
                 <Link
-                  to="/dashboard"
+                  to="/min-garasje"
                   className="font-display text-xs uppercase tracking-[0.2em] text-foreground/40 hover:text-foreground/70 transition-colors"
                 >
-                  Til Dashboard
+                  Til Min garasje
                 </Link>
               </div>
             </div>

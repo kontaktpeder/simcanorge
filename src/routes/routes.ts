@@ -71,7 +71,6 @@ const SporsmalRedirect = lazy(() => import("@/pages/SporsmalRedirect"));
 const GarasjeRedirect = lazy(() => import("@/pages/GarasjeRedirect"));
 
 // Dashboard pages
-const Garasje = lazy(() => import("@/pages/Garasje"));
 const DashboardMineBiler = lazy(() => import("@/pages/DashboardMineBiler"));
 const DashboardOpprettBil = lazy(() => import("@/pages/DashboardOpprettBil"));
 const DashboardBilDetalj = lazy(() => import("@/pages/DashboardBilDetalj"));
@@ -183,7 +182,7 @@ const rawRoutes: RouteConfig[] = [
   { path: "/min-garasje", element: MinGarasje, requiresAuth: true },
   { path: "/konto", element: Konto, requiresAuth: true },
   { path: "/kom-i-gang", element: CompleteProfilePage, requiresAuth: true },
-  { path: "/dashboard", element: lazy(() => import("@/pages/Garasje")), requiresAuth: true },
+  { path: "/dashboard", element: GarasjeRedirect, requiresAuth: true },
   { path: "/dashboard/mine-biler", element: DashboardMineBiler, requiresAuth: true },
   { path: "/dashboard/opprett-bil", element: DashboardOpprettBil, requiresAuth: true },
   { path: "/dashboard/bil/:carId", element: DashboardBilDetalj, requiresAuth: true },

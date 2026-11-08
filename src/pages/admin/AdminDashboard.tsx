@@ -132,7 +132,7 @@ const AdminDashboard = () => {
     },
     {
       label: "Forespørsler",
-      description: "Henvendelser om deler",
+      description: "Henvendelser og søknader",
       value: stats.inquiries,
       badge: stats.unreadInquiries,
       icon: Inbox,
@@ -171,7 +171,7 @@ const AdminDashboard = () => {
           className="w-16 h-16 object-contain opacity-80"
         />
         <div>
-          <h1 className="font-display text-2xl md:text-3xl">Velkommen til Bilgarasje.no</h1>
+          <h1 className="font-display text-2xl md:text-3xl">Velkommen til Simca Norge</h1>
           {totalUnread > 0 || stats.submittedMarketplace > 0 ? (
             <p className="text-muted-foreground">
               Du har{' '}

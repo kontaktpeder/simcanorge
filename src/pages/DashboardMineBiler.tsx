@@ -103,7 +103,7 @@ export default function DashboardMineBiler() {
           <div className="relative z-10 max-w-[1200px] mx-auto px-4 sm:px-5 md:px-8">
             <div className="flex flex-col justify-center min-h-[140px] sm:min-h-[170px] md:min-h-[200px] py-6 md:py-8">
               <Link
-                to="/dashboard"
+                to="/min-garasje"
                 className="inline-flex items-center gap-1.5 text-white/35 hover:text-white/60 mb-3 transition-colors text-[11px] uppercase tracking-[0.15em] font-semibold"
                 style={oswald}
               >

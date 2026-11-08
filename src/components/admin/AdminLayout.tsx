@@ -16,6 +16,7 @@ import {
   User,
   Bug,
   Mail,
+  MessageSquare,
   ShoppingBag,
   Handshake,
   Tag,
@@ -29,17 +30,18 @@ interface AdminLayoutProps {
 
 const navItems = [
   { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/admin/meldinger", label: "Meldinger", icon: Inbox },
-  { href: "/admin/support", label: "Support", icon: Bug },
-  { href: "/admin/invite-email", label: "E-post", icon: Mail },
   { href: "/admin/biler", label: "Biler", icon: Car },
+  { href: "/admin/foresporsler", label: "Forespørsler", icon: Inbox },
+  { href: "/admin/meldinger", label: "Meldinger", icon: MessageSquare },
+  { href: "/admin/support", label: "Support", icon: Bug },
   { href: "/admin/markedsplass", label: "Markedsplass", icon: ShoppingBag },
   { href: "/admin/eierprofiler", label: "Profiler", icon: User },
-  { href: "/admin/deler", label: "Deler", icon: Wrench },
-  { href: "/admin/kategorier", label: "Kategorier", icon: FolderTree },
-  { href: "/admin/brukerprofiler", label: "Brukerprofiler", icon: User },
   { href: "/admin/relasjoner", label: "Relasjoner", icon: Handshake },
   { href: "/admin/merkehubber", label: "Merkehubber", icon: Tag },
+  { href: "/admin/deler", label: "Deler", icon: Wrench },
+  { href: "/admin/kategorier", label: "Kategorier", icon: FolderTree },
+  { href: "/admin/brukerprofiler", label: "Sidetilgang", icon: User },
+  { href: "/admin/invite-email", label: "E-post", icon: Mail },
 ];
 
 export function AdminLayout({ children, title }: AdminLayoutProps) {
@@ -82,7 +84,7 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
       {/* Mobile Header */}
       <header className="md:hidden bg-metal-blue text-white px-4 py-3 flex items-center justify-between sticky top-0 z-50">
         <Link to="/" className="flex items-center gap-2">
-          <img src={simcaBadgeLogo} alt="Bilgarasje.no" className="h-8 w-auto" />
+          <img src={simcaBadgeLogo} alt="Simca Norge" className="h-8 w-auto" />
           <span className="font-display text-sm">ADMIN</span>
         </Link>
         <button
@@ -99,7 +101,9 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
           <nav className="p-4">
             <ul className="space-y-1">
               {navItems.map((item) => {
-                const isActive = location.pathname === item.href;
+                const isActive = item.href === "/admin/dashboard"
+                  ? location.pathname === item.href
+                  : location.pathname === item.href || location.pathname.startsWith(`${item.href}/`);
                 return (
                   <li key={item.href}>
                     <Link
@@ -119,7 +123,7 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
             </ul>
             <div className="border-t border-white/20 mt-4 pt-4 space-y-1">
               <Link
-                to="/dashboard"
+                to="/min-garasje"
                 className="flex items-center gap-3 px-4 py-3 hover:bg-white/15 rounded-lg transition-all"
               >
                 <Car className="w-5 h-5" />
@@ -157,7 +161,7 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
       <aside className="hidden md:flex w-64 bg-metal-blue text-white flex-col relative overflow-hidden">
         <div className="p-6 border-b border-white/20 relative z-10">
           <Link to="/" className="flex items-center gap-3 group">
-            <img src={simcaBadgeLogo} alt="Bilgarasje.no" className="h-12 w-auto transition-transform group-hover:scale-105 drop-shadow-lg" />
+            <img src={simcaBadgeLogo} alt="Simca Norge" className="h-12 w-auto transition-transform group-hover:scale-105 drop-shadow-lg" />
             <span className="font-display text-lg text-metal drop-shadow">ADMIN</span>
           </Link>
         </div>
@@ -165,7 +169,9 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
         <nav className="flex-1 p-4 relative z-10">
           <ul className="space-y-1">
             {navItems.map((item) => {
-              const isActive = location.pathname === item.href;
+              const isActive = item.href === "/admin/dashboard"
+                ? location.pathname === item.href
+                : location.pathname === item.href || location.pathname.startsWith(`${item.href}/`);
               return (
                 <li key={item.href}>
                   <Link
@@ -187,7 +193,7 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
 
         <div className="p-4 border-t border-white/20 relative z-10">
           <Link
-            to="/dashboard"
+            to="/min-garasje"
             className="flex items-center gap-3 px-4 py-3 hover:bg-white/15 rounded-xl transition-all mb-2"
           >
             <Car className="w-5 h-5" />
