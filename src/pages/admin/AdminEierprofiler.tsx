@@ -5,9 +5,8 @@ import { Link } from 'react-router-dom';
 import { AdminLayout } from '@/components/admin/AdminLayout';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
-import { useAllOwnerProfiles, useApproveOwnerProfile, useUpdateOwnerProfile } from '@/hooks/useOwnerProfile';
+import { useAllOwnerProfiles, useUpdateOwnerProfile } from '@/hooks/useOwnerProfile';
 import { supabase } from '@/integrations/supabase/client';
 import { useQuery } from '@tanstack/react-query';
 
@@ -15,7 +14,6 @@ export default function AdminEierprofiler() {
   const [searchQuery, setSearchQuery] = useState('');
   const { data: profiles, isLoading, isError } = useAllOwnerProfiles();
   const updateProfile = useUpdateOwnerProfile();
-  const approveProfile = useApproveOwnerProfile();
 
   // Get car counts for each owner
   const { data: carCounts } = useQuery({
@@ -44,11 +42,6 @@ export default function AdminEierprofiler() {
       profile.location?.toLowerCase().includes(query) ||
       profile.favorite_brands?.some(b => b.toLowerCase().includes(query))
     );
-  })?.sort((a, b) => {
-    // Unapproved first, then approved
-    const aPending = !a.approved_at ? 0 : 1;
-    const bPending = !b.approved_at ? 0 : 1;
-    return aPending - bPending;
   });
 
   const handleToggleVisibility = async (profileId: string, currentValue: boolean) => {
@@ -89,11 +82,7 @@ export default function AdminEierprofiler() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.2, delay: index * 0.05 }}
-                className={`bg-card border rounded-lg p-4 sm:p-5 ${
-                  !profile.approved_at
-                    ? 'border-amber-400 ring-1 ring-amber-200'
-                    : ''
-                }`}
+                className="bg-card border rounded-lg p-4 sm:p-5"
               >
                 <div className="flex flex-col sm:flex-row sm:items-start gap-4">
                   {/* Avatar */}
@@ -121,34 +110,7 @@ export default function AdminEierprofiler() {
                         )}
                       </div>
 
-                      {/* Status + Visibility toggle */}
                       <div className="flex items-center gap-3">
-                        {profile.approved_at ? (
-                          <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 text-xs">
-                            Godkjent
-                          </Badge>
-                        ) : (
-                          <div className="flex items-center gap-2">
-                            <Badge variant="secondary" className="bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400 text-xs">
-                              Venter på godkjenning
-                            </Badge>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                approveProfile.mutate({
-                                  id: profile.id,
-                                  userId: profile.user_id,
-                                });
-                              }}
-                              disabled={approveProfile.isPending}
-                              className="text-xs"
-                            >
-                              Godkjenn
-                            </Button>
-                          </div>
-                        )}
                         <div className="flex items-center gap-2">
                           {profile.visible_public ? (
                             <Eye className="h-4 w-4 text-green-600" />

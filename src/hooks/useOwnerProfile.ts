@@ -265,7 +265,7 @@ export function useCreateOwnerProfile() {
       queryClient.invalidateQueries({ queryKey: ['person_profile'] });
       toast({
         title: 'Profil opprettet',
-        description: 'Din profil er opprettet og venter på godkjenning.',
+        description: 'Din profil er opprettet.',
       });
     },
     onError: (error) => {
@@ -294,57 +294,3 @@ export function useAllOwnerProfiles() {
   });
 }
 
-/** Admin approval. Writes both profile tables and does not send email or notifications. */
-export function useApproveOwnerProfile() {
-  const queryClient = useQueryClient();
-  const { toast } = useToast();
-
-  return useMutation({
-    mutationFn: async ({ id, userId }: { id: string; userId: string }) => {
-      const { error } = await supabase.rpc('admin_approve_person_profile', {
-        _profile_id: id,
-      });
-      if (!error) return { id, userId };
-
-      const missingFn =
-        error.code === 'PGRST202' ||
-        /admin_approve_person_profile/i.test(error.message ?? '');
-      if (!missingFn) throw error;
-
-      const approvedAt = new Date().toISOString();
-      const { data: updated, error: profileError } = await supabase
-        .from('person_profiles')
-        .update({ approved_at: approvedAt })
-        .eq('id', id)
-        .select('id')
-        .maybeSingle();
-      if (profileError) throw profileError;
-      if (!updated) throw new Error('Kunne ikke godkjenne profil');
-
-      const { error: ownerError } = await supabase
-        .from('owners')
-        .update({ approved_at: approvedAt })
-        .eq('user_id', userId);
-      if (ownerError) throw ownerError;
-
-      return { id, userId };
-    },
-    onSuccess: ({ userId }) => {
-      queryClient.invalidateQueries({ queryKey: ['all-owner-profiles'] });
-      queryClient.invalidateQueries({ queryKey: ['owner-profile', userId] });
-      queryClient.invalidateQueries({ queryKey: ['owner-profile-slug'] });
-      toast({
-        title: 'Profil godkjent',
-        description: 'Profilen er godkjent.',
-      });
-    },
-    onError: (error) => {
-      toast({
-        title: 'Feil',
-        description: 'Kunne ikke godkjenne profil.',
-        variant: 'destructive',
-      });
-      console.error('Approve profile error:', error);
-    },
-  });
-}

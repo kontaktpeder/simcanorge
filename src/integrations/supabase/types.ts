@@ -2502,10 +2502,6 @@ export type Database = {
       }
     }
     Functions: {
-      admin_approve_person_profile: {
-        Args: { _profile_id: string }
-        Returns: undefined
-      }
       admin_search_profiles: {
         Args: { search_term?: string }
         Returns: {
