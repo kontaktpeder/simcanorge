@@ -1,5 +1,4 @@
 import React from 'react';
-import { Label } from '@/components/ui/label';
 import {
   Car, CheckCircle, Wrench, History, AlertTriangle,
   RotateCcw, Search, PanelLeftClose, PanelLeft,
@@ -10,9 +9,6 @@ import { CarFormFields } from '@/components/car/CarFormFields';
 import {
   Drawer, DrawerContent, DrawerHeader, DrawerTitle,
 } from '@/components/ui/drawer';
-
-const oswald = { fontFamily: "'Oswald', 'Impact', sans-serif" } as const;
-const chakra = { fontFamily: "'Chakra Petch', 'Oswald', sans-serif" } as const;
 
 const CATEGORIES = [
   { id: 'alle', label: 'Alle biler', icon: Car },
@@ -71,7 +67,6 @@ export function BilerSidePanel({
       onSearchChange={onSearchChange}
       resultCount={resultCount}
       categoryCounts={categoryCounts}
-      lightMode={isMobile}
     />
   );
 
@@ -79,12 +74,9 @@ export function BilerSidePanel({
   if (isMobile) {
     return (
       <Drawer open={open} onOpenChange={onOpenChange}>
-        <DrawerContent className="max-h-[85vh] border-t border-[#34eab8]/20" style={{ background: 'linear-gradient(180deg, #0a1218 0%, #070b10 100%)' }}>
+        <DrawerContent className="max-h-[85vh] border-t border-black/10 bg-[#f6f3ee] text-[#1c1917]">
           <DrawerHeader className="pb-0">
-            <DrawerTitle
-              className="text-[13px] uppercase tracking-[0.15em] font-bold text-white"
-              style={oswald}
-            >
+            <DrawerTitle className="font-display text-2xl uppercase tracking-wide text-[#071628]">
               Filter
             </DrawerTitle>
           </DrawerHeader>
@@ -96,56 +88,23 @@ export function BilerSidePanel({
     );
   }
 
-  // Desktop: collapsible sidebar (Premium Dark — popping)
   return (
     <aside
       className={cn(
-        'shrink-0 z-40 overflow-y-auto static h-full transition-all duration-300 ease-in-out border-r border-[#34eab8]/25 relative',
+        'shrink-0 z-40 overflow-y-auto static h-full transition-all duration-300 ease-in-out bg-white text-[#1c1917]',
         expanded ? 'w-[300px]' : 'w-[56px]',
       )}
-      style={{
-        background: 'linear-gradient(180deg, #0a1422 0%, #070b10 100%)',
-        boxShadow: expanded
-          ? 'inset -1px 0 0 rgba(52,234,184,0.15), 4px 0 24px -8px rgba(52,234,184,0.12)'
-          : 'inset -1px 0 0 rgba(52,234,184,0.2), 2px 0 16px -4px rgba(52,234,184,0.18)',
-      }}
     >
-      {/* Ambient teal glow */}
-      <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 70% 50% at 0% 25%, rgba(52,234,184,0.14) 0%, transparent 65%)' }} />
-      {/* Right-edge accent line */}
-      <div className="absolute top-0 bottom-0 right-0 w-[1px] pointer-events-none" style={{ background: 'linear-gradient(180deg, transparent 0%, rgba(52,234,184,0.5) 35%, rgba(52,234,184,0.5) 65%, transparent 100%)' }} />
-
       <div className="relative min-h-full flex flex-col">
-        {/* Header with toggle */}
-        <div className="sticky top-0 z-10 flex items-center justify-between px-3 py-3 border-b border-[#34eab8]/15" style={{ background: 'rgba(7,11,16,0.92)', backdropFilter: 'blur(10px)' }}>
+        <div className="sticky top-0 z-10 flex items-center justify-between px-3 py-3 border-b border-black/10 bg-white">
           {expanded && (
-            <div className="min-w-0">
-              <div className="flex items-center gap-1.5 mb-0.5">
-                <span className="w-1 h-1 rounded-full bg-[#34eab8] animate-pulse" style={{ boxShadow: '0 0 6px rgba(52,234,184,0.9)' }} />
-                <p
-                  className="text-[9px] tracking-[0.32em] uppercase"
-                  style={{ ...oswald, fontWeight: 600, color: '#34eab8' }}
-                >
-                  Filter
-                </p>
-              </div>
-              <h2
-                className="text-[1.05rem] leading-[0.95] uppercase tracking-[0.02em] text-white font-bold italic"
-                style={chakra}
-              >
-                Arkivet
-              </h2>
-            </div>
+            <h2 className="font-display text-2xl uppercase tracking-wide text-[#071628]">
+              Filter
+            </h2>
           )}
           <button
             onClick={() => onExpandedChange(!expanded)}
-            className={cn(
-              'p-1.5 rounded transition-all shrink-0',
-              expanded
-                ? 'text-white/50 hover:text-[#34eab8] hover:bg-[#34eab8]/10'
-                : 'text-[#34eab8] hover:text-white bg-[#34eab8]/15 hover:bg-[#34eab8]/25 ring-1 ring-[#34eab8]/40',
-            )}
-            style={!expanded ? { boxShadow: '0 0 12px rgba(52,234,184,0.35)' } : undefined}
+            className="p-1.5 rounded text-[#071628]/60 hover:text-[#071628] hover:bg-black/5 transition-colors shrink-0"
             title={expanded ? 'Skjul filter' : 'Vis filter'}
           >
             {expanded ? <PanelLeftClose className="w-4 h-4" /> : <PanelLeft className="w-4 h-4" />}
@@ -165,10 +124,9 @@ export function BilerSidePanel({
                   className={cn(
                     'w-9 h-9 flex items-center justify-center rounded-md transition-all',
                     isActive
-                      ? 'bg-[#34eab8]/20 text-[#34eab8] ring-1 ring-[#34eab8]/40'
-                      : 'text-white/40 hover:text-[#34eab8] hover:bg-[#34eab8]/10',
+                      ? 'bg-[#C10D0D]/10 text-[#C10D0D]'
+                      : 'text-[#071628]/45 hover:text-[#071628] hover:bg-black/5',
                   )}
-                  style={isActive ? { boxShadow: '0 0 10px rgba(52,234,184,0.3)' } : undefined}
                   title={cat.label}
                 >
                   <Icon className="w-4 h-4" />
@@ -191,8 +149,8 @@ export function BilerSidePanel({
 
 /** The actual filter UI, shared between Drawer and Sidebar */
 function BilerFilterContent({
-  filterState, onFilterChange, searchQuery, onSearchChange, resultCount, categoryCounts, lightMode = false,
-}: Omit<Props, 'open' | 'onOpenChange' | 'expanded' | 'onExpandedChange'> & { lightMode?: boolean }) {
+  filterState, onFilterChange, searchQuery, onSearchChange, resultCount, categoryCounts,
+}: Omit<Props, 'open' | 'onOpenChange' | 'expanded' | 'onExpandedChange'>) {
   const hasActiveFilters =
     filterState.category !== 'alle' || filterState.brand !== '' || filterState.model !== '' || filterState.variant !== '' || filterState.body_type !== '' || filterState.year !== '' || filterState.decade !== '' || searchQuery !== '';
 
@@ -210,41 +168,22 @@ function BilerFilterContent({
     pendingRef.current[field as keyof BilerFilterState] = value;
   };
 
-  // Color tokens — both light/dark mode now use Premium Dark palette (teal accent)
-  const c = lightMode
-    ? {
-        searchIcon: 'text-white/40',
-        searchInput: 'border-white/15 focus:border-[#34eab8]/70 text-white placeholder:text-white/30',
-        searchBg: 'bg-transparent',
-        countText: 'text-white/40',
-        divider: 'border-white/10',
-        labelText: 'text-white/45',
-        catActive: 'bg-[#34eab8]/15 text-[#34eab8]',
-        catInactive: 'text-white/55 hover:bg-white/[0.05] hover:text-white/85',
-        catCountActive: 'text-[#34eab8]/70',
-        catCountInactive: 'text-white/25',
-        catIcon: '',
-        catLabel: '',
-        fieldOverrides: '[&_label]:text-white/45 [&_select]:bg-white/[0.06] [&_select]:border-white/[0.1] [&_select]:text-white/85 [&_input]:bg-white/[0.06] [&_input]:border-white/[0.1] [&_input]:text-white/85',
-        resetText: 'text-white/40 hover:text-[#34eab8]',
-      }
-    : {
-        searchIcon: 'text-white/35',
-        searchInput: 'border-white/10 focus:border-[#34eab8]/60 text-white placeholder:text-white/25',
-        searchBg: 'bg-transparent',
-        countText: 'text-white/35',
-        divider: 'border-white/[0.08]',
-        labelText: 'text-white/35',
-        catActive: 'bg-[#34eab8]/15 text-[#34eab8]',
-        catInactive: 'text-white/50 hover:bg-white/[0.04] hover:text-white/80',
-        catCountActive: 'text-[#34eab8]/70',
-        catCountInactive: 'text-white/20',
-        catIcon: '',
-        catLabel: '',
-        fieldOverrides: '[&_label]:text-white/40 [&_select]:bg-white/[0.05] [&_select]:border-white/[0.1] [&_select]:text-white/80 [&_input]:bg-white/[0.05] [&_input]:border-white/[0.1] [&_input]:text-white/80',
-        resetText: 'text-white/35 hover:text-[#34eab8]',
-      };
-
+  const c = {
+    searchIcon: 'text-[#1c1917]/40',
+    searchInput: 'border-black/15 focus:border-[#C10D0D] text-[#1c1917] placeholder:text-[#1c1917]/40',
+    searchBg: 'bg-transparent',
+    countText: 'text-[#1c1917]/55',
+    divider: 'border-black/10',
+    labelText: 'text-[#1c1917]/55',
+    catActive: 'bg-[#C10D0D]/10 text-[#C10D0D]',
+    catInactive: 'text-[#1c1917]/70 hover:bg-black/[0.04] hover:text-[#1c1917]',
+    catCountActive: 'text-[#C10D0D]/80',
+    catCountInactive: 'text-[#1c1917]/35',
+    catIcon: '',
+    catLabel: '',
+    fieldOverrides: '[&_label]:text-[#1c1917]/70 [&_select]:!bg-white [&_select]:!text-[#1c1917] [&_select]:!border-black/20 [&_input]:!bg-white [&_input]:!text-[#1c1917] [&_input]:!border-black/20 [&_button[role=combobox]]:!bg-white [&_button[role=combobox]]:!text-[#1c1917]',
+    resetText: 'text-[#1c1917]/55 hover:text-[#C10D0D]',
+  };
   return (
     <>
       {/* Search + result count */}
@@ -256,15 +195,11 @@ function BilerFilterContent({
             placeholder="Søk i arkivet…"
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
-            className={`w-full bg-transparent border-0 border-b ${c.searchInput} pl-6 pr-2 py-1.5 text-sm outline-none transition-colors`}
-            style={{ ...chakra, fontStyle: 'italic' }}
+            className={`w-full bg-transparent border-0 border-b ${c.searchInput} pl-6 pr-2 py-2 font-sans text-base outline-none transition-colors`}
           />
         </div>
         <div className="flex items-center justify-between">
-          <span
-            className={`text-[11px] ${c.countText}`}
-            style={{ ...oswald, letterSpacing: '0.05em' }}
-          >
+          <span className={`font-sans text-sm ${c.countText}`}>
             {resultCount} {resultCount === 1 ? 'bil' : 'biler'}
           </span>
         </div>
@@ -274,10 +209,7 @@ function BilerFilterContent({
       <div className="flex-1 px-4 py-4 space-y-4">
         {/* Categories */}
         <div>
-          <label
-            className={`text-[10px] uppercase tracking-[0.2em] ${c.labelText} block mb-2`}
-            style={oswald}
-          >
+          <label className={`font-display text-lg uppercase tracking-wide ${c.labelText} block mb-2`}>
             Kategori
           </label>
           <div className="space-y-0.5">
@@ -295,10 +227,7 @@ function BilerFilterContent({
                   )}
                 >
                   <Icon className="w-3.5 h-3.5 shrink-0" />
-                  <span
-                    className="flex-1 text-[11px] uppercase tracking-[0.1em]"
-                    style={oswald}
-                  >
+                  <span className="flex-1 font-sans text-base">
                     {cat.label}
                   </span>
                   <span className={cn(
@@ -318,10 +247,7 @@ function BilerFilterContent({
 
         {/* Car fields filter */}
         <div>
-          <label
-            className={`text-[10px] uppercase tracking-[0.2em] ${c.labelText} block mb-3`}
-            style={oswald}
-          >
+          <label className={`font-display text-lg uppercase tracking-wide ${c.labelText} block mb-3`}>
             Bilmodell
           </label>
           <div className={c.fieldOverrides}>
@@ -349,8 +275,7 @@ function BilerFilterContent({
                 onFilterChange(EMPTY_BILER_FILTER);
                 onSearchChange('');
               }}
-              className={`flex items-center gap-2 text-[11px] ${c.resetText} transition-colors uppercase tracking-[0.15em]`}
-              style={oswald}
+              className={`flex items-center gap-2 font-sans text-base ${c.resetText} transition-colors`}
             >
               <RotateCcw className="w-3 h-3" />
               Nullstill
